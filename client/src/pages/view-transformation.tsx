@@ -13,7 +13,7 @@ export default function ViewTransformation() {
   const fetchTransformation = async () => {
     try {
       // For now, we're just retrieving the latest transformation from uploads
-      const transformedImageUrl = "/uploads/transformed-1745447091110-shampoo_bottle.jpg";
+      const transformedImageUrl = "/uploads/transformed-1745447804156-shampoo_bottle.jpg";
       const originalImageUrl = "/uploads/shampoo_bottle.jpg";
       
       setOriginalImage(originalImageUrl);

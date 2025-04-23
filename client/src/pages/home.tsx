@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'wouter';
 import Navbar from '@/components/Navbar';
 import ImageUploader from '@/components/ImageUploader';
 import PromptInput from '@/components/PromptInput';
@@ -11,6 +12,7 @@ import CtaSection from '@/components/CtaSection';
 import Footer from '@/components/Footer';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 // Enum for the different steps in the process
 enum Step {
@@ -161,6 +163,14 @@ export default function Home() {
               <p>OpenAI API key is not configured. Some features may not work properly.</p>
             </div>
           )}
+          
+          <div className="mt-6">
+            <Link href="/view-transformation">
+              <Button variant="outline" className="hover:bg-primary-50">
+                View GPT-4o Forest Scene Demo
+              </Button>
+            </Link>
+          </div>
         </section>
 
         {/* Image Uploader Section */}
