@@ -24,7 +24,7 @@ export function isOpenAIConfigured(): boolean {
 }
 
 /**
- * Transforms an image based on the provided prompt
+ * Transforms an image based on the provided prompt using GPT-4o
  */
 export async function transformImage(
   imagePath: string, 
@@ -35,21 +35,54 @@ export async function transformImage(
   }
 
   try {
-    // Create the image generation with the uploaded image as reference
+    // Read the image file as base64
+    const imageBuffer = fs.readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
+    
+    // Create the enhanced prompt
     const enhancedPrompt = `Transform this product image: ${prompt}. Keep the product recognizable, but integrate it into the new environment seamlessly.`;
     
     console.log(`Processing image transformation with prompt: ${enhancedPrompt}`);
     
-    // Use the newer DALL-E 3 model with generation instead of edit
-    const response = await openai.images.generate({
-      model: "dall-e-3", // Using the more advanced DALL-E 3
-      prompt: enhancedPrompt,
+    // Use GPT-4o with vision capabilities
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // Using the newest GPT-4o model with vision capabilities
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert image creator. You will generate a detailed, photorealistic image based on the input image and prompt."
+        },
+        {
+          role: "user",
+          content: [
+            { type: "text", text: enhancedPrompt },
+            { 
+              type: "image_url", 
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 1000,
+    });
+    
+    // Since GPT-4o doesn't generate images directly, we'll use DALL-E 3 with the enhanced description from GPT-4o
+    const gpt4oDescription = response.choices[0].message.content;
+    
+    console.log("GPT-4o enhanced description:", gpt4oDescription);
+    
+    // Now use DALL-E 3 with the enhanced description
+    const imageGenResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: gpt4oDescription || enhancedPrompt,
       n: 1,
       size: "1024x1024",
       quality: "hd",
     });
-
-    const data = response.data || [];
+    
+    const data = imageGenResponse.data || [];
     if (!data.length || !data[0].url) {
       throw new Error("No image URL returned from OpenAI");
     }
@@ -62,9 +95,9 @@ export async function transformImage(
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
 
     // Download the image
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to download image: ${imageResponse.statusText}`);
+    const imageDownloadResponse = await fetch(imageUrl);
+    if (!imageDownloadResponse.ok) {
+      throw new Error(`Failed to download image: ${imageDownloadResponse.statusText}`);
     }
 
     // Ensure the directory exists
@@ -75,7 +108,7 @@ export async function transformImage(
 
     // Save the image
     await pipeline(
-      imageResponse.body,
+      imageDownloadResponse.body,
       createWriteStream(transformedPath)
     );
 
