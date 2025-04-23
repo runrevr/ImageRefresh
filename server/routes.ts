@@ -141,13 +141,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             prompt: forestPrompt,
             status: updatedTransformation.status,
           });
-        } catch (error) {
+        } catch (error: any) {
           // Update transformation with error
           await storage.updateTransformationStatus(
             transformation.id,
             "failed",
             undefined,
-            error.message
+            error.message || 'Unknown error occurred'
           );
           
           throw error;
@@ -198,13 +198,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               prompt: updatedTransformation.prompt,
               status: updatedTransformation.status,
             });
-          } catch (error) {
+          } catch (error: any) {
             // Update transformation with error
             await storage.updateTransformationStatus(
               transformation.id,
               "failed",
               undefined,
-              error.message
+              error.message || 'Unknown error occurred'
             );
             
             throw error;
@@ -213,9 +213,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(402).json({ message: "No credits available. Please purchase credits to continue." });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error transforming image:", error);
-      res.status(500).json({ message: `Error transforming image: ${error.message}` });
+      res.status(500).json({ message: `Error transforming image: ${error.message || 'Unknown error occurred'}` });
     }
   });
 

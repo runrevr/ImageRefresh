@@ -83,9 +83,10 @@ export async function transformImage(
       url: imageUrl,
       transformedPath,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error transforming image:", error);
-    throw new Error(`Error transforming image: ${error.message}`);
+    const errorMessage = error.message || 'Unknown error occurred';
+    throw new Error(`Error transforming image: ${errorMessage}`);
   }
 }
 
@@ -139,8 +140,9 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       url: imageUrl,
       transformedPath,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating image variation:", error);
-    throw new Error(`Error creating image variation: ${error.message}`);
+    const errorMessage = error.message || 'Unknown error occurred';
+    throw new Error(`Error creating image variation: ${errorMessage}`);
   }
 }
