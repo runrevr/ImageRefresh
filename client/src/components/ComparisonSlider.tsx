@@ -1,0 +1,108 @@
+import { useState, useRef, useEffect } from 'react';
+
+interface ComparisonSliderProps {
+  beforeImage: string;
+  afterImage: string;
+}
+
+export default function ComparisonSlider({ beforeImage, afterImage }: ComparisonSliderProps) {
+  const [position, setPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const handleMove = (clientX: number) => {
+    if (!isDragging || !sliderRef.current) return;
+    
+    const rect = sliderRef.current.getBoundingClientRect();
+    let newPosition = ((clientX - rect.left) / rect.width) * 100;
+    
+    // Clamp position between 0 and 100
+    newPosition = Math.min(100, Math.max(0, newPosition));
+    setPosition(newPosition);
+  };
+
+  const handleMouseDown = () => {
+    setIsDragging(true);
+  };
+
+  const handleTouchStart = () => {
+    setIsDragging(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      handleMove(e.clientX);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        handleMove(e.touches[0].clientX);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+    };
+
+    // Add event listeners
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('touchmove', handleTouchMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchend', handleTouchEnd);
+    }
+
+    // Clean up
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging]);
+
+  return (
+    <div 
+      ref={sliderRef}
+      className="relative w-full h-full cursor-ew-resize"
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+    >
+      <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+        <img 
+          src={afterImage} 
+          className="max-w-full max-h-full object-contain" 
+          alt="Transformed image" 
+        />
+      </div>
+      
+      <div 
+        className="absolute inset-0 flex items-center justify-center overflow-hidden"
+        style={{ clipPath: `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)` }}
+      >
+        <img 
+          src={beforeImage} 
+          className="max-w-full max-h-full object-contain" 
+          alt="Original image" 
+        />
+      </div>
+      
+      <div 
+        className="absolute top-0 bottom-0 w-1 bg-white"
+        style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+      >
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center">
+          <div className="flex flex-col gap-[2px]">
+            <div className="w-4 h-[2px] bg-gray-400"></div>
+            <div className="w-4 h-[2px] bg-gray-400"></div>
+            <div className="w-4 h-[2px] bg-gray-400"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
