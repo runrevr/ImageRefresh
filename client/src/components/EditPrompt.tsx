@@ -129,13 +129,41 @@ export default function EditPrompt({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="prompt" className="block mb-2 font-medium">Describe Your Edit</Label>
-          <Textarea
-            id="prompt"
-            placeholder="Example: Make the background blue instead of red, add more clouds to the sky, etc."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="w-full h-32 rounded-lg p-4 resize-none text-white bg-black shadow-inner"
-          />
+          <div className="relative">
+            <Textarea
+              id="prompt"
+              placeholder="Example: Make the background blue instead of red, add more clouds to the sky, etc."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="w-full h-32 rounded-lg p-4 resize-none text-white bg-black shadow-inner"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full p-1.5"
+              onClick={enhancePrompt}
+              disabled={isEnhancing || prompt.trim().length === 0}
+              title="Enhance prompt with AI"
+            >
+              {isEnhancing ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              ) : (
+                <Wand2 className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
+            <Button
+              variant="link"
+              size="sm"
+              className="text-xs text-primary-500 p-1 h-auto"
+              onClick={enhancePrompt}
+              disabled={isEnhancing || prompt.trim().length === 0}
+            >
+              <Wand2 className="h-3 w-3 mr-1" /> 
+              {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
+            </Button>
+          </div>
         </div>
         
         <div className="mb-5">
