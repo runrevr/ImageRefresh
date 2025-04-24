@@ -341,6 +341,25 @@ export default function Home() {
                 >
                   Product Photography
                 </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="hover:bg-primary-50 text-white bg-black border-white border-dashed"
+                  onClick={() => {
+                    if (originalImagePath) {
+                      // Skip to prompt step directly
+                      setCurrentStep(Step.Prompt);
+                    } else {
+                      toast({
+                        title: "No image selected",
+                        description: "Please upload an image first to create a custom transformation.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  Custom Transformation
+                </Button>
               </div>
             </div>
           </div>
