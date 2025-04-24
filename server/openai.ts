@@ -116,7 +116,7 @@ export async function transformImage(
     
     console.log("GPT-4o enhanced description:", gpt4oDescription);
     
-    // Now use the new gpt-image-1 model with the enhanced description
+    // Now use DALL-E 3 which doesn't require organization verification
     const imageResponse = await fetch("https://api.openai.com/v1/images/generations", {
       method: 'POST',
       headers: {
@@ -124,10 +124,11 @@ export async function transformImage(
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-image-1",  // Using the newer gpt-image-1 model
+        model: "dall-e-3",  // Using DALL-E 3 which doesn't need verification
         prompt: gpt4oDescription || enhancedPrompt,
         n: 1,
-        size: "1024x1024"
+        size: "1024x1024",
+        quality: "standard"
       })
     });
     
@@ -178,7 +179,7 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
     // For gpt-image-1, we'll use a simple prompt to create a variation
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
-    // Use the new gpt-image-1 model directly
+    // Use DALL-E 3 directly
     const imageResponse = await fetch("https://api.openai.com/v1/images/generations", {
       method: 'POST',
       headers: {
@@ -186,10 +187,11 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-image-1",
+        model: "dall-e-3",
         prompt: variationPrompt,
         n: 1,
-        size: "1024x1024"
+        size: "1024x1024",
+        quality: "standard"
       })
     });
     
