@@ -155,13 +155,13 @@ export default function Home() {
     setCurrentStep(Step.Processing);
 
     try {
-      // Send the edit request - using the transformedImage as the new source
+      // Send the edit request - always using the original uploaded image
       const response = await apiRequest('POST', '/api/transform', {
-        originalImagePath, // Still keep track of the original image
+        originalImagePath, // We use the original image path, not the transformed image path
         prompt: editPrompt,
         userId: user.id,
         isEdit: true, // Flag to indicate this is an edit
-        previousTransformation: transformedImage // Pass the previous transformation to help with context
+        previousTransformation: transformedImage // Pass the previous transformation path for reference only
       });
 
       const data = await response.json();

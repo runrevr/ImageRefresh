@@ -175,11 +175,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Prepare the prompt - enhance it if this is an edit
             let enhancedPrompt = validatedData.prompt;
             
-            if (validatedData.isEdit && validatedData.previousTransformation) {
+            if (validatedData.isEdit) {
+              console.log("Processing an edit request with original image path:", validatedData.originalImagePath);
+              
               // For edits, provide more context to help the AI understand this is an edit
-              enhancedPrompt = `This is an EDIT request to modify a previously transformed image. 
+              // We'll emphasize that we're using the original uploaded image
+              enhancedPrompt = `This is an EDIT request. You are working with the ORIGINAL UPLOADED IMAGE.
                   Please apply the following changes to the image: ${validatedData.prompt}
-                  Make sure to preserve the overall composition but implement these specific changes.`;
+                  Make sure to keep the original composition but implement these specific changes.
+                  IMPORTANT: Use the ORIGINAL image as your starting point, not the previously transformed image.`;
               console.log("Using enhanced prompt for edit:", enhancedPrompt);
             }
             
