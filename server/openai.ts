@@ -84,8 +84,8 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 }
 
 /**
- * Transforms an image based on the provided prompt using OpenAI's images.edit endpoint
- * This allows for more precise editing of specific elements in the image
+ * Transforms an image based on the provided prompt using gpt-image-1
+ * This directly passes the image and prompt to the model without pre-processing
  */
 export async function transformImage(
   imagePath: string, 
@@ -96,28 +96,20 @@ export async function transformImage(
   }
 
   try {
-    // Read the image file
-    const imageBuffer = fs.readFileSync(imagePath);
-    
-    console.log(`Processing image edit with prompt: ${prompt}`);
+    console.log(`Processing image transformation with prompt: ${prompt}`);
     
     try {
-      console.log("Submitting to OpenAI images.edit endpoint...");
+      console.log("Submitting to gpt-image-1 model...");
       
-      // Use the images.edit endpoint for direct image manipulation
-      // Create a readable stream from the file path
-      const imageStream = fs.createReadStream(imagePath);
-      
-      const imageResult = await openai.images.edit({
-        model: "dall-e-2", // Using DALL-E 2 for image editing (API supports dall-e-2 or gpt-image-1)
-        image: imageStream, // Pass the image as a readable stream
+      // Use the gpt-image-1 model as it better handles image transformations
+      const imageResult = await openai.images.generate({
+        model: "gpt-image-1",
         prompt: prompt,
         n: 1,
-        size: "1024x1024",
-        response_format: "b64_json" // Request base64 format for easier handling
+        size: "1024x1024"
       });
       
-      console.log("Successfully edited image with OpenAI");
+      console.log("Successfully generated image with gpt-image-1 model");
       
       // Generate unique name for the transformed image
       const originalFileName = path.basename(imagePath);
@@ -141,10 +133,10 @@ export async function transformImage(
           imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
         } else {
           console.log("Unknown response format:", JSON.stringify(imageResult.data[0]));
-          throw new Error("Unexpected response format from images.edit. Could not find url or b64_json in the response.");
+          throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
         }
       } else {
-        throw new Error("No image data returned. The edit operation failed.");
+        throw new Error("No image data returned. The gpt-image-1 generation failed.");
       }
   
       return {
@@ -152,7 +144,7 @@ export async function transformImage(
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with OpenAI images.edit:", err);
+      console.error("Error with gpt-image-1 model:", err);
       
       // Check for specific error types
       if (err.message && err.message.includes("organization verification")) {
@@ -160,7 +152,7 @@ export async function transformImage(
       } else if (err.code === "invalid_api_key") {
         throw new Error("Invalid OpenAI API key. Please check your configuration.");
       } else {
-        throw new Error("Failed to edit image: " + err.message);
+        throw new Error("Failed to generate image with gpt-image-1: " + err.message);
       }
     }
   } catch (error: any) {
