@@ -373,6 +373,12 @@ Your task is to enhance the user's prompt by:
 3. Adding descriptive adjectives to create a more vivid result
 4. Maintaining the original intent of the prompt
 
+VERY IMPORTANT: The prompt is being used to transform an uploaded image. The uploaded image 
+MUST remain the primary focus of the transformation. Emphasize preserving the original subject 
+while applying the requested changes. Add phrases like "maintain the original subject" or 
+"preserve the original [product/item/person] as the main focus" to ensure the AI doesn't alter 
+the primary subject too dramatically.
+
 Your enhanced prompt MUST be 900 characters or less - this is a strict requirement.
 Focus on quality over quantity and be concise while maintaining descriptive language.
 If an image description is provided, incorporate relevant elements from it.`;
@@ -389,7 +395,11 @@ If an image description is provided, incorporate relevant elements from it.`;
               content: `Original prompt: "${prompt}"
 ${imageDescription ? `\nImage description: ${imageDescription}` : ''}
               
-Please enhance this prompt for AI image generation while preserving the original intent.` 
+Please enhance this prompt for AI image generation while preserving the original intent.
+Remember that this prompt is for transforming an uploaded image, so it's critical
+that the original subject/object in the image remains the primary focus with minimal
+alteration to its core appearance. The transformation should primarily affect the
+style, environment, lighting, and background rather than changing the main subject.` 
             }
           ],
           temperature: 0.7,
