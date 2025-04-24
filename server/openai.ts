@@ -116,29 +116,30 @@ export async function transformImage(
     
     console.log("GPT-4o enhanced description:", gpt4oDescription);
     
-    // Use DALL-E 3 which doesn't require organization verification
-    const imageResponse = await fetch("https://api.openai.com/v1/images/generations", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",  // Using DALL-E 3 which doesn't need verification
+    // Try to use gpt-image-1 first, fall back to DALL-E 3 if needed
+    let imageResult;
+    try {
+      // First attempt with gpt-image-1
+      imageResult = await openai.images.generate({
+        model: "gpt-image-1",  // Trying the newest image model
+        prompt: gpt4oDescription || enhancedPrompt,
+        n: 1,
+        size: "1024x1024"
+      });
+      console.log("Successfully used gpt-image-1 model");
+    } catch (err: any) {
+      // If gpt-image-1 fails due to verification, fall back to DALL-E 3
+      console.log("Falling back to DALL-E 3 model:", err.message);
+      imageResult = await openai.images.generate({
+        model: "dall-e-3",
         prompt: gpt4oDescription || enhancedPrompt,
         n: 1,
         size: "1024x1024",
         quality: "standard"
-      })
-    });
-    
-    if (!imageResponse.ok) {
-      const errorResponse = await imageResponse.text();
-      throw new Error(`API Error: ${imageResponse.status} - ${errorResponse}`);
+      });
     }
     
-    // Parse the response and cast to our interface type
-    const imageResult = await imageResponse.json() as OpenAIImageResponse;
+    // Process the result from SDK
     const data = imageResult.data || [];
     
     if (!data.length || !data[0].url) {
@@ -167,8 +168,8 @@ export async function transformImage(
 }
 
 /**
- * Creates an image variation using the DALL-E 3 model
- * with a simple variation prompt
+ * Creates an image variation using the gpt-image-1 model when available
+ * with a fallback to DALL-E 3 if the newer model is not accessible
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
@@ -176,32 +177,33 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
   }
 
   try {
-    // For DALL-E 3, we'll use a simple prompt to create a variation
+    // Create a simple prompt for the image variation
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
-    // Use DALL-E 3 directly for variations as well
-    const imageResponse = await fetch("https://api.openai.com/v1/images/generations", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
+    // Try to use gpt-image-1 first, fall back to DALL-E 3 if needed
+    let imageResult;
+    try {
+      // First attempt with gpt-image-1
+      imageResult = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: variationPrompt,
+        n: 1,
+        size: "1024x1024"
+      });
+      console.log("Successfully used gpt-image-1 model for variation");
+    } catch (err: any) {
+      // If gpt-image-1 fails, fall back to DALL-E 3
+      console.log("Falling back to DALL-E 3 model for variation:", err.message);
+      imageResult = await openai.images.generate({
         model: "dall-e-3",
         prompt: variationPrompt,
         n: 1,
         size: "1024x1024",
         quality: "standard"
-      })
-    });
-    
-    if (!imageResponse.ok) {
-      const errorResponse = await imageResponse.text();
-      throw new Error(`API Error: ${imageResponse.status} - ${errorResponse}`);
+      });
     }
     
-    // Parse the response and cast to our interface type
-    const imageResult = await imageResponse.json() as OpenAIImageResponse;
+    // Process the result from SDK
     const data = imageResult.data || [];
     
     if (!data.length || !data[0].url) {
