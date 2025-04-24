@@ -117,35 +117,46 @@ export async function transformImage(
     console.log("GPT-4o enhanced description:", gpt4oDescription);
     
     // Use only gpt-image-1 as requested, with no fallback
-    const imageResult = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: gpt4oDescription || enhancedPrompt,
-      n: 1,
-      size: "1024x1024"
-    });
-    console.log("Successfully used gpt-image-1 model");
-    
-    // Process the result from SDK
-    const data = imageResult.data || [];
-    
-    if (!data.length || !data[0].url) {
-      throw new Error("No image URL returned from OpenAI");
+    try {
+      const imageResult = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: gpt4oDescription || enhancedPrompt,
+        n: 1,
+        size: "1024x1024"
+      });
+      console.log("Successfully used gpt-image-1 model");
+      
+      // Process the result from SDK
+      const data = imageResult.data || [];
+      
+      if (!data.length || !data[0].url) {
+        throw new Error("No image URL returned from OpenAI");
+      }
+      
+      const imageUrl = data[0].url;
+  
+      // Generate unique name for the transformed image
+      const originalFileName = path.basename(imagePath);
+      const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
+      const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
+  
+      // Save the image to the filesystem
+      await saveImageFromUrl(imageUrl, transformedPath);
+  
+      return {
+        url: imageUrl,
+        transformedPath,
+      };
+    } catch (err: any) {
+      console.error("Error with gpt-image-1 model:", err);
+      if (err.message && err.message.includes("organization has not been verified")) {
+        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
+      } else {
+        throw err;
+      }
     }
     
-    const imageUrl = data[0].url;
-
-    // Generate unique name for the transformed image
-    const originalFileName = path.basename(imagePath);
-    const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
-    const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-
-    // Save the image to the filesystem
-    await saveImageFromUrl(imageUrl, transformedPath);
-
-    return {
-      url: imageUrl,
-      transformedPath,
-    };
+    throw new Error("Failed to generate image with gpt-image-1");
   } catch (error: any) {
     console.error("Error transforming image:", error);
     const errorMessage = error.message || 'Unknown error occurred';
@@ -167,35 +178,46 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
     // Use only gpt-image-1 as requested, with no fallback
-    const imageResult = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: variationPrompt,
-      n: 1,
-      size: "1024x1024"
-    });
-    console.log("Successfully used gpt-image-1 model for variation");
-    
-    // Process the result from SDK
-    const data = imageResult.data || [];
-    
-    if (!data.length || !data[0].url) {
-      throw new Error("No image URL returned from OpenAI");
+    try {
+      const imageResult = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: variationPrompt,
+        n: 1,
+        size: "1024x1024"
+      });
+      console.log("Successfully used gpt-image-1 model for variation");
+      
+      // Process the result from SDK
+      const data = imageResult.data || [];
+      
+      if (!data.length || !data[0].url) {
+        throw new Error("No image URL returned from OpenAI");
+      }
+      
+      const imageUrl = data[0].url;
+  
+      // Generate unique name for the transformed image
+      const originalFileName = path.basename(imagePath);
+      const transformedFileName = `variation-${Date.now()}-${originalFileName}`;
+      const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
+  
+      // Save the image to the filesystem
+      await saveImageFromUrl(imageUrl, transformedPath);
+  
+      return {
+        url: imageUrl,
+        transformedPath,
+      };
+    } catch (err: any) {
+      console.error("Error with gpt-image-1 model for variation:", err);
+      if (err.message && err.message.includes("organization has not been verified")) {
+        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
+      } else {
+        throw err;
+      }
     }
     
-    const imageUrl = data[0].url;
-
-    // Generate unique name for the transformed image
-    const originalFileName = path.basename(imagePath);
-    const transformedFileName = `variation-${Date.now()}-${originalFileName}`;
-    const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-
-    // Save the image to the filesystem
-    await saveImageFromUrl(imageUrl, transformedPath);
-
-    return {
-      url: imageUrl,
-      transformedPath,
-    };
+    throw new Error("Failed to generate image variation with gpt-image-1");
   } catch (error: any) {
     console.error("Error creating image variation:", error);
     const errorMessage = error.message || 'Unknown error occurred';
