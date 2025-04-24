@@ -156,8 +156,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else {
         // Regular credit-based flow for non-demo images
-        // Check if free credit is available or paid credits
-        if (!user.freeCreditsUsed || user.paidCredits > 0) {
+        // If this is an edit request, proceed without checking credits (one free edit)
+        const isEditRequest = validatedData.isEdit === true;
+        
+        // Check if free credit is available or paid credits (only for new transformations, not edits)
+        if (isEditRequest || !user.freeCreditsUsed || user.paidCredits > 0) {
           // Create a transformation record
           const transformation = await storage.createTransformation({
             userId,
@@ -196,11 +199,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               relativePath
             );
             
-            // Update user credits
-            if (!user.freeCreditsUsed) {
-              await storage.updateUserCredits(userId, true);
-            } else if (user.paidCredits > 0) {
-              await storage.updateUserCredits(userId, true, user.paidCredits - 1);
+            // Update user credits - only for initial transformations, not edits
+            if (!isEditRequest) {
+              if (!user.freeCreditsUsed) {
+                await storage.updateUserCredits(userId, true);
+              } else if (user.paidCredits > 0) {
+                await storage.updateUserCredits(userId, true, user.paidCredits - 1);
+              }
             }
             
             // Return the transformation
@@ -246,8 +251,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         freeCreditsUsed: user.freeCreditsUsed,
         paidCredits: user.paidCredits,
       });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message || 'Unknown error' });
     }
   });
 
@@ -266,8 +271,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: t.createdAt,
         error: t.error,
       })));
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message || 'Unknown error' });
     }
   });
 
@@ -297,8 +302,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paidCredits: updatedUser.paidCredits,
         message: `Successfully purchased ${credits} credits`,
       });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message || 'Unknown error' });
     }
   });
 
