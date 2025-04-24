@@ -308,6 +308,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message || 'Unknown error' });
     }
   });
+  
+  // Add credits to user account (for testing purposes)
+  app.post("/api/add-credits/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Add 10 credits to the user account
+      const updatedUser = await storage.updateUserCredits(
+        userId, 
+        user.freeCreditsUsed, 
+        user.paidCredits + 10
+      );
+      
+      res.json({
+        message: "Successfully added 10 credits",
+        freeCreditsUsed: updatedUser.freeCreditsUsed,
+        paidCredits: updatedUser.paidCredits,
+      });
+    } catch (error: any) {
+      console.error('Error adding credits:', error);
+      res.status(500).json({ message: "Error adding credits" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
