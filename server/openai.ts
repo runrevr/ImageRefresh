@@ -4,6 +4,10 @@ import path from "path";
 import { createWriteStream } from "fs";
 import fetch from "node-fetch";
 import { Readable } from "stream";
+import { promisify } from "util";
+import stream from "stream";
+
+const pipeline = promisify(stream.pipeline);
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
@@ -51,7 +55,7 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
   
   // Make sure we have a readable stream that's not null
   if (imageResponse.body) {
-    const bodyAsReadable = Readable.fromWeb(imageResponse.body as any);
+    const bodyAsReadable = Readable.from(imageResponse.body as any);
     await new Promise<void>((resolve, reject) => {
       bodyAsReadable.pipe(fileStream);
       bodyAsReadable.on('error', reject);
