@@ -116,28 +116,14 @@ export async function transformImage(
     
     console.log("GPT-4o enhanced description:", gpt4oDescription);
     
-    // Try to use gpt-image-1 first, fall back to DALL-E 3 if needed
-    let imageResult;
-    try {
-      // First attempt with gpt-image-1
-      imageResult = await openai.images.generate({
-        model: "gpt-image-1",  // Trying the newest image model
-        prompt: gpt4oDescription || enhancedPrompt,
-        n: 1,
-        size: "1024x1024"
-      });
-      console.log("Successfully used gpt-image-1 model");
-    } catch (err: any) {
-      // If gpt-image-1 fails due to verification, fall back to DALL-E 3
-      console.log("Falling back to DALL-E 3 model:", err.message);
-      imageResult = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: gpt4oDescription || enhancedPrompt,
-        n: 1,
-        size: "1024x1024",
-        quality: "standard"
-      });
-    }
+    // Use only gpt-image-1 as requested, with no fallback
+    const imageResult = await openai.images.generate({
+      model: "gpt-image-1",
+      prompt: gpt4oDescription || enhancedPrompt,
+      n: 1,
+      size: "1024x1024"
+    });
+    console.log("Successfully used gpt-image-1 model");
     
     // Process the result from SDK
     const data = imageResult.data || [];
@@ -168,8 +154,8 @@ export async function transformImage(
 }
 
 /**
- * Creates an image variation using the gpt-image-1 model when available
- * with a fallback to DALL-E 3 if the newer model is not accessible
+ * Creates an image variation using only the gpt-image-1 model
+ * with no fallback option
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
@@ -180,28 +166,14 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
     // Create a simple prompt for the image variation
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
-    // Try to use gpt-image-1 first, fall back to DALL-E 3 if needed
-    let imageResult;
-    try {
-      // First attempt with gpt-image-1
-      imageResult = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: variationPrompt,
-        n: 1,
-        size: "1024x1024"
-      });
-      console.log("Successfully used gpt-image-1 model for variation");
-    } catch (err: any) {
-      // If gpt-image-1 fails, fall back to DALL-E 3
-      console.log("Falling back to DALL-E 3 model for variation:", err.message);
-      imageResult = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: variationPrompt,
-        n: 1,
-        size: "1024x1024",
-        quality: "standard"
-      });
-    }
+    // Use only gpt-image-1 as requested, with no fallback
+    const imageResult = await openai.images.generate({
+      model: "gpt-image-1",
+      prompt: variationPrompt,
+      n: 1,
+      size: "1024x1024"
+    });
+    console.log("Successfully used gpt-image-1 model for variation");
     
     // Process the result from SDK
     const data = imageResult.data || [];
