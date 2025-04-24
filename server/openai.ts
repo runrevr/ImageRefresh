@@ -84,8 +84,9 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 }
 
 /**
- * Transforms an image based on the provided prompt using gpt-image-1
- * This directly passes the image and prompt to the model without pre-processing
+ * Two-stage process for image transformation:
+ * 1. First analyze the image with GPT-4o to get a detailed description
+ * 2. Then create a new image with gpt-image-1 based on both the prompt and the description
  */
 export async function transformImage(
   imagePath: string, 
@@ -99,27 +100,58 @@ export async function transformImage(
     console.log(`Processing image transformation with prompt: ${prompt}`);
     
     try {
-      console.log("Submitting to gpt-image-1 model...");
-      
-      // Read the image file for the prompt
+      // Read the image file
       const imageBuffer = fs.readFileSync(imagePath);
+      const base64Image = imageBuffer.toString('base64');
       
-      // First, we need to resize/compress the image to reduce its size before encoding
-      // For now, let's try a simpler approach using only the prompt with gpt-image-1
-      // since the base64 encoding is too large for the prompt's max length
+      // First use GPT-4o Vision to analyze the image and get a detailed description
+      console.log("Stage 1: Analyzing image with GPT-4o vision capabilities...");
       
-      // Create a data URL for the image that can be used in an HTML img tag
+      // Determine the correct MIME type for the image
       const fileExtension = path.extname(imagePath).toLowerCase();
       const mimeType = fileExtension === '.png' ? 'image/png' : 
                       (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
       
-      // Use the gpt-image-1 model with a modified prompt that references the image indirectly
-      console.log("Using gpt-image-1 with detailed prompt");
+      // Use the GPT-4o model with vision capabilities to analyze the image
+      const visionResponse = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert image analyzer. Provide a detailed description of the image that includes all visible elements, colors, shapes, textures, and other distinctive features. Your description should be comprehensive enough that it could be used to recreate the image."
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: "Describe this image in extreme detail, focusing on all visual elements that make it unique."
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:${mimeType};base64,${base64Image}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 1000
+      });
       
-      // Create a specific prompt that's detailed about the transformation we want
-      const enhancedPrompt = `${prompt}. The image should be the primary subject, with careful attention to its details and composition.`;
+      // Extract the detailed description from GPT-4o, with a fallback if it's null/undefined
+      const content = visionResponse.choices[0].message.content;
+      const detailedDescription = content ? content : "A detailed product image";
+      console.log("Image analysis complete. Description length:", detailedDescription.length);
       
-      console.log("Enhanced prompt:", enhancedPrompt);
+      // Now use gpt-image-1 to generate a new image based on the prompt and the detailed description
+      console.log("Stage 2: Generating transformed image with gpt-image-1...");
+      
+      // Create a comprehensive prompt that incorporates both the user's request and the image details
+      // The key is to emphasize preserving the original image's subject while applying the transformation
+      const enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background.`;
+      
+      console.log("Using enhanced prompt that emphasizes preserving the original subject");
       
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
@@ -182,8 +214,9 @@ export async function transformImage(
 }
 
 /**
- * Creates an image variation using only the gpt-image-1 model
- * with no fallback option
+ * Creates an image variation using the same two-stage process as transformImage
+ * 1. Analyze the image with GPT-4o Vision
+ * 2. Create a variation with gpt-image-1 based on the analysis
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
@@ -191,31 +224,66 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
   }
 
   try {
-    // Create a simple prompt for the image variation
+    // Create a prompt for the image variation
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
-    // Only use gpt-image-1 model with no fallback for variation - using the example code provided
     try {
-      console.log("Attempting to use gpt-image-1 model for variation with b64_json format...");
+      console.log("Starting two-stage variation process...");
       
-      // Read the image file for the prompt
+      // Read the image file
       const imageBuffer = fs.readFileSync(imagePath);
+      const base64Image = imageBuffer.toString('base64');
       
-      // For now, we'll use a detailed prompt approach for variation as well
-      // since including the base64 image in the prompt exceeds the character limit
+      // Stage 1: Analyze the image with GPT-4o Vision
+      console.log("Stage 1: Analyzing image with GPT-4o vision capabilities for variation...");
       
-      // Create a data URL for the image that can be used in an HTML img tag
+      // Determine the correct MIME type for the image
       const fileExtension = path.extname(imagePath).toLowerCase();
       const mimeType = fileExtension === '.png' ? 'image/png' : 
                        (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
       
-      // Use the gpt-image-1 model with a modified prompt for variation
-      console.log("Using gpt-image-1 with detailed prompt for variation");
+      // Use the GPT-4o model with vision capabilities to analyze the image
+      const visionResponse = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert image analyzer. Provide a detailed description of the image focusing on key elements, colors, shapes, composition and style."
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: "Describe this image in detail, focusing on elements that a creative reinterpretation should maintain."
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:${mimeType};base64,${base64Image}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 800
+      });
       
-      // Create a specific prompt for the variation
-      const enhancedVariationPrompt = `${variationPrompt}. Apply artistic filters, change the style dramatically, and create a visually distinct version while maintaining the composition.`;
+      // Extract the detailed description, with a fallback if it's null/undefined
+      const content = visionResponse.choices[0].message.content;
+      const detailedDescription = content ? content : "A detailed product image";
+      console.log("Image analysis complete for variation. Description length:", detailedDescription.length);
       
-      console.log("Enhanced variation prompt:", enhancedVariationPrompt);
+      // Stage 2: Generate a variation with gpt-image-1
+      console.log("Stage 2: Generating image variation with gpt-image-1...");
+      
+      // Create an enhanced prompt with special emphasis on preserving the object's identity
+      const enhancedVariationPrompt = `Create an artistic variation of this exact product: "${detailedDescription}". 
+The product must be the main focus and clearly recognizable as the same item. 
+${variationPrompt}. 
+Keep the product's shape and key details intact but you may alter the style, artistic treatment, lighting, and background.`;
+      
+      console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
