@@ -116,36 +116,34 @@ export async function transformImage(
     
     console.log("GPT-4o enhanced description:", gpt4oDescription);
     
-    // First try gpt-image-1 model with b64_json response format
+    // Only use gpt-image-1 model with no fallback
     try {
-      console.log("Attempting to use gpt-image-1 model with b64_json...");
+      console.log("Attempting to use gpt-image-1 model...");
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
         prompt: gpt4oDescription || enhancedPrompt,
         n: 1,
-        size: "1024x1024",
-        response_format: "b64_json"  // Request base64 data instead of URL
+        size: "1024x1024"
       });
       console.log("Successfully contacted OpenAI API with gpt-image-1 model");
       
       // Process the result from SDK
       const data = imageResult.data || [];
+      console.log("Data array:", JSON.stringify(data, null, 2));
       
-      if (!data.length || !data[0].b64_json) {
-        throw new Error("No image data returned from OpenAI. The gpt-image-1 model is not available for your account.");
+      if (!data.length || !data[0].url) {
+        throw new Error("No image URL returned from OpenAI. The gpt-image-1 model is not available for your account.");
       }
       
+      const imageUrl = data[0].url;
+  
       // Generate unique name for the transformed image
       const originalFileName = path.basename(imagePath);
       const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
       const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-      
-      // Convert base64 to buffer and save directly to filesystem
-      const imageBuffer = Buffer.from(data[0].b64_json, "base64");
-      fs.writeFileSync(transformedPath, imageBuffer);
-      
-      // Create a data URL for the front-end to display
-      const imageUrl = `data:image/png;base64,${data[0].b64_json}`;
+  
+      // Save the image to the filesystem
+      await saveImageFromUrl(imageUrl, transformedPath);
   
       return {
         url: imageUrl,
@@ -154,43 +152,13 @@ export async function transformImage(
     } catch (err: any) {
       console.error("Error with gpt-image-1 model:", err);
       
-      // Fall back to DALL-E 3 model
-      console.log("Falling back to DALL-E 3 model...");
-      try {
-        const imageResult = await openai.images.generate({
-          model: "dall-e-3",
-          prompt: gpt4oDescription || enhancedPrompt,
-          n: 1,
-          size: "1024x1024",
-          quality: "standard"
-        });
-        console.log("Successfully generated image with DALL-E 3 fallback");
-        
-        // Process the result from SDK
-        const data = imageResult.data || [];
-        console.log("DALL-E 3 data array:", JSON.stringify(data, null, 2));
-        
-        if (!data.length || !data[0].url) {
-          throw new Error("No image URL returned from DALL-E 3 fallback.");
-        }
-        
-        const imageUrl = data[0].url;
-    
-        // Generate unique name for the transformed image
-        const originalFileName = path.basename(imagePath);
-        const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
-        const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-    
-        // Save the image to the filesystem
-        await saveImageFromUrl(imageUrl, transformedPath);
-    
-        return {
-          url: imageUrl,
-          transformedPath,
-        };
-      } catch (dall_e_err: any) {
-        console.error("Error with DALL-E 3 fallback:", dall_e_err);
-        throw new Error("Failed to generate image with both gpt-image-1 and DALL-E 3 fallback: " + dall_e_err.message);
+      // Check for specific errors related to gpt-image-1 access
+      if (err.message && err.message.includes("organization verification")) {
+        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
+      } else if (err.code === "unknown_parameter" && err.param === "response_format") {
+        throw new Error("The gpt-image-1 model does not support the response_format parameter as initially expected. Please try with a different parameter configuration.");
+      } else {
+        throw new Error("Failed to generate image with gpt-image-1: " + err.message);
       }
     }
   } catch (error: any) {
@@ -213,36 +181,34 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
     // Create a simple prompt for the image variation
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
-    // First try gpt-image-1 model for variation with b64_json response format
+    // Only use gpt-image-1 model with no fallback for variation
     try {
-      console.log("Attempting to use gpt-image-1 model for variation with b64_json...");
+      console.log("Attempting to use gpt-image-1 model for variation...");
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
         prompt: variationPrompt,
         n: 1,
-        size: "1024x1024",
-        response_format: "b64_json"  // Request base64 data instead of URL
+        size: "1024x1024"
       });
       console.log("Successfully contacted OpenAI API with gpt-image-1 model for variation");
       
       // Process the result from SDK
       const data = imageResult.data || [];
+      console.log("Variation data array:", JSON.stringify(data, null, 2));
       
-      if (!data.length || !data[0].b64_json) {
-        throw new Error("No image data returned from OpenAI for variation. The gpt-image-1 model is not available for your account.");
+      if (!data.length || !data[0].url) {
+        throw new Error("No image URL returned from OpenAI for variation. The gpt-image-1 model is not available for your account.");
       }
       
+      const imageUrl = data[0].url;
+  
       // Generate unique name for the transformed image
       const originalFileName = path.basename(imagePath);
       const transformedFileName = `variation-${Date.now()}-${originalFileName}`;
       const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-      
-      // Convert base64 to buffer and save directly to filesystem
-      const imageBuffer = Buffer.from(data[0].b64_json, "base64");
-      fs.writeFileSync(transformedPath, imageBuffer);
-      
-      // Create a data URL for the front-end to display
-      const imageUrl = `data:image/png;base64,${data[0].b64_json}`;
+  
+      // Save the image to the filesystem
+      await saveImageFromUrl(imageUrl, transformedPath);
   
       return {
         url: imageUrl,
@@ -251,43 +217,13 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
     } catch (err: any) {
       console.error("Error with gpt-image-1 model for variation:", err);
       
-      // Fall back to DALL-E 3 model for variation
-      console.log("Falling back to DALL-E 3 model for variation...");
-      try {
-        const imageResult = await openai.images.generate({
-          model: "dall-e-3",
-          prompt: variationPrompt,
-          n: 1,
-          size: "1024x1024",
-          quality: "standard"
-        });
-        console.log("Successfully generated variation with DALL-E 3 fallback");
-        
-        // Process the result from SDK
-        const data = imageResult.data || [];
-        console.log("DALL-E 3 variation data array:", JSON.stringify(data, null, 2));
-        
-        if (!data.length || !data[0].url) {
-          throw new Error("No image URL returned from DALL-E 3 variation fallback.");
-        }
-        
-        const imageUrl = data[0].url;
-    
-        // Generate unique name for the transformed image
-        const originalFileName = path.basename(imagePath);
-        const transformedFileName = `variation-${Date.now()}-${originalFileName}`;
-        const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-    
-        // Save the image to the filesystem
-        await saveImageFromUrl(imageUrl, transformedPath);
-    
-        return {
-          url: imageUrl,
-          transformedPath,
-        };
-      } catch (dall_e_err: any) {
-        console.error("Error with DALL-E 3 fallback for variation:", dall_e_err);
-        throw new Error("Failed to generate image variation with both gpt-image-1 and DALL-E 3 fallback: " + dall_e_err.message);
+      // Check for specific errors related to gpt-image-1 access
+      if (err.message && err.message.includes("organization verification")) {
+        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
+      } else if (err.code === "unknown_parameter" && err.param === "response_format") {
+        throw new Error("The gpt-image-1 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
+      } else {
+        throw new Error("Failed to generate image variation with gpt-image-1: " + err.message);
       }
     }
   } catch (error: any) {
