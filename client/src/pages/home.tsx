@@ -144,6 +144,68 @@ export default function Home() {
     setCurrentStep(Step.Prompt);
   };
 
+  // Handle starting edit process
+  const handleStartEdit = () => {
+    setCurrentStep(Step.Edit);
+  };
+
+  // Handle edit submission
+  const handleEditSubmit = async (editPrompt: string) => {
+    setPrompt(editPrompt);
+    setCurrentStep(Step.Processing);
+
+    try {
+      // Send the edit request - using the transformedImage as the new source
+      const response = await apiRequest('POST', '/api/transform', {
+        originalImagePath, // Still keep track of the original image
+        prompt: editPrompt,
+        userId: user.id,
+        isEdit: true, // Flag to indicate this is an edit
+        previousTransformation: transformedImage // Pass the previous transformation to help with context
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Replace the transformed image with the edited version
+        setTransformedImage(data.transformedImageUrl);
+        setCurrentStep(Step.Result);
+        
+        // Refresh user credits
+        const creditsResponse = await apiRequest('GET', `/api/credits/${user.id}`);
+        const creditsData = await creditsResponse.json();
+        setUser(prev => ({ 
+          ...prev, 
+          freeCreditsUsed: creditsData.freeCreditsUsed, 
+          paidCredits: creditsData.paidCredits 
+        }));
+      } else {
+        toast({
+          title: "Edit failed",
+          description: data.message,
+          variant: "destructive"
+        });
+        // Go back to result step with the original transformation
+        setCurrentStep(Step.Result);
+      }
+    } catch (error: any) {
+      console.error('Error editing image:', error);
+      
+      let errorMessage = "There was an error editing your image. Please try again.";
+      toast({
+        title: "Edit Failed",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      setCurrentStep(Step.Result);
+    }
+  };
+
+  // Skip the edit and keep the current transformation
+  const handleSkipEdit = () => {
+    setCurrentStep(Step.Result);
+  };
+
   // Function to scroll to uploader section
   const scrollToUploader = () => {
     const uploaderElement = document.getElementById('uploader');
@@ -238,8 +300,21 @@ export default function Home() {
                 transformedImage={transformedImage!} 
                 onTryAgain={handleTryAgain} 
                 onNewImage={handleNewImage}
+                onEditImage={handleStartEdit}
                 freeCredits={!user.freeCreditsUsed ? 1 : 0}
                 paidCredits={user.paidCredits}
+                prompt={prompt}
+                canEdit={true}
+              />
+            )}
+            
+            {currentStep === Step.Edit && (
+              <EditPrompt
+                originalImage={originalImage!}
+                transformedImage={transformedImage!}
+                initialPrompt={prompt}
+                onSubmit={handleEditSubmit}
+                onSkip={handleSkipEdit}
               />
             )}
           </div>

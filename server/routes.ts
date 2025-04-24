@@ -83,6 +83,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         originalImagePath: z.string(),
         prompt: z.string().min(1).max(500),
         userId: z.number().optional(),
+        isEdit: z.boolean().optional(),
+        previousTransformation: z.string().optional(),
       });
 
       const validatedData = transformSchema.parse(req.body);
@@ -167,10 +169,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateTransformationStatus(transformation.id, "processing");
           
           try {
+            // Prepare the prompt - enhance it if this is an edit
+            let enhancedPrompt = validatedData.prompt;
+            
+            if (validatedData.isEdit && validatedData.previousTransformation) {
+              // For edits, provide more context to help the AI understand this is an edit
+              enhancedPrompt = `This is an EDIT request to modify a previously transformed image. 
+                  Please apply the following changes to the image: ${validatedData.prompt}
+                  Make sure to preserve the overall composition but implement these specific changes.`;
+              console.log("Using enhanced prompt for edit:", enhancedPrompt);
+            }
+            
             // Transform the image using OpenAI
             const { transformedPath } = await transformImage(
               fullImagePath, 
-              validatedData.prompt
+              enhancedPrompt
             );
             
             // Get relative path for storage
