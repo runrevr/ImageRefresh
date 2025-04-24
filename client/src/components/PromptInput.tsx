@@ -134,11 +134,11 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
             </div>
             
             <div className="flex space-x-3">
-              <Button variant="outline" onClick={onBack}>
+              <Button variant="outline" onClick={onBack} className="text-white bg-black">
                 <ChevronLeft className="h-4 w-4 mr-1" /> Back
               </Button>
               <Button 
-                className="flex-1"
+                className="flex-1 text-white bg-primary hover:bg-primary/90"
                 onClick={handleSubmit}
                 disabled={prompt.trim().length === 0}
               >
