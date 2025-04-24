@@ -211,6 +211,65 @@ export default function Home() {
     setCurrentStep(Step.Result);
   };
 
+  // Handle preset transformations (cartoon, product photography, etc.)
+  const handlePresetTransformation = async (presetType: string) => {
+    if (!originalImagePath) {
+      toast({
+        title: "No image selected",
+        description: "Please upload an image first to use preset transformations.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Set a default image size for presets (square format)
+    const imageSize = "1024x1024";
+    
+    setCurrentStep(Step.Processing);
+    
+    try {
+      console.log(`Applying ${presetType} preset transformation`);
+      const response = await apiRequest('POST', '/api/transform', {
+        originalImagePath,
+        userId: user.id,
+        preset: presetType,
+        imageSize,
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setTransformedImage(data.transformedImageUrl);
+        setCurrentStep(Step.Result);
+        setPrompt(data.prompt);
+        
+        // Refetch user credits
+        const creditsResponse = await apiRequest('GET', `/api/credits/${user.id}`);
+        const creditsData = await creditsResponse.json();
+        setUser(prevUser => ({
+          ...prevUser,
+          freeCreditsUsed: creditsData.freeCreditsUsed,
+          paidCredits: creditsData.paidCredits
+        }));
+      } else {
+        toast({
+          title: "Transformation failed",
+          description: data.message,
+          variant: "destructive"
+        });
+        setCurrentStep(Step.Upload);
+      }
+    } catch (error) {
+      console.error("Error applying preset transformation:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to apply transformation",
+        variant: "destructive",
+      });
+      setCurrentStep(Step.Upload);
+    }
+  };
+
   // Function to scroll to uploader section
   const scrollToUploader = () => {
     const uploaderElement = document.getElementById('uploader');
@@ -243,12 +302,47 @@ export default function Home() {
             </div>
           )}
           
-          <div className="mt-6">
-            <Link href="/view-transformation">
-              <Button variant="outline" className="hover:bg-primary-50 text-white bg-black">
-                View GPT-4o Forest Scene Demo
-              </Button>
-            </Link>
+          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+            <div className="text-center">
+              <h3 className="text-lg font-medium mb-2">Preset Transformations</h3>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button 
+                  variant="outline" 
+                  className="hover:bg-primary-50 text-white bg-black border-white"
+                  onClick={() => {
+                    if (originalImagePath) {
+                      handlePresetTransformation("cartoon");
+                    } else {
+                      toast({
+                        title: "No image selected",
+                        description: "Please upload an image first to use preset transformations.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  Cartoon Style
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="hover:bg-primary-50 text-white bg-black border-white"
+                  onClick={() => {
+                    if (originalImagePath) {
+                      handlePresetTransformation("product");
+                    } else {
+                      toast({
+                        title: "No image selected",
+                        description: "Please upload an image first to use preset transformations.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  Product Photography
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
 

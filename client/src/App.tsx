@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
-import ViewTransformation from "@/pages/view-transformation";
 import PricingPage from "@/pages/pricing";
 import { useState, useEffect } from "react";
 
@@ -13,7 +12,6 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/view-transformation" component={ViewTransformation} />
       <Route path="/pricing" component={PricingPage} />
       <Route component={NotFound} />
     </Switch>
