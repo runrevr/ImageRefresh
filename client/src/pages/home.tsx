@@ -166,7 +166,7 @@ export default function Home() {
           
           <div className="mt-6">
             <Link href="/view-transformation">
-              <Button variant="outline" className="hover:bg-primary-50">
+              <Button variant="outline" className="hover:bg-primary-50 text-white bg-black">
                 View GPT-4o Forest Scene Demo
               </Button>
             </Link>
