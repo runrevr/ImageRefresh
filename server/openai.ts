@@ -84,8 +84,8 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 }
 
 /**
- * Transforms an image based on the provided prompt using gpt-image-1
- * Directly passes the image and prompt to the model without pre-processing
+ * Transforms an image based on the provided prompt using OpenAI's images.edit endpoint
+ * This allows for more precise editing of specific elements in the image
  */
 export async function transformImage(
   imagePath: string, 
@@ -96,26 +96,28 @@ export async function transformImage(
   }
 
   try {
-    // Read the image file as base64
+    // Read the image file
     const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
     
-    console.log(`Processing image transformation with prompt: ${prompt}`);
+    console.log(`Processing image edit with prompt: ${prompt}`);
     
-    // Only use gpt-image-1 model with no fallback
     try {
-      console.log("Submitting to gpt-image-1 model...");
+      console.log("Submitting to OpenAI images.edit endpoint...");
       
-      // The gpt-image-1 model requires both an image (as reference) and a prompt
-      const imageResult = await openai.images.generate({
-        model: "gpt-image-1",
+      // Use the images.edit endpoint for direct image manipulation
+      // Create a readable stream from the file path
+      const imageStream = fs.createReadStream(imagePath);
+      
+      const imageResult = await openai.images.edit({
+        model: "dall-e-2", // Using DALL-E 2 for image editing (API supports dall-e-2 or gpt-image-1)
+        image: imageStream, // Pass the image as a readable stream
         prompt: prompt,
         n: 1,
-        size: "1024x1024"
+        size: "1024x1024",
+        response_format: "b64_json" // Request base64 format for easier handling
       });
       
-      console.log("Successfully generated image with gpt-image-1 model");
-      console.log("Response format:", JSON.stringify(imageResult, null, 2));
+      console.log("Successfully edited image with OpenAI");
       
       // Generate unique name for the transformed image
       const originalFileName = path.basename(imagePath);
@@ -124,7 +126,7 @@ export async function transformImage(
       
       let imageUrl;
       
-      // Check what format we received - it could be URL or b64_json
+      // Check what format we received
       if (imageResult.data && imageResult.data.length > 0) {
         if (imageResult.data[0].url) {
           // URL format - use saveImageFromUrl
@@ -139,10 +141,10 @@ export async function transformImage(
           imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
         } else {
           console.log("Unknown response format:", JSON.stringify(imageResult.data[0]));
-          throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
+          throw new Error("Unexpected response format from images.edit. Could not find url or b64_json in the response.");
         }
       } else {
-        throw new Error("No image data returned. The gpt-image-1 model is not available for your account.");
+        throw new Error("No image data returned. The edit operation failed.");
       }
   
       return {
@@ -150,15 +152,15 @@ export async function transformImage(
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with gpt-image-1 model:", err);
+      console.error("Error with OpenAI images.edit:", err);
       
-      // Check for specific errors related to gpt-image-1 access
+      // Check for specific error types
       if (err.message && err.message.includes("organization verification")) {
-        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
-      } else if (err.code === "unknown_parameter" && err.param === "response_format") {
-        throw new Error("The gpt-image-1 model does not support the response_format parameter as initially expected. Please try with a different parameter configuration.");
+        throw new Error("Your OpenAI account needs organization verification to use this feature. Error: " + err.message);
+      } else if (err.code === "invalid_api_key") {
+        throw new Error("Invalid OpenAI API key. Please check your configuration.");
       } else {
-        throw new Error("Failed to generate image with gpt-image-1: " + err.message);
+        throw new Error("Failed to edit image: " + err.message);
       }
     }
   } catch (error: any) {
