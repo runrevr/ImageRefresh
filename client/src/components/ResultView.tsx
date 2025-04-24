@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ArrowLeftRight, Upload, ImageIcon } from 'lucide-react';
+import { Download, ArrowLeftRight, Upload, ImageIcon, Edit } from 'lucide-react';
 import ComparisonSlider from './ComparisonSlider';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
@@ -11,9 +11,11 @@ interface ResultViewProps {
   transformedImage: string;
   onTryAgain: () => void;
   onNewImage: () => void;
+  onEditImage?: () => void;
   freeCredits: number;
   paidCredits: number;
   prompt?: string;
+  canEdit?: boolean;
 }
 
 export default function ResultView({ 
@@ -21,9 +23,11 @@ export default function ResultView({
   transformedImage, 
   onTryAgain, 
   onNewImage,
+  onEditImage,
   freeCredits,
   paidCredits,
-  prompt = "Transformation of the original image"
+  prompt = "Transformation of the original image",
+  canEdit = true
 }: ResultViewProps) {
   const handleDownload = () => {
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
@@ -61,6 +65,15 @@ export default function ResultView({
         </div>
         
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          {canEdit && onEditImage && (
+            <Button
+              className="text-white bg-black"
+              onClick={onEditImage}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit This Image
+            </Button>
+          )}
           <Button 
             variant="outline" 
             onClick={onTryAgain}

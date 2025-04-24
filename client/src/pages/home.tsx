@@ -5,6 +5,7 @@ import ImageUploader from '@/components/ImageUploader';
 import PromptInput from '@/components/PromptInput';
 import ProcessingState from '@/components/ProcessingState';
 import ResultView from '@/components/ResultView';
+import EditPrompt from '@/components/EditPrompt';
 import TransformationExamples from '@/components/TransformationExamples';
 import PricingSection from '@/components/PricingSection';
 import FaqSection from '@/components/FaqSection';
@@ -19,7 +20,8 @@ enum Step {
   Upload,
   Prompt,
   Processing,
-  Result
+  Result,
+  Edit
 }
 
 // Default user state - in a real app this would come from authentication
