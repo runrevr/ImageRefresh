@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ArrowLeftRight, Upload } from 'lucide-react';
+import { Download, ArrowLeftRight, Upload, ImageIcon } from 'lucide-react';
 import ComparisonSlider from './ComparisonSlider';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
@@ -13,6 +13,7 @@ interface ResultViewProps {
   onNewImage: () => void;
   freeCredits: number;
   paidCredits: number;
+  prompt?: string;
 }
 
 export default function ResultView({ 
@@ -21,7 +22,8 @@ export default function ResultView({
   onTryAgain, 
   onNewImage,
   freeCredits,
-  paidCredits
+  paidCredits,
+  prompt = "Transformation of the original image"
 }: ResultViewProps) {
   const handleDownload = () => {
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
@@ -36,6 +38,19 @@ export default function ResultView({
             beforeImage={originalImage} 
             afterImage={transformedImage} 
           />
+        </div>
+        
+        {/* Transformation Description - White text on black background */}
+        <div className="bg-black p-4 rounded-lg mb-8">
+          <div className="flex items-start">
+            <ImageIcon className="text-white h-5 w-5 mt-1 mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="text-white font-medium mb-1">Transformation Description</h3>
+              <p className="text-white text-sm md:text-base leading-relaxed">
+                {prompt}
+              </p>
+            </div>
+          </div>
         </div>
         
         <div className="text-center mb-8">

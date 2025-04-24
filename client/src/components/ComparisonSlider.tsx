@@ -72,16 +72,21 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
-      <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+      {/* After Image (Transformed) */}
+      <div className="absolute inset-0 bg-gray-100 flex flex-col items-center justify-center">
         <img 
           src={afterImage} 
           className="max-w-full max-h-full object-contain" 
           alt="Transformed image" 
         />
+        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white text-center">
+          <p className="font-medium text-sm md:text-base">Transformed Image</p>
+        </div>
       </div>
       
+      {/* Before Image (Original) with clip path */}
       <div 
-        className="absolute inset-0 flex items-center justify-center overflow-hidden"
+        className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
         style={{ clipPath: `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)` }}
       >
         <img 
@@ -89,8 +94,12 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
           className="max-w-full max-h-full object-contain" 
           alt="Original image" 
         />
+        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white text-center">
+          <p className="font-medium text-sm md:text-base">Original Image</p>
+        </div>
       </div>
       
+      {/* Slider Control */}
       <div 
         className="absolute top-0 bottom-0 w-1 bg-white"
         style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
