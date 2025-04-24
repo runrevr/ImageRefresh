@@ -8,7 +8,7 @@ interface EditPromptProps {
   originalImage: string;
   transformedImage: string;
   initialPrompt: string;
-  onSubmit: (prompt: string) => void;
+  onSubmit: (prompt: string, imageSize: string) => void;
   onSkip: () => void;
 }
 

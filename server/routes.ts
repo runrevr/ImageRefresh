@@ -85,6 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: z.number().optional(),
         isEdit: z.boolean().optional(),
         previousTransformation: z.string().optional(),
+        imageSize: z.string().optional(),
       });
 
       const validatedData = transformSchema.parse(req.body);
@@ -185,10 +186,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
               console.log("Using direct prompt for edit:", enhancedPrompt);
             }
             
-            // Transform the image using OpenAI
+            // Transform the image using OpenAI with specified image size if provided
             const { transformedPath } = await transformImage(
               fullImagePath, 
-              enhancedPrompt
+              enhancedPrompt,
+              validatedData.imageSize
             );
             
             // Get relative path for storage

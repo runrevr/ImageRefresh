@@ -90,7 +90,8 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
  */
 export async function transformImage(
   imagePath: string, 
-  prompt: string
+  prompt: string,
+  imageSize?: string
 ): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");
@@ -153,11 +154,18 @@ export async function transformImage(
       
       console.log("Using enhanced prompt that emphasizes preserving the original subject");
       
+      // Use the provided image size or default to 1024x1024
+      const size = imageSize && ["1024x1024", "1024x1536", "1536x1024"].includes(imageSize) 
+        ? imageSize 
+        : "1024x1024";
+        
+      console.log(`Using image size: ${size}`);
+      
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
         prompt: enhancedPrompt,
         n: 1,
-        size: "1024x1024"
+        size: size
       });
       
       console.log("Successfully generated image with gpt-image-1 model");
