@@ -1,4 +1,6 @@
 import { transformations, users, type User, type InsertUser, type Transformation, type InsertTransformation } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -14,45 +16,23 @@ export interface IStorage {
   getUserTransformations(userId: number): Promise<Transformation[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private transformations: Map<number, Transformation>;
-  private userIdCounter: number;
-  private transformationIdCounter: number;
-
-  constructor() {
-    this.users = new Map();
-    this.transformations = new Map();
-    this.userIdCounter = 1;
-    this.transformationIdCounter = 1;
-    
-    // Create a default user for development
-    this.createUser({
-      username: "demo",
-      password: "password"
-    });
-  }
-
+export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const user: User = { 
-      ...insertUser, 
-      id, 
-      freeCreditsUsed: false,
-      paidCredits: 0
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
@@ -62,36 +42,35 @@ export class MemStorage implements IStorage {
       throw new Error("User not found");
     }
 
-    const updatedUser = { 
-      ...user,
-      freeCreditsUsed: usedFreeCredit ? true : user.freeCreditsUsed,
-      paidCredits: paidCredits !== undefined ? paidCredits : user.paidCredits
-    };
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        freeCreditsUsed: usedFreeCredit ? true : user.freeCreditsUsed,
+        paidCredits: paidCredits !== undefined ? paidCredits : user.paidCredits
+      })
+      .where(eq(users.id, id))
+      .returning();
 
-    this.users.set(id, updatedUser);
     return updatedUser;
   }
 
   // Transformation operations
   async createTransformation(insertTransformation: InsertTransformation): Promise<Transformation> {
-    const id = this.transformationIdCounter++;
-    const now = new Date();
+    const [transformation] = await db
+      .insert(transformations)
+      .values(insertTransformation)
+      .returning();
     
-    const transformation: Transformation = {
-      ...insertTransformation,
-      id,
-      transformedImagePath: null,
-      status: "pending",
-      createdAt: now,
-      error: null
-    };
-    
-    this.transformations.set(id, transformation);
     return transformation;
   }
 
   async getTransformation(id: number): Promise<Transformation | undefined> {
-    return this.transformations.get(id);
+    const [transformation] = await db
+      .select()
+      .from(transformations)
+      .where(eq(transformations.id, id));
+    
+    return transformation;
   }
 
   async updateTransformationStatus(
@@ -100,27 +79,60 @@ export class MemStorage implements IStorage {
     transformedImagePath?: string,
     error?: string
   ): Promise<Transformation> {
-    const transformation = await this.getTransformation(id);
-    if (!transformation) {
+    const updateData: any = { status };
+    
+    if (transformedImagePath !== undefined) {
+      updateData.transformedImagePath = transformedImagePath;
+    }
+    
+    if (error !== undefined) {
+      updateData.error = error;
+    }
+
+    const [updatedTransformation] = await db
+      .update(transformations)
+      .set(updateData)
+      .where(eq(transformations.id, id))
+      .returning();
+
+    if (!updatedTransformation) {
       throw new Error("Transformation not found");
     }
 
-    const updatedTransformation = {
-      ...transformation,
-      status,
-      ...(transformedImagePath && { transformedImagePath }),
-      ...(error && { error })
-    };
-
-    this.transformations.set(id, updatedTransformation);
     return updatedTransformation;
   }
 
   async getUserTransformations(userId: number): Promise<Transformation[]> {
-    return Array.from(this.transformations.values())
-      .filter(transformation => transformation.userId === userId)
-      .sort((a, b) => b.id - a.id); // Sort by most recent
+    return await db
+      .select()
+      .from(transformations)
+      .where(eq(transformations.userId, userId))
+      .orderBy(desc(transformations.id));
   }
 }
 
-export const storage = new MemStorage();
+// Initialize database with a default user if needed
+async function initializeDatabase() {
+  // Check if the default user exists
+  const defaultUsername = "demo";
+  const storage = new DatabaseStorage();
+  
+  try {
+    const existingUser = await storage.getUserByUsername(defaultUsername);
+    if (!existingUser) {
+      // Create default user
+      await storage.createUser({
+        username: defaultUsername,
+        password: "password"
+      });
+      console.log("Created default user 'demo' for development");
+    }
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  }
+}
+
+// Initialize the database (async but don't wait)
+initializeDatabase();
+
+export const storage = new DatabaseStorage();
