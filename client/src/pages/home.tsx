@@ -146,6 +146,9 @@ export default function Home() {
 
   // Handle starting edit process
   const handleStartEdit = () => {
+    console.log("Starting edit with originalImage:", originalImage);
+    console.log("Original image path:", originalImagePath);
+    console.log("Transformed image:", transformedImage);
     setCurrentStep(Step.Edit);
   };
 

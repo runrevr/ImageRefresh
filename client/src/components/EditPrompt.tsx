@@ -22,6 +22,10 @@ export default function EditPrompt({
   const [prompt, setPrompt] = useState(initialPrompt);
   const { toast } = useToast();
   
+  // Debug the image paths
+  console.log("EditPrompt received originalImage:", originalImage);
+  console.log("EditPrompt received transformedImage:", transformedImage);
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
