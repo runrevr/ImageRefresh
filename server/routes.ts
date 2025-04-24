@@ -82,7 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate request body
       const transformSchema = z.object({
         originalImagePath: z.string(),
-        prompt: z.string().min(1).max(500),
+        prompt: z.string().min(1).max(1000), // Increased from 500 to 1000 to accommodate AI-enhanced prompts
         userId: z.number().optional(),
         isEdit: z.boolean().optional(),
         previousTransformation: z.string().optional(),
@@ -373,7 +373,8 @@ Your task is to enhance the user's prompt by:
 3. Adding descriptive adjectives to create a more vivid result
 4. Maintaining the original intent of the prompt
 
-Keep the enhanced prompt under 200 words and focused on the original request.
+Your enhanced prompt MUST be 900 characters or less - this is a strict requirement.
+Focus on quality over quantity and be concise while maintaining descriptive language.
 If an image description is provided, incorporate relevant elements from it.`;
 
         const response = await openai.chat.completions.create({
@@ -401,11 +402,17 @@ Please enhance this prompt for AI image generation while preserving the original
           throw new Error("Failed to generate enhanced prompt");
         }
         
-        console.log("Generated enhanced prompt:", enhancedPrompt);
+        // Make sure the enhanced prompt doesn't exceed our limit
+        const MAX_PROMPT_LENGTH = 1000; // Match the validation limit 
+        const finalPrompt = enhancedPrompt.length > MAX_PROMPT_LENGTH 
+          ? enhancedPrompt.substring(0, MAX_PROMPT_LENGTH - 3) + "..." 
+          : enhancedPrompt;
+        
+        console.log("Generated enhanced prompt length:", finalPrompt.length);
         
         res.json({
           originalPrompt: prompt,
-          enhancedPrompt
+          enhancedPrompt: finalPrompt
         });
       } catch (error: any) {
         console.error("Error enhancing prompt:", error);
