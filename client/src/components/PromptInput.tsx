@@ -76,7 +76,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
               <Textarea
                 value={prompt}
                 onChange={handlePromptChange}
-                className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
                 placeholder="E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
                 maxLength={maxChars}
               />
