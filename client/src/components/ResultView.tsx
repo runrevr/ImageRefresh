@@ -103,7 +103,7 @@ export default function ResultView({
             <span className="mr-1">⭐</span> 
             You have {freeCredits + paidCredits} free transformation{freeCredits + paidCredits !== 1 ? 's' : ''} remaining.
             {(freeCredits + paidCredits === 0) && (
-              <Link href="#pricing">
+              <Link href="/pricing">
                 <span className="font-medium underline ml-1 cursor-pointer">
                   Get more credits
                 </span>
