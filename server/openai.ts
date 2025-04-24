@@ -116,7 +116,7 @@ export async function transformImage(
     
     console.log("GPT-4o enhanced description:", gpt4oDescription);
     
-    // Now use DALL-E 3 which doesn't require organization verification
+    // Now use gpt-image-1 with the enhanced description from GPT-4o
     const imageResponse = await fetch("https://api.openai.com/v1/images/generations", {
       method: 'POST',
       headers: {
@@ -124,11 +124,10 @@ export async function transformImage(
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "dall-e-3",  // Using DALL-E 3 which doesn't need verification
+        model: "gpt-image-1",  // Using the newest gpt-image-1 model
         prompt: gpt4oDescription || enhancedPrompt,
         n: 1,
-        size: "1024x1024",
-        quality: "standard"
+        size: "1024x1024"
       })
     });
     
@@ -167,7 +166,7 @@ export async function transformImage(
 }
 
 /**
- * Alternative implementation using the newer gpt-image-1 model 
+ * Creates an image variation using the gpt-image-1 model
  * with a simple variation prompt
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
@@ -179,7 +178,7 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
     // For gpt-image-1, we'll use a simple prompt to create a variation
     const variationPrompt = "Create a creative variation of this image with a different style and colors";
     
-    // Use DALL-E 3 directly
+    // Use gpt-image-1 directly
     const imageResponse = await fetch("https://api.openai.com/v1/images/generations", {
       method: 'POST',
       headers: {
@@ -187,11 +186,10 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "dall-e-3",
+        model: "gpt-image-1",
         prompt: variationPrompt,
         n: 1,
-        size: "1024x1024",
-        quality: "standard"
+        size: "1024x1024"
       })
     });
     
