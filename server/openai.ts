@@ -35,19 +35,36 @@ export function isOpenAIConfigured(): boolean {
 }
 
 /**
- * Saves an image from a URL to the local filesystem
+ * Saves an image from a URL or data URL to the local filesystem
  */
 async function saveImageFromUrl(imageUrl: string, destinationPath: string): Promise<void> {
-  // Download the image
-  const imageResponse = await fetch(imageUrl);
-  if (!imageResponse.ok) {
-    throw new Error(`Failed to download image: ${imageResponse.statusText}`);
-  }
-
   // Ensure the uploads directory exists
   const uploadDir = path.join(process.cwd(), "uploads");
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  // Check if this is a data URL (base64)
+  if (imageUrl.startsWith('data:')) {
+    console.log("Saving image from data URL");
+    // Extract the base64 data from the data URL
+    const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      throw new Error("Invalid data URL format");
+    }
+    
+    // Convert base64 to buffer and save directly to filesystem
+    const imageBuffer = Buffer.from(matches[2], "base64");
+    fs.writeFileSync(destinationPath, imageBuffer);
+    return;
+  }
+  
+  // Otherwise treat as a regular URL
+  console.log("Saving image from HTTP URL");
+  // Download the image
+  const imageResponse = await fetch(imageUrl);
+  if (!imageResponse.ok) {
+    throw new Error(`Failed to download image: ${imageResponse.statusText}`);
   }
 
   // Save the image
@@ -128,14 +145,26 @@ export async function transformImage(
       console.log("Successfully contacted OpenAI API with gpt-image-1 model");
       
       // Process the result from SDK
-      const data = imageResult.data || [];
-      console.log("Data array:", JSON.stringify(data, null, 2));
+      console.log("Full image result:", JSON.stringify(imageResult, null, 2));
       
-      if (!data.length || !data[0].url) {
-        throw new Error("No image URL returned from OpenAI. The gpt-image-1 model is not available for your account.");
+      // Handle different response formats - gpt-image-1 seems to use base64 data
+      let imageUrl;
+      if (imageResult.data && imageResult.data.length > 0) {
+        if (imageResult.data[0].url) {
+          // URL format
+          imageUrl = imageResult.data[0].url;
+          console.log("Using URL format from response");
+        } else if (imageResult.data[0].b64_json) {
+          // Base64 format 
+          imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
+          console.log("Using b64_json format from response");
+        } else {
+          console.log("Response data format:", JSON.stringify(imageResult.data[0]));
+          throw new Error("Unexpected response format from OpenAI. Could not find url or b64_json in the response.");
+        }
+      } else {
+        throw new Error("No image data returned from OpenAI. The gpt-image-1 model is not available for your account.");
       }
-      
-      const imageUrl = data[0].url;
   
       // Generate unique name for the transformed image
       const originalFileName = path.basename(imagePath);
@@ -193,14 +222,26 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       console.log("Successfully contacted OpenAI API with gpt-image-1 model for variation");
       
       // Process the result from SDK
-      const data = imageResult.data || [];
-      console.log("Variation data array:", JSON.stringify(data, null, 2));
+      console.log("Full variation result:", JSON.stringify(imageResult, null, 2));
       
-      if (!data.length || !data[0].url) {
-        throw new Error("No image URL returned from OpenAI for variation. The gpt-image-1 model is not available for your account.");
+      // Handle different response formats - gpt-image-1 seems to use base64 data
+      let imageUrl;
+      if (imageResult.data && imageResult.data.length > 0) {
+        if (imageResult.data[0].url) {
+          // URL format
+          imageUrl = imageResult.data[0].url;
+          console.log("Using URL format from variation response");
+        } else if (imageResult.data[0].b64_json) {
+          // Base64 format 
+          imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
+          console.log("Using b64_json format from variation response");
+        } else {
+          console.log("Variation response data format:", JSON.stringify(imageResult.data[0]));
+          throw new Error("Unexpected response format from OpenAI for variation. Could not find url or b64_json in the response.");
+        }
+      } else {
+        throw new Error("No image data returned from OpenAI for variation. The gpt-image-1 model is not available for your account.");
       }
-      
-      const imageUrl = data[0].url;
   
       // Generate unique name for the transformed image
       const originalFileName = path.basename(imagePath);
