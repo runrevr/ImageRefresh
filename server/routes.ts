@@ -120,6 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Transform the image using OpenAI with specified prompt
           const forestPrompt = "a shampoo bottle in the middle of a forest with lucious green leaves after a fresh rain, dewdrops on leaves, sunlight filtering through the canopy, photorealistic, high detail";
           
+          // Send directly to gpt-image-1 without pre-processing
           const { transformedPath } = await transformImage(
             fullImagePath, 
             forestPrompt
@@ -178,13 +179,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (validatedData.isEdit) {
               console.log("Processing an edit request with original image path:", validatedData.originalImagePath);
               
-              // For edits, provide more context to help the AI understand this is an edit
-              // We'll emphasize that we're using the original uploaded image
-              enhancedPrompt = `This is an EDIT request. You are working with the ORIGINAL UPLOADED IMAGE.
-                  Please apply the following changes to the image: ${validatedData.prompt}
-                  Make sure to keep the original composition but implement these specific changes.
-                  IMPORTANT: Use the ORIGINAL image as your starting point, not the previously transformed image.`;
-              console.log("Using enhanced prompt for edit:", enhancedPrompt);
+              // For edits, use a simplified prompt that directly describes the desired changes
+              // We don't need to emphasize using the original image since we're directly passing it to gpt-image-1
+              enhancedPrompt = validatedData.prompt;
+              console.log("Using direct prompt for edit:", enhancedPrompt);
             }
             
             // Transform the image using OpenAI

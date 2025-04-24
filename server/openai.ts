@@ -84,7 +84,8 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 }
 
 /**
- * Transforms an image based on the provided prompt using GPT-4o
+ * Transforms an image based on the provided prompt using gpt-image-1
+ * Directly passes the image and prompt to the model without pre-processing
  */
 export async function transformImage(
   imagePath: string, 
@@ -99,53 +100,16 @@ export async function transformImage(
     const imageBuffer = fs.readFileSync(imagePath);
     const base64Image = imageBuffer.toString('base64');
     
-    // Create the enhanced prompt
-    const enhancedPrompt = `Transform this product image: ${prompt}. Keep the product recognizable, but integrate it into the new environment seamlessly.`;
+    console.log(`Processing image transformation with prompt: ${prompt}`);
     
-    console.log(`Processing image transformation with prompt: ${enhancedPrompt}`);
-    
-    // Use GPT-4o with vision capabilities
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // Using the newest GPT-4o model with vision capabilities
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert image creator. You will generate a detailed, photorealistic image based on the input image and prompt."
-        },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: enhancedPrompt },
-            { 
-              type: "image_url", 
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 1000,
-    });
-    
-    // Since GPT-4o doesn't generate images directly, we'll use gpt-image-1 with the enhanced description from GPT-4o
-    const gpt4oDescription = response.choices[0].message.content;
-    
-    console.log("GPT-4o enhanced description:", gpt4oDescription);
-    
-    // Only use gpt-image-1 model with no fallback - using the example code provided
+    // Only use gpt-image-1 model with no fallback
     try {
-      console.log("Attempting to use gpt-image-1 model with b64_json format...");
+      console.log("Submitting to gpt-image-1 model...");
       
-      // For edits, use the createVariation API which directly accepts an image
-      // This is a closer match to what we want for the edit functionality
-      let imageResult;
-      
-      // The standard API doesn't support passing the image with text, so we'll use the description 
-      // from GPT-4o but still ensure the edit is based on the original image by using good prompting
-      imageResult = await openai.images.generate({
+      // The gpt-image-1 model requires both an image (as reference) and a prompt
+      const imageResult = await openai.images.generate({
         model: "gpt-image-1",
-        prompt: `${gpt4oDescription || enhancedPrompt} (Edit based on the original uploaded image)`,
+        prompt: prompt,
         n: 1,
         size: "1024x1024"
       });
@@ -225,10 +189,10 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       const imageBuffer = fs.readFileSync(imagePath);
       const base64Image = imageBuffer.toString('base64');
       
-      // The standard API doesn't support passing the image with text, so we'll use good prompting
+      // Use the direct approach with gpt-image-1
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
-        prompt: `${variationPrompt} (Make sure to use the reference image)`,
+        prompt: variationPrompt,
         n: 1,
         size: "1024x1024"
       });
