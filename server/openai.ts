@@ -124,7 +124,7 @@ export async function transformImage(
         n: 1,
         size: "1024x1024"
       });
-      console.log("Successfully used gpt-image-1 model");
+      console.log("Successfully contacted OpenAI API with gpt-image-1 model");
       
       // Add detailed debugging output
       console.log("Full API response:", JSON.stringify(imageResult, null, 2));
@@ -134,7 +134,7 @@ export async function transformImage(
       console.log("Data array:", JSON.stringify(data, null, 2));
       
       if (!data.length || !data[0].url) {
-        throw new Error("No image URL returned from OpenAI - Response: " + JSON.stringify(data));
+        throw new Error("No image URL returned from OpenAI. The gpt-image-1 model is not available for your account. This model requires organization verification with OpenAI. Response: " + JSON.stringify(data));
       }
       
       const imageUrl = data[0].url;
@@ -189,7 +189,7 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
         n: 1,
         size: "1024x1024"
       });
-      console.log("Successfully used gpt-image-1 model for variation");
+      console.log("Successfully contacted OpenAI API with gpt-image-1 model for variation");
       
       // Add detailed debugging output
       console.log("Full variation API response:", JSON.stringify(imageResult, null, 2));
@@ -199,7 +199,7 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       console.log("Variation data array:", JSON.stringify(data, null, 2));
       
       if (!data.length || !data[0].url) {
-        throw new Error("No image URL returned from OpenAI for variation - Response: " + JSON.stringify(data));
+        throw new Error("No image URL returned from OpenAI for variation. The gpt-image-1 model is not available for your account. This model requires organization verification with OpenAI. Response: " + JSON.stringify(data));
       }
       
       const imageUrl = data[0].url;

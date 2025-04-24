@@ -104,11 +104,21 @@ export default function Home() {
         });
         setCurrentStep(Step.Prompt);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error transforming image:', error);
+      
+      // Check for OpenAI model verification errors
+      let errorMessage = "There was an error processing your image. Please try again.";
+      
+      if (error.message && error.message.includes("organization verification")) {
+        errorMessage = "Your OpenAI account needs organization verification to use the gpt-image-1 model. This is a new model with limited access.";
+      } else if (error.message && error.message.includes("No image URL returned")) {
+        errorMessage = "The gpt-image-1 model is not available for your account. This model requires organization verification with OpenAI.";
+      }
+      
       toast({
-        title: "Error",
-        description: "There was an error processing your image. Please try again.",
+        title: "Transformation Failed",
+        description: errorMessage,
         variant: "destructive"
       });
       setCurrentStep(Step.Prompt);
