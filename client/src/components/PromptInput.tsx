@@ -6,7 +6,7 @@ import { ChevronLeft, Lightbulb, CircleHelp } from 'lucide-react';
 
 interface PromptInputProps {
   originalImage: string;
-  onSubmit: (prompt: string) => void;
+  onSubmit: (prompt: string, imageSize: string) => void;
   onBack: () => void;
 }
 
@@ -32,6 +32,7 @@ const PROMPT_TIPS = [
 export default function PromptInput({ originalImage, onSubmit, onBack }: PromptInputProps) {
   const [prompt, setPrompt] = useState('');
   const [charCount, setCharCount] = useState(0);
+  const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const maxChars = 500;
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
 
   const handleSubmit = () => {
     if (prompt.trim().length === 0) return;
-    onSubmit(prompt.trim());
+    onSubmit(prompt.trim(), selectedSize);
   };
 
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -52,6 +53,10 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
 
   const selectExamplePrompt = (example: string) => {
     setPrompt(example);
+  };
+  
+  const handleSizeSelection = (size: string) => {
+    setSelectedSize(size);
   };
 
   return (
@@ -83,6 +88,36 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
               <div className="flex justify-between text-sm text-gray-500 mt-1">
                 <span>Be descriptive for better results</span>
                 <span id="char-count">{charCount}/{maxChars}</span>
+              </div>
+            </div>
+            
+            <div className="mb-5">
+              <h4 className="text-sm font-medium mb-2">Image Size</h4>
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1024" ? "border-2 bg-gray-100" : "border"}`}
+                  onClick={() => handleSizeSelection("1024x1024")}
+                >
+                  Square (1024×1024)
+                </Button>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1536" ? "border-2 bg-gray-100" : "border"}`}
+                  onClick={() => handleSizeSelection("1024x1536")}
+                >
+                  Portrait (1024×1536)
+                </Button>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1536x1024" ? "border-2 bg-gray-100" : "border"}`}
+                  onClick={() => handleSizeSelection("1536x1024")}
+                >
+                  Landscape (1536×1024)
+                </Button>
               </div>
             </div>
             

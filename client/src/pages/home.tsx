@@ -73,7 +73,7 @@ export default function Home() {
     setCurrentStep(Step.Prompt);
   };
 
-  const handlePromptSubmit = async (promptText: string) => {
+  const handlePromptSubmit = async (promptText: string, imageSize: string = "1024x1024") => {
     setPrompt(promptText);
     setCurrentStep(Step.Processing);
 
@@ -81,7 +81,8 @@ export default function Home() {
       const response = await apiRequest('POST', '/api/transform', {
         originalImagePath,
         prompt: promptText,
-        userId: user.id
+        userId: user.id,
+        imageSize: imageSize
       });
 
       const data = await response.json();
@@ -153,7 +154,7 @@ export default function Home() {
   };
 
   // Handle edit submission
-  const handleEditSubmit = async (editPrompt: string) => {
+  const handleEditSubmit = async (editPrompt: string, imageSize: string = "1024x1024") => {
     setPrompt(editPrompt);
     setCurrentStep(Step.Processing);
 
@@ -163,6 +164,7 @@ export default function Home() {
         originalImagePath, // We use the original image path, not the transformed image path
         prompt: editPrompt,
         userId: user.id,
+        imageSize: imageSize,
         isEdit: true, // Flag to indicate this is an edit
         previousTransformation: transformedImage // Pass the previous transformation path for reference only
       });
