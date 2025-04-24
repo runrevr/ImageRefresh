@@ -77,6 +77,7 @@ export default function ResultView({
           <Button 
             variant="outline" 
             onClick={onTryAgain}
+            className="text-red-500"
           >
             <ArrowLeftRight className="h-4 w-4 mr-2" />
             Try Another Prompt
