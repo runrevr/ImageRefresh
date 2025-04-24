@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ChevronLeft, Lightbulb, CircleHelp } from 'lucide-react';
+import { ChevronLeft, Lightbulb, CircleHelp, Wand2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 interface PromptInputProps {
   originalImage: string;
@@ -33,6 +35,8 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
   const [prompt, setPrompt] = useState('');
   const [charCount, setCharCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const { toast } = useToast();
   const maxChars = 500;
 
   useEffect(() => {
@@ -58,6 +62,48 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
   const handleSizeSelection = (size: string) => {
     setSelectedSize(size);
   };
+  
+  const enhancePrompt = async () => {
+    if (prompt.trim().length === 0) {
+      toast({
+        title: "Empty prompt",
+        description: "Please enter a prompt to enhance.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsEnhancing(true);
+      
+      const response = await apiRequest('POST', '/api/enhance-prompt', {
+        prompt: prompt.trim()
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to enhance prompt');
+      }
+      
+      const data = await response.json();
+      
+      if (data.enhancedPrompt) {
+        setPrompt(data.enhancedPrompt);
+        toast({
+          title: "Prompt Enhanced",
+          description: "Your prompt has been enhanced with AI assistance.",
+        });
+      }
+    } catch (error) {
+      console.error('Error enhancing prompt:', error);
+      toast({
+        title: "Enhancement Failed",
+        description: "There was an error enhancing your prompt. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   return (
     <div className="p-8">
@@ -78,15 +124,44 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
             </p>
             
             <div className="mb-4">
-              <Textarea
-                value={prompt}
-                onChange={handlePromptChange}
-                className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
-                placeholder="E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
-                maxLength={maxChars}
-              />
-              <div className="flex justify-between text-sm text-gray-500 mt-1">
-                <span>Be descriptive for better results</span>
+              <div className="relative">
+                <Textarea
+                  value={prompt}
+                  onChange={handlePromptChange}
+                  className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
+                  placeholder="E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
+                  maxLength={maxChars}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full p-1.5"
+                  onClick={enhancePrompt}
+                  disabled={isEnhancing || prompt.trim().length === 0}
+                  title="Enhance prompt with AI"
+                >
+                  {isEnhancing ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  ) : (
+                    <Wand2 className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              
+              <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
+                <div className="flex items-center">
+                  <span>Be descriptive for better results</span>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-xs text-primary-500 p-1 h-auto"
+                    onClick={enhancePrompt}
+                    disabled={isEnhancing || prompt.trim().length === 0}
+                  >
+                    <Wand2 className="h-3 w-3 mr-1" /> 
+                    {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
+                  </Button>
+                </div>
                 <span id="char-count">{charCount}/{maxChars}</span>
               </div>
             </div>

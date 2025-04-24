@@ -3,6 +3,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Wand2 } from 'lucide-react';
+import { apiRequest } from '@/lib/queryClient';
 
 interface EditPromptProps {
   originalImage: string;
@@ -21,6 +23,7 @@ export default function EditPrompt({
 }: EditPromptProps) {
   const [prompt, setPrompt] = useState(initialPrompt);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const { toast } = useToast();
   
   // Debug the image paths
@@ -33,6 +36,48 @@ export default function EditPrompt({
   
   const handleSizeSelection = (size: string) => {
     setSelectedSize(size);
+  };
+  
+  const enhancePrompt = async () => {
+    if (prompt.trim().length === 0) {
+      toast({
+        title: "Empty prompt",
+        description: "Please enter a prompt to enhance.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsEnhancing(true);
+      
+      const response = await apiRequest('POST', '/api/enhance-prompt', {
+        prompt: prompt.trim()
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to enhance prompt');
+      }
+      
+      const data = await response.json();
+      
+      if (data.enhancedPrompt) {
+        setPrompt(data.enhancedPrompt);
+        toast({
+          title: "Prompt Enhanced",
+          description: "Your prompt has been enhanced with AI assistance.",
+        });
+      }
+    } catch (error) {
+      console.error('Error enhancing prompt:', error);
+      toast({
+        title: "Enhancement Failed",
+        description: "There was an error enhancing your prompt. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsEnhancing(false);
+    }
   };
   
   const handleSubmit = (e: React.FormEvent) => {

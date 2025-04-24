@@ -7,6 +7,7 @@ import fs from "fs";
 import { transformImage, isOpenAIConfigured } from "./openai";
 import { insertTransformationSchema } from "@shared/schema";
 import { z } from "zod";
+import OpenAI from "openai";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -341,6 +342,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Error adding credits:', error);
       res.status(500).json({ message: "Error adding credits" });
+    }
+  });
+  
+  // Enhance prompt with AI
+  app.post("/api/enhance-prompt", async (req, res) => {
+    try {
+      const { prompt, imageDescription } = req.body;
+      
+      if (!prompt) {
+        return res.status(400).json({ message: "Prompt is required" });
+      }
+      
+      if (!isOpenAIConfigured()) {
+        return res.status(500).json({ message: "OpenAI API key is not configured" });
+      }
+      
+      console.log(`Enhancing prompt: ${prompt}`);
+      
+      try {
+        const openai = new OpenAI({
+          apiKey: process.env.OPENAI_API_KEY,
+        });
+        
+        // Create a system message that guides the AI to enhance the prompt
+        const systemMessage = `You are an expert at creating detailed, descriptive prompts for AI image generation. 
+Your task is to enhance the user's prompt by:
+1. Adding more specific details about style, lighting, and composition
+2. Incorporating keywords that will help the AI understand what is most important to preserve
+3. Adding descriptive adjectives to create a more vivid result
+4. Maintaining the original intent of the prompt
+
+Keep the enhanced prompt under 200 words and focused on the original request.
+If an image description is provided, incorporate relevant elements from it.`;
+
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+          messages: [
+            { 
+              role: "system", 
+              content: systemMessage 
+            },
+            { 
+              role: "user", 
+              content: `Original prompt: "${prompt}"
+${imageDescription ? `\nImage description: ${imageDescription}` : ''}
+              
+Please enhance this prompt for AI image generation while preserving the original intent.` 
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 300,
+        });
+        
+        const enhancedPrompt = response.choices[0].message.content?.trim();
+        
+        if (!enhancedPrompt) {
+          throw new Error("Failed to generate enhanced prompt");
+        }
+        
+        console.log("Generated enhanced prompt:", enhancedPrompt);
+        
+        res.json({
+          originalPrompt: prompt,
+          enhancedPrompt
+        });
+      } catch (error: any) {
+        console.error("Error enhancing prompt:", error);
+        res.status(500).json({ 
+          message: "Error enhancing prompt", 
+          error: error.message 
+        });
+      }
+    } catch (error: any) {
+      console.error("Error processing prompt enhancement:", error);
+      res.status(500).json({ message: `Error enhancing prompt: ${error.message}` });
     }
   });
 
