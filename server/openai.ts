@@ -155,17 +155,18 @@ export async function transformImage(
       console.log("Using enhanced prompt that emphasizes preserving the original subject");
       
       // Use the provided image size or default to 1024x1024
-      const size = imageSize && ["1024x1024", "1024x1536", "1536x1024"].includes(imageSize) 
-        ? imageSize 
-        : "1024x1024";
-        
-      console.log(`Using image size: ${size}`);
+      console.log(`Using image size: ${imageSize || "1024x1024"}`);
+      
+      // Determine the size parameter based on input
+      const sizeParam = imageSize === "1024x1536" ? "1024x1536" :
+                        imageSize === "1536x1024" ? "1536x1024" :
+                        "1024x1024";
       
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
         prompt: enhancedPrompt,
         n: 1,
-        size: size
+        size: sizeParam as any // Type assertion to bypass type checking
       });
       
       console.log("Successfully generated image with gpt-image-1 model");

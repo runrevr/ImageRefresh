@@ -20,6 +20,7 @@ export default function EditPrompt({
   onSkip 
 }: EditPromptProps) {
   const [prompt, setPrompt] = useState(initialPrompt);
+  const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const { toast } = useToast();
   
   // Debug the image paths
@@ -29,6 +30,10 @@ export default function EditPrompt({
   // Ensure we have absolute URLs for the images
   const originalImageUrl = originalImage.startsWith('http') ? originalImage : originalImage.startsWith('/') ? originalImage : `/${originalImage}`;
   const transformedImageUrl = transformedImage.startsWith('http') ? transformedImage : transformedImage.startsWith('/') ? transformedImage : `/${transformedImage}`;
+  
+  const handleSizeSelection = (size: string) => {
+    setSelectedSize(size);
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +47,7 @@ export default function EditPrompt({
       return;
     }
     
-    onSubmit(prompt);
+    onSubmit(prompt, selectedSize);
   };
   
   return (
@@ -86,6 +91,36 @@ export default function EditPrompt({
             onChange={(e) => setPrompt(e.target.value)}
             className="w-full h-32 rounded-lg p-4 resize-none text-white bg-black shadow-inner"
           />
+        </div>
+        
+        <div className="mb-5">
+          <h4 className="text-sm font-medium mb-2">Image Size</h4>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              type="button"
+              variant="outline" 
+              className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1024" ? "border-2 bg-gray-100" : "border"}`}
+              onClick={() => handleSizeSelection("1024x1024")}
+            >
+              Square (1024×1024)
+            </Button>
+            <Button 
+              type="button"
+              variant="outline" 
+              className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1536" ? "border-2 bg-gray-100" : "border"}`}
+              onClick={() => handleSizeSelection("1024x1536")}
+            >
+              Portrait (1024×1536)
+            </Button>
+            <Button 
+              type="button"
+              variant="outline" 
+              className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1536x1024" ? "border-2 bg-gray-100" : "border"}`}
+              onClick={() => handleSizeSelection("1536x1024")}
+            >
+              Landscape (1536×1024)
+            </Button>
+          </div>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-end">
