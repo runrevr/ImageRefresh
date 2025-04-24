@@ -26,6 +26,10 @@ export default function EditPrompt({
   console.log("EditPrompt received originalImage:", originalImage);
   console.log("EditPrompt received transformedImage:", transformedImage);
   
+  // Ensure we have absolute URLs for the images
+  const originalImageUrl = originalImage.startsWith('http') ? originalImage : originalImage.startsWith('/') ? originalImage : `/${originalImage}`;
+  const transformedImageUrl = transformedImage.startsWith('http') ? transformedImage : transformedImage.startsWith('/') ? transformedImage : `/${transformedImage}`;
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -53,7 +57,7 @@ export default function EditPrompt({
           <h3 className="font-semibold mb-2">Current Image</h3>
           <div className="w-full h-64 md:h-80 bg-gray-100 rounded-lg overflow-hidden">
             <img 
-              src={transformedImage} 
+              src={transformedImageUrl} 
               alt="Current transformed version" 
               className="w-full h-full object-contain"
             />
@@ -64,7 +68,7 @@ export default function EditPrompt({
           <h3 className="font-semibold mb-2">Original Image</h3>
           <div className="w-full h-64 md:h-80 bg-gray-100 rounded-lg overflow-hidden">
             <img 
-              src={originalImage} 
+              src={originalImageUrl} 
               alt="Original uploaded image" 
               className="w-full h-full object-contain"
             />
