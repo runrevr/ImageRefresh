@@ -91,7 +91,7 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 export async function transformImage(
   imagePath: string, 
   prompt: string,
-  imageSize?: string
+  imageSize?: string | undefined
 ): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");

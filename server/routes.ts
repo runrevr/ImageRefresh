@@ -82,11 +82,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate request body
       const transformSchema = z.object({
         originalImagePath: z.string(),
-        prompt: z.string().min(1).max(1000), // Increased from 500 to 1000 to accommodate AI-enhanced prompts
+        prompt: z.string().min(1).max(1000).optional(), // Made optional for preset transformations
         userId: z.number().optional(),
         isEdit: z.boolean().optional(),
         previousTransformation: z.string().optional(),
         imageSize: z.string().optional(),
+        preset: z.string().optional(), // For predefined transformation types like 'cartoon' or 'product'
       });
 
       const validatedData = transformSchema.parse(req.body);
@@ -106,26 +107,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // For demo transformation of the shampoo bottle
-      if (path.basename(fullImagePath) === "shampoo_bottle.jpg") {
+      // Check for preset transformations
+      const presetType = validatedData.preset as string | undefined;
+      if (presetType === 'cartoon' || presetType === 'product') {
         // Create a transformation record
         const transformation = await storage.createTransformation({
           userId,
           originalImagePath: validatedData.originalImagePath,
-          prompt: validatedData.prompt,
+          prompt: validatedData.prompt || `Preset transformation: ${presetType}`,
         });
         
         // Update transformation status to processing
         await storage.updateTransformationStatus(transformation.id, "processing");
         
         try {
-          // Transform the image using OpenAI with specified prompt
-          const forestPrompt = "a shampoo bottle in the middle of a forest with lucious green leaves after a fresh rain, dewdrops on leaves, sunlight filtering through the canopy, photorealistic, high detail";
+          // Define preset prompts based on the preset type
+          let presetPrompt = "";
           
-          // Send directly to gpt-image-1 without pre-processing
+          if (presetType === 'cartoon') {
+            presetPrompt = "Transform this image into a vibrant cartoon style with bold outlines, simplified shapes, and exaggerated features. Use bright, saturated colors and create a playful, animated appearance while maintaining the original composition and subject as the main focus. Add a slight cel-shaded effect for depth.";
+          } else if (presetType === 'product') {
+            presetPrompt = "Transform this into a professional product photography style with studio lighting, a clean white or gradient background, perfect exposure, and commercial-quality presentation. Maintain exact product details while enhancing color accuracy, sharpness, and overall appeal. Create soft shadows for depth and ensure the product is the clear focal point.";
+          }
+          
+          // Send directly to gpt-image-1
           const { transformedPath } = await transformImage(
             fullImagePath, 
-            forestPrompt
+            presetPrompt,
+            validatedData.imageSize
           );
           
           // Get relative path for storage
@@ -143,7 +152,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: updatedTransformation.id,
             originalImageUrl: `/uploads/${path.basename(fullImagePath)}`,
             transformedImageUrl: `/uploads/${path.basename(transformedPath)}`,
-            prompt: forestPrompt,
+            prompt: presetPrompt,
             status: updatedTransformation.status,
           });
         } catch (error: any) {
@@ -168,7 +177,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const transformation = await storage.createTransformation({
             userId,
             originalImagePath: validatedData.originalImagePath,
-            prompt: validatedData.prompt,
+            prompt: validatedData.prompt || "Custom transformation", // Add a default prompt if undefined
           });
           
           // Update transformation status to processing
@@ -190,7 +199,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Transform the image using OpenAI with specified image size if provided
             const { transformedPath } = await transformImage(
               fullImagePath, 
-              enhancedPrompt,
+              enhancedPrompt || "Custom transformation", // Default value if prompt is undefined
               validatedData.imageSize
             );
             

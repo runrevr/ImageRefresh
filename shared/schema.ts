@@ -45,7 +45,11 @@ export type ImageUploadResponse = {
 
 export type TransformationRequest = {
   originalImagePath: string;
-  prompt: string;
+  prompt?: string;
+  preset?: string;
+  imageSize?: string;
+  isEdit?: boolean;
+  previousTransformation?: string;
 };
 
 export type PromptExample = {
