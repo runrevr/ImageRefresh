@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ChevronLeft, Lightbulb, CircleHelp, Wand2 } from 'lucide-react';
+import { ChevronLeft, Lightbulb, CircleHelp, Wand2, ChevronRight, ImageIcon, BoxIcon, PaintBucket, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -13,15 +13,13 @@ interface PromptInputProps {
   selectedTransformation?: TransformationType | null;
 }
 
-// Example prompts that users can select
-const EXAMPLE_PROMPTS = [
-  "Turn this portrait into a vibrant oil painting in the style of Van Gogh",
-  "Transform this daytime beach scene into a magical night beach with stars and moonlight",
-  "Convert this modern building into an ancient medieval stone castle",
-  "Enhance this food photo with professional lighting and commercial food styling",
-  "Transform this person into a cyberpunk character with neon accents",
-  "Turn this room into a luxury modern interior with upscale furnishings"
-];
+// Main transformation categories
+export type TransformationType = 'cartoon' | 'product' | 'custom';
+
+// Subcategory types
+export type CartoonSubcategory = 'super-mario' | 'minecraft' | 'pixar' | 'dreamworks' | 'princess' | 'superhero' | 'lego' | 'custom-cartoon';
+export type ProductSubcategory = 'remove-background' | 'enhanced-lighting' | 'natural-scene' | 'product-mockup' | 'custom-product';
+export type OtherSubcategory = 'artistic' | 'abstract' | 'realistic' | 'custom-other';
 
 // Writing tips for better prompts
 const PROMPT_TIPS = [
@@ -32,57 +30,189 @@ const PROMPT_TIPS = [
   "Specify what elements to modify (e.g., 'replace the background with mountains')"
 ];
 
-// Preset transformation descriptions and suggestions
-type TransformationType = 'cartoon' | 'product' | 'custom';
-
-type PresetTransformation = {
+// Descriptions and example prompts for subcategories
+type StyleOption = {
   title: string;
   description: string;
   placeholder: string;
   suggestedPrompt: string;
 };
 
-const PRESET_TRANSFORMATIONS: Record<TransformationType, PresetTransformation> = {
-  cartoon: {
-    title: "Cartoon Style",
-    description: "Transform your image into a vibrant cartoon with bold outlines and simplified shapes.",
-    placeholder: "E.g., 'Add bright colors and exaggerated features while keeping the original subject as the main focus'",
-    suggestedPrompt: "Transform this image into a vibrant cartoon style with bold outlines, simplified shapes, and exaggerated features. Use bright, saturated colors and create a playful, animated appearance while maintaining the original composition and subject as the main focus. Add a slight cel-shaded effect for depth."
+// Cartoon subcategories
+const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
+  'super-mario': {
+    title: 'Super Mario Bros',
+    description: 'Transform into the colorful, blocky style of the Super Mario universe.',
+    placeholder: 'E.g., Add mushrooms and pipes in the background',
+    suggestedPrompt: 'Transform this image into the Super Mario Bros style with saturated colors, simplified cartoon shapes, and a playful, video game aesthetic. Use the iconic blocky style, with elements like question mark boxes, pipes, or mushrooms where appropriate.'
   },
-  product: {
-    title: "Product Photography",
-    description: "Create a professional product shot with the uploaded product as the center focus.",
-    placeholder: "E.g., 'Place the product on a minimal white surface with soft shadows and dramatic lighting'",
-    suggestedPrompt: "Transform this into a professional product photo with the product as the central focus. Use clean, commercial-grade lighting with soft shadows, a simple background that complements the product, and enhance the colors and details to make the product look premium and appealing."
+  'minecraft': {
+    title: 'Minecraft',
+    description: 'Convert to the iconic blocky, pixel style of Minecraft.',
+    placeholder: 'E.g., Add a Minecraft landscape in the background',
+    suggestedPrompt: 'Transform this image into Minecraft pixelated cube style. Use the distinctive blocky aesthetic with clear pixel edges and square proportions. Maintain the color scheme but simplify it to match Minecraft\'s limited palette.'
   },
-  custom: {
-    title: "Custom Transformation",
-    description: "Describe exactly how you'd like to transform your image.",
-    placeholder: "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'",
-    suggestedPrompt: ""
+  'pixar': {
+    title: 'Pixar',
+    description: 'Stylize in the smooth, expressive 3D animation style of Pixar films.',
+    placeholder: 'E.g., Make it look like a character from Toy Story',
+    suggestedPrompt: 'Transform this image into the Pixar animation style with smooth 3D rendering, slightly exaggerated proportions, and expressive features. Use the characteristic high-quality texture, warm lighting, and subtle details that define Pixar\'s animation style.'
+  },
+  'dreamworks': {
+    title: 'DreamWorks',
+    description: 'Render in the dynamic, expressive style of DreamWorks animations.',
+    placeholder: 'E.g., Style it like a character from Shrek or How to Train Your Dragon',
+    suggestedPrompt: 'Transform this image into the DreamWorks animation style with expressive features, dynamic poses, and slightly exaggerated characteristics. Use the distinctive lighting and texture style seen in films like Shrek or How to Train Your Dragon.'
+  },
+  'princess': {
+    title: 'Princess',
+    description: 'Create a fairytale princess style with magical elements.',
+    placeholder: 'E.g., Add a crown, magical sparkles, and royal attire',
+    suggestedPrompt: 'Transform this image into a fairytale princess style with elegant royal attire, soft glowing effects, sparkles, and magical elements. Use pastel colors, ornate details, and a dreamy atmosphere reminiscent of classic fairy tales.'
+  },
+  'superhero': {
+    title: 'Superhero',
+    description: 'Convert to a dynamic comic book superhero style.',
+    placeholder: 'E.g., Add a cape, mask, and action lines',
+    suggestedPrompt: 'Transform this image into a comic book superhero style with bold outlines, dynamic poses, and action elements like motion lines or impact effects. Use vibrant, contrasting colors and dramatic lighting typical of superhero comics.'
+  },
+  'lego': {
+    title: 'Lego',
+    description: 'Reconstruct in the distinctive blocky Lego brick style.',
+    placeholder: 'E.g., Make it look like it\'s built from Lego bricks',
+    suggestedPrompt: 'Transform this image into the Lego brick style with the characteristic plastic texture, studs, and blocky construction. Simplify the forms into brick-built shapes and use the bright, slightly glossy colors typical of Lego sets.'
+  },
+  'custom-cartoon': {
+    title: 'Custom Cartoon Style',
+    description: 'Describe your own custom cartoon transformation.',
+    placeholder: 'E.g., Make it look like a hand-drawn 90s cartoon with thick outlines',
+    suggestedPrompt: ''
+  }
+};
+
+// Product subcategories
+const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
+  'remove-background': {
+    title: 'Remove Background',
+    description: 'Isolate the product with a clean, solid or transparent background.',
+    placeholder: 'E.g., Place on a pure white background with subtle shadow',
+    suggestedPrompt: 'Transform this product image by removing the current background and replacing it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.'
+  },
+  'enhanced-lighting': {
+    title: 'Enhanced Lighting & Colors',
+    description: 'Improve product appearance with professional studio lighting and color enhancement.',
+    placeholder: 'E.g., Add dramatic side lighting to highlight texture',
+    suggestedPrompt: 'Transform this product image with enhanced professional studio lighting. Add soft key lights to highlight the product\'s best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.'
+  },
+  'natural-scene': {
+    title: 'Natural Scene Placement',
+    description: 'Place the product in a realistic outdoor or natural environment.',
+    placeholder: 'E.g., Show the product on a beach at sunset',
+    suggestedPrompt: 'Transform this product image by placing it in a natural scene environment. Integrate it seamlessly with realistic shadows and reflections that match the environment\'s lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.'
+  },
+  'product-mockup': {
+    title: 'Product Mockup',
+    description: 'Show the product in context of use in realistic scenarios.',
+    placeholder: 'E.g., Show being used by a model in a living room',
+    suggestedPrompt: 'Transform this product image into a realistic mockup showing it in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.'
+  },
+  'custom-product': {
+    title: 'Custom Product Enhancement',
+    description: 'Describe your own custom product transformation.',
+    placeholder: 'E.g., Place product on a marble countertop with morning light',
+    suggestedPrompt: ''
+  }
+};
+
+// Other subcategories
+const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
+  'artistic': {
+    title: 'Artistic',
+    description: 'Convert to artistic painting, sketch, or watercolor styles.',
+    placeholder: 'E.g., Make it look like a watercolor painting by Monet',
+    suggestedPrompt: 'Transform this image into an artistic painting style with visible brushstrokes, artistic interpretation, and creative color treatment. Maintain the subject\'s core elements while applying the artistic style throughout the composition.'
+  },
+  'abstract': {
+    title: 'Abstract / Minimalist',
+    description: 'Simplify into abstract forms, shapes, and colors.',
+    placeholder: 'E.g., Reduce to geometric shapes with a limited color palette',
+    suggestedPrompt: 'Transform this image into an abstract or minimalist representation focusing on essential shapes, forms, and a limited color palette. Simplify details while preserving the core essence and identity of the subject through geometric or fluid abstract elements.'
+  },
+  'realistic': {
+    title: 'Realistic Retouching',
+    description: 'Enhance realism with professional photo retouching techniques.',
+    placeholder: 'E.g., Improve lighting and fix imperfections',
+    suggestedPrompt: 'Transform this image with realistic photo retouching techniques. Enhance lighting and shadows, improve color balance, fix imperfections, and increase detail clarity. Maintain natural appearance while creating a polished, professional result.'
+  },
+  'custom-other': {
+    title: 'Custom Request',
+    description: 'Describe your own custom transformation.',
+    placeholder: 'E.g., Make it look like it\'s underwater with fish swimming around',
+    suggestedPrompt: ''
   }
 };
 
 export default function PromptInput({ originalImage, onSubmit, onBack, selectedTransformation }: PromptInputProps) {
+  // State variables
   const [prompt, setPrompt] = useState('');
   const [charCount, setCharCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [primaryCategory, setPrimaryCategory] = useState<'cartoon' | 'product' | 'other' | null>(null);
+  const [cartoonSubcategory, setCartoonSubcategory] = useState<CartoonSubcategory | null>(null);
+  const [productSubcategory, setProductSubcategory] = useState<ProductSubcategory | null>(null);
+  const [otherSubcategory, setOtherSubcategory] = useState<OtherSubcategory | null>(null);
+  
   const { toast } = useToast();
   const maxChars = 500;
 
-  // We no longer auto-fill the prompt based on transformation type
-  // The presets will now only affect the placeholder text and description
-
+  // Update character count when prompt changes
   useEffect(() => {
     setCharCount(prompt.length);
   }, [prompt]);
 
+  // Set initial selection from parent component if provided
+  useEffect(() => {
+    if (selectedTransformation === 'cartoon') {
+      setPrimaryCategory('cartoon');
+    } else if (selectedTransformation === 'product') {
+      setPrimaryCategory('product');
+    } else if (selectedTransformation === 'custom') {
+      setPrimaryCategory('other');
+    }
+  }, [selectedTransformation]);
+
+  // Handle form submission
   const handleSubmit = () => {
     if (prompt.trim().length === 0) return;
-    onSubmit(prompt.trim(), selectedSize);
+    
+    // Build the complete prompt based on selections
+    let finalPrompt = prompt.trim();
+    
+    // Add suggested prompts from chosen categories if there's minimal user input
+    if (prompt.length < 20) {
+      if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
+        const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
+        if (suggestion) {
+          finalPrompt = suggestion + " " + finalPrompt;
+        }
+      } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+        const suggestion = PRODUCT_STYLES[productSubcategory].suggestedPrompt;
+        if (suggestion) {
+          finalPrompt = suggestion + " " + finalPrompt;
+        }
+      } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+        const suggestion = OTHER_STYLES[otherSubcategory].suggestedPrompt;
+        if (suggestion) {
+          finalPrompt = suggestion + " " + finalPrompt;
+        }
+      }
+    }
+    
+    onSubmit(finalPrompt, selectedSize);
   };
 
+  // Handle prompt input changes
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     if (value.length <= maxChars) {
@@ -90,14 +220,48 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     }
   };
 
-  const selectExamplePrompt = (example: string) => {
-    setPrompt(example);
-  };
-  
+  // Handle size selection
   const handleSizeSelection = (size: string) => {
     setSelectedSize(size);
   };
   
+  // Reset subcategory selections when primary category changes
+  const handlePrimaryCategorySelect = (category: 'cartoon' | 'product' | 'other') => {
+    setPrimaryCategory(category);
+    setCartoonSubcategory(null);
+    setProductSubcategory(null);
+    setOtherSubcategory(null);
+  };
+  
+  // Set subcategory selection
+  const handleCartoonSelect = (subcategory: CartoonSubcategory) => {
+    setCartoonSubcategory(subcategory);
+    
+    // Pre-fill prompt with placeholder if it's empty
+    if (!prompt && subcategory in CARTOON_STYLES) {
+      setPrompt(CARTOON_STYLES[subcategory].placeholder.replace('E.g., ', ''));
+    }
+  };
+  
+  const handleProductSelect = (subcategory: ProductSubcategory) => {
+    setProductSubcategory(subcategory);
+    
+    // Pre-fill prompt with placeholder if it's empty
+    if (!prompt && subcategory in PRODUCT_STYLES) {
+      setPrompt(PRODUCT_STYLES[subcategory].placeholder.replace('E.g., ', ''));
+    }
+  };
+  
+  const handleOtherSelect = (subcategory: OtherSubcategory) => {
+    setOtherSubcategory(subcategory);
+    
+    // Pre-fill prompt with placeholder if it's empty
+    if (!prompt && subcategory in OTHER_STYLES) {
+      setPrompt(OTHER_STYLES[subcategory].placeholder.replace('E.g., ', ''));
+    }
+  };
+  
+  // AI prompt enhancement
   const enhancePrompt = async () => {
     if (prompt.trim().length === 0) {
       toast({
@@ -139,56 +303,175 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
       setIsEnhancing(false);
     }
   };
+  
+  // Get current description based on selections
+  const getCurrentDescription = () => {
+    if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
+      return CARTOON_STYLES[cartoonSubcategory].description;
+    } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+      return PRODUCT_STYLES[productSubcategory].description;
+    } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+      return OTHER_STYLES[otherSubcategory].description;
+    }
+    
+    return "Be specific about what changes you want. For best results, include details about style, mood, and elements.";
+  };
+  
+  // Get current placeholder based on selections
+  const getCurrentPlaceholder = () => {
+    if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
+      return CARTOON_STYLES[cartoonSubcategory].placeholder;
+    } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+      return PRODUCT_STYLES[productSubcategory].placeholder;
+    } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+      return OTHER_STYLES[otherSubcategory].placeholder;
+    }
+    
+    return "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'";
+  };
 
   return (
-    <div className="p-8">
-      <div className="w-full max-w-3xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-gray-100 rounded-lg p-4 flex items-center justify-center h-80 md:h-96">
-            <img 
-              src={originalImage} 
-              className="max-w-full max-h-full object-contain" 
-              alt="Your uploaded image" 
-            />
+    <div className="p-4 md:p-8">
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-7 gap-6">
+          {/* Left column - Image preview */}
+          <div className="md:col-span-3">
+            <div className="bg-gray-100 rounded-lg p-4 flex items-center justify-center h-80 md:h-96">
+              <img 
+                src={originalImage} 
+                className="max-w-full max-h-full object-contain" 
+                alt="Your uploaded image" 
+              />
+            </div>
           </div>
           
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <h3 className="text-xl font-medium">Describe your transformation</h3>
-              {selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS && (
-                <div className="bg-black text-white text-xs px-3 py-1 rounded-full">
-                  {PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].title}
-                </div>
-              )}
-            </div>
-            <p className="text-gray-600 mb-4">
-              {selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS
-                ? PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].description
-                : "Be specific about what changes you want. For best results, include details about style, mood, and elements."}
-            </p>
+          {/* Right column - Style selection and prompt input */}
+          <div className="md:col-span-4">
+            <h3 className="text-xl font-medium mb-4">Choose Your Style</h3>
             
+            {/* Primary Category Selection (Step 1) */}
+            <div className="mb-6 space-y-3">
+              <Button 
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${primaryCategory === 'cartoon' 
+                  ? 'border-black bg-black text-white' 
+                  : 'border-black bg-white text-black hover:bg-gray-50'}`}
+                onClick={() => handlePrimaryCategorySelect('cartoon')}
+              >
+                <div className="flex items-center">
+                  <PaintBucket className="h-5 w-5 mr-2" />
+                  <span className="font-medium">Cartoon Style</span>
+                </div>
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+              
+              <Button 
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${primaryCategory === 'product' 
+                  ? 'border-black bg-black text-white' 
+                  : 'border-black bg-white text-black hover:bg-gray-50'}`}
+                onClick={() => handlePrimaryCategorySelect('product')}
+              >
+                <div className="flex items-center">
+                  <BoxIcon className="h-5 w-5 mr-2" />
+                  <span className="font-medium">Product Enhancement</span>
+                </div>
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+              
+              <Button 
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${primaryCategory === 'other' 
+                  ? 'border-black bg-black text-white' 
+                  : 'border-black bg-white text-black hover:bg-gray-50'}`}
+                onClick={() => handlePrimaryCategorySelect('other')}
+              >
+                <div className="flex items-center">
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  <span className="font-medium">Other Styles</span>
+                </div>
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
+            
+            {/* Secondary Category Selection (Step 2) - Cartoon Subcategories */}
+            {primaryCategory === 'cartoon' && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(CARTOON_STYLES).map(([key, style]) => (
+                  <Button 
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 ${cartoonSubcategory === key 
+                      ? 'bg-black text-white border-black' 
+                      : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
+                    onClick={() => handleCartoonSelect(key as CartoonSubcategory)}
+                  >
+                    <span>{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+            
+            {/* Secondary Category Selection (Step 2) - Product Subcategories */}
+            {primaryCategory === 'product' && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(PRODUCT_STYLES).map(([key, style]) => (
+                  <Button 
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 ${productSubcategory === key 
+                      ? 'bg-black text-white border-black' 
+                      : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
+                    onClick={() => handleProductSelect(key as ProductSubcategory)}
+                  >
+                    <span>{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+            
+            {/* Secondary Category Selection (Step 2) - Other Subcategories */}
+            {primaryCategory === 'other' && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(OTHER_STYLES).map(([key, style]) => (
+                  <Button 
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 ${otherSubcategory === key 
+                      ? 'bg-black text-white border-black' 
+                      : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
+                    onClick={() => handleOtherSelect(key as OtherSubcategory)}
+                  >
+                    <span>{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+            
+            {/* Description of selected style */}
+            {(cartoonSubcategory || productSubcategory || otherSubcategory) && (
+              <div className="mb-4">
+                <p className="text-gray-700">{getCurrentDescription()}</p>
+              </div>
+            )}
+            
+            {/* Optional Detailed Prompt Input (Step 3) */}
             <div className="mb-4">
+              <h4 className="text-lg font-medium mb-2">
+                {primaryCategory ? "Optional: Tell us more!" : "Describe your transformation"}
+              </h4>
               <div className="relative">
                 <Textarea
                   value={prompt}
                   onChange={handlePromptChange}
-                  className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
-                  placeholder={selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS
-                    ? PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].placeholder 
-                    : "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
-                  }
+                  className="w-full border border-gray-300 rounded-lg p-4 h-32 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                  placeholder={getCurrentPlaceholder()}
                   maxLength={maxChars}
                 />
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full p-1.5"
+                  className="absolute right-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-gray-100 rounded-full p-1.5"
                   onClick={enhancePrompt}
                   disabled={isEnhancing || prompt.trim().length === 0}
                   title="Enhance prompt with AI"
                 >
                   {isEnhancing ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
                   ) : (
                     <Wand2 className="h-4 w-4" />
                   )}
@@ -197,7 +480,6 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
               
               <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
                 <div className="flex items-center">
-                  <span>Be descriptive for better results</span>
                   <Button
                     variant="link"
                     size="sm"
@@ -213,6 +495,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
               </div>
             </div>
             
+            {/* Size Selection */}
             <div className="mb-5">
               <h4 className="text-sm font-medium mb-2">Image Size</h4>
               <div className="flex flex-wrap gap-2">
@@ -243,31 +526,8 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
               </div>
             </div>
             
+            {/* Writing Tips */}
             <div className="flex items-center space-x-3 mb-6">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="link" className="text-sm text-primary-500 p-0 h-auto">
-                    <Lightbulb className="h-4 w-4 mr-1" /> Example prompts
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Example Prompts</h4>
-                    <div className="space-y-2">
-                      {EXAMPLE_PROMPTS.map((example, index) => (
-                        <div 
-                          key={index}
-                          className="p-2 text-sm rounded hover:bg-gray-100 cursor-pointer"
-                          onClick={() => selectExamplePrompt(example)}
-                        >
-                          {example}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="link" className="text-sm text-primary-500 p-0 h-auto">
@@ -290,14 +550,15 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
               </Popover>
             </div>
             
+            {/* Action Buttons */}
             <div className="flex space-x-3">
               <Button variant="outline" onClick={onBack} className="text-white bg-black">
                 <ChevronLeft className="h-4 w-4 mr-1" /> Back
               </Button>
               <Button 
-                className="flex-1 text-white bg-primary hover:bg-primary/90"
+                className="flex-1 text-white bg-black hover:bg-black/80"
                 onClick={handleSubmit}
-                disabled={prompt.trim().length === 0}
+                disabled={!primaryCategory || !(cartoonSubcategory || productSubcategory || otherSubcategory)}
               >
                 Generate Transformation
               </Button>

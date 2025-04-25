@@ -25,8 +25,8 @@ enum Step {
   Edit
 }
 
-// Possible transformation types
-type TransformationType = 'cartoon' | 'product' | 'custom';
+// Import transformation types from PromptInput
+import { TransformationType, CartoonSubcategory, ProductSubcategory, OtherSubcategory } from '@/components/PromptInput';
 
 // Default user state - in a real app this would come from authentication
 const DEFAULT_USER = {
@@ -378,81 +378,12 @@ export default function Home() {
             )}
             
             {currentStep === Step.Prompt && originalImage && (
-              <>
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold mb-2 text-center">Choose Transformation Style</h2>
-                  <p className="text-center text-gray-600">Select a transformation style or create your own custom transformation</p>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                  <Button 
-                    variant="outline" 
-                    className={`
-                      ${selectedTransformation === "cartoon" 
-                        ? "bg-black text-white hover:bg-black hover:text-white" 
-                        : "bg-white text-black hover:bg-gray-50"
-                      } 
-                      border-black border-2 shadow-md py-6 h-auto
-                    `}
-                    onClick={() => {
-                      if (selectedTransformation === "cartoon") {
-                        setSelectedTransformation(null);
-                      } else {
-                        setSelectedTransformation("cartoon");
-                      }
-                    }}
-                  >
-                    Cartoon Style
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className={`
-                      ${selectedTransformation === "product" 
-                        ? "bg-black text-white hover:bg-black hover:text-white" 
-                        : "bg-white text-black hover:bg-gray-50"
-                      } 
-                      border-black border-2 shadow-md py-6 h-auto
-                    `}
-                    onClick={() => {
-                      if (selectedTransformation === "product") {
-                        setSelectedTransformation(null);
-                      } else {
-                        setSelectedTransformation("product");
-                      }
-                    }}
-                  >
-                    Product Photography
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className={`
-                      ${selectedTransformation === "custom" 
-                        ? "bg-black text-white hover:bg-black hover:text-white" 
-                        : "bg-white text-black hover:bg-gray-50"
-                      } 
-                      border-black border-2 shadow-md py-6 h-auto
-                    `}
-                    onClick={() => {
-                      if (selectedTransformation === "custom") {
-                        setSelectedTransformation(null);
-                      } else {
-                        setSelectedTransformation("custom");
-                      }
-                    }}
-                  >
-                    Custom Transformation
-                  </Button>
-                </div>
-                
-                <PromptInput 
-                  originalImage={originalImage} 
-                  onSubmit={handlePromptSubmit} 
-                  onBack={handleNewImage}
-                  selectedTransformation={selectedTransformation}
-                />
-              </>
+              <PromptInput 
+                originalImage={originalImage} 
+                onSubmit={handlePromptSubmit} 
+                onBack={handleNewImage}
+                selectedTransformation={selectedTransformation}
+              />
             )}
             
             {currentStep === Step.Processing && originalImage && (
