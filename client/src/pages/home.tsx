@@ -71,9 +71,20 @@ export default function Home() {
   const handleUpload = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
-    // Reset any previously selected transformation when uploading a new image
-    setSelectedTransformation(null);
-    setCurrentStep(Step.Prompt);
+    
+    // If a transformation was pre-selected before upload, apply it automatically
+    if (selectedTransformation) {
+      if (selectedTransformation === "custom") {
+        // For custom transformations, just go to the prompt step
+        setCurrentStep(Step.Prompt);
+      } else {
+        // For preset transformations like "cartoon" or "product", apply them immediately
+        handlePresetTransformation(selectedTransformation);
+      }
+    } else {
+      // No transformation selected, go to prompt step
+      setCurrentStep(Step.Prompt);
+    }
   };
 
   const handlePromptSubmit = async (promptText: string, imageSize: string = "1024x1024") => {
@@ -323,14 +334,14 @@ export default function Home() {
                     border-black border-2 shadow-md px-5 py-6 h-auto
                   `}
                   onClick={() => {
+                    // Set selected transformation regardless of whether an image is uploaded
+                    setSelectedTransformation("cartoon");
+                    
                     if (originalImagePath) {
                       handlePresetTransformation("cartoon");
                     } else {
-                      toast({
-                        title: "No image selected",
-                        description: "Please upload an image first to use preset transformations.",
-                        variant: "destructive"
-                      });
+                      // Just set the selected state - transformation will happen after upload
+                      scrollToUploader();
                     }
                   }}
                 >
@@ -347,14 +358,14 @@ export default function Home() {
                     border-black border-2 shadow-md px-5 py-6 h-auto
                   `}
                   onClick={() => {
+                    // Set selected transformation regardless of whether an image is uploaded
+                    setSelectedTransformation("product");
+                    
                     if (originalImagePath) {
                       handlePresetTransformation("product");
                     } else {
-                      toast({
-                        title: "No image selected",
-                        description: "Please upload an image first to use preset transformations.",
-                        variant: "destructive"
-                      });
+                      // Just set the selected state - transformation will happen after upload
+                      scrollToUploader();
                     }
                   }}
                 >
@@ -371,17 +382,15 @@ export default function Home() {
                     border-black border-2 shadow-md px-5 py-6 h-auto
                   `}
                   onClick={() => {
+                    // Set selected transformation regardless of whether an image is uploaded
+                    setSelectedTransformation("custom");
+                    
                     if (originalImagePath) {
-                      // Set selected transformation to custom
-                      setSelectedTransformation("custom");
-                      // Skip to prompt step directly
+                      // Skip to prompt step directly if we already have an image
                       setCurrentStep(Step.Prompt);
                     } else {
-                      toast({
-                        title: "No image selected",
-                        description: "Please upload an image first to create a custom transformation.",
-                        variant: "destructive"
-                      });
+                      // Just set the selected state - will go to the prompt step after upload
+                      scrollToUploader();
                     }
                   }}
                 >
