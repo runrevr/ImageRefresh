@@ -5,6 +5,7 @@ import { Download, ArrowLeftRight, Upload, ImageIcon, Edit } from 'lucide-react'
 import ComparisonSlider from './ComparisonSlider';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
+import EmailCollectionDialog from './EmailCollectionDialog';
 
 interface ResultViewProps {
   originalImage: string;
@@ -52,7 +53,13 @@ export default function ResultView({
 
   return (
     <div className="p-8">
-      {/* Email collection dialog will be implemented later */}
+      {/* Email collection dialog */}
+      <EmailCollectionDialog 
+        open={showEmailDialog}
+        onClose={handleSkipEmail}
+        onEmailSubmitted={handleEmailSubmitted}
+        userId={userId}
+      />
       
       <div className="w-full max-w-3xl mx-auto">
         {/* Comparison slider */}

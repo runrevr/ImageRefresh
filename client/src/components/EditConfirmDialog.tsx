@@ -8,12 +8,12 @@ interface EditConfirmDialogProps {
   paidCredits: number;
 }
 
-export default function EditConfirmDialog({
+const EditConfirmDialog = ({
   open,
   onClose,
   onConfirm,
   paidCredits
-}: EditConfirmDialogProps) {
+}: EditConfirmDialogProps) => {
   if (!open) return null;
   
   return (
@@ -51,4 +51,6 @@ export default function EditConfirmDialog({
       </div>
     </div>
   );
-}
+};
+
+export default EditConfirmDialog;
