@@ -43,6 +43,7 @@ export default function Home() {
   const [user, setUser] = useState(DEFAULT_USER);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
   const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
+  const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
   const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
@@ -147,6 +148,7 @@ export default function Home() {
     setPrompt('');
     setSelectedTransformation(null);
     setCurrentStep(Step.Upload);
+    setShowUploadForm(false);
   };
 
   const handleCancel = () => {
@@ -294,196 +296,198 @@ export default function Home() {
       <Navbar freeCredits={!user.freeCreditsUsed ? 1 : 0} paidCredits={user.paidCredits} />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Hero Section */}
-        <section className="mb-12 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-transparent bg-clip-text">
-            Transform Photos with AI
-          </h1>
-          <p className="text-xl text-gray-600 mb-6 max-w-3xl mx-auto">
-            Upload your photo, describe the transformation you want, and our AI will remix your image into something amazing.
-          </p>
-          <div className="text-sm bg-blue-50 text-blue-700 p-3 rounded-md inline-flex items-center">
-            <i className="fas fa-info-circle mr-2"></i>
-            Your first transformation is free! No credit card required.
-          </div>
-          
-          {!isOpenAIConfigured && (
-            <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
-              <p>OpenAI API key is not configured. Some features may not work properly.</p>
+        {/* Hero Section - Traditional Landing Page Style */}
+        {currentStep === Step.Upload && !showUploadForm && (
+          <section className="py-16 flex flex-col items-center text-center">
+            <h1 className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-transparent bg-clip-text">
+              Transform Your Photos with AI
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Upload any photo and watch our AI transform it into something extraordinary. No design skills needed.
+            </p>
+            <div className="text-md bg-blue-50 text-blue-700 p-4 rounded-md inline-flex items-center mb-8">
+              <i className="fas fa-info-circle mr-2"></i>
+              Your first transformation is free! No credit card required.
             </div>
-          )}
-          
-          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
-            <div className="text-center">
-              <h3 className="text-lg font-medium mb-2">Preset Transformations</h3>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Button 
-                  variant="outline" 
-                  className={`
-                    ${selectedTransformation === "cartoon" 
-                      ? "bg-black text-white hover:bg-black hover:text-white" 
-                      : "bg-white text-black hover:bg-gray-50"
-                    } 
-                    border-black border-2 shadow-md px-5 py-6 h-auto
-                  `}
-                  onClick={() => {
-                    // Toggle selection - if already selected, unselect it
-                    if (selectedTransformation === "cartoon") {
-                      setSelectedTransformation(null);
-                    } else {
-                      // Otherwise, select it
-                      setSelectedTransformation("cartoon");
-                      
-                      if (originalImagePath) {
-                        // Instead of immediately transforming, go to the prompt step with preset selected
-                        setCurrentStep(Step.Prompt);
-                      } else {
-                        // Just set the selected state - will go to prompt step after upload
-                        scrollToUploader();
-                      }
-                    }
-                  }}
-                >
-                  Cartoon Style
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  className={`
-                    ${selectedTransformation === "product" 
-                      ? "bg-black text-white hover:bg-black hover:text-white" 
-                      : "bg-white text-black hover:bg-gray-50"
-                    } 
-                    border-black border-2 shadow-md px-5 py-6 h-auto
-                  `}
-                  onClick={() => {
-                    // Toggle selection - if already selected, unselect it
-                    if (selectedTransformation === "product") {
-                      setSelectedTransformation(null);
-                    } else {
-                      // Otherwise, select it
-                      setSelectedTransformation("product");
-                      
-                      if (originalImagePath) {
-                        // Instead of immediately transforming, go to the prompt step with preset selected
-                        setCurrentStep(Step.Prompt);
-                      } else {
-                        // Just set the selected state - will go to prompt step after upload
-                        scrollToUploader();
-                      }
-                    }
-                  }}
-                >
-                  Product Photography
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  className={`
-                    ${selectedTransformation === "custom" 
-                      ? "bg-black text-white hover:bg-black hover:text-white" 
-                      : "bg-white text-black hover:bg-gray-50"
-                    } 
-                    border-black border-2 shadow-md px-5 py-6 h-auto
-                  `}
-                  onClick={() => {
-                    // Toggle selection - if already selected, unselect it
-                    if (selectedTransformation === "custom") {
-                      setSelectedTransformation(null);
-                    } else {
-                      // Otherwise, select it
-                      setSelectedTransformation("custom");
-                      
-                      if (originalImagePath) {
-                        // Skip to prompt step directly if we already have an image
-                        setCurrentStep(Step.Prompt);
-                      } else {
-                        // Just set the selected state - will go to the prompt step after upload
-                        scrollToUploader();
-                      }
-                    }
-                  }}
-                >
-                  Custom Transformation
-                </Button>
+            
+            <Button 
+              className="bg-black text-white hover:bg-black/80 text-lg px-8 py-6 rounded-lg shadow-lg transform transition hover:scale-105" 
+              onClick={() => setShowUploadForm(true)}
+            >
+              Create Now
+            </Button>
+            
+            {!isOpenAIConfigured && (
+              <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
+                <p>OpenAI API key is not configured. Some features may not work properly.</p>
+              </div>
+            )}
+            
+            {/* Feature Highlights */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-left">
+              <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Cartoon Style</h3>
+                <p className="text-gray-600">Transform your photos into vibrant cartoon illustrations with bold outlines and vivid colors.</p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Product Photography</h3>
+                <p className="text-gray-600">Create professional product photos with perfect lighting, clean backgrounds, and commercial quality.</p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Custom Transformations</h3>
+                <p className="text-gray-600">Describe exactly what you want, and our AI will bring your vision to life with amazing detail.</p>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Image Uploader Section */}
-        <section id="uploader" className="mb-16">
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            {/* Stepper header */}
-            <div className="border-b border-gray-200">
-              <div className="flex">
-                <div className={`px-6 py-4 w-1/3 text-center ${currentStep === Step.Upload ? 'border-b-2 border-primary-500 text-primary-500' : 'text-gray-500'} font-medium`}>
-                  <span className={`${currentStep === Step.Upload ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-500'} w-6 h-6 inline-flex items-center justify-center rounded-full mr-2`}>
-                    1
-                  </span>
-                  Upload
-                </div>
-                <div className={`px-6 py-4 w-1/3 text-center ${currentStep === Step.Prompt ? 'border-b-2 border-primary-500 text-primary-500' : 'text-gray-500'} font-medium`}>
-                  <span className={`${currentStep >= Step.Prompt ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-500'} w-6 h-6 inline-flex items-center justify-center rounded-full mr-2`}>
-                    2
-                  </span>
-                  Describe
-                </div>
-                <div className={`px-6 py-4 w-1/3 text-center ${currentStep === Step.Result ? 'border-b-2 border-primary-500 text-primary-500' : 'text-gray-500'} font-medium`}>
-                  <span className={`${currentStep === Step.Result ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-500'} w-6 h-6 inline-flex items-center justify-center rounded-full mr-2`}>
-                    3
-                  </span>
-                  Result
-                </div>
-              </div>
-            </div>
-
-            {/* Show different components based on current step */}
+          </section>
+        )}
+        
+        {/* Inline Upload Form & Main Wizard Flow */}
+        {(showUploadForm || currentStep !== Step.Upload) && (
+          <div id="uploader" className="bg-white rounded-xl shadow-lg overflow-hidden p-6 mb-10 max-w-3xl mx-auto">
             {currentStep === Step.Upload && (
-              <ImageUploader onImageUploaded={handleUpload} />
+              <div className="max-w-2xl mx-auto">
+                <h2 className="text-2xl font-bold mb-6 text-center">Upload Your Photo</h2>
+                <ImageUploader onImageUploaded={handleUpload} />
+                <div className="mt-4 text-center">
+                  <Button 
+                    variant="outline" 
+                    className="text-black border-black mt-4"
+                    onClick={() => setShowUploadForm(false)}
+                  >
+                    Back to Home
+                  </Button>
+                </div>
+              </div>
             )}
             
-            {currentStep === Step.Prompt && (
-              <PromptInput 
-                originalImage={originalImage!} 
-                onSubmit={handlePromptSubmit} 
-                onBack={handleNewImage}
-                selectedTransformation={selectedTransformation} 
-              />
+            {currentStep === Step.Prompt && originalImage && (
+              <>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold mb-2 text-center">Choose Transformation Style</h2>
+                  <p className="text-center text-gray-600">Select a transformation style or create your own custom transformation</p>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  <Button 
+                    variant="outline" 
+                    className={`
+                      ${selectedTransformation === "cartoon" 
+                        ? "bg-black text-white hover:bg-black hover:text-white" 
+                        : "bg-white text-black hover:bg-gray-50"
+                      } 
+                      border-black border-2 shadow-md py-6 h-auto
+                    `}
+                    onClick={() => {
+                      if (selectedTransformation === "cartoon") {
+                        setSelectedTransformation(null);
+                      } else {
+                        setSelectedTransformation("cartoon");
+                      }
+                    }}
+                  >
+                    Cartoon Style
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    className={`
+                      ${selectedTransformation === "product" 
+                        ? "bg-black text-white hover:bg-black hover:text-white" 
+                        : "bg-white text-black hover:bg-gray-50"
+                      } 
+                      border-black border-2 shadow-md py-6 h-auto
+                    `}
+                    onClick={() => {
+                      if (selectedTransformation === "product") {
+                        setSelectedTransformation(null);
+                      } else {
+                        setSelectedTransformation("product");
+                      }
+                    }}
+                  >
+                    Product Photography
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    className={`
+                      ${selectedTransformation === "custom" 
+                        ? "bg-black text-white hover:bg-black hover:text-white" 
+                        : "bg-white text-black hover:bg-gray-50"
+                      } 
+                      border-black border-2 shadow-md py-6 h-auto
+                    `}
+                    onClick={() => {
+                      if (selectedTransformation === "custom") {
+                        setSelectedTransformation(null);
+                      } else {
+                        setSelectedTransformation("custom");
+                      }
+                    }}
+                  >
+                    Custom Transformation
+                  </Button>
+                </div>
+                
+                <PromptInput 
+                  originalImage={originalImage} 
+                  onSubmit={handlePromptSubmit} 
+                  onBack={handleNewImage}
+                  selectedTransformation={selectedTransformation}
+                />
+              </>
             )}
             
-            {currentStep === Step.Processing && (
+            {currentStep === Step.Processing && originalImage && (
               <ProcessingState 
-                originalImage={originalImage!} 
-                onCancel={handleCancel} 
+                originalImage={originalImage} 
+                onCancel={handleCancel}
               />
             )}
             
-            {currentStep === Step.Result && (
-              <ResultView 
-                originalImage={originalImage!} 
-                transformedImage={transformedImage!} 
-                onTryAgain={handleTryAgain} 
+            {currentStep === Step.Result && originalImage && transformedImage && (
+              <ResultView
+                originalImage={originalImage}
+                transformedImage={transformedImage}
+                onTryAgain={handleTryAgain}
                 onNewImage={handleNewImage}
                 onEditImage={handleStartEdit}
+                prompt={prompt}
                 freeCredits={!user.freeCreditsUsed ? 1 : 0}
                 paidCredits={user.paidCredits}
-                prompt={prompt}
                 canEdit={true}
               />
             )}
             
-            {currentStep === Step.Edit && (
+            {currentStep === Step.Edit && originalImage && transformedImage && (
               <EditPrompt
-                originalImage={originalImage!}
-                transformedImage={transformedImage!}
+                originalImage={originalImage}
+                transformedImage={transformedImage}
                 initialPrompt={prompt}
                 onSubmit={handleEditSubmit}
                 onSkip={handleSkipEdit}
               />
             )}
           </div>
-        </section>
+        )}
 
         <TransformationExamples onExampleClick={scrollToUploader} />
         <PricingSection userId={user.id} />
