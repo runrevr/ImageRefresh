@@ -334,14 +334,19 @@ export default function Home() {
                     border-black border-2 shadow-md px-5 py-6 h-auto
                   `}
                   onClick={() => {
-                    // Set selected transformation regardless of whether an image is uploaded
-                    setSelectedTransformation("cartoon");
-                    
-                    if (originalImagePath) {
-                      handlePresetTransformation("cartoon");
+                    // Toggle selection - if already selected, unselect it
+                    if (selectedTransformation === "cartoon") {
+                      setSelectedTransformation(null);
                     } else {
-                      // Just set the selected state - transformation will happen after upload
-                      scrollToUploader();
+                      // Otherwise, select it
+                      setSelectedTransformation("cartoon");
+                      
+                      if (originalImagePath) {
+                        handlePresetTransformation("cartoon");
+                      } else {
+                        // Just set the selected state - transformation will happen after upload
+                        scrollToUploader();
+                      }
                     }
                   }}
                 >
@@ -358,14 +363,19 @@ export default function Home() {
                     border-black border-2 shadow-md px-5 py-6 h-auto
                   `}
                   onClick={() => {
-                    // Set selected transformation regardless of whether an image is uploaded
-                    setSelectedTransformation("product");
-                    
-                    if (originalImagePath) {
-                      handlePresetTransformation("product");
+                    // Toggle selection - if already selected, unselect it
+                    if (selectedTransformation === "product") {
+                      setSelectedTransformation(null);
                     } else {
-                      // Just set the selected state - transformation will happen after upload
-                      scrollToUploader();
+                      // Otherwise, select it
+                      setSelectedTransformation("product");
+                      
+                      if (originalImagePath) {
+                        handlePresetTransformation("product");
+                      } else {
+                        // Just set the selected state - transformation will happen after upload
+                        scrollToUploader();
+                      }
                     }
                   }}
                 >
@@ -382,15 +392,20 @@ export default function Home() {
                     border-black border-2 shadow-md px-5 py-6 h-auto
                   `}
                   onClick={() => {
-                    // Set selected transformation regardless of whether an image is uploaded
-                    setSelectedTransformation("custom");
-                    
-                    if (originalImagePath) {
-                      // Skip to prompt step directly if we already have an image
-                      setCurrentStep(Step.Prompt);
+                    // Toggle selection - if already selected, unselect it
+                    if (selectedTransformation === "custom") {
+                      setSelectedTransformation(null);
                     } else {
-                      // Just set the selected state - will go to the prompt step after upload
-                      scrollToUploader();
+                      // Otherwise, select it
+                      setSelectedTransformation("custom");
+                      
+                      if (originalImagePath) {
+                        // Skip to prompt step directly if we already have an image
+                        setCurrentStep(Step.Prompt);
+                      } else {
+                        // Just set the selected state - will go to the prompt step after upload
+                        scrollToUploader();
+                      }
                     }
                   }}
                 >
