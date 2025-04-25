@@ -17,6 +17,7 @@ export const transformations = pgTable("transformations", {
   transformedImagePath: text("transformed_image_path"),
   prompt: text("prompt").notNull(),
   status: text("status").notNull().default("pending"), // pending, processing, completed, failed
+  editsUsed: integer("edits_used").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   error: text("error"),
 });
