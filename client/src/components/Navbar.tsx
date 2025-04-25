@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Wand2 } from 'lucide-react';
 import { Link } from 'wouter';
+import logoImage from '../assets/logo.png';
 
 interface NavbarProps {
   freeCredits: number;
@@ -19,7 +19,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img src="/images/logo.png" alt="ImageRefresh Logo" className="h-8" />
+            <img src={logoImage} alt="ImageRefresh Logo" className="h-10" />
           </div>
         </Link>
         
@@ -61,7 +61,10 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               </Button>
             </SheetTrigger>
             <SheetContent>
-              <div className="flex flex-col space-y-4 mt-6">
+              <div className="flex items-center mb-6 pt-4">
+                <img src={logoImage} alt="ImageRefresh Logo" className="h-8" />
+              </div>
+              <div className="flex flex-col space-y-4">
                 <a 
                   href="#examples" 
                   className="text-lg font-medium py-2"
