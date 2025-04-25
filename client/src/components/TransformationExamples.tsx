@@ -62,7 +62,7 @@ export default function TransformationExamples({ onExampleClick }: Transformatio
   };
 
   return (
-    <section id="examples" className="mb-16">
+    <section id="examples" className="mb-16 mt-20">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">Stunning Transformations</h2>
         <p className="text-xl text-gray-600">See what our AI can do with your photos</p>
