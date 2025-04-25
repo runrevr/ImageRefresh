@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Download, ArrowLeftRight, Upload, ImageIcon, Edit } from 'lucide-react';
@@ -33,12 +33,27 @@ export default function ResultView({
   transformationId = '',
   editsUsed = 0
 }: ResultViewProps) {
+  const [showEmailDialog, setShowEmailDialog] = useState(true);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const userId = 1; // Default to user ID 1 for demo
+  
+  const handleEmailSubmitted = () => {
+    setEmailSubmitted(true);
+    setShowEmailDialog(false);
+  };
+  
+  const handleSkipEmail = () => {
+    setShowEmailDialog(false);
+  };
+  
   const handleDownload = () => {
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
   };
 
   return (
     <div className="p-8">
+      {/* Email collection dialog will be implemented later */}
+      
       <div className="w-full max-w-3xl mx-auto">
         {/* Comparison slider */}
         <div className="w-full h-96 rounded-lg overflow-hidden mb-8">
