@@ -22,7 +22,7 @@ const examples: PromptExample[] = [
     title: "Professional Product Photography",
     prompt: "Transform this basic product shot into a professional commercial product photograph with ideal lighting, composition, and visual appeal",
     originalImageUrl: "/images/camo.jpg",
-    transformedImageUrl: "/images/van-gogh-tiger.png"
+    transformedImageUrl: "/images/camo-product.png"
   },
   {
     category: "Architectural",
