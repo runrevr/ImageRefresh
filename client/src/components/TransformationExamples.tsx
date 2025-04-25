@@ -37,20 +37,6 @@ const examples: PromptExample[] = [
     prompt: "Enhance this food photo with professional lighting and commercial food styling",
     originalImageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
     transformedImageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-  },
-  {
-    category: "Sci-Fi",
-    title: "Cyberpunk Character",
-    prompt: "Transform this person into a cyberpunk character with neon accents and futuristic elements",
-    originalImageUrl: "https://images.unsplash.com/photo-1581084324492-c8076f130f86?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    transformedImageUrl: "https://images.unsplash.com/photo-1581084324492-c8076f130f86?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-  },
-  {
-    category: "Interior Design",
-    title: "Room Makeover",
-    prompt: "Transform this room into a luxury modern interior with upscale furnishings",
-    originalImageUrl: "https://images.unsplash.com/photo-1610146090564-35921429d339?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    transformedImageUrl: "https://images.unsplash.com/photo-1610146090564-35921429d339?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
   }
 ];
 
