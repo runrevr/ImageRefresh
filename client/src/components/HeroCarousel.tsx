@@ -117,7 +117,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
             
             <div className="flex flex-col items-center justify-center">
               <Button 
-                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg shadow-lg mb-6 border-4 border-blue-500" 
+                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg mb-6 border-4 border-blue-500 shadow-[0_10px_25px_-5px_rgba(59,130,246,0.5)]" 
                 onClick={onCreateClick}
               >
                 🎉 Make My Photos Pop
