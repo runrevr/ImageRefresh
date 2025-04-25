@@ -342,9 +342,10 @@ export default function Home() {
                       setSelectedTransformation("cartoon");
                       
                       if (originalImagePath) {
-                        handlePresetTransformation("cartoon");
+                        // Instead of immediately transforming, go to the prompt step with preset selected
+                        setCurrentStep(Step.Prompt);
                       } else {
-                        // Just set the selected state - transformation will happen after upload
+                        // Just set the selected state - will go to prompt step after upload
                         scrollToUploader();
                       }
                     }
@@ -371,9 +372,10 @@ export default function Home() {
                       setSelectedTransformation("product");
                       
                       if (originalImagePath) {
-                        handlePresetTransformation("product");
+                        // Instead of immediately transforming, go to the prompt step with preset selected
+                        setCurrentStep(Step.Prompt);
                       } else {
-                        // Just set the selected state - transformation will happen after upload
+                        // Just set the selected state - will go to prompt step after upload
                         scrollToUploader();
                       }
                     }

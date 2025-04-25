@@ -10,6 +10,7 @@ interface PromptInputProps {
   originalImage: string;
   onSubmit: (prompt: string, imageSize: string) => void;
   onBack: () => void;
+  selectedTransformation?: TransformationType | null;
 }
 
 // Example prompts that users can select
@@ -31,13 +32,51 @@ const PROMPT_TIPS = [
   "Specify what elements to modify (e.g., 'replace the background with mountains')"
 ];
 
-export default function PromptInput({ originalImage, onSubmit, onBack }: PromptInputProps) {
+// Preset transformation descriptions and suggestions
+type TransformationType = 'cartoon' | 'product' | 'custom';
+
+type PresetTransformation = {
+  title: string;
+  description: string;
+  placeholder: string;
+  suggestedPrompt: string;
+};
+
+const PRESET_TRANSFORMATIONS: Record<TransformationType, PresetTransformation> = {
+  cartoon: {
+    title: "Cartoon Style",
+    description: "Transform your image into a vibrant cartoon with bold outlines and simplified shapes.",
+    placeholder: "E.g., 'Add bright colors and exaggerated features while keeping the original subject as the main focus'",
+    suggestedPrompt: "Transform this image into a vibrant cartoon style with bold outlines, simplified shapes, and exaggerated features. Use bright, saturated colors and create a playful, animated appearance while maintaining the original composition and subject as the main focus. Add a slight cel-shaded effect for depth."
+  },
+  product: {
+    title: "Product Photography",
+    description: "Create a professional product shot with the uploaded product as the center focus.",
+    placeholder: "E.g., 'Place the product on a minimal white surface with soft shadows and dramatic lighting'",
+    suggestedPrompt: "Transform this into a professional product photo with the product as the central focus. Use clean, commercial-grade lighting with soft shadows, a simple background that complements the product, and enhance the colors and details to make the product look premium and appealing."
+  },
+  custom: {
+    title: "Custom Transformation",
+    description: "Describe exactly how you'd like to transform your image.",
+    placeholder: "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'",
+    suggestedPrompt: ""
+  }
+};
+
+export default function PromptInput({ originalImage, onSubmit, onBack, selectedTransformation }: PromptInputProps) {
   const [prompt, setPrompt] = useState('');
   const [charCount, setCharCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
   const { toast } = useToast();
   const maxChars = 500;
+
+  // Set suggested prompt based on selected transformation
+  useEffect(() => {
+    if (selectedTransformation && PRESET_TRANSFORMATIONS[selectedTransformation]?.suggestedPrompt) {
+      setPrompt(PRESET_TRANSFORMATIONS[selectedTransformation].suggestedPrompt);
+    }
+  }, [selectedTransformation]);
 
   useEffect(() => {
     setCharCount(prompt.length);
@@ -118,9 +157,18 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
           </div>
           
           <div>
-            <h3 className="text-xl font-medium mb-4">Describe your transformation</h3>
+            <div className="flex items-center gap-3 mb-4">
+              <h3 className="text-xl font-medium">Describe your transformation</h3>
+              {selectedTransformation && (
+                <div className="bg-black text-white text-xs px-3 py-1 rounded-full">
+                  {PRESET_TRANSFORMATIONS[selectedTransformation]?.title || 'Custom'}
+                </div>
+              )}
+            </div>
             <p className="text-gray-600 mb-4">
-              Be specific about what changes you want. For best results, include details about style, mood, and elements.
+              {selectedTransformation
+                ? PRESET_TRANSFORMATIONS[selectedTransformation]?.description
+                : "Be specific about what changes you want. For best results, include details about style, mood, and elements."}
             </p>
             
             <div className="mb-4">
@@ -129,7 +177,10 @@ export default function PromptInput({ originalImage, onSubmit, onBack }: PromptI
                   value={prompt}
                   onChange={handlePromptChange}
                   className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
-                  placeholder="E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
+                  placeholder={selectedTransformation 
+                    ? PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].placeholder 
+                    : "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
+                  }
                   maxLength={maxChars}
                 />
                 <Button
