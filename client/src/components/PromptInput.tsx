@@ -73,8 +73,9 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
 
   // Set suggested prompt based on selected transformation
   useEffect(() => {
-    if (selectedTransformation && PRESET_TRANSFORMATIONS[selectedTransformation]?.suggestedPrompt) {
-      setPrompt(PRESET_TRANSFORMATIONS[selectedTransformation].suggestedPrompt);
+    if (selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS) {
+      const transformation = selectedTransformation as TransformationType;
+      setPrompt(PRESET_TRANSFORMATIONS[transformation].suggestedPrompt);
     }
   }, [selectedTransformation]);
 
@@ -159,15 +160,15 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
           <div>
             <div className="flex items-center gap-3 mb-4">
               <h3 className="text-xl font-medium">Describe your transformation</h3>
-              {selectedTransformation && (
+              {selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS && (
                 <div className="bg-black text-white text-xs px-3 py-1 rounded-full">
-                  {PRESET_TRANSFORMATIONS[selectedTransformation]?.title || 'Custom'}
+                  {PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].title}
                 </div>
               )}
             </div>
             <p className="text-gray-600 mb-4">
-              {selectedTransformation
-                ? PRESET_TRANSFORMATIONS[selectedTransformation]?.description
+              {selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS
+                ? PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].description
                 : "Be specific about what changes you want. For best results, include details about style, mood, and elements."}
             </p>
             
@@ -177,7 +178,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                   value={prompt}
                   onChange={handlePromptChange}
                   className="w-full border border-gray-300 rounded-lg p-4 h-40 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
-                  placeholder={selectedTransformation 
+                  placeholder={selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS
                     ? PRESET_TRANSFORMATIONS[selectedTransformation as TransformationType].placeholder 
                     : "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'"
                   }

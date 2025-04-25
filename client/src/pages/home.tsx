@@ -24,6 +24,9 @@ enum Step {
   Edit
 }
 
+// Possible transformation types
+type TransformationType = 'cartoon' | 'product' | 'custom';
+
 // Default user state - in a real app this would come from authentication
 const DEFAULT_USER = {
   id: 1,
@@ -39,7 +42,7 @@ export default function Home() {
   const [prompt, setPrompt] = useState<string>('');
   const [user, setUser] = useState(DEFAULT_USER);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  const [selectedTransformation, setSelectedTransformation] = useState<string | null>(null);
+  const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
   const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
@@ -227,7 +230,7 @@ export default function Home() {
   };
 
   // Handle preset transformations (cartoon, product photography, etc.)
-  const handlePresetTransformation = async (presetType: string) => {
+  const handlePresetTransformation = async (presetType: TransformationType) => {
     if (!originalImagePath) {
       toast({
         title: "No image selected",
@@ -454,7 +457,8 @@ export default function Home() {
               <PromptInput 
                 originalImage={originalImage!} 
                 onSubmit={handlePromptSubmit} 
-                onBack={handleNewImage} 
+                onBack={handleNewImage}
+                selectedTransformation={selectedTransformation} 
               />
             )}
             
