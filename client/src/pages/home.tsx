@@ -308,7 +308,7 @@ export default function Home() {
               <div className="flex flex-wrap justify-center gap-3">
                 <Button 
                   variant="outline" 
-                  className="hover:bg-primary-50 text-white bg-black border-white"
+                  className="hover:bg-gray-50 bg-white text-black border-black border-2 shadow-md px-5 py-6 h-auto"
                   onClick={() => {
                     if (originalImagePath) {
                       handlePresetTransformation("cartoon");
@@ -326,7 +326,7 @@ export default function Home() {
                 
                 <Button 
                   variant="outline" 
-                  className="hover:bg-primary-50 text-white bg-black border-white"
+                  className="hover:bg-gray-50 bg-white text-black border-black border-2 shadow-md px-5 py-6 h-auto"
                   onClick={() => {
                     if (originalImagePath) {
                       handlePresetTransformation("product");
@@ -344,7 +344,7 @@ export default function Home() {
                 
                 <Button 
                   variant="outline" 
-                  className="hover:bg-primary-50 text-white bg-black border-white border-dashed"
+                  className="hover:bg-gray-50 bg-white text-black border-black border-2 border-dashed shadow-md px-5 py-6 h-auto"
                   onClick={() => {
                     if (originalImagePath) {
                       // Skip to prompt step directly
