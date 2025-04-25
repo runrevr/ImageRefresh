@@ -8,6 +8,7 @@ import { transformImage, isOpenAIConfigured } from "./openai";
 import { insertTransformationSchema } from "@shared/schema";
 import { z } from "zod";
 import OpenAI from "openai";
+import Stripe from "stripe";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -40,6 +41,11 @@ const upload = multer({
     }
     cb(null, true);
   },
+});
+
+// Initialize Stripe with our secret key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2023-10-16',
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -553,6 +559,37 @@ style, environment, lighting, and background rather than changing the main subje
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Unknown error' });
+    }
+  });
+
+  // Stripe payment intent creation endpoint
+  app.post("/api/create-payment-intent", async (req, res) => {
+    try {
+      const { amount } = req.body;
+      
+      if (!amount || typeof amount !== 'number') {
+        return res.status(400).json({ message: "Valid amount is required" });
+      }
+      
+      // Create a PaymentIntent with the amount
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Stripe expects amount in cents
+        currency: 'usd',
+        payment_method_types: ['card'],
+        metadata: {
+          product: 'ImageMixer Credits',
+        },
+      });
+      
+      // Return the client secret to the frontend
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+      });
+    } catch (error: any) {
+      console.error("Error creating payment intent:", error);
+      res.status(500).json({ 
+        message: error.message || 'An error occurred creating the payment intent'
+      });
     }
   });
 
