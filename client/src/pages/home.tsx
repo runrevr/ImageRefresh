@@ -322,11 +322,7 @@ export default function Home() {
                   
                   {/* Content */}
                   <div className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center z-10">
-                    <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"></path>
-                      </svg>
-                    </div>
+
                     <h3 className="text-2xl font-bold mb-3 text-white">Product Photography</h3>
                     <p className="text-gray-100 mb-4 max-w-xs">Transform everyday product shots into professional studio quality photos with enhanced lighting and composition.</p>
                     <div className="mt-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
