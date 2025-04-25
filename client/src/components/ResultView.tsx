@@ -16,6 +16,8 @@ interface ResultViewProps {
   paidCredits: number;
   prompt?: string;
   canEdit?: boolean;
+  transformationId?: string;
+  editsUsed?: number;
 }
 
 export default function ResultView({ 
@@ -27,7 +29,9 @@ export default function ResultView({
   freeCredits,
   paidCredits,
   prompt = "Transformation of the original image",
-  canEdit = true
+  canEdit = true,
+  transformationId = '',
+  editsUsed = 0
 }: ResultViewProps) {
   const handleDownload = () => {
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
@@ -62,6 +66,15 @@ export default function ResultView({
           <p className="text-gray-600">
             Drag the slider to compare before and after images.
           </p>
+          
+          {transformationId && (
+            <div className="mt-3 text-sm">
+              <span className="text-gray-500">
+                Transformation ID: {transformationId}
+                {editsUsed > 0 ? ` • ${editsUsed} edit${editsUsed !== 1 ? 's' : ''} used` : ''}
+              </span>
+            </div>
+          )}
         </div>
         
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -69,9 +82,15 @@ export default function ResultView({
             <Button
               className="text-white bg-black"
               onClick={onEditImage}
+              title={editsUsed > 0 ? "Additional edits will use credits" : "You have 1 free edit available"}
             >
               <Edit className="h-4 w-4 mr-2" />
-              Edit This Image
+              {editsUsed > 0 ? "Edit Again (Uses Credit)" : "Edit This Image"}
+              {editsUsed > 0 && (
+                <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
+                  1 Credit
+                </span>
+              )}
             </Button>
           )}
           <Button 

@@ -135,9 +135,13 @@ export default function EditPrompt({
   
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center">Make One Edit</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        {editsUsed > 0 ? "Additional Edit" : "Make One Free Edit"}
+      </h2>
       <p className="text-gray-600 mb-6 text-center">
-        You can make one free edit to your transformation. Describe what you'd like to change.
+        {editsUsed > 0 
+          ? "You've already used your free edit. Additional edits will use 1 credit." 
+          : "You can make one free edit to your transformation. Describe what you'd like to change."}
       </p>
       
       <div className="flex flex-col md:flex-row gap-6 mb-8">
@@ -234,6 +238,16 @@ export default function EditPrompt({
           </div>
         </div>
         
+        {editsUsed > 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+            <p className="text-yellow-800 text-sm">
+              <strong>Note:</strong> You've already used your free edit for this transformation.
+              This additional edit will use 1 credit from your account.
+              You currently have {paidCredits} credits remaining.
+            </p>
+          </div>
+        )}
+        
         <div className="flex flex-col sm:flex-row gap-4 justify-end">
           <Button 
             type="button" 
@@ -247,10 +261,18 @@ export default function EditPrompt({
             type="submit" 
             className="text-white bg-black"
           >
-            Apply Edit
+            {editsUsed > 0 ? "Apply Edit (Use 1 Credit)" : "Apply Edit"}
           </Button>
         </div>
       </form>
+      
+      {/* Confirmation Dialog for additional edits */}
+      <EditConfirmationDialog
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        onConfirm={handleConfirmEdit}
+        paidCredits={paidCredits}
+      />
     </div>
   );
 }
