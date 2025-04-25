@@ -18,9 +18,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/">
-          <div className="flex items-center space-x-2 cursor-pointer">
-            <Wand2 className="h-6 w-6 text-primary-500" />
-            <span className="font-bold text-xl text-primary-500">ImageMixer</span>
+          <div className="flex items-center cursor-pointer">
+            <img src="/images/logo.png" alt="ImageRefresh Logo" className="h-8" />
           </div>
         </Link>
         
