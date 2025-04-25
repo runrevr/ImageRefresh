@@ -36,7 +36,7 @@ const examples: PromptExample[] = [
     title: "Restaurant-Quality Food Photos",
     prompt: "Enhance this burger photo with professional lighting and commercial food styling for an appetizing presentation",
     originalImageUrl: "/images/burger.png",
-    transformedImageUrl: "/images/burger.png"
+    transformedImageUrl: "/images/burger-transformed.png"
   }
 ];
 
