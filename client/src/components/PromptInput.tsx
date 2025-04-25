@@ -19,7 +19,7 @@ export type TransformationType = 'cartoon' | 'product' | 'custom';
 // Subcategory types
 export type CartoonSubcategory = 'super-mario' | 'minecraft' | 'pixar' | 'dreamworks' | 'princess' | 'superhero' | 'lego' | 'custom-cartoon';
 export type ProductSubcategory = 'remove-background' | 'enhanced-lighting' | 'natural-scene' | 'product-mockup' | 'custom-product';
-export type OtherSubcategory = 'artistic' | 'abstract' | 'realistic' | 'custom-other';
+export type OtherSubcategory = 'baby-prediction' | 'future-self' | 'ghibli-style' | 'ai-action-figure' | 'pet-as-human' | 'self-as-cat' | 'custom-other';
 
 // Writing tips for better prompts
 const PROMPT_TIPS = [
@@ -126,23 +126,41 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
 
 // Other subcategories
 const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
-  'artistic': {
-    title: 'Artistic',
-    description: 'Convert to artistic painting, sketch, or watercolor styles.',
-    placeholder: 'E.g., Make it look like a watercolor painting by Monet',
-    suggestedPrompt: 'Transform this image into an artistic painting style with visible brushstrokes, artistic interpretation, and creative color treatment. Maintain the subject\'s core elements while applying the artistic style throughout the composition.'
+  'baby-prediction': {
+    title: 'What Will Our Baby Look Like',
+    description: 'Envision how a future baby might look based on the people in the image.',
+    placeholder: 'E.g., Show what our future baby might look like',
+    suggestedPrompt: 'Using the people in this image as parents, create a realistic and heartwarming prediction of what their baby might look like. Blend facial features, skin tone, hair color, and eye color in a natural way. Make the baby appear around 1 year old with a joyful expression.'
   },
-  'abstract': {
-    title: 'Abstract / Minimalist',
-    description: 'Simplify into abstract forms, shapes, and colors.',
-    placeholder: 'E.g., Reduce to geometric shapes with a limited color palette',
-    suggestedPrompt: 'Transform this image into an abstract or minimalist representation focusing on essential shapes, forms, and a limited color palette. Simplify details while preserving the core essence and identity of the subject through geometric or fluid abstract elements.'
+  'future-self': {
+    title: 'What Will I Look Like in 20 Years',
+    description: 'Age the subject in the image to show how they might look 20 years in the future.',
+    placeholder: 'E.g., Show me as a distinguished older person',
+    suggestedPrompt: 'Transform this image to show how this person might look 20 years in the future. Age the face naturally with appropriate wrinkles, hair changes, and subtle physical aging. Maintain their core facial structure and identity while showing realistic aging effects. Keep the same general style and pose.'
   },
-  'realistic': {
-    title: 'Realistic Retouching',
-    description: 'Enhance realism with professional photo retouching techniques.',
-    placeholder: 'E.g., Improve lighting and fix imperfections',
-    suggestedPrompt: 'Transform this image with realistic photo retouching techniques. Enhance lighting and shadows, improve color balance, fix imperfections, and increase detail clarity. Maintain natural appearance while creating a polished, professional result.'
+  'ghibli-style': {
+    title: 'Ghibli Style',
+    description: 'Transform into the beautiful, painterly anime style of Studio Ghibli films.',
+    placeholder: 'E.g., Make it look like a scene from a Miyazaki film',
+    suggestedPrompt: 'Transform this image into the distinctive Studio Ghibli animation style with soft, painterly backgrounds, whimsical elements, and the characteristic Miyazaki aesthetic. Use the warm color palette, gentle lighting, and simplified but expressive facial features typical of films like Spirited Away or My Neighbor Totoro.'
+  },
+  'ai-action-figure': {
+    title: 'AI Action Figure',
+    description: 'Turn the subject into a realistic, detailed action figure or toy.',
+    placeholder: 'E.g., Make me into a collectible action figure with accessories',
+    suggestedPrompt: 'Transform this image into a realistic, high-quality action figure or toy. Add visible joints, plastic texture, and a display stand. Include appropriate accessories and packaging design elements. Maintain the subject\'s likeness and key features while giving it the distinctive plastic sheen and manufacturing details of a premium collectible figure.'
+  },
+  'pet-as-human': {
+    title: 'What Would My Pet Look Like as a Human',
+    description: 'Reimagine a pet as a human while keeping recognizable traits and personality.',
+    placeholder: 'E.g., Transform my dog into a human with similar features',
+    suggestedPrompt: 'Transform this pet into a human character while preserving its distinctive features, coloration, and personality. Maintain the essence and character of the pet in human form, with subtle references to fur color, eye shape, and distinctive markings. Create a humanoid that feels connected to the original pet\'s identity and spirit.'
+  },
+  'self-as-cat': {
+    title: 'What Would I Look Like as a Cat',
+    description: 'Transform a human into a cat with recognizable traits from the original subject.',
+    placeholder: 'E.g., Turn me into a cat that resembles my features',
+    suggestedPrompt: 'Transform this person into a cat while preserving their distinctive features, coloration, and personality. Create a feline that has subtle similarities to the human\'s hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.'
   },
   'custom-other': {
     title: 'Custom Request',
