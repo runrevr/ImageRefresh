@@ -87,7 +87,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
                 </div>
                 
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-white/60 z-10" />
                 
                 {/* Transformation type */}
                 <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full z-20 backdrop-blur-sm">
@@ -97,21 +97,24 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 z-20 bg-white/20 hover:bg-white/30 text-white" />
-        <CarouselNext className="absolute right-4 top-1/2 z-20 bg-white/20 hover:bg-white/30 text-white" />
+        <CarouselPrevious className="absolute left-4 top-1/2 z-20 bg-black/60 hover:bg-black/80 text-white" />
+        <CarouselNext className="absolute right-4 top-1/2 z-20 bg-black/60 hover:bg-black/80 text-white" />
       </Carousel>
       
       {/* Content overlay */}
       <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-8 bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text leading-tight">
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
               Transform Your Photos with AI
             </h1>
-            <p className="text-xl lg:text-2xl mb-8 text-gray-200 mx-auto">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-6 text-black/80">
+              One Click. Incredible Results.
+            </h2>
+            <p className="text-xl lg:text-2xl mb-8 text-gray-700 mx-auto">
               Upload any photo and watch our AI transform it into something extraordinary. No design skills needed.
             </p>
-            <div className="text-md bg-white/10 text-white p-4 rounded-md inline-flex items-center backdrop-blur-sm mb-8 mx-auto">
+            <div className="text-md bg-black/60 text-white p-4 rounded-md inline-flex items-center backdrop-blur-sm mb-8 mx-auto">
               <i className="fas fa-info-circle mr-2"></i>
               Your first transformation is free! No credit card required.
             </div>
