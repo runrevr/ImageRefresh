@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Wand2 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
-import EditConfirmationDialog from './EditConfirmationDialog';
+import EditConfirmDialog from './EditConfirmDialog';
 
 interface EditPromptProps {
   originalImage: string;
@@ -267,9 +267,9 @@ export default function EditPrompt({
       </form>
       
       {/* Confirmation Dialog for additional edits */}
-      <EditConfirmationDialog
+      <EditConfirmDialog
         open={showConfirmDialog}
-        onOpenChange={setShowConfirmDialog}
+        onClose={() => setShowConfirmDialog(false)}
         onConfirm={handleConfirmEdit}
         paidCredits={paidCredits}
       />
