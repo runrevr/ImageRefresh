@@ -6,6 +6,7 @@ import { PricingTier } from '@shared/schema';
 import { useState } from 'react';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import StripeCheckout from './StripeCheckout';
 
 interface PricingSectionProps {
   userId: number;
@@ -56,11 +57,11 @@ const pricingTiers: PricingTier[] = [
 
 export default function PricingSection({ userId }: PricingSectionProps) {
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
+  const [showCheckout, setShowCheckout] = useState(false);
   const { toast } = useToast();
 
   const handlePurchase = async (tier: PricingTier) => {
-    // In a real app, this would take you to a checkout page
-    // For this demo, we'll simulate a purchase for the Basic and Pro plans
     if (tier.name === "Free Trial") {
       toast({
         title: "Free Trial",
@@ -69,37 +70,42 @@ export default function PricingSection({ userId }: PricingSectionProps) {
       return;
     }
 
-    setIsPurchasing(true);
+    // For paid plans, show the Stripe checkout
+    setSelectedTier(tier);
+    setShowCheckout(true);
+  };
+
+  const handleCheckoutSuccess = async () => {
+    setShowCheckout(false);
+    toast({
+      title: "Purchase Successful",
+      description: `Your credits are now available for use!`,
+    });
     
-    try {
-      // Simulate purchasing credits
-      const credits = tier.name === "Basic" ? 10 : 30;
-      
-      const response = await apiRequest('POST', '/api/purchase-credits', {
-        userId,
-        credits
-      });
-      
-      const data = await response.json();
-      
-      toast({
-        title: "Purchase Successful",
-        description: `You now have ${data.paidCredits} credits available.`,
-      });
-    } catch (error) {
-      console.error("Error purchasing credits:", error);
-      toast({
-        title: "Purchase Failed",
-        description: "There was an error processing your purchase. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsPurchasing(false);
-    }
+    // You could refresh the user's credit information here if needed
+  };
+
+  const handleCheckoutCancel = () => {
+    setShowCheckout(false);
   };
 
   return (
     <section id="pricing" className="mb-16">
+      {/* Stripe Checkout Modal */}
+      {showCheckout && selectedTier && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="max-w-md w-full">
+            <StripeCheckout 
+              amount={selectedTier.name === "Basic" ? 10 : 25}
+              userId={userId}
+              creditAmount={selectedTier.name === "Basic" ? 10 : 30}
+              onSuccess={handleCheckoutSuccess}
+              onCancel={handleCheckoutCancel}
+            />
+          </div>
+        </div>
+      )}
+      
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">Simple, Transparent Pricing</h2>
         <p className="text-xl text-gray-600">Choose a plan that works for you</p>
@@ -136,7 +142,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
               <Button 
                 className={`w-full ${tier.buttonClass}`}
                 onClick={() => handlePurchase(tier)}
-                disabled={isPurchasing}
+                disabled={isPurchasing || showCheckout}
               >
                 {isPurchasing ? 'Processing...' : tier.buttonText}
               </Button>
