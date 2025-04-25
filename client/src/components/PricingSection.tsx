@@ -16,10 +16,10 @@ const pricingTiers: PricingTier[] = [
     name: "Free Trial",
     price: "$0",
     features: [
-      { available: true, text: "1 Free image transformation" },
+      { available: true, text: "1 free credit" },
+      { available: true, text: "Each credit = 1 image + 1 edit" },
       { available: true, text: "Standard resolution output" },
-      { available: true, text: "Basic editing capabilities" },
-      { available: false, text: "No watermark removal" }
+      { available: false, text: "No commercial usage rights" }
     ],
     buttonText: "Start Free",
     buttonClass: "border border-gray-300 text-gray-700 hover:bg-gray-50",
@@ -27,11 +27,11 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Basic",
-    price: "$9.99",
+    price: "$10",
     features: [
-      { available: true, text: "10 Image transformations" },
+      { available: true, text: "10 credits" },
+      { available: true, text: "Each credit = 1 image + 1 edit" },
       { available: true, text: "HD resolution output" },
-      { available: true, text: "Advanced editing options" },
       { available: true, text: "No watermarks" }
     ],
     popular: true,
@@ -41,11 +41,11 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Pro",
-    price: "$24.99",
+    price: "$25/month",
     features: [
-      { available: true, text: "30 Image transformations" },
+      { available: true, text: "30 credits per month" },
+      { available: true, text: "Credits reset monthly" },
       { available: true, text: "4K resolution output" },
-      { available: true, text: "Priority processing" },
       { available: true, text: "Commercial usage rights" }
     ],
     buttonText: "Choose Pro",

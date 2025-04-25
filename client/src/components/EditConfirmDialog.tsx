@@ -20,10 +20,10 @@ const EditConfirmDialog = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
       <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
         <div className="p-6">
-          <h3 className="text-lg font-semibold mb-2">Additional Edit Will Use Credits</h3>
+          <h3 className="text-lg font-semibold mb-2">Additional Edit Will Use A New Credit</h3>
           <p className="text-gray-600 mb-4">
-            You've already used your free edit for this transformation. 
-            Additional edits will use 1 credit from your account.
+            Each credit includes 1 transformation and 1 edit. You've already used the free edit for this image.
+            Making another edit will use 1 additional credit from your account.
             You currently have {paidCredits} credits remaining.
           </p>
           <p className="text-gray-600 mb-6">

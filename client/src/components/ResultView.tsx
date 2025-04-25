@@ -142,7 +142,8 @@ export default function ResultView({
         <div className="mt-8 p-4 bg-blue-50 rounded-lg text-center">
           <p className="text-blue-700">
             <span className="mr-1">⭐</span> 
-            You have {freeCredits + paidCredits} free transformation{freeCredits + paidCredits !== 1 ? 's' : ''} remaining.
+            You have {freeCredits + paidCredits} credit{freeCredits + paidCredits !== 1 ? 's' : ''} remaining.
+            <span className="block text-sm mt-1">Each credit includes 1 image creation + 1 edit.</span>
             {(freeCredits + paidCredits === 0) && (
               <Link href="/pricing">
                 <span className="font-medium underline ml-1 cursor-pointer">
