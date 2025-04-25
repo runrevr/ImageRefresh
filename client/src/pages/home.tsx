@@ -241,7 +241,7 @@ export default function Home() {
     }
     
     // Set the selected transformation
-    setSelectedTransformation(presetType);
+    setSelectedTransformation(presetType as TransformationType);
     
     // Set a default image size for presets (square format)
     const imageSize = "1024x1024";
