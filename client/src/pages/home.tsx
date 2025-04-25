@@ -481,8 +481,6 @@ export default function Home() {
           </div>
         )}
 
-        <TransformationExamples onExampleClick={scrollToUploader} />
-        <PricingSection userId={user.id} />
         <FaqSection />
         <CtaSection onClick={scrollToUploader} />
       </main>
