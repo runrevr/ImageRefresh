@@ -315,7 +315,7 @@ export default function Home() {
                   {/* Background image with overlay */}
                   <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-300"></div>
                   <img 
-                    src="/images/features/product-photo.jpg" 
+                    src="/images/features/product-sunset.png" 
                     alt="Product Photography" 
                     className="absolute inset-0 w-full h-full object-cover"
                   />
