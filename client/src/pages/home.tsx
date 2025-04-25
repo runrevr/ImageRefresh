@@ -384,7 +384,7 @@ export default function Home() {
                   <div className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center z-10">
 
                     <h3 className="text-2xl font-bold mb-3 text-white">Custom Transformations</h3>
-                    <p className="text-gray-100 mb-4 max-w-xs">Create any artistic style you can imagine with our advanced AI, from classical paintings to futuristic designs.</p>
+                    <p className="text-gray-100 mb-4 max-w-xs">Turn ordinary photos into viral-worthy images with our advanced AI. Create any style from classical paintings to eye-catching social media content.</p>
                     <div className="mt-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                       <Button 
                         variant="outline" 
