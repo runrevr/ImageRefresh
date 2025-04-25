@@ -39,6 +39,7 @@ export default function Home() {
   const [prompt, setPrompt] = useState<string>('');
   const [user, setUser] = useState(DEFAULT_USER);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
+  const [selectedTransformation, setSelectedTransformation] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
@@ -70,6 +71,8 @@ export default function Home() {
   const handleUpload = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
+    // Reset any previously selected transformation when uploading a new image
+    setSelectedTransformation(null);
     setCurrentStep(Step.Prompt);
   };
 
@@ -138,6 +141,7 @@ export default function Home() {
     setOriginalImagePath(null);
     setTransformedImage(null);
     setPrompt('');
+    setSelectedTransformation(null);
     setCurrentStep(Step.Upload);
   };
 
@@ -221,6 +225,9 @@ export default function Home() {
       });
       return;
     }
+    
+    // Set the selected transformation
+    setSelectedTransformation(presetType);
     
     // Set a default image size for presets (square format)
     const imageSize = "1024x1024";
@@ -308,7 +315,13 @@ export default function Home() {
               <div className="flex flex-wrap justify-center gap-3">
                 <Button 
                   variant="outline" 
-                  className="hover:bg-gray-50 bg-white text-black border-black border-2 shadow-md px-5 py-6 h-auto"
+                  className={`
+                    ${selectedTransformation === "cartoon" 
+                      ? "bg-black text-white hover:bg-black hover:text-white" 
+                      : "bg-white text-black hover:bg-gray-50"
+                    } 
+                    border-black border-2 shadow-md px-5 py-6 h-auto
+                  `}
                   onClick={() => {
                     if (originalImagePath) {
                       handlePresetTransformation("cartoon");
@@ -326,7 +339,13 @@ export default function Home() {
                 
                 <Button 
                   variant="outline" 
-                  className="hover:bg-gray-50 bg-white text-black border-black border-2 shadow-md px-5 py-6 h-auto"
+                  className={`
+                    ${selectedTransformation === "product" 
+                      ? "bg-black text-white hover:bg-black hover:text-white" 
+                      : "bg-white text-black hover:bg-gray-50"
+                    } 
+                    border-black border-2 shadow-md px-5 py-6 h-auto
+                  `}
                   onClick={() => {
                     if (originalImagePath) {
                       handlePresetTransformation("product");
@@ -344,9 +363,17 @@ export default function Home() {
                 
                 <Button 
                   variant="outline" 
-                  className="hover:bg-gray-50 bg-white text-black border-black border-2 shadow-md px-5 py-6 h-auto"
+                  className={`
+                    ${selectedTransformation === "custom" 
+                      ? "bg-black text-white hover:bg-black hover:text-white" 
+                      : "bg-white text-black hover:bg-gray-50"
+                    } 
+                    border-black border-2 shadow-md px-5 py-6 h-auto
+                  `}
                   onClick={() => {
                     if (originalImagePath) {
+                      // Set selected transformation to custom
+                      setSelectedTransformation("custom");
                       // Skip to prompt step directly
                       setCurrentStep(Step.Prompt);
                     } else {
