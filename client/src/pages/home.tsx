@@ -344,7 +344,7 @@ export default function Home() {
                 
                 <Button 
                   variant="outline" 
-                  className="hover:bg-gray-50 bg-white text-black border-black border-2 border-dashed shadow-md px-5 py-6 h-auto"
+                  className="hover:bg-gray-50 bg-white text-black border-black border-2 shadow-md px-5 py-6 h-auto"
                   onClick={() => {
                     if (originalImagePath) {
                       // Skip to prompt step directly
