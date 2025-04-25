@@ -29,7 +29,7 @@ export default function ProcessingState({ originalImage, onCancel }: ProcessingS
                 <span className="animate-bounce mx-0.5 animation-delay-200">.</span>
                 <span className="animate-bounce mx-0.5 animation-delay-400">.</span>
               </div>
-              <p className="text-sm text-gray-500 mt-4">This may take up to 30 seconds</p>
+              <p className="text-sm text-gray-500 mt-4">Drawing your imagination may take up to 60 seconds</p>
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@ export default function ProcessingState({ originalImage, onCancel }: ProcessingS
             Our AI is working its magic on your image.
             <br />Please wait while we create your transformation.
           </p>
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel} className="text-white bg-black hover:bg-black/80">
             <X className="h-4 w-4 mr-2" /> Cancel
           </Button>
         </div>
