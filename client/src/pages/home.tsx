@@ -75,19 +75,9 @@ export default function Home() {
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
     
-    // If a transformation was pre-selected before upload, apply it automatically
-    if (selectedTransformation) {
-      if (selectedTransformation === "custom") {
-        // For custom transformations, just go to the prompt step
-        setCurrentStep(Step.Prompt);
-      } else {
-        // For preset transformations like "cartoon" or "product", apply them immediately
-        handlePresetTransformation(selectedTransformation);
-      }
-    } else {
-      // No transformation selected, go to prompt step
-      setCurrentStep(Step.Prompt);
-    }
+    // Always go to the prompt step regardless of preset selection
+    // This allows users to customize prompts for preset transformations
+    setCurrentStep(Step.Prompt);
   };
 
   const handlePromptSubmit = async (promptText: string, imageSize: string = "1024x1024") => {
