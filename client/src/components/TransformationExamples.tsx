@@ -12,16 +12,16 @@ interface TransformationExamplesProps {
 const examples: PromptExample[] = [
   {
     category: "Artistic Style",
-    title: "Camo to Artistic Transformation",
-    prompt: "Transform this camo hoodie into a vibrant artistic design with bold, expressive patterns and colors",
-    originalImageUrl: "/images/camo.jpg",
+    title: "Portrait to Oil Painting",
+    prompt: "Transform this portrait into a vibrant oil painting in the style of Van Gogh with swirling brushstrokes and intense colors",
+    originalImageUrl: "https://images.unsplash.com/photo-1602491453631-e2a5ad90a131?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
     transformedImageUrl: "/images/van-gogh-tiger.png"
   },
   {
     category: "Product Enhancement",
     title: "Professional Product Photography",
     prompt: "Transform this basic product shot into a professional commercial product photograph with ideal lighting, composition, and visual appeal",
-    originalImageUrl: "/images/product-original.jpg",
+    originalImageUrl: "/images/camo.jpg",
     transformedImageUrl: "/images/van-gogh-tiger.png"
   },
   {
