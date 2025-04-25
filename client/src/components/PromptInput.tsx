@@ -71,13 +71,8 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
   const { toast } = useToast();
   const maxChars = 500;
 
-  // Set suggested prompt based on selected transformation
-  useEffect(() => {
-    if (selectedTransformation && selectedTransformation in PRESET_TRANSFORMATIONS) {
-      const transformation = selectedTransformation as TransformationType;
-      setPrompt(PRESET_TRANSFORMATIONS[transformation].suggestedPrompt);
-    }
-  }, [selectedTransformation]);
+  // We no longer auto-fill the prompt based on transformation type
+  // The presets will now only affect the placeholder text and description
 
   useEffect(() => {
     setCharCount(prompt.length);

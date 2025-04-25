@@ -121,13 +121,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateTransformationStatus(transformation.id, "processing");
         
         try {
-          // Define preset prompts based on the preset type
+          // Get user prompt or use an empty string if none provided
+          const userPrompt = validatedData.prompt || "";
+          
+          // Define preset contexts to combine with user input
           let presetPrompt = "";
           
           if (presetType === 'cartoon') {
-            presetPrompt = "Transform this image into a vibrant cartoon style with bold outlines, simplified shapes, and exaggerated features. Use bright, saturated colors and create a playful, animated appearance while maintaining the original composition and subject as the main focus. Add a slight cel-shaded effect for depth.";
+            // Add cartoon-specific context, combined with user input
+            let cartoonContext = "Transform this image into a vibrant cartoon style with bold outlines, simplified shapes, and exaggerated features. ";
+            presetPrompt = `${cartoonContext}${userPrompt} Always ensure the original subject from the uploaded image remains the main focus with bright, saturated colors.`;
           } else if (presetType === 'product') {
-            presetPrompt = "Transform this into a professional product photography style with studio lighting, a clean white or gradient background, perfect exposure, and commercial-quality presentation. Maintain exact product details while enhancing color accuracy, sharpness, and overall appeal. Create soft shadows for depth and ensure the product is the clear focal point.";
+            // Add product photography context, combined with user input
+            let productContext = "Transform this into a professional product photography style with studio lighting, a clean background, perfect exposure, and commercial-quality presentation. ";
+            presetPrompt = `${productContext}${userPrompt} Always ensure the product is the clear focal point with enhanced details and accurate colors.`;
           }
           
           // Send directly to gpt-image-1
