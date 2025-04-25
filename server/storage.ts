@@ -8,6 +8,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUserCredits(id: number, usedFreeCredit: boolean, paidCredits?: number): Promise<User>;
+  updateUserEmail(id: number, email: string): Promise<User>;
   
   // Transformation operations
   createTransformation(transformation: InsertTransformation): Promise<Transformation>;
@@ -49,6 +50,21 @@ export class DatabaseStorage implements IStorage {
         freeCreditsUsed: usedFreeCredit ? true : user.freeCreditsUsed,
         paidCredits: paidCredits !== undefined ? paidCredits : user.paidCredits
       })
+      .where(eq(users.id, id))
+      .returning();
+
+    return updatedUser;
+  }
+  
+  async updateUserEmail(id: number, email: string): Promise<User> {
+    const user = await this.getUser(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({ email })
       .where(eq(users.id, id))
       .returning();
 

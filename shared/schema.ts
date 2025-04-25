@@ -6,6 +6,7 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  email: text("email"),
   freeCreditsUsed: boolean("free_credits_used").default(false).notNull(),
   paidCredits: integer("paid_credits").default(0).notNull(),
 });
@@ -25,6 +26,7 @@ export const transformations = pgTable("transformations", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  email: true,
 });
 
 export const insertTransformationSchema = createInsertSchema(transformations).pick({

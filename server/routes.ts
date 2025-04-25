@@ -523,6 +523,39 @@ style, environment, lighting, and background rather than changing the main subje
     }
   });
 
+  // Update user email endpoint
+  app.post("/api/update-email", async (req, res) => {
+    try {
+      const { userId, email } = req.body;
+      
+      if (!userId || !email) {
+        return res.status(400).json({ message: "User ID and email are required" });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Update the user's email
+      const updatedUser = await storage.updateUserEmail(userId, email);
+      
+      res.json({
+        success: true,
+        email: updatedUser.email,
+        message: "Email updated successfully"
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message || 'Unknown error' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
