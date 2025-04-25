@@ -105,10 +105,15 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
         style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
       >
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center">
-          <div className="flex flex-col gap-[2px]">
-            <div className="w-4 h-[2px] bg-gray-400"></div>
-            <div className="w-4 h-[2px] bg-gray-400"></div>
-            <div className="w-4 h-[2px] bg-gray-400"></div>
+          <div className="flex items-center">
+            {/* Left Arrow */}
+            <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
+              <path d="M7.41 10.59L2.83 6L7.41 1.41L6 0L0 6L6 12L7.41 10.59Z" fill="#666666"/>
+            </svg>
+            {/* Right Arrow */}
+            <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
+              <path d="M0.59 10.59L5.17 6L0.59 1.41L2 0L8 6L2 12L0.59 10.59Z" fill="#666666"/>
+            </svg>
           </div>
         </div>
       </div>
