@@ -382,11 +382,7 @@ export default function Home() {
                   
                   {/* Content */}
                   <div className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center z-10">
-                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
-                      </svg>
-                    </div>
+
                     <h3 className="text-2xl font-bold mb-3 text-white">Custom Transformations</h3>
                     <p className="text-gray-100 mb-4 max-w-xs">Create any artistic style you can imagine with our advanced AI, from classical paintings to futuristic designs.</p>
                     <div className="mt-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
