@@ -115,16 +115,18 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
               Upload any photo and watch our AI transform it into something extraordinary. No design skills needed.
             </p>
             
-            <Button 
-              className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg shadow-lg mb-6" 
-              onClick={onCreateClick}
-            >
-              Create Now
-            </Button>
-            
-            <div className="text-md text-gray-700 p-2 inline-flex items-center mx-auto">
-              <i className="fas fa-info-circle mr-2"></i>
-              Your first transformation is free! No credit card required.
+            <div className="flex flex-col items-center justify-center">
+              <Button 
+                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg shadow-lg mb-6" 
+                onClick={onCreateClick}
+              >
+                Create Now
+              </Button>
+              
+              <div className="text-md text-gray-700 p-2">
+                <i className="fas fa-info-circle mr-2"></i>
+                Your first transformation is free! No credit card required.
+              </div>
             </div>
           </div>
         </div>
