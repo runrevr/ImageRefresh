@@ -13,6 +13,7 @@ export interface IStorage {
   createTransformation(transformation: InsertTransformation): Promise<Transformation>;
   getTransformation(id: number): Promise<Transformation | undefined>;
   updateTransformationStatus(id: number, status: string, transformedImagePath?: string, error?: string): Promise<Transformation>;
+  incrementEditsUsed(id: number): Promise<Transformation>;
   getUserTransformations(userId: number): Promise<Transformation[]>;
 }
 
@@ -99,6 +100,24 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Transformation not found");
     }
 
+    return updatedTransformation;
+  }
+
+  async incrementEditsUsed(id: number): Promise<Transformation> {
+    const transformation = await this.getTransformation(id);
+    if (!transformation) {
+      throw new Error("Transformation not found");
+    }
+    
+    // Increment the editsUsed count
+    const [updatedTransformation] = await db
+      .update(transformations)
+      .set({ 
+        editsUsed: (transformation.editsUsed || 0) + 1 
+      })
+      .where(eq(transformations.id, id))
+      .returning();
+    
     return updatedTransformation;
   }
 

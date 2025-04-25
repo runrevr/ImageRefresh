@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Wand2 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
+import EditConfirmationDialog from './EditConfirmationDialog';
 
 interface EditPromptProps {
   originalImage: string;
@@ -12,6 +13,10 @@ interface EditPromptProps {
   initialPrompt: string;
   onSubmit: (prompt: string, imageSize: string) => void;
   onSkip: () => void;
+  transformationId?: string; // ID of the transformation being edited
+  editsUsed?: number; // Count of edits already used
+  freeCreditsUsed?: boolean; // Whether user has used free credits
+  paidCredits?: number; // User's remaining paid credits
 }
 
 export default function EditPrompt({ 
@@ -19,11 +24,16 @@ export default function EditPrompt({
   transformedImage, 
   initialPrompt,
   onSubmit, 
-  onSkip 
+  onSkip,
+  transformationId = '',
+  editsUsed = 0,
+  freeCreditsUsed = false,
+  paidCredits = 0
 }: EditPromptProps) {
   const [prompt, setPrompt] = useState(initialPrompt);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { toast } = useToast();
   
   // Debug the image paths
@@ -80,6 +90,12 @@ export default function EditPrompt({
     }
   };
   
+  // Handle updating description for page - update based on if this will be a free edit or not
+  useEffect(() => {
+    // We'll update any relevant UI based on edits used
+    console.log(`Edits used for transformation #${transformationId}: ${editsUsed}`);
+  }, [editsUsed, transformationId]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -92,6 +108,28 @@ export default function EditPrompt({
       return;
     }
     
+    // Check if this is an additional edit (beyond the first free one)
+    if (editsUsed > 0) {
+      // Show confirmation dialog if user has credits
+      if (paidCredits > 0) {
+        setShowConfirmDialog(true);
+      } else {
+        // No credits available
+        toast({
+          title: "Additional Credit Required",
+          description: "You've used your free edit for this transformation. Please purchase credits to make additional edits.",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // First edit is free, proceed
+      onSubmit(prompt, selectedSize);
+    }
+  };
+  
+  const handleConfirmEdit = () => {
+    // User confirmed using a credit for this edit
+    setShowConfirmDialog(false);
     onSubmit(prompt, selectedSize);
   };
   

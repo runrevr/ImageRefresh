@@ -178,35 +178,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // If this is an edit request, proceed without checking credits (one free edit)
         const isEditRequest = validatedData.isEdit === true;
         
-        // Check if free credit is available or paid credits (only for new transformations, not edits)
-        if (isEditRequest || !user.freeCreditsUsed || user.paidCredits > 0) {
-          // Create a transformation record
+        // Handle edit requests separately with additional credit tracking
+        if (isEditRequest) {
+          // Get the previousTransformation to check edit count
+          if (!validatedData.previousTransformation) {
+            return res.status(400).json({ message: "Previous transformation ID is required for edits" });
+          }
+          
+          const prevTransformationId = parseInt(validatedData.previousTransformation);
+          const prevTransformation = await storage.getTransformation(prevTransformationId);
+          
+          if (!prevTransformation) {
+            return res.status(404).json({ message: "Previous transformation not found" });
+          }
+          
+          // Check if this is beyond the first edit (which is free)
+          if (prevTransformation.editsUsed > 0) {
+            // Additional edits require credits
+            if (user.paidCredits <= 0) {
+              return res.status(402).json({ 
+                message: "You've used your free edit. Additional edits require credits.",
+                needsCredits: true 
+              });
+            }
+            
+            // Deduct a credit for additional edits
+            await storage.updateUserCredits(userId, true, user.paidCredits - 1);
+          }
+          
+          // Update the edits used count
+          await storage.incrementEditsUsed(prevTransformationId);
+          
+          // Create a new transformation record for this edit
           const transformation = await storage.createTransformation({
             userId,
             originalImagePath: validatedData.originalImagePath,
-            prompt: validatedData.prompt || "Custom transformation", // Add a default prompt if undefined
+            prompt: validatedData.prompt || "Edit transformation",
           });
           
           // Update transformation status to processing
           await storage.updateTransformationStatus(transformation.id, "processing");
           
           try {
-            // Prepare the prompt - enhance it if this is an edit
-            let enhancedPrompt = validatedData.prompt;
-            
-            if (validatedData.isEdit) {
-              console.log("Processing an edit request with original image path:", validatedData.originalImagePath);
-              
-              // For edits, use a simplified prompt that directly describes the desired changes
-              // We don't need to emphasize using the original image since we're directly passing it to gpt-image-1
-              enhancedPrompt = validatedData.prompt;
-              console.log("Using direct prompt for edit:", enhancedPrompt);
-            }
+            console.log("Processing an edit request with original image path:", validatedData.originalImagePath);
+            const enhancedPrompt = validatedData.prompt;
+            console.log("Using direct prompt for edit:", enhancedPrompt);
             
             // Transform the image using OpenAI with specified image size if provided
             const { transformedPath } = await transformImage(
               fullImagePath, 
-              enhancedPrompt || "Custom transformation", // Default value if prompt is undefined
+              enhancedPrompt || "Edit transformation", 
               validatedData.imageSize
             );
             
@@ -220,13 +241,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
               relativePath
             );
             
-            // Update user credits - only for initial transformations, not edits
-            if (!isEditRequest) {
-              if (!user.freeCreditsUsed) {
-                await storage.updateUserCredits(userId, true);
-              } else if (user.paidCredits > 0) {
-                await storage.updateUserCredits(userId, true, user.paidCredits - 1);
-              }
+            // Return the transformation
+            res.json({
+              id: updatedTransformation.id,
+              originalImageUrl: `/uploads/${path.basename(fullImagePath)}`,
+              transformedImageUrl: `/uploads/${path.basename(transformedPath)}`,
+              prompt: updatedTransformation.prompt,
+              status: updatedTransformation.status,
+              editsUsed: (prevTransformation.editsUsed || 0) + 1
+            });
+          } catch (error: any) {
+            // Update transformation with error
+            await storage.updateTransformationStatus(
+              transformation.id,
+              "failed",
+              undefined,
+              error.message || 'Unknown error occurred'
+            );
+            
+            throw error;
+          }
+        } 
+        // Regular (non-edit) transformations
+        else if (!user.freeCreditsUsed || user.paidCredits > 0) {
+          // Create a transformation record
+          const transformation = await storage.createTransformation({
+            userId,
+            originalImagePath: validatedData.originalImagePath,
+            prompt: validatedData.prompt || "Custom transformation", // Add a default prompt if undefined
+          });
+          
+          // Update transformation status to processing
+          await storage.updateTransformationStatus(transformation.id, "processing");
+          
+          try {
+            // Transform the image using OpenAI with specified image size if provided
+            const { transformedPath } = await transformImage(
+              fullImagePath, 
+              validatedData.prompt || "Custom transformation", // Default value if prompt is undefined
+              validatedData.imageSize
+            );
+            
+            // Get relative path for storage
+            const relativePath = path.relative(process.cwd(), transformedPath);
+            
+            // Update transformation with the result
+            const updatedTransformation = await storage.updateTransformationStatus(
+              transformation.id,
+              "completed",
+              relativePath
+            );
+            
+            // Update user credits for initial transformations
+            if (!user.freeCreditsUsed) {
+              await storage.updateUserCredits(userId, true);
+            } else if (user.paidCredits > 0) {
+              await storage.updateUserCredits(userId, true, user.paidCredits - 1);
             }
             
             // Return the transformation
