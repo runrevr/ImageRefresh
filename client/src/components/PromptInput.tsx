@@ -458,7 +458,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 <Textarea
                   value={prompt}
                   onChange={handlePromptChange}
-                  className="w-full border border-gray-300 rounded-lg p-4 h-32 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-4 h-32 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
                   placeholder={getCurrentPlaceholder()}
                   maxLength={maxChars}
                 />
