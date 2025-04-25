@@ -25,11 +25,11 @@ const examples: PromptExample[] = [
     transformedImageUrl: "/images/camo-product.png"
   },
   {
-    category: "Architectural",
-    title: "Modern to Medieval",
-    prompt: "Transform this modern building into an ancient medieval stone castle",
-    originalImageUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    transformedImageUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+    category: "Character Design",
+    title: "Kid to Cartoon Character",
+    prompt: "Transform this child's portrait into a playful, animated cartoon character in a Pixar-inspired style",
+    originalImageUrl: "/images/kid.png",
+    transformedImageUrl: "/images/van-gogh-tiger.png"
   },
   {
     category: "Commercial",
