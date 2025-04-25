@@ -112,7 +112,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
               One Click. Incredible Results.
             </h2>
             <p className="text-xl lg:text-2xl mb-8 text-gray-700 mx-auto">
-              Upload any photo and watch our AI transform it into something extraordinary. No design skills needed.
+              Upload a photo. Let our AI reimagine it. Create dazzling product shots, cartoon heroes, food art & more — no editing skills needed.
             </p>
             
             <div className="flex flex-col items-center justify-center">
