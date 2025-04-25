@@ -27,9 +27,9 @@ const examples: PromptExample[] = [
   {
     category: "Character Design",
     title: "Kid to Cartoon Character",
-    prompt: "Transform this child's portrait into a playful, animated cartoon character in a Pixar-inspired style",
+    prompt: "Transform this child's portrait into a playful, animated cartoon character in a Minecraft-inspired style",
     originalImageUrl: "/images/kid.png",
-    transformedImageUrl: "/images/van-gogh-tiger.png"
+    transformedImageUrl: "/images/kid-cartoon.png"
   },
   {
     category: "Commercial",
