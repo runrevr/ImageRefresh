@@ -11,6 +11,17 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        // Custom theme colors
+        brand: {
+          primary: "#2A7B9B",
+          secondary: "#FF7B54",
+          neutral: {
+            light: "#F2F2F2",
+            dark: "#333333",
+          },
+          accent: "#A3E4D7",
+        },
+        // ShadCN Colors
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -24,10 +35,28 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          100: "#e7f3f7", // Lighter version of primary
+          200: "#cfe8ef",
+          300: "#a0d1e0",
+          400: "#71bbd1",
+          500: "#42a4c3",
+          600: "#2A7B9B", // Primary color
+          700: "#236283",
+          800: "#1c4b6b",
+          900: "#153453",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          100: "#ffefe8", // Lighter version of secondary
+          200: "#ffd9c7",
+          300: "#ffc0a6",
+          400: "#ffa785",
+          500: "#FF7B54", // Secondary color
+          600: "#e66542",
+          700: "#cc5036",
+          800: "#b33c2a",
+          900: "#99291e",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -36,6 +65,15 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          100: "#f0fbf8", // Lighter version of accent
+          200: "#e0f7f1",
+          300: "#c1f0e3",
+          400: "#A3E4D7", // Accent color
+          500: "#75d6c4",
+          600: "#4bc8b1",
+          700: "#29b09a",
+          800: "#208e7c",
+          900: "#176d5f",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

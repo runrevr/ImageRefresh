@@ -24,7 +24,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
   const totalCredits = freeCredits + paidCredits;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
@@ -33,14 +33,14 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         </Link>
         
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#examples" className="text-gray-600 hover:text-primary-500 transition">Examples</a>
-          <a href="#pricing" className="text-gray-600 hover:text-primary-500 transition">Pricing</a>
-          <a href="#faq" className="text-gray-600 hover:text-primary-500 transition">Help</a>
+          <a href="#examples" className="text-gray-600 hover:text-primary-600 transition">Examples</a>
+          <a href="#pricing" className="text-gray-600 hover:text-primary-600 transition">Pricing</a>
+          <a href="#faq" className="text-gray-600 hover:text-primary-600 transition">Help</a>
         </div>
         
         <div className="flex items-center space-x-4">
           <div className="hidden sm:block text-sm font-medium">
-            <span className="px-2 py-1 bg-primary-100 text-primary-800 rounded-full">{totalCredits} credits</span>
+            <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full">{totalCredits} credits</span>
           </div>
           <Link href="/pricing">
             <Button className="hidden sm:block">
@@ -132,7 +132,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 </a>
                 <div className="pt-4 border-t border-gray-200">
                   <div className="text-sm font-medium mb-2">
-                    <span className="px-2 py-1 bg-primary-100 text-primary-800 rounded-full">{totalCredits} credits</span>
+                    <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full">{totalCredits} credits</span>
                   </div>
                   <Link href="/pricing">
                     <Button className="w-full mb-3" onClick={() => setIsMenuOpen(false)}>
@@ -150,7 +150,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                       </Link>
                       <Button 
                         variant="ghost" 
-                        className="w-full text-red-500" 
+                        className="w-full text-secondary-600" 
                         onClick={() => {
                           logoutMutation.mutate();
                           setIsMenuOpen(false);
