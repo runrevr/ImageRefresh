@@ -75,7 +75,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
           ) : (
             <div className="hidden md:flex items-center space-x-2">
               <Link href="/auth">
-                <Button variant="outline">Log in</Button>
+                <Button variant="outline" className="bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">Log in</Button>
               </Link>
               <Link href="/auth?tab=register">
                 <Button className="bg-[#2A7B9B] hover:bg-primary-700 text-white border-none">Sign up</Button>
@@ -143,10 +143,10 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   {user ? (
                     <>
                       <Link href="/account" onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full mb-2">My Account</Button>
+                        <Button variant="outline" className="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">My Account</Button>
                       </Link>
                       <Link href="/transformations" onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full mb-2">My Images</Button>
+                        <Button variant="outline" className="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">My Images</Button>
                       </Link>
                       <Button 
                         variant="ghost" 
@@ -162,7 +162,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   ) : (
                     <>
                       <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full mb-2">Log in</Button>
+                        <Button variant="outline" className="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">Log in</Button>
                       </Link>
                       <Link href="/auth?tab=register" onClick={() => setIsMenuOpen(false)}>
                         <Button className="w-full bg-[#2A7B9B] hover:bg-primary-700 text-white border-none">Sign up</Button>
