@@ -106,7 +106,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
-              Get Scroll-Stopping Photos — Without Hiring a Photographer or Designer
+              Create Viral-Worthy Images In Just 3 Clicks
             </h1>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-6 text-black/80">
               One Click. Incredible Results.
