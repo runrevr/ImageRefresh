@@ -491,9 +491,6 @@ export default function Home() {
             )}
           </div>
         )}
-
-        <FaqSection />
-        <CtaSection onClick={scrollToUploader} />
       </main>
 
       <Footer />
