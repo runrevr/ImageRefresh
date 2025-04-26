@@ -3,10 +3,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation, useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
@@ -21,7 +21,7 @@ const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {

@@ -14,6 +14,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import AccountPage from "@/pages/account";
 import TransformationsPage from "@/pages/transformations";
+import CheckoutPage from "@/pages/checkout";
+import SubscribePage from "@/pages/subscribe";
 
 function Router() {
   return (
@@ -25,6 +27,8 @@ function Router() {
       <Route path="/register" component={AuthPage} />
       <ProtectedRoute path="/account" component={AccountPage} />
       <ProtectedRoute path="/transformations" component={TransformationsPage} />
+      <ProtectedRoute path="/checkout" component={CheckoutPage} />
+      <ProtectedRoute path="/subscribe" component={SubscribePage} />
       <Route component={NotFound} />
     </Switch>
   );

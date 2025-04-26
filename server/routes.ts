@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import express, { type Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
@@ -46,7 +46,7 @@ const upload = multer({
 
 // Initialize Stripe with our secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2023-10-16' as any,
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -567,33 +567,94 @@ style, environment, lighting, and background rather than changing the main subje
   });
 
   // Stripe payment intent creation endpoint
+  // Create payment intent for subscription/one-time purchase
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
-      const { amount } = req.body;
-      
-      if (!amount || typeof amount !== 'number') {
-        return res.status(400).json({ message: "Valid amount is required" });
+      // Validate authentication
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
       }
       
-      // Create a PaymentIntent with the amount
+      const { planType, credits, amount } = req.body;
+      
+      if (!planType || !credits || !amount) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+      
+      // Create a payment intent with the order amount and currency
+      if (!stripe) {
+        return res.status(500).json({ message: "Stripe is not configured" });
+      }
+      
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Stripe expects amount in cents
-        currency: 'usd',
-        payment_method_types: ['card'],
+        amount: amount, // amount in cents
+        currency: "usd",
+        // Verify your integration in this guide by including this parameter
         metadata: {
-          product: 'ImageMixer Credits',
+          userId: req.user.id,
+          planType,
+          credits,
+          integration_check: 'accept_a_payment',
         },
       });
       
-      // Return the client secret to the frontend
+      // NOTE: Credits are updated via the webhook handler after successful payment
+      
       res.json({
-        clientSecret: paymentIntent.client_secret,
+        clientSecret: paymentIntent.client_secret
       });
     } catch (error: any) {
       console.error("Error creating payment intent:", error);
-      res.status(500).json({ 
-        message: error.message || 'An error occurred creating the payment intent'
-      });
+      res.status(500).json({ message: `Error creating payment intent: ${error.message}` });
+    }
+  });
+
+  // Stripe webhook handler
+  app.post('/api/webhook', async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    
+    // This is a simplified example - in production you would verify the signature
+    // using a webhook secret from your Stripe dashboard
+    try {
+      const event = stripe.webhooks.constructEvent(
+        req.body,
+        sig as string,
+        process.env.STRIPE_WEBHOOK_SECRET as string
+      );
+      
+      // Handle the event
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object as Stripe.PaymentIntent;
+          console.log(`PaymentIntent was successful: ${paymentIntent.id}`);
+          
+          // Update user credits based on metadata
+          if (paymentIntent.metadata.userId && paymentIntent.metadata.credits) {
+            const userId = parseInt(paymentIntent.metadata.userId);
+            const creditsToAdd = parseInt(paymentIntent.metadata.credits);
+            
+            const user = await storage.getUser(userId);
+            if (user) {
+              // Add the purchased credits to the user's account
+              await storage.updateUserCredits(
+                userId, 
+                user.freeCreditsUsed, 
+                (user.paidCredits || 0) + creditsToAdd
+              );
+              console.log(`Updated user ${userId} with ${creditsToAdd} additional credits`);
+            }
+          }
+          break;
+          
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+      
+      // Return a 200 response to acknowledge receipt of the event
+      res.json({received: true});
+    } catch (err: any) {
+      console.error(`Webhook Error: ${err.message}`);
+      res.status(400).send(`Webhook Error: ${err.message}`);
     }
   });
 
