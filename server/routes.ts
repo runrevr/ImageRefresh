@@ -9,6 +9,7 @@ import { insertTransformationSchema } from "@shared/schema";
 import { z } from "zod";
 import OpenAI from "openai";
 import Stripe from "stripe";
+import { setupAuth } from "./auth";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -45,10 +46,13 @@ const upload = multer({
 
 // Initialize Stripe with our secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-08-16',
+  apiVersion: '2023-10-16',
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
+  
   // Serve uploaded files
   app.use("/uploads", (req, res, next) => {
     const filePath = path.join(uploadDir, req.url);
