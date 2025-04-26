@@ -1,10 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Check, X } from 'lucide-react';
 import { PricingTier } from '@shared/schema';
 import { useState } from 'react';
-import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
 
@@ -31,7 +29,7 @@ const pricingTiers: PricingTier[] = [
     price: "$10/month",
     features: [
       { available: true, text: "10 credits per month" },
-      { available: true, text: "Each credit = 1 image + 1 edit" },
+      { available: true, text: "Credits reset monthly" },
       { available: true, text: "HD resolution output" },
       { available: true, text: "No watermarks" }
     ],
@@ -80,7 +78,6 @@ export default function PricingSection({ userId }: PricingSectionProps) {
 
   return (
     <section id="pricing" className="mb-16">
-      
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">Simple, Transparent Pricing</h2>
         <p className="text-xl text-gray-600">Choose a plan that works for you</p>
