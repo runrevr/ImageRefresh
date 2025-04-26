@@ -46,7 +46,7 @@ const upload = multer({
 
 // Initialize Stripe with our secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2025-03-31.basil',
+  apiVersion: '2023-10-16',
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
