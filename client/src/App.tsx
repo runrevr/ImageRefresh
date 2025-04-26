@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import PricingPage from "@/pages/pricing";
-import AuthPage from "@/pages/auth";
+import AuthPage from "@/pages/auth-page";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 
