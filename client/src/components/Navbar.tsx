@@ -39,8 +39,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         </div>
         
         <div className="flex items-center space-x-4">
-          <div className="hidden sm:block text-sm text-gray-500">
-            <span>{totalCredits}</span> free edit{totalCredits !== 1 ? 's' : ''} remaining
+          <div className="hidden sm:block text-sm font-medium">
+            <span className="px-2 py-1 bg-primary-100 text-primary-800 rounded-full">{totalCredits} credits</span>
           </div>
           <Link href="/pricing">
             <Button className="hidden sm:block">
@@ -131,8 +131,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   Help
                 </a>
                 <div className="pt-4 border-t border-gray-200">
-                  <div className="text-sm text-gray-500 mb-2">
-                    {totalCredits} free edit{totalCredits !== 1 ? 's' : ''} remaining
+                  <div className="text-sm font-medium mb-2">
+                    <span className="px-2 py-1 bg-primary-100 text-primary-800 rounded-full">{totalCredits} credits</span>
                   </div>
                   <Link href="/pricing">
                     <Button className="w-full mb-3" onClick={() => setIsMenuOpen(false)}>
