@@ -47,6 +47,10 @@ const EmailCollectionDialog = ({
       });
       
       if (response.ok) {
+        // Save to localStorage to track that this user has used the email feature
+        localStorage.setItem('emailCollected', 'true');
+        localStorage.setItem('collectedEmail', email);
+        
         toast({
           title: "Success!",
           description: "Your email has been saved. Enjoy your image!",

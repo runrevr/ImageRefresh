@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import ImageUploader from '@/components/ImageUploader';
 import PromptInput from '@/components/PromptInput';
@@ -12,6 +12,7 @@ import FaqSection from '@/components/FaqSection';
 import CtaSection from '@/components/CtaSection';
 import Footer from '@/components/Footer';
 import HeroCarousel from '@/components/HeroCarousel';
+import AccountNeededDialog from '@/components/AccountNeededDialog';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,8 @@ export default function Home() {
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
   const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
+  const [showAccountNeededDialog, setShowAccountNeededDialog] = useState<boolean>(false);
+  const [storedEmail, setStoredEmail] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
@@ -79,6 +82,16 @@ export default function Home() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [showUploadForm]);
+  
+  // Check for email collection status on component mount
+  useEffect(() => {
+    const emailCollected = localStorage.getItem('emailCollected');
+    const collectedEmail = localStorage.getItem('collectedEmail');
+    
+    if (emailCollected === 'true' && collectedEmail) {
+      setStoredEmail(collectedEmail);
+    }
+  }, []);
 
   const handleUpload = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);
@@ -303,15 +316,32 @@ export default function Home() {
     }
   };
 
+  // Function to handle Upload button clicks with account check
+  const handleUploadClick = () => {
+    // If the user has previously used the email collection feature, show account dialog
+    if (storedEmail) {
+      setShowAccountNeededDialog(true);
+    } else {
+      setShowUploadForm(true);
+    }
+  };
+  
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
       <Navbar freeCredits={!user.freeCreditsUsed ? 1 : 0} paidCredits={user.paidCredits} />
+      
+      {/* Account Needed Dialog */}
+      <AccountNeededDialog 
+        open={showAccountNeededDialog}
+        onClose={() => setShowAccountNeededDialog(false)}
+        email={storedEmail}
+      />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Hero Section - Carousel Style */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>
-            <HeroCarousel onCreateClick={() => setShowUploadForm(true)} />
+            <HeroCarousel onCreateClick={handleUploadClick} />
             
             {!isOpenAIConfigured && (
               <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
