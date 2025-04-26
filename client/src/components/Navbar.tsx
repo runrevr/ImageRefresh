@@ -43,7 +43,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full">{totalCredits} credits</span>
           </div>
           <Link href="/pricing">
-            <Button className="hidden sm:block">
+            <Button className="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
               Get More Credits
             </Button>
           </Link>
@@ -78,7 +78,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 <Button variant="outline">Log in</Button>
               </Link>
               <Link href="/auth?tab=register">
-                <Button>Sign up</Button>
+                <Button className="bg-[#2A7B9B] hover:bg-primary-700 text-white border-none">Sign up</Button>
               </Link>
             </div>
           )}
@@ -135,7 +135,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                     <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full">{totalCredits} credits</span>
                   </div>
                   <Link href="/pricing">
-                    <Button className="w-full mb-3" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full mb-3 bg-[#FF7B54] hover:bg-secondary-600 text-white border-none" onClick={() => setIsMenuOpen(false)}>
                       Get More Credits
                     </Button>
                   </Link>
@@ -165,7 +165,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                         <Button variant="outline" className="w-full mb-2">Log in</Button>
                       </Link>
                       <Link href="/auth?tab=register" onClick={() => setIsMenuOpen(false)}>
-                        <Button className="w-full">Sign up</Button>
+                        <Button className="w-full bg-[#2A7B9B] hover:bg-primary-700 text-white border-none">Sign up</Button>
                       </Link>
                     </>
                   )}
