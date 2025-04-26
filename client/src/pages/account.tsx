@@ -208,9 +208,12 @@ export default function AccountPage() {
                         <h4 className="font-bold mb-1">30 Credits</h4>
                         <p className="text-2xl font-bold mb-2">$20/mo</p>
                         <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
+                        <p className="text-[#333333] mb-3 text-sm font-medium">
+                          ✨ Get 50% more value! ✨<br />
+                          Upgrade to our $20 package and receive 30 credits instead of just 20 credits at the standard rate. 🚀 💰
+                        </p>
                         <Button 
-                          className="w-full" 
-                          variant="default" 
+                          className="w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white" 
                           onClick={() => navigate("/subscribe")}
                         >
                           Subscribe Now
