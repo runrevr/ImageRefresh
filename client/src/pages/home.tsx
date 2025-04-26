@@ -170,6 +170,11 @@ export default function Home() {
     setSelectedTransformation(null);
     setCurrentStep(Step.Upload);
     setShowUploadForm(false);
+    
+    // Clear email collection status
+    localStorage.removeItem('emailCollected');
+    localStorage.removeItem('collectedEmail');
+    setStoredEmail(null);
   };
 
   const handleCancel = () => {
@@ -371,9 +376,13 @@ export default function Home() {
                         variant="outline" 
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
-                          setShowUploadForm(true);
-                          scrollToUploader();
-                          setSelectedTransformation('product');
+                          if (storedEmail) {
+                            setShowAccountNeededDialog(true);
+                          } else {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('product');
+                          }
                         }}
                       >
                         Try it now
@@ -401,9 +410,13 @@ export default function Home() {
                         variant="outline" 
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
-                          setShowUploadForm(true);
-                          scrollToUploader();
-                          setSelectedTransformation('cartoon');
+                          if (storedEmail) {
+                            setShowAccountNeededDialog(true);
+                          } else {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('cartoon');
+                          }
                         }}
                       >
                         Try it now
@@ -431,9 +444,13 @@ export default function Home() {
                         variant="outline" 
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
-                          setShowUploadForm(true);
-                          scrollToUploader();
-                          setSelectedTransformation('custom');
+                          if (storedEmail) {
+                            setShowAccountNeededDialog(true);
+                          } else {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('custom');
+                          }
                         }}
                       >
                         Try it now
@@ -445,7 +462,13 @@ export default function Home() {
             </div>
             
             {/* Example Transformations Section */}
-            <TransformationExamples onExampleClick={() => setShowUploadForm(true)} />
+            <TransformationExamples onExampleClick={() => {
+              if (storedEmail) {
+                setShowAccountNeededDialog(true);
+              } else {
+                setShowUploadForm(true);
+              }
+            }} />
             
             {/* Pricing Section */}
             <PricingSection userId={user.id} />
@@ -455,8 +478,12 @@ export default function Home() {
             
             {/* Final CTA */}
             <CtaSection onClick={() => {
-              setShowUploadForm(true);
-              scrollToUploader();
+              if (storedEmail) {
+                setShowAccountNeededDialog(true);
+              } else {
+                setShowUploadForm(true);
+                scrollToUploader();
+              }
             }} />
           </>
         )}
