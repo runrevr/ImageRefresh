@@ -187,13 +187,14 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-email">Email (optional)</Label>
+                    <Label htmlFor="register-email">Email</Label>
                     <Input 
                       id="register-email" 
                       type="email" 
                       placeholder="Enter your email" 
                       value={registerEmail} 
-                      onChange={(e) => setRegisterEmail(e.target.value)} 
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                      required
                     />
                   </div>
                   <div className="space-y-2">

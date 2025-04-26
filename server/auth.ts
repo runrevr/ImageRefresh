@@ -15,7 +15,7 @@ declare global {
       id: number;
       username: string;
       password: string;
-      email?: string;
+      email: string;
       freeCreditsUsed: boolean;
       paidCredits: number;
     }
@@ -94,11 +94,16 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Username already exists" });
       }
 
+      // Email is now required
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+      
       // Create the user with hashed password
       const user = await storage.createUser({
         username,
         password: await hashPassword(password),
-        email: email || undefined,
+        email,
       });
 
       // Log the user in
