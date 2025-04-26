@@ -175,7 +175,7 @@ export default function AccountPage() {
               <CardContent>
                 <div className="space-y-6">
                   <div className="bg-gray-50 p-6 rounded-lg border">
-                    <h3 className="text-xl font-bold mb-2">Available Credits</h3>
+                    <h3 className="text-xl font-bold mb-2 text-[#333333]">Available Credits</h3>
                     <div className="flex items-baseline">
                       <span className="text-4xl font-bold">{user.paidCredits}</span>
                       <span className="text-gray-500 ml-2">credits</span>
