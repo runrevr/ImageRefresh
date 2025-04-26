@@ -117,10 +117,10 @@ export default function AccountPage() {
                             </div>
                           </div>
                           <div className="aspect-square relative bg-gray-100">
-                            {transformation.transformedImageUrl ? (
+                            {transformation.transformedImagePath ? (
                               <>
                                 <img 
-                                  src={transformation.transformedImageUrl} 
+                                  src={transformation.transformedImagePath} 
                                   alt="Transformed" 
                                   className="absolute inset-0 w-full h-full object-cover"
                                 />
@@ -210,7 +210,7 @@ export default function AccountPage() {
                         <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
                         <Button 
                           className="w-full" 
-                          variant="primary" 
+                          variant="default" 
                           onClick={() => navigate("/pricing")}
                         >
                           Subscribe Now
