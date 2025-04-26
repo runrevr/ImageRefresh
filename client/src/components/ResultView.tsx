@@ -70,13 +70,13 @@ export default function ResultView({
           />
         </div>
         
-        {/* Transformation Description - White text on black background */}
-        <div className="bg-black p-4 rounded-lg mb-8">
+        {/* Transformation Description - Gray text */}
+        <div className="p-4 rounded-lg mb-8 border border-gray-200">
           <div className="flex items-start">
-            <ImageIcon className="text-white h-5 w-5 mt-1 mr-3 flex-shrink-0" />
+            <ImageIcon className="text-gray-700 h-5 w-5 mt-1 mr-3 flex-shrink-0" />
             <div>
-              <h3 className="text-white font-medium mb-1">Transformation Description</h3>
-              <p className="text-white text-sm md:text-base leading-relaxed">
+              <h3 className="text-gray-700 font-medium mb-1">Description:</h3>
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                 {prompt}
               </p>
             </div>
