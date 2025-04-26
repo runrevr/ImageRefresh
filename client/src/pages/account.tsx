@@ -196,7 +196,7 @@ export default function AccountPage() {
                         <p className="text-sm text-gray-500 mb-4">One-time purchase</p>
                         <Button 
                           className="w-full" 
-                          onClick={() => navigate("/pricing")}
+                          onClick={() => navigate("/checkout")}
                         >
                           Purchase Now
                         </Button>
@@ -211,11 +211,49 @@ export default function AccountPage() {
                         <Button 
                           className="w-full" 
                           variant="default" 
-                          onClick={() => navigate("/pricing")}
+                          onClick={() => navigate("/subscribe")}
                         >
                           Subscribe Now
                         </Button>
                       </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 border-t pt-6">
+                    <h3 className="text-lg font-medium mb-4">Billing History</h3>
+                    <div className="bg-white rounded-lg border">
+                      <div className="divide-y">
+                        {/* Mock billing history - to be replaced with real data */}
+                        <div className="p-4 flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">30 Credit Subscription</p>
+                            <p className="text-sm text-gray-500">Apr 26, 2025</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">$25.00</p>
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                              Paid
+                            </span>
+                          </div>
+                        </div>
+                        <div className="p-4 flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">10 Credit Pack</p>
+                            <p className="text-sm text-gray-500">Apr 19, 2025</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">$10.00</p>
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                              Paid
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-500">
+                        Need help with your billing? <a href="mailto:support@imagerefresh.ai" className="text-blue-600 hover:underline">Contact Support</a>
+                      </p>
                     </div>
                   </div>
                 </div>

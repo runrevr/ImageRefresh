@@ -323,6 +323,15 @@ export default function Home() {
 
   // Function to handle Upload button clicks with account check
   const handleUploadClick = () => {
+    // If already logged in, ignore the email storage and clear it
+    if (user.id) {
+      localStorage.removeItem('emailCollected');
+      localStorage.removeItem('collectedEmail');
+      setStoredEmail(null);
+      setShowUploadForm(true);
+      return;
+    }
+    
     // If the user has previously used the email collection feature, show account dialog
     if (storedEmail) {
       setShowAccountNeededDialog(true);
@@ -340,6 +349,8 @@ export default function Home() {
         open={showAccountNeededDialog}
         onClose={() => setShowAccountNeededDialog(false)}
         email={storedEmail}
+        isLoggedIn={Boolean(user.id)}
+        remainingCredits={user.paidCredits}
       />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
@@ -376,7 +387,12 @@ export default function Home() {
                         variant="outline" 
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
-                          if (storedEmail) {
+                          // If user is logged in, skip email check
+                          if (user.id) {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('product');
+                          } else if (storedEmail) {
                             setShowAccountNeededDialog(true);
                           } else {
                             setShowUploadForm(true);
@@ -410,7 +426,12 @@ export default function Home() {
                         variant="outline" 
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
-                          if (storedEmail) {
+                          // If user is logged in, skip email check
+                          if (user.id) {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('cartoon');
+                          } else if (storedEmail) {
                             setShowAccountNeededDialog(true);
                           } else {
                             setShowUploadForm(true);
@@ -444,7 +465,12 @@ export default function Home() {
                         variant="outline" 
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
-                          if (storedEmail) {
+                          // If user is logged in, skip email check
+                          if (user.id) {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('custom');
+                          } else if (storedEmail) {
                             setShowAccountNeededDialog(true);
                           } else {
                             setShowUploadForm(true);
@@ -463,7 +489,10 @@ export default function Home() {
             
             {/* Example Transformations Section */}
             <TransformationExamples onExampleClick={() => {
-              if (storedEmail) {
+              // If user is logged in, skip email check
+              if (user.id) {
+                setShowUploadForm(true);
+              } else if (storedEmail) {
                 setShowAccountNeededDialog(true);
               } else {
                 setShowUploadForm(true);
@@ -478,7 +507,11 @@ export default function Home() {
             
             {/* Final CTA */}
             <CtaSection onClick={() => {
-              if (storedEmail) {
+              // If user is logged in, skip email check
+              if (user.id) {
+                setShowUploadForm(true);
+                scrollToUploader();
+              } else if (storedEmail) {
                 setShowAccountNeededDialog(true);
               } else {
                 setShowUploadForm(true);
