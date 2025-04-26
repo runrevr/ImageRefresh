@@ -206,7 +206,7 @@ export default function AccountPage() {
                           BEST VALUE
                         </span>
                         <h4 className="font-bold mb-1">30 Credits</h4>
-                        <p className="text-2xl font-bold mb-2">$20/mo</p>
+                        <p className="text-2xl font-bold mb-2 text-[#333333]">$20/mo</p>
                         <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
                         <p className="text-[#333333] mb-3 text-sm font-medium">
                           ✨ Get 50% more value! ✨<br />
