@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Lato:wght@300;400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -53,7 +55,40 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-lato font-normal antialiased bg-background text-foreground;
+  }
+
+  /* Typography styles */
+  h1, .h1 {
+    @apply font-nunito font-bold text-3xl leading-tight md:text-4xl lg:text-5xl;
+  }
+
+  h2, .h2 {
+    @apply font-nunito font-semibold text-2xl leading-tight md:text-3xl lg:text-4xl;
+  }
+
+  h3, .h3 {
+    @apply font-nunito font-medium text-xl leading-snug md:text-2xl lg:text-3xl;
+  }
+
+  h4, .h4 {
+    @apply font-nunito font-medium text-lg leading-snug md:text-xl;
+  }
+
+  p {
+    @apply font-lato font-normal leading-relaxed;
+  }
+
+  button, .button {
+    @apply font-lato font-semibold;
+  }
+
+  .small, small, .caption {
+    @apply font-lato font-light text-sm;
+  }
+
+  .header-menu {
+    @apply font-lato font-semibold text-[15px];
   }
 }
 
