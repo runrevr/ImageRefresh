@@ -10,7 +10,15 @@ import MemoryStore from "memorystore";
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Use User type from schema but without circular reference
+    interface User {
+      id: number;
+      username: string;
+      password: string;
+      email?: string;
+      freeCreditsUsed: boolean;
+      paidCredits: number;
+    }
   }
 }
 
@@ -52,7 +60,7 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
+    new LocalStrategy(async (username: string, password: string, done: any) => {
       try {
         const user = await storage.getUserByUsername(username);
         if (!user || !(await comparePasswords(password, user.password))) {
@@ -60,18 +68,18 @@ export function setupAuth(app: Express) {
         } else {
           return done(null, user);
         }
-      } catch (err) {
+      } catch (err: any) {
         return done(err);
       }
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
-  passport.deserializeUser(async (id: number, done) => {
+  passport.serializeUser((user: any, done: any) => done(null, user.id));
+  passport.deserializeUser(async (id: number, done: any) => {
     try {
       const user = await storage.getUser(id);
       done(null, user || undefined);
-    } catch (err) {
+    } catch (err: any) {
       done(err);
     }
   });
@@ -94,7 +102,7 @@ export function setupAuth(app: Express) {
       });
 
       // Log the user in
-      req.login(user, (err) => {
+      req.login(user, (err: any) => {
         if (err) return next(err);
         res.status(201).json(user);
       });
@@ -105,12 +113,12 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) return next(err);
       if (!user) {
         return res.status(401).json({ message: "Invalid username or password" });
       }
-      req.login(user, (err) => {
+      req.login(user, (err: any) => {
         if (err) return next(err);
         res.status(200).json(user);
       });

@@ -1,0 +1,229 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Transformation } from "@shared/schema";
+import { formatDistanceToNow } from "date-fns";
+
+export default function AccountPage() {
+  const { user, isLoading: authLoading } = useAuth();
+  const [, navigate] = useLocation();
+  const [activeTab, setActiveTab] = useState("profile");
+  
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
+  
+  // Fetch user transformations
+  const { data: transformations, isLoading: transformationsLoading } = useQuery<any[]>({
+    queryKey: ["/api/transformations", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await apiRequest("GET", `/api/transformations/${user.id}`);
+      if (!res.ok) throw new Error("Failed to fetch transformations");
+      return res.json();
+    },
+    enabled: !!user
+  });
+  
+  if (authLoading) {
+    return (
+      <div className="container mx-auto p-6 min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-4xl">
+          <Skeleton className="h-12 w-48 mb-6" />
+          <Skeleton className="h-64 w-full rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return null; // Will redirect via useEffect
+  }
+  
+  return (
+    <div className="container mx-auto p-6 min-h-screen">
+      <div className="w-full max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">My Account</h1>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-8">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="transformations">My Images</TabsTrigger>
+            <TabsTrigger value="credits">Credits</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="profile">
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Information</CardTitle>
+                <CardDescription>Manage your account details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-medium">Username</h3>
+                    <p className="text-gray-600">{user.username}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium">Email</h3>
+                    <p className="text-gray-600">{user.email || "No email provided"}</p>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button variant="outline" onClick={() => {}}>
+                      Update Profile
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="transformations">
+            <Card>
+              <CardHeader>
+                <CardTitle>My Transformations</CardTitle>
+                <CardDescription>View your image transformation history</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {transformationsLoading ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                  </div>
+                ) : transformations && transformations.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {transformations.map((transformation) => (
+                      <div key={transformation.id} className="border rounded-lg overflow-hidden">
+                        <div className="grid grid-cols-2 gap-1">
+                          <div className="aspect-square relative bg-gray-100">
+                            <img 
+                              src={transformation.originalImagePath} 
+                              alt="Original" 
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1">
+                              Original
+                            </div>
+                          </div>
+                          <div className="aspect-square relative bg-gray-100">
+                            {transformation.transformedImageUrl ? (
+                              <>
+                                <img 
+                                  src={transformation.transformedImageUrl} 
+                                  alt="Transformed" 
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1">
+                                  Transformed
+                                </div>
+                              </>
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                {transformation.status === "failed" ? (
+                                  <p className="text-red-500 text-sm text-center p-2">
+                                    Transformation failed
+                                  </p>
+                                ) : (
+                                  <p className="text-gray-500 text-sm text-center p-2">
+                                    {transformation.status === "pending" ? "Pending" : "Processing"}...
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="p-3">
+                          <p className="text-xs text-gray-500">
+                            {transformation.createdAt ? (
+                              formatDistanceToNow(new Date(transformation.createdAt), { addSuffix: true })
+                            ) : (
+                              "Date unknown"
+                            )}
+                          </p>
+                          <p className="text-sm mt-1 line-clamp-2">{transformation.prompt}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 mb-4">You haven't created any transformations yet.</p>
+                    <Button onClick={() => navigate("/")}>Create Your First Transformation</Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="credits">
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Credits</CardTitle>
+                <CardDescription>Manage your subscription and credits</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="bg-gray-50 p-6 rounded-lg border">
+                    <h3 className="text-xl font-bold mb-2">Available Credits</h3>
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-bold">{user.paidCredits}</span>
+                      <span className="text-gray-500 ml-2">credits</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {user.freeCreditsUsed ? 
+                        "You've used your free credit" : 
+                        "You have 1 free credit available"}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-4">Get More Credits</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="border rounded-lg p-4 text-center">
+                        <h4 className="font-bold mb-1">10 Credits</h4>
+                        <p className="text-2xl font-bold mb-2">$10</p>
+                        <p className="text-sm text-gray-500 mb-4">One-time purchase</p>
+                        <Button 
+                          className="w-full" 
+                          onClick={() => navigate("/pricing")}
+                        >
+                          Purchase Now
+                        </Button>
+                      </div>
+                      <div className="border rounded-lg p-4 text-center bg-blue-50 border-blue-200">
+                        <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded-full absolute -mt-6">
+                          BEST VALUE
+                        </span>
+                        <h4 className="font-bold mb-1">30 Credits</h4>
+                        <p className="text-2xl font-bold mb-2">$25/mo</p>
+                        <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
+                        <Button 
+                          className="w-full" 
+                          variant="primary" 
+                          onClick={() => navigate("/pricing")}
+                        >
+                          Subscribe Now
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

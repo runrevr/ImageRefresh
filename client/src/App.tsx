@@ -10,6 +10,10 @@ import AuthPage from "@/pages/auth";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 
+// Import statement at top of file
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import AccountPage from "@/pages/account";
+
 function Router() {
   return (
     <Switch>
@@ -18,6 +22,8 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/login" component={AuthPage} />
       <Route path="/register" component={AuthPage} />
+      <ProtectedRoute path="/account" component={AccountPage} />
+      <ProtectedRoute path="/transformations" component={AccountPage} />
       <Route component={NotFound} />
     </Switch>
   );
