@@ -109,7 +109,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
               Create Viral-Worthy Images In Just 3 Clicks
             </h1>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-6 text-black/80">
-              One Click. Incredible Results.
+              Upload Your Image, Unload Your Imagination
             </h2>
             <p className="text-xl lg:text-2xl mb-8 text-gray-700 mx-auto">
               Imagine your kid as a cartoon hero. Your product as the next viral obsession. Your content is creating trends. If Nothing Else You Can Make Your Friends Look Like a Simpson Charcter...
