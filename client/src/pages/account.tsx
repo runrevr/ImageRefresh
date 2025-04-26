@@ -205,7 +205,7 @@ export default function AccountPage() {
                         <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded-full absolute -mt-6">
                           BEST VALUE
                         </span>
-                        <h4 className="font-bold mb-1">30 Credits</h4>
+                        <h4 className="font-bold mb-1 text-[#333333]">30 Credits</h4>
                         <p className="text-2xl font-bold mb-2 text-[#333333]">$20/mo</p>
                         <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
                         <p className="text-[#333333] mb-3 text-sm font-medium">
