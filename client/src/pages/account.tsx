@@ -192,13 +192,13 @@ export default function AccountPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="border rounded-lg p-4 text-center">
                         <h4 className="font-bold mb-1">10 Credits</h4>
-                        <p className="text-2xl font-bold mb-2">$10</p>
-                        <p className="text-sm text-gray-500 mb-4">One-time purchase</p>
+                        <p className="text-2xl font-bold mb-2">$10/mo</p>
+                        <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
                         <Button 
                           className="w-full" 
                           onClick={() => navigate("/checkout")}
                         >
-                          Purchase Now
+                          Subscribe Now
                         </Button>
                       </div>
                       <div className="border rounded-lg p-4 text-center bg-blue-50 border-blue-200">
@@ -206,7 +206,7 @@ export default function AccountPage() {
                           BEST VALUE
                         </span>
                         <h4 className="font-bold mb-1">30 Credits</h4>
-                        <p className="text-2xl font-bold mb-2">$25/mo</p>
+                        <p className="text-2xl font-bold mb-2">$20/mo</p>
                         <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
                         <Button 
                           className="w-full" 
@@ -230,7 +230,7 @@ export default function AccountPage() {
                             <p className="text-sm text-gray-500">Apr 26, 2025</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium">$25.00</p>
+                            <p className="font-medium">$20.00</p>
                             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                               Paid
                             </span>
@@ -238,7 +238,7 @@ export default function AccountPage() {
                         </div>
                         <div className="p-4 flex justify-between items-center">
                           <div>
-                            <p className="font-medium">10 Credit Pack</p>
+                            <p className="font-medium">10 Credit Subscription</p>
                             <p className="text-sm text-gray-500">Apr 19, 2025</p>
                           </div>
                           <div className="text-right">

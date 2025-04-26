@@ -28,27 +28,28 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Basic",
-    price: "$10",
+    price: "$10/month",
     features: [
-      { available: true, text: "10 credits" },
+      { available: true, text: "10 credits per month" },
       { available: true, text: "Each credit = 1 image + 1 edit" },
       { available: true, text: "HD resolution output" },
       { available: true, text: "No watermarks" }
     ],
-    popular: true,
+    popular: false,
     buttonText: "Choose Basic",
     buttonClass: "bg-primary-500 text-white hover:bg-primary-600",
     borderClass: "border-t-4 border-primary-500"
   },
   {
     name: "Pro",
-    price: "$25/month",
+    price: "$20/month",
     features: [
       { available: true, text: "30 credits per month" },
       { available: true, text: "Credits reset monthly" },
       { available: true, text: "4K resolution output" },
       { available: true, text: "Commercial usage rights" }
     ],
+    popular: true,
     buttonText: "Choose Pro",
     buttonClass: "border border-secondary-500 text-secondary-500 hover:bg-secondary-50",
     borderClass: "border-t-4 border-secondary-500"
@@ -96,7 +97,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="max-w-md w-full">
             <StripeCheckout 
-              amount={selectedTier.name === "Basic" ? 10 : 25}
+              amount={selectedTier.name === "Basic" ? 10 : 20}
               userId={userId}
               creditAmount={selectedTier.name === "Basic" ? 10 : 30}
               onSuccess={handleCheckoutSuccess}
