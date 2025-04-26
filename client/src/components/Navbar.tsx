@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Link } from 'wouter';
 import logoImage from '../assets/logo.png';
 import { useAuth } from '@/hooks/useAuth';
+import { Bot } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -40,7 +41,10 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         
         <div className="flex items-center space-x-4">
           <div className="hidden sm:block text-sm font-medium">
-            <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full">{totalCredits} credits</span>
+            <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
+              <Bot className="h-4 w-4 mr-1 text-primary-600" />
+              {totalCredits} credits
+            </span>
           </div>
           <Link href="/pricing">
             <Button className="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
@@ -132,7 +136,10 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 </a>
                 <div className="pt-4 border-t border-gray-200">
                   <div className="text-sm font-medium mb-2">
-                    <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full">{totalCredits} credits</span>
+                    <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
+                      <Bot className="h-4 w-4 mr-1 text-primary-600" />
+                      {totalCredits} credits
+                    </span>
                   </div>
                   <Link href="/pricing">
                     <Button className="w-full mb-3 bg-[#FF7B54] hover:bg-secondary-600 text-white border-none" onClick={() => setIsMenuOpen(false)}>
