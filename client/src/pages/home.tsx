@@ -72,6 +72,13 @@ export default function Home() {
     fetchUserCredits();
     fetchConfig();
   }, []);
+  
+  // Scroll to top when uploadForm appears
+  useEffect(() => {
+    if (showUploadForm) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showUploadForm]);
 
   const handleUpload = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);
@@ -286,9 +293,13 @@ export default function Home() {
 
   // Function to scroll to uploader section
   const scrollToUploader = () => {
+    // First scroll to the top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Then scroll to the uploader element
     const uploaderElement = document.getElementById('uploader');
     if (uploaderElement) {
-      uploaderElement.scrollIntoView({ behavior: 'smooth' });
+      uploaderElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -430,7 +441,7 @@ export default function Home() {
                 <div className="mt-4 text-center">
                   <Button 
                     variant="outline" 
-                    className="text-black border-black mt-4"
+                    className="text-white border-white mt-4"
                     onClick={() => setShowUploadForm(false)}
                   >
                     Back to Home
