@@ -33,9 +33,9 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         </Link>
         
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#examples" className="text-gray-600 hover:text-primary-600 transition">Examples</a>
-          <a href="#pricing" className="text-gray-600 hover:text-primary-600 transition">Pricing</a>
-          <a href="#faq" className="text-gray-600 hover:text-primary-600 transition">Help</a>
+          <a href="#examples" className="text-[#333333] hover:text-[#2A7B9B] transition">Examples</a>
+          <a href="#pricing" className="text-[#333333] hover:text-[#2A7B9B] transition">Pricing</a>
+          <a href="#faq" className="text-[#333333] hover:text-[#2A7B9B] transition">Help</a>
         </div>
         
         <div className="flex items-center space-x-4">
@@ -111,21 +111,21 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <div className="flex flex-col space-y-4">
                 <a 
                   href="#examples" 
-                  className="text-lg font-medium py-2"
+                  className="text-lg font-medium py-2 text-[#333333] hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Examples
                 </a>
                 <Link 
                   href="/pricing" 
-                  className="text-lg font-medium py-2 block"
+                  className="text-lg font-medium py-2 block text-[#333333] hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Pricing
                 </Link>
                 <a 
                   href="#faq" 
-                  className="text-lg font-medium py-2"
+                  className="text-lg font-medium py-2 text-[#333333] hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Help
