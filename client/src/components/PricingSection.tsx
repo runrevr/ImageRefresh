@@ -6,7 +6,7 @@ import { PricingTier } from '@shared/schema';
 import { useState } from 'react';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import StripeCheckout from './StripeCheckout';
+import { useLocation } from 'wouter';
 
 interface PricingSectionProps {
   userId: number;
@@ -58,9 +58,8 @@ const pricingTiers: PricingTier[] = [
 
 export default function PricingSection({ userId }: PricingSectionProps) {
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
-  const [showCheckout, setShowCheckout] = useState(false);
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const handlePurchase = async (tier: PricingTier) => {
     if (tier.name === "Free Trial") {
@@ -71,41 +70,16 @@ export default function PricingSection({ userId }: PricingSectionProps) {
       return;
     }
 
-    // For paid plans, show the Stripe checkout
-    setSelectedTier(tier);
-    setShowCheckout(true);
-  };
-
-  const handleCheckoutSuccess = async () => {
-    setShowCheckout(false);
-    toast({
-      title: "Purchase Successful",
-      description: `Your credits are now available for use!`,
-    });
-    
-    // You could refresh the user's credit information here if needed
-  };
-
-  const handleCheckoutCancel = () => {
-    setShowCheckout(false);
+    // For paid plans, navigate to the appropriate checkout page
+    if (tier.name === "Basic") {
+      navigate("/checkout");
+    } else if (tier.name === "Pro") {
+      navigate("/subscribe");
+    }
   };
 
   return (
     <section id="pricing" className="mb-16">
-      {/* Stripe Checkout Modal */}
-      {showCheckout && selectedTier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="max-w-md w-full">
-            <StripeCheckout 
-              amount={selectedTier.name === "Basic" ? 10 : 20}
-              userId={userId}
-              creditAmount={selectedTier.name === "Basic" ? 10 : 30}
-              onSuccess={handleCheckoutSuccess}
-              onCancel={handleCheckoutCancel}
-            />
-          </div>
-        </div>
-      )}
       
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">Simple, Transparent Pricing</h2>
@@ -143,7 +117,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
               <Button 
                 className={`w-full ${tier.buttonClass}`}
                 onClick={() => handlePurchase(tier)}
-                disabled={isPurchasing || showCheckout}
+                disabled={isPurchasing}
               >
                 {isPurchasing ? 'Processing...' : tier.buttonText}
               </Button>
