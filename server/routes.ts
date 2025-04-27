@@ -195,7 +195,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             return res.status(400).json({ message: "Previous transformation ID is required for edits" });
           }
           
+          // Guard against NaN when parsing previousTransformation
           const prevTransformationId = parseInt(validatedData.previousTransformation);
+          if (isNaN(prevTransformationId)) {
+            return res.status(400).json({ message: "Invalid previous transformation ID" });
+          }
           const prevTransformation = await storage.getTransformation(prevTransformationId);
           
           if (!prevTransformation) {
