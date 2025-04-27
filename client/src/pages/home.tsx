@@ -48,6 +48,7 @@ export default function Home() {
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
   const [showAccountNeededDialog, setShowAccountNeededDialog] = useState<boolean>(false);
   const [storedEmail, setStoredEmail] = useState<string | null>(null);
+  const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
   const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
@@ -121,6 +122,8 @@ export default function Home() {
       
       if (response.ok) {
         setTransformedImage(data.transformedImageUrl);
+        // Store transformation data including the database ID
+        setCurrentTransformation(data);
         setCurrentStep(Step.Result);
         
         // Refresh user credits
@@ -244,6 +247,8 @@ export default function Home() {
       if (response.ok) {
         // Replace the transformed image with the edited version
         setTransformedImage(data.transformedImageUrl);
+        // Store the new transformation data from the edit
+        setCurrentTransformation(data);
         setCurrentStep(Step.Result);
         
         // Refresh user credits
@@ -330,6 +335,8 @@ export default function Home() {
       
       if (response.ok) {
         setTransformedImage(data.transformedImageUrl);
+        // Store transformation data including the database ID
+        setCurrentTransformation(data);
         setCurrentStep(Step.Result);
         setPrompt(data.prompt);
         
