@@ -202,7 +202,8 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
 
   // Handle form submission
   const handleSubmit = () => {
-    if (prompt.trim().length === 0) return;
+    // Remove validation to allow empty prompts - the suggestedPrompt will be used
+    // if (prompt.trim().length === 0) return;
     
     // Build the complete prompt based on selections
     let finalPrompt = prompt.trim();
@@ -228,22 +229,37 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
         finalPrompt = suggestion + " " + finalPrompt;
       }
     }
-    // Add suggested prompts from chosen categories if there's minimal user input
-    else if (prompt.length < 20) {
-      if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
-        const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
-        if (suggestion) {
-          finalPrompt = suggestion + " " + finalPrompt;
-        }
-      } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
-        const suggestion = PRODUCT_STYLES[productSubcategory].suggestedPrompt;
-        if (suggestion) {
-          finalPrompt = suggestion + " " + finalPrompt;
-        }
-      } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
-        const suggestion = OTHER_STYLES[otherSubcategory].suggestedPrompt;
-        if (suggestion) {
-          finalPrompt = suggestion + " " + finalPrompt;
+    // Add suggested prompts from chosen categories
+    else {
+      // If no subcategory is selected but primary is cartoon, use a generic prompt
+      if (primaryCategory === 'cartoon' && !cartoonSubcategory) {
+        finalPrompt = "Transform this image into a cartoon style with vibrant colors and exaggerated features. " + finalPrompt;
+      }
+      // If no subcategory is selected but primary is product, use a generic prompt
+      else if (primaryCategory === 'product' && !productSubcategory) {
+        finalPrompt = "Enhance this product image with professional lighting and a clean background. " + finalPrompt;
+      }
+      // If no subcategory is selected but primary is other, use a generic prompt
+      else if (primaryCategory === 'other' && !otherSubcategory) {
+        finalPrompt = "Transform this image with creative artistic effects. " + finalPrompt;
+      }
+      // If subcategory is selected, use its suggested prompt for minimal user input
+      else if (prompt.length < 20) {
+        if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
+          const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
+          if (suggestion) {
+            finalPrompt = suggestion + " " + finalPrompt;
+          }
+        } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+          const suggestion = PRODUCT_STYLES[productSubcategory].suggestedPrompt;
+          if (suggestion) {
+            finalPrompt = suggestion + " " + finalPrompt;
+          }
+        } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+          const suggestion = OTHER_STYLES[otherSubcategory].suggestedPrompt;
+          if (suggestion) {
+            finalPrompt = suggestion + " " + finalPrompt;
+          }
         }
       }
     }
@@ -583,7 +599,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
               <Button 
                 className="flex-1 text-white bg-black hover:bg-black/80"
                 onClick={handleSubmit}
-                disabled={!primaryCategory || !(cartoonSubcategory || productSubcategory || otherSubcategory)}
+                disabled={!primaryCategory}
               >
                 Generate Transformation
               </Button>
