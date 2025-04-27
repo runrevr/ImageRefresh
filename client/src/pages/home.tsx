@@ -201,14 +201,31 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
-      // Send the edit request - always using the original uploaded image
+      if (!transformedImage) {
+        throw new Error("Missing transformed image for edit");
+      }
+      
+      // Extract the file name from the transformed image URL path for use in our API call
+      const transformedImagePath = transformedImage.startsWith('/') 
+        ? transformedImage.substring(1) // Remove leading slash if present
+        : transformedImage;
+        
+      console.log("Using transformed image for edit:", transformedImagePath);
+      
+      // Extract transformation ID if it exists from the previous API call
+      const transformationIdMatch = transformedImage.match(/transformed-(\d+)-/);
+      const previousTransformationId = transformationIdMatch ? transformationIdMatch[1] : "";
+      
+      console.log("Previous transformation ID:", previousTransformationId);
+      
+      // Send the edit request - using the transformed image as the base for editing
       const response = await apiRequest('POST', '/api/transform', {
-        originalImagePath, // We use the original image path, not the transformed image path
+        originalImagePath: transformedImagePath, // Use the transformed image as the new base
         prompt: editPrompt,
         userId: user.id,
         imageSize: imageSize,
         isEdit: true, // Flag to indicate this is an edit
-        previousTransformation: transformedImage // Pass the previous transformation path for reference only
+        previousTransformation: previousTransformationId // Pass the extracted transformation ID
       });
 
       const data = await response.json();

@@ -29,10 +29,16 @@ export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
 });
 
-export const insertTransformationSchema = createInsertSchema(transformations).pick({
+// Create the schema and extend it to increase prompt length limit
+const baseInsertTransformationSchema = createInsertSchema(transformations).pick({
   userId: true,
   originalImagePath: true,
   prompt: true,
+});
+
+// Export the schema with modified validation for the prompt field
+export const insertTransformationSchema = baseInsertTransformationSchema.extend({
+  prompt: z.string().max(10000), // Increased length limit for prompts
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
