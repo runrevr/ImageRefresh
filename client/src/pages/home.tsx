@@ -185,6 +185,7 @@ export default function Home() {
     setTransformedImage(null);
     setPrompt('');
     setSelectedTransformation(null);
+    setCurrentTransformation(null); // Clear current transformation data
     setCurrentStep(Step.Upload);
     setShowUploadForm(false);
     
@@ -642,6 +643,8 @@ export default function Home() {
                 freeCredits={!user.freeCreditsUsed ? 1 : 0}
                 paidCredits={user.paidCredits}
                 canEdit={true}
+                transformationId={currentTransformation?.id?.toString()}
+                editsUsed={currentTransformation?.editsUsed || 0}
               />
             )}
             
