@@ -476,7 +476,14 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                       ? 'bg-black text-white border-black' 
                       : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
                     onClick={() => handleOtherSelect(key as OtherSubcategory)}
-                    title={key === 'baby-prediction' ? 'Must have an image with two people in it to work correctly' : ''}
+                    title={
+                      key === 'baby-prediction' ? 'Must have an image with two people in it to work correctly' : 
+                      key === 'pet-as-human' ? 'Must have image of your pet with a visible face to work correctly' : 
+                      key === 'self-as-cat' ? 'Must have image of a person with a visible face to work correctly' : 
+                      key === 'future-self' ? 'Must have a clear image of a person\'s face to work correctly' :
+                      key === 'ai-action-figure' ? 'Works best with a clear image of a person or object' :
+                      ''
+                    }
                   >
                     <span className="line-clamp-2">{style.title}</span>
                   </Button>
