@@ -126,7 +126,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
       <div className="bg-gray-50 rounded-xl p-6 max-w-5xl mx-auto mt-8">
         <h3 className="text-lg font-bold mb-3">Need more transformations?</h3>
         <p className="text-gray-600 mb-4">Contact us for custom enterprise plans or bulk pricing.</p>
-        <Button variant="outline">
+        <Button variant="default" className="bg-primary-500 text-white hover:bg-primary-600">
           Contact Sales
         </Button>
       </div>
