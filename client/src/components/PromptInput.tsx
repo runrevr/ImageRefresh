@@ -263,6 +263,11 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     setCartoonSubcategory(null);
     setProductSubcategory(null);
     setOtherSubcategory(null);
+    
+    // If selecting cartoon category, pre-fill the default placeholder text
+    if (category === 'cartoon' && !prompt) {
+      setPrompt("Place the name Jack somewhere in the image");
+    }
   };
   
   // Set subcategory selection
@@ -270,8 +275,8 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     setCartoonSubcategory(subcategory);
     
     // Pre-fill prompt with placeholder if it's empty
-    if (!prompt && subcategory in CARTOON_STYLES) {
-      setPrompt(CARTOON_STYLES[subcategory].placeholder.replace('E.g., ', ''));
+    if (!prompt) {
+      setPrompt("Place the name Jack somewhere in the image");
     }
   };
   
@@ -351,8 +356,9 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
   
   // Get current placeholder based on selections
   const getCurrentPlaceholder = () => {
-    if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
-      return CARTOON_STYLES[cartoonSubcategory].placeholder;
+    // For cartoon styles, always use the same placeholder regardless of subcategory
+    if (primaryCategory === 'cartoon') {
+      return "E.g., Place the name Jack somewhere in the image";
     } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
       return PRODUCT_STYLES[productSubcategory].placeholder;
     } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
