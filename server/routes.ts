@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check for preset transformations
       const presetType = validatedData.preset as string | undefined;
-      if (presetType === 'cartoon' || presetType === 'product' || presetType === 'ghibli-style') {
+      if (presetType === 'cartoon' || presetType === 'product' || presetType === 'ghibli-style' || presetType === 'mario-style') {
         // Create a transformation record
         const transformation = await storage.createTransformation({
           userId,
@@ -149,6 +149,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Add Ghibli style context, combined with user input
             let ghibliContext = "Transform this uploaded image into the distinctive Studio Ghibli animation style while preserving the subject's essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio's signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject's core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world. ";
             presetPrompt = `${ghibliContext}${userPrompt}`;
+          } else if (presetType === 'mario-style') {
+            // Add 8-bit Mario style context, combined with user input
+            let marioContext = "Transform this uploaded image into a vibrant 8-bit pixel art style inspired by classic retro video games. The background MUST feature a vibrant 8-bit pixel art landscape with a bright, solid blue sky and fluffy, white clouds outlined in black, accented with pixelated blue highlights. The ground MUST be made up of brown, brick-textured tiles, creating a classic retro platform for characters to walk on. Include foreground elements such as a large green pipe emerging from the ground, possibly with a red and green plant-like creature extending upward. Small turtle-like creatures with green shells may be added as appropriate. Include suspended brick blocks and special marked blocks floating in the air, suggesting hidden rewards or surprises. Add vibrant flowers with white and orange blooms growing from blocks. The background scenery should include rolling green hills and rounded trees, drawn in simple shapes with black accents to add depth. The overall scene must be a colorful, nostalgic 8-bit world, filled with playful energy and classic side-scrolling adventure vibes. ";
+            presetPrompt = `${marioContext}${userPrompt} Ensure the original subject from the uploaded image remains the primary focus, pixelated in the 8-bit style but still clearly recognizable.`;
           }
           
           // Send directly to gpt-image-1
