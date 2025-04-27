@@ -223,9 +223,9 @@ export default function Home() {
         
       console.log("Using transformed image for edit:", transformedImagePath);
       
-      // Extract transformation ID if it exists from the previous API call
-      const transformationIdMatch = transformedImage.match(/transformed-(\d+)-/);
-      const previousTransformationId = transformationIdMatch ? transformationIdMatch[1] : "";
+      // Extract transformation ID (which is stored in the database) if it exists from the previous API call
+      // This needs to be the actual DB record ID, not the timestamp in the filename
+      const previousTransformationId = currentTransformation?.id || null;
       
       console.log("Previous transformation ID:", previousTransformationId);
       
