@@ -73,19 +73,19 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   'superhero': {
     title: 'Superhero',
     description: 'Convert to a dynamic comic book superhero style.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: 'Transform this image into a comic book superhero style with bold outlines, dynamic poses, and action elements like motion lines or impact effects. Use vibrant, contrasting colors and dramatic lighting typical of superhero comics.'
   },
   'lego': {
     title: 'Lego',
     description: 'Reconstruct in the distinctive blocky Lego brick style.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: 'The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform the child into a custom Lego minifigure that accurately matches their real-life features from uploaded image. Carefully replicate the child\'s hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the child\'s clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the child\'s Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.'
   },
   'custom-cartoon': {
     title: 'Custom Cartoon Style',
     description: 'Describe your own custom cartoon transformation.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: ''
   }
 };
