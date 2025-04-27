@@ -196,8 +196,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           // Guard against NaN when parsing previousTransformation
-          const prevTransformationId = parseInt(validatedData.previousTransformation);
+          // The ID could be a number, a URL, or an ID extracted from a filename pattern
+          let prevTransformationId: number;
+          
+          // Try to parse as a direct number first
+          prevTransformationId = parseInt(validatedData.previousTransformation);
+          
+          // If that failed, check if there's a transformation ID pattern in the string
           if (isNaN(prevTransformationId)) {
+            // Look for patterns like transformed-12345-filename.jpg (where 12345 is the ID)
+            const match = validatedData.previousTransformation.match(/transformed-(\d+)-/);
+            if (match && match[1]) {
+              prevTransformationId = parseInt(match[1]);
+            }
+          }
+          
+          // If we still don't have a valid ID, return an error
+          if (isNaN(prevTransformationId)) {
+            console.error("Could not extract transformation ID from:", validatedData.previousTransformation);
             return res.status(400).json({ message: "Invalid previous transformation ID" });
           }
           const prevTransformation = await storage.getTransformation(prevTransformationId);
@@ -234,11 +250,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateTransformationStatus(transformation.id, "processing");
           
           try {
-            console.log("Processing an edit request with original image path:", validatedData.originalImagePath);
+            console.log("Processing an edit request with image path:", validatedData.originalImagePath);
+            console.log("Full image path for edit:", fullImagePath);
+            
             const enhancedPrompt = validatedData.prompt;
             console.log("Using direct prompt for edit:", enhancedPrompt);
             
-            // Transform the image using OpenAI with specified image size if provided
+            // For edit requests, we're now using the transformed image as the starting point
+            // not the original image - this enables iterated edits like in ChatGPT
             const { transformedPath } = await transformImage(
               fullImagePath, 
               enhancedPrompt || "Edit transformation", 
