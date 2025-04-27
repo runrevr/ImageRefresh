@@ -282,13 +282,15 @@ export default function Home() {
       console.error('Error editing image:', error);
       
       let errorMessage = "There was an error editing your image. Please try again.";
+      let errorTitle = "Edit Failed";
       
       if (error.message && error.message.includes("safety system")) {
-        errorMessage = "Your edit request was rejected by our safety system. Please try a different prompt that is more appropriate for all audiences.";
+        errorTitle = "Content Safety Alert";
+        errorMessage = "Your edit request was rejected by our safety system. For color changes, try being very specific. For example: 'Change the background from green to blue' or 'Make the shirt red instead of white'.";
       }
       
       toast({
-        title: "Edit Failed",
+        title: errorTitle,
         description: errorMessage,
         variant: "destructive"
       });

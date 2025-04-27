@@ -163,8 +163,10 @@ export async function transformImage(
       
       let enhancedPrompt;
       if (isEdit) {
-        // For edits, focus more on applying the specific changes requested
-        enhancedPrompt = `Apply the following edit to this image: "${prompt}". Preserve all key elements from the image. ${safetyGuards}`;
+        // For edits, focus more on applying the specific changes requested while keeping it extra safe
+        // Add more explicit safe guidance for color change requests
+        const editSafetyGuards = "Maintain the existing composition and elements. Do not add any new characters, faces, or human-like figures. Keep all subjects fully clothed and appropriate for all audiences. Simply change colors or basic visual elements as requested while preserving the identity of the original image.";
+        enhancedPrompt = `Apply the following edit to this image: "${prompt}". Preserve all key features and elements from the original image. ${safetyGuards} ${editSafetyGuards}`;
       } else {
         // For initial transformations, keep the subject but transform the context/background
         enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background. ${safetyGuards}`;
