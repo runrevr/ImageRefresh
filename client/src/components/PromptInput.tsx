@@ -43,32 +43,32 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   'super-mario': {
     title: 'Super Mario Bros',
     description: 'Transform into the colorful, blocky style of the Super Mario universe.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: 'The scene should be inspired by a cinematic, colorful tech-fantasy universe with glowing pipes, floating platforms, oversized mushrooms, and blocky architecture. Use bright, saturated colors with joyful lighting and dynamic energy. Transform the child into a royal or heroic character based on classic adventure archetypes: If the child is a girl, style her as a whimsical princess in a pink dress with white gloves, a gold crown, and elegant details. If the child is a boy, style him as an energetic adventurer in colorful overalls with a red or green cap and oversized gloves. Always match outfit details, proportions, and styling to the child\'s age and physical description while maintaining full likeness.'
   },
   'minecraft': {
     title: 'Minecraft',
     description: 'Convert to the iconic blocky, pixel style of Minecraft.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: 'Transform this image into Minecraft pixelated cube style. Use the distinctive blocky aesthetic with clear pixel edges and square proportions. Maintain the color scheme but simplify it to match Minecraft\'s limited palette.'
   },
   'pixar': {
     title: 'Pixar',
     description: 'Stylize in the smooth, expressive 3D animation style of Pixar films.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: 'Transform this image into the Pixar animation style with smooth 3D rendering, slightly exaggerated proportions, and expressive features. Use the characteristic high-quality texture, warm lighting, and subtle details that define Pixar\'s animation style.'
   },
   'dreamworks': {
     title: 'DreamWorks',
     description: 'Render in the dynamic, expressive style of DreamWorks animations.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: 'Transform this image into the DreamWorks animation style with expressive features, dynamic poses, and slightly exaggerated characteristics. Use the distinctive lighting and texture style seen in films like Shrek or How to Train Your Dragon.'
   },
   'princess': {
     title: 'Princess',
     description: 'Create a fairytale princess style with magical elements.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Using the uploaded image as the main focus, transform it into a Nordic princess with magical ice powers in a crystalline winter landscape featuring a young blonde adventurer in rugged mountain clothing with his loyal reindeer companion. The scene includes a whimsical living snowman with a carrot nose and stick arms, exploring near a magnificent castle made entirely of blue-tinted ice crystals that sparkle in the sunlight. In the background, include hints of an imposing snow guardian creature partially hidden among the icy formations. Stylized 3D animation with bright jewel tones against snow-white backgrounds, exaggerated facial features, large expressive eyes, and flowing hair. The atmosphere captures a sense of wonder and adventure in a magical winter kingdom with decorative frost patterns, swirling snowflakes, and ice crystals with magical blue glow. Traditional Scandinavian-inspired clothing with rosemaling patterns amidst dramatic ice formations and snow-covered pine forests.'
+    suggestedPrompt: 'Using the uploaded image as the main focus, transform it into a Winter fantasy portrait featuring a noble figure with elemental abilities creating beautiful frost patterns in a snow-covered landscape. The scene includes an animated snow creation with simple features bringing joy to the adventure near a remarkable structure formed from transparent crystalline materials that catch the light. Distant shapes suggest gentle mountain guardians watching over the realm. Rendered in modern animation style with rich color contrasts between cool blues and warm accents, stylized character designs with appealing features, and detailed texturing. The world has a mythological Nordic inspiration with folk-art embellishments on clothing and architecture. The environment features magical winter elements like suspended ice fragments, decorated evergreens, and shimmering light effects creating an enchanted atmosphere where nature and magic intertwine in a celebration of winter\'s beauty.'
   },
   'superhero': {
     title: 'Superhero',
