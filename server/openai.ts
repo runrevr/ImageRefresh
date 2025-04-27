@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 import { Readable } from "stream";
 import { promisify } from "util";
 import stream from "stream";
+import FormData from "form-data";
 
 const pipeline = promisify(stream.pipeline);
 
@@ -165,15 +166,40 @@ export async function transformImage(
                         imageSize === "1536x1024" ? "1536x1024" :
                         "1024x1024";
       
-      // Instead of using the edit endpoint, we'll use the OpenAI SDK with the generation endpoint
-      // as we've found the edit endpoint is more complex for our server-side use case
-      // Note: We tried using the moderate parameter but it's not supported by the API
-      const imageResult = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: enhancedPrompt,
-        n: 1,
-        size: sizeParam as any // Type assertion to bypass type checking
+      // Use the images/edits endpoint as requested
+      // This requires a form with the image, prompt, and parameters
+      const formData = new FormData();
+      
+      // Append the image file directly from the buffer
+      formData.append('image', imageBuffer, {
+        filename: path.basename(imagePath),
+        contentType: mimeType,
       });
+      formData.append('prompt', enhancedPrompt);
+      formData.append('n', '1');
+      formData.append('size', sizeParam);
+      formData.append('model', 'gpt-image-1');
+      
+      // Call the images/edits endpoint directly
+      const response = await fetch('https://api.openai.com/v1/images/edits', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: formData as any, // Cast to any to avoid TypeScript errors
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json() as any;
+        throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
+      }
+      
+      const imageResult = await response.json() as {
+        data?: Array<{
+          url?: string;
+          b64_json?: string;
+        }>
+      };
       
       console.log("Successfully generated image with gpt-image-1 model");
       
