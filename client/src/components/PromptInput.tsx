@@ -263,39 +263,19 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     setCartoonSubcategory(null);
     setProductSubcategory(null);
     setOtherSubcategory(null);
-    
-    // If selecting cartoon category, pre-fill the default placeholder text
-    if (category === 'cartoon' && !prompt) {
-      setPrompt("Place the name Jack somewhere in the image");
-    }
   };
   
   // Set subcategory selection
   const handleCartoonSelect = (subcategory: CartoonSubcategory) => {
     setCartoonSubcategory(subcategory);
-    
-    // Pre-fill prompt with placeholder if it's empty
-    if (!prompt) {
-      setPrompt("Place the name Jack somewhere in the image");
-    }
   };
   
   const handleProductSelect = (subcategory: ProductSubcategory) => {
     setProductSubcategory(subcategory);
-    
-    // Pre-fill prompt with placeholder if it's empty
-    if (!prompt && subcategory in PRODUCT_STYLES) {
-      setPrompt(PRODUCT_STYLES[subcategory].placeholder.replace('E.g., ', ''));
-    }
   };
   
   const handleOtherSelect = (subcategory: OtherSubcategory) => {
     setOtherSubcategory(subcategory);
-    
-    // Pre-fill prompt with placeholder if it's empty
-    if (!prompt && subcategory in OTHER_STYLES) {
-      setPrompt(OTHER_STYLES[subcategory].placeholder.replace('E.g., ', ''));
-    }
   };
   
   // AI prompt enhancement
