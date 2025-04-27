@@ -56,7 +56,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Pixar',
     description: 'Stylize in the smooth, expressive 3D animation style of Pixar films.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform this image into the Pixar animation style with smooth 3D rendering, slightly exaggerated proportions, and expressive features. Use the characteristic high-quality texture, warm lighting, and subtle details that define Pixar\'s animation style.'
+    suggestedPrompt: 'Transform this image into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.'
   },
   'dreamworks': {
     title: 'DreamWorks',
