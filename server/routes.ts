@@ -460,15 +460,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // Add 10 credits to the user account
+      // Add 20 credits to the user account
       const updatedUser = await storage.updateUserCredits(
         userId, 
         user.freeCreditsUsed, 
-        user.paidCredits + 10
+        user.paidCredits + 20
       );
       
       res.json({
-        message: "Successfully added 10 credits",
+        message: "Successfully added 20 credits",
         freeCreditsUsed: updatedUser.freeCreditsUsed,
         paidCredits: updatedUser.paidCredits,
       });
