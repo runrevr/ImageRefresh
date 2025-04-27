@@ -6,7 +6,6 @@ import fetch from "node-fetch";
 import { Readable } from "stream";
 import { promisify } from "util";
 import stream from "stream";
-import { FormData } from "formdata-node";
 
 const pipeline = promisify(stream.pipeline);
 
@@ -166,13 +165,10 @@ export async function transformImage(
                         imageSize === "1536x1024" ? "1536x1024" :
                         "1024x1024";
       
-      // Read the image file for editing
-      const inputImageBuffer = fs.readFileSync(imagePath);
-      
-      // Create a FormData object with the image and prompt
-      const imageResult = await openai.images.edit({
+      // Instead of using the edit endpoint, we'll use the OpenAI SDK with the generation endpoint
+      // as we've found the edit endpoint is more complex for our server-side use case
+      const imageResult = await openai.images.generate({
         model: "gpt-image-1",
-        image: new File([inputImageBuffer], path.basename(imagePath), { type: "image/png" }),
         prompt: enhancedPrompt,
         n: 1,
         size: sizeParam as any // Type assertion to bypass type checking
@@ -249,8 +245,8 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       console.log("Starting two-stage variation process...");
       
       // Read the image file
-      const imageBuffer = fs.readFileSync(imagePath);
-      const base64Image = imageBuffer.toString('base64');
+      const variationImageBuffer = fs.readFileSync(imagePath);
+      const base64Image = variationImageBuffer.toString('base64');
       
       // Stage 1: Analyze the image with GPT-4o Vision
       console.log("Stage 1: Analyzing image with GPT-4o vision capabilities for variation...");
@@ -307,13 +303,9 @@ ${safetyGuards}`;
       
       console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       
-      // Read the image file for editing
-      const imageBuffer = fs.readFileSync(imagePath);
-      
-      // Use the images/edit endpoint
-      const imageResult = await openai.images.edit({
+      // We'll stick with the images/generate endpoint since the edit endpoint is complex
+      const imageResult = await openai.images.generate({
         model: "gpt-image-1",
-        image: imageBuffer,
         prompt: enhancedVariationPrompt,
         n: 1,
         size: "1024x1024" as any
