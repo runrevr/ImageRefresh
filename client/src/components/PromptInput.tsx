@@ -14,7 +14,7 @@ interface PromptInputProps {
 }
 
 // Main transformation categories
-export type TransformationType = 'cartoon' | 'product' | 'custom';
+export type TransformationType = 'cartoon' | 'product' | 'custom' | 'mario-style' | 'ghibli-style';
 
 // Subcategory types
 export type CartoonSubcategory = 'super-mario' | 'minecraft' | 'pixar' | 'dreamworks' | 'princess' | 'superhero' | 'lego' | 'custom-cartoon';
