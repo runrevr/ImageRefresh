@@ -74,7 +74,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Superhero',
     description: 'Convert to a dynamic comic book superhero style.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform this image into a comic book superhero style with bold outlines, dynamic poses, and action elements like motion lines or impact effects. Use vibrant, contrasting colors and dramatic lighting typical of superhero comics.'
+    suggestedPrompt: 'Transform this uploaded image into a superhero version that maintains the person\'s distinct facial features, expression, and body proportions while adding superhero elements. Outfit them with a dynamic flowing cape and heroic costume featuring a custom emblematic chest symbol. Preserve their unique characteristics, hairstyle, and identity while enhancing them with a bold, colorful superhero uniform with contrasting colors. Place them in a heroic stance within an urban environment with city skyline backdrop. Add subtle power effects surrounding their hands or eyes suggesting their unique abilities. The cape should billow dramatically to create a sense of movement and power. Maintain the subject\'s authentic appearance and individual features while elevating them to superhero status with cinematic lighting and a powerful presence that captures their transformation from ordinary person to extraordinary hero.'
   },
   'lego': {
     title: 'Lego',
