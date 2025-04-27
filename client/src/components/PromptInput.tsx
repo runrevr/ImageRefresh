@@ -62,7 +62,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Trolls',
     description: 'Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform the uploaded photo into a joyful, whimsical character inspired by animated fantasy creatures, similar to the style of the DreamWorks Trolls movies. Give the character playful, exaggerated features like a rounded nose, large expressive eyes, and big pointy ears. Style the hair in a tall, wild, and vividly colorful way (such as neon pink, electric blue, sunny yellow, or rainbow blends), resembling a soft, fluffy cotton texture. The character\'s skin tone can be a soft pastel or bright fantasy color (like aqua, mint green, soft lavender, or bubblegum pink), while keeping the facial structure recognizable to the original person. Emphasize a cheerful, magical, and uplifting vibe, with a background that feels like a glowing enchanted forest or colorful dreamland. The final style should feel fun, cartoonish, and cinematic — capturing the playful spirit of animated musical fantasy films.'
+    suggestedPrompt: 'Create a joyful fantasy-style portrait inspired by the uploaded photo, featuring a whimsical character with big sparkling eyes, a wide friendly smile, tall colorful hair styled in playful shapes, and vibrant pastel or neon-toned skin. The style should resemble animated fantasy movies, with an uplifting, magical, and imaginative feeling. Keep the character\'s face friendly, expressive, and recognizable, celebrating a happy, dreamlike atmosphere.'
   },
   'princess': {
     title: 'Princess',
