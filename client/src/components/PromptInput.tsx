@@ -96,25 +96,25 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
     title: 'Remove Background',
     description: 'Isolate the product with a clean, solid or transparent background.',
     placeholder: 'E.g., Place on a pure white background with subtle shadow',
-    suggestedPrompt: 'Transform this product image by removing the current background and replacing it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.'
+    suggestedPrompt: 'Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.'
   },
   'enhanced-lighting': {
     title: 'Enhanced Lighting & Colors',
     description: 'Improve product appearance with professional studio lighting and color enhancement.',
     placeholder: 'E.g., Add dramatic side lighting to highlight texture',
-    suggestedPrompt: 'Transform this product image with enhanced professional studio lighting. Add soft key lights to highlight the product\'s best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.'
+    suggestedPrompt: 'Apply enhanced professional studio lighting. Add soft key lights to highlight the product\'s best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.'
   },
   'natural-scene': {
     title: 'Natural Scene Placement',
     description: 'Place the product in a realistic outdoor or natural environment.',
     placeholder: 'E.g., Show the product on a beach at sunset',
-    suggestedPrompt: 'Transform this product image by placing it in a natural scene environment. Integrate it seamlessly with realistic shadows and reflections that match the environment\'s lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.'
+    suggestedPrompt: 'Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment\'s lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.'
   },
   'product-mockup': {
     title: 'Product Mockup',
     description: 'Show the product in context of use in realistic scenarios.',
     placeholder: 'E.g., Show being used by a model in a living room',
-    suggestedPrompt: 'Transform this product image into a realistic mockup showing it in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.'
+    suggestedPrompt: 'Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.'
   },
   'custom-product': {
     title: 'Create Your Own Product Image',
@@ -130,13 +130,13 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     title: 'What Will Our Baby Look Like',
     description: 'Envision how a future baby might look based on the people in the image.',
     placeholder: 'E.g., Show what our future baby might look like',
-    suggestedPrompt: 'Using the people in this image as parents, create a realistic and heartwarming prediction of what their baby might look like. Blend facial features, skin tone, hair color, and eye color in a natural way. Make the baby appear around 1 year old with a joyful expression.'
+    suggestedPrompt: 'Using the people shown as parents, create a realistic and heartwarming prediction of what their baby might look like. Blend facial features, skin tone, hair color, and eye color in a natural way. Make the baby appear around 1 year old with a joyful expression.'
   },
   'future-self': {
     title: 'What Will I Look Like in 20 Years',
     description: 'Age the subject in the image to show how they might look 20 years in the future.',
     placeholder: 'E.g., Show me as a distinguished older person',
-    suggestedPrompt: 'Transform this image to show how this person might look 20 years in the future. Age the face naturally with appropriate wrinkles, hair changes, and subtle physical aging. Maintain their core facial structure and identity while showing realistic aging effects. Keep the same general style and pose.'
+    suggestedPrompt: 'Show how the person might look 20 years in the future. Age the face naturally with appropriate wrinkles, hair changes, and subtle physical aging. Maintain their core facial structure and identity while showing realistic aging effects. Keep the same general style and pose.'
   },
   'ghibli-style': {
     title: 'Ghibli Style',
@@ -154,13 +154,13 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     title: 'What Would My Pet Look Like as a Human',
     description: 'Reimagine a pet as a human while keeping recognizable traits and personality.',
     placeholder: 'E.g., Transform my dog into a human with similar features',
-    suggestedPrompt: 'Transform this pet into a human character while preserving its distinctive features, coloration, and personality. Maintain the essence and character of the pet in human form, with subtle references to fur color, eye shape, and distinctive markings. Create a humanoid that feels connected to the original pet\'s identity and spirit.'
+    suggestedPrompt: 'Transform the pet into a human character while preserving distinctive features, coloration, and personality. Maintain the essence and character in human form, with subtle references to fur color, eye shape, and distinctive markings. Create a humanoid that feels connected to the original pet\'s identity and spirit.'
   },
   'self-as-cat': {
     title: 'What Would I Look Like as a Cat',
     description: 'Transform a human into a cat with recognizable traits from the original subject.',
     placeholder: 'E.g., Turn me into a cat that resembles my features',
-    suggestedPrompt: 'Transform this person into a cat while preserving their distinctive features, coloration, and personality. Create a feline that has subtle similarities to the human\'s hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.'
+    suggestedPrompt: 'Transform into a cat while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.'
   },
   'custom-other': {
     title: 'Create Your Own Image',
@@ -233,15 +233,15 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     else {
       // If no subcategory is selected but primary is cartoon, use a generic prompt
       if (primaryCategory === 'cartoon' && !cartoonSubcategory) {
-        finalPrompt = "Transform this image into a cartoon style with vibrant colors and exaggerated features. " + finalPrompt;
+        finalPrompt = "Transform into a cartoon style with vibrant colors and exaggerated features. " + finalPrompt;
       }
       // If no subcategory is selected but primary is product, use a generic prompt
       else if (primaryCategory === 'product' && !productSubcategory) {
-        finalPrompt = "Enhance this product image with professional lighting and a clean background. " + finalPrompt;
+        finalPrompt = "Enhance with professional lighting and a clean background. " + finalPrompt;
       }
       // If no subcategory is selected but primary is other, use a generic prompt
       else if (primaryCategory === 'other' && !otherSubcategory) {
-        finalPrompt = "Transform this image with creative artistic effects. " + finalPrompt;
+        finalPrompt = "Transform with creative artistic effects. " + finalPrompt;
       }
       // If subcategory is selected, use its suggested prompt for minimal user input
       else if (prompt.length < 20) {
