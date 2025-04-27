@@ -50,7 +50,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Minecraft',
     description: 'Convert to the iconic blocky, pixel style of Minecraft.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform this image into Minecraft pixelated cube style. Use the distinctive blocky aesthetic with clear pixel edges and square proportions. Maintain the color scheme but simplify it to match Minecraft\'s limited palette.'
+    suggestedPrompt: 'Transform this image into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game\'s distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft\'s procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.'
   },
   'pixar': {
     title: 'Pixar',
