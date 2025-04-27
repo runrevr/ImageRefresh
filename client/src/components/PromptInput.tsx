@@ -44,7 +44,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Super Mario Bros',
     description: 'Transform into the colorful, blocky style of the Super Mario universe.',
     placeholder: 'E.g., Add mushrooms and pipes in the background',
-    suggestedPrompt: 'Transform this image into the Super Mario Bros style with saturated colors, simplified cartoon shapes, and a playful, video game aesthetic. Use the iconic blocky style, with elements like question mark boxes, pipes, or mushrooms where appropriate.'
+    suggestedPrompt: 'The scene should be inspired by a cinematic, colorful tech-fantasy universe with glowing pipes, floating platforms, oversized mushrooms, and blocky architecture. Use bright, saturated colors with joyful lighting and dynamic energy.'
   },
   'minecraft': {
     title: 'Minecraft',
