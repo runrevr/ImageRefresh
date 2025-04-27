@@ -399,10 +399,10 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 onClick={() => handlePrimaryCategorySelect('cartoon')}
               >
                 <div className="flex items-center">
-                  <PaintBucket className="h-5 w-5 mr-2" />
-                  <span className="font-medium">Cartoon Style</span>
+                  <PaintBucket className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">Cartoon Style</span>
                 </div>
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
               
               <Button 
@@ -412,10 +412,10 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 onClick={() => handlePrimaryCategorySelect('product')}
               >
                 <div className="flex items-center">
-                  <BoxIcon className="h-5 w-5 mr-2" />
-                  <span className="font-medium">Product Enhancement</span>
+                  <BoxIcon className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">Product Enhancement</span>
                 </div>
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
               
               <Button 
@@ -425,10 +425,10 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 onClick={() => handlePrimaryCategorySelect('other')}
               >
                 <div className="flex items-center">
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  <span className="font-medium">Other Styles</span>
+                  <Sparkles className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">Other Styles</span>
                 </div>
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
             </div>
             
@@ -438,12 +438,12 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 {Object.entries(CARTOON_STYLES).map(([key, style]) => (
                   <Button 
                     key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 ${cartoonSubcategory === key 
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${cartoonSubcategory === key 
                       ? 'bg-black text-white border-black' 
                       : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
                     onClick={() => handleCartoonSelect(key as CartoonSubcategory)}
                   >
-                    <span>{style.title}</span>
+                    <span className="line-clamp-2">{style.title}</span>
                   </Button>
                 ))}
               </div>
@@ -455,12 +455,12 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 {Object.entries(PRODUCT_STYLES).map(([key, style]) => (
                   <Button 
                     key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 ${productSubcategory === key 
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${productSubcategory === key 
                       ? 'bg-black text-white border-black' 
                       : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
                     onClick={() => handleProductSelect(key as ProductSubcategory)}
                   >
-                    <span>{style.title}</span>
+                    <span className="line-clamp-2">{style.title}</span>
                   </Button>
                 ))}
               </div>
@@ -472,12 +472,13 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 {Object.entries(OTHER_STYLES).map(([key, style]) => (
                   <Button 
                     key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 ${otherSubcategory === key 
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${otherSubcategory === key 
                       ? 'bg-black text-white border-black' 
                       : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
                     onClick={() => handleOtherSelect(key as OtherSubcategory)}
+                    title={key === 'baby-prediction' ? 'Must have an image with two people in it to work correctly' : ''}
                   >
-                    <span>{style.title}</span>
+                    <span className="line-clamp-2">{style.title}</span>
                   </Button>
                 ))}
               </div>
