@@ -132,11 +132,20 @@ export default function Home() {
           paidCredits: creditsData.paidCredits 
         }));
       } else {
-        toast({
-          title: "Transformation failed",
-          description: data.message,
-          variant: "destructive"
-        });
+        // Check for specific error types
+        if (data.error === "content_safety") {
+          toast({
+            title: "Content Safety Alert",
+            description: "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Transformation failed",
+            description: data.message,
+            variant: "destructive"
+          });
+        }
         setCurrentStep(Step.Prompt);
       }
     } catch (error: any) {
@@ -149,6 +158,8 @@ export default function Home() {
         errorMessage = "Your OpenAI account needs organization verification to use the gpt-image-1 model. This is a new model with limited access.";
       } else if (error.message && error.message.includes("No image URL returned")) {
         errorMessage = "The gpt-image-1 model is not available for your account. This model requires organization verification with OpenAI.";
+      } else if (error.message && error.message.includes("safety system")) {
+        errorMessage = "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.";
       }
       
       toast({
@@ -244,11 +255,20 @@ export default function Home() {
           paidCredits: creditsData.paidCredits 
         }));
       } else {
-        toast({
-          title: "Edit failed",
-          description: data.message,
-          variant: "destructive"
-        });
+        // Check for specific error types
+        if (data.error === "content_safety") {
+          toast({
+            title: "Content Safety Alert",
+            description: "Your edit request was rejected by our safety system. Please try a different prompt that is more appropriate for all audiences.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Edit failed",
+            description: data.message,
+            variant: "destructive"
+          });
+        }
         // Go back to result step with the original transformation
         setCurrentStep(Step.Result);
       }
@@ -256,6 +276,11 @@ export default function Home() {
       console.error('Error editing image:', error);
       
       let errorMessage = "There was an error editing your image. Please try again.";
+      
+      if (error.message && error.message.includes("safety system")) {
+        errorMessage = "Your edit request was rejected by our safety system. Please try a different prompt that is more appropriate for all audiences.";
+      }
+      
       toast({
         title: "Edit Failed",
         description: errorMessage,
@@ -317,18 +342,35 @@ export default function Home() {
           paidCredits: creditsData.paidCredits
         }));
       } else {
-        toast({
-          title: "Transformation failed",
-          description: data.message,
-          variant: "destructive"
-        });
+        // Check for specific error types
+        if (data.error === "content_safety") {
+          toast({
+            title: "Content Safety Alert",
+            description: "Your request was rejected by our safety system. Please try a different style that is more appropriate for all audiences.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Transformation failed",
+            description: data.message,
+            variant: "destructive"
+          });
+        }
         setCurrentStep(Step.Upload);
       }
     } catch (error) {
       console.error("Error applying preset transformation:", error);
+      
+      // Extract error message
+      const errorMessage = error instanceof Error 
+        ? (error.message.includes("safety system") 
+            ? "Your request was rejected by our safety system. Please try a different style that is more appropriate for all audiences." 
+            : error.message)
+        : "Failed to apply transformation";
+      
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to apply transformation",
+        title: "Transformation Failed",
+        description: errorMessage,
         variant: "destructive",
       });
       setCurrentStep(Step.Upload);
