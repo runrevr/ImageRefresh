@@ -105,6 +105,9 @@ export default function Home() {
   const handlePromptSubmit = async (promptText: string, imageSize: string = "1024x1024") => {
     setPrompt(promptText);
     setCurrentStep(Step.Processing);
+    
+    // Scroll to top to see the processing state
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
       const response = await apiRequest('POST', '/api/transform', {
@@ -193,6 +196,9 @@ export default function Home() {
   const handleEditSubmit = async (editPrompt: string, imageSize: string = "1024x1024") => {
     setPrompt(editPrompt);
     setCurrentStep(Step.Processing);
+    
+    // Scroll to top to see the processing state
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
       // Send the edit request - always using the original uploaded image
@@ -265,6 +271,9 @@ export default function Home() {
     const imageSize = "1024x1024";
     
     setCurrentStep(Step.Processing);
+    
+    // Scroll to top to see the processing state
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     try {
       console.log(`Applying ${presetType} preset transformation`);
