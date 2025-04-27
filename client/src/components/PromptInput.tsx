@@ -67,8 +67,8 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   'princess': {
     title: 'Princess',
     description: 'Create a fairytale princess style with magical elements.',
-    placeholder: 'E.g., Enter name "Jack" into the image',
-    suggestedPrompt: 'Transform this image into a fairytale princess style with elegant royal attire, soft glowing effects, sparkles, and magical elements. Use pastel colors, ornate details, and a dreamy atmosphere reminiscent of classic fairy tales.'
+    placeholder: 'E.g., Place the name Jack somewhere in the image',
+    suggestedPrompt: 'Using the uploaded image as the main focus, transform it into a Nordic princess with magical ice powers in a crystalline winter landscape featuring a young blonde adventurer in rugged mountain clothing with his loyal reindeer companion. The scene includes a whimsical living snowman with a carrot nose and stick arms, exploring near a magnificent castle made entirely of blue-tinted ice crystals that sparkle in the sunlight. In the background, include hints of an imposing snow guardian creature partially hidden among the icy formations. Stylized 3D animation with bright jewel tones against snow-white backgrounds, exaggerated facial features, large expressive eyes, and flowing hair. The atmosphere captures a sense of wonder and adventure in a magical winter kingdom with decorative frost patterns, swirling snowflakes, and ice crystals with magical blue glow. Traditional Scandinavian-inspired clothing with rosemaling patterns amidst dramatic ice formations and snow-covered pine forests.'
   },
   'superhero': {
     title: 'Superhero',
@@ -216,6 +216,13 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     }
     // Always include the full Lego prompt, regardless of user input
     else if (primaryCategory === 'cartoon' && cartoonSubcategory === 'lego') {
+      const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
+      if (suggestion) {
+        finalPrompt = suggestion + " " + finalPrompt;
+      }
+    }
+    // Always include the full Princess prompt, regardless of user input
+    else if (primaryCategory === 'cartoon' && cartoonSubcategory === 'princess') {
       const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
       if (suggestion) {
         finalPrompt = suggestion + " " + finalPrompt;
