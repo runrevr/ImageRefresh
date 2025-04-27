@@ -120,7 +120,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
                 className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg mb-6 border-4 border-[#FF7B54] shadow-[0_10px_25px_-5px_rgba(255,123,84,0.5)]" 
                 onClick={onCreateClick}
               >
-                ⚡ Turn This Sh*t Into Art
+                ⚡ Let's Make Some Magic
               </Button>
               
               <div className="text-md text-gray-700 p-2">
