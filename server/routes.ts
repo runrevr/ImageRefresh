@@ -357,6 +357,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error: any) {
       console.error("Error transforming image:", error);
+      
+      // Check for content safety rejections from OpenAI
+      if (error.message && error.message.includes("safety system")) {
+        // Return specific error for content safety issues
+        return res.status(400).json({ 
+          message: "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.", 
+          error: "content_safety" 
+        });
+      }
+      
       res.status(500).json({ message: `Error transforming image: ${error.message || 'Unknown error occurred'}` });
     }
   });
