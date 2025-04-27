@@ -265,7 +265,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const { transformedPath } = await transformImage(
               fullImagePath, 
               enhancedPrompt || "Edit transformation", 
-              validatedData.imageSize
+              validatedData.imageSize,
+              true // Flag this as an edit operation
             );
             
             // Get relative path for storage

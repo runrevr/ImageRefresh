@@ -92,7 +92,8 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 export async function transformImage(
   imagePath: string, 
   prompt: string,
-  imageSize?: string | undefined
+  imageSize?: string | undefined,
+  isEdit: boolean = false
 ): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");
@@ -100,19 +101,25 @@ export async function transformImage(
 
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
+    console.log(`Is this an edit request: ${isEdit}`);
     
     try {
+      // Verify the image exists
+      if (!fs.existsSync(imagePath)) {
+        throw new Error(`Image file does not exist at path: ${imagePath}`);
+      }
+      
       // Read the image file
       const imageBuffer = fs.readFileSync(imagePath);
       const base64Image = imageBuffer.toString('base64');
-      
-      // First use GPT-4o Vision to analyze the image and get a detailed description
-      console.log("Stage 1: Analyzing image with GPT-4o vision capabilities...");
       
       // Determine the correct MIME type for the image
       const fileExtension = path.extname(imagePath).toLowerCase();
       const mimeType = fileExtension === '.png' ? 'image/png' : 
                       (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
+      
+      // First use GPT-4o Vision to analyze the image and get a detailed description
+      console.log("Stage 1: Analyzing image with GPT-4o vision capabilities...");
       
       // Use the GPT-4o model with vision capabilities to analyze the image
       const visionResponse = await openai.chat.completions.create({
@@ -154,7 +161,14 @@ export async function transformImage(
       // Also add safety guardrails to avoid content policy violations
       const safetyGuards = "Create a family-friendly, G-rated image appropriate for all ages. Avoid any content that could be interpreted as violent, sexual, political, or offensive in any way. Ensure the output maintains a positive and appropriate tone.";
       
-      const enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background. ${safetyGuards}`;
+      let enhancedPrompt;
+      if (isEdit) {
+        // For edits, focus more on applying the specific changes requested
+        enhancedPrompt = `Apply the following edit to this image: "${prompt}". Preserve all key elements from the image. ${safetyGuards}`;
+      } else {
+        // For initial transformations, keep the subject but transform the context/background
+        enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background. ${safetyGuards}`;
+      }
       
       console.log("Using enhanced prompt that emphasizes preserving the original subject");
       
@@ -166,8 +180,15 @@ export async function transformImage(
                         imageSize === "1536x1024" ? "1536x1024" :
                         "1024x1024";
       
-      // Use the images/edits endpoint as requested
-      // This requires a form with the image, prompt, and parameters
+      // Generate unique name for the transformed image
+      const originalFileName = path.basename(imagePath);
+      const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
+      const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
+      
+      let imageUrl;
+      
+      // For edits, we use the images/edits endpoint
+      // Use the images/edits endpoint with form-data
       const formData = new FormData();
       
       // Append the image file directly from the buffer
@@ -202,13 +223,6 @@ export async function transformImage(
       };
       
       console.log("Successfully generated image with gpt-image-1 model");
-      
-      // Generate unique name for the transformed image
-      const originalFileName = path.basename(imagePath);
-      const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
-      const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-      
-      let imageUrl;
       
       // Check what format we received
       if (imageResult.data && imageResult.data.length > 0) {
