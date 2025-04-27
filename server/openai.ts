@@ -150,7 +150,10 @@ export async function transformImage(
       
       // Create a comprehensive prompt that incorporates both the user's request and the image details
       // The key is to emphasize preserving the original image's subject while applying the transformation
-      const enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background.`;
+      // Also add safety guardrails to avoid content policy violations
+      const safetyGuards = "Create a family-friendly, G-rated image appropriate for all ages. Avoid any content that could be interpreted as violent, sexual, political, or offensive in any way. Ensure the output maintains a positive and appropriate tone.";
+      
+      const enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background. ${safetyGuards}`;
       
       console.log("Using enhanced prompt that emphasizes preserving the original subject");
       
@@ -287,10 +290,14 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       console.log("Stage 2: Generating image variation with gpt-image-1...");
       
       // Create an enhanced prompt with special emphasis on preserving the object's identity
+      // Add safety guardrails to avoid content policy violations
+      const safetyGuards = "Create a family-friendly, G-rated image appropriate for all ages. Avoid any content that could be interpreted as violent, sexual, political, or offensive in any way. Ensure the output maintains a positive and appropriate tone.";
+      
       const enhancedVariationPrompt = `Create an artistic variation of this exact product: "${detailedDescription}". 
 The product must be the main focus and clearly recognizable as the same item. 
 ${variationPrompt}. 
-Keep the product's shape and key details intact but you may alter the style, artistic treatment, lighting, and background.`;
+Keep the product's shape and key details intact but you may alter the style, artistic treatment, lighting, and background.
+${safetyGuards}`;
       
       console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       

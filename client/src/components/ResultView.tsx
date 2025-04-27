@@ -34,11 +34,17 @@ export default function ResultView({
   transformationId = '',
   editsUsed = 0
 }: ResultViewProps) {
-  const [showEmailDialog, setShowEmailDialog] = useState(true);
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  // Check if this is an edit (editsUsed > 0) or if email has already been collected
+  const isEdit = editsUsed > 0;
+  const emailAlreadyCollected = localStorage.getItem('emailCollected') === 'true';
+  
+  // Only show email dialog if it's not an edit and email hasn't been collected yet
+  const [showEmailDialog, setShowEmailDialog] = useState(!isEdit && !emailAlreadyCollected);
+  const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected);
   const userId = 1; // Default to user ID 1 for demo
   
   const handleEmailSubmitted = () => {
+    localStorage.setItem('emailCollected', 'true');
     setEmailSubmitted(true);
     setShowEmailDialog(false);
   };
