@@ -10,7 +10,7 @@ import { FAQ } from '@shared/schema';
 const faqs: FAQ[] = [
   {
     question: "How does the AI image transformation work?",
-    answer: "Our AI uses advanced image processing algorithms based on OpenAI's DALL-E to understand your original image and apply the transformations you describe in your prompt. The AI analyzes your image, interprets your instructions, and generates a new version that matches your description while maintaining the core elements of the original."
+    answer: "We use specialized prompting and AI to make magic happen! Our technology analyzes your image, interprets your instructions, and generates a new version that matches your description while maintaining the core elements of the original. Our proprietary approach ensures high-quality transformations that preserve the identity of your subject while applying creative changes."
   },
   {
     question: "What types of images work best with your tool?",
