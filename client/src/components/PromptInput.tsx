@@ -83,7 +83,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     suggestedPrompt: 'The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform the child into a custom Lego minifigure that accurately matches their real-life features from uploaded image. Carefully replicate the child\'s hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the child\'s clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the child\'s Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.'
   },
   'custom-cartoon': {
-    title: 'Custom Cartoon Style',
+    title: 'Create Your Own Cartoon',
     description: 'Describe your own custom cartoon transformation.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
     suggestedPrompt: ''
@@ -117,7 +117,7 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
     suggestedPrompt: 'Transform this product image into a realistic mockup showing it in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.'
   },
   'custom-product': {
-    title: 'Custom Product Enhancement',
+    title: 'Create Your Own Product Image',
     description: 'Describe your own custom product transformation.',
     placeholder: 'E.g., Place product on a marble countertop with morning light',
     suggestedPrompt: ''
@@ -163,7 +163,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     suggestedPrompt: 'Transform this person into a cat while preserving their distinctive features, coloration, and personality. Create a feline that has subtle similarities to the human\'s hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.'
   },
   'custom-other': {
-    title: 'Custom Request',
+    title: 'Create Your Own Image',
     description: 'Describe your own custom transformation.',
     placeholder: 'E.g., Make it look like it\'s underwater with fish swimming around',
     suggestedPrompt: ''
