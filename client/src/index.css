@@ -97,3 +97,12 @@ textarea.bg-black::placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
 
+/* Animation delay utilities */
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+

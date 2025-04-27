@@ -92,7 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate request body
       const transformSchema = z.object({
         originalImagePath: z.string(),
-        prompt: z.string().min(1).max(1000).optional(), // Made optional for preset transformations
+        prompt: z.string().max(5000).optional(), // Increased max length and made optional for preset transformations
         userId: z.number().optional(),
         isEdit: z.boolean().optional(),
         previousTransformation: z.string().optional(),
