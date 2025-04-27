@@ -14,7 +14,7 @@ interface PromptInputProps {
 }
 
 // Main transformation categories
-export type TransformationType = 'cartoon' | 'product' | 'custom' | 'mario-style' | 'ghibli-style';
+export type TransformationType = 'cartoon' | 'product' | 'custom';
 
 // Subcategory types
 export type CartoonSubcategory = 'super-mario' | 'minecraft' | 'pixar' | 'dreamworks' | 'princess' | 'superhero' | 'lego' | 'custom-cartoon';
@@ -44,7 +44,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Super Mario Bros',
     description: 'Transform into the colorful, blocky style of the Super Mario universe.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'The scene should be inspired by a cinematic, colorful tech-fantasy universe with glowing pipes, floating platforms, oversized mushrooms, and blocky architecture. Use bright, saturated colors with joyful lighting and dynamic energy. Transform the child into a royal or heroic character based on classic adventure archetypes: If the child is a girl, style her as a whimsical princess in a pink dress with white gloves, a gold crown, and elegant details. If the child is a boy, style him as an energetic adventurer in colorful overalls with a red or green cap and oversized gloves. Always match outfit details, proportions, and styling to the child\'s age and physical description while maintaining full likeness. Do not reference or name any copyrighted characters directly. All elements must feel original and inspired by the genre, not copied.'
+    suggestedPrompt: 'Create a vibrant, colorful 8-bit pixel art scene featuring a bright blue sky with fluffy white clouds, brown brick tiles, suspended question mark blocks, green warp pipes, and rolling grassy hills in the background. Include pixelated power-up flowers, coin blocks, and classic video game elements arranged as platforms. Use a limited color palette with bold primary colors and distinctive pixel-based shading in a cheerful, nostalgic Nintendo game style. Transform the subject into a heroic pixelated character based on classic adventure archetypes: If the subject is female, style her as a princess with a pink dress, white gloves, and a gold crown. If male, style him as an adventurer with colorful overalls, a cap, and oversized gloves. Maintain the subject\'s core facial features and likeness while adapting to the 8-bit pixel art aesthetic. All elements must feel original and inspired by classic Nintendo games without directly copying copyrighted characters.'
   },
   'minecraft': {
     title: 'Minecraft',
@@ -197,12 +197,6 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
       setPrimaryCategory('product');
     } else if (selectedTransformation === 'custom') {
       setPrimaryCategory('other');
-    } else if (selectedTransformation === 'mario-style') {
-      setPrimaryCategory('cartoon');
-      setCartoonSubcategory('super-mario');
-    } else if (selectedTransformation === 'ghibli-style') {
-      setPrimaryCategory('other');
-      setOtherSubcategory('ghibli-style');
     }
   }, [selectedTransformation]);
 
