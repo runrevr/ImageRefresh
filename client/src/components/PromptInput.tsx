@@ -62,7 +62,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Trolls',
     description: 'Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Create a playful fantasy character with wildly exaggerated, tall, and fluffy hair in vibrant, neon, or rainbow colors. The hair should feel energetic and almost magical — soaring upward in fun, gravity-defying shapes. The character should have sparkling, joyful eyes, a big friendly smile, and soft pastel or bright-toned skin. Style the character in a lively, colorful animated fantasy style, full of happiness, imagination, and dreamlike charm.'
+    suggestedPrompt: 'Create a playful fantasy character with wildly exaggerated, tall, fluffy hair in vibrant neon or rainbow colors that soars upward in gravity-defying shapes. Incorporate natural facial characteristics—such as skin tone, eye color, smile lines, and distinctive facial contours—to give the design a personally resonant touch. Render the character in a lively, colorful animated fantasy style, full of joy, magic, and dreamlike charm, with a softly glowing enchanted-forest backdrop.'
   },
   'princess': {
     title: 'Princess',
