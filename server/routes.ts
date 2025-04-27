@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check for preset transformations
       const presetType = validatedData.preset as string | undefined;
-      if (presetType === 'cartoon' || presetType === 'product') {
+      if (presetType === 'cartoon' || presetType === 'product' || presetType === 'ghibli-style') {
         // Create a transformation record
         const transformation = await storage.createTransformation({
           userId,
@@ -145,6 +145,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Add product photography context, combined with user input
             let productContext = "Transform this into a professional product photography style with studio lighting, a clean background, perfect exposure, and commercial-quality presentation. ";
             presetPrompt = `${productContext}${userPrompt} Always ensure the product is the clear focal point with enhanced details and accurate colors.`;
+          } else if (presetType === 'ghibli-style') {
+            // Add Ghibli style context, combined with user input
+            let ghibliContext = "Transform this uploaded image into the distinctive Studio Ghibli animation style while preserving the subject's essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio's signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject's core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world. ";
+            presetPrompt = `${ghibliContext}${userPrompt}`;
           }
           
           // Send directly to gpt-image-1

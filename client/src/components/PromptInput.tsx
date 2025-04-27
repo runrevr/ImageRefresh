@@ -142,7 +142,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     title: 'Ghibli Style',
     description: 'Transform into the beautiful, painterly anime style of Studio Ghibli films.',
     placeholder: 'E.g., Make it look like a scene from a Miyazaki film',
-    suggestedPrompt: 'Transform this image into the distinctive Studio Ghibli animation style with soft, painterly backgrounds, whimsical elements, and the characteristic Miyazaki aesthetic. Use the warm color palette, gentle lighting, and simplified but expressive facial features typical of films like Spirited Away or My Neighbor Totoro.'
+    suggestedPrompt: 'Transform this uploaded image into the distinctive Studio Ghibli animation style while preserving the subject\'s essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio\'s signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject\'s core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world.'
   },
   'ai-action-figure': {
     title: 'AI Action Figure',
