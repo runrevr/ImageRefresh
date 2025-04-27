@@ -59,10 +59,10 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     suggestedPrompt: 'Transform this image into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.'
   },
   'dreamworks': {
-    title: 'DreamWorks',
-    description: 'Render in the dynamic, expressive style of DreamWorks animations.',
+    title: 'Troll Style',
+    description: 'Transform into a vibrant, whimsical world with colorful hair and magical forest settings.',
     placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform this image into the DreamWorks animation style with expressive features, dynamic poses, and slightly exaggerated characteristics. Use the distinctive lighting and texture style seen in films like Shrek or How to Train Your Dragon.'
+    suggestedPrompt: 'Transform this image into a vibrant fantasy style featuring whimsical forest dwellers with wildly colorful hair that stands straight up. Characters should have exaggerated proportions with oversized heads, large expressive eyes, tiny bodies, and small limbs. The visual style should be ultra-colorful with a rich, saturated palette spanning the entire rainbow. The environment should be a magical forest wonderland with mushroom houses, candy-colored plants, and sparkling elements. Add musical themes with instruments, musical notes, and characters in dance poses. Textures should appear soft and fuzzy like felt or yarn with visible fibers. The overall aesthetic combines childlike wonder with a handcrafted feel featuring glitter effects, rainbow gradients, and an overwhelmingly positive, happy mood. Characters should display extreme emotional expressions with big smiles and wide eyes, celebrating friendship and diversity in a fantasy forest setting.'
   },
   'princess': {
     title: 'Princess',
