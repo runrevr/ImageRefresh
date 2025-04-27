@@ -167,14 +167,13 @@ export async function transformImage(
       
       // Instead of using the edit endpoint, we'll use the OpenAI SDK with the generation endpoint
       // as we've found the edit endpoint is more complex for our server-side use case
-      // Use type assertion to include the moderate parameter which isn't in the TypeScript definition
+      // Note: We tried using the moderate parameter but it's not supported by the API
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
         prompt: enhancedPrompt,
         n: 1,
-        size: sizeParam as any, // Type assertion to bypass type checking
-        moderate: "low" // Set moderation to low sensitivity
-      } as any);
+        size: sizeParam as any // Type assertion to bypass type checking
+      });
       
       console.log("Successfully generated image with gpt-image-1 model");
       
@@ -306,14 +305,13 @@ ${safetyGuards}`;
       console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       
       // We'll stick with the images/generate endpoint since the edit endpoint is complex
-      // Use type assertion to include the moderate parameter which isn't in the TypeScript definition
+      // Note: We tried using the moderate parameter but it's not supported by the API
       const imageResult = await openai.images.generate({
         model: "gpt-image-1",
         prompt: enhancedVariationPrompt,
         n: 1,
-        size: "1024x1024" as any,
-        moderate: "low" // Set moderation to low sensitivity
-      } as any);
+        size: "1024x1024" as any
+      });
       
       console.log("Successfully generated variation with gpt-image-1 model");
       console.log("Variation response format:", JSON.stringify(imageResult, null, 2));
