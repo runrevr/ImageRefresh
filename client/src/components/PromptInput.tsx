@@ -44,7 +44,7 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: 'Super Mario Bros',
     description: 'Transform into the colorful, blocky style of the Super Mario universe.',
     placeholder: 'E.g., Add mushrooms and pipes in the background',
-    suggestedPrompt: 'The scene should be inspired by a cinematic, colorful tech-fantasy universe with glowing pipes, floating platforms, oversized mushrooms, and blocky architecture. Use bright, saturated colors with joyful lighting and dynamic energy.'
+    suggestedPrompt: 'The scene should be inspired by a cinematic, colorful tech-fantasy universe with glowing pipes, floating platforms, oversized mushrooms, and blocky architecture. Use bright, saturated colors with joyful lighting and dynamic energy. Transform the child into a royal or heroic character based on classic adventure archetypes: If the child is a girl, style her as a whimsical princess in a pink dress with white gloves, a gold crown, and elegant details. If the child is a boy, style him as an energetic adventurer in colorful overalls with a red or green cap and oversized gloves. Always match outfit details, proportions, and styling to the child\'s age and physical description while maintaining full likeness.'
   },
   'minecraft': {
     title: 'Minecraft',
@@ -207,8 +207,15 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     // Build the complete prompt based on selections
     let finalPrompt = prompt.trim();
     
+    // Always include the full Super Mario prompt, regardless of user input
+    if (primaryCategory === 'cartoon' && cartoonSubcategory === 'super-mario') {
+      const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
+      if (suggestion) {
+        finalPrompt = suggestion + " " + finalPrompt;
+      }
+    } 
     // Add suggested prompts from chosen categories if there's minimal user input
-    if (prompt.length < 20) {
+    else if (prompt.length < 20) {
       if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
         const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
         if (suggestion) {
