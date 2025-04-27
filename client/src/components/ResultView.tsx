@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ArrowLeftRight, Upload, ImageIcon, Edit } from 'lucide-react';
+import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, ChevronDown, ChevronUp } from 'lucide-react';
 import ComparisonSlider from './ComparisonSlider';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
@@ -41,6 +41,7 @@ export default function ResultView({
   // Only show email dialog if it's not an edit and email hasn't been collected yet
   const [showEmailDialog, setShowEmailDialog] = useState(!isEdit && !emailAlreadyCollected);
   const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const userId = 1; // Default to user ID 1 for demo
   
   const handleEmailSubmitted = () => {
@@ -55,6 +56,12 @@ export default function ResultView({
   
   const handleDownload = () => {
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
+  };
+  
+  // Helper function to truncate long prompt text
+  const getTruncatedPrompt = (text: string, maxLength = 150) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
   };
 
   return (
@@ -76,15 +83,41 @@ export default function ResultView({
           />
         </div>
         
-        {/* Transformation Description - Gray text */}
+        {/* Transformation Description - Gray text with collapsible content */}
         <div className="p-4 rounded-lg mb-8 border border-gray-200">
           <div className="flex items-start">
             <ImageIcon className="text-gray-700 h-5 w-5 mt-1 mr-3 flex-shrink-0" />
-            <div>
-              <h3 className="text-gray-700 font-medium mb-1">Description:</h3>
-              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                {prompt}
-              </p>
+            <div className="w-full">
+              <div className="flex justify-between items-center mb-1">
+                <h3 className="text-gray-700 font-medium">Description:</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 w-7 p-0" 
+                  onClick={() => setShowFullDescription(!showFullDescription)}
+                  title={showFullDescription ? "Hide full description" : "Show full description"}
+                >
+                  {showFullDescription ? 
+                    <ChevronUp className="h-4 w-4 text-gray-500" /> : 
+                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                  }
+                </Button>
+              </div>
+              <div className={`overflow-hidden transition-all duration-300 ${showFullDescription ? 'max-h-screen' : 'max-h-16'}`}>
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                  {showFullDescription ? prompt : getTruncatedPrompt(prompt)}
+                </p>
+              </div>
+              {!showFullDescription && prompt.length > 150 && (
+                <div className="text-right mt-1">
+                  <button 
+                    className="text-xs text-primary-500 hover:underline"
+                    onClick={() => setShowFullDescription(true)}
+                  >
+                    Show more
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
