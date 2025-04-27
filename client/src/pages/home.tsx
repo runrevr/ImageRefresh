@@ -445,7 +445,7 @@ export default function Home() {
             
             {/* Feature Highlights */}
             <div className="w-full bg-gray-800 py-12 mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
                 <div className="rounded-xl overflow-hidden relative group h-80">
                   {/* Background image with overlay */}
                   <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-300"></div>
@@ -554,6 +554,45 @@ export default function Home() {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation('custom');
+                          }
+                        }}
+                      >
+                        Try it now
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="rounded-xl overflow-hidden relative group h-80">
+                  {/* Background image with overlay */}
+                  <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-300"></div>
+                  <img 
+                    src="/images/features/lego-cartoon.png" 
+                    alt="8-bit Mario Style" 
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center z-10">
+
+                    <h3 className="text-2xl font-bold mb-3 text-white">8-bit Game Style</h3>
+                    <p className="text-gray-100 mb-4 max-w-xs">Transform your photos into colorful 8-bit pixel art featuring classic video game landscapes, block platforms, and retro gaming elements.</p>
+                    <div className="mt-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      <Button 
+                        variant="outline" 
+                        className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                        onClick={() => {
+                          // If user is logged in, skip email check
+                          if (user.id) {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('mario-style');
+                          } else if (storedEmail) {
+                            setShowAccountNeededDialog(true);
+                          } else {
+                            setShowUploadForm(true);
+                            scrollToUploader();
+                            setSelectedTransformation('mario-style');
                           }
                         }}
                       >

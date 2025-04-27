@@ -197,6 +197,12 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
       setPrimaryCategory('product');
     } else if (selectedTransformation === 'custom') {
       setPrimaryCategory('other');
+    } else if (selectedTransformation === 'mario-style') {
+      setPrimaryCategory('cartoon');
+      setCartoonSubcategory('super-mario');
+    } else if (selectedTransformation === 'ghibli-style') {
+      setPrimaryCategory('other');
+      setOtherSubcategory('ghibli-style');
     }
   }, [selectedTransformation]);
 
