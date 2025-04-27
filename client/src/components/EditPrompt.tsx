@@ -30,7 +30,8 @@ export default function EditPrompt({
   freeCreditsUsed = false,
   paidCredits = 0
 }: EditPromptProps) {
-  const [prompt, setPrompt] = useState(initialPrompt);
+  // Start with an empty prompt box for edits, regardless of the initialPrompt
+  const [prompt, setPrompt] = useState('');
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);

@@ -95,7 +95,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         prompt: z.string().max(5000).optional(), // Increased max length and made optional for preset transformations
         userId: z.number().optional(),
         isEdit: z.boolean().optional(),
-        previousTransformation: z.string().optional(),
+        previousTransformation: z.union([z.string(), z.number()]).optional(), // Accept either string or number ID
         imageSize: z.string().optional(),
         preset: z.string().optional(), // For predefined transformation types like 'cartoon' or 'product'
       });
@@ -203,15 +203,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // The ID could be a number, a URL, or an ID extracted from a filename pattern
           let prevTransformationId: number;
           
-          // Try to parse as a direct number first
-          prevTransformationId = parseInt(validatedData.previousTransformation);
-          
-          // If that failed, check if there's a transformation ID pattern in the string
-          if (isNaN(prevTransformationId)) {
-            // Look for patterns like transformed-12345-filename.jpg (where 12345 is the ID)
-            const match = validatedData.previousTransformation.match(/transformed-(\d+)-/);
-            if (match && match[1]) {
-              prevTransformationId = parseInt(match[1]);
+          // Handle different types of previousTransformation value
+          if (typeof validatedData.previousTransformation === 'number') {
+            // If it's already a number, use it directly
+            prevTransformationId = validatedData.previousTransformation;
+          } else {
+            // If it's a string, try to parse it as a number first
+            const prevTransformationStr = String(validatedData.previousTransformation);
+            prevTransformationId = parseInt(prevTransformationStr);
+            
+            // If that failed, check if there's a transformation ID pattern in the string
+            if (isNaN(prevTransformationId)) {
+              // Look for patterns like transformed-12345-filename.jpg (where 12345 is the ID)
+              const match = prevTransformationStr.match(/transformed-(\d+)-/);
+              if (match && match[1]) {
+                prevTransformationId = parseInt(match[1]);
+              }
             }
           }
           
