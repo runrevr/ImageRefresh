@@ -43,49 +43,49 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   'super-mario': {
     title: 'Super Mario Bros',
     description: 'Transform into the colorful, blocky style of the Super Mario universe.',
-    placeholder: 'E.g., Add mushrooms and pipes in the background',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: 'The scene should be inspired by a cinematic, colorful tech-fantasy universe with glowing pipes, floating platforms, oversized mushrooms, and blocky architecture. Use bright, saturated colors with joyful lighting and dynamic energy. Transform the child into a royal or heroic character based on classic adventure archetypes: If the child is a girl, style her as a whimsical princess in a pink dress with white gloves, a gold crown, and elegant details. If the child is a boy, style him as an energetic adventurer in colorful overalls with a red or green cap and oversized gloves. Always match outfit details, proportions, and styling to the child\'s age and physical description while maintaining full likeness.'
   },
   'minecraft': {
     title: 'Minecraft',
     description: 'Convert to the iconic blocky, pixel style of Minecraft.',
-    placeholder: 'E.g., Add a Minecraft landscape in the background',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: 'Transform this image into Minecraft pixelated cube style. Use the distinctive blocky aesthetic with clear pixel edges and square proportions. Maintain the color scheme but simplify it to match Minecraft\'s limited palette.'
   },
   'pixar': {
     title: 'Pixar',
     description: 'Stylize in the smooth, expressive 3D animation style of Pixar films.',
-    placeholder: 'E.g., Make it look like a character from Toy Story',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: 'Transform this image into the Pixar animation style with smooth 3D rendering, slightly exaggerated proportions, and expressive features. Use the characteristic high-quality texture, warm lighting, and subtle details that define Pixar\'s animation style.'
   },
   'dreamworks': {
     title: 'DreamWorks',
     description: 'Render in the dynamic, expressive style of DreamWorks animations.',
-    placeholder: 'E.g., Style it like a character from Shrek or How to Train Your Dragon',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: 'Transform this image into the DreamWorks animation style with expressive features, dynamic poses, and slightly exaggerated characteristics. Use the distinctive lighting and texture style seen in films like Shrek or How to Train Your Dragon.'
   },
   'princess': {
     title: 'Princess',
     description: 'Create a fairytale princess style with magical elements.',
-    placeholder: 'E.g., Add a crown, magical sparkles, and royal attire',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: 'Transform this image into a fairytale princess style with elegant royal attire, soft glowing effects, sparkles, and magical elements. Use pastel colors, ornate details, and a dreamy atmosphere reminiscent of classic fairy tales.'
   },
   'superhero': {
     title: 'Superhero',
     description: 'Convert to a dynamic comic book superhero style.',
-    placeholder: 'E.g., Add a cape, mask, and action lines',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: 'Transform this image into a comic book superhero style with bold outlines, dynamic poses, and action elements like motion lines or impact effects. Use vibrant, contrasting colors and dramatic lighting typical of superhero comics.'
   },
   'lego': {
     title: 'Lego',
     description: 'Reconstruct in the distinctive blocky Lego brick style.',
-    placeholder: 'E.g., Make it look like it\'s built from Lego bricks',
-    suggestedPrompt: 'Transform this image into the Lego brick style with the characteristic plastic texture, studs, and blocky construction. Simplify the forms into brick-built shapes and use the bright, slightly glossy colors typical of Lego sets.'
+    placeholder: 'E.g., Enter name "Jack" into the image',
+    suggestedPrompt: 'The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform the child into a custom Lego minifigure that accurately matches their real-life features from uploaded image. Carefully replicate the child\'s hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the child\'s clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the child\'s Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.'
   },
   'custom-cartoon': {
     title: 'Custom Cartoon Style',
     description: 'Describe your own custom cartoon transformation.',
-    placeholder: 'E.g., Make it look like a hand-drawn 90s cartoon with thick outlines',
+    placeholder: 'E.g., Enter name "Jack" into the image',
     suggestedPrompt: ''
   }
 };
@@ -213,7 +213,14 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
       if (suggestion) {
         finalPrompt = suggestion + " " + finalPrompt;
       }
-    } 
+    }
+    // Always include the full Lego prompt, regardless of user input
+    else if (primaryCategory === 'cartoon' && cartoonSubcategory === 'lego') {
+      const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
+      if (suggestion) {
+        finalPrompt = suggestion + " " + finalPrompt;
+      }
+    }
     // Add suggested prompts from chosen categories if there's minimal user input
     else if (prompt.length < 20) {
       if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
