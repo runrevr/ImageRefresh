@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 import { Readable } from "stream";
 import { promisify } from "util";
 import stream from "stream";
+import { FormData } from "formdata-node";
 
 const pipeline = promisify(stream.pipeline);
 
@@ -165,8 +166,13 @@ export async function transformImage(
                         imageSize === "1536x1024" ? "1536x1024" :
                         "1024x1024";
       
-      const imageResult = await openai.images.generate({
+      // Read the image file for editing
+      const inputImageBuffer = fs.readFileSync(imagePath);
+      
+      // Create a FormData object with the image and prompt
+      const imageResult = await openai.images.edit({
         model: "gpt-image-1",
+        image: new File([inputImageBuffer], path.basename(imagePath), { type: "image/png" }),
         prompt: enhancedPrompt,
         n: 1,
         size: sizeParam as any // Type assertion to bypass type checking
@@ -301,11 +307,16 @@ ${safetyGuards}`;
       
       console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       
-      const imageResult = await openai.images.generate({
+      // Read the image file for editing
+      const imageBuffer = fs.readFileSync(imagePath);
+      
+      // Use the images/edit endpoint
+      const imageResult = await openai.images.edit({
         model: "gpt-image-1",
+        image: imageBuffer,
         prompt: enhancedVariationPrompt,
         n: 1,
-        size: "1024x1024"
+        size: "1024x1024" as any
       });
       
       console.log("Successfully generated variation with gpt-image-1 model");
