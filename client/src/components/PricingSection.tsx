@@ -91,7 +91,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
           >
             {tier.popular && (
               <div className="absolute top-0 right-0 w-0 h-0 border-t-[100px] border-t-[#FF7B54] border-l-[100px] border-l-transparent z-10 shadow-lg">
-                <span className="absolute top-[-48px] right-[12px] text-white font-bold uppercase tracking-wider text-xs transform rotate-45">Popular</span>
+                <span className="absolute top-[15px] right-[25px] text-white font-bold uppercase tracking-wider text-xs transform rotate-45">Popular</span>
               </div>
             )}
             <CardContent className="p-6 flex-grow flex flex-col">
