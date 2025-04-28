@@ -151,7 +151,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             presetPrompt = `${ghibliContext}${userPrompt}`;
           } else if (presetType === 'mario-style') {
             // Add 8-bit Mario style context, combined with user input
-            let marioContext = "Transform this uploaded image into a vibrant 8-bit pixel art style inspired by classic retro video games. The background MUST feature a vibrant 8-bit pixel art landscape with a bright, solid blue sky and fluffy, white clouds outlined in black, accented with pixelated blue highlights. The ground MUST be made up of brown, brick-textured tiles, creating a classic retro platform for characters to walk on. Include foreground elements such as a large green pipe emerging from the ground, possibly with a red and green plant-like creature extending upward. Small turtle-like creatures with green shells may be added as appropriate. Include suspended brick blocks and special marked blocks floating in the air, suggesting hidden rewards or surprises. Add vibrant flowers with white and orange blooms growing from blocks. The background scenery should include rolling green hills and rounded trees, drawn in simple shapes with black accents to add depth. The overall scene must be a colorful, nostalgic 8-bit world, filled with playful energy and classic side-scrolling adventure vibes. ";
+            let marioContext = `Transform the uploaded image into a vibrant 8-bit pixel art style, reminiscent of classic retro video games. The background should feature a bright, solid blue sky filled with fluffy white pixel clouds, outlined in black with subtle blue pixel highlights. The ground must be constructed from brown, brick-textured tiles arranged in a classic platformer style.
+
+              In the foreground, add a large, vivid green pipe emerging from the ground, possibly with a red-and-green plant creature (similar to a carnivorous vine) rising out of it. Place small turtle-like pixel creatures with green shells scattered playfully across the ground.
+
+              Include suspended floating elements, such as brown brick blocks and special yellow marked blocks with question marks, hinting at hidden rewards or power-ups. From some of these blocks, grow colorful pixelated flowers with white petals and orange centers.
+
+              Fill the background landscape with rolling green hills and rounded, cartoonish trees drawn in simple, bold shapes, outlined in black for a classic pixel-art look.
+
+              Emphasize vibrant, saturated colors, crisp pixel details, and a lively, nostalgic side-scrolling atmosphere full of energy and charm, inspired by iconic 8-bit adventure games.
+
+ `;
             presetPrompt = `${marioContext}${userPrompt} Ensure the original subject from the uploaded image remains the primary focus, pixelated in the 8-bit style but still clearly recognizable.`;
           }
           

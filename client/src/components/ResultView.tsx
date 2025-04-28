@@ -138,44 +138,51 @@ export default function ResultView({
           )}
         </div>
         
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          {canEdit && onEditImage && (
-            <Button
-              className="text-white bg-black"
-              onClick={onEditImage}
-              title={editsUsed > 0 ? "Additional edits will use credits" : "You have 1 free edit available"}
+        {/* First row: Edit and Download */}
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            {canEdit && onEditImage && (
+              <Button
+                className="text-white bg-black flex-1"
+                onClick={onEditImage}
+                title={editsUsed > 0 ? "Additional edits will use credits" : "You have 1 free edit available"}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                {editsUsed > 0 ? "Edit Again (Uses Credit)" : "Edit This Image"}
+                {editsUsed > 0 && (
+                  <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
+                    1 Credit
+                  </span>
+                )}
+              </Button>
+            )}
+            <Button 
+              className="flex-1"
+              onClick={handleDownload}
             >
-              <Edit className="h-4 w-4 mr-2" />
-              {editsUsed > 0 ? "Edit Again (Uses Credit)" : "Edit This Image"}
-              {editsUsed > 0 && (
-                <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
-                  1 Credit
-                </span>
-              )}
+              <Download className="h-4 w-4 mr-2" /> Download Image
             </Button>
-          )}
-          <Button 
-            variant="outline" 
-            onClick={onTryAgain}
-            className="text-red-500"
-          >
-            <ArrowLeftRight className="h-4 w-4 mr-2" />
-            Try Another Prompt
-          </Button>
-          <Button 
-            className="flex-1"
-            onClick={handleDownload}
-          >
-            <Download className="h-4 w-4 mr-2" /> Download Image
-          </Button>
-          <Button 
-            variant="outline"
-            className="border-primary-500 text-black hover:bg-primary-50 hover:text-primary-500 bg-primary-500"
-            onClick={onNewImage}
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            Upload New Image
-          </Button>
+          </div>
+          
+          {/* Second row: Try Another Prompt and Upload New Image */}
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <Button 
+              variant="outline" 
+              onClick={onTryAgain}
+              className="text-red-500 flex-1"
+            >
+              <ArrowLeftRight className="h-4 w-4 mr-2" />
+              Try Another Prompt
+            </Button>
+            <Button 
+              variant="outline"
+              className="border-primary-500 text-black hover:bg-primary-50 hover:text-primary-500 bg-primary-500 flex-1"
+              onClick={onNewImage}
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Upload New Image
+            </Button>
+          </div>
         </div>
         
         <div className="mt-8 p-4 bg-blue-50 rounded-lg text-center">
