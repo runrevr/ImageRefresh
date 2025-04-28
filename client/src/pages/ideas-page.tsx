@@ -101,9 +101,9 @@ export default function IdeasPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap -mx-2">
+        <div className="flex flex-wrap justify-center -mx-2">
           {ideas.map((idea) => (
-            <div key={idea.id} className="w-full sm:w-1/2 lg:w-1/3 p-2">
+            <div key={idea.id} className="w-full sm:w-1/2 md:w-1/3 p-2" style={{ minWidth: "250px", maxWidth: "400px" }}>
               <Card 
                 className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
                 onMouseEnter={() => setHoveredCard(idea.id)}
