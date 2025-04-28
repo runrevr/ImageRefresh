@@ -162,10 +162,10 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
       "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
   },
   "natural-scene": {
-    title: "Natural Scene Placement",
+    title: "Lifestyle Integration",
     description:
       "Place the product in a realistic outdoor or natural environment.",
-    placeholder: "E.g., Show the product on a beach at sunset",
+    placeholder: "E.g., Indoor or outdoor, which environment [modern/rustic/minimalist]",
     suggestedPrompt:
       "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
   },
@@ -216,7 +216,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     description:
       "Turn the subject into a realistic, detailed action figure or toy.",
     placeholder:
-      "E.g., Put the name 'x', with 'x, y, z tools'",
+      "E.g., Put the name on the packaging with accessories",
     suggestedPrompt:
       "Use this uploaded image to create a picture of an action figure toy in a blister package, displayed from head to toe. The action figure should accurately represent the character/person from the uploaded image while giving it a mass-produced toy aesthetic with visible joints and plastic texture. Include relevant accessories that match the character's theme, abilities, or items visible in the original image. The package should have clear plastic with cardboard backing featuring bright colors and marketing text. The packaging should prominently display an appropriate name/title at the top that fits the character/person shown in the image.",
   },
