@@ -193,7 +193,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
       "Envision how a future baby might look based on the people in the image.",
     placeholder: "E.g., Show what our future baby might look like",
     suggestedPrompt:
-      "Using the people shown as parents, create a realistic and heartwarming prediction of what their baby might look like. Blend facial features, skin tone, hair color, and eye color in a natural way. Make the baby appear around 1 year old with a joyful expression.",
+      "Create a realistic image of a baby that would result from the genetics of the two people in the uploaded photos. The baby should have a balanced blend of facial features from both parents, including eye shape/color, nose, mouth, face shape, and skin tone. Show only the baby in the final image, centered in frame with good lighting against a neutral background. The baby should appear healthy, happy, and around 6-12 months old with a natural expression. Dress the baby in appropriate baby clothing - such as a simple onesie, cute baby outfit, or comfortable infant attire - not attempting to match or replicate the clothing style of the parents. Add subtle details that clearly connect to features from both parent photos without directly copying them.",
   },
   "future-self": {
     title: "What Will I Look Like in 20 Years",
