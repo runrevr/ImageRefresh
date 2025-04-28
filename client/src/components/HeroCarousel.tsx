@@ -62,7 +62,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
       
       {/* Content overlay */}
       <div className="relative z-20 flex-1 flex items-center justify-center">
-        <div className="container mx-auto px-6 md:px-8 py-10">
+        <div className="container mx-auto px-6 md:px-8 py-10 pb-16">
           <div className="max-w-2xl mx-auto text-center md:pt-0">
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
               Create Viral-Worthy Images In Just 3 Clicks
@@ -76,13 +76,13 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
             
             <div className="flex flex-col items-center justify-center">
               <Button 
-                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg mb-6 border-4 border-[#FF7B54] shadow-[0_10px_25px_-5px_rgba(255,123,84,0.5)]" 
+                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg mb-10 border-4 border-[#FF7B54] shadow-[0_10px_25px_-5px_rgba(255,123,84,0.5)]" 
                 onClick={onCreateClick}
               >
                 ⚡ Let's Make Some Magic
               </Button>
               
-              <div className="text-md text-gray-700 p-2">
+              <div className="text-md text-gray-700 p-2 mb-4">
                 <i className="fas fa-info-circle mr-2"></i>
                 Your first transformation is free! No credit card required.
               </div>
