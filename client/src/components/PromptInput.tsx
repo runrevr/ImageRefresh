@@ -216,9 +216,9 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     description:
       "Turn the subject into a realistic, detailed action figure or toy.",
     placeholder:
-      "E.g., Make me into a collectible action figure with accessories",
+      "E.g., Put the name "x", with "x, y, z tools",
     suggestedPrompt:
-      "Transform into a realistic, high-quality action figure or toy. Add visible joints, plastic texture, and a display stand. Include appropriate accessories and packaging design elements. Maintain the subject's likeness and key features while giving it the distinctive plastic sheen and manufacturing details of a premium collectible figure.",
+      "Use this uploaded image to create a picture of an action figure toy in a blister package, displayed from head to toe. The action figure should accurately represent the character/person from the uploaded image while giving it a mass-produced toy aesthetic with visible joints and plastic texture. Include relevant accessories that match the character's theme, abilities, or items visible in the original image. The package should have clear plastic with cardboard backing featuring bright colors and marketing text. The packaging should prominently display an appropriate name/title at the top that fits the character/person shown in the image.",
   },
   "pet-as-human": {
     title: "What Would My Pet Look Like as a Human",
