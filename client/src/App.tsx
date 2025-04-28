@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import PricingPage from "@/pages/pricing";
 import AuthPage from "@/pages/auth-page";
+import IdeasPage from "@/pages/ideas-page";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -22,6 +23,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/pricing" component={PricingPage} />
+      <Route path="/ideas" component={IdeasPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login" component={AuthPage} />
       <Route path="/register" component={AuthPage} />

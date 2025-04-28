@@ -34,7 +34,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         </Link>
         
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#examples" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Examples</a>
+          <Link href="/ideas" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Ideas</Link>
           <a href="#pricing" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Pricing</a>
           <a href="#faq" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Help</a>
         </div>
@@ -113,13 +113,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 <img src={logoImage} alt="ImageRefresh Logo" className="h-12" />
               </div>
               <div className="flex flex-col space-y-4">
-                <a 
-                  href="#examples" 
+                <Link 
+                  href="/ideas" 
                   className="header-menu py-2 text-[#333333] hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Examples
-                </a>
+                  Ideas
+                </Link>
                 <Link 
                   href="/pricing" 
                   className="header-menu py-2 block text-[#333333] hover:text-[#2A7B9B] transition"
