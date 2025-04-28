@@ -75,6 +75,21 @@ export default function ResultView({
       />
       
       <div className="w-full max-w-3xl mx-auto">
+        {/* Transformation Complete Message */}
+        <div className="text-center mb-6">
+          <p className="text-xl font-medium mb-2">Transformation Complete!</p>
+          <p className="text-gray-600">
+            Drag the slider to compare before and after images.
+          </p>
+          {editsUsed > 0 && (
+            <div className="mt-1 text-sm">
+              <span className="text-gray-500">
+                {editsUsed} edit{editsUsed !== 1 ? 's' : ''} used
+              </span>
+            </div>
+          )}
+        </div>
+        
         {/* Comparison slider */}
         <div className="w-full h-96 rounded-lg overflow-hidden mb-8">
           <ComparisonSlider 
@@ -120,22 +135,6 @@ export default function ResultView({
               )}
             </div>
           </div>
-        </div>
-        
-        <div className="text-center mb-8">
-          <p className="text-xl font-medium mb-2">Transformation Complete!</p>
-          <p className="text-gray-600">
-            Drag the slider to compare before and after images.
-          </p>
-          
-          {transformationId && (
-            <div className="mt-3 text-sm">
-              <span className="text-gray-500">
-                Transformation ID: {transformationId}
-                {editsUsed > 0 ? ` • ${editsUsed} edit${editsUsed !== 1 ? 's' : ''} used` : ''}
-              </span>
-            </div>
-          )}
         </div>
         
         {/* First row: Edit and Download */}
