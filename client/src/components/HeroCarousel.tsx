@@ -65,7 +65,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
       {/* Content overlay */}
       <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="max-w-2xl mx-auto text-center pt-[4rem] md:pt-0">
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
               Create Viral-Worthy Images In Just 3 Clicks
             </h1>
