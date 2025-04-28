@@ -80,11 +80,17 @@ export default function IdeasPage() {
     },
   ];
 
-  const copyPromptToClipboard = (prompt: string) => {
-    navigator.clipboard.writeText(prompt);
+  const saveStylePrompt = (idea: IdeaCard) => {
+    // Save the selected idea prompt in localStorage for use on the home page
+    localStorage.setItem('selectedStyle', JSON.stringify({
+      prompt: idea.prompt,
+      title: idea.title,
+      category: idea.category
+    }));
+    
     toast({
-      title: "Prompt copied!",
-      description: "The prompt has been copied to your clipboard.",
+      title: "Style selected!",
+      description: `The "${idea.title}" style will be applied to your next image.`,
     });
   };
 
@@ -130,17 +136,13 @@ export default function IdeasPage() {
                   <CardDescription className="text-xs">{idea.description}</CardDescription>
                 </CardHeader>
 
-                <CardFooter className="flex justify-between gap-1 p-3">
-                  <Button 
-                    variant="outline" 
-                    className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white text-xs py-1"
-                    onClick={() => copyPromptToClipboard(idea.prompt)}
-                  >
-                    Copy Prompt
-                  </Button>
+                <CardFooter className="flex justify-center p-3">
                   <Link href="/">
-                    <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white text-xs py-1">
-                      Try It
+                    <Button 
+                      className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full"
+                      onClick={() => saveStylePrompt(idea)}
+                    >
+                      Use This Style
                     </Button>
                   </Link>
                 </CardFooter>
