@@ -45,6 +45,7 @@ export type ProductSubcategory =
   | "enhanced-lighting"
   | "natural-scene"
   | "product-mockup"
+  | "social-media-ready"
   | "custom-product";
 export type OtherSubcategory =
   | "baby-prediction"
@@ -175,6 +176,13 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
     placeholder: "E.g., Show being used by a model in a living room",
     suggestedPrompt:
       "Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.",
+  },
+  "social-media-ready": {
+    title: "Social Media Ready",
+    description: "Optimize product presentation for social media platforms.",
+    placeholder: "Color Style: vibrant, pastel or contrasting",
+    suggestedPrompt:
+      "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with [vibrant/pastel/contrasting] colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay, incorporate trending visual elements, and ensure the product pops against a carefully designed background that suggests lifestyle without overwhelming.",
   },
   "custom-product": {
     title: "Create Your Own Product Image",
