@@ -30,9 +30,9 @@ export function Layout({ children }: LayoutProps) {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-full min-h-screen">
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-      <main className="flex-grow">
+      <main className="flex-grow flex flex-col">
         {children}
       </main>
       <Footer />

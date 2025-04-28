@@ -48,7 +48,7 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
-    <div className="relative overflow-hidden text-white h-[90vh] min-h-[700px] mt-[-2rem] flex flex-col">
+    <div className="relative overflow-hidden text-white h-screen min-h-[700px] m-0 flex flex-col">
       {/* Background image with the cats */}
       <img 
         src="/images/cats.png" 
@@ -70,7 +70,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
               Upload Your Image, Unload Your Imagination
             </h2>
             <p className="text-xl lg:text-2xl mb-8 text-gray-700 mx-auto">
-              Imagine your kid as a cartoon hero. Your product as the next viral obsession. Your content is creating trends. If Nothing Else You Can Make Your Friends Look Like a Simpson Charcter...
+              Imagine your kid as a cartoon hero. Your product as the next viral obsession. Your content is creating tons of likes and comments. If nothing else you can make your friends look like a cat...
             </p>
             
             <div className="flex flex-col items-center justify-center">

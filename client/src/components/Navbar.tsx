@@ -29,14 +29,14 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img src={logoImage} alt="ImageRefresh Logo" className="h-16" />
+            <img src={logoImage} alt="ImageRefresh Logo" className="h-24" />
           </div>
         </Link>
         
-        <div className="hidden md:flex items-center space-x-8">
-          <Link href="/ideas" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Ideas</Link>
-          <a href="#pricing" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Pricing</a>
-          <a href="#faq" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition">Help</a>
+        <div className="hidden md:flex items-center space-x-24">
+          <Link href="/ideas" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold">Ideas</Link>
+          <a href="#pricing" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold">Pricing</a>
+          <a href="#faq" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold">Help</a>
         </div>
         
         <div className="flex items-center space-x-4">

@@ -54,8 +54,16 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply h-full m-0 p-0;
+  }
+
   body {
     @apply font-lato font-normal antialiased bg-background text-foreground;
+  }
+  
+  #root {
+    @apply h-full flex flex-col;
   }
 
   /* Typography styles */
