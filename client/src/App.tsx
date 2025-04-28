@@ -53,10 +53,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <div className="flex flex-col min-h-screen h-full w-full" style={{ minHeight: '100vh', height: '100%' }}>
-            <Toaster />
-            <Router />
-          </div>
+          <Toaster />
+          <Router />
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

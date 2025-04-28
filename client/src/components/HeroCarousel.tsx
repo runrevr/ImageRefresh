@@ -48,22 +48,21 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
-    <div className="relative overflow-hidden text-white h-screen w-full min-h-screen m-0 p-0 flex flex-col flex-grow" style={{ minHeight: '100vh', height: '100%' }}>
+    <div className="w-full h-screen min-h-screen relative overflow-hidden">
       {/* Background image with the cats */}
       <img 
         src="/images/couple_of_cats.png" 
         alt="Four cats dressed as humans"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />
       
       {/* Semi-transparent overlay for better text readability */}
-      <div className="absolute inset-0 bg-white/60 z-10" />
+      <div className="absolute inset-0 bg-white/60 z-10"></div>
       
       {/* Content overlay */}
-      <div className="relative z-20 flex-1 flex items-center justify-center">
-        <div className="container mx-auto px-6 md:px-8 py-10 pb-16">
-          <div className="max-w-2xl mx-auto text-center md:pt-0">
+      <div className="relative z-20 h-full w-full flex items-center justify-center">
+        <div className="container mx-auto px-6 md:px-8 py-10">
+          <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
               Create Viral-Worthy Images In Just 3 Clicks
             </h1>

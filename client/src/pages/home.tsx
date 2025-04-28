@@ -439,7 +439,7 @@ export default function Home() {
   };
   
   return (
-    <div className="text-gray-800 min-h-screen flex flex-col bg-white w-full h-full" style={{ minHeight: '100vh', height: '100%' }}>
+    <div className="text-gray-800 min-h-screen flex flex-col bg-white">
       
       <Navbar freeCredits={!user.freeCreditsUsed ? 1 : 0} paidCredits={user.paidCredits} />
       
