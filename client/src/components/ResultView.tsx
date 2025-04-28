@@ -143,7 +143,7 @@ export default function ResultView({
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             {canEdit && onEditImage && (
               <Button
-                className="text-white bg-black flex-1"
+                className="text-[#FF7B54] bg-[#333333] hover:bg-[#333333]/90 flex-1"
                 onClick={onEditImage}
                 title={editsUsed > 0 ? "Additional edits will use credits" : "You have 1 free edit available"}
               >
