@@ -51,12 +51,13 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
-    <div className="w-full h-screen min-h-screen relative overflow-hidden">
+    <div className="w-full h-screen min-h-screen relative overflow-hidden bg-white">
       {/* Background image with the cats */}
       <img 
         src={catsImage} 
         alt="Four cats dressed as humans"
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ width: '100vw', height: '100vh', objectFit: 'cover' }}
       />
       
       {/* Semi-transparent overlay for better text readability */}

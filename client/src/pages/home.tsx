@@ -439,7 +439,7 @@ export default function Home() {
   };
   
   return (
-    <div className="text-gray-800 min-h-screen flex flex-col bg-white">
+    <div className="text-gray-800 min-h-screen flex flex-col" style={{ backgroundColor: 'white' }}>
       
       <Navbar freeCredits={!user.freeCreditsUsed ? 1 : 0} paidCredits={user.paidCredits} />
       

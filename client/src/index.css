@@ -61,7 +61,8 @@
   }
 
   body {
-    @apply font-lato font-normal antialiased bg-background text-foreground;
+    @apply font-lato font-normal antialiased text-foreground;
+    background-color: white;
     display: flex;
     flex-direction: column;
   }
