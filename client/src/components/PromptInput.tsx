@@ -1,10 +1,24 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ChevronLeft, Lightbulb, CircleHelp, Wand2, ChevronRight, ImageIcon, BoxIcon, PaintBucket, Sparkles } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  ChevronLeft,
+  Lightbulb,
+  CircleHelp,
+  Wand2,
+  ChevronRight,
+  ImageIcon,
+  BoxIcon,
+  PaintBucket,
+  Sparkles,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface PromptInputProps {
   originalImage: string;
@@ -14,12 +28,32 @@ interface PromptInputProps {
 }
 
 // Main transformation categories
-export type TransformationType = 'cartoon' | 'product' | 'custom';
+export type TransformationType = "cartoon" | "product" | "custom";
 
 // Subcategory types
-export type CartoonSubcategory = 'super-mario' | 'minecraft' | 'pixar' | 'dreamworks' | 'princess' | 'superhero' | 'lego' | 'custom-cartoon';
-export type ProductSubcategory = 'remove-background' | 'enhanced-lighting' | 'natural-scene' | 'product-mockup' | 'custom-product';
-export type OtherSubcategory = 'baby-prediction' | 'future-self' | 'ghibli-style' | 'ai-action-figure' | 'pet-as-human' | 'self-as-cat' | 'custom-other';
+export type CartoonSubcategory =
+  | "super-mario"
+  | "minecraft"
+  | "pixar"
+  | "dreamworks"
+  | "princess"
+  | "superhero"
+  | "lego"
+  | "custom-cartoon";
+export type ProductSubcategory =
+  | "remove-background"
+  | "enhanced-lighting"
+  | "natural-scene"
+  | "product-mockup"
+  | "custom-product";
+export type OtherSubcategory =
+  | "baby-prediction"
+  | "future-self"
+  | "ghibli-style"
+  | "ai-action-figure"
+  | "pet-as-human"
+  | "self-as-cat"
+  | "custom-other";
 
 // Writing tips for better prompts
 const PROMPT_TIPS = [
@@ -27,7 +61,7 @@ const PROMPT_TIPS = [
   "Mention colors and lighting (e.g., 'vibrant colors', 'dramatic lighting')",
   "Reference artists or styles (e.g., 'like Van Gogh', 'cyberpunk aesthetic')",
   "Include mood or atmosphere (e.g., 'mysterious', 'cheerful', 'serene')",
-  "Specify what elements to modify (e.g., 'replace the background with mountains')"
+  "Specify what elements to modify (e.g., 'replace the background with mountains')",
 ];
 
 // Descriptions and example prompts for subcategories
@@ -40,147 +74,188 @@ type StyleOption = {
 
 // Cartoon subcategories
 const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
-  'super-mario': {
-    title: 'Super Mario Bros',
-    description: 'Transform into the colorful, blocky style of the Super Mario universe.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Create a vibrant, colorful 8-bit pixel art scene featuring a bright blue sky with fluffy white clouds, brown brick tiles, suspended question mark blocks, green warp pipes, and rolling grassy hills in the background. Include pixelated power-up flowers, coin blocks, and classic video game elements arranged as platforms. Use a limited color palette with bold primary colors and distinctive pixel-based shading in a cheerful, nostalgic Nintendo game style. Transform the subject into a heroic pixelated character based on classic adventure archetypes: If the subject is female, style her as a princess with a pink dress, white gloves, and a gold crown. If male, style him as an adventurer with colorful overalls, a cap, and oversized gloves. Maintain the subject\'s core facial features and likeness while adapting to the 8-bit pixel art aesthetic. All elements must feel original and inspired by classic Nintendo games without directly copying copyrighted characters.'
+  "super-mario": {
+    title: "Super Mario Bros",
+    description:
+      "Transform into the colorful, blocky style of the Super Mario universe.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt:
+      "Create a colorful 8-bit pixel art scene inspired by retro video games. The scene features a small pixel-style character sitting on a brown brick platform, holding a glowing orb. The character wears a green shirt and blue pants. The background includes a bright blue sky with pixelated white clouds outlined in black, rolling green hills, rounded trees, and colorful pixel flowers growing from floating bricks. Add a large green warp pipe with a red-and-green plant coming out of it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above the character. The overall style should feel bright, playful, and nostalgic, like a side-scrolling adventure world.",
   },
-  'minecraft': {
-    title: 'Minecraft',
-    description: 'Convert to the iconic blocky, pixel style of Minecraft.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game\'s distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft\'s procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.'
+  minecraft: {
+    title: "Minecraft",
+    description: "Convert to the iconic blocky, pixel style of Minecraft.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt:
+      "Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game's distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft's procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.",
   },
-  'pixar': {
-    title: 'Pixar',
-    description: 'Stylize in the smooth, expressive 3D animation style of Pixar films.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.'
+  pixar: {
+    title: "Pixar",
+    description:
+      "Stylize in the smooth, expressive 3D animation style of Pixar films.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt:
+      "Transform into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.",
   },
-  'dreamworks': {
-    title: 'Trolls',
-    description: 'Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'The scene should be set in a vibrant, musical-inspired fantasy world with oversized flowers, sparkling waterfalls, and candy-colored foliage arranged in rhythmic, concert-like formations. Use bright, saturated colors with joyful, high-contrast lighting and dynamic motion throughout the environment. Transform the child into a whimsical troll folk-hero character drawn from classic fairy-tale archetypes: • If the pic is a girl, style her hair as a tall, fluffy braid woven with floral garlands and glitter accents in vivid rainbow hues. • If the child is a boy, style his hair as a wild, gravity-defying foliage crown of neon or pastel shades, with playful, textured garments inspired by forest motifs. Carefully match hairstyle details, proportions, and styling to the child\'s age and natural features (skin tone, eye color, smile shape) to preserve full likeness. Do not reference or name any copyrighted franchises or characters. All elements must feel original and inspired by musical-fantasy traditions, not copied.'
+  dreamworks: {
+    title: "Trolls",
+    description:
+      "Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt:
+      "Use the uploaded image as inspiration for the mood and attitude of a whimsical troll folk-hero character. Create a playful fantasy scene filled with oversized flowers, sparkling waterfalls, and colorful candy-like forests arranged in musical, rhythmic patterns. Design the character in a bright, cartoon style with wild, gravity-defying neon hair shaped like a crown, textured clothes inspired by forest leaves and vines, and a joyful, lively expression. Set everything in a vivid, high-contrast animated world, like a cheerful fairy-tale concert. Do not attempt to copy real-world features or likeness from the uploaded image. Everything should feel original, imaginative, and inspired by classic musical fantasy traditions.",
   },
-  'princess': {
-    title: 'Princess',
-    description: 'Create a fairytale princess style with magical elements.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.'
+  princess: {
+    title: "Princess",
+    description: "Create a fairytale princess style with magical elements.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt:
+      "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
   },
-  'superhero': {
-    title: 'Superhero',
-    description: 'Convert to a dynamic comic book superhero style.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'Use the uploaded image as inspiration to create a new, non-photorealistic cartoon superhero character for a family-friendly art project. Design the character in a bold, animated style with exaggerated features, including a dynamic flowing cape, a colorful heroic costume with a unique chest emblem, and vibrant contrasting colors. Add voluminous, stylized hair and a heroic stance in a whimsical urban cartoon cityscape with a skyline backdrop. Include subtle, glowing power effects around the hands or eyes to suggest special abilities, with a billowing cape for a sense of movement. Ensure the character has a playful, cartoonish appearance suitable for a children\'s animated series.'
+  superhero: {
+    title: "Superhero",
+    description: "Convert to a dynamic comic book superhero style.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt: `Use the uploaded image as inspiration for the pose and action of a new, non-photorealistic cartoon superhero character. Create a bold animated style with exaggerated features, colorful heroic costumes, dynamic flowing capes, and glowing energy effects around the hands or eyes. Make the character seated on a block or platform, holding a glowing energy orb, with a serious and determined expression. Set the scene in a whimsical urban cartoon cityscape with a skyline backdrop, and use bright, joyful colors. Do not copy any facial features or likeness from the uploaded image. Everything must feel original and playful, inspired by animated superhero adventures.`,
   },
-  'lego': {
-    title: 'Lego',
-    description: 'Reconstruct in the distinctive blocky Lego brick style.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: 'The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.'
+  lego: {
+    title: "Lego",
+    description: "Reconstruct in the distinctive blocky Lego brick style.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt:
+      "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
   },
-  'custom-cartoon': {
-    title: 'Create Your Own Cartoon',
-    description: 'Describe your own custom cartoon transformation.',
-    placeholder: 'E.g., Place the name Jack somewhere in the image',
-    suggestedPrompt: ''
-  }
+  "custom-cartoon": {
+    title: "Create Your Own Cartoon",
+    description: "Describe your own custom cartoon transformation.",
+    placeholder: "E.g., Place the name Jack somewhere in the image",
+    suggestedPrompt: "",
+  },
 };
 
 // Product subcategories
 const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
-  'remove-background': {
-    title: 'Remove Background',
-    description: 'Isolate the product with a clean, solid or transparent background.',
-    placeholder: 'E.g., Place on a pure white background with subtle shadow',
-    suggestedPrompt: 'Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.'
+  "remove-background": {
+    title: "Remove Background",
+    description:
+      "Isolate the product with a clean, solid or transparent background.",
+    placeholder: "E.g., Place on a pure white background with subtle shadow",
+    suggestedPrompt:
+      "Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.",
   },
-  'enhanced-lighting': {
-    title: 'Enhanced Lighting & Colors',
-    description: 'Improve product appearance with professional studio lighting and color enhancement.',
-    placeholder: 'E.g., Add dramatic side lighting to highlight texture',
-    suggestedPrompt: 'Apply enhanced professional studio lighting. Add soft key lights to highlight the product\'s best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.'
+  "enhanced-lighting": {
+    title: "Enhanced Lighting & Colors",
+    description:
+      "Improve product appearance with professional studio lighting and color enhancement.",
+    placeholder: "E.g., Add dramatic side lighting to highlight texture",
+    suggestedPrompt:
+      "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
   },
-  'natural-scene': {
-    title: 'Natural Scene Placement',
-    description: 'Place the product in a realistic outdoor or natural environment.',
-    placeholder: 'E.g., Show the product on a beach at sunset',
-    suggestedPrompt: 'Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment\'s lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.'
+  "natural-scene": {
+    title: "Natural Scene Placement",
+    description:
+      "Place the product in a realistic outdoor or natural environment.",
+    placeholder: "E.g., Show the product on a beach at sunset",
+    suggestedPrompt:
+      "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
   },
-  'product-mockup': {
-    title: 'Product Mockup',
-    description: 'Show the product in context of use in realistic scenarios.',
-    placeholder: 'E.g., Show being used by a model in a living room',
-    suggestedPrompt: 'Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.'
+  "product-mockup": {
+    title: "Product Mockup",
+    description: "Show the product in context of use in realistic scenarios.",
+    placeholder: "E.g., Show being used by a model in a living room",
+    suggestedPrompt:
+      "Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.",
   },
-  'custom-product': {
-    title: 'Create Your Own Product Image',
-    description: 'Describe your own custom product transformation.',
-    placeholder: 'E.g., Place product on a marble countertop with morning light',
-    suggestedPrompt: ''
-  }
+  "custom-product": {
+    title: "Create Your Own Product Image",
+    description: "Describe your own custom product transformation.",
+    placeholder:
+      "E.g., Place product on a marble countertop with morning light",
+    suggestedPrompt: "",
+  },
 };
 
 // Other subcategories
 const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
-  'baby-prediction': {
-    title: 'What Will Our Baby Look Like',
-    description: 'Envision how a future baby might look based on the people in the image.',
-    placeholder: 'E.g., Show what our future baby might look like',
-    suggestedPrompt: 'Using the people shown as parents, create a realistic and heartwarming prediction of what their baby might look like. Blend facial features, skin tone, hair color, and eye color in a natural way. Make the baby appear around 1 year old with a joyful expression.'
+  "baby-prediction": {
+    title: "What Will Our Baby Look Like",
+    description:
+      "Envision how a future baby might look based on the people in the image.",
+    placeholder: "E.g., Show what our future baby might look like",
+    suggestedPrompt:
+      "Using the people shown as parents, create a realistic and heartwarming prediction of what their baby might look like. Blend facial features, skin tone, hair color, and eye color in a natural way. Make the baby appear around 1 year old with a joyful expression.",
   },
-  'future-self': {
-    title: 'What Will I Look Like in 20 Years',
-    description: 'Age the subject in the image to show how they might look 20 years in the future.',
-    placeholder: 'E.g., Show me as a distinguished older person',
-    suggestedPrompt: 'Show how the person might look 20 years in the future. Age the face naturally with appropriate wrinkles, hair changes, and subtle physical aging. Maintain their core facial structure and identity while showing realistic aging effects. Keep the same general style and pose.'
+  "future-self": {
+    title: "What Will I Look Like in 20 Years",
+    description:
+      "Age the subject in the image to show how they might look 20 years in the future.",
+    placeholder: "E.g., Show me as a distinguished older person",
+    suggestedPrompt:
+      "Show how the person might look 20 years in the future. Age the face naturally with appropriate wrinkles, hair changes, and subtle physical aging. Maintain their core facial structure and identity while showing realistic aging effects. Keep the same general style and pose.",
   },
-  'ghibli-style': {
-    title: 'Ghibli Style',
-    description: 'Transform into the beautiful, painterly anime style of Studio Ghibli films.',
-    placeholder: 'E.g., Make it look like a scene from a Miyazaki film',
-    suggestedPrompt: 'Transform into the distinctive Studio Ghibli animation style while preserving the subject\'s essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio\'s signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject\'s core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world.'
+  "ghibli-style": {
+    title: "Ghibli Style",
+    description:
+      "Transform into the beautiful, painterly anime style of Studio Ghibli films.",
+    placeholder: "E.g., Make it look like a scene from a Miyazaki film",
+    suggestedPrompt:
+      "Transform into the distinctive Studio Ghibli animation style while preserving the subject's essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio's signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject's core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world.",
   },
-  'ai-action-figure': {
-    title: 'AI Action Figure',
-    description: 'Turn the subject into a realistic, detailed action figure or toy.',
-    placeholder: 'E.g., Make me into a collectible action figure with accessories',
-    suggestedPrompt: 'Transform into a realistic, high-quality action figure or toy. Add visible joints, plastic texture, and a display stand. Include appropriate accessories and packaging design elements. Maintain the subject\'s likeness and key features while giving it the distinctive plastic sheen and manufacturing details of a premium collectible figure.'
+  "ai-action-figure": {
+    title: "AI Action Figure",
+    description:
+      "Turn the subject into a realistic, detailed action figure or toy.",
+    placeholder:
+      "E.g., Make me into a collectible action figure with accessories",
+    suggestedPrompt:
+      "Transform into a realistic, high-quality action figure or toy. Add visible joints, plastic texture, and a display stand. Include appropriate accessories and packaging design elements. Maintain the subject's likeness and key features while giving it the distinctive plastic sheen and manufacturing details of a premium collectible figure.",
   },
-  'pet-as-human': {
-    title: 'What Would My Pet Look Like as a Human',
-    description: 'Reimagine a pet as a human while keeping recognizable traits and personality.',
-    placeholder: 'E.g., Transform my dog into a human with similar features',
-    suggestedPrompt: 'Transform the pet into a human character while preserving distinctive features, coloration, and personality. Maintain the essence and character in human form, with subtle references to fur color, eye shape, and distinctive markings. Create a humanoid that feels connected to the original pet\'s identity and spirit.'
+  "pet-as-human": {
+    title: "What Would My Pet Look Like as a Human",
+    description:
+      "Reimagine a pet as a human while keeping recognizable traits and personality.",
+    placeholder: "E.g., Transform my dog into a human with similar features",
+    suggestedPrompt:
+      "Transform the pet into a human character while preserving distinctive features, coloration, and personality. Maintain the essence and character in human form, with subtle references to fur color, eye shape, and distinctive markings. Create a humanoid that feels connected to the original pet's identity and spirit.",
   },
-  'self-as-cat': {
-    title: 'What Would I Look Like as a Cat',
-    description: 'Transform a human into a cat with recognizable traits from the original subject.',
-    placeholder: 'E.g., Turn me into a cat that resembles my features',
-    suggestedPrompt: 'Transform into a cat while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.'
+  "self-as-cat": {
+    title: "What Would I Look Like as a Cat",
+    description:
+      "Transform a human into a cat with recognizable traits from the original subject.",
+    placeholder: "E.g., Turn me into a cat that resembles my features",
+    suggestedPrompt:
+      "Transform into a cat while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
   },
-  'custom-other': {
-    title: 'Create Your Own Image',
-    description: 'Describe your own custom transformation.',
-    placeholder: 'E.g., Make it look like it\'s underwater with fish swimming around',
-    suggestedPrompt: ''
-  }
+  "custom-other": {
+    title: "Create Your Own Image",
+    description: "Describe your own custom transformation.",
+    placeholder:
+      "E.g., Make it look like it's underwater with fish swimming around",
+    suggestedPrompt: "",
+  },
 };
 
-export default function PromptInput({ originalImage, onSubmit, onBack, selectedTransformation }: PromptInputProps) {
+export default function PromptInput({
+  originalImage,
+  onSubmit,
+  onBack,
+  selectedTransformation,
+}: PromptInputProps) {
   // State variables
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
   const [charCount, setCharCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
-  const [primaryCategory, setPrimaryCategory] = useState<'cartoon' | 'product' | 'other' | null>(null);
-  const [cartoonSubcategory, setCartoonSubcategory] = useState<CartoonSubcategory | null>(null);
-  const [productSubcategory, setProductSubcategory] = useState<ProductSubcategory | null>(null);
-  const [otherSubcategory, setOtherSubcategory] = useState<OtherSubcategory | null>(null);
-  
+  const [primaryCategory, setPrimaryCategory] = useState<
+    "cartoon" | "product" | "other" | null
+  >(null);
+  const [cartoonSubcategory, setCartoonSubcategory] =
+    useState<CartoonSubcategory | null>(null);
+  const [productSubcategory, setProductSubcategory] =
+    useState<ProductSubcategory | null>(null);
+  const [otherSubcategory, setOtherSubcategory] =
+    useState<OtherSubcategory | null>(null);
+
   const { toast } = useToast();
   const maxChars = 500;
 
@@ -191,12 +266,12 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
 
   // Set initial selection from parent component if provided
   useEffect(() => {
-    if (selectedTransformation === 'cartoon') {
-      setPrimaryCategory('cartoon');
-    } else if (selectedTransformation === 'product') {
-      setPrimaryCategory('product');
-    } else if (selectedTransformation === 'custom') {
-      setPrimaryCategory('other');
+    if (selectedTransformation === "cartoon") {
+      setPrimaryCategory("cartoon");
+    } else if (selectedTransformation === "product") {
+      setPrimaryCategory("product");
+    } else if (selectedTransformation === "custom") {
+      setPrimaryCategory("other");
     }
   }, [selectedTransformation]);
 
@@ -204,26 +279,29 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
   const handleSubmit = () => {
     // Remove validation to allow empty prompts - the suggestedPrompt will be used
     // if (prompt.trim().length === 0) return;
-    
+
     // Build the complete prompt based on selections
     let finalPrompt = prompt.trim();
-    
+
     // Always include the full Super Mario prompt, regardless of user input
-    if (primaryCategory === 'cartoon' && cartoonSubcategory === 'super-mario') {
+    if (primaryCategory === "cartoon" && cartoonSubcategory === "super-mario") {
       const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
       if (suggestion) {
         finalPrompt = suggestion + " " + finalPrompt;
       }
     }
     // Always include the full Lego prompt, regardless of user input
-    else if (primaryCategory === 'cartoon' && cartoonSubcategory === 'lego') {
+    else if (primaryCategory === "cartoon" && cartoonSubcategory === "lego") {
       const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
       if (suggestion) {
         finalPrompt = suggestion + " " + finalPrompt;
       }
     }
     // Always include the full Princess prompt, regardless of user input
-    else if (primaryCategory === 'cartoon' && cartoonSubcategory === 'princess') {
+    else if (
+      primaryCategory === "cartoon" &&
+      cartoonSubcategory === "princess"
+    ) {
       const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
       if (suggestion) {
         finalPrompt = suggestion + " " + finalPrompt;
@@ -232,30 +310,47 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
     // Add suggested prompts from chosen categories
     else {
       // If no subcategory is selected but primary is cartoon, use a generic prompt
-      if (primaryCategory === 'cartoon' && !cartoonSubcategory) {
-        finalPrompt = "Transform into a cartoon style with vibrant colors and exaggerated features. " + finalPrompt;
+      if (primaryCategory === "cartoon" && !cartoonSubcategory) {
+        finalPrompt =
+          "Transform into a cartoon style with vibrant colors and exaggerated features. " +
+          finalPrompt;
       }
       // If no subcategory is selected but primary is product, use a generic prompt
-      else if (primaryCategory === 'product' && !productSubcategory) {
-        finalPrompt = "Enhance with professional lighting and a clean background. " + finalPrompt;
+      else if (primaryCategory === "product" && !productSubcategory) {
+        finalPrompt =
+          "Enhance with professional lighting and a clean background. " +
+          finalPrompt;
       }
       // If no subcategory is selected but primary is other, use a generic prompt
-      else if (primaryCategory === 'other' && !otherSubcategory) {
-        finalPrompt = "Transform with creative artistic effects. " + finalPrompt;
+      else if (primaryCategory === "other" && !otherSubcategory) {
+        finalPrompt =
+          "Transform with creative artistic effects. " + finalPrompt;
       }
       // If subcategory is selected, use its suggested prompt for minimal user input
       else if (prompt.length < 20) {
-        if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
+        if (
+          primaryCategory === "cartoon" &&
+          cartoonSubcategory &&
+          cartoonSubcategory in CARTOON_STYLES
+        ) {
           const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
           if (suggestion) {
             finalPrompt = suggestion + " " + finalPrompt;
           }
-        } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+        } else if (
+          primaryCategory === "product" &&
+          productSubcategory &&
+          productSubcategory in PRODUCT_STYLES
+        ) {
           const suggestion = PRODUCT_STYLES[productSubcategory].suggestedPrompt;
           if (suggestion) {
             finalPrompt = suggestion + " " + finalPrompt;
           }
-        } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+        } else if (
+          primaryCategory === "other" &&
+          otherSubcategory &&
+          otherSubcategory in OTHER_STYLES
+        ) {
           const suggestion = OTHER_STYLES[otherSubcategory].suggestedPrompt;
           if (suggestion) {
             finalPrompt = suggestion + " " + finalPrompt;
@@ -263,7 +358,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
         }
       }
     }
-    
+
     onSubmit(finalPrompt, selectedSize);
   };
 
@@ -279,52 +374,54 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
   const handleSizeSelection = (size: string) => {
     setSelectedSize(size);
   };
-  
+
   // Reset subcategory selections when primary category changes
-  const handlePrimaryCategorySelect = (category: 'cartoon' | 'product' | 'other') => {
+  const handlePrimaryCategorySelect = (
+    category: "cartoon" | "product" | "other",
+  ) => {
     setPrimaryCategory(category);
     setCartoonSubcategory(null);
     setProductSubcategory(null);
     setOtherSubcategory(null);
   };
-  
+
   // Set subcategory selection
   const handleCartoonSelect = (subcategory: CartoonSubcategory) => {
     setCartoonSubcategory(subcategory);
   };
-  
+
   const handleProductSelect = (subcategory: ProductSubcategory) => {
     setProductSubcategory(subcategory);
   };
-  
+
   const handleOtherSelect = (subcategory: OtherSubcategory) => {
     setOtherSubcategory(subcategory);
   };
-  
+
   // AI prompt enhancement
   const enhancePrompt = async () => {
     if (prompt.trim().length === 0) {
       toast({
         title: "Empty prompt",
         description: "Please enter a prompt to enhance.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     try {
       setIsEnhancing(true);
-      
-      const response = await apiRequest('POST', '/api/enhance-prompt', {
-        prompt: prompt.trim()
+
+      const response = await apiRequest("POST", "/api/enhance-prompt", {
+        prompt: prompt.trim(),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to enhance prompt');
+        throw new Error("Failed to enhance prompt");
       }
-      
+
       const data = await response.json();
-      
+
       if (data.enhancedPrompt) {
         setPrompt(data.enhancedPrompt);
         toast({
@@ -333,41 +430,62 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
         });
       }
     } catch (error) {
-      console.error('Error enhancing prompt:', error);
+      console.error("Error enhancing prompt:", error);
       toast({
         title: "Enhancement Failed",
-        description: "There was an error enhancing your prompt. Please try again.",
-        variant: "destructive"
+        description:
+          "There was an error enhancing your prompt. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsEnhancing(false);
     }
   };
-  
+
   // Get current description based on selections
   const getCurrentDescription = () => {
-    if (primaryCategory === 'cartoon' && cartoonSubcategory && cartoonSubcategory in CARTOON_STYLES) {
+    if (
+      primaryCategory === "cartoon" &&
+      cartoonSubcategory &&
+      cartoonSubcategory in CARTOON_STYLES
+    ) {
       return CARTOON_STYLES[cartoonSubcategory].description;
-    } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+    } else if (
+      primaryCategory === "product" &&
+      productSubcategory &&
+      productSubcategory in PRODUCT_STYLES
+    ) {
       return PRODUCT_STYLES[productSubcategory].description;
-    } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+    } else if (
+      primaryCategory === "other" &&
+      otherSubcategory &&
+      otherSubcategory in OTHER_STYLES
+    ) {
       return OTHER_STYLES[otherSubcategory].description;
     }
-    
+
     return "Be specific about what changes you want. For best results, include details about style, mood, and elements.";
   };
-  
+
   // Get current placeholder based on selections
   const getCurrentPlaceholder = () => {
     // For cartoon styles, always use the same placeholder regardless of subcategory
-    if (primaryCategory === 'cartoon') {
+    if (primaryCategory === "cartoon") {
       return "E.g., Place the name Jack somewhere in the image";
-    } else if (primaryCategory === 'product' && productSubcategory && productSubcategory in PRODUCT_STYLES) {
+    } else if (
+      primaryCategory === "product" &&
+      productSubcategory &&
+      productSubcategory in PRODUCT_STYLES
+    ) {
       return PRODUCT_STYLES[productSubcategory].placeholder;
-    } else if (primaryCategory === 'other' && otherSubcategory && otherSubcategory in OTHER_STYLES) {
+    } else if (
+      primaryCategory === "other" &&
+      otherSubcategory &&
+      otherSubcategory in OTHER_STYLES
+    ) {
       return OTHER_STYLES[otherSubcategory].placeholder;
     }
-    
+
     return "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'";
   };
 
@@ -378,111 +496,85 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
           {/* Left column - Image preview */}
           <div className="md:col-span-3">
             <div className="bg-gray-100 rounded-lg p-4 flex items-center justify-center h-80 md:h-96">
-              <img 
-                src={originalImage} 
-                className="max-w-full max-h-full object-contain" 
-                alt="Your uploaded image" 
+              <img
+                src={originalImage}
+                className="max-w-full max-h-full object-contain"
+                alt="Your uploaded image"
               />
             </div>
           </div>
-          
+
           {/* Right column - Style selection and prompt input */}
           <div className="md:col-span-4">
             <h3 className="text-xl font-medium mb-4">Choose Your Style</h3>
-            
+
             {/* Primary Category Selection (Step 1) */}
             <div className="mb-6 space-y-3">
-              <Button 
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${primaryCategory === 'cartoon' 
-                  ? 'border-black bg-black text-white' 
-                  : 'border-black bg-white text-black hover:bg-gray-50'}`}
-                onClick={() => handlePrimaryCategorySelect('cartoon')}
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "cartoon"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("cartoon")}
               >
                 <div className="flex items-center">
                   <PaintBucket className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">Cartoon Style</span>
+                  <span className="font-medium whitespace-normal break-words">
+                    Cartoon Style
+                  </span>
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
-              
-              <Button 
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${primaryCategory === 'product' 
-                  ? 'border-black bg-black text-white' 
-                  : 'border-black bg-white text-black hover:bg-gray-50'}`}
-                onClick={() => handlePrimaryCategorySelect('product')}
+
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "product"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("product")}
               >
                 <div className="flex items-center">
                   <BoxIcon className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">Product Enhancement</span>
+                  <span className="font-medium whitespace-normal break-words">
+                    Product Enhancement
+                  </span>
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
-              
-              <Button 
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${primaryCategory === 'other' 
-                  ? 'border-black bg-black text-white' 
-                  : 'border-black bg-white text-black hover:bg-gray-50'}`}
-                onClick={() => handlePrimaryCategorySelect('other')}
+
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "other"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("other")}
               >
                 <div className="flex items-center">
                   <Sparkles className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">Other Styles</span>
+                  <span className="font-medium whitespace-normal break-words">
+                    Other Styles
+                  </span>
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
             </div>
-            
+
             {/* Secondary Category Selection (Step 2) - Cartoon Subcategories */}
-            {primaryCategory === 'cartoon' && (
+            {primaryCategory === "cartoon" && (
               <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
                 {Object.entries(CARTOON_STYLES).map(([key, style]) => (
-                  <Button 
+                  <Button
                     key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${cartoonSubcategory === key 
-                      ? 'bg-black text-white border-black' 
-                      : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
-                    onClick={() => handleCartoonSelect(key as CartoonSubcategory)}
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-            
-            {/* Secondary Category Selection (Step 2) - Product Subcategories */}
-            {primaryCategory === 'product' && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(PRODUCT_STYLES).map(([key, style]) => (
-                  <Button 
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${productSubcategory === key 
-                      ? 'bg-black text-white border-black' 
-                      : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
-                    onClick={() => handleProductSelect(key as ProductSubcategory)}
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-            
-            {/* Secondary Category Selection (Step 2) - Other Subcategories */}
-            {primaryCategory === 'other' && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(OTHER_STYLES).map(([key, style]) => (
-                  <Button 
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${otherSubcategory === key 
-                      ? 'bg-black text-white border-black' 
-                      : 'bg-white text-black border border-gray-300 hover:bg-gray-50'}`}
-                    onClick={() => handleOtherSelect(key as OtherSubcategory)}
-                    title={
-                      key === 'baby-prediction' ? 'Must have an image with two people in it to work correctly' : 
-                      key === 'pet-as-human' ? 'Must have image of your pet with a visible face to work correctly' : 
-                      key === 'self-as-cat' ? 'Must have image of a person with a visible face to work correctly' : 
-                      key === 'future-self' ? 'Must have a clear image of a person\'s face to work correctly' :
-                      key === 'ai-action-figure' ? 'Works best with a clear image of a person or object' :
-                      ''
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
+                      cartoonSubcategory === key
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() =>
+                      handleCartoonSelect(key as CartoonSubcategory)
                     }
                   >
                     <span className="line-clamp-2">{style.title}</span>
@@ -490,18 +582,73 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 ))}
               </div>
             )}
-            
+
+            {/* Secondary Category Selection (Step 2) - Product Subcategories */}
+            {primaryCategory === "product" && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(PRODUCT_STYLES).map(([key, style]) => (
+                  <Button
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
+                      productSubcategory === key
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() =>
+                      handleProductSelect(key as ProductSubcategory)
+                    }
+                  >
+                    <span className="line-clamp-2">{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+
+            {/* Secondary Category Selection (Step 2) - Other Subcategories */}
+            {primaryCategory === "other" && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(OTHER_STYLES).map(([key, style]) => (
+                  <Button
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
+                      otherSubcategory === key
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() => handleOtherSelect(key as OtherSubcategory)}
+                    title={
+                      key === "baby-prediction"
+                        ? "Must have an image with two people in it to work correctly"
+                        : key === "pet-as-human"
+                          ? "Must have image of your pet with a visible face to work correctly"
+                          : key === "self-as-cat"
+                            ? "Must have image of a person with a visible face to work correctly"
+                            : key === "future-self"
+                              ? "Must have a clear image of a person's face to work correctly"
+                              : key === "ai-action-figure"
+                                ? "Works best with a clear image of a person or object"
+                                : ""
+                    }
+                  >
+                    <span className="line-clamp-2">{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+
             {/* Description of selected style */}
             {(cartoonSubcategory || productSubcategory || otherSubcategory) && (
               <div className="mb-4">
                 <p className="text-gray-700">{getCurrentDescription()}</p>
               </div>
             )}
-            
+
             {/* Optional Detailed Prompt Input (Step 3) */}
             <div className="mb-4">
               <h4 className="text-lg font-medium mb-2">
-                {primaryCategory ? "Optional: Tell us more!" : "Describe your transformation"}
+                {primaryCategory
+                  ? "Optional: Tell us more!"
+                  : "Describe your transformation"}
               </h4>
               <div className="relative">
                 <Textarea
@@ -526,7 +673,7 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                   )}
                 </Button>
               </div>
-              
+
               <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
                 <div className="flex items-center">
                   <Button
@@ -536,37 +683,39 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                     onClick={enhancePrompt}
                     disabled={isEnhancing || prompt.trim().length === 0}
                   >
-                    <Wand2 className="h-3 w-3 mr-1" /> 
-                    {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
+                    <Wand2 className="h-3 w-3 mr-1" />
+                    {isEnhancing ? "Enhancing..." : "Enhance with AI"}
                   </Button>
                 </div>
-                <span id="char-count">{charCount}/{maxChars}</span>
+                <span id="char-count">
+                  {charCount}/{maxChars}
+                </span>
               </div>
             </div>
-            
+
             {/* Size Selection */}
             <div className="mb-5">
               <h4 className="text-sm font-medium mb-2">Image Size</h4>
               <div className="flex flex-wrap gap-2">
-                <Button 
+                <Button
                   type="button"
-                  variant="outline" 
+                  variant="outline"
                   className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1024" ? "border-2 bg-gray-100" : "border"}`}
                   onClick={() => handleSizeSelection("1024x1024")}
                 >
                   Square (1024×1024)
                 </Button>
-                <Button 
+                <Button
                   type="button"
-                  variant="outline" 
+                  variant="outline"
                   className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1536" ? "border-2 bg-gray-100" : "border"}`}
                   onClick={() => handleSizeSelection("1024x1536")}
                 >
                   Portrait (1024×1536)
                 </Button>
-                <Button 
+                <Button
                   type="button"
-                  variant="outline" 
+                  variant="outline"
                   className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1536x1024" ? "border-2 bg-gray-100" : "border"}`}
                   onClick={() => handleSizeSelection("1536x1024")}
                 >
@@ -574,12 +723,15 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 </Button>
               </div>
             </div>
-            
+
             {/* Writing Tips */}
             <div className="flex items-center space-x-3 mb-6">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="link" className="text-sm text-primary-500 p-0 h-auto">
+                  <Button
+                    variant="link"
+                    className="text-sm text-primary-500 p-0 h-auto"
+                  >
                     <CircleHelp className="h-4 w-4 mr-1" /> Writing tips
                   </Button>
                 </PopoverTrigger>
@@ -598,13 +750,17 @@ export default function PromptInput({ originalImage, onSubmit, onBack, selectedT
                 </PopoverContent>
               </Popover>
             </div>
-            
+
             {/* Action Buttons */}
             <div className="flex space-x-3">
-              <Button variant="outline" onClick={onBack} className="text-white bg-black">
+              <Button
+                variant="outline"
+                onClick={onBack}
+                className="text-white bg-black"
+              >
                 <ChevronLeft className="h-4 w-4 mr-1" /> Back
               </Button>
-              <Button 
+              <Button
                 className="flex-1 text-white bg-black hover:bg-black/80"
                 onClick={handleSubmit}
                 disabled={!primaryCategory}
