@@ -7,7 +7,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ComparisonSlider } from "@/components/ui/comparison-slider";
-import coverPhotoPath from "@assets/Cover photo.png";
 
 // Define the type for our carousel items
 interface CarouselExample {
@@ -48,13 +47,16 @@ interface HeroCarouselProps {
 }
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
+  // Use a regular image path since we copied the image to public/images
+  const catsImageUrl = '/images/couple-of-cats.png';
+  
   return (
     <div className="relative overflow-hidden text-white h-[90vh] min-h-[700px] mt-[-2rem] flex flex-col">
       {/* Background image with the collage - using background-image instead of an img tag */}
       <div 
         className="absolute inset-0 z-0 bg-center bg-cover bg-no-repeat"
-        style={{ backgroundImage: `url(${coverPhotoPath})` }}
-        aria-label="Background collage of transformed images"
+        style={{ backgroundImage: `url(${catsImageUrl})` }}
+        aria-label="Background of four cats in human clothing"
       />
       
       {/* Semi-transparent overlay for better text readability */}
