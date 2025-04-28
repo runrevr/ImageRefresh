@@ -436,9 +436,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check for content safety rejections from OpenAI
       if (error.message && error.message.includes("safety system")) {
+        // If the prompt mentions or relates to children, babies, or clothing changes, provide a more specific message
+        const isAboutChildren = req.body.prompt && 
+          (req.body.prompt.toLowerCase().includes("baby") || 
+           req.body.prompt.toLowerCase().includes("child") || 
+           req.body.prompt.toLowerCase().includes("kid") || 
+           req.body.prompt.toLowerCase().includes("shirt") ||
+           req.body.prompt.toLowerCase().includes("cloth"));
+           
         // Return specific error for content safety issues
         return res.status(400).json({
-          message:
+          message: isAboutChildren ? 
+            "Safety systems are particularly strict about editing images of children. Please try a different type of edit that doesn't involve changing clothing or appearance of the child image." : 
             "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
           error: "content_safety",
         });
