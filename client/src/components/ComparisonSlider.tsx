@@ -8,12 +8,14 @@ interface ComparisonSliderProps {
 export default function ComparisonSlider({ beforeImage, afterImage }: ComparisonSliderProps) {
   const [position, setPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const fullscreenRef = useRef<HTMLDivElement>(null);
 
-  const handleMove = (clientX: number) => {
-    if (!isDragging || !sliderRef.current) return;
+  const handleMove = (clientX: number, elementRef: React.RefObject<HTMLDivElement>) => {
+    if (!isDragging || !elementRef.current) return;
     
-    const rect = sliderRef.current.getBoundingClientRect();
+    const rect = elementRef.current.getBoundingClientRect();
     let newPosition = ((clientX - rect.left) / rect.width) * 100;
     
     // Clamp position between 0 and 100
@@ -29,14 +31,27 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
     setIsDragging(true);
   };
 
+  // Toggle fullscreen mode
+  const toggleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsFullscreen(!isFullscreen);
+  };
+
+  // Close fullscreen on escape key
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && isFullscreen) {
+      setIsFullscreen(false);
+    }
+  };
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      handleMove(e.clientX);
+      handleMove(e.clientX, isFullscreen ? fullscreenRef : sliderRef);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length > 0) {
-        handleMove(e.touches[0].clientX);
+        handleMove(e.touches[0].clientX, isFullscreen ? fullscreenRef : sliderRef);
       }
     };
 
@@ -56,31 +71,36 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
       window.addEventListener('touchend', handleTouchEnd);
     }
 
+    // Add escape key listener for fullscreen mode
+    window.addEventListener('keydown', handleKeyDown);
+
     // Clean up
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isDragging]);
+  }, [isDragging, isFullscreen]);
 
-  return (
+  // Render slider component
+  const renderSlider = (ref: React.RefObject<HTMLDivElement>, isFullscreenView: boolean = false) => (
     <div 
-      ref={sliderRef}
-      className="relative w-full h-full cursor-ew-resize"
+      ref={ref}
+      className={`relative w-full h-full cursor-ew-resize ${isFullscreenView ? 'rounded-lg overflow-hidden' : ''}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
       {/* After Image (Transformed) */}
-      <div className="absolute inset-0 bg-gray-100 flex flex-col items-center justify-center">
+      <div className={`absolute inset-0 ${isFullscreenView ? 'bg-gray-900' : 'bg-gray-100'} flex flex-col items-center justify-center`}>
         <img 
           src={afterImage} 
           className="max-w-full max-h-full object-contain" 
           alt="Transformed image" 
         />
         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white text-center">
-          <p className="font-medium text-sm md:text-base">Transformed Image</p>
+          <p className={`font-medium ${isFullscreenView ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>Transformed Image</p>
         </div>
       </div>
       
@@ -95,7 +115,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
           alt="Original image" 
         />
         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white text-center">
-          <p className="font-medium text-sm md:text-base">Original Image</p>
+          <p className={`font-medium ${isFullscreenView ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>Original Image</p>
         </div>
       </div>
       
@@ -117,6 +137,47 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
           </div>
         </div>
       </div>
+
+      {/* Expand/Collapse Icon */}
+      {!isFullscreenView && (
+        <button
+          onClick={toggleFullscreen}
+          className="absolute top-2 right-2 w-10 h-10 bg-black bg-opacity-60 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-opacity z-10"
+          aria-label="View fullscreen"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 15V18C3 19.1 3.9 20 5 20H8M21 9V6C21 4.9 20.1 4 19 4H16M3 9V6C3 4.9 3.9 4 5 4H8M21 15V18C21 19.1 20.1 20 19 20H16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
     </div>
+  );
+
+  return (
+    <>
+      {/* Normal View */}
+      {renderSlider(sliderRef)}
+
+      {/* Fullscreen Modal */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4">
+          <div className="relative max-w-6xl w-full max-h-[90vh]">
+            {/* Close Button */}
+            <button
+              onClick={toggleFullscreen}
+              className="absolute -top-12 right-0 w-10 h-10 bg-black bg-opacity-60 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-opacity z-10"
+              aria-label="Close fullscreen"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            {/* Fullscreen Slider */}
+            {renderSlider(fullscreenRef, true)}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
