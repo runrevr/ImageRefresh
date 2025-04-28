@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/carousel";
 import { ComparisonSlider } from "@/components/ui/comparison-slider";
 
+// Import the image directly
+import catsImage from "../assets/couple of cats.png";
+
 // Define the type for our carousel items
 interface CarouselExample {
   id: number;
@@ -51,7 +54,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
     <div className="w-full h-screen min-h-screen relative overflow-hidden">
       {/* Background image with the cats */}
       <img 
-        src="/couple-of-cats.png" 
+        src={catsImage} 
         alt="Four cats dressed as humans"
         className="absolute inset-0 w-full h-full object-cover"
       />
