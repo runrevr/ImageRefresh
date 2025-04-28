@@ -142,8 +142,13 @@ export default function EditPrompt({
       <p className="text-gray-600 mb-6 text-center">
         {editsUsed > 0 
           ? "You've already used the included edit for this image. Additional edits will require a new credit." 
-          : "Each credit includes 1 image transformation + 1 edit. Describe what you'd like to change."}
+          : "Each credit includes 1 image transformation + 1 edit. For best results, focus on simple color changes and be very specific with your instructions."}
       </p>
+      <div className="bg-blue-50 border border-blue-100 rounded-md p-3 mb-6">
+        <p className="text-blue-800 text-sm">
+          <strong>Tips for successful edits:</strong> Keep edits simple and focused on color changes (e.g., "Change the background from blue to green"). The more specific you are, the better the results. Avoid requests that could alter character appearance beyond simple color adjustments.
+        </p>
+      </div>
       
       <div className="flex flex-col md:flex-row gap-6 mb-8">
         <div className="flex-1 flex flex-col items-center">
@@ -175,7 +180,7 @@ export default function EditPrompt({
           <div className="relative">
             <Textarea
               id="prompt"
-              placeholder="Example: Make the background blue instead of red, add more clouds to the sky, etc."
+              placeholder="For best results: Focus on simple color changes like 'Change the hat from blue to red' or 'Make the background purple instead of green'. Be very specific and avoid content that could be rejected by safety systems."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="w-full h-32 rounded-lg p-4 resize-none text-white bg-black shadow-inner"

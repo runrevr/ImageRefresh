@@ -265,7 +265,7 @@ export default function Home() {
         if (data.error === "content_safety") {
           toast({
             title: "Content Safety Alert",
-            description: "Your edit request was rejected by our safety system. Please try a different prompt that is more appropriate for all audiences.",
+            description: "Your edit request was rejected by our safety system. When making edits: (1) Focus only on color changes or simple visual adjustments, (2) Be very specific like 'Change the hat from blue to red', (3) Avoid requests that could modify character appearance beyond simple color changes.",
             variant: "destructive"
           });
         } else {
@@ -286,7 +286,7 @@ export default function Home() {
       
       if (error.message && error.message.includes("safety system")) {
         errorTitle = "Content Safety Alert";
-        errorMessage = "Your edit request was rejected by our safety system. For color changes, try being very specific. For example: 'Change the background from green to blue' or 'Make the shirt red instead of white'.";
+        errorMessage = "Your edit request was rejected by our safety system. When making edits: (1) Focus only on color changes or simple visual adjustments, (2) Be very specific like 'Change the hat from blue to red', (3) Avoid requests that could modify character appearance beyond simple color changes.";
       }
       
       toast({
