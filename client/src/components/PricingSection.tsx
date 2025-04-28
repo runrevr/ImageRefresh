@@ -87,37 +87,41 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         {pricingTiers.map((tier, index) => (
           <Card 
             key={index}
-            className={`overflow-hidden shadow-md ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''}`}
+            className={`overflow-hidden shadow-md ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''} flex flex-col`}
           >
             {tier.popular && (
               <div className="absolute top-0 right-0 bg-primary-500 text-white px-4 py-1 text-sm font-medium">
                 Popular
               </div>
             )}
-            <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-4">{tier.name}</h3>
-              <div className="text-4xl font-bold mb-6">{tier.price}</div>
-              <ul className="space-y-3 mb-8">
-                {tier.features.map((feature, fIndex) => (
-                  <li key={fIndex} className="flex items-start">
-                    {feature.available ? (
-                      <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    ) : (
-                      <X className="h-5 w-5 text-gray-400 mt-0.5 mr-2 flex-shrink-0" />
-                    )}
-                    <span className={feature.available ? '' : 'text-gray-400'}>
-                      {feature.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <Button 
-                className={`w-full ${tier.buttonClass}`}
-                onClick={() => handlePurchase(tier)}
-                disabled={isPurchasing}
-              >
-                {isPurchasing ? 'Processing...' : tier.buttonText}
-              </Button>
+            <CardContent className="p-6 flex-grow flex flex-col">
+              <div>
+                <h3 className="text-xl font-bold mb-4">{tier.name}</h3>
+                <div className="text-4xl font-bold mb-6">{tier.price}</div>
+                <ul className="space-y-3">
+                  {tier.features.map((feature, fIndex) => (
+                    <li key={fIndex} className="flex items-start">
+                      {feature.available ? (
+                        <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                      ) : (
+                        <X className="h-5 w-5 text-gray-400 mt-0.5 mr-2 flex-shrink-0" />
+                      )}
+                      <span className={feature.available ? '' : 'text-gray-400'}>
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-auto pt-8">
+                <Button 
+                  className={`w-full ${tier.buttonClass}`}
+                  onClick={() => handlePurchase(tier)}
+                  disabled={isPurchasing}
+                >
+                  {isPurchasing ? 'Processing...' : tier.buttonText}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
