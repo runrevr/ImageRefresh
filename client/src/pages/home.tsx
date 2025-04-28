@@ -419,7 +419,21 @@ export default function Home() {
   };
   
   return (
-    <div className="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <div className="text-gray-800 min-h-screen flex flex-col">
+      {/* Fixed position background image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/images/backgrounds/cover-photo.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
+      {/* Semi-transparent overlay for readability */}
+      <div className="fixed inset-0 bg-white/80 z-0" />
+      
       <Navbar freeCredits={!user.freeCreditsUsed ? 1 : 0} paidCredits={user.paidCredits} />
       
       {/* Account Needed Dialog */}
@@ -431,7 +445,7 @@ export default function Home() {
         remainingCredits={user.paidCredits}
       />
       
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="container mx-auto px-4 py-8 max-w-6xl relative z-10">
         {/* Hero Section - Carousel Style */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>

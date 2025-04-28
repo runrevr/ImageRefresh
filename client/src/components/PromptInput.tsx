@@ -79,8 +79,14 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     description:
       "Transform into the colorful, blocky style of the Super Mario universe.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt:
-      `Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small, pixel-style adventurer character (boy or girl) in a playful, confident, or determined pose, sitting or standing on a brown brick platform, holding a glowing orb. The character should be dressed in a bright green shirt and blue pants, with a bold chest emblem or detail to match the character’s spirit. Set the background with a bright blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above the character. The overall style should feel bright, energetic, nostalgic, and inspired by a fun, side-scrolling adventure game. The character’s facial expression should be playful, serious, or determined, based on the mood you desire, but do not copy real-world facial features or likenesses.
+    suggestedPrompt: `Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small pixel-style adventurer character (boy or girl) with a playful, confident, or determined expression, sitting or standing on a brown brick platform, holding a glowing orb.
+
+For a boy, the character should have a more rugged and adventurous look, with a bold, structured design — like a simple but strong chest emblem and energetic pose.
+For a girl, the character should have a playful, whimsical design — a floral-inspired chest emblem or softer, rounded features with a joyful expression and fluid motion in the pose.
+
+The character should wear a bright green shirt and blue pants. The scene features a bright solid blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above.
+
+The overall style should feel cheerful, energetic, bright, and nostalgic, capturing the playful, lively atmosphere of classic side-scrolling adventure games. The character should have a playful attitude, but do not copy real-world facial features or likenesses.
 
   `,
   },
