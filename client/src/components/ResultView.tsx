@@ -175,7 +175,7 @@ export default function ResultView({
             </Button>
             <Button 
               variant="outline"
-              className="border-primary-500 text-black hover:bg-primary-50 hover:text-primary-500 bg-primary-500 flex-1"
+              className="border-[#333333] text-black hover:bg-gray-100 bg-[#f2f2f2] flex-1"
               onClick={onNewImage}
             >
               <Upload className="h-4 w-4 mr-2" />
