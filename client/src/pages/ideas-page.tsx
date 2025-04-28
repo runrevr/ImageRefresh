@@ -101,11 +101,11 @@ export default function IdeasPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {ideas.map((idea) => (
             <Card 
               key={idea.id} 
-              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] max-w-sm mx-auto"
+              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] w-full"
               onMouseEnter={() => setHoveredCard(idea.id)}
               onMouseLeave={() => setHoveredCard(null)}
             >
@@ -125,22 +125,22 @@ export default function IdeasPage() {
                 </div>
               </div>
 
-              <CardHeader className="p-4">
-                <CardTitle className="text-lg font-bold text-[#333333]">{idea.title}</CardTitle>
-                <CardDescription className="text-sm">{idea.description}</CardDescription>
+              <CardHeader className="p-3 pb-1">
+                <CardTitle className="text-base font-bold text-[#333333]">{idea.title}</CardTitle>
+                <CardDescription className="text-xs">{idea.description}</CardDescription>
               </CardHeader>
 
-              <CardFooter className="flex justify-between gap-2 p-4">
+              <CardFooter className="flex justify-between gap-1 p-3">
                 <Button 
                   variant="outline" 
-                  className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white text-xs px-2"
+                  className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white text-xs py-1"
                   onClick={() => copyPromptToClipboard(idea.prompt)}
                 >
                   Copy Prompt
                 </Button>
                 <Link href="/">
-                  <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white text-xs px-2">
-                    Try It Now
+                  <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white text-xs py-1">
+                    Try It
                   </Button>
                 </Link>
               </CardFooter>
