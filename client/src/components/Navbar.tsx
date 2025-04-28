@@ -86,7 +86,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 <Button variant="outline" className="bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">Log in</Button>
               </Link>
               <Link href="/auth?tab=register">
-                <Button className="bg-[#2A7B9B] hover:bg-primary-700 text-white border-none">Sign up</Button>
+                <Button className="bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">Sign up</Button>
               </Link>
             </div>
           )}
@@ -180,7 +180,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                         <Button variant="outline" className="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">Log in</Button>
                       </Link>
                       <Link href="/auth?tab=register" onClick={() => setIsMenuOpen(false)}>
-                        <Button className="w-full bg-[#2A7B9B] hover:bg-primary-700 text-white border-none">Sign up</Button>
+                        <Button className="w-full bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">Sign up</Button>
                       </Link>
                     </>
                   )}
