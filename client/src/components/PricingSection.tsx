@@ -35,8 +35,8 @@ const pricingTiers: PricingTier[] = [
     ],
     popular: false,
     buttonText: "Choose Basic",
-    buttonClass: "bg-[#FF7B54] text-white hover:bg-[#e56c49]",
-    borderClass: "border-t-4 border-[#FF7B54]"
+    buttonClass: "bg-[#2A7B9B] text-white hover:bg-[#1e6988]",
+    borderClass: "border-t-4 border-[#2A7B9B]"
   },
   {
     name: "Pro",
@@ -49,8 +49,8 @@ const pricingTiers: PricingTier[] = [
     ],
     popular: true,
     buttonText: "Choose Pro",
-    buttonClass: "bg-[#2A7B9B] text-white hover:bg-[#1e6988]",
-    borderClass: "border-t-4 border-[#2A7B9B]"
+    buttonClass: "bg-[#FF7B54] text-white hover:bg-[#e56c49]",
+    borderClass: "border-t-4 border-[#FF7B54]"
   }
 ];
 
