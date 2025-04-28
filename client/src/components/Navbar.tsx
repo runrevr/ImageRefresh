@@ -26,7 +26,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
             <img src={logoImage} alt="ImageRefresh Logo" className="h-12 md:h-14" style={{ maxWidth: '280px' }} />
@@ -34,23 +34,27 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         </Link>
         
         <div className="hidden md:flex items-center space-x-24">
-          <Link href="/ideas" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold">Ideas</Link>
-          <a href="#pricing" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold">Pricing</a>
-          <a href="#faq" className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold">Help</a>
+          <Link href="/ideas" className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">Ideas</Link>
+          <a href="#pricing" className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">Pricing</a>
+          <a href="#faq" className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">Help</a>
         </div>
         
         <div className="flex items-center space-x-4">
-          <div className="hidden sm:block text-sm font-medium">
-            <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
-              <Bot className="h-4 w-4 mr-1 text-primary-600" />
-              {totalCredits} credits
-            </span>
-          </div>
-          <Link href="/pricing">
-            <Button className="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
-              Get More Credits
-            </Button>
-          </Link>
+          {user && (
+            <>
+              <div className="hidden sm:block text-sm font-medium">
+                <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
+                  <Bot className="h-4 w-4 mr-1 text-primary-600" />
+                  {totalCredits} credits
+                </span>
+              </div>
+              <Link href="/pricing">
+                <Button className="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
+                  Get More Credits
+                </Button>
+              </Link>
+            </>
+          )}
           
           {/* User account dropdown or auth buttons */}
           {user ? (
@@ -135,17 +139,21 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   Help
                 </a>
                 <div className="pt-4 border-t border-gray-200">
-                  <div className="text-sm font-medium mb-2">
-                    <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
-                      <Bot className="h-4 w-4 mr-1 text-primary-600" />
-                      {totalCredits} credits
-                    </span>
-                  </div>
-                  <Link href="/pricing">
-                    <Button className="w-full mb-3 bg-[#FF7B54] hover:bg-secondary-600 text-white border-none" onClick={() => setIsMenuOpen(false)}>
-                      Get More Credits
-                    </Button>
-                  </Link>
+                  {user && (
+                    <>
+                      <div className="text-sm font-medium mb-2">
+                        <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
+                          <Bot className="h-4 w-4 mr-1 text-primary-600" />
+                          {totalCredits} credits
+                        </span>
+                      </div>
+                      <Link href="/pricing">
+                        <Button className="w-full mb-3 bg-[#FF7B54] hover:bg-secondary-600 text-white border-none" onClick={() => setIsMenuOpen(false)}>
+                          Get More Credits
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                   
                   {user ? (
                     <>
