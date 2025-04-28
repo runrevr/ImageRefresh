@@ -783,6 +783,36 @@ style, environment, lighting, and background rather than changing the main subje
     }
   });
 
+  // Special test endpoint to add 30 credits to test account (user ID 1)
+  app.get("/api/add-test-credits", async (req, res) => {
+    try {
+      const testUserId = 1; // Hardcoded user ID for test account
+      const creditsToAdd = 30; // Add 30 credits
+      
+      // Get current user
+      const user = await storage.getUser(testUserId);
+      if (!user) {
+        return res.status(404).json({ message: "Test user not found" });
+      }
+      
+      // Update the user's credits
+      const updatedUser = await storage.updateUserCredits(
+        testUserId, 
+        user.freeCreditsUsed, 
+        user.paidCredits + creditsToAdd
+      );
+      
+      res.json({
+        success: true,
+        message: `Added ${creditsToAdd} credits to test account`,
+        previousCredits: user.paidCredits,
+        newCredits: updatedUser.paidCredits
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message || "Unknown error occurred" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
