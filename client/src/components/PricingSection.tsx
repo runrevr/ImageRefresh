@@ -90,8 +90,8 @@ export default function PricingSection({ userId }: PricingSectionProps) {
             className={`overflow-hidden shadow-md bg-white ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''} flex flex-col text-[#333333]`}
           >
             {tier.popular && (
-              <div className="absolute top-0 right-0 w-0 h-0 border-t-[75px] border-t-[#FF7B54] border-l-[75px] border-l-transparent z-10 shadow-lg">
-                <span className="absolute top-[-68px] right-[10px] text-white font-bold uppercase tracking-wider text-xs">Popular</span>
+              <div className="absolute top-0 right-0 w-0 h-0 border-t-[100px] border-t-[#FF7B54] border-l-[100px] border-l-transparent z-10 shadow-lg">
+                <span className="absolute top-[-80px] right-[12px] text-white font-bold uppercase tracking-wider text-sm">Popular</span>
               </div>
             )}
             <CardContent className="p-6 flex-grow flex flex-col">
