@@ -6,6 +6,7 @@ import ComparisonSlider from './ComparisonSlider';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
 import EmailCollectionDialog from './EmailCollectionDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ResultViewProps {
   originalImage: string;
@@ -34,15 +35,21 @@ export default function ResultView({
   transformationId = '',
   editsUsed = 0
 }: ResultViewProps) {
+  // Get authentication state
+  const { user } = useAuth();
+  
   // Check if this is an edit (editsUsed > 0) or if email has already been collected
   const isEdit = editsUsed > 0;
   const emailAlreadyCollected = localStorage.getItem('emailCollected') === 'true';
   
-  // Only show email dialog if it's not an edit and email hasn't been collected yet
-  const [showEmailDialog, setShowEmailDialog] = useState(!isEdit && !emailAlreadyCollected);
-  const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected);
+  // Only show email dialog if:
+  // 1. It's not an edit, AND
+  // 2. Email hasn't been collected yet, AND
+  // 3. User is not logged in (users who are logged in already have their emails)
+  const [showEmailDialog, setShowEmailDialog] = useState(!isEdit && !emailAlreadyCollected && !user);
+  const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected || !!user);
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const userId = 1; // Default to user ID 1 for demo
+  const userId = user?.id || 1; // Use logged in user ID if available
   
   const handleEmailSubmitted = () => {
     localStorage.setItem('emailCollected', 'true');
