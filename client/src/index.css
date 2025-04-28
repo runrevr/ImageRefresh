@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.mt-screen {
+  margin-top: 100vh;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 0 0% 20%; /* #333333 (neutral-dark) */

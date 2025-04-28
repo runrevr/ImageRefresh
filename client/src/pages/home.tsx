@@ -452,11 +452,12 @@ export default function Home() {
         remainingCredits={user.paidCredits}
       />
       
-      <main className="container mx-auto px-4 py-8 max-w-6xl relative z-10">
+      <main className="relative w-full">
         {/* Hero Section - Carousel Style */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>
             <HeroCarousel onCreateClick={handleUploadClick} />
+            <div className="mt-screen"></div>
             
             {!isOpenAIConfigured && (
               <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
