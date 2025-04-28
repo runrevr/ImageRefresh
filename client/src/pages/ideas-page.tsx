@@ -134,7 +134,7 @@ export default function IdeasPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-12">
           {ideas.map((idea) => (
             <div key={idea.id} className="w-full sm:w-[45%] md:w-[30%]" style={{ minWidth: "250px", maxWidth: "400px" }}>
               <Card 
