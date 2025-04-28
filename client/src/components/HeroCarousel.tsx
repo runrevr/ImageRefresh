@@ -50,10 +50,10 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
     <div className="relative overflow-hidden text-white h-[90vh] min-h-[700px] mt-[-2rem] flex flex-col">
       {/* Background image with the cats */}
-      <div 
-        className="absolute inset-0 z-0 bg-center bg-cover bg-no-repeat"
-        style={{ backgroundImage: 'url(/images/couple-of-cats.png)' }}
-        aria-label="Background of four cats in human clothing"
+      <img 
+        src="/images/cats.png" 
+        alt="Four cats dressed as humans"
+        className="absolute inset-0 w-full h-full object-cover"
       />
       
       {/* Semi-transparent overlay for better text readability */}
