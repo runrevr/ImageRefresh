@@ -90,61 +90,62 @@ export default function IdeasPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-[#2A7B9B] to-[#A3E4D7] inline-block text-transparent bg-clip-text">
+      <div className="max-w-screen-xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-[#2A7B9B] to-[#A3E4D7] inline-block text-transparent bg-clip-text">
             Transformation Ideas
           </h1>
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+          <p className="text-base text-gray-700 max-w-2xl mx-auto">
             Explore different styles and prompts to inspire your next image transformation. 
-            Click on any card to see before and after examples and copy prompts directly to use in your own transformations.
+            Hover over cards to see before/after examples.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-wrap -mx-2">
           {ideas.map((idea) => (
-            <Card 
-              key={idea.id} 
-              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] w-full"
-              onMouseEnter={() => setHoveredCard(idea.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <div className="relative w-full h-48 overflow-hidden">
-                <img 
-                  src={hoveredCard === idea.id ? idea.transformedImage : idea.originalImage} 
-                  alt={hoveredCard === idea.id ? "Transformed image" : "Original image"}
-                  className="w-full h-full object-cover transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                  <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
-                    {hoveredCard === idea.id ? "After" : "Before"}
-                  </p>
+            <div key={idea.id} className="w-full sm:w-1/2 lg:w-1/3 p-2">
+              <Card 
+                className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
+                onMouseEnter={() => setHoveredCard(idea.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className="relative w-full h-48 overflow-hidden">
+                  <img 
+                    src={hoveredCard === idea.id ? idea.transformedImage : idea.originalImage} 
+                    alt={hoveredCard === idea.id ? "Transformed image" : "Original image"}
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
+                      {hoveredCard === idea.id ? "After" : "Before"}
+                    </p>
+                  </div>
+                  <div className="absolute top-2 right-2 bg-[#FF7B54] text-white px-2 py-1 rounded text-xs">
+                    {idea.category}
+                  </div>
                 </div>
-                <div className="absolute top-2 right-2 bg-[#FF7B54] text-white px-2 py-1 rounded text-xs">
-                  {idea.category}
-                </div>
-              </div>
 
-              <CardHeader className="p-3 pb-1">
-                <CardTitle className="text-base font-bold text-[#333333]">{idea.title}</CardTitle>
-                <CardDescription className="text-xs">{idea.description}</CardDescription>
-              </CardHeader>
+                <CardHeader className="p-3 pb-1">
+                  <CardTitle className="text-base font-bold text-[#333333]">{idea.title}</CardTitle>
+                  <CardDescription className="text-xs">{idea.description}</CardDescription>
+                </CardHeader>
 
-              <CardFooter className="flex justify-between gap-1 p-3">
-                <Button 
-                  variant="outline" 
-                  className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white text-xs py-1"
-                  onClick={() => copyPromptToClipboard(idea.prompt)}
-                >
-                  Copy Prompt
-                </Button>
-                <Link href="/">
-                  <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white text-xs py-1">
-                    Try It
+                <CardFooter className="flex justify-between gap-1 p-3">
+                  <Button 
+                    variant="outline" 
+                    className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white text-xs py-1"
+                    onClick={() => copyPromptToClipboard(idea.prompt)}
+                  >
+                    Copy Prompt
                   </Button>
-                </Link>
-              </CardFooter>
-            </Card>
+                  <Link href="/">
+                    <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white text-xs py-1">
+                      Try It
+                    </Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
           ))}
         </div>
       </div>
