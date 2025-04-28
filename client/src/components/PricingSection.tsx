@@ -12,7 +12,7 @@ interface PricingSectionProps {
 
 const pricingTiers: PricingTier[] = [
   {
-    name: "Free Trial",
+    name: "Free",
     price: "$0",
     features: [
       { available: true, text: "1 free credit" },
@@ -20,12 +20,12 @@ const pricingTiers: PricingTier[] = [
       { available: true, text: "Standard resolution output" },
       { available: false, text: "No commercial usage rights" }
     ],
-    buttonText: "Start Free",
+    buttonText: "Get Started",
     buttonClass: "border border-gray-300 text-gray-700 hover:bg-gray-50",
     borderClass: "border-t-4 border-gray-200"
   },
   {
-    name: "Basic",
+    name: "Core",
     price: "$10/month",
     features: [
       { available: true, text: "10 credits per month" },
@@ -34,12 +34,12 @@ const pricingTiers: PricingTier[] = [
       { available: true, text: "No watermarks" }
     ],
     popular: false,
-    buttonText: "Choose Basic",
+    buttonText: "Choose Core",
     buttonClass: "bg-[#2A7B9B] text-white hover:bg-[#1e6988]",
     borderClass: "border-t-4 border-[#2A7B9B]"
   },
   {
-    name: "Pro",
+    name: "Premium",
     price: "$20/month",
     features: [
       { available: true, text: "30 credits per month" },
@@ -48,7 +48,7 @@ const pricingTiers: PricingTier[] = [
       { available: true, text: "Commercial usage rights" }
     ],
     popular: true,
-    buttonText: "Choose Pro",
+    buttonText: "Choose Premium",
     buttonClass: "bg-[#FF7B54] text-white hover:bg-[#e56c49]",
     borderClass: "border-t-4 border-[#FF7B54]"
   }
@@ -60,18 +60,18 @@ export default function PricingSection({ userId }: PricingSectionProps) {
   const [, navigate] = useLocation();
 
   const handlePurchase = async (tier: PricingTier) => {
-    if (tier.name === "Free Trial") {
+    if (tier.name === "Free") {
       toast({
-        title: "Free Trial",
-        description: "You already have access to the free trial!",
+        title: "Free Plan",
+        description: "You already have access to the free plan!",
       });
       return;
     }
 
     // For paid plans, navigate to the appropriate checkout page
-    if (tier.name === "Basic") {
+    if (tier.name === "Core") {
       navigate("/checkout");
-    } else if (tier.name === "Pro") {
+    } else if (tier.name === "Premium") {
       navigate("/subscribe");
     }
   };
