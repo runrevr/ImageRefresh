@@ -87,7 +87,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         {pricingTiers.map((tier, index) => (
           <Card 
             key={index}
-            className={`overflow-hidden shadow-md ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''} flex flex-col`}
+            className={`overflow-hidden shadow-md bg-white ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''} flex flex-col text-[#333333]`}
           >
             {tier.popular && (
               <div className="absolute top-0 right-0 bg-primary-500 text-white px-4 py-1 text-sm font-medium">
@@ -96,8 +96,8 @@ export default function PricingSection({ userId }: PricingSectionProps) {
             )}
             <CardContent className="p-6 flex-grow flex flex-col">
               <div>
-                <h3 className="text-xl font-bold mb-4">{tier.name}</h3>
-                <div className="text-4xl font-bold mb-6">{tier.price}</div>
+                <h3 className="text-xl font-bold mb-4 text-[#333333]">{tier.name}</h3>
+                <div className="text-4xl font-bold mb-6 text-[#333333]">{tier.price}</div>
                 <ul className="space-y-3">
                   {tier.features.map((feature, fIndex) => (
                     <li key={fIndex} className="flex items-start">
@@ -106,7 +106,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
                       ) : (
                         <X className="h-5 w-5 text-gray-400 mt-0.5 mr-2 flex-shrink-0" />
                       )}
-                      <span className={feature.available ? '' : 'text-gray-400'}>
+                      <span className={feature.available ? 'text-[#333333]' : 'text-gray-400'}>
                         {feature.text}
                       </span>
                     </li>
