@@ -169,7 +169,7 @@ export default function ResultView({
             <Button 
               variant="outline" 
               onClick={onTryAgain}
-              className="text-red-500 flex-1"
+              className="text-[#A3E4D7] border-[#A3E4D7] hover:bg-[#A3E4D7]/10 flex-1"
             >
               <ArrowLeftRight className="h-4 w-4 mr-2" />
               Try Another Prompt
