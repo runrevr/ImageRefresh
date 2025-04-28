@@ -784,7 +784,7 @@ style, environment, lighting, and background rather than changing the main subje
   });
 
   // Special test endpoint to add 30 credits to test account (user ID 1)
-  app.get("/api/add-test-credits", async (req, res) => {
+  app.get("/api/admin/add-test-credits", async (req, res) => {
     try {
       const testUserId = 1; // Hardcoded user ID for test account
       const creditsToAdd = 30; // Add 30 credits
