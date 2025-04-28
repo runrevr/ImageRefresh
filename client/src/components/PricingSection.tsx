@@ -83,11 +83,11 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         <p className="text-xl text-gray-600">Choose a plan that works for you</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 max-w-5xl mx-auto">
         {pricingTiers.map((tier, index) => (
           <Card 
             key={index}
-            className={`overflow-hidden shadow-md ${tier.borderClass} relative ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''}`}
+            className={`overflow-hidden shadow-md ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''}`}
           >
             {tier.popular && (
               <div className="absolute top-0 right-0 bg-primary-500 text-white px-4 py-1 text-sm font-medium">
