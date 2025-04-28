@@ -51,7 +51,7 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
     <div className="w-full h-screen min-h-screen relative overflow-hidden">
       {/* Background image with the cats */}
       <img 
-        src="/images/couple_of_cats.png" 
+        src="/images/couple-of-cats.png" 
         alt="Four cats dressed as humans"
         className="absolute inset-0 w-full h-full object-cover"
       />
