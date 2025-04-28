@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Layout } from "@/components/Layout";
+import { Layout } from "../components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -57,8 +57,8 @@ export default function IdeasPage() {
       category: "Fine Art",
       prompt: "Transform this image into Vincent van Gogh's distinctive Post-Impressionist style. Use bold, visible brushstrokes with thick impasto texture. Apply vibrant, swirling patterns in the background reminiscent of 'Starry Night'. Create emotional color contrasts with deep blues, bright yellows, and rich greens. Maintain the basic composition and subjects from the original image, but interpret them with van Gogh's characteristic distorted perspective and emotional intensity. Add slight elongation of features and objects, with outlines emphasized by darker colors.",
       description: "Turn your photos into stunning Post-Impressionist masterpieces with Van Gogh's distinctive swirling brushstrokes and vibrant colors.",
-      originalImage: "/uploads/example-landscape.jpg",
-      transformedImage: "/uploads/transformed-van-gogh.jpg"
+      originalImage: "/examples/example-landscape.png",
+      transformedImage: "/examples/transformed-van-gogh.png"
     },
     {
       id: "watercolor",
@@ -66,8 +66,8 @@ export default function IdeasPage() {
       category: "Fine Art",
       prompt: "Transform this image into a delicate watercolor painting with soft, translucent washes of color. Create gentle color bleeds and subtle gradients with visible paper texture showing through. Use a light touch with minimal detail, focusing on capturing the essence and mood rather than precise details. Apply transparent layering techniques with colors slightly bleeding into one another at the edges. Include some areas where colors blend naturally and others with small deliberate brushstrokes. Add slight bleeding effects at color boundaries typical of wet-on-wet watercolor techniques.",
       description: "Transform photos into elegant watercolor paintings with soft color washes and gentle transitions.",
-      originalImage: "/uploads/example-portrait.jpg",
-      transformedImage: "/uploads/transformed-watercolor.jpg"
+      originalImage: "/examples/example-portrait.png",
+      transformedImage: "/examples/transformed-watercolor.png"
     },
     {
       id: "cyberpunk",
@@ -75,8 +75,8 @@ export default function IdeasPage() {
       category: "Sci-Fi",
       prompt: "Transform this image into a cyberpunk-style scene with neon-lit urban dystopia aesthetics. Add abundant holographic displays, vibrant neon signs in pink, blue, and purple casting colorful glows. Create a rainy night atmosphere with reflective wet streets and steam rising from vents. Include technological enhancements like cybernetic implants, AR displays, or digital interfaces. The lighting should feature stark contrasts between dark shadows and bright artificial lights, with lens flares and light pollution. Maintain the core elements of the original image but reimagined in this high-tech, gritty futuristic setting.",
       description: "Enter a futuristic world of neon lights, holographic displays, and technological enhancements in a cyberpunk-inspired transformation.",
-      originalImage: "/uploads/example-city.jpg",
-      transformedImage: "/uploads/transformed-cyberpunk.jpg"
+      originalImage: "/examples/example-city.png",
+      transformedImage: "/examples/transformed-cyberpunk.png"
     },
   ];
 
