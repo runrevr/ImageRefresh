@@ -49,6 +49,7 @@ export default function Home() {
   const [showAccountNeededDialog, setShowAccountNeededDialog] = useState<boolean>(false);
   const [storedEmail, setStoredEmail] = useState<string | null>(null);
   const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
+  const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
   const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
@@ -106,6 +107,9 @@ export default function Home() {
   const handlePromptSubmit = async (promptText: string, imageSize: string = "1024x1024") => {
     setPrompt(promptText);
     setCurrentStep(Step.Processing);
+    
+    // Reset the flag when submitting a new transformation
+    setHasTriedAnotherPrompt(false);
     
     // Scroll to top to see the processing state
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,6 +179,18 @@ export default function Home() {
   };
 
   const handleTryAgain = () => {
+    // Only allow trying another prompt if they haven't tried one already
+    if (hasTriedAnotherPrompt) {
+      toast({
+        title: "Limit Reached",
+        description: "You've already tried another prompt for this image. Please start a new transformation to try more options.",
+        variant: "default"
+      });
+      return;
+    }
+    
+    // Set the flag to indicate they've now tried another prompt
+    setHasTriedAnotherPrompt(true);
     setPrompt('');
     setCurrentStep(Step.Prompt);
   };
@@ -186,6 +202,7 @@ export default function Home() {
     setPrompt('');
     setSelectedTransformation(null);
     setCurrentTransformation(null); // Clear current transformation data
+    setHasTriedAnotherPrompt(false); // Reset the "tried another prompt" flag
     setCurrentStep(Step.Upload);
     setShowUploadForm(false);
     
@@ -319,6 +336,9 @@ export default function Home() {
     
     // Set a default image size for presets (square format)
     const imageSize = "1024x1024";
+    
+    // Reset the flag when applying a preset transformation
+    setHasTriedAnotherPrompt(false);
     
     setCurrentStep(Step.Processing);
     
