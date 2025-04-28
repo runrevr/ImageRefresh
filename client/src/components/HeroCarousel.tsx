@@ -49,23 +49,21 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
-    <div className="relative overflow-hidden text-white h-[90vh] min-h-[700px] mt-[-2rem]">
-      {/* Background image with the collage */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={coverPhotoPath} 
-          alt="Background collage of transformed images"
-          className="w-full h-full object-cover object-center"
-        />
-      </div>
+    <div className="relative overflow-hidden text-white h-[90vh] min-h-[700px] mt-[-2rem] flex flex-col">
+      {/* Background image with the collage - using background-image instead of an img tag */}
+      <div 
+        className="absolute inset-0 z-0 bg-center bg-cover bg-no-repeat"
+        style={{ backgroundImage: `url(${coverPhotoPath})` }}
+        aria-label="Background collage of transformed images"
+      />
       
       {/* Semi-transparent overlay for better text readability */}
       <div className="absolute inset-0 bg-white/60 z-10" />
       
       {/* Content overlay */}
-      <div className="relative z-20 h-full flex items-center justify-center">
-        <div className="container mx-auto px-4 md:px-8 py-8">
-          <div className="max-w-2xl mx-auto text-center pt-[4rem] md:pt-0">
+      <div className="relative z-20 flex-1 flex items-center justify-center">
+        <div className="container mx-auto px-6 md:px-8 py-10">
+          <div className="max-w-2xl mx-auto text-center md:pt-0">
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
               Create Viral-Worthy Images In Just 3 Clicks
             </h1>
