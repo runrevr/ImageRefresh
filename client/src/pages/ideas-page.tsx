@@ -30,8 +30,8 @@ export default function IdeasPage() {
       category: "Retro Gaming",
       prompt: "Create a colorful 8-bit pixel art scene inspired by retro video games. The scene features a small pixel-style character sitting on a brown brick platform, holding a glowing orb. The character wears a green shirt and blue pants. The background includes a bright blue sky with pixelated white clouds outlined in black, rolling green hills, rounded trees, and colorful pixel flowers growing from floating bricks. Add a large green warp pipe with a red-and-green plant coming out of it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above the character. The overall style should feel bright, playful, and nostalgic, like a side-scrolling adventure world.",
       description: "Transform any photo into a nostalgic 8-bit pixel art style reminiscent of classic Nintendo games.",
-      originalImage: "/uploads/example-boy.jpg",
-      transformedImage: "/uploads/transformed-pixel-art.jpg"
+      originalImage: "/examples/example-boy.png",
+      transformedImage: "/examples/transformed-pixel-art.png"
     },
     {
       id: "superhero",
@@ -39,8 +39,8 @@ export default function IdeasPage() {
       category: "Fantasy",
       prompt: "Use the uploaded image as inspiration for the pose and action of a new, non-photorealistic cartoon superhero character. Create a bold animated style with exaggerated features, colorful heroic costumes, dynamic flowing capes, and glowing energy effects around the hands or eyes. Make the character have a serious and determined expression. Set the scene in a whimsical urban cartoon cityscape with a skyline backdrop, and use bright, joyful colors. Everything must feel original and playful, inspired by animated superhero adventures.",
       description: "Turn yourself or friends into vibrant comic book superheroes with dynamic poses and energy effects.",
-      originalImage: "/uploads/example-person.jpg",
-      transformedImage: "/uploads/transformed-superhero.jpg"
+      originalImage: "/examples/example-person.png",
+      transformedImage: "/examples/transformed-superhero.png"
     },
     {
       id: "trolls",
@@ -48,8 +48,8 @@ export default function IdeasPage() {
       category: "Animation",
       prompt: "Use the uploaded image as inspiration for the mood and attitude of a whimsical troll folk-hero character. Create a playful fantasy scene filled with oversized flowers, sparkling waterfalls, and colorful candy-like forests arranged in musical, rhythmic patterns. Design the character in a bright, cartoon style with wild, gravity-defying neon hair shaped like a crown, textured clothes inspired by forest leaves and vines, and a joyful, lively expression. Set everything in a vivid, high-contrast animated world, like a cheerful fairy-tale concert.",
       description: "Create a magical, musical world with vibrant colors and whimsical characters inspired by the Trolls movie style.",
-      originalImage: "/uploads/example-child.jpg",
-      transformedImage: "/uploads/transformed-trolls.jpg"
+      originalImage: "/examples/example-child.png",
+      transformedImage: "/examples/transformed-trolls.png"
     },
     {
       id: "van-gogh",
