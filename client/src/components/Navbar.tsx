@@ -29,7 +29,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img src={logoImage} alt="ImageRefresh Logo" className="h-24" />
+            <img src={logoImage} alt="ImageRefresh Logo" className="h-12 md:h-14" style={{ maxWidth: '280px' }} />
           </div>
         </Link>
         
@@ -110,7 +110,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             </SheetTrigger>
             <SheetContent>
               <div className="flex items-center mb-6 pt-4">
-                <img src={logoImage} alt="ImageRefresh Logo" className="h-12" />
+                <img src={logoImage} alt="ImageRefresh Logo" className="h-10" style={{ maxWidth: '220px' }} />
               </div>
               <div className="flex flex-col space-y-4">
                 <Link 
