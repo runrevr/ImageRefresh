@@ -48,12 +48,13 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
-    <div className="relative overflow-hidden text-white h-screen min-h-[700px] m-0 flex flex-col">
+    <div className="relative overflow-hidden text-white h-screen w-full min-h-screen m-0 p-0 flex flex-col flex-grow" style={{ minHeight: '100vh', height: '100%' }}>
       {/* Background image with the cats */}
       <img 
-        src="/images/cats.png" 
+        src="/images/couple_of_cats.png" 
         alt="Four cats dressed as humans"
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />
       
       {/* Semi-transparent overlay for better text readability */}
