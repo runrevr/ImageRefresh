@@ -49,57 +49,19 @@ interface HeroCarouselProps {
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
     <div className="relative overflow-hidden text-white h-[90vh] min-h-[700px] mt-[-2rem]">
-      {/* Background carousel */}
-      <Carousel className="absolute inset-0 h-full w-full">
-        <CarouselContent className="h-full">
-          {examples.map((example) => (
-            <CarouselItem key={example.id} className="h-full">
-              <div className="relative h-full w-full">
-                {/* Before/After Slider as Background */}
-                <div className="absolute inset-0 z-0">
-                  <ComparisonSlider 
-                    className="h-full w-full"
-                    before={
-                      <div className="h-full w-full">
-                        <img 
-                          src={example.beforeImage} 
-                          alt="Before" 
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute left-4 bottom-4 text-white px-2 py-1 bg-black/50 rounded-md text-sm">
-                          Before
-                        </div>
-                      </div>
-                    }
-                    after={
-                      <div className="h-full w-full">
-                        <img 
-                          src={example.afterImage} 
-                          alt="After" 
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute right-4 bottom-4 text-white px-2 py-1 bg-black/50 rounded-md text-sm">
-                          After
-                        </div>
-                      </div>
-                    }
-                  />
-                </div>
-                
-                {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-white/60 z-10" />
-                
-                {/* Transformation type */}
-                <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full z-20 backdrop-blur-sm">
-                  {example.title}
-                </div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 z-20 bg-black/60 hover:bg-black/80 text-white" />
-        <CarouselNext className="absolute right-4 top-1/2 z-20 bg-black/60 hover:bg-black/80 text-white" />
-      </Carousel>
+      {/* Background image with the collage from the attached assets */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/images/backgrounds/cover-photo.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
+      {/* Semi-transparent overlay for better text readability */}
+      <div className="absolute inset-0 bg-white/60 z-10" />
       
       {/* Content overlay */}
       <div className="relative z-20 h-full flex items-center">

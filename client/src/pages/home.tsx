@@ -418,24 +418,8 @@ export default function Home() {
     }
   };
   
-  // Import the background image to ensure it's available
-  const backgroundImage = "/images/backgrounds/cover-photo.png";
-  
   return (
     <div className="text-gray-800 min-h-screen flex flex-col">
-      {/* Fixed position background image */}
-      <div 
-        className="fixed inset-0 z-0 bg-[#f0f0f0]" 
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
-      
-      {/* Semi-transparent overlay for readability */}
-      <div className="fixed inset-0 bg-white/50 z-0" />
       
       <Navbar freeCredits={!user.freeCreditsUsed ? 1 : 0} paidCredits={user.paidCredits} />
       
