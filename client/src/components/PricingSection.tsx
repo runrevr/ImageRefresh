@@ -90,7 +90,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
             className={`overflow-hidden shadow-md bg-white ${tier.borderClass} relative flex-1 md:max-w-xs ${tier.popular ? 'transform scale-105 shadow-lg z-10' : ''} flex flex-col text-[#333333]`}
           >
             {tier.popular && (
-              <div className="absolute top-0 right-0 bg-primary-500 text-white px-4 py-1 text-sm font-medium">
+              <div className="absolute top-0 right-0 bg-[#FF7B54] text-white px-4 py-1 text-sm font-medium">
                 Popular
               </div>
             )}
@@ -130,7 +130,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
       <div className="bg-gray-50 rounded-xl p-6 max-w-5xl mx-auto mt-8">
         <h3 className="text-lg font-bold mb-3">Need more transformations?</h3>
         <p className="text-gray-600 mb-4">Contact us for custom enterprise plans or bulk pricing.</p>
-        <Button variant="default" className="bg-primary-500 text-white hover:bg-primary-600">
+        <Button variant="default" className="bg-[#FF7B54] text-white hover:bg-[#e56c49]">
           Contact Sales
         </Button>
       </div>
