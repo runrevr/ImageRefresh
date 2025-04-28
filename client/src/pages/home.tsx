@@ -457,7 +457,6 @@ export default function Home() {
         {currentStep === Step.Upload && !showUploadForm && (
           <>
             <HeroCarousel onCreateClick={handleUploadClick} />
-            <div className="mt-screen"></div>
             
             {!isOpenAIConfigured && (
               <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
@@ -466,7 +465,7 @@ export default function Home() {
             )}
             
             {/* Feature Highlights */}
-            <div className="w-full bg-gray-800 py-12 mt-8">
+            <div className="w-full bg-gray-800 py-12 mt-0 pt-12">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
                 <div className="rounded-xl overflow-hidden relative group h-80">
                   {/* Background image with overlay */}

@@ -1,49 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { ComparisonSlider } from "@/components/ui/comparison-slider";
-
-// Import the image directly
 import catsImage from "../assets/couple of cats.png";
-
-// Define the type for our carousel items
-interface CarouselExample {
-  id: number;
-  beforeImage: string;
-  afterImage: string;
-  title: string;
-  description: string;
-}
-
-// Example data for our carousel
-const examples: CarouselExample[] = [
-  {
-    id: 1,
-    beforeImage: "/uploads/image-1745589592601-385889560.jpg",
-    afterImage: "/uploads/transformed-1745589830896-image-1745589592601-385889560.jpg",
-    title: "Product Photography",
-    description: "Transform everyday products into professional studio quality photos"
-  },
-  {
-    id: 2,
-    beforeImage: "/uploads/image-1745519719394-392561701.jpg",
-    afterImage: "/uploads/transformed-1745519755708-image-1745519719394-392561701.jpg",
-    title: "Cartoon Style",
-    description: "Convert your images into vibrant cartoon illustrations"
-  },
-  {
-    id: 3,
-    beforeImage: "/uploads/image-1745518488094-199361840.jpg",
-    afterImage: "/uploads/transformed-1745518728162-image-1745518488094-199361840.jpg",
-    title: "Custom Transformations",
-    description: "Create any artistic style you can imagine"
-  }
-];
 
 interface HeroCarouselProps {
   onCreateClick: () => void;
@@ -51,41 +7,44 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden bg-white z-0" style={{ marginTop: 0 }}>
-      {/* Background image with the cats */}
-      <img 
-        src={catsImage} 
-        alt="Four cats dressed as humans"
-        className="absolute top-0 left-0 w-screen h-screen object-cover"
-        style={{ objectPosition: 'center center', maxWidth: '100%', objectFit: 'cover' }}
+    <div className="w-full h-screen bg-white relative overflow-hidden mt-[-80px] pt-[80px]">
+      <div 
+        className="absolute inset-0 bg-center bg-cover z-0"
+        style={{
+          backgroundImage: `url(${catsImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          width: '100%',
+          height: '100%'
+        }}
       />
       
       {/* Semi-transparent overlay for better text readability */}
-      <div className="absolute inset-0 bg-white/60 z-10"></div>
+      <div className="absolute inset-0 bg-white/60 z-1"></div>
       
       {/* Content overlay */}
-      <div className="relative z-20 h-full w-full flex items-center justify-center">
-        <div className="container mx-auto px-6 md:px-8 py-10">
+      <div className="relative z-10 h-full w-full flex items-center justify-center">
+        <div className="container mx-auto px-6 md:px-8">
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2 text-black leading-tight">
+            <h1 className="text-6xl sm:text-7xl font-bold mb-4 text-black leading-tight">
               Create Viral-Worthy Images In Just 3 Clicks
             </h1>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-6 text-black/80">
+            <h2 className="text-2xl sm:text-3xl font-medium mb-6 text-black/80">
               Upload Your Image, Unload Your Imagination
             </h2>
-            <p className="text-xl lg:text-2xl mb-8 text-gray-700 mx-auto">
-              Imagine your kid as a cartoon hero. Your product as the next viral obsession. Your content is creating tons of likes and comments. If nothing else you can make your friends look like a cat...
+            <p className="text-xl mb-8 text-gray-700 mx-auto">
+              Imagine your kid as a cartoon hero. Your product as the next viral obsession. Your content creating tons of likes and comments. If nothing else you can make your friends look like a cat...
             </p>
             
             <div className="flex flex-col items-center justify-center">
               <Button 
-                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg mb-10 border-4 border-[#FF7B54] shadow-[0_10px_25px_-5px_rgba(255,123,84,0.5)]" 
+                className="bg-white text-black hover:bg-white/90 text-lg font-medium px-8 py-6 rounded-lg mb-6 border-4 border-[#FF7B54] shadow-[0_10px_25px_-5px_rgba(255,123,84,0.5)]" 
                 onClick={onCreateClick}
               >
                 ⚡ Let's Make Some Magic
               </Button>
               
-              <div className="text-md text-gray-700 p-2 mb-4">
+              <div className="text-md text-gray-700 p-2">
                 <i className="fas fa-info-circle mr-2"></i>
                 Your first transformation is free! No credit card required.
               </div>
