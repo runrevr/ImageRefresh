@@ -96,7 +96,7 @@ export default function TransformationExamples({ onExampleClick }: Transformatio
         <Button 
           onClick={handleExampleClick}
           size="lg"
-          className="bg-primary-500 hover:bg-primary-600"
+          className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white"
         >
           <Wand2 className="h-4 w-4 mr-2" />
           Create Your Own Transformation
