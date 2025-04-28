@@ -116,7 +116,9 @@ const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
     title: "Superhero",
     description: "Convert to a dynamic comic book superhero style.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt: `Use the uploaded image as inspiration for the pose and action of a new, non-photorealistic cartoon superhero character. Create a bold animated style with exaggerated features, colorful heroic costumes, dynamic flowing capes, and glowing energy effects around the hands or eyes. Make the character seated on a block or platform, holding a glowing energy orb, with a serious and determined expression. Set the scene in a whimsical urban cartoon cityscape with a skyline backdrop, and use bright, joyful colors. Do not copy any facial features or likeness from the uploaded image. Everything must feel original and playful, inspired by animated superhero adventures.`,
+    suggestedPrompt: `Create a colorful 2D cartoon-style illustration of a cheerful young superhero [boy or girl] standing proudly with hands on hips or seated confidently on a platform holding a glowing energy orb. The character should have playful, stylized hair, bright expressive eyes, and either a big happy smile or a serious, determined expression. Dress the superhero in a vibrant costume with a bold chest emblem, colorful gloves, boots, and a flowing cape. Set the background as either a bright, whimsical outdoor scene with green bushes, trees, and a winding path under a clear blue sky, or a lively urban cartoon cityscape with tall colorful buildings and fluffy clouds. Add soft glowing effects around the hands, orb, or emblem to suggest magical powers. The overall style should be animated, playful, bold, and perfect for a children's cartoon series. Use any uploaded images only for inspiration for pose and action, without copying real facial features or likeness.
+
+`,
   },
   lego: {
     title: "Lego",
