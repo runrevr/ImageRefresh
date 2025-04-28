@@ -242,7 +242,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
       "Transform a human into a cat with recognizable traits from the original subject.",
     placeholder: "E.g., Turn me into a cat that resembles my features",
     suggestedPrompt:
-      "Transform into a cat while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
+      "Transform into a cat/cats while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
   },
   "custom-other": {
     title: "Create Your Own Image",

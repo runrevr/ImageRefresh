@@ -354,7 +354,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         // Regular (non-edit) transformations
-        else if (true || !user.freeCreditsUsed || user.paidCredits > 0) {
+        // In development mode (NODE_ENV !== 'production'), bypass credit check for easier testing
+        // In production, enforce the credit limit (free credit or paid credits)
+        else if ((process.env.NODE_ENV !== 'production') || !user.freeCreditsUsed || user.paidCredits > 0) {
           // Create a transformation record
           console.log("validatedData.originalImagePath:", validatedData.prompt);
           const transformation = await storage.createTransformation({
@@ -522,8 +524,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add credits to user account (for testing purposes)
+  // Add credits to user account (for testing purposes - only available in non-production environments)
   app.post("/api/add-credits/:userId", async (req, res) => {
+    // Block this endpoint in production mode for security
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({ 
+        message: "This endpoint is not available in production mode" 
+      });
+    }
+    
     try {
       const userId = parseInt(req.params.userId);
 
@@ -545,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       res.json({
-        message: "Successfully added 20 credits",
+        message: "Successfully added 20 credits (development mode only)",
         freeCreditsUsed: updatedUser.freeCreditsUsed,
         paidCredits: updatedUser.paidCredits,
       });
@@ -783,8 +792,15 @@ style, environment, lighting, and background rather than changing the main subje
     }
   });
 
-  // Special test endpoint to add 30 credits to test account (user ID 1)
+  // Special test endpoint to add 30 credits to test account (user ID 1) - development only
   app.get("/api/admin/add-test-credits", async (req, res) => {
+    // Block this endpoint in production mode for security
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({ 
+        message: "This endpoint is not available in production mode" 
+      });
+    }
+    
     try {
       const testUserId = 1; // Hardcoded user ID for test account
       const creditsToAdd = 30; // Add 30 credits
@@ -804,7 +820,7 @@ style, environment, lighting, and background rather than changing the main subje
       
       res.json({
         success: true,
-        message: `Added ${creditsToAdd} credits to test account`,
+        message: `Added ${creditsToAdd} credits to test account (development mode only)`,
         previousCredits: user.paidCredits,
         newCredits: updatedUser.paidCredits
       });
