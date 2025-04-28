@@ -90,7 +90,7 @@ export default function IdeasPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-[#2A7B9B] to-[#A3E4D7] inline-block text-transparent bg-clip-text">
             Transformation Ideas
@@ -101,22 +101,22 @@ export default function IdeasPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ideas.map((idea) => (
             <Card 
               key={idea.id} 
-              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B]"
+              className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] max-w-sm mx-auto"
               onMouseEnter={() => setHoveredCard(idea.id)}
               onMouseLeave={() => setHoveredCard(null)}
             >
-              <div className="relative w-full h-64 overflow-hidden">
+              <div className="relative w-full h-48 overflow-hidden">
                 <img 
                   src={hoveredCard === idea.id ? idea.transformedImage : idea.originalImage} 
                   alt={hoveredCard === idea.id ? "Transformed image" : "Original image"}
                   className="w-full h-full object-cover transition-all duration-500"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                  <p className="text-white text-lg font-medium bg-black bg-opacity-60 px-4 py-2 rounded">
+                  <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
                     {hoveredCard === idea.id ? "After" : "Before"}
                   </p>
                 </div>
@@ -125,21 +125,21 @@ export default function IdeasPage() {
                 </div>
               </div>
 
-              <CardHeader>
-                <CardTitle className="text-xl font-bold text-[#333333]">{idea.title}</CardTitle>
-                <CardDescription>{idea.description}</CardDescription>
+              <CardHeader className="p-4">
+                <CardTitle className="text-lg font-bold text-[#333333]">{idea.title}</CardTitle>
+                <CardDescription className="text-sm">{idea.description}</CardDescription>
               </CardHeader>
 
-              <CardFooter className="flex justify-between gap-4">
+              <CardFooter className="flex justify-between gap-2 p-4">
                 <Button 
                   variant="outline" 
-                  className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white"
+                  className="border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white text-xs px-2"
                   onClick={() => copyPromptToClipboard(idea.prompt)}
                 >
                   Copy Prompt
                 </Button>
                 <Link href="/">
-                  <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white">
+                  <Button className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white text-xs px-2">
                     Try It Now
                   </Button>
                 </Link>
