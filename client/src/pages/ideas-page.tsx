@@ -122,7 +122,7 @@ export default function IdeasPage() {
                   <img 
                     src={hoveredCard === idea.id ? idea.transformedImage : idea.originalImage} 
                     alt={hoveredCard === idea.id ? "Transformed image" : "Original image"}
-                    className={`w-full h-full transition-all duration-500 ${idea.id === "painting" ? "object-cover object-[50%_35%]" : "object-cover"}`}
+                    className={`w-full h-full transition-all duration-500 ${idea.id === "painting" ? "object-cover object-[50%_35%]" : "object-cover object-[50%_20%]"}`}
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
