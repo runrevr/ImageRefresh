@@ -17,6 +17,7 @@ import {
   PaintBucket,
   Paintbrush,
   Sparkles,
+  Clock, // For era category
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -225,6 +226,8 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
     suggestedPrompt: "",
   },
 };
+
+
 
 // Painting subcategories
 const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
@@ -520,6 +523,11 @@ export default function PromptInput({
           "Transform into a beautiful artistic painting with rich textures and expressive brushwork. " +
           finalPrompt;
       }
+      // If no subcategory is selected but primary is era, use a generic prompt
+      else if (primaryCategory === "era" && !eraSubcategory) {
+        finalPrompt =
+          "Transform into a historical or cultural era style with period-appropriate elements. " + finalPrompt;
+      }
       // If no subcategory is selected but primary is other, use a generic prompt
       else if (primaryCategory === "other" && !otherSubcategory) {
         finalPrompt =
@@ -551,6 +559,15 @@ export default function PromptInput({
           paintingSubcategory in PAINTING_STYLES
         ) {
           const suggestion = PAINTING_STYLES[paintingSubcategory].suggestedPrompt;
+          if (suggestion) {
+            finalPrompt = suggestion + " " + finalPrompt;
+          }
+        } else if (
+          primaryCategory === "era" &&
+          eraSubcategory &&
+          eraSubcategory in ERA_STYLES
+        ) {
+          const suggestion = ERA_STYLES[eraSubcategory].suggestedPrompt;
           if (suggestion) {
             finalPrompt = suggestion + " " + finalPrompt;
           }
@@ -681,6 +698,12 @@ export default function PromptInput({
     ) {
       return PAINTING_STYLES[paintingSubcategory].description;
     } else if (
+      primaryCategory === "era" &&
+      eraSubcategory &&
+      eraSubcategory in ERA_STYLES
+    ) {
+      return ERA_STYLES[eraSubcategory].description;
+    } else if (
       primaryCategory === "other" &&
       otherSubcategory &&
       otherSubcategory in OTHER_STYLES
@@ -708,6 +731,12 @@ export default function PromptInput({
       paintingSubcategory in PAINTING_STYLES
     ) {
       return PAINTING_STYLES[paintingSubcategory].placeholder;
+    } else if (
+      primaryCategory === "era" &&
+      eraSubcategory &&
+      eraSubcategory in ERA_STYLES
+    ) {
+      return ERA_STYLES[eraSubcategory].placeholder;
     } else if (
       primaryCategory === "other" &&
       otherSubcategory &&
@@ -808,7 +837,7 @@ export default function PromptInput({
                 onClick={() => handlePrimaryCategorySelect("era")}
               >
                 <div className="flex items-center">
-                  <History className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <Clock className="h-5 w-5 mr-2 flex-shrink-0" />
                   <span className="font-medium whitespace-normal break-words">
                     Pop Culture Through the Eras
                   </span>
@@ -951,7 +980,7 @@ export default function PromptInput({
             )}
 
             {/* Description of selected style */}
-            {(cartoonSubcategory || productSubcategory || paintingSubcategory || otherSubcategory) && (
+            {(cartoonSubcategory || productSubcategory || paintingSubcategory || eraSubcategory || otherSubcategory) && (
               <div className="mb-4">
                 <p className="text-gray-700">{getCurrentDescription()}</p>
               </div>

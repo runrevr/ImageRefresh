@@ -61,13 +61,13 @@ export default function IdeasPage() {
       transformedImage: "/assets/couple-field-painting.png"
     },
     {
-      id: "watercolor",
-      title: "Watercolor Style",
-      category: "Painting",
-      prompt: "Transform this image into a delicate watercolor painting with soft, translucent washes of color. Create gentle color bleeds and subtle gradients with visible paper texture showing through. Use a light touch with minimal detail, focusing on capturing the essence and mood rather than precise details. Apply transparent layering techniques with colors slightly bleeding into one another at the edges. Include some areas where colors blend naturally and others with small deliberate brushstrokes. Add slight bleeding effects at color boundaries typical of wet-on-wet watercolor techniques.",
-      description: "Transform photos into elegant watercolor paintings with soft color washes and gentle transitions.",
+      id: "pop-culture-eras",
+      title: "Pop Culture Through the Eras",
+      category: "Historical",
+      prompt: "Transform into a historical or cultural era style with period-appropriate elements. Choose from styles including Old Western, 90s Hip-Hop, 1980s Retro, Renaissance, Caricature, Victorian Era, Disco Era, Cyberpunk, and Medieval.",
+      description: "Travel through time with transformations that place you in different historical eras and cultural movements.",
       originalImage: "/examples/example-portrait.png",
-      transformedImage: "/examples/transformed-watercolor.png"
+      transformedImage: "/examples/transformed-victorian.png"
     },
     {
       id: "cyberpunk",
