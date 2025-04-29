@@ -80,7 +80,7 @@ export default function TransformationsPage() {
               <div className="grid grid-cols-2 gap-1">
                 <div className="aspect-square relative bg-gray-100">
                   <img 
-                    src={transformation.originalImagePath} 
+                    src={transformation.originalImageUrl} 
                     alt="Original" 
                     className="absolute inset-0 w-full h-full object-cover"
                   />
@@ -89,10 +89,10 @@ export default function TransformationsPage() {
                   </div>
                 </div>
                 <div className="aspect-square relative bg-gray-100">
-                  {transformation.transformedImagePath ? (
+                  {transformation.transformedImageUrl ? (
                     <>
                       <img 
-                        src={transformation.transformedImagePath} 
+                        src={transformation.transformedImageUrl} 
                         alt="Transformed" 
                         className="absolute inset-0 w-full h-full object-cover"
                       />
@@ -135,16 +135,16 @@ export default function TransformationsPage() {
                     variant="secondary" 
                     size="sm" 
                     className="flex-1"
-                    onClick={() => window.open(transformation.originalImagePath, '_blank')}
+                    onClick={() => window.open(transformation.originalImageUrl, '_blank')}
                   >
                     Original
                   </Button>
-                  {transformation.transformedImagePath && (
+                  {transformation.transformedImageUrl && (
                     <Button 
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={() => window.open(transformation.transformedImagePath, '_blank')}
+                      onClick={() => window.open(transformation.transformedImageUrl, '_blank')}
                     >
                       Transformed
                     </Button>

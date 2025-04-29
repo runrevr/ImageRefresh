@@ -108,7 +108,7 @@ export default function AccountPage() {
                         <div className="grid grid-cols-2 gap-1">
                           <div className="aspect-square relative bg-gray-100">
                             <img 
-                              src={transformation.originalImagePath} 
+                              src={transformation.originalImageUrl} 
                               alt="Original" 
                               className="absolute inset-0 w-full h-full object-cover"
                             />
@@ -117,10 +117,10 @@ export default function AccountPage() {
                             </div>
                           </div>
                           <div className="aspect-square relative bg-gray-100">
-                            {transformation.transformedImagePath ? (
+                            {transformation.transformedImageUrl ? (
                               <>
                                 <img 
-                                  src={transformation.transformedImagePath} 
+                                  src={transformation.transformedImageUrl} 
                                   alt="Transformed" 
                                   className="absolute inset-0 w-full h-full object-cover"
                                 />

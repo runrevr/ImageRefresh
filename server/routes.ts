@@ -482,22 +482,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/transformations/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
+      console.log(`Getting transformations for user ID: ${userId}`);
+      
       const transformations = await storage.getUserTransformations(userId);
+      console.log(`Found ${transformations.length} transformations for user ID ${userId}`);
+      
+      if (transformations.length > 0) {
+        // Log first transformation to diagnose issues
+        console.log("First transformation:", JSON.stringify(transformations[0], null, 2));
+      }
 
-      res.json(
-        transformations.map((t) => ({
-          id: t.id,
-          originalImageUrl: `/uploads/${path.basename(t.originalImagePath)}`,
-          transformedImageUrl: t.transformedImagePath
-            ? `/uploads/${path.basename(t.transformedImagePath)}`
-            : null,
-          prompt: t.prompt,
-          status: t.status,
-          createdAt: t.createdAt,
-          error: t.error,
-        })),
-      );
+      const mappedTransformations = transformations.map((t) => ({
+        id: t.id,
+        originalImagePath: t.originalImagePath,
+        originalImageUrl: `/uploads/${path.basename(t.originalImagePath)}`,
+        transformedImagePath: t.transformedImagePath,
+        transformedImageUrl: t.transformedImagePath
+          ? `/uploads/${path.basename(t.transformedImagePath)}`
+          : null,
+        prompt: t.prompt,
+        status: t.status,
+        createdAt: t.createdAt,
+        error: t.error,
+      }));
+      
+      console.log(`Returning ${mappedTransformations.length} mapped transformations`);
+      res.json(mappedTransformations);
     } catch (error: any) {
+      console.error("Error getting transformations:", error);
       res.status(500).json({ message: error.message || "Unknown error" });
     }
   });
