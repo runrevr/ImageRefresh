@@ -13,6 +13,7 @@ import Stripe from "stripe";
 import { setupAuth } from "./auth";
 
 import axios from "axios";
+import fs from "fs";
 import FormData from "form-data";
 
 async function callGPTImageTransformAPI({
@@ -36,7 +37,7 @@ async function callGPTImageTransformAPI({
       {
         headers: {
           ...formData.getHeaders(),
-          Authorization: `Bearer YOUR_API_KEY`, // if needed
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // if needed
         },
       },
     );
@@ -457,7 +458,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             const { transformedPath } = await transformImage(
               fullImagePath,
-              finalPrompt,
+              finalPrompt || 'custom transformation.',
               validatedData.imageSize,
             );
 
