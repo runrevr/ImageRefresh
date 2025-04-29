@@ -15,6 +15,7 @@ import {
   ImageIcon,
   BoxIcon,
   PaintBucket,
+  Paintbrush,
   Sparkles,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -357,7 +358,7 @@ export default function PromptInput({
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [primaryCategory, setPrimaryCategory] = useState<
-    "cartoon" | "product" | "other" | null
+    "cartoon" | "product" | "painting" | "other" | null
   >(null);
   const [cartoonSubcategory, setCartoonSubcategory] =
     useState<CartoonSubcategory | null>(null);
@@ -489,11 +490,12 @@ export default function PromptInput({
 
   // Reset subcategory selections when primary category changes
   const handlePrimaryCategorySelect = (
-    category: "cartoon" | "product" | "other",
+    category: "cartoon" | "product" | "painting" | "other",
   ) => {
     setPrimaryCategory(category);
     setCartoonSubcategory(null);
     setProductSubcategory(null);
+    setPaintingSubcategory(null);
     setOtherSubcategory(null);
   };
 
@@ -504,6 +506,10 @@ export default function PromptInput({
 
   const handleProductSelect = (subcategory: ProductSubcategory) => {
     setProductSubcategory(subcategory);
+  };
+
+  const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
+    setPaintingSubcategory(subcategory);
   };
 
   const handleOtherSelect = (subcategory: OtherSubcategory) => {
@@ -569,6 +575,12 @@ export default function PromptInput({
     ) {
       return PRODUCT_STYLES[productSubcategory].description;
     } else if (
+      primaryCategory === "painting" &&
+      paintingSubcategory &&
+      paintingSubcategory in PAINTING_STYLES
+    ) {
+      return PAINTING_STYLES[paintingSubcategory].description;
+    } else if (
       primaryCategory === "other" &&
       otherSubcategory &&
       otherSubcategory in OTHER_STYLES
@@ -590,6 +602,12 @@ export default function PromptInput({
       productSubcategory in PRODUCT_STYLES
     ) {
       return PRODUCT_STYLES[productSubcategory].placeholder;
+    } else if (
+      primaryCategory === "painting" &&
+      paintingSubcategory &&
+      paintingSubcategory in PAINTING_STYLES
+    ) {
+      return PAINTING_STYLES[paintingSubcategory].placeholder;
     } else if (
       primaryCategory === "other" &&
       otherSubcategory &&
@@ -740,6 +758,27 @@ export default function PromptInput({
                 ))}
               </div>
             )}
+            
+            {/* Secondary Category Selection (Step 2) - Painting Subcategories */}
+            {primaryCategory === "painting" && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(PAINTING_STYLES).map(([key, style]) => (
+                  <Button
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
+                      paintingSubcategory === key
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() =>
+                      handlePaintingSelect(key as PaintingSubcategory)
+                    }
+                  >
+                    <span className="line-clamp-2">{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
 
             {/* Secondary Category Selection (Step 2) - Other Subcategories */}
             {primaryCategory === "other" && (
@@ -774,7 +813,7 @@ export default function PromptInput({
             )}
 
             {/* Description of selected style */}
-            {(cartoonSubcategory || productSubcategory || otherSubcategory) && (
+            {(cartoonSubcategory || productSubcategory || paintingSubcategory || otherSubcategory) && (
               <div className="mb-4">
                 <p className="text-gray-700">{getCurrentDescription()}</p>
               </div>
