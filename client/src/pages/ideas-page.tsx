@@ -52,9 +52,9 @@ export default function IdeasPage() {
       transformedImage: "/examples/transformed-trolls.png"
     },
     {
-      id: "van-gogh",
-      title: "Van Gogh Style",
-      category: "Fine Art",
+      id: "painting",
+      title: "Turn to Painting",
+      category: "Paintings",
       prompt: "Transform this image into Vincent van Gogh's distinctive Post-Impressionist style. Use bold, visible brushstrokes with thick impasto texture. Apply vibrant, swirling patterns in the background reminiscent of 'Starry Night'. Create emotional color contrasts with deep blues, bright yellows, and rich greens. Maintain the basic composition and subjects from the original image, but interpret them with van Gogh's characteristic distorted perspective and emotional intensity. Add slight elongation of features and objects, with outlines emphasized by darker colors.",
       description: "Turn your photos into stunning Post-Impressionist masterpieces with Van Gogh's distinctive swirling brushstrokes and vibrant colors.",
       originalImage: "/examples/example-landscape.png",
