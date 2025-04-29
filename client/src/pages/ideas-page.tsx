@@ -34,13 +34,13 @@ export default function IdeasPage() {
       transformedImage: "/examples/transformed-pixel-art.png"
     },
     {
-      id: "superhero",
-      title: "Superhero Comic",
-      category: "Fantasy",
-      prompt: "Use the uploaded image as inspiration for the pose and action of a new, non-photorealistic cartoon superhero character. Create a bold animated style with exaggerated features, colorful heroic costumes, dynamic flowing capes, and glowing energy effects around the hands or eyes. Make the character have a serious and determined expression. Set the scene in a whimsical urban cartoon cityscape with a skyline backdrop, and use bright, joyful colors. Everything must feel original and playful, inspired by animated superhero adventures.",
-      description: "Turn yourself or friends into vibrant comic book superheroes with dynamic poses and energy effects.",
-      originalImage: "/examples/example-person.png",
-      transformedImage: "/examples/transformed-superhero.png"
+      id: "pop-culture-eras",
+      title: "Pop Culture Through the Eras",
+      category: "Historical",
+      prompt: "Transform into a historical or cultural era style with period-appropriate elements. Choose from styles including Old Western, 90s Hip-Hop, 1980s Retro, Renaissance, Caricature, Victorian Era, Disco Era, Cyberpunk, and Medieval.",
+      description: "Transform photos into historical styles from Western frontiers to 80's to 90's hip-hop while preserving recognizable likenesses",
+      originalImage: "/examples/example-portrait.png",
+      transformedImage: "/examples/transformed-victorian.png"
     },
     {
       id: "painting",
