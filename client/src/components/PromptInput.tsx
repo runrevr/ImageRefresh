@@ -29,15 +29,20 @@ interface PromptInputProps {
   onBack: () => void;
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
-  savedStyle?: { 
-    prompt: string; 
-    title: string; 
-    category: string; 
+  savedStyle?: {
+    prompt: string;
+    title: string;
+    category: string;
   } | null; // Style information from Ideas page
 }
 
 // Main transformation categories
-export type TransformationType = "cartoon" | "product" | "painting" | "era" | "custom";
+export type TransformationType =
+  | "cartoon"
+  | "product"
+  | "painting"
+  | "era"
+  | "custom";
 
 // Subcategory types
 export type CartoonSubcategory =
@@ -69,7 +74,7 @@ export type PaintingSubcategory =
   | "gothic-noir"
   | "charcoal-pencil"
   | "custom-painting";
-  
+
 export type EraSubcategory =
   | "old-western"
   | "90s-hip-hop"
@@ -81,7 +86,7 @@ export type EraSubcategory =
   | "cyberpunk"
   | "medieval"
   | "custom-era";
-  
+
 export type OtherSubcategory =
   | "baby-prediction"
   | "future-self"
@@ -201,7 +206,8 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
     title: "Lifestyle Integration",
     description:
       "Place the product in a realistic outdoor or natural environment.",
-    placeholder: "E.g., Indoor or outdoor, which environment [modern/rustic/minimalist]",
+    placeholder:
+      "E.g., Indoor or outdoor, which environment [modern/rustic/minimalist]",
     suggestedPrompt:
       "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
   },
@@ -228,82 +234,104 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
   },
 };
 
-
-
 // Painting subcategories
 const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
   "oil-painting": {
     title: "Oil Painting",
-    description: "Emulates traditional oil paintings with rich colors, textures, and visible brushstrokes.",
+    description:
+      "Emulates traditional oil paintings with rich colors, textures, and visible brushstrokes.",
     placeholder: "E.g., In the style of Van Gogh or Rembrandt",
-    suggestedPrompt: "Transform this image into a traditional oil painting with rich, deep colors and visible textured brushstrokes. Create a masterful composition with careful attention to light and shadow, capturing the dimensional quality and depth that oil paint provides. Apply thick impasto technique for highlights and finer brush detail for shadows. Use a warm, slightly muted color palette reminiscent of classical oil paintings, with subtle glazing effects and the characteristic luminosity that comes from layered oil paint. The final result should have the timeless, elegant aesthetic of museum-quality oil paintings while maintaining the essence and emotional quality of the original image."
+    suggestedPrompt:
+      "Transform this image into a traditional oil painting with rich, deep colors and visible textured brushstrokes. Create a masterful composition with careful attention to light and shadow, capturing the dimensional quality and depth that oil paint provides. Apply thick impasto technique for highlights and finer brush detail for shadows. Use a warm, slightly muted color palette reminiscent of classical oil paintings, with subtle glazing effects and the characteristic luminosity that comes from layered oil paint. The final result should have the timeless, elegant aesthetic of museum-quality oil paintings while maintaining the essence and emotional quality of the original image.",
   },
-  "watercolor": {
+  watercolor: {
     title: "Watercolor",
-    description: "Creates a soft, fluid look with translucent colors, similar to watercolor paintings.",
+    description:
+      "Creates a soft, fluid look with translucent colors, similar to watercolor paintings.",
     placeholder: "E.g., Add delicate color washes and soft edges",
-    suggestedPrompt: "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted with broader, more impressionistic areas. The colors should appear light, luminous and slightly diluted with a fresh, airy quality. Add subtle paper texture to enhance the authentic watercolor feel. The final image should convey a dreamy, ethereal atmosphere with the gentle, translucent quality that makes watercolor paintings so distinctive."
+    suggestedPrompt:
+      "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted with broader, more impressionistic areas. The colors should appear light, luminous and slightly diluted with a fresh, airy quality. Add subtle paper texture to enhance the authentic watercolor feel. The final image should convey a dreamy, ethereal atmosphere with the gentle, translucent quality that makes watercolor paintings so distinctive.",
   },
-  "impressionist": {
+  impressionist: {
     title: "Impressionist",
-    description: "Focuses on capturing light and movement with loose brushstrokes, like the works of Monet and Renoir.",
+    description:
+      "Focuses on capturing light and movement with loose brushstrokes, like the works of Monet and Renoir.",
     placeholder: "E.g., Use short, visible brushstrokes to capture light",
-    suggestedPrompt: "Transform this image into an Impressionist painting in the style of Monet, Renoir, or Degas. Use small, thin brush strokes that are visible to the naked eye, creating a sense of spontaneity and movement. Focus on accurately depicting the changing qualities of light with vivid colors applied side-by-side for a vibrant, shimmering effect. Capture the fleeting moment and overall visual impression rather than exact details. Apply an open composition with unusual visual angles and emphasis on light in its changing qualities. Include elements of ordinary subject matter transformed by the play of natural light. The color palette should be bright yet natural, with particular attention to the reflection of colors from objects to one another. The final image should convey the sense of atmosphere and the shifting effect of light and color that characterizes Impressionist works."
+    suggestedPrompt:
+      "Transform this image into an Impressionist painting in the style of Monet, Renoir, or Degas. Use small, thin brush strokes that are visible to the naked eye, creating a sense of spontaneity and movement. Focus on accurately depicting the changing qualities of light with vivid colors applied side-by-side for a vibrant, shimmering effect. Capture the fleeting moment and overall visual impression rather than exact details. Apply an open composition with unusual visual angles and emphasis on light in its changing qualities. Include elements of ordinary subject matter transformed by the play of natural light. The color palette should be bright yet natural, with particular attention to the reflection of colors from objects to one another. The final image should convey the sense of atmosphere and the shifting effect of light and color that characterizes Impressionist works.",
   },
-  "abstract": {
+  abstract: {
     title: "Abstract",
-    description: "Uses non-representational forms and colors to create a visually striking image, focusing on shape, color and form.",
+    description:
+      "Uses non-representational forms and colors to create a visually striking image, focusing on shape, color and form.",
     placeholder: "E.g., Create a bold, geometric abstract interpretation",
-    suggestedPrompt: "Transform this image into an abstract composition that uses color, form, line, and texture to create a non-representational interpretation of the subject. Break down the original image into its essential elements, emphasizing shapes, patterns, and color relationships rather than realistic depiction. Create a bold visual rhythm with geometric or organic forms, dynamic lines, and contrasting colors. The composition should balance tension and harmony, with focal points created through color intensity, size, or position. The palette can be vibrant and expressive or subtle and monochromatic, depending on the emotional quality you wish to convey. The final result should evoke emotional or intellectual responses through its compositional elements alone, without relying on recognizable imagery, capturing the essence rather than the appearance of the original subject."
+    suggestedPrompt:
+      "Transform this image into an abstract composition that uses color, form, line, and texture to create a non-representational interpretation of the subject. Break down the original image into its essential elements, emphasizing shapes, patterns, and color relationships rather than realistic depiction. Create a bold visual rhythm with geometric or organic forms, dynamic lines, and contrasting colors. The composition should balance tension and harmony, with focal points created through color intensity, size, or position. The palette can be vibrant and expressive or subtle and monochromatic, depending on the emotional quality you wish to convey. The final result should evoke emotional or intellectual responses through its compositional elements alone, without relying on recognizable imagery, capturing the essence rather than the appearance of the original subject.",
   },
   "pop-surrealism": {
     title: "Pop Surrealism",
-    description: "Blends surreal and dreamlike elements with bright, exaggerated colors, creating eye-catching results.",
+    description:
+      "Blends surreal and dreamlike elements with bright, exaggerated colors, creating eye-catching results.",
     placeholder: "E.g., Add whimsical, dreamlike elements",
-    suggestedPrompt: "Transform this image into a pop surrealist artwork that combines dreamlike, fantastical elements with bright, cartoon-influenced aesthetics. Create a whimsical, slightly unsettling scene that juxtaposes the familiar with the bizarre. Use a vibrant, high-saturation color palette with bold outlines and smooth gradients reminiscent of lowbrow art and comic book styles. Incorporate unexpected elements, altered scale relationships, and imaginative details that challenge reality while maintaining a polished, illustrative quality. Add symbolic objects, anthropomorphic creatures, or nostalgic pop culture references that create narrative tension and intrigue. The final image should balance technical precision with imaginative fantasy, creating a visually striking composition that feels both accessible and otherworldly, inviting viewers into an alternate reality that's both familiar and strange."
+    suggestedPrompt:
+      "Transform this image into a pop surrealist artwork that combines dreamlike, fantastical elements with bright, cartoon-influenced aesthetics. Create a whimsical, slightly unsettling scene that juxtaposes the familiar with the bizarre. Use a vibrant, high-saturation color palette with bold outlines and smooth gradients reminiscent of lowbrow art and comic book styles. Incorporate unexpected elements, altered scale relationships, and imaginative details that challenge reality while maintaining a polished, illustrative quality. Add symbolic objects, anthropomorphic creatures, or nostalgic pop culture references that create narrative tension and intrigue. The final image should balance technical precision with imaginative fantasy, creating a visually striking composition that feels both accessible and otherworldly, inviting viewers into an alternate reality that's both familiar and strange.",
   },
   "art-deco": {
     title: "Art Deco",
-    description: "Features bold geometric shapes, rich colors, and a luxurious, elegant aesthetic.",
+    description:
+      "Features bold geometric shapes, rich colors, and a luxurious, elegant aesthetic.",
     placeholder: "E.g., Add geometric patterns and metallic accents",
-    suggestedPrompt: "Transform this image into an Art Deco style artwork featuring the bold geometric forms, symmetry, and lavish ornamentation characteristic of 1920s and 1930s design. Apply a color palette of rich, deep colors accented with gold, silver, or black, creating a sense of luxury and sophistication. Incorporate strong vertical lines, stepped forms, sweeping curves, and sunburst patterns typical of Art Deco architecture and design. Add elegant, stylized representations of natural or mechanical elements with the clean lines and geometric precision that defines the style. The composition should feel balanced yet dynamic, with a sense of sleek modernity and celebration of urban life and technological progress. The final image should capture the glamour, elegance, and bold confidence of the Art Deco period, combining ornamental richness with geometric simplicity."
+    suggestedPrompt:
+      "Transform this image into an Art Deco style artwork featuring the bold geometric forms, symmetry, and lavish ornamentation characteristic of 1920s and 1930s design. Apply a color palette of rich, deep colors accented with gold, silver, or black, creating a sense of luxury and sophistication. Incorporate strong vertical lines, stepped forms, sweeping curves, and sunburst patterns typical of Art Deco architecture and design. Add elegant, stylized representations of natural or mechanical elements with the clean lines and geometric precision that defines the style. The composition should feel balanced yet dynamic, with a sense of sleek modernity and celebration of urban life and technological progress. The final image should capture the glamour, elegance, and bold confidence of the Art Deco period, combining ornamental richness with geometric simplicity.",
   },
   "pixel-art": {
     title: "Pixel Art",
-    description: "Transforms images into blocky, low-resolution visuals reminiscent of 8-bit and 16-bit games for a retro feel.",
-    placeholder: "E.g., Convert to 16-bit pixel style with limited color palette",
-    suggestedPrompt: "Transform this image into pixelated digital art reminiscent of classic 8-bit or 16-bit video games. Convert all elements into a grid-based format with distinct, visible square pixels as the building blocks of the image. Apply a limited color palette with few shades per color channel, creating the characteristic constrained spectrum of retro games. Simplify complex forms and details into blocky representations using careful pixel placement to suggest shape and dimension. Use techniques like dithering (alternating patterns of pixels) to create the illusion of additional colors or shading. Implement clean edges and distinct color boundaries with minimal anti-aliasing. The final image should have a charming, nostalgic quality that celebrates the aesthetic constraints of early digital art while still being recognizable as the original subject."
+    description:
+      "Transforms images into blocky, low-resolution visuals reminiscent of 8-bit and 16-bit games for a retro feel.",
+    placeholder:
+      "E.g., Convert to 16-bit pixel style with limited color palette",
+    suggestedPrompt:
+      "Transform this image into pixelated digital art reminiscent of classic 8-bit or 16-bit video games. Convert all elements into a grid-based format with distinct, visible square pixels as the building blocks of the image. Apply a limited color palette with few shades per color channel, creating the characteristic constrained spectrum of retro games. Simplify complex forms and details into blocky representations using careful pixel placement to suggest shape and dimension. Use techniques like dithering (alternating patterns of pixels) to create the illusion of additional colors or shading. Implement clean edges and distinct color boundaries with minimal anti-aliasing. The final image should have a charming, nostalgic quality that celebrates the aesthetic constraints of early digital art while still being recognizable as the original subject.",
   },
   "anime-manga": {
     title: "Anime/Manga",
-    description: "Captures the dynamic energy of Japanese comics and animation with detailed shading and vibrant colors.",
+    description:
+      "Captures the dynamic energy of Japanese comics and animation with detailed shading and vibrant colors.",
     placeholder: "E.g., Create a detailed anime character style",
-    suggestedPrompt: "Transform this image into a high-quality anime/manga art style that captures the distinctive aesthetic of Japanese animation and comics. Apply bold, clean outlines with variable line weight to define forms. Create large, expressive eyes with detailed highlights and reflections, simplified facial features, and stylized hair with exaggerated volume and distinctive color. Use cell-shaded coloring with flat color areas separated by hard edges for shadows rather than gradual blending. Include characteristic anime visual elements like speed lines for movement, expressive symbols to show emotion, and dramatic lighting effects. The background should be detailed but somewhat simplified compared to the foreground elements. The overall composition should have a dynamic quality with dramatic angles or perspectives and a vibrant color palette that emphasizes character expression and mood. The final image should feel like a frame from a high-quality anime production or a page from a professionally illustrated manga."
+    suggestedPrompt:
+      "Transform this image into a high-quality anime/manga art style that captures the distinctive aesthetic of Japanese animation and comics. Apply bold, clean outlines with variable line weight to define forms. Create large, expressive eyes with detailed highlights and reflections, simplified facial features, and stylized hair with exaggerated volume and distinctive color. Use cell-shaded coloring with flat color areas separated by hard edges for shadows rather than gradual blending. Include characteristic anime visual elements like speed lines for movement, expressive symbols to show emotion, and dramatic lighting effects. The background should be detailed but somewhat simplified compared to the foreground elements. The overall composition should have a dynamic quality with dramatic angles or perspectives and a vibrant color palette that emphasizes character expression and mood. The final image should feel like a frame from a high-quality anime production or a page from a professionally illustrated manga.",
   },
   "cartoon-style": {
     title: "Cartoon Style",
-    description: "Brings a playful energy to an image with exaggerated features.",
+    description:
+      "Brings a playful energy to an image with exaggerated features.",
     placeholder: "E.g., Create a fun, stylized cartoon version",
-    suggestedPrompt: "Transform this image into a vibrant, playful cartoon style with bold outlines, simplified forms, and exaggerated features. Create a clean, graphic look with smooth, flat colors and simplified shadows that give dimension without complex shading. Apply slightly exaggerated proportions to emphasize distinctive character features while maintaining recognizability. Use thick, consistent outlines around the main elements to give that classic cartoon definition. The color palette should be bright and saturated with good contrast between elements. Add a sense of energy and expressiveness to poses and facial expressions, capturing personality with simple but effective details. The background should be slightly simplified compared to the foreground elements, with a focus on supporting the main subject. The final result should have that instantly recognizable cartoon aesthetic that feels lighthearted, accessible, and full of personality."
+    suggestedPrompt:
+      "Transform this image into a vibrant, playful cartoon style with bold outlines, simplified forms, and exaggerated features. Create a clean, graphic look with smooth, flat colors and simplified shadows that give dimension without complex shading. Apply slightly exaggerated proportions to emphasize distinctive character features while maintaining recognizability. Use thick, consistent outlines around the main elements to give that classic cartoon definition. The color palette should be bright and saturated with good contrast between elements. Add a sense of energy and expressiveness to poses and facial expressions, capturing personality with simple but effective details. The background should be slightly simplified compared to the foreground elements, with a focus on supporting the main subject. The final result should have that instantly recognizable cartoon aesthetic that feels lighthearted, accessible, and full of personality.",
   },
   "gothic-noir": {
     title: "Gothic Noir",
-    description: "Combines high contrast and eerie shadows to create an atmosphere of suspense.",
+    description:
+      "Combines high contrast and eerie shadows to create an atmosphere of suspense.",
     placeholder: "E.g., Add dramatic shadows and mysterious atmosphere",
-    suggestedPrompt: "Transform this image into a gothic noir style artwork featuring dramatic shadows, high contrast, and an atmosphere of mystery and suspense. Create a moody, atmospheric scene with deep, inky blacks and stark highlights that sculpt the subject with dramatic lighting. Apply a limited, desaturated color palette dominated by dark tones with occasional accents of deep red, midnight blue, or purple. Incorporate gothic elements like ornate architecture, wrought iron details, or victorian-inspired styling that suggests a sense of decaying grandeur. The lighting should create long, dramatic shadows and slivers of illumination that partially reveal the subject, leaving much to the imagination. Add subtle details like mist, smoke, or environmental elements that enhance the sense of foreboding. The final image should evoke the feeling of classic film noir combined with gothic sensibilities, creating a haunting, cinematic quality that suggests hidden stories and unseen dangers lurking just beyond the frame."
+    suggestedPrompt:
+      "Transform this image into a gothic noir style artwork featuring dramatic shadows, high contrast, and an atmosphere of mystery and suspense. Create a moody, atmospheric scene with deep, inky blacks and stark highlights that sculpt the subject with dramatic lighting. Apply a limited, desaturated color palette dominated by dark tones with occasional accents of deep red, midnight blue, or purple. Incorporate gothic elements like ornate architecture, wrought iron details, or victorian-inspired styling that suggests a sense of decaying grandeur. The lighting should create long, dramatic shadows and slivers of illumination that partially reveal the subject, leaving much to the imagination. Add subtle details like mist, smoke, or environmental elements that enhance the sense of foreboding. The final image should evoke the feeling of classic film noir combined with gothic sensibilities, creating a haunting, cinematic quality that suggests hidden stories and unseen dangers lurking just beyond the frame.",
   },
   "charcoal-pencil": {
     title: "Charcoal Pencil Drawing",
-    description: "Creates a dramatic, textured black and white drawing with rich shadows and expressive lines.",
+    description:
+      "Creates a dramatic, textured black and white drawing with rich shadows and expressive lines.",
     placeholder: "E.g., Focus on dramatic shading and textural elements",
-    suggestedPrompt: "Transform this image into a sophisticated charcoal pencil drawing with rich tonal contrasts and expressive mark-making. Create a dramatic interplay of light and shadow using a range of values from velvety blacks to bright highlights, with various gray tones for depth. Apply visible, deliberate strokes that capture both fine details and broader gestural marks, varying pressure to create both sharp lines and soft, smudged areas. Include characteristic charcoal drawing elements like bold, decisive outlines, intricate cross-hatching for shadow areas, and strategic highlighting through erasure. The texture should show the grain of the paper with light smudging and blending in places, while maintaining crisp details in focal areas. Emphasize composition through careful balance of negative space and detailed areas. The final image should have the intimate, immediate quality of hand-drawn charcoal artwork with its distinctive dramatic contrast, atmospheric depth, and expressive, tactile surface qualities."
+    suggestedPrompt:
+      "Transform this image into a sophisticated charcoal pencil drawing with rich tonal contrasts and expressive mark-making. Create a dramatic interplay of light and shadow using a range of values from velvety blacks to bright highlights, with various gray tones for depth. Apply visible, deliberate strokes that capture both fine details and broader gestural marks, varying pressure to create both sharp lines and soft, smudged areas. Include characteristic charcoal drawing elements like bold, decisive outlines, intricate cross-hatching for shadow areas, and strategic highlighting through erasure. The texture should show the grain of the paper with light smudging and blending in places, while maintaining crisp details in focal areas. Emphasize composition through careful balance of negative space and detailed areas. The final image should have the intimate, immediate quality of hand-drawn charcoal artwork with its distinctive dramatic contrast, atmospheric depth, and expressive, tactile surface qualities.",
   },
   "custom-painting": {
     title: "Create Your Own Painting Style",
     description: "Describe your own custom painting transformation.",
-    placeholder: "E.g., Create a mixed-media collage with watercolor and sketch elements",
-    suggestedPrompt: ""
-  }
+    placeholder:
+      "E.g., Create a mixed-media collage with watercolor and sketch elements",
+    suggestedPrompt: "",
+  },
 };
 
 // Era subcategories
@@ -312,62 +340,80 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
     title: "Old Western",
     description: "Rugged frontier aesthetic with sepia tones (1860-1890)",
     placeholder: "E.g., Add cowboy hat or sheriff badge",
-    suggestedPrompt: "Transform into an authentic Old Western portrait from the American frontier era (1860-1890). Apply sepia-toned photographic effect with faded edges and subtle aging marks. Convert clothing to period-appropriate Western attire including cowboy hats, bandanas, vests, or prairie dresses. Add frontier elements like weathered wooden backgrounds, saloon interiors, or dusty Main Street scenes. Enhance with rugged textures, authentic period props like revolvers, saddles, or pocket watches. The final portrait should capture the gritty, determined spirit of the frontier with strong directional lighting reminiscent of early photography while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Create an authentic Old Western portrait from the American frontier era (1860-1890), capturing the rugged and determined spirit of the time. The character should be dressed in period-appropriate Western attire, such as a cowboy hat, bandana, vest, and boots, or a prairie dress. Incorporate authentic props like a revolver, pocket watch, or saddle. The portrait should feature a sepia-toned photographic effect, with faded edges and subtle aging marks to reflect the style of early frontier photography. The background can include weathered wooden textures, saloon interiors, or a dusty main street scene, all evoking the frontier's tough and resilient atmosphere. Ensure strong directional lighting, reminiscent of 19th-century photographs, while keeping the subject’s likeness clear and true to the original inspiration.",
   },
   "90s-hip-hop": {
     title: "90's Hip-Hop",
-    description: "Bold fashion with baggy clothes, gold chains, and urban backdrops",
+    description:
+      "Bold fashion with baggy clothes, gold chains, and urban backdrops",
     placeholder: "E.g., Add backward cap and boom box",
-    suggestedPrompt: "Transform into an authentic 90's hip-hop music video style portrait. Apply high-contrast photography with slight film grain and bold colors. Convert clothing to iconic 90's hip-hop fashion including oversized jerseys, baggy jeans, Timberland boots, bright tracksuits, backward caps, or bandanas. Add statement gold chains, large medallions, chunky watches, and rectangular sunglasses. Set against urban backdrops like graffiti walls, basketball courts, city streets, or luxury cars. Include 90's props like boomboxes, pagers, early cell phones, or basketball sneakers. The final image should capture the confident, bold aesthetic of 90's hip-hop culture while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Transform into an authentic 90's hip-hop music video style portrait. Apply high-contrast photography with slight film grain and bold colors. Convert clothing to iconic 90's hip-hop fashion including oversized jerseys, baggy jeans, Timberland boots, bright tracksuits, backward caps, or bandanas. Add statement gold chains, large medallions, chunky watches, and rectangular sunglasses. Set against urban backdrops like graffiti walls, basketball courts, city streets, or luxury cars. Include 90's props like boomboxes, pagers, early cell phones, or basketball sneakers. The final image should capture the confident, bold aesthetic of 90's hip-hop culture while maintaining clear likeness to the original subject.",
   },
   "1980s": {
     title: "1980's",
-    description: "Vibrant neon colors, big hair, shoulder pads, and maximalist style",
+    description:
+      "Vibrant neon colors, big hair, shoulder pads, and maximalist style",
     placeholder: "E.g., Add neon background and retro sunglasses",
-    suggestedPrompt: "Transform into an authentic 1980's portrait with vibrant neon aesthetics. Apply high-saturation, high-contrast photography with slight airbrushing effect. Convert hairstyles to characteristic 80's looks including big permed hair, mullets, side ponytails, or feathered styles. Update clothing to iconic 80's fashion with shoulder pads, Members Only jackets, leg warmers, acid-wash jeans, neon colors, or power suits. Add period accessories like large plastic earrings, Ray-Ban Wayfarers, scrunchies, sweatbands, or chunky digital watches. Set against 80's backdrops featuring laser grids, chrome effects, geometric patterns, or airbrushed gradients. Include 80's technology like boomboxes, Walkmans, early video game systems, or brick phones. The final image should capture the maximalist, energetic spirit of the 1980's while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Transform into an authentic 1980's portrait with vibrant neon aesthetics. Apply high-saturation, high-contrast photography with slight airbrushing effect. Convert hairstyles to characteristic 80's looks including big permed hair, mullets, side ponytails, or feathered styles. Update clothing to iconic 80's fashion with shoulder pads, Members Only jackets, leg warmers, acid-wash jeans, neon colors, or power suits. Add period accessories like large plastic earrings, Ray-Ban Wayfarers, scrunchies, sweatbands, or chunky digital watches. Set against 80's backdrops featuring laser grids, chrome effects, geometric patterns, or airbrushed gradients. Include 80's technology like boomboxes, Walkmans, early video game systems, or brick phones. The final image should capture the maximalist, energetic spirit of the 1980's while maintaining clear likeness to the original subject.",
   },
-  "renaissance": {
+  renaissance: {
     title: "Renaissance",
-    description: "Classical painting style with formal poses and rich, muted colors (1400-1600)",
+    description:
+      "Classical painting style with formal poses and rich, muted colors (1400-1600)",
     placeholder: "E.g., Add period-appropriate formal attire",
-    suggestedPrompt: "Transform into a Renaissance portrait painting in the style of masters like Leonardo da Vinci or Raphael (1400-1600). Apply oil painting technique with rich, muted color palette and subtle glazing effects. Convert clothing to period Renaissance attire including high collars, elaborate embroidery, velvet, brocade fabrics, ornate jewelry, and formal headwear. Position the subject in a three-quarter view with dignified posture against a dark backdrop or classical architectural elements. Add symbolic Renaissance objects that reflect status or character like books, scientific instruments, religious items, or flora. Apply characteristic Renaissance lighting with soft modeling and sfumato technique creating subtle transitions between light and shadow. The final portrait should convey the solemnity, dignity and intellectual character of Renaissance portraiture while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Transform into a Renaissance portrait painting in the style of masters like Leonardo da Vinci or Raphael (1400-1600). Apply oil painting technique with rich, muted color palette and subtle glazing effects. Convert clothing to period Renaissance attire including high collars, elaborate embroidery, velvet, brocade fabrics, ornate jewelry, and formal headwear. Position the subject in a three-quarter view with dignified posture against a dark backdrop or classical architectural elements. Add symbolic Renaissance objects that reflect status or character like books, scientific instruments, religious items, or flora. Apply characteristic Renaissance lighting with soft modeling and sfumato technique creating subtle transitions between light and shadow. The final portrait should convey the solemnity, dignity and intellectual character of Renaissance portraiture while maintaining clear likeness to the original subject.",
   },
-  "caricature": {
+  caricature: {
     title: "Caricature",
-    description: "Exaggerated features with humorous intent while maintaining recognition",
+    description:
+      "Exaggerated features with humorous intent while maintaining recognition",
     placeholder: "E.g., Exaggerate eyes and mouth for humorous effect",
-    suggestedPrompt: "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery."
+    suggestedPrompt:
+      "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
   },
   "victorian-era": {
     title: "Victorian Era",
-    description: "Formal portraiture with period clothing and restrained dignity (1837-1901)",
+    description:
+      "Formal portraiture with period clothing and restrained dignity (1837-1901)",
     placeholder: "E.g., Add ornate background or pocket watch",
-    suggestedPrompt: "Transform into an authentic Victorian era photographic portrait (1837-1901). Apply sepia or black and white tones with formal composition and static poses characteristic of early photography. Convert clothing to period-appropriate Victorian attire including high collars, waistcoats, pocket watches, brooches, formal dresses with corseted waists, or military uniforms with medals. Position the subject with a dignified, serious expression in front of painted backdrops, ornate furniture, columns, or velvet drapes. Add Victorian accessories like walking sticks, parasols, top hats, gloves, or Victorian jewelry. The final portrait should capture the formality, restraint and social propriety of Victorian society with the technical limitations of period photography while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Transform into an authentic Victorian era photographic portrait (1837-1901). Apply sepia or black and white tones with formal composition and static poses characteristic of early photography. Convert clothing to period-appropriate Victorian attire including high collars, waistcoats, pocket watches, brooches, formal dresses with corseted waists, or military uniforms with medals. Position the subject with a dignified, serious expression in front of painted backdrops, ornate furniture, columns, or velvet drapes. Add Victorian accessories like walking sticks, parasols, top hats, gloves, or Victorian jewelry. The final portrait should capture the formality, restraint and social propriety of Victorian society with the technical limitations of period photography while maintaining clear likeness to the original subject.",
   },
   "disco-era": {
     title: "Disco Era",
-    description: "Glamorous 70's style with sequins, platform shoes, and vibrant lighting",
+    description:
+      "Glamorous 70's style with sequins, platform shoes, and vibrant lighting",
     placeholder: "E.g., Add disco ball and dance floor",
-    suggestedPrompt: "Transform into a quintessential Disco Era (1975-1980) portrait. Apply vivid, slightly oversaturated colors with glamorous lighting and lens flare effects. Convert hairstyles to characteristic disco looks including feathered cuts, afros, or Farrah Fawcett waves. Update clothing to iconic disco fashion with sequins, metallic fabrics, satin shirts with wide collars, bell bottoms, platform shoes, or wrap dresses. Add disco accessories like oversized sunglasses, chunky gold jewelry, or medallions. Set against disco nightclub backdrops featuring mirror balls, colored lights, illuminated dance floors, or sparkly decorations. The final image should capture the energetic, liberated spirit of the disco era while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Transform into a quintessential Disco Era (1975-1980) portrait. Apply vivid, slightly oversaturated colors with glamorous lighting and lens flare effects. Convert hairstyles to characteristic disco looks including feathered cuts, afros, or Farrah Fawcett waves. Update clothing to iconic disco fashion with sequins, metallic fabrics, satin shirts with wide collars, bell bottoms, platform shoes, or wrap dresses. Add disco accessories like oversized sunglasses, chunky gold jewelry, or medallions. Set against disco nightclub backdrops featuring mirror balls, colored lights, illuminated dance floors, or sparkly decorations. The final image should capture the energetic, liberated spirit of the disco era while maintaining clear likeness to the original subject.",
   },
-  "cyberpunk": {
+  cyberpunk: {
     title: "Cyberpunk",
-    description: "Futuristic dystopian aesthetic with neon accents and technological elements",
+    description:
+      "Futuristic dystopian aesthetic with neon accents and technological elements",
     placeholder: "E.g., Add cybernetic implants and city backdrop",
-    suggestedPrompt: "Transform into a cyberpunk-style portrait set in a high-tech dystopian future. Apply dark, contrasty photography with vibrant neon accents and cinematic color grading in teals and magentas. Add subtle technological augmentations like glowing cybernetic implants, neural interfaces, AR displays, or bionic enhancements that merge seamlessly with the subject. Update clothing to futuristic urban streetwear with technical fabrics, asymmetrical cuts, utility straps, and tech accessories. Set against dystopian city backdrops featuring neon signs, holographic advertisements, industrial elements, and rainy reflective streets. Include cyberpunk elements like data visualizations, glitch effects, or floating UI elements. The final image should capture the gritty yet high-tech aesthetic of cyberpunk while maintaining clear likeness to the original subject."
+    suggestedPrompt:
+      "Transform into a cyberpunk-style portrait set in a high-tech dystopian future. Apply dark, contrasty photography with vibrant neon accents and cinematic color grading in teals and magentas. Add subtle technological augmentations like glowing cybernetic implants, neural interfaces, AR displays, or bionic enhancements that merge seamlessly with the subject. Update clothing to futuristic urban streetwear with technical fabrics, asymmetrical cuts, utility straps, and tech accessories. Set against dystopian city backdrops featuring neon signs, holographic advertisements, industrial elements, and rainy reflective streets. Include cyberpunk elements like data visualizations, glitch effects, or floating UI elements. The final image should capture the gritty yet high-tech aesthetic of cyberpunk while maintaining clear likeness to the original subject.",
   },
-  "medieval": {
+  medieval: {
     title: "Medieval",
-    description: "Stylized representation with period attire and symbolic elements (1000-1400)",
+    description:
+      "Stylized representation with period attire and symbolic elements (1000-1400)",
     placeholder: "E.g., Add crown or armor and castle background",
-    suggestedPrompt: "Transform into an authentic Medieval art style reminiscent of illuminated manuscripts and early European paintings (1000-1400). Apply flat, iconic painting technique with rich, primary colors, minimal shading, and pronounced outlines. Convert clothing to period Medieval attire including tunics, cloaks, chainmail, plate armor, wimples, or long robes with symbolic colors. Add Medieval status symbols like crowns, scepters, heraldic emblems, hawks, or swords. Set against simplified backgrounds with gold leaf accents, Norman arches, castle elements, or natural scenes with stylized trees and flowers. Include Medieval iconography related to the subject's characteristics or profession. The final image should capture the symbolic, somewhat flattened perspective of Medieval art with its bold colors and religious or courtly themes while still maintaining some likeness to the original subject."
+    suggestedPrompt:
+      "Transform into an authentic Medieval art style reminiscent of illuminated manuscripts and early European paintings (1000-1400). Apply flat, iconic painting technique with rich, primary colors, minimal shading, and pronounced outlines. Convert clothing to period Medieval attire including tunics, cloaks, chainmail, plate armor, wimples, or long robes with symbolic colors. Add Medieval status symbols like crowns, scepters, heraldic emblems, hawks, or swords. Set against simplified backgrounds with gold leaf accents, Norman arches, castle elements, or natural scenes with stylized trees and flowers. Include Medieval iconography related to the subject's characteristics or profession. The final image should capture the symbolic, somewhat flattened perspective of Medieval art with its bold colors and religious or courtly themes while still maintaining some likeness to the original subject.",
   },
   "custom-era": {
     title: "Create Your Own Era",
     description: "Describe your own custom historical era transformation",
-    placeholder: "E.g., Transform into Ancient Egyptian style with hieroglyphic elements",
-    suggestedPrompt: ""
-  }
+    placeholder:
+      "E.g., Transform into Ancient Egyptian style with hieroglyphic elements",
+    suggestedPrompt: "",
+  },
 };
 
 // Other subcategories
@@ -400,8 +446,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     title: "AI Action Figure",
     description:
       "Turn the subject into a realistic, detailed action figure or toy.",
-    placeholder:
-      "E.g., Put the name on the packaging with accessories",
+    placeholder: "E.g., Put the name on the packaging with accessories",
     suggestedPrompt:
       "Use this uploaded image to create a picture of an action figure toy in a blister package, displayed from head to toe. The action figure should accurately represent the character/person from the uploaded image while giving it a mass-produced toy aesthetic with visible joints and plastic texture. Include relevant accessories that match the character's theme, abilities, or items visible in the original image. The package should have clear plastic with cardboard backing featuring bright colors and marketing text. The packaging should prominently display an appropriate name/title at the top that fits the character/person shown in the image.",
   },
@@ -452,8 +497,9 @@ export default function PromptInput({
     useState<ProductSubcategory | null>(null);
   const [paintingSubcategory, setPaintingSubcategory] =
     useState<PaintingSubcategory | null>(null);
-  const [eraSubcategory, setEraSubcategory] =
-    useState<EraSubcategory | null>(null);
+  const [eraSubcategory, setEraSubcategory] = useState<EraSubcategory | null>(
+    null,
+  );
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
 
@@ -533,7 +579,8 @@ export default function PromptInput({
       // If no subcategory is selected but primary is era, use a generic prompt
       else if (primaryCategory === "era" && !eraSubcategory) {
         finalPrompt =
-          "Transform into a historical or cultural era style with period-appropriate elements. " + finalPrompt;
+          "Transform into a historical or cultural era style with period-appropriate elements. " +
+          finalPrompt;
       }
       // If no subcategory is selected but primary is other, use a generic prompt
       else if (primaryCategory === "other" && !otherSubcategory) {
@@ -565,7 +612,8 @@ export default function PromptInput({
           paintingSubcategory &&
           paintingSubcategory in PAINTING_STYLES
         ) {
-          const suggestion = PAINTING_STYLES[paintingSubcategory].suggestedPrompt;
+          const suggestion =
+            PAINTING_STYLES[paintingSubcategory].suggestedPrompt;
           if (suggestion) {
             finalPrompt = suggestion + " " + finalPrompt;
           }
@@ -767,12 +815,16 @@ export default function PromptInput({
                 className="max-w-full max-h-full object-contain"
                 alt="Your uploaded image"
               />
-              
+
               {/* Saved Style Notification Banner */}
               {savedStyle && (
                 <div className="mt-3 w-full bg-secondary text-white p-3 rounded-md text-sm">
-                  <div className="font-medium">Applied Style: {savedStyle.title}</div>
-                  <div className="text-xs opacity-90">Category: {savedStyle.category}</div>
+                  <div className="font-medium">
+                    Applied Style: {savedStyle.title}
+                  </div>
+                  <div className="text-xs opacity-90">
+                    Category: {savedStyle.category}
+                  </div>
                 </div>
               )}
             </div>
@@ -817,7 +869,7 @@ export default function PromptInput({
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
-              
+
               <Button
                 className={`w-full justify-between text-left border-2 h-auto py-3 ${
                   primaryCategory === "painting"
@@ -834,7 +886,7 @@ export default function PromptInput({
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
-              
+
               <Button
                 className={`w-full justify-between text-left border-2 h-auto py-3 ${
                   primaryCategory === "era"
@@ -911,7 +963,7 @@ export default function PromptInput({
                 ))}
               </div>
             )}
-            
+
             {/* Secondary Category Selection (Step 2) - Painting Subcategories */}
             {primaryCategory === "painting" && (
               <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
@@ -944,16 +996,14 @@ export default function PromptInput({
                         ? "bg-black text-white border-black"
                         : "bg-white text-black border border-gray-300 hover:bg-gray-50"
                     }`}
-                    onClick={() =>
-                      handleEraSelect(key as EraSubcategory)
-                    }
+                    onClick={() => handleEraSelect(key as EraSubcategory)}
                   >
                     <span className="line-clamp-2">{style.title}</span>
                   </Button>
                 ))}
               </div>
             )}
-            
+
             {/* Secondary Category Selection (Step 2) - Other Subcategories */}
             {primaryCategory === "other" && (
               <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
@@ -987,7 +1037,11 @@ export default function PromptInput({
             )}
 
             {/* Description of selected style */}
-            {(cartoonSubcategory || productSubcategory || paintingSubcategory || eraSubcategory || otherSubcategory) && (
+            {(cartoonSubcategory ||
+              productSubcategory ||
+              paintingSubcategory ||
+              eraSubcategory ||
+              otherSubcategory) && (
               <div className="mb-4">
                 <p className="text-gray-700">{getCurrentDescription()}</p>
               </div>

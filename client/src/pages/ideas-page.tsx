@@ -26,11 +26,11 @@ export default function IdeasPage() {
   const ideas: IdeaCard[] = [
     {
       id: "pixel-art",
-      title: "8-Bit Pixel Art",
-      category: "Retro Gaming",
+      title: "Video Game Characters",
+      category: "Video Game Characters",
       prompt: "Create a colorful 8-bit pixel art scene inspired by retro video games. The scene features a small pixel-style character sitting on a brown brick platform, holding a glowing orb. The character wears a green shirt and blue pants. The background includes a bright blue sky with pixelated white clouds outlined in black, rolling green hills, rounded trees, and colorful pixel flowers growing from floating bricks. Add a large green warp pipe with a red-and-green plant coming out of it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above the character. The overall style should feel bright, playful, and nostalgic, like a side-scrolling adventure world.",
-      description: "Transform any photo into a nostalgic 8-bit pixel art style reminiscent of classic Nintendo games.",
-      originalImage: "/examples/example-boy.png",
+      description: "Transform any photo into a nostalgic and newer video game characters. Want to be a GTA charcter? NBA 2K? Fortnite?",
+      originalImage: "/examples/man-portrait.png",
       transformedImage: "/examples/transformed-pixel-art.png"
     },
     {
