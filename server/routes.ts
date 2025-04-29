@@ -5,6 +5,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { transformImage, isOpenAIConfigured } from "./openai";
+import { runCleanupTasks } from "./cleanup";
 import { insertTransformationSchema } from "@shared/schema";
 import { z } from "zod";
 import OpenAI from "openai";
@@ -847,6 +848,36 @@ style, environment, lighting, and background rather than changing the main subje
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message || "Unknown error occurred" });
+    }
+  });
+  
+  // Admin endpoint to manually trigger cleanup of old transformations (images older than 60 days)
+  app.get("/api/admin/run-cleanup", async (req, res) => {
+    // Block this endpoint in production mode for unauthenticated users
+    if (process.env.NODE_ENV === 'production' && !req.isAuthenticated()) {
+      return res.status(403).json({ 
+        message: "Authentication required" 
+      });
+    }
+    
+    try {
+      // Start cleanup in the background
+      console.log("Manual cleanup triggered via admin endpoint");
+      
+      // Don't await - we want to return right away and let cleanup run in background
+      runCleanupTasks()
+        .then(() => console.log("Manual cleanup completed successfully"))
+        .catch(err => console.error("Error during manual cleanup:", err));
+      
+      res.status(202).json({ 
+        message: "Cleanup process started in the background. Images older than 60 days will be removed." 
+      });
+    } catch (error: any) {
+      console.error("Error triggering cleanup:", error);
+      res.status(500).json({ 
+        message: "Error triggering cleanup", 
+        error: error.message 
+      });
     }
   });
 

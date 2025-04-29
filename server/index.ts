@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { runCleanupTasks } from "./cleanup";
 
 const app = express();
 app.use(express.json());
@@ -66,5 +67,19 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Run cleanup once at startup
+    runCleanupTasks()
+      .then(() => log('Initial cleanup tasks completed'))
+      .catch(err => console.error('Error during initial cleanup:', err));
+    
+    // Schedule daily cleanup (86400000 ms = 24 hours)
+    const CLEANUP_INTERVAL = 86400000;
+    setInterval(() => {
+      log('Running scheduled cleanup tasks...');
+      runCleanupTasks()
+        .then(() => log('Scheduled cleanup tasks completed'))
+        .catch(err => console.error('Error during scheduled cleanup:', err));
+    }, CLEANUP_INTERVAL);
   });
 })();
