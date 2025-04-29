@@ -383,6 +383,8 @@ export default function PromptInput({
       setPrimaryCategory("cartoon");
     } else if (selectedTransformation === "product") {
       setPrimaryCategory("product");
+    } else if (selectedTransformation === "painting") {
+      setPrimaryCategory("painting");
     } else if (selectedTransformation === "custom") {
       setPrimaryCategory("other");
     }
@@ -434,6 +436,12 @@ export default function PromptInput({
           "Enhance with professional lighting and a clean background. " +
           finalPrompt;
       }
+      // If no subcategory is selected but primary is painting, use a generic prompt
+      else if (primaryCategory === "painting" && !paintingSubcategory) {
+        finalPrompt =
+          "Transform into a beautiful artistic painting with rich textures and expressive brushwork. " +
+          finalPrompt;
+      }
       // If no subcategory is selected but primary is other, use a generic prompt
       else if (primaryCategory === "other" && !otherSubcategory) {
         finalPrompt =
@@ -456,6 +464,15 @@ export default function PromptInput({
           productSubcategory in PRODUCT_STYLES
         ) {
           const suggestion = PRODUCT_STYLES[productSubcategory].suggestedPrompt;
+          if (suggestion) {
+            finalPrompt = suggestion + " " + finalPrompt;
+          }
+        } else if (
+          primaryCategory === "painting" &&
+          paintingSubcategory &&
+          paintingSubcategory in PAINTING_STYLES
+        ) {
+          const suggestion = PAINTING_STYLES[paintingSubcategory].suggestedPrompt;
           if (suggestion) {
             finalPrompt = suggestion + " " + finalPrompt;
           }
