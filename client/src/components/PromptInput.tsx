@@ -296,6 +296,70 @@ const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
   }
 };
 
+// Era subcategories
+const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
+  "old-western": {
+    title: "Old Western",
+    description: "Rugged frontier aesthetic with sepia tones (1860-1890)",
+    placeholder: "E.g., Add cowboy hat or sheriff badge",
+    suggestedPrompt: "Transform into an authentic Old Western portrait from the American frontier era (1860-1890). Apply sepia-toned photographic effect with faded edges and subtle aging marks. Convert clothing to period-appropriate Western attire including cowboy hats, bandanas, vests, or prairie dresses. Add frontier elements like weathered wooden backgrounds, saloon interiors, or dusty Main Street scenes. Enhance with rugged textures, authentic period props like revolvers, saddles, or pocket watches. The final portrait should capture the gritty, determined spirit of the frontier with strong directional lighting reminiscent of early photography while maintaining clear likeness to the original subject."
+  },
+  "90s-hip-hop": {
+    title: "90's Hip-Hop",
+    description: "Bold fashion with baggy clothes, gold chains, and urban backdrops",
+    placeholder: "E.g., Add backward cap and boom box",
+    suggestedPrompt: "Transform into an authentic 90's hip-hop music video style portrait. Apply high-contrast photography with slight film grain and bold colors. Convert clothing to iconic 90's hip-hop fashion including oversized jerseys, baggy jeans, Timberland boots, bright tracksuits, backward caps, or bandanas. Add statement gold chains, large medallions, chunky watches, and rectangular sunglasses. Set against urban backdrops like graffiti walls, basketball courts, city streets, or luxury cars. Include 90's props like boomboxes, pagers, early cell phones, or basketball sneakers. The final image should capture the confident, bold aesthetic of 90's hip-hop culture while maintaining clear likeness to the original subject."
+  },
+  "1980s": {
+    title: "1980's",
+    description: "Vibrant neon colors, big hair, shoulder pads, and maximalist style",
+    placeholder: "E.g., Add neon background and retro sunglasses",
+    suggestedPrompt: "Transform into an authentic 1980's portrait with vibrant neon aesthetics. Apply high-saturation, high-contrast photography with slight airbrushing effect. Convert hairstyles to characteristic 80's looks including big permed hair, mullets, side ponytails, or feathered styles. Update clothing to iconic 80's fashion with shoulder pads, Members Only jackets, leg warmers, acid-wash jeans, neon colors, or power suits. Add period accessories like large plastic earrings, Ray-Ban Wayfarers, scrunchies, sweatbands, or chunky digital watches. Set against 80's backdrops featuring laser grids, chrome effects, geometric patterns, or airbrushed gradients. Include 80's technology like boomboxes, Walkmans, early video game systems, or brick phones. The final image should capture the maximalist, energetic spirit of the 1980's while maintaining clear likeness to the original subject."
+  },
+  "renaissance": {
+    title: "Renaissance",
+    description: "Classical painting style with formal poses and rich, muted colors (1400-1600)",
+    placeholder: "E.g., Add period-appropriate formal attire",
+    suggestedPrompt: "Transform into a Renaissance portrait painting in the style of masters like Leonardo da Vinci or Raphael (1400-1600). Apply oil painting technique with rich, muted color palette and subtle glazing effects. Convert clothing to period Renaissance attire including high collars, elaborate embroidery, velvet, brocade fabrics, ornate jewelry, and formal headwear. Position the subject in a three-quarter view with dignified posture against a dark backdrop or classical architectural elements. Add symbolic Renaissance objects that reflect status or character like books, scientific instruments, religious items, or flora. Apply characteristic Renaissance lighting with soft modeling and sfumato technique creating subtle transitions between light and shadow. The final portrait should convey the solemnity, dignity and intellectual character of Renaissance portraiture while maintaining clear likeness to the original subject."
+  },
+  "caricature": {
+    title: "Caricature",
+    description: "Exaggerated features with humorous intent while maintaining recognition",
+    placeholder: "E.g., Exaggerate eyes and mouth for humorous effect",
+    suggestedPrompt: "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery."
+  },
+  "victorian-era": {
+    title: "Victorian Era",
+    description: "Formal portraiture with period clothing and restrained dignity (1837-1901)",
+    placeholder: "E.g., Add ornate background or pocket watch",
+    suggestedPrompt: "Transform into an authentic Victorian era photographic portrait (1837-1901). Apply sepia or black and white tones with formal composition and static poses characteristic of early photography. Convert clothing to period-appropriate Victorian attire including high collars, waistcoats, pocket watches, brooches, formal dresses with corseted waists, or military uniforms with medals. Position the subject with a dignified, serious expression in front of painted backdrops, ornate furniture, columns, or velvet drapes. Add Victorian accessories like walking sticks, parasols, top hats, gloves, or Victorian jewelry. The final portrait should capture the formality, restraint and social propriety of Victorian society with the technical limitations of period photography while maintaining clear likeness to the original subject."
+  },
+  "disco-era": {
+    title: "Disco Era",
+    description: "Glamorous 70's style with sequins, platform shoes, and vibrant lighting",
+    placeholder: "E.g., Add disco ball and dance floor",
+    suggestedPrompt: "Transform into a quintessential Disco Era (1975-1980) portrait. Apply vivid, slightly oversaturated colors with glamorous lighting and lens flare effects. Convert hairstyles to characteristic disco looks including feathered cuts, afros, or Farrah Fawcett waves. Update clothing to iconic disco fashion with sequins, metallic fabrics, satin shirts with wide collars, bell bottoms, platform shoes, or wrap dresses. Add disco accessories like oversized sunglasses, chunky gold jewelry, or medallions. Set against disco nightclub backdrops featuring mirror balls, colored lights, illuminated dance floors, or sparkly decorations. The final image should capture the energetic, liberated spirit of the disco era while maintaining clear likeness to the original subject."
+  },
+  "cyberpunk": {
+    title: "Cyberpunk",
+    description: "Futuristic dystopian aesthetic with neon accents and technological elements",
+    placeholder: "E.g., Add cybernetic implants and city backdrop",
+    suggestedPrompt: "Transform into a cyberpunk-style portrait set in a high-tech dystopian future. Apply dark, contrasty photography with vibrant neon accents and cinematic color grading in teals and magentas. Add subtle technological augmentations like glowing cybernetic implants, neural interfaces, AR displays, or bionic enhancements that merge seamlessly with the subject. Update clothing to futuristic urban streetwear with technical fabrics, asymmetrical cuts, utility straps, and tech accessories. Set against dystopian city backdrops featuring neon signs, holographic advertisements, industrial elements, and rainy reflective streets. Include cyberpunk elements like data visualizations, glitch effects, or floating UI elements. The final image should capture the gritty yet high-tech aesthetic of cyberpunk while maintaining clear likeness to the original subject."
+  },
+  "medieval": {
+    title: "Medieval",
+    description: "Stylized representation with period attire and symbolic elements (1000-1400)",
+    placeholder: "E.g., Add crown or armor and castle background",
+    suggestedPrompt: "Transform into an authentic Medieval art style reminiscent of illuminated manuscripts and early European paintings (1000-1400). Apply flat, iconic painting technique with rich, primary colors, minimal shading, and pronounced outlines. Convert clothing to period Medieval attire including tunics, cloaks, chainmail, plate armor, wimples, or long robes with symbolic colors. Add Medieval status symbols like crowns, scepters, heraldic emblems, hawks, or swords. Set against simplified backgrounds with gold leaf accents, Norman arches, castle elements, or natural scenes with stylized trees and flowers. Include Medieval iconography related to the subject's characteristics or profession. The final image should capture the symbolic, somewhat flattened perspective of Medieval art with its bold colors and religious or courtly themes while still maintaining some likeness to the original subject."
+  },
+  "custom-era": {
+    title: "Create Your Own Era",
+    description: "Describe your own custom historical era transformation",
+    placeholder: "E.g., Transform into Ancient Egyptian style with hieroglyphic elements",
+    suggestedPrompt: ""
+  }
+};
+
 // Other subcategories
 const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   "baby-prediction": {
@@ -370,7 +434,7 @@ export default function PromptInput({
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [primaryCategory, setPrimaryCategory] = useState<
-    "cartoon" | "product" | "painting" | "other" | null
+    "cartoon" | "product" | "painting" | "era" | "other" | null
   >(null);
   const [cartoonSubcategory, setCartoonSubcategory] =
     useState<CartoonSubcategory | null>(null);
@@ -378,6 +442,8 @@ export default function PromptInput({
     useState<ProductSubcategory | null>(null);
   const [paintingSubcategory, setPaintingSubcategory] =
     useState<PaintingSubcategory | null>(null);
+  const [eraSubcategory, setEraSubcategory] =
+    useState<EraSubcategory | null>(null);
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
 
@@ -519,12 +585,13 @@ export default function PromptInput({
 
   // Reset subcategory selections when primary category changes
   const handlePrimaryCategorySelect = (
-    category: "cartoon" | "product" | "painting" | "other",
+    category: "cartoon" | "product" | "painting" | "era" | "other",
   ) => {
     setPrimaryCategory(category);
     setCartoonSubcategory(null);
     setProductSubcategory(null);
     setPaintingSubcategory(null);
+    setEraSubcategory(null);
     setOtherSubcategory(null);
   };
 
@@ -539,6 +606,10 @@ export default function PromptInput({
 
   const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
     setPaintingSubcategory(subcategory);
+  };
+
+  const handleEraSelect = (subcategory: EraSubcategory) => {
+    setEraSubcategory(subcategory);
   };
 
   const handleOtherSelect = (subcategory: OtherSubcategory) => {
@@ -727,6 +798,23 @@ export default function PromptInput({
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
               </Button>
+              
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "era"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("era")}
+              >
+                <div className="flex items-center">
+                  <History className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">
+                    Pop Culture Through the Eras
+                  </span>
+                </div>
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
+              </Button>
 
               <Button
                 className={`w-full justify-between text-left border-2 h-auto py-3 ${
@@ -809,6 +897,27 @@ export default function PromptInput({
               </div>
             )}
 
+            {/* Secondary Category Selection (Step 2) - Era Subcategories */}
+            {primaryCategory === "era" && (
+              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
+                {Object.entries(ERA_STYLES).map(([key, style]) => (
+                  <Button
+                    key={key}
+                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
+                      eraSubcategory === key
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() =>
+                      handleEraSelect(key as EraSubcategory)
+                    }
+                  >
+                    <span className="line-clamp-2">{style.title}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
+            
             {/* Secondary Category Selection (Step 2) - Other Subcategories */}
             {primaryCategory === "other" && (
               <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
