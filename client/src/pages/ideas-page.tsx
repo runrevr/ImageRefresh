@@ -57,7 +57,7 @@ export default function IdeasPage() {
       category: "Paintings",
       prompt: "Transform this image into a beautiful artistic painting with rich textures and expressive brushwork. You can select from 10 painting styles including Oil Painting, Watercolor, Impressionist, Abstract, Pop Surrealism, Art Deco, Pixel Art, Anime/Manga, Cartoon Style, and Gothic Noir.",
       description: "Turn your photos into stunning painting styles stretching throughout history with 10 different artistic styles to choose from.",
-      originalImage: "/examples/example-landscape.png",
+      originalImage: "/assets/couple-field.png",
       transformedImage: "/examples/transformed-van-gogh.png"
     },
     {
