@@ -35,7 +35,7 @@ interface PromptInputProps {
 }
 
 // Main transformation categories
-export type TransformationType = "cartoon" | "product" | "custom";
+export type TransformationType = "cartoon" | "product" | "painting" | "custom";
 
 // Subcategory types
 export type CartoonSubcategory =
@@ -54,6 +54,19 @@ export type ProductSubcategory =
   | "product-mockup"
   | "social-media-ready"
   | "custom-product";
+export type PaintingSubcategory =
+  | "oil-painting"
+  | "watercolor"
+  | "impressionist"
+  | "abstract"
+  | "pop-surrealism"
+  | "art-deco"
+  | "pixel-art"
+  | "anime-manga"
+  | "cartoon-style"
+  | "gothic-noir"
+  | "custom-painting";
+  
 export type OtherSubcategory =
   | "baby-prediction"
   | "future-self"
@@ -200,6 +213,76 @@ const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
   },
 };
 
+// Painting subcategories
+const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
+  "oil-painting": {
+    title: "Oil Painting",
+    description: "Emulates traditional oil paintings with rich colors, textures, and visible brushstrokes.",
+    placeholder: "E.g., In the style of Van Gogh or Rembrandt",
+    suggestedPrompt: "Transform this image into a traditional oil painting with rich, deep colors and visible textured brushstrokes. Create a masterful composition with careful attention to light and shadow, capturing the dimensional quality and depth that oil paint provides. Apply thick impasto technique for highlights and finer brush detail for shadows. Use a warm, slightly muted color palette reminiscent of classical oil paintings, with subtle glazing effects and the characteristic luminosity that comes from layered oil paint. The final result should have the timeless, elegant aesthetic of museum-quality oil paintings while maintaining the essence and emotional quality of the original image."
+  },
+  "watercolor": {
+    title: "Watercolor",
+    description: "Creates a soft, fluid look with translucent colors, similar to watercolor paintings.",
+    placeholder: "E.g., Add delicate color washes and soft edges",
+    suggestedPrompt: "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted with broader, more impressionistic areas. The colors should appear light, luminous and slightly diluted with a fresh, airy quality. Add subtle paper texture to enhance the authentic watercolor feel. The final image should convey a dreamy, ethereal atmosphere with the gentle, translucent quality that makes watercolor paintings so distinctive."
+  },
+  "impressionist": {
+    title: "Impressionist",
+    description: "Focuses on capturing light and movement with loose brushstrokes, like the works of Monet and Renoir.",
+    placeholder: "E.g., Use short, visible brushstrokes to capture light",
+    suggestedPrompt: "Transform this image into an Impressionist painting in the style of Monet, Renoir, or Degas. Use small, thin brush strokes that are visible to the naked eye, creating a sense of spontaneity and movement. Focus on accurately depicting the changing qualities of light with vivid colors applied side-by-side for a vibrant, shimmering effect. Capture the fleeting moment and overall visual impression rather than exact details. Apply an open composition with unusual visual angles and emphasis on light in its changing qualities. Include elements of ordinary subject matter transformed by the play of natural light. The color palette should be bright yet natural, with particular attention to the reflection of colors from objects to one another. The final image should convey the sense of atmosphere and the shifting effect of light and color that characterizes Impressionist works."
+  },
+  "abstract": {
+    title: "Abstract",
+    description: "Uses non-representational forms and colors to create a visually striking image, focusing on shape, color and form.",
+    placeholder: "E.g., Create a bold, geometric abstract interpretation",
+    suggestedPrompt: "Transform this image into an abstract composition that uses color, form, line, and texture to create a non-representational interpretation of the subject. Break down the original image into its essential elements, emphasizing shapes, patterns, and color relationships rather than realistic depiction. Create a bold visual rhythm with geometric or organic forms, dynamic lines, and contrasting colors. The composition should balance tension and harmony, with focal points created through color intensity, size, or position. The palette can be vibrant and expressive or subtle and monochromatic, depending on the emotional quality you wish to convey. The final result should evoke emotional or intellectual responses through its compositional elements alone, without relying on recognizable imagery, capturing the essence rather than the appearance of the original subject."
+  },
+  "pop-surrealism": {
+    title: "Pop Surrealism",
+    description: "Blends surreal and dreamlike elements with bright, exaggerated colors, creating eye-catching results.",
+    placeholder: "E.g., Add whimsical, dreamlike elements",
+    suggestedPrompt: "Transform this image into a pop surrealist artwork that combines dreamlike, fantastical elements with bright, cartoon-influenced aesthetics. Create a whimsical, slightly unsettling scene that juxtaposes the familiar with the bizarre. Use a vibrant, high-saturation color palette with bold outlines and smooth gradients reminiscent of lowbrow art and comic book styles. Incorporate unexpected elements, altered scale relationships, and imaginative details that challenge reality while maintaining a polished, illustrative quality. Add symbolic objects, anthropomorphic creatures, or nostalgic pop culture references that create narrative tension and intrigue. The final image should balance technical precision with imaginative fantasy, creating a visually striking composition that feels both accessible and otherworldly, inviting viewers into an alternate reality that's both familiar and strange."
+  },
+  "art-deco": {
+    title: "Art Deco",
+    description: "Features bold geometric shapes, rich colors, and a luxurious, elegant aesthetic.",
+    placeholder: "E.g., Add geometric patterns and metallic accents",
+    suggestedPrompt: "Transform this image into an Art Deco style artwork featuring the bold geometric forms, symmetry, and lavish ornamentation characteristic of 1920s and 1930s design. Apply a color palette of rich, deep colors accented with gold, silver, or black, creating a sense of luxury and sophistication. Incorporate strong vertical lines, stepped forms, sweeping curves, and sunburst patterns typical of Art Deco architecture and design. Add elegant, stylized representations of natural or mechanical elements with the clean lines and geometric precision that defines the style. The composition should feel balanced yet dynamic, with a sense of sleek modernity and celebration of urban life and technological progress. The final image should capture the glamour, elegance, and bold confidence of the Art Deco period, combining ornamental richness with geometric simplicity."
+  },
+  "pixel-art": {
+    title: "Pixel Art",
+    description: "Transforms images into blocky, low-resolution visuals reminiscent of 8-bit and 16-bit games for a retro feel.",
+    placeholder: "E.g., Convert to 16-bit pixel style with limited color palette",
+    suggestedPrompt: "Transform this image into pixelated digital art reminiscent of classic 8-bit or 16-bit video games. Convert all elements into a grid-based format with distinct, visible square pixels as the building blocks of the image. Apply a limited color palette with few shades per color channel, creating the characteristic constrained spectrum of retro games. Simplify complex forms and details into blocky representations using careful pixel placement to suggest shape and dimension. Use techniques like dithering (alternating patterns of pixels) to create the illusion of additional colors or shading. Implement clean edges and distinct color boundaries with minimal anti-aliasing. The final image should have a charming, nostalgic quality that celebrates the aesthetic constraints of early digital art while still being recognizable as the original subject."
+  },
+  "anime-manga": {
+    title: "Anime/Manga",
+    description: "Captures the dynamic energy of Japanese comics and animation with detailed shading and vibrant colors.",
+    placeholder: "E.g., Create a detailed anime character style",
+    suggestedPrompt: "Transform this image into a high-quality anime/manga art style that captures the distinctive aesthetic of Japanese animation and comics. Apply bold, clean outlines with variable line weight to define forms. Create large, expressive eyes with detailed highlights and reflections, simplified facial features, and stylized hair with exaggerated volume and distinctive color. Use cell-shaded coloring with flat color areas separated by hard edges for shadows rather than gradual blending. Include characteristic anime visual elements like speed lines for movement, expressive symbols to show emotion, and dramatic lighting effects. The background should be detailed but somewhat simplified compared to the foreground elements. The overall composition should have a dynamic quality with dramatic angles or perspectives and a vibrant color palette that emphasizes character expression and mood. The final image should feel like a frame from a high-quality anime production or a page from a professionally illustrated manga."
+  },
+  "cartoon-style": {
+    title: "Cartoon Style",
+    description: "Brings a playful energy to an image with exaggerated features.",
+    placeholder: "E.g., Create a fun, stylized cartoon version",
+    suggestedPrompt: "Transform this image into a vibrant, playful cartoon style with bold outlines, simplified forms, and exaggerated features. Create a clean, graphic look with smooth, flat colors and simplified shadows that give dimension without complex shading. Apply slightly exaggerated proportions to emphasize distinctive character features while maintaining recognizability. Use thick, consistent outlines around the main elements to give that classic cartoon definition. The color palette should be bright and saturated with good contrast between elements. Add a sense of energy and expressiveness to poses and facial expressions, capturing personality with simple but effective details. The background should be slightly simplified compared to the foreground elements, with a focus on supporting the main subject. The final result should have that instantly recognizable cartoon aesthetic that feels lighthearted, accessible, and full of personality."
+  },
+  "gothic-noir": {
+    title: "Gothic Noir",
+    description: "Combines high contrast and eerie shadows to create an atmosphere of suspense.",
+    placeholder: "E.g., Add dramatic shadows and mysterious atmosphere",
+    suggestedPrompt: "Transform this image into a gothic noir style artwork featuring dramatic shadows, high contrast, and an atmosphere of mystery and suspense. Create a moody, atmospheric scene with deep, inky blacks and stark highlights that sculpt the subject with dramatic lighting. Apply a limited, desaturated color palette dominated by dark tones with occasional accents of deep red, midnight blue, or purple. Incorporate gothic elements like ornate architecture, wrought iron details, or victorian-inspired styling that suggests a sense of decaying grandeur. The lighting should create long, dramatic shadows and slivers of illumination that partially reveal the subject, leaving much to the imagination. Add subtle details like mist, smoke, or environmental elements that enhance the sense of foreboding. The final image should evoke the feeling of classic film noir combined with gothic sensibilities, creating a haunting, cinematic quality that suggests hidden stories and unseen dangers lurking just beyond the frame."
+  },
+  "custom-painting": {
+    title: "Create Your Own Painting Style",
+    description: "Describe your own custom painting transformation.",
+    placeholder: "E.g., Create a mixed-media collage with watercolor and sketch elements",
+    suggestedPrompt: ""
+  }
+};
+
 // Other subcategories
 const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   "baby-prediction": {
@@ -280,6 +363,8 @@ export default function PromptInput({
     useState<CartoonSubcategory | null>(null);
   const [productSubcategory, setProductSubcategory] =
     useState<ProductSubcategory | null>(null);
+  const [paintingSubcategory, setPaintingSubcategory] =
+    useState<PaintingSubcategory | null>(null);
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
 
@@ -574,6 +659,23 @@ export default function PromptInput({
                   <BoxIcon className="h-5 w-5 mr-2 flex-shrink-0" />
                   <span className="font-medium whitespace-normal break-words">
                     Product Enhancement
+                  </span>
+                </div>
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
+              </Button>
+              
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "painting"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("painting")}
+              >
+                <div className="flex items-center">
+                  <Paintbrush className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">
+                    Painting Styles
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
