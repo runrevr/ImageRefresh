@@ -36,7 +36,7 @@ interface PromptInputProps {
 }
 
 // Main transformation categories
-export type TransformationType = "cartoon" | "product" | "painting" | "custom";
+export type TransformationType = "cartoon" | "product" | "painting" | "era" | "custom";
 
 // Subcategory types
 export type CartoonSubcategory =
@@ -67,6 +67,18 @@ export type PaintingSubcategory =
   | "cartoon-style"
   | "gothic-noir"
   | "custom-painting";
+  
+export type EraSubcategory =
+  | "old-western"
+  | "90s-hip-hop"
+  | "1980s"
+  | "renaissance"
+  | "caricature"
+  | "victorian-era"
+  | "disco-era"
+  | "cyberpunk"
+  | "medieval"
+  | "custom-era";
   
 export type OtherSubcategory =
   | "baby-prediction"
