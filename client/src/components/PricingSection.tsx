@@ -18,7 +18,7 @@ const pricingTiers: PricingTier[] = [
       { available: true, text: "1 free credit" },
       { available: true, text: "Each credit = 1 image + 1 edit" },
       { available: true, text: "Standard resolution output" },
-      { available: false, text: "No commercial usage rights" }
+      { available: false, text: "Access prior images in your account." }
     ],
     buttonText: "Get Started",
     buttonClass: "border border-gray-300 text-gray-700 hover:bg-gray-50",
@@ -31,7 +31,7 @@ const pricingTiers: PricingTier[] = [
       { available: true, text: "10 credits per month" },
       { available: true, text: "Credits reset monthly" },
       { available: true, text: "HD resolution output" },
-      { available: true, text: "No watermarks" }
+      { available: true, text: "All images created are stored in your account" }
     ],
     popular: false,
     buttonText: "Choose Core",
