@@ -59,24 +59,6 @@ export default function IdeasPage() {
       description: "Create a magical, musical world with vibrant colors and whimsical characters inspired by the Trolls movie style.",
       originalImage: "/examples/example-child.png",
       transformedImage: "/examples/transformed-trolls.png"
-    },
-    {
-      id: "pop-culture-eras",
-      title: "Pop Culture Through the Eras",
-      category: "Historical",
-      prompt: "Transform into a historical or cultural era style with period-appropriate elements. Choose from styles including Old Western, 90s Hip-Hop, 1980s Retro, Renaissance, Caricature, Victorian Era, Disco Era, Cyberpunk, and Medieval.",
-      description: "Transform photos into historical styles from Western frontiers to 80's to 90's hip-hop while preserving recognizable likenesses",
-      originalImage: "/examples/example-portrait.png",
-      transformedImage: "/examples/transformed-victorian.png"
-    },
-    {
-      id: "cyberpunk",
-      title: "Cyberpunk Future",
-      category: "Sci-Fi",
-      prompt: "Transform this image into a cyberpunk-style scene with neon-lit urban dystopia aesthetics. Add abundant holographic displays, vibrant neon signs in pink, blue, and purple casting colorful glows. Create a rainy night atmosphere with reflective wet streets and steam rising from vents. Include technological enhancements like cybernetic implants, AR displays, or digital interfaces. The lighting should feature stark contrasts between dark shadows and bright artificial lights, with lens flares and light pollution. Maintain the core elements of the original image but reimagined in this high-tech, gritty futuristic setting.",
-      description: "Enter a futuristic world of neon lights, holographic displays, and technological enhancements in a cyberpunk-inspired transformation.",
-      originalImage: "/examples/example-city.png",
-      transformedImage: "/examples/transformed-cyberpunk.png"
     }
   ];
 
