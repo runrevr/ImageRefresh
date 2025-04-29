@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { SavedStyle } from "./StyleIntegration";
 import { apiRequest } from "@/lib/queryClient";
 
 interface PromptInputProps {
@@ -25,6 +26,12 @@ interface PromptInputProps {
   onSubmit: (prompt: string, imageSize: string) => void;
   onBack: () => void;
   selectedTransformation?: TransformationType | null;
+  defaultPrompt?: string; // Default prompt text (can come from saved style)
+  savedStyle?: { 
+    prompt: string; 
+    title: string; 
+    category: string; 
+  } | null; // Style information from Ideas page
 }
 
 // Main transformation categories
@@ -258,9 +265,11 @@ export default function PromptInput({
   onSubmit,
   onBack,
   selectedTransformation,
+  defaultPrompt = "", // Default to empty string if not provided
+  savedStyle = null, // Default to null if not provided
 }: PromptInputProps) {
   // State variables
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(defaultPrompt);
   const [charCount, setCharCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -513,12 +522,20 @@ export default function PromptInput({
         <div className="grid md:grid-cols-7 gap-6">
           {/* Left column - Image preview */}
           <div className="md:col-span-3">
-            <div className="bg-gray-100 rounded-lg p-4 flex items-center justify-center h-80 md:h-96">
+            <div className="bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center h-80 md:h-96">
               <img
                 src={originalImage}
                 className="max-w-full max-h-full object-contain"
                 alt="Your uploaded image"
               />
+              
+              {/* Saved Style Notification Banner */}
+              {savedStyle && (
+                <div className="mt-3 w-full bg-secondary text-white p-3 rounded-md text-sm">
+                  <div className="font-medium">Applied Style: {savedStyle.title}</div>
+                  <div className="text-xs opacity-90">Category: {savedStyle.category}</div>
+                </div>
+              )}
             </div>
           </div>
 
