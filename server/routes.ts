@@ -440,7 +440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             //   "Transforming image with prompt 3rd:",
             //   validatedData.prompt,
             // );
-
+            console.log("I am trying\n\n\n");
             let finalPrompt = validatedData.prompt; // what user sent
 
             // 🧠 New: If no user prompt, auto-generate one from the image
@@ -455,10 +455,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // You can split if you want separate description and prompt, but mostly just take the "art prompt" part
               finalPrompt = descriptionAndPrompt.artPrompt;
             }
+            const descriptionAndPrompt =
+              await getDescriptionAndPromptFromImage(fullImagePath);
 
+            // You can split if you want separate description and prompt, but mostly just take the "art prompt" part
+            finalPrompt = descriptionAndPrompt.artPrompt + " " + finalPrompt;
+            console.log("final prompt : ", finalPrompt);
             const { transformedPath } = await transformImage(
               fullImagePath,
-              finalPrompt || 'custom transformation.',
+              finalPrompt || "custom transformation.",
               validatedData.imageSize,
             );
 
