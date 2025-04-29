@@ -77,34 +77,7 @@ export default function IdeasPage() {
       description: "Enter a futuristic world of neon lights, holographic displays, and technological enhancements in a cyberpunk-inspired transformation.",
       originalImage: "/examples/example-city.png",
       transformedImage: "/examples/transformed-cyberpunk.png"
-    },
-    {
-      id: "claymation",
-      title: "Claymation Style",
-      category: "Animation",
-      prompt: "Transform this image into a claymation style scene. Create characters and objects with a handcrafted clay appearance, featuring slightly imperfect textures with small indentations and fingerprint-like impressions. Use bright, saturated colors with a slightly matte finish typical of modeling clay. Add subtle details that suggest the materials are physically molded, with rounded edges and simplified features. The overall aesthetic should resemble stop-motion animation with miniature handmade models, similar to Wallace and Gromit or Coraline, with warm lighting that enhances the tactile quality of the scene.",
-      description: "Transform your photos into charming claymation scenes with handcrafted clay-like textures and stop-motion animation aesthetics.",
-      originalImage: "/examples/example-person.png", 
-      transformedImage: "/examples/transformed-superhero.png"
-    },
-    {
-      id: "steampunk",
-      title: "Steampunk World",
-      category: "Fantasy",
-      prompt: "Transform this image into a detailed steampunk scene with Victorian-era aesthetics combined with retro-futuristic technology. Add elaborate brass and copper machinery with visible gears, cogs, pipes, and gauges. Include steam-powered devices with wisps of steam or vapor. Dress figures in Victorian-inspired clothing with leather, brass goggles, top hats, corsets, or waistcoats. The color palette should feature rich browns, coppers, bronzes, and deep burgundies. Incorporate airships, mechanical limbs, or clockwork devices as appropriate. The lighting should be warm with a slight sepia tone, creating an atmosphere of industrial innovation in an alternate history setting.",
-      description: "Step into an alternate Victorian world of brass machinery, steam power, and mechanical wonders with this steampunk transformation.",
-      originalImage: "/examples/example-city.png",
-      transformedImage: "/examples/transformed-cyberpunk.png"
-    },
-    {
-      id: "stained-glass",
-      title: "Stained Glass Art",
-      category: "Fine Art",
-      prompt: "Transform this image into an intricate stained glass art style. Convert all elements into distinct colored glass pieces separated by bold black leading lines. Use rich, translucent colors that appear to glow as if light is passing through them. Simplify complex details into geometric or flowing organic shapes typical of stained glass design. The colors should be vibrant and saturated with varying levels of transparency. Add delicate details within some glass pieces such as subtle shading or small decorative elements. The overall effect should resemble a beautiful church window or Art Nouveau stained glass panel with an illuminated quality.",
-      description: "Transform your photos into luminous stained glass artwork with vibrant colors divided by elegant black leading lines.",
-      originalImage: "/examples/example-landscape.png",
-      transformedImage: "/examples/transformed-van-gogh.png"
-    },
+    }
   ];
 
   const saveStylePrompt = (idea: IdeaCard) => {
