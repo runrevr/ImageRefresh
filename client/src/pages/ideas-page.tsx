@@ -111,7 +111,7 @@ export default function IdeasPage() {
                       {hoveredCard === idea.id ? "After" : "Before"}
                     </p>
                   </div>
-                  <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white px-2 py-1 rounded text-xs">
+                  <div className="absolute top-2 right-2 bg-white bg-opacity-50 text-black px-2 py-1 rounded text-xs font-medium">
                     {idea.category}
                   </div>
                 </div>
