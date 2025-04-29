@@ -43,15 +43,6 @@ export default function IdeasPage() {
       transformedImage: "/examples/transformed-superhero.png"
     },
     {
-      id: "trolls",
-      title: "Fantasy Troll World",
-      category: "Animation",
-      prompt: "Use the uploaded image as inspiration for the mood and attitude of a whimsical troll folk-hero character. Create a playful fantasy scene filled with oversized flowers, sparkling waterfalls, and colorful candy-like forests arranged in musical, rhythmic patterns. Design the character in a bright, cartoon style with wild, gravity-defying neon hair shaped like a crown, textured clothes inspired by forest leaves and vines, and a joyful, lively expression. Set everything in a vivid, high-contrast animated world, like a cheerful fairy-tale concert.",
-      description: "Create a magical, musical world with vibrant colors and whimsical characters inspired by the Trolls movie style.",
-      originalImage: "/examples/example-child.png",
-      transformedImage: "/examples/transformed-trolls.png"
-    },
-    {
       id: "painting",
       title: "Turn to Painting",
       category: "Paintings",
@@ -59,6 +50,15 @@ export default function IdeasPage() {
       description: "Turn your photos into stunning painting styles stretching throughout history with 10 different artistic styles to choose from.",
       originalImage: "/assets/couple-field.png",
       transformedImage: "/assets/couple-field-painting.png"
+    },
+    {
+      id: "trolls",
+      title: "Fantasy Troll World",
+      category: "Animation",
+      prompt: "Use the uploaded image as inspiration for the mood and attitude of a whimsical troll folk-hero character. Create a playful fantasy scene filled with oversized flowers, sparkling waterfalls, and colorful candy-like forests arranged in musical, rhythmic patterns. Design the character in a bright, cartoon style with wild, gravity-defying neon hair shaped like a crown, textured clothes inspired by forest leaves and vines, and a joyful, lively expression. Set everything in a vivid, high-contrast animated world, like a cheerful fairy-tale concert.",
+      description: "Create a magical, musical world with vibrant colors and whimsical characters inspired by the Trolls movie style.",
+      originalImage: "/examples/example-child.png",
+      transformedImage: "/examples/transformed-trolls.png"
     },
     {
       id: "pop-culture-eras",
