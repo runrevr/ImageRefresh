@@ -16,6 +16,7 @@ import AccountNeededDialog from '@/components/AccountNeededDialog';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { getSavedStyle, clearSavedStyle, hasSavedStyle } from '@/components/StyleIntegration';
 
 // Enum for the different steps in the process
 enum Step {
@@ -95,9 +96,32 @@ export default function Home() {
     }
   }, []);
 
+  // Check for saved style from Ideas page
+  const [savedStyle, setSavedStyle] = useState<{ prompt: string; title: string; category: string } | null>(null);
+  
+  // When a user uploads an image, check if they previously selected a style from the Ideas page
   const handleUpload = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
+    
+    // Check if there's a saved style from the Ideas page
+    if (hasSavedStyle()) {
+      const style = getSavedStyle();
+      if (style) {
+        // Set the prompt from the saved style
+        setPrompt(style.prompt);
+        setSavedStyle(style);
+        
+        // Notify the user that a style is being applied
+        toast({
+          title: `Applying "${style.title}" style`,
+          description: `The ${style.category} style will be applied to your next image.`,
+        });
+        
+        // Clear the saved style to avoid reapplying it
+        clearSavedStyle();
+      }
+    }
     
     // Always go to the prompt step regardless of preset selection
     // This allows users to customize prompts for preset transformations
@@ -645,6 +669,8 @@ export default function Home() {
                 onSubmit={handlePromptSubmit} 
                 onBack={handleNewImage}
                 selectedTransformation={selectedTransformation}
+                defaultPrompt={prompt} // Pass the prompt (which may contain savedStyle.prompt)
+                savedStyle={savedStyle} // Pass the saved style with category and title
               />
             )}
             
