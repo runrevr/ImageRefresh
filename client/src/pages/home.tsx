@@ -95,6 +95,21 @@ export default function Home() {
       setStoredEmail(collectedEmail);
     }
   }, []);
+  
+  // Check for showUpload query parameter and show upload form if present
+  useEffect(() => {
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const showUploadParam = urlParams.get('showUpload');
+    
+    // If showUpload=true is present in the URL, automatically show the upload form
+    if (showUploadParam === 'true') {
+      setShowUploadForm(true);
+      setTimeout(() => {
+        scrollToUploader();
+      }, 500);
+    }
+  }, []);
 
   // Check for saved style from Ideas page
   const [savedStyle, setSavedStyle] = useState<{ prompt: string; title: string; category: string } | null>(null);
