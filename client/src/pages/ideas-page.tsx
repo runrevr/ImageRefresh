@@ -65,7 +65,7 @@ export default function IdeasPage() {
       title: "Pop Culture Through the Eras",
       category: "Historical",
       prompt: "Transform into a historical or cultural era style with period-appropriate elements. Choose from styles including Old Western, 90s Hip-Hop, 1980s Retro, Renaissance, Caricature, Victorian Era, Disco Era, Cyberpunk, and Medieval.",
-      description: "Travel through time with transformations that place you in different historical eras and cultural movements.",
+      description: "Transform photos into historical styles from Western frontiers to 80's to 90's hip-hop while preserving recognizable likenesses",
       originalImage: "/examples/example-portrait.png",
       transformedImage: "/examples/transformed-victorian.png"
     },

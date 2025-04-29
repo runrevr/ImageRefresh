@@ -67,6 +67,7 @@ export type PaintingSubcategory =
   | "anime-manga"
   | "cartoon-style"
   | "gothic-noir"
+  | "charcoal-pencil"
   | "custom-painting";
   
 export type EraSubcategory =
@@ -290,6 +291,12 @@ const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
     description: "Combines high contrast and eerie shadows to create an atmosphere of suspense.",
     placeholder: "E.g., Add dramatic shadows and mysterious atmosphere",
     suggestedPrompt: "Transform this image into a gothic noir style artwork featuring dramatic shadows, high contrast, and an atmosphere of mystery and suspense. Create a moody, atmospheric scene with deep, inky blacks and stark highlights that sculpt the subject with dramatic lighting. Apply a limited, desaturated color palette dominated by dark tones with occasional accents of deep red, midnight blue, or purple. Incorporate gothic elements like ornate architecture, wrought iron details, or victorian-inspired styling that suggests a sense of decaying grandeur. The lighting should create long, dramatic shadows and slivers of illumination that partially reveal the subject, leaving much to the imagination. Add subtle details like mist, smoke, or environmental elements that enhance the sense of foreboding. The final image should evoke the feeling of classic film noir combined with gothic sensibilities, creating a haunting, cinematic quality that suggests hidden stories and unseen dangers lurking just beyond the frame."
+  },
+  "charcoal-pencil": {
+    title: "Charcoal Pencil Drawing",
+    description: "Creates a dramatic, textured black and white drawing with rich shadows and expressive lines.",
+    placeholder: "E.g., Focus on dramatic shading and textural elements",
+    suggestedPrompt: "Transform this image into a sophisticated charcoal pencil drawing with rich tonal contrasts and expressive mark-making. Create a dramatic interplay of light and shadow using a range of values from velvety blacks to bright highlights, with various gray tones for depth. Apply visible, deliberate strokes that capture both fine details and broader gestural marks, varying pressure to create both sharp lines and soft, smudged areas. Include characteristic charcoal drawing elements like bold, decisive outlines, intricate cross-hatching for shadow areas, and strategic highlighting through erasure. The texture should show the grain of the paper with light smudging and blending in places, while maintaining crisp details in focal areas. Emphasize composition through careful balance of negative space and detailed areas. The final image should have the intimate, immediate quality of hand-drawn charcoal artwork with its distinctive dramatic contrast, atmospheric depth, and expressive, tactile surface qualities."
   },
   "custom-painting": {
     title: "Create Your Own Painting Style",
