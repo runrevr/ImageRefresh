@@ -19,6 +19,7 @@ import CheckoutPage from "@/pages/checkout";
 import SubscribePage from "@/pages/subscribe";
 import BuyCreditsPage from "@/pages/buy-credits";
 import CheckoutDemoPage from "@/pages/checkout-demo";
+import CheckoutFlowDemoPage from "@/pages/checkout-flow-demo";
 
 function Router() {
   return (
@@ -39,6 +40,7 @@ function Router() {
       <ProtectedRoute path="/subscribe" component={SubscribePage} />
       <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
       <Route path="/checkout-demo" component={CheckoutDemoPage} />
+      <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
       <Route component={NotFound} />
     </Switch>
   );
