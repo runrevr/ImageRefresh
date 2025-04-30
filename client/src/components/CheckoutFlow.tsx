@@ -237,55 +237,51 @@ const StyleStep = ({ onNext, onBack, categoryId, selectedStyleId }: StyleStepPro
   const [localSelectedId, setLocalSelectedId] = useState<string | undefined>(selectedStyleId);
 
   return (
-    <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-8">Select a Style</h2>
-      
-      {/* Large preview image for selected style */}
-      <div className="w-full max-w-sm mb-8 mx-auto">
-        <Card className="overflow-hidden">
-          <div className="aspect-[16/9] bg-gray-100 flex items-center justify-center">
-            {localSelectedId ? (
-              <img 
-                src={styles.find((s: Style) => s.id === localSelectedId)?.previewImage || ''}
-                alt="Selected style preview"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex flex-col items-center text-gray-400">
-                <ImageIcon className="h-16 w-16 mb-2" />
-                <p className="text-sm text-center">Select a style below<br />to preview</p>
-              </div>
-            )}
-          </div>
-        </Card>
+    <div className="flex flex-col w-full max-w-3xl mx-auto">
+      {/* Breadcrumbs */}
+      <div className="flex items-center text-sm text-gray-500 mb-6">
+        <span>Categories</span>
+        <ChevronRight className="h-4 w-4 mx-1" />
+        <span className="font-medium text-gray-900">{category?.name || 'Category'}</span>
       </div>
       
-      {/* Style grid - 3x3 compact grid */}
+      <h2 className="text-2xl font-bold mb-6">Select a Style</h2>
+      
+      {/* Preview area with text prompt */}
+      <div className="w-full mb-8 border rounded-md p-6 bg-gray-50">
+        <div className="flex flex-col items-center justify-center text-gray-400">
+          <ImageIcon className="h-16 w-16 mb-2" />
+          <p className="text-center text-gray-500">
+            Select a style below<br />to preview
+          </p>
+        </div>
+      </div>
+      
+      {/* Style grid - 3 columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
         {styles.map((style: Style) => (
           <Card 
             key={style.id}
-            className={`cursor-pointer transition-all hover:border-[#2A7B9B] hover:shadow-md ${
+            className={`cursor-pointer transition-all overflow-hidden hover:border-[#2A7B9B] hover:shadow-md ${
               localSelectedId === style.id ? 'border-[#2A7B9B] bg-[#2A7B9B]/5' : ''
             }`}
             onClick={() => setLocalSelectedId(style.id)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center mb-2">
-                {/* Small thumbnail */}
-                <div className="w-12 h-12 bg-gray-100 rounded mr-3 flex-shrink-0 overflow-hidden">
-                  {style.previewImage && (
-                    <img 
-                      src={style.previewImage}
-                      alt={style.name}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </div>
-                
-                {/* Style name */}
-                <h3 className="font-semibold text-base">{style.name}</h3>
-              </div>
+            {/* Image at the top */}
+            <div className="aspect-square w-full bg-gray-100 overflow-hidden">
+              {style.previewImage && (
+                <img 
+                  src={style.previewImage}
+                  alt={style.name}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+            
+            {/* Text content below image */}
+            <CardContent className="p-3">
+              {/* Style name */}
+              <h3 className="font-semibold text-base mb-1">{style.name}</h3>
               
               {/* Style description */}
               <p className="text-xs text-gray-500 line-clamp-2">{style.description}</p>
