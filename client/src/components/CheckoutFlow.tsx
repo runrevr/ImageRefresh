@@ -341,89 +341,59 @@ interface ConfirmStepProps {
 
 const ConfirmStep = ({ onConfirm, onBack, imageUrl, selectedStyle }: ConfirmStepProps) => {
   return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-8">Confirm Your Selection</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
-        <Card>
-          <CardHeader>
-            <CardTitle>Original Image</CardTitle>
-          </CardHeader>
-          <CardContent className="flex justify-center items-center p-4">
-            {imageUrl ? (
-              <img 
-                src={imageUrl} 
-                alt="Original" 
-                className="max-h-60 object-contain"
-              />
-            ) : (
-              <div className="bg-gray-100 h-60 w-full flex items-center justify-center">
-                <ImageIcon className="h-12 w-12 text-gray-400" />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+    <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-6">
+        {/* Left side - Original Image */}
+        <div className="border rounded-lg overflow-hidden">
+          {imageUrl ? (
+            <img 
+              src={imageUrl} 
+              alt="Original" 
+              className="w-full h-64 object-cover"
+            />
+          ) : (
+            <div className="bg-gray-100 h-64 w-full flex items-center justify-center">
+              <ImageIcon className="h-12 w-12 text-gray-400" />
+            </div>
+          )}
+        </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Selected Style</CardTitle>
-            <CardDescription>{selectedStyle?.name || "No style selected"}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center items-center p-4">
-            {selectedStyle ? (
-              <img 
-                src={selectedStyle.previewImage} 
-                alt={selectedStyle.name} 
-                className="max-h-60 object-contain"
-              />
-            ) : (
-              <div className="bg-gray-100 h-60 w-full flex items-center justify-center">
-                <Paintbrush className="h-12 w-12 text-gray-400" />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Right side - Style info */}
+        <div className="flex flex-col">
+          <h2 className="text-2xl font-bold">
+            {selectedStyle?.name || "Style"}
+          </h2>
+          <h3 className="text-lg mb-2">
+            {selectedStyle?.category ? getCategory(selectedStyle.category)?.name : ""}
+          </h3>
+          <p className="text-gray-600 mb-4">
+            {selectedStyle?.description || "No style selected"}
+          </p>
+          
+          {/* Description text area */}
+          <div className="border rounded p-3 mt-auto">
+            <p className="text-sm text-gray-500">description</p>
+          </div>
+        </div>
       </div>
       
-      <Card className="w-full max-w-3xl mt-8">
-        <CardHeader>
-          <CardTitle>Order Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-1.5">
-            <div className="flex justify-between">
-              <span className="text-sm">Base transformation</span>
-              <span className="text-sm font-medium">1 credit</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm">Style: {selectedStyle ? selectedStyle.name : 'Not selected'}</span>
-              <span className="text-sm font-medium">0 credits</span>
-            </div>
-          </div>
-          
-          <Separator className="my-4" />
-          
-          <div className="flex justify-between font-medium">
-            <span>Total</span>
-            <span>1 credit</span>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button 
-            variant="outline" 
-            onClick={onBack}
-          >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Back
-          </Button>
-          <Button 
-            onClick={onConfirm} 
-            disabled={!selectedStyle || !imageUrl}
-            className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white"
-          >
-            Confirm and Transform
-          </Button>
-        </CardFooter>
-      </Card>
+      {/* Action buttons */}
+      <div className="flex w-full justify-between gap-4 mt-4">
+        <Button 
+          variant="outline" 
+          onClick={onBack}
+          className="min-w-[120px]"
+        >
+          Back
+        </Button>
+        <Button 
+          onClick={onConfirm} 
+          disabled={!selectedStyle || !imageUrl}
+          className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white min-w-[200px]"
+        >
+          Create Magic
+        </Button>
+      </div>
     </div>
   );
 };
