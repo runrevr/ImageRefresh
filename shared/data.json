@@ -281,9 +281,9 @@
       ]
     },
     {
-      "id": "special",
-      "name": "Special Effects",
-      "description": "Unique and creative transformations for fun and entertainment",
+      "id": "kids",
+      "name": "Kids",
+      "description": "Fun transformations perfect for children's photos",
       "icon": "Sparkles",
       "styles": [
         {
