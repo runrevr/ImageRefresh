@@ -33,8 +33,8 @@ interface StepProps {
 
 const StepIndicator = ({ currentStep, totalSteps }: StepProps) => {
   return (
-    <div className="w-full mb-8">
-      <div className="flex items-center justify-between">
+    <div className="w-full mb-8 flex justify-center">
+      <div className="flex items-center justify-between w-1/2">
         {Array.from({ length: totalSteps }).map((_, index) => (
           <div key={index} className="flex flex-col items-center">
             <div 
@@ -56,7 +56,7 @@ const StepIndicator = ({ currentStep, totalSteps }: StepProps) => {
           </div>
         ))}
       </div>
-      <div className="relative mt-2">
+      <div className="relative mt-2 w-1/2">
         <div className="absolute top-0 h-1 w-full bg-gray-200"></div>
         <div 
           className="absolute top-0 h-1 bg-[#2A7B9B] transition-all duration-300"
