@@ -41,7 +41,7 @@ const StepIndicator = ({ currentStep, totalSteps }: StepProps) => {
         {/* Step labels above the circles */}
         <div className="flex justify-between mb-2">
           {Array.from({ length: totalSteps }).map((_, index) => (
-            <div key={`label-${index}`} className="text-xs text-center w-16">
+            <div key={`label-${index}`} className="text-xs text-center w-16 mx-auto text-[#333333] flex justify-center">
               {stepLabels[index]}
             </div>
           ))}
