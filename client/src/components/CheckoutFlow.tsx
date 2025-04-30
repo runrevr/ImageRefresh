@@ -1,11 +1,29 @@
 import { useState } from "react";
 import { Layout } from "./Layout";
 import CompactStyleSelector from "./CompactStyleSelector";
-import { type Style } from "../../../shared/data.utils";
+import { 
+  type Style, 
+  type Category,
+  getCategories, 
+  getStylesByCategory, 
+  getCategory 
+} from "../../../shared/data.utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Check, ChevronLeft, ChevronRight, Image, Upload, Paintbrush, ImageIcon, CreditCard } from "lucide-react";
+import { 
+  Check, 
+  ChevronLeft, 
+  ChevronRight, 
+  Image, 
+  Upload, 
+  Paintbrush, 
+  ImageIcon, 
+  CreditCard,
+  Clock,
+  Box as BoxIcon,
+  Sparkles
+} from "lucide-react";
 
 // Step components
 interface StepProps {
@@ -135,32 +153,70 @@ interface CategoryStepProps {
 }
 
 const CategoryStep = ({ onNext, onBack, selectedCategoryId }: CategoryStepProps) => {
-  // This step now uses the category tabs from CompactStyleSelector indirectly
+  const categories = getCategories();
+  
+  // Get category icons from data
+  const getCategoryIcon = (iconName?: string): React.ReactNode => {
+    switch(iconName) {
+      case 'ImageIcon': return <ImageIcon className="h-10 w-10" />;
+      case 'Paintbrush': return <Paintbrush className="h-10 w-10" />;
+      case 'Clock': return <Clock className="h-10 w-10" />;
+      case 'BoxIcon': return <BoxIcon className="h-10 w-10" />;
+      case 'Sparkles': return <Sparkles className="h-10 w-10" />;
+      default: return <Paintbrush className="h-10 w-10" />;
+    }
+  };
+  
   return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-8">Choose Category</h2>
-      <CompactStyleSelector
-        onSelectStyle={(style) => {
-          // Navigate directly to style step
-          onNext(style.category);
-        }}
-        initialCategory={selectedCategoryId}
-        maxHeight="400px"
-      />
+    <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-8">Choose a Category</h2>
       
-      <div className="flex justify-between w-full max-w-md mt-8">
+      {/* Categories Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+        {categories.map((category: Category) => (
+          <Card 
+            key={category.id}
+            className={`cursor-pointer transition-all hover:border-[#2A7B9B] hover:shadow-md ${
+              selectedCategoryId === category.id ? 'border-[#2A7B9B] bg-[#2A7B9B]/5' : ''
+            }`}
+            onClick={() => onNext(category.id)}
+          >
+            <CardContent className="p-6 flex flex-col items-center text-center">
+              <div className="mb-3 p-2 rounded-full">
+                {getCategoryIcon(category.icon)}
+              </div>
+              <h3 className="font-semibold text-lg mb-1">{category.name}</h3>
+              <p className="text-sm text-gray-500">{category.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      {/* Pagination dots */}
+      <div className="flex justify-center mt-4 space-x-1">
+        {categories.length > 3 && Array.from({ length: Math.ceil(categories.length / 3) }).map((_, i) => (
+          <div 
+            key={i} 
+            className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-[#2A7B9B]' : 'bg-gray-300'}`}
+          />
+        ))}
+      </div>
+      
+      <div className="flex justify-between w-full mt-8">
         <Button 
           variant="outline" 
           onClick={onBack}
         >
-          <ChevronLeft className="mr-2 h-4 w-4" /> Back
+          Back
         </Button>
+        <div className="text-sm text-gray-500 self-center">
+          Step 2 of 4
+        </div>
         <Button 
-          onClick={() => onNext(selectedCategoryId || '')} 
-          disabled={!selectedCategoryId}
+          onClick={() => onNext(selectedCategoryId || categories[0]?.id || '')} 
           className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white"
         >
-          Next <ChevronRight className="ml-2 h-4 w-4" />
+          Next
         </Button>
       </div>
     </div>
@@ -176,22 +232,80 @@ interface StyleStepProps {
 }
 
 const StyleStep = ({ onNext, onBack, categoryId, selectedStyleId }: StyleStepProps) => {
+  const styles = getStylesByCategory(categoryId);
+  const category = getCategory(categoryId);
+
   return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-8">Pick a Style</h2>
-      <CompactStyleSelector
-        onSelectStyle={onNext}
-        selectedStyleId={selectedStyleId}
-        initialCategory={categoryId}
-        maxHeight="400px"
-      />
+    <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-8">Pick Style</h2>
       
-      <div className="flex justify-between w-full max-w-md mt-8">
+      {/* Style grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+        {styles.map((style: Style) => (
+          <Card 
+            key={style.id}
+            className={`cursor-pointer transition-all hover:border-[#2A7B9B] hover:shadow-md overflow-hidden ${
+              selectedStyleId === style.id ? 'border-[#2A7B9B] bg-[#2A7B9B]/5' : ''
+            }`}
+            onClick={() => onNext(style)}
+          >
+            <div className="grid grid-cols-3">
+              {/* Image preview - takes up 1/3 of the card */}
+              <div className="aspect-square bg-gray-100">
+                {style.previewImage && (
+                  <img 
+                    src={style.previewImage}
+                    alt={style.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
+              
+              {/* Style details - takes up 2/3 of the card */}
+              <div className="col-span-2 p-4 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-semibold text-base">{style.name}</h3>
+                  <p className="text-sm text-gray-500 mt-1">{style.description}</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={`mt-2 w-full ${selectedStyleId === style.id ? 'bg-[#2A7B9B] text-white hover:bg-[#2A7B9B]/90' : ''}`}
+                >
+                  Select Style
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+      
+      {/* Pagination dots */}
+      <div className="flex justify-center mt-4 space-x-1">
+        {styles.length > 4 && Array.from({ length: Math.ceil(styles.length / 4) }).map((_, i) => (
+          <div 
+            key={i} 
+            className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-[#2A7B9B]' : 'bg-gray-300'}`}
+          />
+        ))}
+      </div>
+      
+      <div className="flex justify-between w-full mt-8">
         <Button 
           variant="outline" 
           onClick={onBack}
         >
-          <ChevronLeft className="mr-2 h-4 w-4" /> Back
+          Back
+        </Button>
+        <div className="text-sm text-gray-500 self-center">
+          Step 3 of 4
+        </div>
+        <Button 
+          onClick={() => selectedStyleId && onNext(styles.find((s: Style) => s.id === selectedStyleId) || styles[0])} 
+          className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white"
+          disabled={!selectedStyleId}
+        >
+          Next
         </Button>
       </div>
     </div>
