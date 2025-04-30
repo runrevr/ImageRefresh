@@ -1,7 +1,7 @@
 import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -12,6 +12,7 @@ import { Loader2, CreditCard } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useQuery } from "@tanstack/react-query";
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
@@ -84,6 +85,9 @@ const CreditPurchaseForm = () => {
       });
       setIsProcessing(false);
     } else {
+      // Invalidate the subscription query to force a refetch
+      queryClient.invalidateQueries(["/api/user/subscription"]);
+      
       toast({
         title: "Payment Successful",
         description: "Thank you for your purchase!",
@@ -121,6 +125,18 @@ export default function BuyCredits() {
   const [paidCredits, setPaidCredits] = useState(0);
   const [selectedPackage, setSelectedPackage] = useState<CreditPackage>(creditPackages[1]); // Default to the recommended package
   
+  // Fetch subscription status
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ["/api/user/subscription"],
+    queryFn: async () => {
+      if (!user) return null;
+      const res = await apiRequest("GET", "/api/user/subscription");
+      if (!res.ok) throw new Error("Failed to fetch subscription data");
+      return res.json();
+    },
+    enabled: !!user
+  });
+  
   useEffect(() => {
     if (user) {
       setFreeCredits(!user.freeCreditsUsed ? 1 : 0);
@@ -137,7 +153,7 @@ export default function BuyCredits() {
     // Create PaymentIntent for the selected package
     try {
       const response = await apiRequest("POST", "/api/create-payment-intent", { 
-        planType: "credit_purchase",
+        planType: "credit_purchase", // This will ensure webhook marks it as a credit purchase
         credits: selectedPkg.credits,
         amount: selectedPkg.price
       });
@@ -173,6 +189,53 @@ export default function BuyCredits() {
           <Button className="mt-4" onClick={() => window.location.href = "/auth"}>
             Log In or Sign Up
           </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+  
+  // Show loading spinner while subscription status is being checked
+  if (subscriptionLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+        <div className="container mx-auto py-10 px-4">
+          <div className="max-w-2xl mx-auto flex flex-col items-center justify-center py-12">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+            <p className="text-lg text-gray-600">Checking your subscription status...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+  
+  // If user doesn't have active subscription, redirect to pricing page
+  if (
+    subscriptionData && 
+    !subscriptionData.hasActiveSubscription && 
+    subscriptionData.subscriptionStatus !== 'active'
+  ) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+        <div className="container mx-auto py-10 px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6 text-center">
+              <h2 className="text-xl font-bold mb-2 text-amber-800">Subscription Required</h2>
+              <p className="text-amber-700 mb-4">
+                You need an active subscription to purchase additional credits. 
+                Please subscribe to one of our plans to unlock this feature.
+              </p>
+              <Button 
+                className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white" 
+                onClick={() => window.location.href = "/pricing"}
+              >
+                View Subscription Plans
+              </Button>
+            </div>
+          </div>
         </div>
         <Footer />
       </div>

@@ -22,6 +22,18 @@ export default function AccountPage() {
     }
   }, [user, authLoading, navigate]);
   
+  // Fetch subscription status
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ["/api/user/subscription"],
+    queryFn: async () => {
+      if (!user) return null;
+      const res = await apiRequest("GET", "/api/user/subscription");
+      if (!res.ok) throw new Error("Failed to fetch subscription data");
+      return res.json();
+    },
+    enabled: !!user
+  });
+  
   // Fetch user transformations
   const { data: transformations, isLoading: transformationsLoading } = useQuery<any[]>({
     queryKey: ["/api/transformations", user?.id],
@@ -177,20 +189,27 @@ export default function AccountPage() {
                   <div className="bg-gray-50 p-6 rounded-lg border">
                     <h3 className="text-xl font-bold mb-2 text-[#333333]">Available Credits</h3>
                     <p className="text-4xl font-bold">
-                      {user.paidCredits} <span className="text-gray-500 text-lg ml-1">credits</span>
+                      {subscriptionData?.credits || user.paidCredits || 0} <span className="text-gray-500 text-lg ml-1">credits</span>
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
-                      {user.freeCreditsUsed ? 
+                      {subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 
                         "You've used your free credit" : 
                         "You have 1 free credit available"}
                     </p>
+                    {subscriptionData?.subscriptionTier && subscriptionData?.subscriptionStatus === 'active' && (
+                      <div className="mt-2 pt-2 border-t border-gray-200">
+                        <p className="text-sm font-medium text-green-600">
+                          Active {subscriptionData.subscriptionTier === 'basic' ? 'Basic' : 'Premium'} Subscription
+                        </p>
+                      </div>
+                    )}
                   </div>
                   
                   <div>
                     <h3 className="text-lg font-medium mb-4">Get More Credits</h3>
                     
                     {/* Check if user has an active subscription */}
-                    {user.subscriptionStatus === 'active' ? (
+                    {(subscriptionData?.hasActiveSubscription || subscriptionData?.subscriptionStatus === 'active') ? (
                       <>
                         <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <p className="font-medium text-green-800">
