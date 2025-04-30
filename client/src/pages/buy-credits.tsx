@@ -172,6 +172,8 @@ export default function BuyCredits() {
       
       const data = await response.json();
       setClientSecret(data.clientSecret);
+      // Clear any previous errors
+      setPaymentError(null);
     } catch (error: any) {
       console.error("Error creating payment intent:", error);
       setPaymentError(error.message || "There was a problem setting up your payment. Please try again.");
@@ -192,6 +194,12 @@ export default function BuyCredits() {
 
   const handlePackageChange = (packageId: string) => {
     createPaymentIntent(packageId);
+  };
+
+  // Handler for retry after error
+  const handleRetry = () => {
+    setPaymentError(null);
+    createPaymentIntent(selectedPackage.id);
   };
 
   if (!user) {
@@ -255,12 +263,6 @@ export default function BuyCredits() {
       </div>
     );
   }
-
-  // Handler for retry after error
-  const handleRetry = () => {
-    setPaymentError(null);
-    createPaymentIntent(selectedPackage.id);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
