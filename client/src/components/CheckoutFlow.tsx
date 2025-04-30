@@ -247,16 +247,6 @@ const StyleStep = ({ onNext, onBack, categoryId, selectedStyleId }: StyleStepPro
       
       <h2 className="text-2xl font-bold mb-6">Select a Style</h2>
       
-      {/* Preview area with text prompt */}
-      <div className="w-full mb-8 border rounded-md p-6 bg-gray-50">
-        <div className="flex flex-col items-center justify-center text-gray-400">
-          <ImageIcon className="h-16 w-16 mb-2" />
-          <p className="text-center text-gray-500">
-            Select a style below<br />to preview
-          </p>
-        </div>
-      </div>
-      
       {/* Style grid - 3 columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
         {styles.map((style: Style) => (
