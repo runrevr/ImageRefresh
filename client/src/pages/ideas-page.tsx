@@ -108,8 +108,14 @@ const StyleCard = ({
       </div>
 
       <CardHeader className="p-3 pb-1">
-        <CardTitle className="text-base font-bold text-[#333333]">{style.name}</CardTitle>
-        <CardDescription className="text-xs">{style.description}</CardDescription>
+        <CardTitle className="text-lg font-bold text-center mb-2">
+          {style.name.split(' ').map((word, index) => (
+            <span key={index} className={index % 2 === 0 ? "text-[#2A7B9B]" : "text-[#FF7B54]"}>
+              {index > 0 ? ' ' : ''}{word}
+            </span>
+          ))}
+        </CardTitle>
+        <CardDescription className="text-xs text-gray-600">{style.description}</CardDescription>
       </CardHeader>
 
       <CardFooter className="flex justify-center p-3">
@@ -178,9 +184,9 @@ export default function IdeasPage() {
               </>
             ) : (
               <>
-                <span className="text-[#ff7b54]">Trans</span>
+                <span className="text-[#2A7B9B]">Trans</span>
                 <span className="text-[#FF7B54]">formation</span>
-                <span className="text-[#ff7b54]"> Id</span>
+                <span className="text-[#2A7B9B]"> Id</span>
                 <span className="text-[#FF7B54]">eas</span>
               </>
             )}
