@@ -137,10 +137,15 @@ export default function BuyCredits() {
     // Create PaymentIntent for the selected package
     try {
       const response = await apiRequest("POST", "/api/create-payment-intent", { 
-        type: "credit_purchase",
+        planType: "credit_purchase",
         credits: selectedPkg.credits,
         amount: selectedPkg.price
       });
+      
+      if (!response.ok) {
+        throw new Error("Failed to create payment intent");
+      }
+      
       const data = await response.json();
       setClientSecret(data.clientSecret);
     } catch (error) {

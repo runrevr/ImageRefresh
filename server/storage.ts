@@ -9,6 +9,13 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUserCredits(id: number, usedFreeCredit: boolean, paidCredits?: number): Promise<User>;
   updateUserEmail(id: number, email: string): Promise<User>;
+  updateUserSubscription(
+    id: number, 
+    subscriptionTier: string | null, 
+    subscriptionStatus: string | null, 
+    stripeCustomerId?: string | null, 
+    stripeSubscriptionId?: string | null
+  ): Promise<User>;
   
   // Transformation operations
   createTransformation(transformation: InsertTransformation): Promise<Transformation>;
