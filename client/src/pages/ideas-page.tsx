@@ -178,9 +178,9 @@ export default function IdeasPage() {
               </>
             ) : (
               <>
-                <span className="text-[#2A7B9B]">Trans</span>
+                <span className="text-[#ff7b54]">Trans</span>
                 <span className="text-[#FF7B54]">formation</span>
-                <span className="text-[#2A7B9B]"> Id</span>
+                <span className="text-[#ff7b54]"> Id</span>
                 <span className="text-[#FF7B54]">eas</span>
               </>
             )}
