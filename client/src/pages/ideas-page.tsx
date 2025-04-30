@@ -67,33 +67,22 @@ const StyleCard = ({
   style: Style; 
   onSelect: (style: Style) => void;
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <Card 
       className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full h-48 overflow-hidden">
         <img 
-          src={isHovered ? style.previewImage : (style.beforeImage || style.previewImage)} 
-          alt={isHovered ? "Transformed image" : "Original image"}
-          className="w-full h-full object-cover transition-opacity duration-300"
+          src={style.previewImage}
+          alt={style.name}
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
           <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
             <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
-              {isHovered ? "After" : "Before"}
+              View Style
             </p>
           </div>
-          {isHovered && (
-            <img 
-              src="/mario.png" 
-              alt="Mario background"
-              className="absolute inset-0 w-full h-full object-cover z-[-1]"
-            />
-          )}
         </div>
         
         {/* Tags */}
