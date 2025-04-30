@@ -114,6 +114,9 @@ export default function Home() {
   // Check for saved style from Ideas page
   const [savedStyle, setSavedStyle] = useState<{ prompt: string; title: string; category: string } | null>(null);
   
+  // Flag to trigger auto-submission after uploading image with a selected style
+  const [autoSubmitStyle, setAutoSubmitStyle] = useState<boolean>(false);
+  
   // When a user uploads an image, check if they previously selected a style from the Ideas page
   const handleUpload = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);

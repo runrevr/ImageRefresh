@@ -1036,6 +1036,18 @@ export default function PromptInput({
               </div>
             )}
 
+            {/* Display preselected style from Ideas page */}
+            {savedStyle && (
+              <div className="mb-4 p-3 bg-[#2A7B9B]/10 border border-[#2A7B9B]/30 rounded-md">
+                <div className="flex items-center">
+                  <Wand2 className="h-5 w-5 mr-2 text-[#2A7B9B]" />
+                  <span className="font-medium text-[#2A7B9B]">
+                    Using "{savedStyle.title}" style from {savedStyle.category}
+                  </span>
+                </div>
+              </div>
+            )}
+            
             {/* Description of selected style */}
             {(cartoonSubcategory ||
               productSubcategory ||
