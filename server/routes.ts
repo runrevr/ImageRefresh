@@ -602,6 +602,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user subscription status
+  app.get("/api/user/subscription", async (req, res) => {
+    try {
+      // Check if the user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return subscription information
+      res.json({
+        userId: user.id,
+        hasActiveSubscription: user.subscriptionStatus === 'active',
+        subscriptionTier: user.subscriptionTier,
+        subscriptionStatus: user.subscriptionStatus,
+        credits: user.paidCredits,
+        freeCreditsUsed: user.freeCreditsUsed
+      });
+    } catch (error: any) {
+      console.error("Error fetching subscription status:", error);
+      res.status(500).json({ message: "Error fetching subscription status" });
+    }
+  });
+
   // Get transformation history
   app.get("/api/transformations/:userId", async (req, res) => {
     try {
