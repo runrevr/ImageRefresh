@@ -77,13 +77,6 @@ const StyleCard = ({
           alt={style.name}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-          <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-            <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
-              View Style
-            </p>
-          </div>
-        </div>
         
         {/* Tags */}
         <div className="absolute top-2 right-2 flex gap-1">
