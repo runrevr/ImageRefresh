@@ -81,10 +81,27 @@ const StyleCard = ({
           alt={isHovered ? "Transformed image" : "Original image"}
           className="w-full h-full object-cover transition-opacity duration-300"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-          <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
-            {isHovered ? "After" : "Before"}
-          </p>
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+          {isHovered ? (
+            <div className="absolute inset-0 w-full h-full">
+              <img 
+                src="/mario.png" 
+                alt="Mario background" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
+                  After
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+              <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
+                Before
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Tags */}
