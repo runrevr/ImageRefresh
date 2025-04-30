@@ -135,11 +135,18 @@ export default function Home() {
         
         // Clear the saved style to avoid reapplying it
         clearSavedStyle();
+        
+        // Since we have a preset style, we can automatically submit the transformation
+        // with a small delay to allow the user to see the toast notification
+        setCurrentStep(Step.Prompt);
+        setTimeout(() => {
+          handlePromptSubmit(style.prompt);
+        }, 1500);
+        return;
       }
     }
     
-    // Always go to the prompt step regardless of preset selection
-    // This allows users to customize prompts for preset transformations
+    // If no saved style, just go to the prompt step
     setCurrentStep(Step.Prompt);
   };
 
