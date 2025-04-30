@@ -51,7 +51,7 @@ const CategoryCard = ({
         {IconComponent}
         <h3 className="text-lg font-bold mb-2">{category.name}</h3>
         <p className="text-sm text-gray-500 mb-3">{category.description}</p>
-        <div className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+        <div className="text-xs bg-[#2A7B9B]/10 text-[#2A7B9B] font-medium px-2 py-1 rounded-full">
           {styleCount} style{styleCount !== 1 ? 's' : ''}
         </div>
       </CardContent>
