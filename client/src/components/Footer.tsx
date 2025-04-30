@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Wand2 className="h-6 w-6 text-white" />
-              <span className="font-bold text-xl text-white">ImageMixer</span>
+              <span className="font-bold text-xl text-white">Imagerefresh.com</span>
             </div>
             <p className="text-gray-400 mb-4">
               Transform your photos with the power of AI. 
@@ -32,18 +32,15 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-400 hover:text-white transition">AI Image Editing</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white transition">Style Transfer</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Background Replacement</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Commercial Usage</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition">Transformation Ideas</a></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-bold text-white mb-4">Resources</h3>
+            <h3 className="font-bold text-white mb-4">Pricing</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Prompt Guide</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Blog</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Tutorials</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">API Documentation</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition">Pricing & Credits</a></li>
+
             </ul>
           </div>
           
@@ -52,14 +49,12 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-400 hover:text-white transition">About Us</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white transition">Contact</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Terms of Service</a></li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} ImageMixer. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} ImageRefresh.com. All rights reserved.</p>
         </div>
       </div>
     </footer>
