@@ -287,47 +287,80 @@
       "icon": "Sparkles",
       "styles": [
         {
-          "id": "baby-prediction",
-          "name": "What Will Our Baby Look Like",
-          "description": "Envision how a future baby might look based on the people in the image",
-          "category": "special",
-          "prompt": "Create a realistic baby portrait that combines facial features from the people in this image. Blend key genetic traits such as eye shape, nose structure, mouth, and general face shape. The baby should appear between 6-12 months old with soft, natural baby skin, realistic baby proportions, and age-appropriate baby details. Set against a soft, neutral nursery-appropriate background with gentle, flattering lighting. The image should look natural and realistic, not cartoon-like, with accurate skin tones that reflect a blend of the source individuals. Create a single, central baby - not twins or multiple options. The final result should be a heartwarming, plausible visualization of what a baby from these individuals might look like, with proper baby features and proportions.",
-          "previewImage": "/examples/transformed-baby-prediction.png",
-          "beforeImage": "/examples/example-couple.png",
+          "id": "super-mario-kids",
+          "name": "Super Mario Bros",
+          "description": "Transform into the colorful, blocky style of the Super Mario universe",
+          "category": "kids",
+          "prompt": "Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small pixel-style adventurer character (boy or girl) with a playful, confident, or determined expression, sitting or standing on a brown brick platform, holding a glowing orb. For a boy, the character should have a more rugged and adventurous look, with a bold, structured design — like a simple but strong chest emblem and energetic pose. For a girl, the character should have a playful, whimsical design — a floral-inspired chest emblem or softer, rounded features with a joyful expression and fluid motion in the pose. The character should wear a bright green shirt and blue pants. The scene features a bright solid blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above. The overall style should feel cheerful, energetic, bright, and nostalgic, capturing the playful, lively atmosphere of classic side-scrolling adventure games. The character should have a playful attitude, but do not copy real-world facial features or likenesses.",
+          "previewImage": "/examples/transformed-pixel-art.png",
+          "beforeImage": "/examples/example-boy.png",
           "featured": true,
-          "tags": ["family", "prediction", "baby"]
+          "tags": ["video game", "pixel", "retro"]
         },
         {
-          "id": "ghibli-style",
-          "name": "Studio Ghibli",
-          "description": "Transform photos into the distinctive anime style of Studio Ghibli films",
-          "category": "special",
-          "prompt": "Transform this uploaded image into the distinctive Studio Ghibli animation style while preserving the subject's essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio's signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject's core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world.",
-          "previewImage": "/examples/transformed-ghibli.png",
+          "id": "minecraft-kids",
+          "name": "Minecraft",
+          "description": "Convert to the iconic blocky, pixel style of Minecraft",
+          "category": "kids",
+          "prompt": "Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game's distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft's procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.",
+          "previewImage": "/examples/transformed-minecraft.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["video game", "pixel", "blocks"]
+        },
+        {
+          "id": "pixar-kids",
+          "name": "Pixar",
+          "description": "Stylize in the smooth, expressive 3D animation style of Pixar films",
+          "category": "kids",
+          "prompt": "Transform into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.",
+          "previewImage": "/examples/transformed-pixar.png",
           "beforeImage": "/examples/example-portrait.png",
           "popular": true,
-          "tags": ["anime", "japanese", "miyazaki"]
+          "tags": ["3D", "animation", "family"]
         },
         {
-          "id": "pet-as-human",
-          "name": "Pet as Human",
-          "description": "Reimagine your pet as a human while maintaining their key characteristics",
-          "category": "special",
-          "prompt": "Transform this pet into a human character while maintaining its distinctive personality, key color patterns, and characteristic features. Create a fully human body and face, but incorporate subtle references to the pet's distinctive markings, coloration, and physical traits. Match the human's expression and pose to reflect the pet's typical demeanor and attitude. Dress the human character in clothing that complements the pet's color scheme and suggests their personality. The setting should be a realistic human environment that relates to the pet's usual environment or interests. The final image should be a creative 'if your pet were human' portrait that friends would recognize as being inspired by this specific pet, capturing its essence and personality in human form.",
-          "previewImage": "/examples/transformed-pet-human.png",
-          "beforeImage": "/examples/example-pet.png",
-          "new": true,
-          "tags": ["animals", "anthropomorphic", "creative"]
+          "id": "trolls-kids",
+          "name": "Trolls",
+          "description": "Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments",
+          "category": "kids",
+          "prompt": "Use the uploaded image only as inspiration for the mood and attitude of a whimsical fantasy hero character. Create a colorful cartoon-style character with a playful, lively, and adventurous spirit. Design the character with wild, gravity-defying neon or pastel-colored hair shaped like a crown, and textured clothing inspired by forest leaves, vines, and magical plants. Set the scene in a vivid, high-contrast fantasy world filled with oversized flowers, sparkling waterfalls, candy-colored forests, and rhythmic, musical patterns. The character can have a joyful smile or a determined expression, depending on the mood. Add glowing, magical accents around the character to enhance the fantasy feel. All elements should be original, imaginative, and inspired by classic musical fairy-tale traditions. Do not copy real-world facial features or likeness from the uploaded image.",
+          "previewImage": "/examples/transformed-trolls.png",
+          "beforeImage": "/examples/example-child.png",
+          "featured": true,
+          "tags": ["colorful", "fantasy", "musical"]
         },
         {
-          "id": "self-as-cat",
-          "name": "Human as Cat",
-          "description": "See yourself as a cute cat while maintaining your key features",
-          "category": "special",
-          "prompt": "Transform this human into an adorable cat while preserving distinctive personality traits and characteristics. Create a completely feline body and face, but incorporate subtle references to the human's distinctive features like hair color/style, eye color, and any notable accessories. Match the cat's expression and pose to the human's typical demeanor and attitude. Place the cat character in an environment that relates to the human's interests or usual settings, but adapted for a feline inhabitant. The result should be a charming 'if this person were a cat' portrait that captures the essence and personality of the human subject in feline form. The cat should be realistic in anatomy but with slightly stylized, appealing features that make it endearing and photogenic.",
-          "previewImage": "/examples/transformed-human-cat.png",
-          "beforeImage": "/examples/example-portrait.png",
-          "tags": ["animals", "cute", "feline"]
+          "id": "princess-kids",
+          "name": "Princess",
+          "description": "Create a fairytale princess style with magical elements",
+          "category": "kids",
+          "prompt": "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
+          "previewImage": "/examples/transformed-princess.png",
+          "beforeImage": "/examples/example-child.png",
+          "tags": ["disney", "fairytale", "fantasy"]
+        },
+        {
+          "id": "superhero-kids",
+          "name": "Superhero",
+          "description": "Convert to a dynamic comic book superhero style",
+          "category": "kids",
+          "prompt": "Create a colorful 2D cartoon-style illustration of a cheerful young superhero [boy or girl] standing proudly with hands on hips or seated confidently on a platform holding a glowing energy orb. The character should have playful, stylized hair, bright expressive eyes, and either a big happy smile or a serious, determined expression. Dress the superhero in a vibrant costume with a bold chest emblem, colorful gloves, boots, and a flowing cape. Set the background as either a bright, whimsical outdoor scene with green bushes, trees, and a winding path under a clear blue sky, or a lively urban cartoon cityscape with tall colorful buildings and fluffy clouds. Add soft glowing effects around the hands, orb, or emblem to suggest magical powers. The overall style should be animated, playful, bold, and perfect for a children's cartoon series. Use any uploaded images only for inspiration for pose and action, without copying real facial features or likeness.",
+          "previewImage": "/examples/transformed-superhero.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["comic book", "action", "powers"]
+        },
+        {
+          "id": "lego-kids",
+          "name": "Lego",
+          "description": "Reconstruct in the distinctive blocky Lego brick style",
+          "category": "kids",
+          "prompt": "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
+          "previewImage": "/examples/transformed-lego.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["toy", "blocks", "construction"]
         }
       ]
     }
