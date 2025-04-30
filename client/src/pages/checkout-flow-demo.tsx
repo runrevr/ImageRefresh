@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import CheckoutFlow from "@/components/CheckoutFlow";
-import { Style } from "../../shared/data.utils";
+import { type Style } from "@shared/data.utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";

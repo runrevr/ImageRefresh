@@ -234,48 +234,62 @@ interface StyleStepProps {
 const StyleStep = ({ onNext, onBack, categoryId, selectedStyleId }: StyleStepProps) => {
   const styles = getStylesByCategory(categoryId);
   const category = getCategory(categoryId);
+  const [localSelectedId, setLocalSelectedId] = useState<string | undefined>(selectedStyleId);
 
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-8">Pick Style</h2>
+      <h2 className="text-2xl font-bold mb-8">Select a Style</h2>
       
-      {/* Style grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+      {/* Large preview image for selected style */}
+      <div className="w-full max-w-sm mb-8 mx-auto">
+        <Card className="overflow-hidden">
+          <div className="aspect-[16/9] bg-gray-100 flex items-center justify-center">
+            {localSelectedId ? (
+              <img 
+                src={styles.find((s: Style) => s.id === localSelectedId)?.previewImage || ''}
+                alt="Selected style preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex flex-col items-center text-gray-400">
+                <ImageIcon className="h-16 w-16 mb-2" />
+                <p className="text-sm text-center">Select a style below<br />to preview</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+      
+      {/* Style grid - 3x3 compact grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
         {styles.map((style: Style) => (
           <Card 
             key={style.id}
-            className={`cursor-pointer transition-all hover:border-[#2A7B9B] hover:shadow-md overflow-hidden ${
-              selectedStyleId === style.id ? 'border-[#2A7B9B] bg-[#2A7B9B]/5' : ''
+            className={`cursor-pointer transition-all hover:border-[#2A7B9B] hover:shadow-md ${
+              localSelectedId === style.id ? 'border-[#2A7B9B] bg-[#2A7B9B]/5' : ''
             }`}
-            onClick={() => onNext(style)}
+            onClick={() => setLocalSelectedId(style.id)}
           >
-            <div className="grid grid-cols-3">
-              {/* Image preview - takes up 1/3 of the card */}
-              <div className="aspect-square bg-gray-100">
-                {style.previewImage && (
-                  <img 
-                    src={style.previewImage}
-                    alt={style.name}
-                    className="w-full h-full object-cover"
-                  />
-                )}
+            <CardContent className="p-4">
+              <div className="flex items-center mb-2">
+                {/* Small thumbnail */}
+                <div className="w-12 h-12 bg-gray-100 rounded mr-3 flex-shrink-0 overflow-hidden">
+                  {style.previewImage && (
+                    <img 
+                      src={style.previewImage}
+                      alt={style.name}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+                
+                {/* Style name */}
+                <h3 className="font-semibold text-base">{style.name}</h3>
               </div>
               
-              {/* Style details - takes up 2/3 of the card */}
-              <div className="col-span-2 p-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-semibold text-base">{style.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{style.description}</p>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className={`mt-2 w-full ${selectedStyleId === style.id ? 'bg-[#2A7B9B] text-white hover:bg-[#2A7B9B]/90' : ''}`}
-                >
-                  Select Style
-                </Button>
-              </div>
-            </div>
+              {/* Style description */}
+              <p className="text-xs text-gray-500 line-clamp-2">{style.description}</p>
+            </CardContent>
           </Card>
         ))}
       </div>
@@ -301,9 +315,14 @@ const StyleStep = ({ onNext, onBack, categoryId, selectedStyleId }: StyleStepPro
           Step 3 of 4
         </div>
         <Button 
-          onClick={() => selectedStyleId && onNext(styles.find((s: Style) => s.id === selectedStyleId) || styles[0])} 
+          onClick={() => {
+            if (localSelectedId) {
+              const style = styles.find((s: Style) => s.id === localSelectedId);
+              if (style) onNext(style);
+            }
+          }} 
           className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white"
-          disabled={!selectedStyleId}
+          disabled={!localSelectedId}
         >
           Next
         </Button>
