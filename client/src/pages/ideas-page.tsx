@@ -219,17 +219,31 @@ export default function IdeasPage() {
           </div>
         )}
 
-        {/* Styles Grid */}
+        {/* Styles Section Heading */}
         {selectedCategory && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {styles.map((style) => (
-              <StyleCard
-                key={style.id}
-                style={style}
-                onSelect={saveStylePrompt}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-3">
+                <span className="text-[#2A7B9B]">Popular </span>
+                <span className="text-[#FF7B54]">{currentCategory?.name} </span>
+                <span className="text-[#2A7B9B]">Styles</span>
+              </h2>
+              <p className="text-gray-600">
+                Select any style below to transform your images with this look.
+              </p>
+            </div>
+            
+            {/* Styles Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {styles.map((style) => (
+                <StyleCard
+                  key={style.id}
+                  style={style}
+                  onSelect={saveStylePrompt}
+                />
+              ))}
+            </div>
+          </>
         )}
         
         {/* Empty state if no styles are found */}
