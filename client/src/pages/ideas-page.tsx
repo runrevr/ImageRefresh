@@ -167,8 +167,23 @@ export default function IdeasPage() {
     <Layout>
       <div className="max-w-screen-xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-[#2A7B9B] to-[#A3E4D7] inline-block text-transparent bg-clip-text">
-            {selectedCategory ? currentCategory?.name || 'Transformation Styles' : 'Transformation Ideas'}
+          <h1 className="text-3xl font-bold mb-3">
+            {selectedCategory ? (
+              <>
+                {currentCategory?.name.split(' ').map((word, index) => (
+                  <span key={index} className={index % 2 === 0 ? "text-[#2A7B9B]" : "text-[#FF7B54]"}>
+                    {index > 0 ? ' ' : ''}{word}
+                  </span>
+                )) || 'Transformation Styles'}
+              </>
+            ) : (
+              <>
+                <span className="text-[#2A7B9B]">Trans</span>
+                <span className="text-[#FF7B54]">formation</span>
+                <span className="text-[#2A7B9B]"> Id</span>
+                <span className="text-[#FF7B54]">eas</span>
+              </>
+            )}
           </h1>
           <p className="text-base text-gray-700 max-w-2xl mx-auto">
             {selectedCategory 
