@@ -916,6 +916,7 @@ style, environment, lighting, and background rather than changing the main subje
           if (paymentIntent.metadata.userId && paymentIntent.metadata.credits) {
             const userId = parseInt(paymentIntent.metadata.userId);
             const creditsToAdd = parseInt(paymentIntent.metadata.credits);
+            const planType = paymentIntent.metadata.planType;
 
             const user = await storage.getUser(userId);
             if (user) {
@@ -925,6 +926,22 @@ style, environment, lighting, and background rather than changing the main subje
                 user.freeCreditsUsed,
                 (user.paidCredits || 0) + creditsToAdd,
               );
+              
+              // If this is a subscription payment, update the subscription status
+              if (planType === 'basic' || planType === 'pro') {
+                // This is a subscription purchase
+                const tier = planType === 'basic' ? 'basic' : 'premium';
+                await storage.updateUserSubscription(
+                  userId,
+                  tier,
+                  'active'
+                );
+                console.log(`Updated user ${userId} subscription status to active (${tier})`);
+              } else if (planType === 'credit_purchase') {
+                // This is a one-time credit purchase, don't change subscription status
+                console.log(`Processed one-time credit purchase for user ${userId}`);
+              }
+              
               console.log(
                 `Updated user ${userId} with ${creditsToAdd} additional credits`,
               );

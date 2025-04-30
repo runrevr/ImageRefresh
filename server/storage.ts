@@ -77,6 +77,40 @@ export class DatabaseStorage implements IStorage {
 
     return updatedUser;
   }
+  
+  async updateUserSubscription(
+    id: number, 
+    subscriptionTier: string | null, 
+    subscriptionStatus: string | null, 
+    stripeCustomerId?: string | null, 
+    stripeSubscriptionId?: string | null
+  ): Promise<User> {
+    const user = await this.getUser(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const updateData: any = {
+      subscriptionTier,
+      subscriptionStatus
+    };
+    
+    if (stripeCustomerId !== undefined) {
+      updateData.stripeCustomerId = stripeCustomerId;
+    }
+    
+    if (stripeSubscriptionId !== undefined) {
+      updateData.stripeSubscriptionId = stripeSubscriptionId;
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
+
+    return updatedUser;
+  }
 
   // Transformation operations
   async createTransformation(insertTransformation: InsertTransformation): Promise<Transformation> {
@@ -165,7 +199,8 @@ async function initializeDatabase() {
       // Create default user
       await storage.createUser({
         username: defaultUsername,
-        password: "password"
+        password: "password",
+        email: "demo@example.com"
       });
       console.log("Created default user 'demo' for development");
     }
