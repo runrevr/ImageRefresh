@@ -16,11 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 
-interface AuthPageProps {
-  initialTab?: "login" | "register";
-}
-
-export default function AuthPage({ initialTab: propsInitialTab }: AuthPageProps) {
+export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, navigate] = useLocation();
   const [, params] = useRoute("/auth?tab=:tab");
