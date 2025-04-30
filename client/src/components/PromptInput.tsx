@@ -341,7 +341,7 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
     description: "Rugged frontier aesthetic with sepia tones (1860-1890)",
     placeholder: "E.g., Add cowboy hat or sheriff badge",
     suggestedPrompt:
-      "Transform the image into an authentic Old Western portrait from the American frontier era (1860-1890). Apply a sepia-toned photographic effect, capturing the vintage feel with faded edges and subtle aging marks typical of early photography. Outfit the subject in period-appropriate Western attire: cowboy hats, vests, bandanas, and prairie dresses. Integrate iconic frontier props such as revolvers, pocket watches, saddles, or rustic tools, as well as weathered wooden backgrounds, saloon interiors, or dusty Main Street scenes. Use soft yet directional lighting to mimic the feel of early photographic portraits, emphasizing rugged textures, and authenticity. This final portrait should evoke the spirit of the American frontier—gritty, determined, and grounded in historical accuracy.",
+      "Captured in sepia tones, this late 19th-century portrait depicts a strong, determined woman from the American Old West, standing confidently in front of a weathered wooden wall. She wears a classic cowboy hat that casts shadows over her focused gaze, along with a bandana and a holstered revolver. Her rugged attire includes a vest, pants, and boots, all in period-appropriate Western style. The photograph’s timeworn quality is accentuated by soft lighting and subtle textural imperfections, reflecting the grit and spirit of the frontier.",
   },
   "90s-hip-hop": {
     title: "90's Hip-Hop",
