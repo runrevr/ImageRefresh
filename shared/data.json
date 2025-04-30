@@ -292,7 +292,7 @@
           "description": "Transform into the colorful, blocky style of the Super Mario universe",
           "category": "kids",
           "prompt": "Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small pixel-style adventurer character (boy or girl) with a playful, confident, or determined expression, sitting or standing on a brown brick platform, holding a glowing orb. For a boy, the character should have a more rugged and adventurous look, with a bold, structured design — like a simple but strong chest emblem and energetic pose. For a girl, the character should have a playful, whimsical design — a floral-inspired chest emblem or softer, rounded features with a joyful expression and fluid motion in the pose. The character should wear a bright green shirt and blue pants. The scene features a bright solid blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above. The overall style should feel cheerful, energetic, bright, and nostalgic, capturing the playful, lively atmosphere of classic side-scrolling adventure games. The character should have a playful attitude, but do not copy real-world facial features or likenesses.",
-          "previewImage": "mario.png",
+          "previewImage": "/mario.png",
           "beforeImage": "/examples/example-boy.png",
           "featured": true,
           "tags": ["video game", "pixel", "retro"]
@@ -303,7 +303,7 @@
           "description": "Convert to the iconic blocky, pixel style of Minecraft",
           "category": "kids",
           "prompt": "Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game's distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft's procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.",
-          "previewImage": "minecraft-character.png",
+          "previewImage": "/minecraft-character.png",
           "beforeImage": "/examples/example-child.png",
           "popular": true,
           "tags": ["video game", "pixel", "blocks"]
@@ -357,7 +357,7 @@
           "description": "Reconstruct in the distinctive blocky Lego brick style",
           "category": "kids",
           "prompt": "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
-          "previewImage": "lego-character.png",
+          "previewImage": "/lego-character.png",
           "beforeImage": "/examples/example-child.png",
           "popular": true,
           "tags": ["toy", "blocks", "construction"]
