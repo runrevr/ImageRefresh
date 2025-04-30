@@ -85,14 +85,19 @@ const CreditPurchaseForm = () => {
       });
       setIsProcessing(false);
     } else {
-      // Invalidate the subscription query to force a refetch
-      queryClient.invalidateQueries(["/api/user/subscription"]);
+      // Invalidate queries to force a refetch of data
+      queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       
       toast({
         title: "Payment Successful",
-        description: "Thank you for your purchase!",
+        description: "Thank you for your purchase! Your credits will be added to your account shortly.",
       });
-      navigate("/account?tab=credits");
+      
+      // Redirect to account page with credits tab selected
+      setTimeout(() => {
+        navigate("/account?tab=credits");
+      }, 500);
     }
   }
 
@@ -124,6 +129,8 @@ export default function BuyCredits() {
   const [freeCredits, setFreeCredits] = useState(0);
   const [paidCredits, setPaidCredits] = useState(0);
   const [selectedPackage, setSelectedPackage] = useState<CreditPackage>(creditPackages[1]); // Default to the recommended package
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Fetch subscription status
   const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
@@ -159,13 +166,20 @@ export default function BuyCredits() {
       });
       
       if (!response.ok) {
-        throw new Error("Failed to create payment intent");
+        const errorData = await response.json().catch(() => ({ message: "Unknown error" }));
+        throw new Error(errorData.message || "Failed to create payment intent");
       }
       
       const data = await response.json();
       setClientSecret(data.clientSecret);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating payment intent:", error);
+      setPaymentError(error.message || "There was a problem setting up your payment. Please try again.");
+      toast({
+        title: "Payment Setup Failed",
+        description: error.message || "There was a problem setting up your payment. Please try again.",
+        variant: "destructive",
+      });
     }
   };
   
@@ -242,12 +256,42 @@ export default function BuyCredits() {
     );
   }
 
+  // Handler for retry after error
+  const handleRetry = () => {
+    setPaymentError(null);
+    createPaymentIntent(selectedPackage.id);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
       <div className="container mx-auto py-10 px-4">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-2xl font-bold mb-6">Purchase Additional Credits</h1>
+          
+          {/* Show error message if payment setup failed */}
+          {paymentError && (
+            <div className="mb-6">
+              <Card className="border-red-200 bg-red-50">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center text-center p-4">
+                    <div className="rounded-full bg-red-100 p-3 mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-600"><path d="M10 16l2-2m2-2l-2 2m-2-2l2 2M4 8l2.1 2.8A3 3 0 0 1 9 14.1l5.5-5.5a3 3 0 0 1 4.2 0L20 10"></path><path d="M21 15v4a1 1 0 0 1-1 1h-4"></path><path d="M19 10V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v4"></path></svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Payment Setup Failed</h3>
+                    <p className="text-red-700 mb-4">{paymentError}</p>
+                    <Button 
+                      variant="outline" 
+                      onClick={handleRetry}
+                      className="border-red-300 text-red-700 hover:bg-red-50"
+                    >
+                      Try Again
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
           
           <Card className="mb-6">
             <CardHeader>
