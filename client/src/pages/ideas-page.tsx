@@ -5,136 +5,233 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
-// Import Mascots
-import logoImage from "@assets/Imagerefresh Logo.png";
+// Import icons
+import {
+  ImageIcon,
+  Paintbrush,
+  Clock,
+  BoxIcon,
+  Sparkles,
+  ChevronLeft,
+} from "lucide-react";
 
-// Define a type for the idea card
-interface IdeaCard {
-  id: string;
-  title: string;
-  category: string;
-  prompt: string;
-  description: string;
-  originalImage: string;
-  transformedImage: string;
-}
+// Import data utilities
+import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
+
+// Component for displaying a category card
+const CategoryCard = ({ 
+  category, 
+  onClick 
+}: { 
+  category: Category; 
+  onClick: (categoryId: string) => void;
+}) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    ImageIcon: <ImageIcon className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
+    Paintbrush: <Paintbrush className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
+    Clock: <Clock className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
+    BoxIcon: <BoxIcon className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
+    Sparkles: <Sparkles className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
+  };
+
+  // Count styles in this category
+  const styleCount = category.styles.length;
+  
+  // Get the icon component or default to ImageIcon
+  const IconComponent = category.icon && iconMap[category.icon] 
+    ? iconMap[category.icon]
+    : <ImageIcon className="h-12 w-12 mb-2 text-[#2A7B9B]" />;
+
+  return (
+    <Card 
+      className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] cursor-pointer"
+      onClick={() => onClick(category.id)}
+    >
+      <CardContent className="flex flex-col items-center justify-center p-6 text-center h-full">
+        {IconComponent}
+        <h3 className="text-lg font-bold mb-2">{category.name}</h3>
+        <p className="text-sm text-gray-500 mb-3">{category.description}</p>
+        <div className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+          {styleCount} style{styleCount !== 1 ? 's' : ''}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Component for displaying a style card
+const StyleCard = ({ 
+  style, 
+  onSelect 
+}: { 
+  style: Style; 
+  onSelect: (style: Style) => void;
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <Card 
+      className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative w-full h-48 overflow-hidden">
+        <img 
+          src={isHovered ? style.previewImage : (style.beforeImage || style.previewImage)} 
+          alt={isHovered ? "Transformed image" : "Original image"}
+          className="w-full h-full object-cover transition-opacity duration-300"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+          <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
+            {isHovered ? "After" : "Before"}
+          </p>
+        </div>
+        
+        {/* Tags */}
+        <div className="absolute top-2 right-2 flex gap-1">
+          {style.featured && (
+            <span className="bg-[#FF7B54] text-white px-2 py-1 rounded text-xs font-medium">
+              Featured
+            </span>
+          )}
+          {style.new && (
+            <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
+              New
+            </span>
+          )}
+          {style.popular && (
+            <span className="bg-purple-500 text-white px-2 py-1 rounded text-xs font-medium">
+              Popular
+            </span>
+          )}
+        </div>
+      </div>
+
+      <CardHeader className="p-3 pb-1">
+        <CardTitle className="text-base font-bold text-[#333333]">{style.name}</CardTitle>
+        <CardDescription className="text-xs">{style.description}</CardDescription>
+      </CardHeader>
+
+      <CardFooter className="flex justify-center p-3">
+        <Link href="/?showUpload=true">
+          <Button 
+            className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full"
+            onClick={() => onSelect(style)}
+          >
+            Use This Style
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
+  );
+};
 
 export default function IdeasPage() {
   const { toast } = useToast();
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  
+  // Get all categories from our data structure
+  const categories = getCategories();
+  
+  // Get styles for the selected category
+  const styles = selectedCategory 
+    ? getStylesByCategory(selectedCategory)
+    : [];
 
-  const ideas: IdeaCard[] = [
-    {
-      id: "pixel-art",
-      title: "Video Game Characters",
-      category: "Video Game Characters",
-      prompt: "Create a colorful 8-bit pixel art scene inspired by retro video games. The scene features a small pixel-style character sitting on a brown brick platform, holding a glowing orb. The character wears a green shirt and blue pants. The background includes a bright blue sky with pixelated white clouds outlined in black, rolling green hills, rounded trees, and colorful pixel flowers growing from floating bricks. Add a large green warp pipe with a red-and-green plant coming out of it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above the character. The overall style should feel bright, playful, and nostalgic, like a side-scrolling adventure world.",
-      description: "Transform any photo into a nostalgic and newer video game characters. Want to be a GTA charcter? NBA 2K? Fortnite?",
-      originalImage: "/examples/example-boy.png",
-      transformedImage: "/examples/transformed-pixel-art.png"
-    },
-    {
-      id: "pop-culture-eras",
-      title: "Pop Culture Through the Eras",
-      category: "Historical",
-      prompt: "Transform into a historical or cultural era style with period-appropriate elements. Choose from styles including Old Western, 90s Hip-Hop, 1980s Retro, Renaissance, Caricature, Victorian Era, Disco Era, Cyberpunk, and Medieval.",
-      description: "Transform photos into historical styles from Western frontiers to 80's to 90's hip-hop while preserving recognizable likenesses",
-      originalImage: "/examples/example-portrait.png",
-      transformedImage: "/examples/transformed-victorian.png"
-    },
-    {
-      id: "painting",
-      title: "Turn to Painting",
-      category: "Paintings",
-      prompt: "Transform this image into a beautiful artistic painting with rich textures and expressive brushwork. You can select from 10 painting styles including Oil Painting, Watercolor, Impressionist, Abstract, Pop Surrealism, Art Deco, Pixel Art, Anime/Manga, Cartoon Style, and Gothic Noir.",
-      description: "Turn your photos into stunning painting styles stretching throughout history with 10 different artistic styles to choose from.",
-      originalImage: "/assets/couple-field.png",
-      transformedImage: "/assets/couple-field-painting.png"
-    },
-    {
-      id: "trolls",
-      title: "Fantasy Troll World",
-      category: "Animation",
-      prompt: "Use the uploaded image as inspiration for the mood and attitude of a whimsical troll folk-hero character. Create a playful fantasy scene filled with oversized flowers, sparkling waterfalls, and colorful candy-like forests arranged in musical, rhythmic patterns. Design the character in a bright, cartoon style with wild, gravity-defying neon hair shaped like a crown, textured clothes inspired by forest leaves and vines, and a joyful, lively expression. Set everything in a vivid, high-contrast animated world, like a cheerful fairy-tale concert.",
-      description: "Create a magical, musical world with vibrant colors and whimsical characters inspired by the Trolls movie style.",
-      originalImage: "/examples/example-child.png",
-      transformedImage: "/examples/transformed-trolls.png"
-    }
-  ];
-
-  const saveStylePrompt = (idea: IdeaCard) => {
-    // Save the selected idea prompt in localStorage for use on the home page
+  // Function to save the selected style to localStorage
+  const saveStylePrompt = (style: Style) => {
+    // Save the selected style in localStorage for use on the home page
     localStorage.setItem('selectedStyle', JSON.stringify({
-      prompt: idea.prompt,
-      title: idea.title,
-      category: idea.category
+      prompt: style.prompt,
+      title: style.name,
+      category: style.category
     }));
     
     toast({
       title: "Style selected!",
-      description: `The "${idea.title}" style will be applied to your next image.`,
+      description: `The "${style.name}" style will be applied to your next image.`,
     });
-    
-    // The Link component will handle navigation to the home page
-    // No need for additional redirection code here
   };
+
+  // Function to go back to categories
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+  };
+
+  // Selected category object
+  const currentCategory = selectedCategory
+    ? categories.find(c => c.id === selectedCategory)
+    : null;
 
   return (
     <Layout>
       <div className="max-w-screen-xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-[#2A7B9B] to-[#A3E4D7] inline-block text-transparent bg-clip-text">
-            Transformation Ideas
+            {selectedCategory ? currentCategory?.name || 'Transformation Styles' : 'Transformation Ideas'}
           </h1>
           <p className="text-base text-gray-700 max-w-2xl mx-auto">
-            Explore different styles and prompts to inspire your next image transformation. 
-            Hover over cards to see before/after examples.
+            {selectedCategory 
+              ? `Choose from our ${styles.length} ${currentCategory?.name.toLowerCase()} styles to transform your images.`
+              : 'Explore different categories and styles to inspire your next image transformation.'}
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-12">
-          {ideas.map((idea) => (
-            <div key={idea.id} className="w-full sm:w-[45%] md:w-[30%]" style={{ minWidth: "250px", maxWidth: "400px" }}>
-              <Card 
-                className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
-                onMouseEnter={() => setHoveredCard(idea.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                <div className="relative w-full h-48 overflow-hidden">
-                  <img 
-                    src={hoveredCard === idea.id ? idea.transformedImage : idea.originalImage} 
-                    alt={hoveredCard === idea.id ? "Transformed image" : "Original image"}
-                    className={`w-full h-full transition-all duration-500 ${idea.id === "painting" ? "object-cover object-[50%_35%]" : "object-cover object-[50%_20%]"}`}
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <p className="text-white text-sm font-medium bg-black bg-opacity-60 px-3 py-1 rounded">
-                      {hoveredCard === idea.id ? "After" : "Before"}
-                    </p>
-                  </div>
-                  <div className="absolute top-2 right-2 bg-white bg-opacity-50 text-black px-2 py-1 rounded text-xs font-medium">
-                    {idea.category}
-                  </div>
-                </div>
+        {/* Breadcrumb navigation when a category is selected */}
+        {selectedCategory && (
+          <div className="flex items-center mb-6">
+            <Button 
+              variant="ghost" 
+              className="flex items-center text-[#2A7B9B] hover:text-[#2A7B9B]/80 pl-0"
+              onClick={handleBackToCategories}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Back to Categories
+            </Button>
+          </div>
+        )}
 
-                <CardHeader className="p-3 pb-1">
-                  <CardTitle className="text-base font-bold text-[#333333]">{idea.title}</CardTitle>
-                  <CardDescription className="text-xs">{idea.description}</CardDescription>
-                </CardHeader>
+        {/* Category Grid (3x3) */}
+        {!selectedCategory && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {categories.map((category) => (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                onClick={setSelectedCategory}
+              />
+            ))}
+          </div>
+        )}
 
-                <CardFooter className="flex justify-center p-3">
-                  <Link href="/?showUpload=true">
-                    <Button 
-                      className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full"
-                      onClick={() => saveStylePrompt(idea)}
-                    >
-                      Use This Style
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            </div>
-          ))}
-        </div>
+        {/* Styles Grid */}
+        {selectedCategory && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {styles.map((style) => (
+              <StyleCard
+                key={style.id}
+                style={style}
+                onSelect={saveStylePrompt}
+              />
+            ))}
+          </div>
+        )}
+        
+        {/* Empty state if no styles are found */}
+        {selectedCategory && styles.length === 0 && (
+          <div className="text-center py-12">
+            <ImageIcon className="h-12 w-12 mx-auto text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-700">No styles found</h3>
+            <p className="text-gray-500 mb-6">There are no styles available in this category yet.</p>
+            <Button 
+              variant="outline" 
+              className="mx-auto"
+              onClick={handleBackToCategories}
+            >
+              Back to Categories
+            </Button>
+          </div>
+        )}
       </div>
     </Layout>
   );
