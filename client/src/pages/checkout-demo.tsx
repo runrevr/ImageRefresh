@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Layout } from "../components/Layout";
 import CompactStyleSelector from "../components/CompactStyleSelector";
-import type { Style } from "../../../shared/data.types";
+import type { Style } from "../../../shared/data.utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";

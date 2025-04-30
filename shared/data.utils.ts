@@ -3,6 +3,9 @@
  */
 
 import { DataStructure, Category, Style, StyleLookup, getAllStyles, createStyleLookup } from './data.types';
+
+// Re-export types for convenience
+export type { Category, Style };
 import data from './data.json';
 
 // Cast the imported JSON to our TypeScript type

@@ -33,13 +33,14 @@ import {
   Check
 } from "lucide-react";
 
-// Import data utilities
+// Import data utilities and types
 import { 
   getCategories, 
   getStylesByCategory, 
-  getStyle
+  getStyle,
+  type Category,
+  type Style
 } from "../../../shared/data.utils";
-import type { Category, Style } from "../../../shared/data.types";
 
 // Props for the component
 interface CompactStyleSelectorProps {
