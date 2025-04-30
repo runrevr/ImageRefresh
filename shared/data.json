@@ -56,7 +56,7 @@
           "description": "Create a fairytale princess style with magical elements",
           "category": "animation",
           "prompt": "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
-          "previewImage": "/examples/transformed-princess.png",
+          "previewImage": "/princess-character.png",
           "beforeImage": "/examples/example-child.png",
           "tags": ["disney", "fairytale", "fantasy"]
         },
@@ -336,7 +336,7 @@
           "description": "Create a fairytale princess style with magical elements",
           "category": "kids",
           "prompt": "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
-          "previewImage": "/examples/transformed-princess.png",
+          "previewImage": "/princess-character.png",
           "beforeImage": "/examples/example-child.png",
           "tags": ["disney", "fairytale", "fantasy"]
         },
