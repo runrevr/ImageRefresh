@@ -107,7 +107,7 @@ const StyleCard = ({
         </div>
       </div>
 
-      <CardHeader className="p-3 pb-1 bg-gradient-to-r from-[#2A7B9B] to-[#FF7B54] rounded-t-lg">
+      <CardHeader className="p-3 pb-1 bg-[#FF7B54] rounded-t-lg">
         <CardTitle className="text-lg font-bold text-center mb-2 text-white">
           {style.name}
         </CardTitle>
