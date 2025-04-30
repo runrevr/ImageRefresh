@@ -16,13 +16,18 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 
-export default function AuthPage() {
+interface AuthPageProps {
+  initialTab?: "login" | "register";
+}
+
+export default function AuthPage({ initialTab: propsInitialTab }: AuthPageProps) {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, navigate] = useLocation();
   const [, params] = useRoute("/auth?tab=:tab");
   const { toast } = useToast();
   
-  const initialTab = params?.tab === "register" ? "register" : "login";
+  // Default to the register tab unless login is explicitly specified
+  const initialTab = params?.tab === "login" ? "login" : "register";
   const [activeTab, setActiveTab] = useState(initialTab);
   
   // Login form state

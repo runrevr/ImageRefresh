@@ -82,10 +82,10 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             </DropdownMenu>
           ) : (
             <div className="hidden md:flex items-center space-x-2">
-              <Link href="/auth">
+              <Link href="/auth?tab=login">
                 <Button variant="outline" className="bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">Log in</Button>
               </Link>
-              <Link href="/auth?tab=register">
+              <Link href="/auth">
                 <Button className="bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">Sign up</Button>
               </Link>
             </div>
@@ -176,10 +176,10 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                     </>
                   ) : (
                     <>
-                      <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
+                      <Link href="/auth?tab=login" onClick={() => setIsMenuOpen(false)}>
                         <Button variant="outline" className="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]">Log in</Button>
                       </Link>
-                      <Link href="/auth?tab=register" onClick={() => setIsMenuOpen(false)}>
+                      <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
                         <Button className="w-full bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">Sign up</Button>
                       </Link>
                     </>

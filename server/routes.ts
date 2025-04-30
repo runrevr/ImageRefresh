@@ -498,7 +498,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 });
               }
             }
-
+            
             const { transformedPath } = await transformImage(
               fullImagePath,
               validatedData.prompt || "Custom transformation", // Default value if prompt is undefined

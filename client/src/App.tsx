@@ -25,8 +25,12 @@ function Router() {
       <Route path="/pricing" component={PricingPage} />
       <Route path="/ideas" component={IdeasPage} />
       <Route path="/auth" component={AuthPage} />
-      <Route path="/login" component={AuthPage} />
-      <Route path="/register" component={AuthPage} />
+      <Route path="/login">
+        {() => <AuthPage initialTab="login" />}
+      </Route>
+      <Route path="/register">
+        {() => <AuthPage initialTab="register" />}
+      </Route>
       <ProtectedRoute path="/account" component={AccountPage} />
       <ProtectedRoute path="/transformations" component={TransformationsPage} />
       <ProtectedRoute path="/checkout" component={CheckoutPage} />
