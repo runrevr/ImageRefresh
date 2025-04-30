@@ -357,7 +357,7 @@
           "description": "Reconstruct in the distinctive blocky Lego brick style",
           "category": "kids",
           "prompt": "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
-          "previewImage": "/lego-character.png",
+          "previewImage": "/jolene-lego.png",
           "beforeImage": "/example-child.png",
           "popular": true,
           "tags": ["toy", "blocks", "construction"]
