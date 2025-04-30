@@ -32,36 +32,49 @@ interface StepProps {
 }
 
 const StepIndicator = ({ currentStep, totalSteps }: StepProps) => {
+  // Labels for each step
+  const stepLabels = ["Upload Image", "Choose Category", "Select Style", "Confirm"];
+  
   return (
-    <div className="w-full mb-8 flex justify-center">
-      <div className="flex items-center justify-between w-1/2">
-        {Array.from({ length: totalSteps }).map((_, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div 
-              className={`
-                flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium
-                ${index + 1 <= currentStep 
-                  ? 'bg-[#2A7B9B] text-white' 
-                  : 'bg-gray-200 text-gray-500'}
-              `}
-            >
-              {index + 1}
+    <div className="w-full mb-12 flex justify-center">
+      <div className="w-[80%] max-w-2xl relative">
+        {/* Step labels above the circles */}
+        <div className="flex justify-between mb-2">
+          {Array.from({ length: totalSteps }).map((_, index) => (
+            <div key={`label-${index}`} className="text-xs text-center w-16">
+              {stepLabels[index]}
             </div>
-            <div className="text-xs mt-1 text-center">
-              {index === 0 && "Upload"}
-              {index === 1 && "Choose Category"}
-              {index === 2 && "Pick Style"}
-              {index === 3 && "Confirm"}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="relative mt-2 w-1/2">
-        <div className="absolute top-0 h-1 w-full bg-gray-200"></div>
+          ))}
+        </div>
+        
+        {/* The progress line */}
+        <div className="absolute top-[42px] left-0 w-full h-[2px] bg-gray-200"></div>
         <div 
-          className="absolute top-0 h-1 bg-[#2A7B9B] transition-all duration-300"
-          style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+          className="absolute top-[42px] left-0 h-[2px] bg-[#2A7B9B] transition-all duration-300"
+          style={{ 
+            width: currentStep === 1 ? '0%' : 
+                  currentStep === totalSteps ? '100%' : 
+                  `${((currentStep - 1) / (totalSteps - 1)) * 100}%` 
+          }}
         ></div>
+        
+        {/* Step circles */}
+        <div className="flex justify-between">
+          {Array.from({ length: totalSteps }).map((_, index) => (
+            <div key={`circle-${index}`} className="flex flex-col items-center">
+              <div 
+                className={`
+                  relative z-10 flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium
+                  ${index + 1 <= currentStep 
+                    ? 'bg-[#2A7B9B] text-white' 
+                    : 'bg-gray-200 text-gray-500'}
+                `}
+              >
+                {index + 1}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
