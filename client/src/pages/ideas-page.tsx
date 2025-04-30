@@ -73,7 +73,7 @@ const StyleCard = ({
     >
       <div className="relative w-full h-48 overflow-hidden">
         <img 
-          src={style.previewImage}
+          src={`${window.location.origin}${style.previewImage}`}
           alt={style.name}
           className="w-full h-full object-cover"
         />

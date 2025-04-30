@@ -160,7 +160,7 @@ export default function CompactStyleSelector({
                     {showThumbnails && (
                       <div className="w-12 h-12 mr-3 rounded-md overflow-hidden flex-shrink-0 border border-gray-200">
                         <img 
-                          src={style.previewImage} 
+                          src={`${window.location.origin}${style.previewImage}`} 
                           alt={style.name}
                           className="w-full h-full object-cover"
                         />
