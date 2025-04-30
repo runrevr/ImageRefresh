@@ -11,7 +11,96 @@ import { z } from "zod";
 import OpenAI from "openai";
 import Stripe from "stripe";
 import { setupAuth } from "./auth";
+import axios from "axios";
 
+import path from "path";
+import axios from "axios";
+import { Request } from "express";
+import sharp from "sharp";
+/**
+ * Generate visual description and art prompt from image.
+ */
+import path from "path";
+import axios from "axios";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+
+/**
+ * Convert image to supported JPEG format and resize if needed
+ */
+async function convertToJpeg(originalPath: string): Promise<string> {
+  const parsed = path.parse(originalPath);
+  const jpegPath = path.join(parsed.dir, `${parsed.name}-converted.jpg`);
+
+  if (jpegPath === originalPath) {
+    throw new Error("Input and output paths cannot be the same.");
+  }
+
+  await sharp(originalPath)
+    .resize({ width: 1024, withoutEnlargement: true })
+    .jpeg({ quality: 90 })
+    .toFile(jpegPath);
+
+  return jpegPath;
+}
+
+/**
+ * Analyze image and get description + artPrompt using OpenAI's latest `responses.create` API
+ */
+export async function getDescriptionAndPromptFromImage_OpenAI(
+  imagePath: string,
+): Promise<{ description: string; artPrompt: string }> {
+  // Convert to JPEG if needed
+  const jpegPath = await convertToJpeg(imagePath);
+  const imageBytes = fs.readFileSync(jpegPath);
+  const base64Image = imageBytes.toString("base64");
+
+  const response = await openai.responses.create({
+    model: "gpt-4o",
+    input: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text: `
+              You are a visual expert describing a character-focused image. Your job is to:
+
+              1. Describe the image with extreme detail, emphasizing:
+                 - the appearance of the character(s): gender, age, ethnicity (if clear), facial features, hairstyle, expression, pose, eye direction
+                 - clothing: type, color, texture, accessories, and style
+                 - physical context: body position, interaction with environment, background, lighting, color tones, and camera angle
+
+              2. Then write an AI image generation prompt that recreates the same scene with creative enhancement, but **preserves the character's identity, pose, clothing, and visual essence**.
+
+              The image generation prompt should be rich, cinematic, and ready for use in tools like DALL·E or Midjourney.
+
+              Return the result as:
+              { "description": "...", "artPrompt": "..." }
+
+              Stay under 1000 characters per field. Be vivid, precise, and visual.
+              `,
+          },
+          {
+            type: "input_image",
+            image_url: `data:image/jpeg;base64,${base64Image}`,
+            detail: "high",
+          },
+        ],
+      },
+    ],
+  });
+
+  const text = response.output_text;
+  const jsonMatch = text.match(/{[\s\S]*}/);
+  if (!jsonMatch) throw new Error("No JSON found in model output");
+
+  const parsed = JSON.parse(jsonMatch[0]);
+  return {
+    description: parsed.description ?? "",
+    artPrompt: parsed.artPrompt ?? "",
+  };
+}
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -357,7 +446,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Regular (non-edit) transformations
         // In development mode (NODE_ENV !== 'production'), bypass credit check for easier testing
         // In production, enforce the credit limit (free credit or paid credits)
-        else if ((process.env.NODE_ENV !== 'production') || !user.freeCreditsUsed || user.paidCredits > 0) {
+        else if (
+          process.env.NODE_ENV !== "production" ||
+          !user.freeCreditsUsed ||
+          user.paidCredits > 0
+        ) {
           // Create a transformation record
           console.log("validatedData.originalImagePath:", validatedData.prompt);
           const transformation = await storage.createTransformation({
@@ -378,9 +471,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
               "Transforming image with prompt 3rd:",
               validatedData.prompt,
             );
+            let finalPrompt = validatedData.prompt;
+
+            if (true || !finalPrompt || finalPrompt.trim() === "") {
+              console.log(
+                "No prompt provided, generating prompt from image...",
+              );
+
+              try {
+                const { description, artPrompt } =
+                  await getDescriptionAndPromptFromImage_OpenAI(
+                    fullImagePath,
+                    `${req.protocol}://${req.get("host")}`,
+                  );
+                console.log("Auto-generated image description:", description);
+                console.log("Auto-generated art prompt:", artPrompt);
+                finalPrompt = artPrompt;
+              } catch (err: any) {
+                console.error(
+                  "Failed to generate description and prompt:",
+                  err,
+                );
+                return res.status(500).json({
+                  message: "Failed to generate prompt from image",
+                  error: err.message,
+                });
+              }
+            }
+
             const { transformedPath } = await transformImage(
               fullImagePath,
               validatedData.prompt || "Custom transformation", // Default value if prompt is undefined
+              // finalPrompt,
               validatedData.imageSize,
             );
 
@@ -438,18 +560,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check for content safety rejections from OpenAI
       if (error.message && error.message.includes("safety system")) {
         // If the prompt mentions or relates to children, babies, or clothing changes, provide a more specific message
-        const isAboutChildren = req.body.prompt && 
-          (req.body.prompt.toLowerCase().includes("baby") || 
-           req.body.prompt.toLowerCase().includes("child") || 
-           req.body.prompt.toLowerCase().includes("kid") || 
-           req.body.prompt.toLowerCase().includes("shirt") ||
-           req.body.prompt.toLowerCase().includes("cloth"));
-           
+        const isAboutChildren =
+          req.body.prompt &&
+          (req.body.prompt.toLowerCase().includes("baby") ||
+            req.body.prompt.toLowerCase().includes("child") ||
+            req.body.prompt.toLowerCase().includes("kid") ||
+            req.body.prompt.toLowerCase().includes("shirt") ||
+            req.body.prompt.toLowerCase().includes("cloth"));
+
         // Return specific error for content safety issues
         return res.status(400).json({
-          message: isAboutChildren ? 
-            "Safety systems are particularly strict about editing images of children. Please try a different type of edit that doesn't involve changing clothing or appearance of the child image." : 
-            "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
+          message: isAboutChildren
+            ? "Safety systems are particularly strict about editing images of children. Please try a different type of edit that doesn't involve changing clothing or appearance of the child image."
+            : "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
           error: "content_safety",
         });
       }
@@ -484,13 +607,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       console.log(`Getting transformations for user ID: ${userId}`);
-      
+
       const transformations = await storage.getUserTransformations(userId);
-      console.log(`Found ${transformations.length} transformations for user ID ${userId}`);
-      
+      console.log(
+        `Found ${transformations.length} transformations for user ID ${userId}`,
+      );
+
       if (transformations.length > 0) {
         // Log first transformation to diagnose issues
-        console.log("First transformation:", JSON.stringify(transformations[0], null, 2));
+        console.log(
+          "First transformation:",
+          JSON.stringify(transformations[0], null, 2),
+        );
       }
 
       const mappedTransformations = transformations.map((t) => ({
@@ -506,8 +634,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: t.createdAt,
         error: t.error,
       }));
-      
-      console.log(`Returning ${mappedTransformations.length} mapped transformations`);
+
+      console.log(
+        `Returning ${mappedTransformations.length} mapped transformations`,
+      );
       res.json(mappedTransformations);
     } catch (error: any) {
       console.error("Error getting transformations:", error);
@@ -549,12 +679,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Add credits to user account (for testing purposes - only available in non-production environments)
   app.post("/api/add-credits/:userId", async (req, res) => {
     // Block this endpoint in production mode for security
-    if (process.env.NODE_ENV === 'production') {
-      return res.status(403).json({ 
-        message: "This endpoint is not available in production mode" 
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({
+        message: "This endpoint is not available in production mode",
       });
     }
-    
+
     try {
       const userId = parseInt(req.params.userId);
 
@@ -817,66 +947,69 @@ style, environment, lighting, and background rather than changing the main subje
   // Special test endpoint to add 30 credits to test account (user ID 1) - development only
   app.get("/api/admin/add-test-credits", async (req, res) => {
     // Block this endpoint in production mode for security
-    if (process.env.NODE_ENV === 'production') {
-      return res.status(403).json({ 
-        message: "This endpoint is not available in production mode" 
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({
+        message: "This endpoint is not available in production mode",
       });
     }
-    
+
     try {
       const testUserId = 1; // Hardcoded user ID for test account
       const creditsToAdd = 30; // Add 30 credits
-      
+
       // Get current user
       const user = await storage.getUser(testUserId);
       if (!user) {
         return res.status(404).json({ message: "Test user not found" });
       }
-      
+
       // Update the user's credits
       const updatedUser = await storage.updateUserCredits(
-        testUserId, 
-        user.freeCreditsUsed, 
-        user.paidCredits + creditsToAdd
+        testUserId,
+        user.freeCreditsUsed,
+        user.paidCredits + creditsToAdd,
       );
-      
+
       res.json({
         success: true,
         message: `Added ${creditsToAdd} credits to test account (development mode only)`,
         previousCredits: user.paidCredits,
-        newCredits: updatedUser.paidCredits
+        newCredits: updatedUser.paidCredits,
       });
     } catch (error: any) {
-      res.status(500).json({ message: error.message || "Unknown error occurred" });
+      res
+        .status(500)
+        .json({ message: error.message || "Unknown error occurred" });
     }
   });
-  
+
   // Admin endpoint to manually trigger cleanup of old transformations (images older than 60 days)
   app.get("/api/admin/run-cleanup", async (req, res) => {
     // Block this endpoint in production mode for unauthenticated users
-    if (process.env.NODE_ENV === 'production' && !req.isAuthenticated()) {
-      return res.status(403).json({ 
-        message: "Authentication required" 
+    if (process.env.NODE_ENV === "production" && !req.isAuthenticated()) {
+      return res.status(403).json({
+        message: "Authentication required",
       });
     }
-    
+
     try {
       // Start cleanup in the background
       console.log("Manual cleanup triggered via admin endpoint");
-      
+
       // Don't await - we want to return right away and let cleanup run in background
       runCleanupTasks()
         .then(() => console.log("Manual cleanup completed successfully"))
-        .catch(err => console.error("Error during manual cleanup:", err));
-      
-      res.status(202).json({ 
-        message: "Cleanup process started in the background. Images older than 60 days will be removed." 
+        .catch((err) => console.error("Error during manual cleanup:", err));
+
+      res.status(202).json({
+        message:
+          "Cleanup process started in the background. Images older than 60 days will be removed.",
       });
     } catch (error: any) {
       console.error("Error triggering cleanup:", error);
-      res.status(500).json({ 
-        message: "Error triggering cleanup", 
-        error: error.message 
+      res.status(500).json({
+        message: "Error triggering cleanup",
+        error: error.message,
       });
     }
   });
