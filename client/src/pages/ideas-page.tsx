@@ -107,15 +107,11 @@ const StyleCard = ({
         </div>
       </div>
 
-      <CardHeader className="p-3 pb-1">
-        <CardTitle className="text-lg font-bold text-center mb-2">
-          {style.name.split(' ').map((word, index) => (
-            <span key={index} className={index % 2 === 0 ? "text-[#2A7B9B]" : "text-[#FF7B54]"}>
-              {index > 0 ? ' ' : ''}{word}
-            </span>
-          ))}
+      <CardHeader className="p-3 pb-1 bg-gradient-to-r from-[#2A7B9B] to-[#FF7B54] rounded-t-lg">
+        <CardTitle className="text-lg font-bold text-center mb-2 text-white">
+          {style.name}
         </CardTitle>
-        <CardDescription className="text-xs text-gray-600">{style.description}</CardDescription>
+        <CardDescription className="text-xs text-white text-opacity-90">{style.description}</CardDescription>
       </CardHeader>
 
       <CardFooter className="flex justify-center p-3">
