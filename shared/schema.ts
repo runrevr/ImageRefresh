@@ -9,6 +9,10 @@ export const users = pgTable("users", {
   email: text("email").notNull(),
   freeCreditsUsed: boolean("free_credits_used").default(false).notNull(),
   paidCredits: integer("paid_credits").default(0).notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  subscriptionTier: text("subscription_tier"), // 'basic', 'premium', or null
+  subscriptionStatus: text("subscription_status"), // 'active', 'inactive', 'canceled', or null
 });
 
 export const transformations = pgTable("transformations", {

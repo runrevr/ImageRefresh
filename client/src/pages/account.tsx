@@ -188,37 +188,104 @@ export default function AccountPage() {
                   
                   <div>
                     <h3 className="text-lg font-medium mb-4">Get More Credits</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border rounded-lg p-4 text-center">
-                        <h4 className="font-bold mb-1">10 Credits</h4>
-                        <p className="text-2xl font-bold mb-2">$10/mo</p>
-                        <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
-                        <Button 
-                          className="w-full" 
-                          onClick={() => navigate("/checkout")}
-                        >
-                          Subscribe Now
-                        </Button>
+                    
+                    {/* Check if user has an active subscription */}
+                    {user.hasActiveSubscription ? (
+                      <>
+                        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="font-medium text-green-800">
+                            You have an active subscription! You can purchase additional credits.
+                          </p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                          <div className="border rounded-lg p-4 text-center">
+                            <h4 className="font-bold mb-1">1 Credit</h4>
+                            <p className="text-2xl font-bold mb-2">$1.00</p>
+                            <p className="text-sm text-gray-500 mb-4">One-time purchase</p>
+                            <Button 
+                              className="w-full" 
+                              onClick={() => navigate("/buy-credits")}
+                            >
+                              Buy Now
+                            </Button>
+                          </div>
+                          
+                          <div className="border rounded-lg p-4 text-center bg-blue-50 border-blue-200 relative">
+                            <span className="bg-[#FF7B54] text-white px-2 py-1 text-xs rounded-full absolute -top-2 -right-2">
+                              BEST VALUE
+                            </span>
+                            <h4 className="font-bold mb-1">12 Credits</h4>
+                            <p className="text-2xl font-bold mb-2">$10.00</p>
+                            <p className="text-sm text-green-600 mb-4">Save 16%</p>
+                            <Button 
+                              className="w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white" 
+                              onClick={() => navigate("/buy-credits")}
+                            >
+                              Buy Now
+                            </Button>
+                          </div>
+                          
+                          <div className="border rounded-lg p-4 text-center">
+                            <h4 className="font-bold mb-1">30 Credits</h4>
+                            <p className="text-2xl font-bold mb-2">$20.00</p>
+                            <p className="text-sm text-green-600 mb-4">Save 33%</p>
+                            <Button 
+                              className="w-full" 
+                              onClick={() => navigate("/buy-credits")}
+                            >
+                              Buy Now
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="border rounded-lg p-4 text-center bg-gray-50">
+                            <h4 className="font-bold mb-1">Need More Credits?</h4>
+                            <p className="mb-4">Consider upgrading your subscription</p>
+                            <Button 
+                              variant="outline"
+                              className="w-full" 
+                              onClick={() => navigate("/pricing")}
+                            >
+                              View Subscription Plans
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="border rounded-lg p-4 text-center">
+                          <h4 className="font-bold mb-1">10 Credits</h4>
+                          <p className="text-2xl font-bold mb-2">$10/mo</p>
+                          <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
+                          <Button 
+                            className="w-full" 
+                            onClick={() => navigate("/checkout")}
+                          >
+                            Subscribe Now
+                          </Button>
+                        </div>
+                        <div className="border rounded-lg p-4 text-center bg-blue-50 border-blue-200 relative">
+                          <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded-full absolute -top-2 -right-2">
+                            BEST VALUE
+                          </span>
+                          <h4 className="font-bold mb-1 text-[#333333]">30 Credits</h4>
+                          <p className="text-2xl font-bold mb-2 text-[#333333]">$20/mo</p>
+                          <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
+                          <p className="text-[#333333] mb-3 text-sm font-medium">
+                            ✨ Get 50% more value! ✨<br />
+                            Upgrade to our $20 package and receive 30 credits instead of just 20 credits at the standard rate. 🚀 💰
+                          </p>
+                          <Button 
+                            className="w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white" 
+                            onClick={() => navigate("/subscribe")}
+                          >
+                            Subscribe Now
+                          </Button>
+                        </div>
                       </div>
-                      <div className="border rounded-lg p-4 text-center bg-blue-50 border-blue-200">
-                        <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded-full absolute -mt-6">
-                          BEST VALUE
-                        </span>
-                        <h4 className="font-bold mb-1 text-[#333333]">30 Credits</h4>
-                        <p className="text-2xl font-bold mb-2 text-[#333333]">$20/mo</p>
-                        <p className="text-sm text-gray-500 mb-4">Monthly subscription</p>
-                        <p className="text-[#333333] mb-3 text-sm font-medium">
-                          ✨ Get 50% more value! ✨<br />
-                          Upgrade to our $20 package and receive 30 credits instead of just 20 credits at the standard rate. 🚀 💰
-                        </p>
-                        <Button 
-                          className="w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white" 
-                          onClick={() => navigate("/subscribe")}
-                        >
-                          Subscribe Now
-                        </Button>
-                      </div>
-                    </div>
+                    )}
                   </div>
                   
                   <div className="mt-8 border-t pt-6">

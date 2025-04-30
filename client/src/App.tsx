@@ -17,6 +17,7 @@ import AccountPage from "@/pages/account";
 import TransformationsPage from "@/pages/transformations";
 import CheckoutPage from "@/pages/checkout";
 import SubscribePage from "@/pages/subscribe";
+import BuyCreditsPage from "@/pages/buy-credits";
 
 function Router() {
   return (
@@ -35,6 +36,7 @@ function Router() {
       <ProtectedRoute path="/transformations" component={TransformationsPage} />
       <ProtectedRoute path="/checkout" component={CheckoutPage} />
       <ProtectedRoute path="/subscribe" component={SubscribePage} />
+      <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
       <Route component={NotFound} />
     </Switch>
   );
