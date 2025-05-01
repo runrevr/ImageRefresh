@@ -448,12 +448,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // In production, enforce the credit limit (monthly free credit or paid credits)
         else {
           // First check if the user has a free monthly credit available
-          const hasFreeMonthlyCredit = process.env.NODE_ENV !== "production" || 
-                                      await storage.checkAndResetMonthlyFreeCredit(userId);
-                                      
+          const hasFreeMonthlyCredit =
+            process.env.NODE_ENV !== "production" ||
+            (await storage.checkAndResetMonthlyFreeCredit(userId));
+
           if (hasFreeMonthlyCredit || user.paidCredits > 0) {
             // Create a transformation record
-            console.log("validatedData.originalImagePath:", validatedData.prompt);
+            console.log(
+              "validatedData.originalImagePath:",
+              validatedData.prompt,
+            );
             const transformation = await storage.createTransformation({
               userId,
               originalImagePath: validatedData.originalImagePath,
@@ -499,7 +503,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   });
                 }
               }
-              
+
               const { transformedPath } = await transformImage(
                 fullImagePath,
                 validatedData.prompt || "Custom transformation", // Default value if prompt is undefined
@@ -508,7 +512,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               );
 
               // Get relative path for storage
-              const relativePath = path.relative(process.cwd(), transformedPath);
+              const relativePath = path.relative(
+                process.cwd(),
+                transformedPath,
+              );
 
               // Update transformation with the result
               const updatedTransformation =
@@ -596,6 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json({
+        id: user.id,
         freeCreditsUsed: user.freeCreditsUsed,
         paidCredits: user.paidCredits,
       });
@@ -611,22 +619,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ message: "Not authenticated" });
       }
-      
+
       const userId = req.user.id;
       const user = await storage.getUser(userId);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Return subscription information
       res.json({
         userId: user.id,
-        hasActiveSubscription: user.subscriptionStatus === 'active',
+        hasActiveSubscription: user.subscriptionStatus === "active",
         subscriptionTier: user.subscriptionTier,
         subscriptionStatus: user.subscriptionStatus,
         credits: user.paidCredits,
-        freeCreditsUsed: user.freeCreditsUsed
+        freeCreditsUsed: user.freeCreditsUsed,
       });
     } catch (error: any) {
       console.error("Error fetching subscription status:", error);
@@ -924,7 +932,7 @@ style, environment, lighting, and background rather than changing the main subje
         .json({ message: `Error creating payment intent: ${error.message}` });
     }
   });
-  
+
   // Direct credit purchase endpoint (for immediate credit updates after payment)
   app.post("/api/purchase-credits", async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -934,19 +942,21 @@ style, environment, lighting, and background rather than changing the main subje
     try {
       const { userId, credits } = req.body;
       const user = req.user as Express.User;
-      
+
       // Security check: ensure user can only update their own credits
       if (user.id !== userId) {
-        return res.status(403).json({ message: "Forbidden: Cannot update another user's credits" });
+        return res
+          .status(403)
+          .json({ message: "Forbidden: Cannot update another user's credits" });
       }
-      
+
       // Get the current user state from the database to ensure
       // we're not accidentally adding credits twice if the webhook already processed this
       const currentUser = await storage.getUser(userId);
       if (!currentUser) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Only add credits if the webhook hasn't already processed this payment
       // This check helps prevent the double-crediting issue
       if (currentUser.paidCredits === user.paidCredits) {
@@ -954,11 +964,11 @@ style, environment, lighting, and background rather than changing the main subje
         const updatedUser = await storage.updateUserCredits(
           userId,
           user.freeCreditsUsed,
-          (user.paidCredits || 0) + credits
+          (user.paidCredits || 0) + credits,
         );
-        
+
         console.log(`Successfully added ${credits} credits to user ${userId}`);
-        
+
         res.status(200).json({
           success: true,
           message: `Added ${credits} credits to your account`,
@@ -966,8 +976,10 @@ style, environment, lighting, and background rather than changing the main subje
         });
       } else {
         // Credits were already updated by webhook, just return current state
-        console.log(`Credits already updated for user ${userId} by webhook, returning current state`);
-        
+        console.log(
+          `Credits already updated for user ${userId} by webhook, returning current state`,
+        );
+
         res.status(200).json({
           success: true,
           message: `Your purchase was successful. You now have ${currentUser.paidCredits} credits.`,
@@ -976,9 +988,9 @@ style, environment, lighting, and background rather than changing the main subje
       }
     } catch (error: any) {
       console.error("Error purchasing credits:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: `Error purchasing credits: ${error.message}`,
-        success: false
+        success: false,
       });
     }
   });
@@ -986,21 +998,23 @@ style, environment, lighting, and background rather than changing the main subje
   // Stripe webhook handler
   app.post("/api/webhook", async (req, res) => {
     const sig = req.headers["stripe-signature"];
-    
+
     try {
       let event;
-      
+
       // Try to verify webhook signature if we have the secret
       if (process.env.STRIPE_WEBHOOK_SECRET && sig) {
         try {
           event = stripe.webhooks.constructEvent(
             req.body,
             sig as string,
-            process.env.STRIPE_WEBHOOK_SECRET
+            process.env.STRIPE_WEBHOOK_SECRET,
           );
           console.log("Webhook signature verified successfully");
         } catch (err: any) {
-          console.error(`Webhook signature verification failed: ${err.message}`);
+          console.error(
+            `Webhook signature verification failed: ${err.message}`,
+          );
           // Continue with the raw event data since this is a development environment
           event = req.body;
         }
@@ -1009,18 +1023,25 @@ style, environment, lighting, and background rather than changing the main subje
         console.log("Using raw webhook data (no signature verification)");
         event = req.body;
       }
-      
+
       // Add special handling for direct use of the event object
-      if (event.type === "payment_intent.succeeded" || 
-         (event.data && event.data.object && event.data.object.object === "payment_intent" && 
-          event.data.object.status === "succeeded")) {
-          
+      if (
+        event.type === "payment_intent.succeeded" ||
+        (event.data &&
+          event.data.object &&
+          event.data.object.object === "payment_intent" &&
+          event.data.object.status === "succeeded")
+      ) {
         // Get the payment intent data, handling both verified and raw webhook formats
         const paymentIntent = event.data ? event.data.object : event;
         console.log(`PaymentIntent was successful: ${paymentIntent.id}`);
-        
+
         // Update user credits based on metadata
-        if (paymentIntent.metadata && paymentIntent.metadata.userId && paymentIntent.metadata.credits) {
+        if (
+          paymentIntent.metadata &&
+          paymentIntent.metadata.userId &&
+          paymentIntent.metadata.credits
+        ) {
           const userId = parseInt(paymentIntent.metadata.userId);
           const creditsToAdd = parseInt(paymentIntent.metadata.credits);
           const planType = paymentIntent.metadata.planType;
@@ -1033,29 +1054,29 @@ style, environment, lighting, and background rather than changing the main subje
               user.freeCreditsUsed,
               (user.paidCredits || 0) + creditsToAdd,
             );
-            
+
             // If this is a subscription payment, update the subscription status
-            if (planType === 'basic' || planType === 'pro') {
+            if (planType === "basic" || planType === "pro") {
               // This is a subscription purchase
-              const tier = planType === 'basic' ? 'basic' : 'premium';
-              await storage.updateUserSubscription(
-                userId,
-                tier,
-                'active'
+              const tier = planType === "basic" ? "basic" : "premium";
+              await storage.updateUserSubscription(userId, tier, "active");
+              console.log(
+                `Updated user ${userId} subscription status to active (${tier})`,
               );
-              console.log(`Updated user ${userId} subscription status to active (${tier})`);
-            } else if (planType === 'credit_purchase') {
+            } else if (planType === "credit_purchase") {
               // This is a one-time credit purchase, don't change subscription status
-              console.log(`Processed one-time credit purchase for user ${userId}`);
+              console.log(
+                `Processed one-time credit purchase for user ${userId}`,
+              );
             }
-            
+
             console.log(
               `Updated user ${userId} with ${creditsToAdd} additional credits`,
             );
           }
         }
       } else {
-        console.log(`Unhandled event type ${event.type || 'unknown'}`);
+        console.log(`Unhandled event type ${event.type || "unknown"}`);
       }
 
       // Return a 200 response to acknowledge receipt of the event
