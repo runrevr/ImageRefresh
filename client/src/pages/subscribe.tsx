@@ -133,29 +133,29 @@ export default function Subscribe() {
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
-                <h2 className="font-semibold">Pro Subscription</h2>
+                <h2 className="font-semibold text-[#FF7B54]">Pro Subscription</h2>
                 <p className="text-sm text-gray-500">30 credits monthly</p>
               </div>
               <div className="text-lg font-bold">$20/month</div>
             </div>
             
             <div className="mb-6">
-              <h3 className="font-medium mb-2">Subscription Benefits:</h3>
-              <ul className="space-y-2">
+              <h3 className="font-medium mb-2 text-[#FF7B54]">Subscription Benefits:</h3>
+              <ul className="space-y-2 text-[#333333]">
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                  <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
                   <span>30 credits each month</span>
                 </li>
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                  <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
                   <span>Credits reset monthly</span>
                 </li>
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                  <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
                   <span>4K resolution output</span>
                 </li>
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                  <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
                   <span>Commercial usage rights</span>
                 </li>
               </ul>

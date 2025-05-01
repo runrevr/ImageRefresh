@@ -133,7 +133,7 @@ export default function Checkout() {
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
-                <h2 className="font-semibold">Basic Subscription</h2>
+                <h2 className="font-semibold text-[#FF7B54]">Basic Subscription</h2>
                 <p className="text-sm text-gray-500">10 credits monthly</p>
               </div>
               <div className="text-lg font-bold">$10/month</div>

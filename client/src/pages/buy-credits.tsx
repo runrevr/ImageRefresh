@@ -348,8 +348,8 @@ export default function BuyCredits() {
           
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Select Credit Package</CardTitle>
-              <CardDescription>Choose the amount of credits you want to purchase</CardDescription>
+              <CardTitle className="text-[#FF7B54]">Select Credit Package</CardTitle>
+              <CardDescription className="text-[#333333]">Choose the amount of credits you want to purchase</CardDescription>
             </CardHeader>
             <CardContent>
               <RadioGroup 
@@ -383,13 +383,13 @@ export default function BuyCredits() {
           {clientSecret ? (
             <Card>
               <CardHeader>
-                <CardTitle>Payment Details</CardTitle>
-                <CardDescription>Complete your purchase securely</CardDescription>
+                <CardTitle className="text-[#FF7B54]">Payment Details</CardTitle>
+                <CardDescription className="text-[#333333]">Complete your purchase securely</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center pb-4 border-b mb-4">
                   <div>
-                    <h2 className="font-semibold">{selectedPackage.credits} Credit{selectedPackage.credits > 1 ? 's' : ''}</h2>
+                    <h2 className="font-semibold text-[#FF7B54]">{selectedPackage.credits} Credit{selectedPackage.credits > 1 ? 's' : ''}</h2>
                     <p className="text-sm text-gray-500">One-time purchase</p>
                   </div>
                   <div className="text-lg font-bold">${(selectedPackage.price / 100).toFixed(2)}</div>

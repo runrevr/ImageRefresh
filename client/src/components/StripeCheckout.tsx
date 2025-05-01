@@ -190,9 +190,9 @@ export default function StripeCheckout({
   const options = {
     clientSecret,
     appearance: {
-      theme: 'stripe',
+      theme: 'stripe' as const,
       variables: {
-        colorPrimary: '#000000',
+        colorPrimary: '#FF7B54',
         colorBackground: '#ffffff',
         colorText: '#333333',
       }
@@ -201,8 +201,8 @@ export default function StripeCheckout({
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Purchase {creditAmount} Credits</h3>
-      <p className="text-gray-600 mb-6">
+      <h3 className="text-xl font-semibold mb-4 text-[#FF7B54]">Purchase {creditAmount} Credits</h3>
+      <p className="text-[#333333] mb-6">
         Each credit includes 1 image transformation and 1 edit. Your credits will be available immediately after purchase.
       </p>
       
