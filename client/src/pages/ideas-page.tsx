@@ -18,6 +18,7 @@ import {
 // Import specific images
 import westernImage from "../assets/Western.png";
 import legoCharacterImage from "../assets/lego-character.png";
+import hiphopImage from "../assets/Hiphop.png";
 
 // Import data utilities
 import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
@@ -79,6 +80,8 @@ const StyleCard = ({
     imageSrc = westernImage;
   } else if (style.id === "lego") {
     imageSrc = legoCharacterImage;
+  } else if (style.id === "90s-hip-hop") {
+    imageSrc = hiphopImage;
   }
   
   return (
