@@ -1,0 +1,284 @@
+{
+  "categories": [
+    {
+      "id": "animation",
+      "name": "Kids",
+      "description": "Fun transformations perfect for children's photos",
+      "icon": "Sparkles",
+      "styles": [
+        {
+          "id": "super-mario",
+          "name": "Super Mario Bros",
+          "description": "Transform into the colorful, blocky style of the Super Mario universe",
+          "category": "animation",
+          "prompt": "Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small pixel-style adventurer character (boy or girl) with a playful, confident, or determined expression, sitting or standing on a brown brick platform, holding a glowing orb. For a boy, the character should have a more rugged and adventurous look, with a bold, structured design — like a simple but strong chest emblem and energetic pose. For a girl, the character should have a playful, whimsical design — a floral-inspired chest emblem or softer, rounded features with a joyful expression and fluid motion in the pose. The character should wear a bright green shirt and blue pants. The scene features a bright solid blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above. The overall style should feel cheerful, energetic, bright, and nostalgic, capturing the playful, lively atmosphere of classic side-scrolling adventure games. The character should have a playful attitude, but do not copy real-world facial features or likenesses.",
+          "previewImage": "/mario.png",
+          "beforeImage": "/examples/example-boy.png",
+          "featured": true,
+          "tags": ["video game", "pixel", "retro"]
+        },
+        {
+          "id": "minecraft",
+          "name": "Minecraft",
+          "description": "Convert to the iconic blocky, pixel style of Minecraft",
+          "category": "animation",
+          "prompt": "Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game's distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft's procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.",
+          "previewImage": "/examples/transformed-minecraft.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["video game", "pixel", "blocks"]
+        },
+        {
+          "id": "pixar",
+          "name": "Pixar",
+          "description": "Stylize in the smooth, expressive 3D animation style of Pixar films",
+          "category": "animation",
+          "prompt": "Transform into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.",
+          "previewImage": "/pixar-character.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["3D", "animation", "family"]
+        },
+        {
+          "id": "dreamworks-trolls",
+          "name": "Trolls",
+          "description": "Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments",
+          "category": "animation",
+          "prompt": "Use the uploaded image only as inspiration for the mood and attitude of a whimsical fantasy hero character. Create a colorful cartoon-style character with a playful, lively, and adventurous spirit. Design the character with wild, gravity-defying neon or pastel-colored hair shaped like a crown, and textured clothing inspired by forest leaves, vines, and magical plants. Set the scene in a vivid, high-contrast fantasy world filled with oversized flowers, sparkling waterfalls, candy-colored forests, and rhythmic, musical patterns. The character can have a joyful smile or a determined expression, depending on the mood. Add glowing, magical accents around the character to enhance the fantasy feel. All elements should be original, imaginative, and inspired by classic musical fairy-tale traditions. Do not copy real-world facial features or likeness from the uploaded image.",
+          "previewImage": "/trolls-character.png",
+          "beforeImage": "/examples/example-child.png",
+          "featured": true,
+          "tags": ["colorful", "fantasy", "musical"]
+        },
+        {
+          "id": "princess",
+          "name": "Princess",
+          "description": "Create a fairytale princess style with magical elements",
+          "category": "animation",
+          "prompt": "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
+          "previewImage": "/princess-character.png",
+          "beforeImage": "/examples/example-child.png",
+          "tags": ["disney", "fairytale", "fantasy"]
+        },
+        {
+          "id": "superhero",
+          "name": "Superhero",
+          "description": "Convert to a dynamic comic book superhero style",
+          "category": "animation",
+          "prompt": "Create a colorful 2D cartoon-style illustration of a cheerful young superhero [boy or girl] standing proudly with hands on hips or seated confidently on a platform holding a glowing energy orb. The character should have playful, stylized hair, bright expressive eyes, and either a big happy smile or a serious, determined expression. Dress the superhero in a vibrant costume with a bold chest emblem, colorful gloves, boots, and a flowing cape. Set the background as either a bright, whimsical outdoor scene with green bushes, trees, and a winding path under a clear blue sky, or a lively urban cartoon cityscape with tall colorful buildings and fluffy clouds. Add soft glowing effects around the hands, orb, or emblem to suggest magical powers. The overall style should be animated, playful, bold, and perfect for a children's cartoon series. Use any uploaded images only for inspiration for pose and action, without copying real facial features or likeness.",
+          "previewImage": "/examples/transformed-superhero.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["comic book", "action", "powers"]
+        },
+        {
+          "id": "lego",
+          "name": "Lego",
+          "description": "Reconstruct the image in the distinctive blocky Lego brick style",
+          "category": "animation",
+          "prompt": "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
+          "previewImage": "/lego-character.png",
+          "beforeImage": "/example-child.png",
+          "popular": true,
+          "tags": ["toy", "blocks", "construction"]
+        }
+      ]
+    },
+    {
+      "id": "artistic",
+      "name": "Artistic Paintings",
+      "description": "Transform photos into beautiful artistic styles and painting techniques",
+      "icon": "Paintbrush",
+      "styles": [
+        {
+          "id": "oil-painting",
+          "name": "Oil Painting",
+          "description": "Emulates traditional oil paintings with rich colors, textures, and visible brushstrokes",
+          "category": "artistic",
+          "prompt": "Transform this image into a traditional oil painting with rich, deep colors and visible textured brushstrokes. Create a masterful composition with careful attention to light and shadow, capturing the dimensional quality and depth that oil paint provides. Apply thick impasto technique for highlights and finer brush detail for shadows. Use a warm, slightly muted color palette reminiscent of classical oil paintings, with subtle glazing effects and the characteristic luminosity that comes from layered oil paint. The final result should have the timeless, elegant aesthetic of museum-quality oil paintings while maintaining the essence and emotional quality of the original image.",
+          "previewImage": "/assets/couple-field-painting.png",
+          "beforeImage": "/assets/couple-field.png",
+          "featured": true,
+          "tags": ["classic", "textured", "traditional"]
+        },
+        {
+          "id": "watercolor",
+          "name": "Watercolor",
+          "description": "Creates a soft, fluid look with translucent colors, similar to watercolor paintings",
+          "category": "artistic",
+          "prompt": "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted with broader, more impressionistic areas. The colors should appear light, luminous and slightly diluted with a fresh, airy quality. Add subtle paper texture to enhance the authentic watercolor feel. The final image should convey a dreamy, ethereal atmosphere with the gentle, translucent quality that makes watercolor paintings so distinctive.",
+          "previewImage": "/examples/transformed-watercolor.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["fluid", "transparent", "delicate"]
+        },
+        {
+          "id": "impressionist",
+          "name": "Impressionist",
+          "description": "Focuses on capturing light and movement with loose brushstrokes, like the works of Monet and Renoir",
+          "category": "artistic",
+          "prompt": "Transform this image into an Impressionist painting in the style of Claude Monet, Pierre-Auguste Renoir, or Camille Pissarro. Use visible, broken brushstrokes with pure, unmixed colors placed side by side to create a vibrant, shimmering effect. Focus on capturing the fleeting effects of light and atmosphere rather than fine details. Apply a bright, sunlit color palette dominated by blues, greens, and warm yellows. Create the characteristic Impressionist sense of spontaneity and movement through loose brushwork. Pay special attention to reflections, shadows, and how light plays on surfaces. Include soft, blurred edges and the impression of natural outdoor lighting with the distinctive atmospheric quality found in classic Impressionist masterpieces.",
+          "previewImage": "/examples/transformed-impressionist.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "featured": true,
+          "tags": ["monet", "light", "broken brushstrokes"]
+        },
+        {
+          "id": "abstract",
+          "name": "Abstract",
+          "description": "Transforms reality into non-representational forms, shapes, and colors",
+          "category": "artistic",
+          "prompt": "Transform this image into an abstract work of art that deconstructs the subject into essential forms, shapes, and colors. Simplify complex elements into bold geometric forms or fluid organic shapes. Use a striking color palette with high contrast and unexpected color combinations. Create visual rhythm through repeated patterns, lines, and forms that suggest movement and energy. Include variations in texture from smooth color fields to areas of intense detail or texture. Remove or greatly simplify recognizable details while preserving the essence and emotional impact of the original. The final result should be non-literal and open to interpretation while maintaining a careful compositional balance that guides the eye through the abstract elements.",
+          "previewImage": "/examples/transformed-abstract.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["non-representational", "geometric", "expressive"]
+        },
+        {
+          "id": "pop-surrealism",
+          "name": "Pop Surrealism",
+          "description": "Combines pop culture elements with dreamlike, surreal imagery",
+          "category": "artistic",
+          "prompt": "Transform this image into a Pop Surrealism style artwork that blends elements of pop culture with dreamlike, surreal imagery. Incorporate a vivid, saturated color palette with bold outlines and smooth rendering. Create an uncanny juxtaposition of familiar elements in unexpected contexts or combinations. Add whimsical or fantastical elements that subvert reality while maintaining technical precision in the rendering. Include symbolic or narrative elements that suggest a mysterious story. The overall aesthetic should balance between cute and disturbing, polished and peculiar, combining the accessible appeal of pop art with the strange dreamscapes of surrealism in the tradition of artists like Mark Ryden, Ray Caesar, or Camille Rose Garcia.",
+          "previewImage": "/examples/transformed-pop-surrealism.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "new": true,
+          "tags": ["lowbrow", "dreamlike", "fantastical"]
+        },
+        {
+          "id": "art-deco",
+          "name": "Art Deco",
+          "description": "Features bold geometric shapes, lavish ornamentation, and symmetry",
+          "category": "artistic",
+          "prompt": "Transform this image into an Art Deco style artwork reminiscent of the 1920s and 1930s. Apply the distinctive geometric precision and symmetry that defines Art Deco, with bold, clean lines and shapes. Use a sophisticated color palette of rich, deep colors accented with gold, silver, or black. Incorporate typical Art Deco patterns such as sunbursts, zigzags, and stepped forms. Add decorative elements featuring stylized natural or mechanical motifs. Create a sense of luxury and glamour through high contrast and the suggestion of metallic or lacquered surfaces. The overall composition should feel elegant, modern, and boldly graphic with the strong vertical lines and geometric stylization characteristic of iconic Art Deco design and illustration.",
+          "previewImage": "/examples/transformed-art-deco.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "tags": ["geometric", "elegant", "1920s"]
+        }
+      ]
+    },
+    {
+      "id": "historical",
+      "name": "Historical Eras",
+      "description": "Go back in time with transformations that capture different historical periods",
+      "icon": "Clock",
+      "styles": [
+        {
+          "id": "old-western",
+          "name": "Old Western",
+          "description": "Rugged frontier aesthetic with sepia tones (1860-1890)",
+          "category": "historical",
+          "prompt": "Transform this image into an authentic Old Western style photograph from the American frontier era (1860s-1890s). Apply a warm sepia tone or faded brownish-yellow color palette with slightly reduced contrast. Add a grainy, slightly blurred quality reminiscent of early photography. Include period-appropriate elements like rustic wooden structures, dusty landscapes, or frontier town settings. For portraits, modify clothing to include western wear such as cowboy hats, bandanas, leather vests, or period dresses. Add subtle aging effects like scratches, spots, or uneven exposure typical of vintage photographs. The final image should capture the rugged, historical aesthetic of the American Old West as seen in authentic period photography from the frontier days.",
+          "previewImage": "/Western.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["cowboy", "frontier", "sepia"]
+        },
+        {
+          "id": "90s-hip-hop",
+          "name": "90s Hip-Hop",
+          "description": "Bold, colorful urban style from the golden age of hip-hop",
+          "category": "historical",
+          "prompt": "Transform this image into a 90s hip-hop style with all the iconic visual elements of that golden era. Use vibrant, bold colors with high contrast and slight oversaturation. Apply fashion elements characteristic of 90s hip-hop culture such as baggy jeans, snapback caps, chunky gold chains, sports jerseys, bandanas, or branded sportswear (Fubu, Karl Kani, etc). For backgrounds, include urban settings with graffiti art, basketball courts, or city streets. Add technical visual effects typical of 90s media like slight film grain, occasional light leaks, or subtle VHS-style artifacts. Incorporate iconic props like boomboxes, vintage sneakers, or period-appropriate vehicles when contextually fitting. The overall vibe should capture the energetic, confident aesthetic that defined 90s hip-hop visual culture.",
+          "previewImage": "/examples/transformed-90s-hiphop.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "featured": true,
+          "tags": ["urban", "music", "retro"]
+        },
+        {
+          "id": "1980s",
+          "name": "1980s",
+          "description": "Bold, colorful aesthetic with neon colors and geometric patterns",
+          "category": "historical",
+          "prompt": "Transform this image into a vibrant 1980s aesthetic with all the iconic visual elements of the decade. Use a bold color scheme dominated by neon colors like hot pink, electric blue, and bright yellow with high contrast. Apply 80s fashion elements such as big hair, shoulder pads, leg warmers, Members Only jackets, or acid-wash denim. For backgrounds, incorporate geometric patterns like triangles, zigzags, and grids in bright colors or gradient effects. Add technological items from the era such as boomboxes, Walkmans, early computers, or arcade games when contextually appropriate. Create lighting effects reminiscent of 80s media, such as lens flares, neon glows, or sunset gradients. The final image should capture the energetic, optimistic, and slightly exaggerated visual style that defined 1980s pop culture.",
+          "previewImage": "/examples/transformed-1980s.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["retro", "neon", "synthwave"]
+        },
+        {
+          "id": "renaissance",
+          "name": "Renaissance",
+          "description": "Classical European art style with realistic proportions and religious/mythological themes",
+          "category": "historical",
+          "prompt": "Transform this image into a Renaissance-style painting reminiscent of the works of masters like Leonardo da Vinci, Raphael, or Titian (15th-16th century). Apply the characteristic techniques of Renaissance art, including realistic anatomy, balanced compositions, and perfect proportions. Use the distinctive color palette of Renaissance paintings with rich, saturated colors offset by deep shadows and atmospheric perspective. Add subtle religious or mythological elements typical of the period if appropriate to the context. Create the illusion of depth through careful perspective and the layering of foreground, middle, and background elements. For portraits, modify poses to reflect the dignified, posed formality of Renaissance portraiture with slightly idealized features. The lighting should create dramatic but soft contrasts with the glowing luminosity that characterized Renaissance masterpieces.",
+          "previewImage": "/examples/transformed-renaissance.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "tags": ["classical", "european", "masterpiece"]
+        },
+        {
+          "id": "victorian-era",
+          "name": "Victorian Era",
+          "description": "Formal, ornate style from 19th century England",
+          "category": "historical",
+          "prompt": "Transform this image into an authentic Victorian-era style portrait photograph from the mid-to-late 19th century. Apply a sepia or monochrome color palette with rich contrast between light and shadow areas. Add the distinctive formal composition of Victorian photography with subjects posed stiffly and facing slightly off-center. Modify clothing to include period-appropriate Victorian attire such as high collars, waistcoats, pocket watches, and fitted jackets for men, or high-necked dresses with full skirts, corsets, and elaborate hairstyles for women. Include Victorian decorative elements like ornate furniture, heavy drapery, patterned wallpaper, or classical columns in the background. Create a slightly soft focus effect typical of early photography while maintaining critical detail in the face. The final image should capture the formal, dignified aesthetic of Victorian portrait photography with its characteristic blend of technical constraints and high society sensibilities.",
+          "previewImage": "/examples/transformed-victorian.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "featured": true,
+          "tags": ["formal", "antique", "monochrome"]
+        },
+        {
+          "id": "medieval",
+          "name": "Medieval",
+          "description": "Middle Ages style with knights, castles and fantasy elements",
+          "category": "historical",
+          "prompt": "Transform this image into a medieval-style illuminated manuscript or tapestry artwork from the European Middle Ages (c. 500-1500 CE). Apply the distinctive flat perspective and stylized human figures characteristic of medieval art, with elongated proportions and simplified facial features. Use rich, saturated colors dominated by reds, blues, and gold accents on backgrounds reminiscent of aged parchment or fabric. Add iconic medieval elements such as castles, knights in armor, ornate religious symbols, heraldic designs, or fantastical creatures like dragons and unicorns where contextually appropriate. Incorporate decorative borders with intertwining vines, geometric patterns, or small narrative scenes. Include Gothic architectural elements such as pointed arches and flying buttresses in background structures. The final image should capture the mystical, symbolic quality of medieval art with its fascinating blend of religious devotion, courtly romance, and fantastical imagination.",
+          "previewImage": "/examples/transformed-medieval.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "tags": ["fantasy", "knights", "historical"]
+        }
+      ]
+    },
+    {
+      "id": "product",
+      "name": "Product Photography",
+      "description": "Professional product photography styles for commercial use",
+      "icon": "BoxIcon",
+      "styles": [
+        {
+          "id": "remove-background",
+          "name": "Remove Background",
+          "description": "Isolate the product with a clean, solid or transparent background",
+          "category": "product",
+          "prompt": "Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.",
+          "previewImage": "/examples/transformed-product-white.png",
+          "beforeImage": "/examples/product-original.png",
+          "tags": ["clean", "professional", "isolated"]
+        },
+        {
+          "id": "enhanced-lighting",
+          "name": "Enhanced Lighting & Colors",
+          "description": "Improve product appearance with professional studio lighting and color enhancement",
+          "category": "product",
+          "prompt": "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
+          "previewImage": "/examples/transformed-product-lighting.png",
+          "beforeImage": "/examples/product-original.png",
+          "popular": true,
+          "tags": ["studio", "professional", "commercial"]
+        },
+        {
+          "id": "lifestyle-integration",
+          "name": "Lifestyle Integration",
+          "description": "Place the product in a realistic lifestyle environment",
+          "category": "product",
+          "prompt": "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
+          "previewImage": "/examples/transformed-product-lifestyle.png",
+          "beforeImage": "/examples/product-original.png",
+          "featured": true,
+          "tags": ["contextual", "environment", "natural"]
+        },
+        {
+          "id": "social-media-ready",
+          "name": "Social Media Ready",
+          "description": "Optimize product presentation for social media platforms",
+          "category": "product",
+          "prompt": "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with vibrant colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay, incorporate trending visual elements, and ensure the product pops against a carefully designed background that suggests lifestyle without overwhelming.",
+          "previewImage": "/examples/transformed-product-social.png",
+          "beforeImage": "/examples/product-original.png",
+          "new": true,
+          "tags": ["instagram", "trendy", "marketing"]
+        }
+      ]
+    }
+  ]
+}

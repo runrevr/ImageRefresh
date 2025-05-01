@@ -1,0 +1,84 @@
+    {
+      "id": "animation",
+      "name": "Kids",
+      "description": "Fun transformations perfect for children's photos",
+      "icon": "Sparkles",
+      "styles": [
+        {
+          "id": "super-mario",
+          "name": "Super Mario Bros",
+          "description": "Transform into the colorful, blocky style of the Super Mario universe",
+          "category": "animation",
+          "prompt": "Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small pixel-style adventurer character (boy or girl) with a playful, confident, or determined expression, sitting or standing on a brown brick platform, holding a glowing orb. For a boy, the character should have a more rugged and adventurous look, with a bold, structured design — like a simple but strong chest emblem and energetic pose. For a girl, the character should have a playful, whimsical design — a floral-inspired chest emblem or softer, rounded features with a joyful expression and fluid motion in the pose. The character should wear a bright green shirt and blue pants. The scene features a bright solid blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above. The overall style should feel cheerful, energetic, bright, and nostalgic, capturing the playful, lively atmosphere of classic side-scrolling adventure games. The character should have a playful attitude, but do not copy real-world facial features or likenesses.",
+          "previewImage": "/mario.png",
+          "beforeImage": "/examples/example-boy.png",
+          "featured": true,
+          "tags": ["video game", "pixel", "retro"]
+        },
+        {
+          "id": "minecraft",
+          "name": "Minecraft",
+          "description": "Convert to the iconic blocky, pixel style of Minecraft",
+          "category": "animation",
+          "prompt": "Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game's distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft's procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.",
+          "previewImage": "/examples/transformed-minecraft.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["video game", "pixel", "blocks"]
+        },
+        {
+          "id": "pixar",
+          "name": "Pixar",
+          "description": "Stylize in the smooth, expressive 3D animation style of Pixar films",
+          "category": "animation",
+          "prompt": "Transform into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.",
+          "previewImage": "/pixar-character.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["3D", "animation", "family"]
+        },
+        {
+          "id": "dreamworks-trolls",
+          "name": "Trolls",
+          "description": "Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments",
+          "category": "animation",
+          "prompt": "Use the uploaded image only as inspiration for the mood and attitude of a whimsical fantasy hero character. Create a colorful cartoon-style character with a playful, lively, and adventurous spirit. Design the character with wild, gravity-defying neon or pastel-colored hair shaped like a crown, and textured clothing inspired by forest leaves, vines, and magical plants. Set the scene in a vivid, high-contrast fantasy world filled with oversized flowers, sparkling waterfalls, candy-colored forests, and rhythmic, musical patterns. The character can have a joyful smile or a determined expression, depending on the mood. Add glowing, magical accents around the character to enhance the fantasy feel. All elements should be original, imaginative, and inspired by classic musical fairy-tale traditions. Do not copy real-world facial features or likeness from the uploaded image.",
+          "previewImage": "/trolls-character.png",
+          "beforeImage": "/examples/example-child.png",
+          "featured": true,
+          "tags": ["colorful", "fantasy", "musical"]
+        },
+        {
+          "id": "princess",
+          "name": "Princess",
+          "description": "Create a fairytale princess style with magical elements",
+          "category": "animation",
+          "prompt": "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
+          "previewImage": "/princess-character.png",
+          "beforeImage": "/examples/example-child.png",
+          "tags": ["disney", "fairytale", "fantasy"]
+        },
+        {
+          "id": "superhero",
+          "name": "Superhero",
+          "description": "Convert to a dynamic comic book superhero style",
+          "category": "animation",
+          "prompt": "Create a colorful 2D cartoon-style illustration of a cheerful young superhero [boy or girl] standing proudly with hands on hips or seated confidently on a platform holding a glowing energy orb. The character should have playful, stylized hair, bright expressive eyes, and either a big happy smile or a serious, determined expression. Dress the superhero in a vibrant costume with a bold chest emblem, colorful gloves, boots, and a flowing cape. Set the background as either a bright, whimsical outdoor scene with green bushes, trees, and a winding path under a clear blue sky, or a lively urban cartoon cityscape with tall colorful buildings and fluffy clouds. Add soft glowing effects around the hands, orb, or emblem to suggest magical powers. The overall style should be animated, playful, bold, and perfect for a children's cartoon series. Use any uploaded images only for inspiration for pose and action, without copying real facial features or likeness.",
+          "previewImage": "/examples/transformed-superhero.png",
+          "beforeImage": "/examples/example-child.png",
+          "popular": true,
+          "tags": ["comic book", "action", "powers"]
+        },
+        {
+          "id": "lego",
+          "name": "Lego",
+          "description": "Reconstruct the image in the distinctive blocky Lego brick style",
+          "category": "animation",
+          "prompt": "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
+          "previewImage": "/lego-character.png",
+          "beforeImage": "/example-child.png",
+          "popular": true,
+          "tags": ["toy", "blocks", "construction"]
+        }
+      ]
+    },

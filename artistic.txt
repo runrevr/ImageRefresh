@@ -1,0 +1,74 @@
+    {
+      "id": "artistic",
+      "name": "Artistic Paintings",
+      "description": "Transform photos into beautiful artistic styles and painting techniques",
+      "icon": "Paintbrush",
+      "styles": [
+        {
+          "id": "oil-painting",
+          "name": "Oil Painting",
+          "description": "Emulates traditional oil paintings with rich colors, textures, and visible brushstrokes",
+          "category": "artistic",
+          "prompt": "Transform this image into a traditional oil painting with rich, deep colors and visible textured brushstrokes. Create a masterful composition with careful attention to light and shadow, capturing the dimensional quality and depth that oil paint provides. Apply thick impasto technique for highlights and finer brush detail for shadows. Use a warm, slightly muted color palette reminiscent of classical oil paintings, with subtle glazing effects and the characteristic luminosity that comes from layered oil paint. The final result should have the timeless, elegant aesthetic of museum-quality oil paintings while maintaining the essence and emotional quality of the original image.",
+          "previewImage": "/assets/couple-field-painting.png",
+          "beforeImage": "/assets/couple-field.png",
+          "featured": true,
+          "tags": ["classic", "textured", "traditional"]
+        },
+        {
+          "id": "watercolor",
+          "name": "Watercolor",
+          "description": "Creates a soft, fluid look with translucent colors, similar to watercolor paintings",
+          "category": "artistic",
+          "prompt": "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted with broader, more impressionistic areas. The colors should appear light, luminous and slightly diluted with a fresh, airy quality. Add subtle paper texture to enhance the authentic watercolor feel. The final image should convey a dreamy, ethereal atmosphere with the gentle, translucent quality that makes watercolor paintings so distinctive.",
+          "previewImage": "/examples/transformed-watercolor.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["fluid", "transparent", "delicate"]
+        },
+        {
+          "id": "impressionist",
+          "name": "Impressionist",
+          "description": "Focuses on capturing light and movement with loose brushstrokes, like the works of Monet and Renoir",
+          "category": "artistic",
+          "prompt": "Transform this image into an Impressionist painting in the style of Claude Monet, Pierre-Auguste Renoir, or Camille Pissarro. Use visible, broken brushstrokes with pure, unmixed colors placed side by side to create a vibrant, shimmering effect. Focus on capturing the fleeting effects of light and atmosphere rather than fine details. Apply a bright, sunlit color palette dominated by blues, greens, and warm yellows. Create the characteristic Impressionist sense of spontaneity and movement through loose brushwork. Pay special attention to reflections, shadows, and how light plays on surfaces. Include soft, blurred edges and the impression of natural outdoor lighting with the distinctive atmospheric quality found in classic Impressionist masterpieces.",
+          "previewImage": "/examples/transformed-impressionist.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "featured": true,
+          "tags": ["monet", "light", "broken brushstrokes"]
+        },
+        {
+          "id": "abstract",
+          "name": "Abstract",
+          "description": "Transforms reality into non-representational forms, shapes, and colors",
+          "category": "artistic",
+          "prompt": "Transform this image into an abstract work of art that deconstructs the subject into essential forms, shapes, and colors. Simplify complex elements into bold geometric forms or fluid organic shapes. Use a striking color palette with high contrast and unexpected color combinations. Create visual rhythm through repeated patterns, lines, and forms that suggest movement and energy. Include variations in texture from smooth color fields to areas of intense detail or texture. Remove or greatly simplify recognizable details while preserving the essence and emotional impact of the original. The final result should be non-literal and open to interpretation while maintaining a careful compositional balance that guides the eye through the abstract elements.",
+          "previewImage": "/examples/transformed-abstract.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "popular": true,
+          "tags": ["non-representational", "geometric", "expressive"]
+        },
+        {
+          "id": "pop-surrealism",
+          "name": "Pop Surrealism",
+          "description": "Combines pop culture elements with dreamlike, surreal imagery",
+          "category": "artistic",
+          "prompt": "Transform this image into a Pop Surrealism style artwork that blends elements of pop culture with dreamlike, surreal imagery. Incorporate a vivid, saturated color palette with bold outlines and smooth rendering. Create an uncanny juxtaposition of familiar elements in unexpected contexts or combinations. Add whimsical or fantastical elements that subvert reality while maintaining technical precision in the rendering. Include symbolic or narrative elements that suggest a mysterious story. The overall aesthetic should balance between cute and disturbing, polished and peculiar, combining the accessible appeal of pop art with the strange dreamscapes of surrealism in the tradition of artists like Mark Ryden, Ray Caesar, or Camille Rose Garcia.",
+          "previewImage": "/examples/transformed-pop-surrealism.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "new": true,
+          "tags": ["lowbrow", "dreamlike", "fantastical"]
+        },
+        {
+          "id": "art-deco",
+          "name": "Art Deco",
+          "description": "Features bold geometric shapes, lavish ornamentation, and symmetry",
+          "category": "artistic",
+          "prompt": "Transform this image into an Art Deco style artwork reminiscent of the 1920s and 1930s. Apply the distinctive geometric precision and symmetry that defines Art Deco, with bold, clean lines and shapes. Use a sophisticated color palette of rich, deep colors accented with gold, silver, or black. Incorporate typical Art Deco patterns such as sunbursts, zigzags, and stepped forms. Add decorative elements featuring stylized natural or mechanical motifs. Create a sense of luxury and glamour through high contrast and the suggestion of metallic or lacquered surfaces. The overall composition should feel elegant, modern, and boldly graphic with the strong vertical lines and geometric stylization characteristic of iconic Art Deco design and illustration.",
+          "previewImage": "/examples/transformed-art-deco.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "tags": ["geometric", "elegant", "1920s"]
+        }
+      ]
+    },
+    {

@@ -1,0 +1,52 @@
+      "id": "product",
+      "name": "Product Photography",
+      "description": "Professional product photography styles for commercial use",
+      "icon": "BoxIcon",
+      "styles": [
+        {
+          "id": "remove-background",
+          "name": "Remove Background",
+          "description": "Isolate the product with a clean, solid or transparent background",
+          "category": "product",
+          "prompt": "Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.",
+          "previewImage": "/examples/transformed-product-white.png",
+          "beforeImage": "/examples/product-original.png",
+          "tags": ["clean", "professional", "isolated"]
+        },
+        {
+          "id": "enhanced-lighting",
+          "name": "Enhanced Lighting & Colors",
+          "description": "Improve product appearance with professional studio lighting and color enhancement",
+          "category": "product",
+          "prompt": "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
+          "previewImage": "/examples/transformed-product-lighting.png",
+          "beforeImage": "/examples/product-original.png",
+          "popular": true,
+          "tags": ["studio", "professional", "commercial"]
+        },
+        {
+          "id": "lifestyle-integration",
+          "name": "Lifestyle Integration",
+          "description": "Place the product in a realistic lifestyle environment",
+          "category": "product",
+          "prompt": "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
+          "previewImage": "/examples/transformed-product-lifestyle.png",
+          "beforeImage": "/examples/product-original.png",
+          "featured": true,
+          "tags": ["contextual", "environment", "natural"]
+        },
+        {
+          "id": "social-media-ready",
+          "name": "Social Media Ready",
+          "description": "Optimize product presentation for social media platforms",
+          "category": "product",
+          "prompt": "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with vibrant colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay, incorporate trending visual elements, and ensure the product pops against a carefully designed background that suggests lifestyle without overwhelming.",
+          "previewImage": "/examples/transformed-product-social.png",
+          "beforeImage": "/examples/product-original.png",
+          "new": true,
+          "tags": ["instagram", "trendy", "marketing"]
+        }
+      ]
+    }
+  ]
+}
