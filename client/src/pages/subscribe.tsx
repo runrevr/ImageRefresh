@@ -152,10 +152,6 @@ export default function Subscribe() {
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
-                  <span>4K resolution output</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
                   <span>Commercial usage rights</span>
                 </li>
               </ul>
