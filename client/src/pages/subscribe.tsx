@@ -63,7 +63,11 @@ const SubscribeForm = () => {
         <Button type="button" variant="outline" onClick={() => navigate("/account")}>
           Cancel
         </Button>
-        <Button type="submit" disabled={!stripe || isProcessing}>
+        <Button
+          type="submit"
+          disabled={!stripe || isProcessing}
+          className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white"
+        >
           {isProcessing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

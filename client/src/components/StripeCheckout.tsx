@@ -116,7 +116,7 @@ const CheckoutForm = ({
         <Button 
           type="submit" 
           disabled={!stripe || isLoading}
-          className="bg-black text-white"
+          className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white"
         >
           {isLoading ? (
             <>
