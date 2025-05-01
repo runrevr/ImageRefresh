@@ -16,6 +16,7 @@ export interface IStorage {
     stripeCustomerId?: string | null, 
     stripeSubscriptionId?: string | null
   ): Promise<User>;
+  checkAndResetMonthlyFreeCredit(id: number): Promise<boolean>; // Check if user has free credit this month
   
   // Transformation operations
   createTransformation(transformation: InsertTransformation): Promise<Transformation>;
@@ -51,16 +52,54 @@ export class DatabaseStorage implements IStorage {
       throw new Error("User not found");
     }
 
+    const updateData: any = {
+      paidCredits: paidCredits !== undefined ? paidCredits : user.paidCredits
+    };
+    
+    // If we're using the free credit, update the lastFreeCredit timestamp
+    if (usedFreeCredit) {
+      updateData.freeCreditsUsed = true;
+      updateData.lastFreeCredit = new Date();
+    }
+
     const [updatedUser] = await db
       .update(users)
-      .set({ 
-        freeCreditsUsed: usedFreeCredit ? true : user.freeCreditsUsed,
-        paidCredits: paidCredits !== undefined ? paidCredits : user.paidCredits
-      })
+      .set(updateData)
       .where(eq(users.id, id))
       .returning();
 
     return updatedUser;
+  }
+  
+  async checkAndResetMonthlyFreeCredit(id: number): Promise<boolean> {
+    const user = await this.getUser(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    // If user has never used a free credit (new user) or doesn't have a lastFreeCredit date
+    if (!user.freeCreditsUsed || !user.lastFreeCredit) {
+      return true; // They have a free credit available
+    }
+    
+    const lastUsed = new Date(user.lastFreeCredit);
+    const now = new Date();
+    
+    // Check if it's been at least one month since the last free credit was used
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    
+    if (lastUsed < oneMonthAgo) {
+      // It's been more than a month, reset the freeCreditsUsed flag
+      await db
+        .update(users)
+        .set({ freeCreditsUsed: false })
+        .where(eq(users.id, id));
+      
+      return true; // They have a free credit available
+    }
+    
+    return false; // They've already used their free credit this month
   }
   
   async updateUserEmail(id: number, email: string): Promise<User> {

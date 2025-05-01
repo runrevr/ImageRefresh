@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   email: text("email").notNull(),
   freeCreditsUsed: boolean("free_credits_used").default(false).notNull(),
+  lastFreeCredit: timestamp("last_free_credit"), // When the free credit was last used
   paidCredits: integer("paid_credits").default(0).notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
