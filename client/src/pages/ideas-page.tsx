@@ -23,12 +23,13 @@ import eightyImage from "../assets/80s.png";
 import renaissanceImage from "../assets/Renaissance.png";
 import victorianImage from "../assets/Victorian era.png";
 import medievalImage from "../assets/medieval.png";
+import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
 import artisticBackgroundImage from "../assets/Renaissance.png"; // Using Renaissance image for Artistic category
 import historicalBackgroundImage from "../assets/Victorian era.png"; // Using Victorian era image for Historical category
-import productBackgroundImage from "../assets/Western.png"; // Using Western image for Product category
+import productBackgroundImage from "../assets/sunset-shampoo.jpg"; // Using sunset shampoo image for Product category
 
 // Import data utilities
 import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
