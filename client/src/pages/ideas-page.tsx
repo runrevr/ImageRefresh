@@ -20,6 +20,7 @@ import westernImage from "../assets/Western.png";
 import legoCharacterImage from "../assets/lego-character.png";
 import hiphopImage from "../assets/Hiphop.png";
 import eightyImage from "../assets/80s.png";
+import renaissanceImage from "../assets/Renaissance.png";
 
 // Import data utilities
 import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
@@ -85,6 +86,8 @@ const StyleCard = ({
     imageSrc = hiphopImage;
   } else if (style.id === "1980s") {
     imageSrc = eightyImage;
+  } else if (style.id === "renaissance") {
+    imageSrc = renaissanceImage;
   }
   
   return (
