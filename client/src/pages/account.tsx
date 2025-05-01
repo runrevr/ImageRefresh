@@ -191,10 +191,22 @@ export default function AccountPage() {
                     <div className="bg-gray-50 p-6 rounded-lg border">
                       <h3 className="text-xl font-bold mb-2 text-[#333333]">Available Credits</h3>
                       <p className="text-4xl font-bold text-[#333333]">
-                        {(subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 0 : 1) + (subscriptionData?.credits || user.paidCredits || 0)} <span className="text-gray-500 text-lg ml-1">{(subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 0 : 1) + (subscriptionData?.credits || user.paidCredits || 0) === 1 ? 'credit' : 'credits'}</span>
+                        {(() => {
+                          // Safely determine if free credit is available
+                          const freeCredit = (subscriptionData?.freeCreditsUsed === true || user?.freeCreditsUsed === true) ? 0 : 1;
+                          // Safely get paid credits
+                          const paidCredits = subscriptionData?.credits || user?.paidCredits || 0;
+                          // Calculate total
+                          const totalCredits = freeCredit + paidCredits;
+                          return (
+                            <>
+                              {totalCredits} <span className="text-gray-500 text-lg ml-1">{totalCredits === 1 ? 'credit' : 'credits'}</span>
+                            </>
+                          );
+                        })()}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
-                        {subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 
+                        {subscriptionData?.freeCreditsUsed === true || user?.freeCreditsUsed === true ? 
                           "You've used your free monthly credit" : 
                           "Includes your free monthly credit"}
                       </p>
