@@ -54,50 +54,101 @@ const creditPackages: CreditPackage[] = [
   }
 ];
 
-const CreditPurchaseForm = () => {
+type CreditPurchaseFormProps = {
+  selectedPackage: CreditPackage;
+};
+
+const CreditPurchaseForm = ({ selectedPackage }: CreditPurchaseFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
+  const { user } = useAuth();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !user) {
       setIsProcessing(false);
       return;
     }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.origin + "/account?tab=credits",
-      },
-    });
+    try {
+      // Step 1: Confirm the payment with Stripe
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        redirect: 'if_required',
+      });
 
-    if (error) {
+      if (error) {
+        toast({
+          title: "Payment Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+      
+      // Step 2: If payment was successful, manually update the credits
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        try {
+          // Call the purchase-credits endpoint to update the user's credits
+          const response = await apiRequest('POST', '/api/purchase-credits', {
+            userId: user.id,
+            credits: selectedPackage.credits
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to add credits to your account');
+          }
+          
+          const data = await response.json();
+          
+          // Invalidate queries to force a refetch of data
+          queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+          
+          toast({
+            title: "Payment Successful!",
+            description: `You now have ${data.paidCredits} credits available for use.`,
+          });
+          
+          // Redirect to account page with credits tab selected
+          setTimeout(() => {
+            navigate("/account?tab=credits");
+          }, 500);
+        } catch (creditError: any) {
+          console.error('Error adding credits:', creditError);
+          toast({
+            title: "Error Adding Credits",
+            description: "Your payment was successful, but we couldn't add credits to your account. Please contact support.",
+            variant: "destructive"
+          });
+          setIsProcessing(false);
+        }
+      } else {
+        // Payment requires additional actions or is still processing
+        toast({
+          title: "Payment Processing",
+          description: "Your payment is still processing. Credits will be added once the payment is completed.",
+        });
+        
+        // Redirect to account page
+        setTimeout(() => {
+          navigate("/account?tab=credits");
+        }, 500);
+      }
+    } catch (error: any) {
+      console.error('Payment error:', error);
       toast({
-        title: "Payment Failed",
-        description: error.message,
-        variant: "destructive",
+        title: "Payment Error",
+        description: error.message || "An unexpected error occurred. Please try again.",
+        variant: "destructive"
       });
       setIsProcessing(false);
-    } else {
-      // Invalidate queries to force a refetch of data
-      queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
-      toast({
-        title: "Payment Successful",
-        description: "Thank you for your purchase! Your credits will be added to your account shortly.",
-      });
-      
-      // Redirect to account page with credits tab selected
-      setTimeout(() => {
-        navigate("/account?tab=credits");
-      }, 500);
     }
   }
 
@@ -344,7 +395,7 @@ export default function BuyCredits() {
                   <div className="text-lg font-bold">${(selectedPackage.price / 100).toFixed(2)}</div>
                 </div>
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <CreditPurchaseForm />
+                  <CreditPurchaseForm selectedPackage={selectedPackage} />
                 </Elements>
               </CardContent>
             </Card>
