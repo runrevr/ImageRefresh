@@ -102,7 +102,7 @@ export default function AccountPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+            Available Credits
             <TabsContent value="transformations">
               <Card>
                 <CardHeader>
