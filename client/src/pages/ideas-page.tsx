@@ -83,13 +83,13 @@ const CategoryCard = ({
     >
       <div className="relative">
         {/* Background image with overlay */}
-        <div className="h-48 overflow-hidden">
+        <div className="h-64 overflow-hidden">
           <img 
             src={backgroundImage}
             alt={category.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center p-6 text-center">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center px-4 py-8 text-center">
             {IconComponent}
             <h3 className="text-xl font-bold mb-2 text-white">{category.name}</h3>
             
@@ -146,7 +146,7 @@ const StyleCard = ({
     <Card 
       className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
     >
-      <div className="relative w-full h-48 overflow-hidden">
+      <div className="relative w-full h-64 overflow-hidden">
         <img 
           src={imageSrc}
           alt={style.name}
