@@ -15,6 +15,10 @@ import {
   ChevronLeft,
 } from "lucide-react";
 
+// Import specific images
+import westernImage from "../assets/Western.png";
+import legoCharacterImage from "../assets/lego-character.png";
+
 // Import data utilities
 import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
 
@@ -67,10 +71,15 @@ const StyleCard = ({
   style: Style; 
   onSelect: (style: Style) => void;
 }) => {
-  // Simple approach: special case handling for specific images
-  const imageSrc = style.id === "old-western" ? "/Western.png" :
-                  style.id === "lego" ? "/lego-character.png" :
-                  style.previewImage;
+  // Handle imported images for specific styles
+  let imageSrc = style.previewImage;
+  
+  // Use imported images for specific styles
+  if (style.id === "old-western") {
+    imageSrc = westernImage;
+  } else if (style.id === "lego") {
+    imageSrc = legoCharacterImage;
+  }
   
   return (
     <Card 
