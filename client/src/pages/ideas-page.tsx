@@ -24,6 +24,12 @@ import renaissanceImage from "../assets/Renaissance.png";
 import victorianImage from "../assets/Victorian era.png";
 import medievalImage from "../assets/medieval.png";
 
+// Import category background images
+import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
+import artisticBackgroundImage from "../assets/Renaissance.png"; // Using Renaissance image for Artistic category
+import historicalBackgroundImage from "../assets/Victorian era.png"; // Using Victorian era image for Historical category
+import productBackgroundImage from "../assets/Western.png"; // Using Western image for Product category
+
 // Import data utilities
 import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
 
@@ -36,11 +42,11 @@ const CategoryCard = ({
   onClick: (categoryId: string) => void;
 }) => {
   const iconMap: Record<string, React.ReactNode> = {
-    ImageIcon: <ImageIcon className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
-    Paintbrush: <Paintbrush className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
-    Clock: <Clock className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
-    BoxIcon: <BoxIcon className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
-    Sparkles: <Sparkles className="h-12 w-12 mb-2 text-[#2A7B9B]" />,
+    ImageIcon: <ImageIcon className="h-12 w-12 mb-2 text-white" />,
+    Paintbrush: <Paintbrush className="h-12 w-12 mb-2 text-white" />,
+    Clock: <Clock className="h-12 w-12 mb-2 text-white" />,
+    BoxIcon: <BoxIcon className="h-12 w-12 mb-2 text-white" />,
+    Sparkles: <Sparkles className="h-12 w-12 mb-2 text-white" />,
   };
 
   // Count styles in this category
@@ -49,21 +55,59 @@ const CategoryCard = ({
   // Get the icon component or default to ImageIcon
   const IconComponent = category.icon && iconMap[category.icon] 
     ? iconMap[category.icon]
-    : <ImageIcon className="h-12 w-12 mb-2 text-[#2A7B9B]" />;
+    : <ImageIcon className="h-12 w-12 mb-2 text-white" />;
+    
+  // Map category ID to background image
+  let backgroundImage;
+  switch(category.id) {
+    case 'animation':
+      backgroundImage = kidsBackgroundImage;
+      break;
+    case 'artistic':
+      backgroundImage = artisticBackgroundImage;
+      break;
+    case 'historical':
+      backgroundImage = historicalBackgroundImage;
+      break;
+    case 'product':
+      backgroundImage = productBackgroundImage;
+      break;
+    default:
+      backgroundImage = kidsBackgroundImage; // Default fallback
+  }
 
   return (
     <Card 
-      className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] cursor-pointer"
-      onClick={() => onClick(category.id)}
+      className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B]"
     >
-      <CardContent className="flex flex-col items-center justify-center p-6 text-center h-full">
-        {IconComponent}
-        <h3 className="text-lg font-bold mb-2">{category.name}</h3>
-        <p className="text-sm text-gray-500 mb-3">{category.description}</p>
-        <div className="text-xs bg-[#2A7B9B]/10 text-[#2A7B9B] font-medium px-2 py-1 rounded-full">
-          {styleCount} style{styleCount !== 1 ? 's' : ''}
+      <div className="relative">
+        {/* Background image with overlay */}
+        <div className="h-48 overflow-hidden">
+          <img 
+            src={backgroundImage}
+            alt={category.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center p-6 text-center">
+            {IconComponent}
+            <h3 className="text-xl font-bold mb-2 text-white">{category.name}</h3>
+            <p className="text-sm text-white/90 mb-3">{category.description}</p>
+            <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full">
+              {styleCount} style{styleCount !== 1 ? 's' : ''}
+            </div>
+          </div>
         </div>
-      </CardContent>
+        
+        {/* Button section */}
+        <div className="p-4 flex justify-center">
+          <Button
+            className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white"
+            onClick={() => onClick(category.id)}
+          >
+            View Styles
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 };
