@@ -92,21 +92,22 @@ const CategoryCard = ({
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center p-6 text-center">
             {IconComponent}
             <h3 className="text-xl font-bold mb-2 text-white">{category.name}</h3>
-            <p className="text-sm text-white/90 mb-3">{category.description}</p>
-            <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full">
+            
+            {/* Styles count above description */}
+            <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full mb-2">
               {styleCount} style{styleCount !== 1 ? 's' : ''}
             </div>
+            
+            <p className="text-sm text-white/90 mb-4">{category.description}</p>
+            
+            {/* View Styles button inside the overlay */}
+            <Button
+              className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1"
+              onClick={() => onClick(category.id)}
+            >
+              View Styles
+            </Button>
           </div>
-        </div>
-        
-        {/* Button section */}
-        <div className="p-4 flex justify-center">
-          <Button
-            className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white"
-            onClick={() => onClick(category.id)}
-          >
-            View Styles
-          </Button>
         </div>
       </div>
     </Card>
