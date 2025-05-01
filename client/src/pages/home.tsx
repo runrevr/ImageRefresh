@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import ImageUploader from "@/components/ImageUploader";
 import PromptInput from "@/components/PromptInput";
@@ -39,11 +40,12 @@ import {
   OtherSubcategory,
 } from "@/components/PromptInput";
 
-// Default user state - in a real app this would come from authentication
-const DEFAULT_USER = {
-  id: 1,
-  freeCreditsUsed: false,
-  paidCredits: 0,
+// We need a local user state to maintain the updated credit information
+// This will be initialized with the data from useAuth
+type UserCredits = {
+  freeCreditsUsed: boolean;
+  paidCredits: number;
+  id: number;
 };
 
 export default function Home() {
@@ -54,7 +56,20 @@ export default function Home() {
   );
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
-  const [user, setUser] = useState(DEFAULT_USER);
+  const { user: authUser } = useAuth();
+  // Initialize local user state with data from auth
+  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
+  
+  // Update local user state when auth user changes
+  useEffect(() => {
+    if (authUser) {
+      setUserCredits({
+        id: authUser.id,
+        freeCreditsUsed: authUser.freeCreditsUsed,
+        paidCredits: authUser.paidCredits
+      });
+    }
+  }, [authUser]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
   const [selectedTransformation, setSelectedTransformation] =
     useState<TransformationType | null>(null);
@@ -70,11 +85,13 @@ export default function Home() {
   // Fetch user credits and OpenAI configuration on component mount
   useEffect(() => {
     const fetchUserCredits = async () => {
+      if (!userCredits) return;
+      
       try {
-        const response = await apiRequest("GET", `/api/credits/${user.id}`);
+        const response = await apiRequest("GET", `/api/credits/${userCredits.id}`);
         const data = await response.json();
-        setUser((prev) => ({
-          ...prev,
+        setUserCredits((prev) => ({
+          ...prev!,
           freeCreditsUsed: data.freeCreditsUsed,
           paidCredits: data.paidCredits,
         }));
@@ -95,7 +112,7 @@ export default function Home() {
 
     fetchUserCredits();
     fetchConfig();
-  }, []);
+  }, [userCredits]);
 
   // Scroll to top when uploadForm appears
   useEffect(() => {
@@ -192,7 +209,7 @@ export default function Home() {
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
         prompt: promptText,
-        userId: user.id,
+        userId: userCredits?.id,
         imageSize: imageSize,
       });
 
@@ -207,10 +224,10 @@ export default function Home() {
         // Refresh user credits
         const creditsResponse = await apiRequest(
           "GET",
-          `/api/credits/${user.id}`,
+          `/api/credits/${userCredits?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUser((prev) => ({
+        setUserCredits((prev) => ({
           ...prev,
           freeCreditsUsed: creditsData.freeCreditsUsed,
           paidCredits: creditsData.paidCredits,
@@ -346,7 +363,7 @@ export default function Home() {
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath: transformedImagePath, // Use the transformed image as the new base
         prompt: editPrompt,
-        userId: user.id,
+        userId: userCredits?.id,
         imageSize: imageSize,
         isEdit: true, // Flag to indicate this is an edit
         previousTransformation: previousTransformationId, // Pass the extracted transformation ID
@@ -364,10 +381,10 @@ export default function Home() {
         // Refresh user credits
         const creditsResponse = await apiRequest(
           "GET",
-          `/api/credits/${user.id}`,
+          `/api/credits/${userCredits?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUser((prev) => ({
+        setUserCredits((prev) => ({
           ...prev,
           freeCreditsUsed: creditsData.freeCreditsUsed,
           paidCredits: creditsData.paidCredits,
@@ -448,7 +465,7 @@ export default function Home() {
       console.log(`Applying ${presetType} preset transformation`);
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
-        userId: user.id,
+        userId: userCredits?.id,
         preset: presetType,
         imageSize,
       });
@@ -465,14 +482,18 @@ export default function Home() {
         // Refetch user credits
         const creditsResponse = await apiRequest(
           "GET",
-          `/api/credits/${user.id}`,
+          `/api/credits/${userCredits?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUser((prevUser) => ({
+        setUserCredits((prevUser) => prevUser ? {
           ...prevUser,
           freeCreditsUsed: creditsData.freeCreditsUsed,
           paidCredits: creditsData.paidCredits,
-        }));
+        } : {
+          id: userCredits?.id || 0,
+          freeCreditsUsed: creditsData.freeCreditsUsed,
+          paidCredits: creditsData.paidCredits,
+        });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -526,7 +547,7 @@ export default function Home() {
   // Function to handle Upload button clicks with account check
   const handleUploadClick = () => {
     // If already logged in, ignore the email storage and clear it
-    if (user.id) {
+    if (userCredits?.id) {
       localStorage.removeItem("emailCollected");
       localStorage.removeItem("collectedEmail");
       setStoredEmail(null);
@@ -548,8 +569,8 @@ export default function Home() {
       style={{ backgroundColor: "white" }}
     >
       <Navbar
-        freeCredits={!user.freeCreditsUsed ? 1 : 0}
-        paidCredits={user.paidCredits}
+        freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
+        paidCredits={userCredits?.paidCredits || 0}
       />
 
       {/* Account Needed Dialog */}
@@ -557,8 +578,8 @@ export default function Home() {
         open={showAccountNeededDialog}
         onClose={() => setShowAccountNeededDialog(false)}
         email={storedEmail}
-        isLoggedIn={Boolean(user.id)}
-        remainingCredits={user.paidCredits}
+        isLoggedIn={Boolean(userCredits?.id)}
+        remainingCredits={userCredits?.paidCredits || 0}
       />
 
       <main className="relative w-full">
@@ -603,7 +624,7 @@ export default function Home() {
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
                           // If user is logged in, skip email check
-                          if (user.id) {
+                          if (userCredits?.id) {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation("product");
@@ -647,7 +668,7 @@ export default function Home() {
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
                           // If user is logged in, skip email check
-                          if (user.id) {
+                          if (userCredits?.id) {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation("cartoon");
@@ -691,7 +712,7 @@ export default function Home() {
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
                           // If user is logged in, skip email check
-                          if (user.id) {
+                          if (userCredits?.id) {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation("custom");
@@ -716,7 +737,7 @@ export default function Home() {
             <TransformationExamples
               onExampleClick={() => {
                 // If user is logged in, skip email check
-                if (user.id) {
+                if (userCredits?.id) {
                   setShowUploadForm(true);
                 } else if (storedEmail) {
                   setShowAccountNeededDialog(true);
@@ -727,7 +748,7 @@ export default function Home() {
             />
 
             {/* Pricing Section */}
-            <PricingSection userId={user.id} />
+            <PricingSection userId={userCredits?.id} />
 
             {/* FAQ Section */}
             <FaqSection />
@@ -736,7 +757,7 @@ export default function Home() {
             <CtaSection
               onClick={() => {
                 // If user is logged in, skip email check
-                if (user.id) {
+                if (userCredits?.id) {
                   setShowUploadForm(true);
                   scrollToUploader();
                 } else if (storedEmail) {
@@ -802,8 +823,8 @@ export default function Home() {
                   onNewImage={handleNewImage}
                   onEditImage={handleStartEdit}
                   prompt={prompt}
-                  freeCredits={!user.freeCreditsUsed ? 1 : 0}
-                  paidCredits={user.paidCredits}
+                  freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
+                  paidCredits={userCredits?.paidCredits || 0}
                   canEdit={true}
                   transformationId={currentTransformation?.id?.toString()}
                   editsUsed={currentTransformation?.editsUsed || 0}
