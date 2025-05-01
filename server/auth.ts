@@ -4,8 +4,8 @@ import { Express } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { storage } from "./storage";
-import { User } from "@shared/schema";
+import { storage } from "./storage.js";
+import { User } from "../shared/schema.js";
 import MemoryStore from "memorystore";
 
 declare global {
@@ -13,11 +13,18 @@ declare global {
     // Use User type from schema but without circular reference
     interface User {
       id: number;
-      username: string;
+      name: string;
+      username: string | null;
       password: string;
       email: string;
       freeCreditsUsed: boolean;
+      lastFreeCredit: Date | null;
       paidCredits: number;
+      stripeCustomerId: string | null;
+      stripeSubscriptionId: string | null;
+      subscriptionTier: string | null;
+      subscriptionStatus: string | null;
+      createdAt: Date;
     }
   }
 }
@@ -86,7 +93,7 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      const { username, password, email } = req.body;
+      const { username, password, email, name } = req.body;
       
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(username);
@@ -99,16 +106,25 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Email is required" });
       }
       
+      // Name is now required
+      if (!name) {
+        return res.status(400).json({ message: "Name is required" });
+      }
+      
       // Create the user with hashed password
       // All users should start with freeCreditsUsed = false (they get 1 free credit)
       // and paidCredits = 0 (no paid credits)
-      const user = await storage.createUser({
+      const hashedPassword = await hashPassword(password);
+      const insertUser = {
+        name: name || "User", // Set default name if not provided
         username,
-        password: await hashPassword(password),
+        password: hashedPassword,
         email,
         freeCreditsUsed: false, // All users get 1 free credit per month
         paidCredits: 0 // Start with 0 paid credits
-      });
+      };
+      
+      const user = await storage.createUser(insertUser);
 
       // Log the user in
       req.login(user, (err: any) => {

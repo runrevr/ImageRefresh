@@ -1,6 +1,6 @@
-import { transformations, users, type User, type InsertUser, type Transformation, type InsertTransformation } from "@shared/schema";
-import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { transformations, users, memberships, type User, type InsertUser, type Transformation, type InsertTransformation, type Membership, type InsertMembership } from "../shared/schema.js";
+import { db } from "./db.js";
+import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -17,6 +17,13 @@ export interface IStorage {
     stripeSubscriptionId?: string | null
   ): Promise<User>;
   checkAndResetMonthlyFreeCredit(id: number): Promise<boolean>; // Check if user has free credit this month
+  
+  // Membership operations
+  createMembership(membership: InsertMembership): Promise<Membership>;
+  getMembership(id: number): Promise<Membership | undefined>;
+  getUserMemberships(userId: number): Promise<Membership[]>;
+  getActiveMembership(userId: number): Promise<Membership | undefined>;
+  updateMembershipStatus(id: number, status: string): Promise<Membership>;
   
   // Transformation operations
   createTransformation(transformation: InsertTransformation): Promise<Transformation>;
@@ -150,6 +157,68 @@ export class DatabaseStorage implements IStorage {
 
     return updatedUser;
   }
+  
+  // Membership operations
+  async createMembership(insertMembership: InsertMembership): Promise<Membership> {
+    const [membership] = await db
+      .insert(memberships)
+      .values(insertMembership)
+      .returning();
+    
+    return membership;
+  }
+  
+  async getMembership(id: number): Promise<Membership | undefined> {
+    const [membership] = await db
+      .select()
+      .from(memberships)
+      .where(eq(memberships.id, id));
+    
+    return membership;
+  }
+  
+  async getUserMemberships(userId: number): Promise<Membership[]> {
+    return await db
+      .select()
+      .from(memberships)
+      .where(eq(memberships.userId, userId))
+      .orderBy(desc(memberships.id));
+  }
+  
+  async getActiveMembership(userId: number): Promise<Membership | undefined> {
+    const membershipsResult = await db
+      .select()
+      .from(memberships)
+      .where(and(
+        eq(memberships.userId, userId),
+        eq(memberships.status, 'active')
+      ))
+      .orderBy(desc(memberships.startDate));
+    
+    if (membershipsResult.length > 0) {
+      return membershipsResult[0];
+    }
+    
+    return undefined;
+  }
+  
+  async updateMembershipStatus(id: number, status: string): Promise<Membership> {
+    const membership = await this.getMembership(id);
+    if (!membership) {
+      throw new Error("Membership not found");
+    }
+    
+    const [updatedMembership] = await db
+      .update(memberships)
+      .set({ 
+        status,
+        updatedAt: new Date()
+      })
+      .where(eq(memberships.id, id))
+      .returning();
+    
+    return updatedMembership;
+  }
 
   // Transformation operations
   async createTransformation(insertTransformation: InsertTransformation): Promise<Transformation> {
@@ -236,12 +305,22 @@ async function initializeDatabase() {
     const existingUser = await storage.getUserByUsername(defaultUsername);
     if (!existingUser) {
       // Create default user
-      await storage.createUser({
+      const user = await storage.createUser({
+        name: "Demo User",
         username: defaultUsername,
         password: "password",
         email: "demo@example.com"
       });
-      console.log("Created default user 'demo' for development");
+      
+      // Create a free membership for the demo user
+      await storage.createMembership({
+        userId: user.id,
+        planType: "free",
+        status: "active",
+        startDate: new Date()
+      });
+      
+      console.log("Created default user 'demo' with free membership for development");
     }
   } catch (error) {
     console.error("Error initializing database:", error);

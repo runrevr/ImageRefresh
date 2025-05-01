@@ -4,9 +4,10 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
+  name: text("name").default("User"),
+  email: text("email").notNull(),  // Remove unique constraint temporarily
   password: text("password").notNull(),
-  email: text("email").notNull(),
+  username: text("username"),  // Remove unique constraint temporarily
   freeCreditsUsed: boolean("free_credits_used").default(false).notNull(),
   lastFreeCredit: timestamp("last_free_credit"), // When the free credit was last used
   paidCredits: integer("paid_credits").default(0).notNull(),
@@ -14,6 +15,18 @@ export const users = pgTable("users", {
   stripeSubscriptionId: text("stripe_subscription_id"),
   subscriptionTier: text("subscription_tier"), // 'basic', 'premium', or null
   subscriptionStatus: text("subscription_status"), // 'active', 'inactive', 'canceled', or null
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const memberships = pgTable("memberships", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  planType: text("plan_type").notNull(), // 'free', 'basic', 'premium', etc.
+  status: text("status").notNull().default("active"), // 'active', 'inactive', 'canceled', 'expired'
+  startDate: timestamp("start_date").defaultNow().notNull(),
+  endDate: timestamp("end_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const transformations = pgTable("transformations", {
@@ -28,12 +41,25 @@ export const transformations = pgTable("transformations", {
   error: text("error"),
 });
 
+// Relations are defined through foreign keys in the tables above
+// userId in memberships references users.id
+// userId in transformations references users.id
+
 export const insertUserSchema = createInsertSchema(users).pick({
+  name: true,
   username: true,
   password: true,
   email: true,
   freeCreditsUsed: true,
   paidCredits: true,
+});
+
+export const insertMembershipSchema = createInsertSchema(memberships).pick({
+  userId: true,
+  planType: true,
+  status: true,
+  startDate: true,
+  endDate: true,
 });
 
 // Create the schema and extend it to increase prompt length limit
@@ -50,6 +76,8 @@ export const insertTransformationSchema = baseInsertTransformationSchema.extend(
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type InsertMembership = z.infer<typeof insertMembershipSchema>;
+export type Membership = typeof memberships.$inferSelect;
 export type InsertTransformation = z.infer<typeof insertTransformationSchema>;
 export type Transformation = typeof transformations.$inferSelect;
 
