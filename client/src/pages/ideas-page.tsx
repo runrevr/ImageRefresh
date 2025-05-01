@@ -22,6 +22,7 @@ import hiphopImage from "../assets/Hiphop.png";
 import eightyImage from "../assets/80s.png";
 import renaissanceImage from "../assets/Renaissance.png";
 import victorianImage from "../assets/Victorian era.png";
+import medievalImage from "../assets/medieval.png";
 
 // Import data utilities
 import { getCategories, getStylesByCategory, Category, Style } from "../../../shared/data.utils";
@@ -91,6 +92,8 @@ const StyleCard = ({
     imageSrc = renaissanceImage;
   } else if (style.id === "victorian-era") {
     imageSrc = victorianImage;
+  } else if (style.id === "medieval") {
+    imageSrc = medievalImage;
   }
   
   return (
