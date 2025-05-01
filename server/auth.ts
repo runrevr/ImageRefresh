@@ -99,16 +99,15 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Email is required" });
       }
       
-      // Check if this is the trial account (your username)
-      const isTrial = username === "admin"; // Replace with your actual trial username
-      
       // Create the user with hashed password
-      // All non-trial accounts start with freeCreditsUsed = true (no free credits)
+      // All users should start with freeCreditsUsed = false (they get 1 free credit)
+      // and paidCredits = 0 (no paid credits)
       const user = await storage.createUser({
         username,
         password: await hashPassword(password),
         email,
-        freeCreditsUsed: !isTrial, // Only trial account gets free credits
+        freeCreditsUsed: false, // All users get 1 free credit per month
+        paidCredits: 0 // Start with 0 paid credits
       });
 
       // Log the user in

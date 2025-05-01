@@ -33,6 +33,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   email: true,
   freeCreditsUsed: true,
+  paidCredits: true,
 });
 
 // Create the schema and extend it to increase prompt length limit
