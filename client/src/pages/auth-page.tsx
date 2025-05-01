@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Loader2 } from "lucide-react";
+import "@/components/ui/tabs-custom.css";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
@@ -116,7 +117,7 @@ export default function AuthPage() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-2 mb-6 tabs-custom">
                 <TabsTrigger value="login">Log In</TabsTrigger>
                 <TabsTrigger value="register">Sign Up</TabsTrigger>
               </TabsList>
