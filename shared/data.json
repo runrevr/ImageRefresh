@@ -169,7 +169,7 @@
           "description": "Rugged frontier aesthetic with sepia tones (1860-1890)",
           "category": "historical",
           "prompt": "Transform this image into an authentic Old Western style photograph from the American frontier era (1860s-1890s). Apply a warm sepia tone or faded brownish-yellow color palette with slightly reduced contrast. Add a grainy, slightly blurred quality reminiscent of early photography. Include period-appropriate elements like rustic wooden structures, dusty landscapes, or frontier town settings. For portraits, modify clothing to include western wear such as cowboy hats, bandanas, leather vests, or period dresses. Add subtle aging effects like scratches, spots, or uneven exposure typical of vintage photographs. The final image should capture the rugged, historical aesthetic of the American Old West as seen in authentic period photography from the frontier days.",
-          "previewImage": "/Western.png",
+          "previewImage": "/western.png",
           "beforeImage": "/examples/example-portrait.png",
           "popular": true,
           "tags": ["cowboy", "frontier", "sepia"]

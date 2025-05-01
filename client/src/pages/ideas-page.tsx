@@ -67,15 +67,25 @@ const StyleCard = ({
   style: Style; 
   onSelect: (style: Style) => void;
 }) => {
+  // Add console log to debug the style properties
+  console.log(`Style Card: id=${style.id}, name=${style.name}, image path:`, 
+    style.id === "old-western" ? "/western.png" : (style.id === "lego" ? "/lego-character.png" : style.previewImage)
+  );
+  
+  // For old-western and lego, use hard-coded image paths
+  const imageSrc = (() => {
+    if (style.id === "old-western") return "/western.png"; // Using lowercase version 
+    if (style.id === "lego") return "/lego-character.png";
+    return style.previewImage;
+  })();
+  
   return (
     <Card 
       className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
     >
       <div className="relative w-full h-48 overflow-hidden">
         <img 
-          src={style.id === "lego" ? "/lego-character.png" : 
-               style.id === "old-western" ? "/Western.png" : 
-               style.previewImage}
+          src={imageSrc}
           alt={style.name}
           className="w-full h-full object-cover"
         />
