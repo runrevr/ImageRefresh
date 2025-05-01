@@ -85,12 +85,12 @@ export default function AccountPage() {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-lg font-medium">Username</h3>
-                      <p className="text-gray-600">{user.username}</p>
+                      <p className="text-white">{user.username}</p>
                     </div>
                     
                     <div>
                       <h3 className="text-lg font-medium">Email</h3>
-                      <p className="text-gray-600">{user.email || "No email provided"}</p>
+                      <p className="text-white">{user.email || "No email provided"}</p>
                     </div>
                     
                     <div className="pt-4">
