@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
@@ -150,9 +151,8 @@ export default function AuthPage() {
                         Forgot password?
                       </a>
                     </div>
-                    <Input 
+                    <PasswordInput 
                       id="login-password" 
-                      type="password" 
                       placeholder="Enter your password" 
                       value={loginPassword} 
                       onChange={(e) => setLoginPassword(e.target.value)}
@@ -200,9 +200,8 @@ export default function AuthPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-password">Password</Label>
-                    <Input 
+                    <PasswordInput 
                       id="register-password" 
-                      type="password" 
                       placeholder="Create a password" 
                       value={registerPassword} 
                       onChange={(e) => setRegisterPassword(e.target.value)}
@@ -211,9 +210,8 @@ export default function AuthPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-confirm-password">Confirm Password</Label>
-                    <Input 
+                    <PasswordInput 
                       id="register-confirm-password" 
-                      type="password" 
                       placeholder="Confirm your password" 
                       value={registerConfirmPassword} 
                       onChange={(e) => setRegisterConfirmPassword(e.target.value)}
