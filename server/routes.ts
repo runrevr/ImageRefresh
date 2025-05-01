@@ -445,113 +445,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         // Regular (non-edit) transformations
         // In development mode (NODE_ENV !== 'production'), bypass credit check for easier testing
-        // In production, enforce the credit limit (free credit or paid credits)
-        else if (
-          process.env.NODE_ENV !== "production" ||
-          !user.freeCreditsUsed ||
-          user.paidCredits > 0
-        ) {
-          // Create a transformation record
-          console.log("validatedData.originalImagePath:", validatedData.prompt);
-          const transformation = await storage.createTransformation({
-            userId,
-            originalImagePath: validatedData.originalImagePath,
-            prompt: validatedData.prompt || "Custom transformation", // Add a default prompt if undefined
-          });
-
-          // Update transformation status to processing
-          await storage.updateTransformationStatus(
-            transformation.id,
-            "processing",
-          );
-
-          try {
-            // Transform the image using OpenAI with specified image size if provided
-            console.log(
-              "Transforming image with prompt 3rd:",
-              validatedData.prompt,
-            );
-            let finalPrompt = validatedData.prompt;
-
-            if (true || !finalPrompt || finalPrompt.trim() === "") {
-              console.log(
-                "No prompt provided, generating prompt from image...",
-              );
-
-              try {
-                const { description, artPrompt } =
-                  await getDescriptionAndPromptFromImage_OpenAI(
-                    fullImagePath,
-                    `${req.protocol}://${req.get("host")}`,
-                  );
-                console.log("Auto-generated image description:", description);
-                console.log("Auto-generated art prompt:", artPrompt);
-                finalPrompt = artPrompt;
-              } catch (err: any) {
-                console.error(
-                  "Failed to generate description and prompt:",
-                  err,
-                );
-                return res.status(500).json({
-                  message: "Failed to generate prompt from image",
-                  error: err.message,
-                });
-              }
-            }
-            
-            const { transformedPath } = await transformImage(
-              fullImagePath,
-              validatedData.prompt || "Custom transformation", // Default value if prompt is undefined
-              // finalPrompt,
-              validatedData.imageSize,
-            );
-
-            // Get relative path for storage
-            const relativePath = path.relative(process.cwd(), transformedPath);
-
-            // Update transformation with the result
-            const updatedTransformation =
-              await storage.updateTransformationStatus(
-                transformation.id,
-                "completed",
-                relativePath,
-              );
-
-            // Update user credits for initial transformations
-            if (!user.freeCreditsUsed) {
-              await storage.updateUserCredits(userId, true);
-            } else if (user.paidCredits > 0) {
-              await storage.updateUserCredits(
-                userId,
-                true,
-                user.paidCredits - 1,
-              );
-            }
-
-            // Return the transformation
-            res.json({
-              id: updatedTransformation.id,
-              originalImageUrl: `/uploads/${path.basename(fullImagePath)}`,
-              transformedImageUrl: `/uploads/${path.basename(transformedPath)}`,
-              prompt: updatedTransformation.prompt,
-              status: updatedTransformation.status,
+        // In production, enforce the credit limit (monthly free credit or paid credits)
+        else {
+          // First check if the user has a free monthly credit available
+          const hasFreeMonthlyCredit = process.env.NODE_ENV !== "production" || 
+                                      await storage.checkAndResetMonthlyFreeCredit(userId);
+                                      
+          if (hasFreeMonthlyCredit || user.paidCredits > 0) {
+            // Create a transformation record
+            console.log("validatedData.originalImagePath:", validatedData.prompt);
+            const transformation = await storage.createTransformation({
+              userId,
+              originalImagePath: validatedData.originalImagePath,
+              prompt: validatedData.prompt || "Custom transformation", // Add a default prompt if undefined
             });
-          } catch (error: any) {
-            // Update transformation with error
+
+            // Update transformation status to processing
             await storage.updateTransformationStatus(
               transformation.id,
-              "failed",
-              undefined,
-              error.message || "Unknown error occurred",
+              "processing",
             );
 
-            throw error;
+            try {
+              // Transform the image using OpenAI with specified image size if provided
+              console.log(
+                "Transforming image with prompt 3rd:",
+                validatedData.prompt,
+              );
+              let finalPrompt = validatedData.prompt;
+
+              if (true || !finalPrompt || finalPrompt.trim() === "") {
+                console.log(
+                  "No prompt provided, generating prompt from image...",
+                );
+
+                try {
+                  const { description, artPrompt } =
+                    await getDescriptionAndPromptFromImage_OpenAI(
+                      fullImagePath,
+                      `${req.protocol}://${req.get("host")}`,
+                    );
+                  console.log("Auto-generated image description:", description);
+                  console.log("Auto-generated art prompt:", artPrompt);
+                  finalPrompt = artPrompt;
+                } catch (err: any) {
+                  console.error(
+                    "Failed to generate description and prompt:",
+                    err,
+                  );
+                  return res.status(500).json({
+                    message: "Failed to generate prompt from image",
+                    error: err.message,
+                  });
+                }
+              }
+              
+              const { transformedPath } = await transformImage(
+                fullImagePath,
+                validatedData.prompt || "Custom transformation", // Default value if prompt is undefined
+                // finalPrompt,
+                validatedData.imageSize,
+              );
+
+              // Get relative path for storage
+              const relativePath = path.relative(process.cwd(), transformedPath);
+
+              // Update transformation with the result
+              const updatedTransformation =
+                await storage.updateTransformationStatus(
+                  transformation.id,
+                  "completed",
+                  relativePath,
+                );
+
+              // Update user credits for initial transformations
+              if (!user.freeCreditsUsed) {
+                await storage.updateUserCredits(userId, true);
+              } else if (user.paidCredits > 0) {
+                await storage.updateUserCredits(
+                  userId,
+                  true,
+                  user.paidCredits - 1,
+                );
+              }
+
+              // Return the transformation
+              res.json({
+                id: updatedTransformation.id,
+                originalImageUrl: `/uploads/${path.basename(fullImagePath)}`,
+                transformedImageUrl: `/uploads/${path.basename(transformedPath)}`,
+                prompt: updatedTransformation.prompt,
+                status: updatedTransformation.status,
+              });
+            } catch (error: any) {
+              // Update transformation with error
+              await storage.updateTransformationStatus(
+                transformation.id,
+                "failed",
+                undefined,
+                error.message || "Unknown error occurred",
+              );
+
+              throw error;
+            }
+          } else {
+            return res.status(402).json({
+              message:
+                "No credits available. Please purchase credits to continue.",
+            });
           }
-        } else {
-          return res.status(402).json({
-            message:
-              "No credits available. Please purchase credits to continue.",
-          });
         }
       }
     } catch (error: any) {
