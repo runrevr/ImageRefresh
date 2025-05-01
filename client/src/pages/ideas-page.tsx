@@ -69,12 +69,12 @@ const StyleCard = ({
 }) => {
   // Add console log to debug the style properties
   console.log(`Style Card: id=${style.id}, name=${style.name}, image path:`, 
-    style.id === "old-western" ? "/western.png" : (style.id === "lego" ? "/lego-character.png" : style.previewImage)
+    style.id === "old-western" ? "/western.jpg" : (style.id === "lego" ? "/lego-character.png" : style.previewImage)
   );
   
   // For old-western and lego, use hard-coded image paths
   const imageSrc = (() => {
-    if (style.id === "old-western") return "/western.png"; // Using lowercase version 
+    if (style.id === "old-western") return "/western.jpg"; // Using jpg version
     if (style.id === "lego") return "/lego-character.png";
     return style.previewImage;
   })();
