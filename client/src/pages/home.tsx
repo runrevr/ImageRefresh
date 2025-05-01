@@ -72,14 +72,9 @@ export default function Home() {
     const fetchUserCredits = async () => {
       try {
         const response = await apiRequest("GET", `/api/credits/${user.id}`);
-        if (!response.ok) {
-          console.error("Failed to fetch credits");
-          return;
-        }
         const data = await response.json();
         setUser((prev) => ({
           ...prev,
-          id: data.id,
           freeCreditsUsed: data.freeCreditsUsed,
           paidCredits: data.paidCredits,
         }));
