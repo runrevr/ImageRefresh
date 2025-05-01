@@ -940,20 +940,40 @@ style, environment, lighting, and background rather than changing the main subje
         return res.status(403).json({ message: "Forbidden: Cannot update another user's credits" });
       }
       
-      // Add credits to the user's account
-      const updatedUser = await storage.updateUserCredits(
-        userId,
-        user.freeCreditsUsed,
-        (user.paidCredits || 0) + credits
-      );
+      // Get the current user state from the database to ensure
+      // we're not accidentally adding credits twice if the webhook already processed this
+      const currentUser = await storage.getUser(userId);
+      if (!currentUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
       
-      console.log(`Successfully added ${credits} credits to user ${userId}`);
-      
-      res.status(200).json({
-        success: true,
-        message: `Added ${credits} credits to your account`,
-        paidCredits: updatedUser.paidCredits,
-      });
+      // Only add credits if the webhook hasn't already processed this payment
+      // This check helps prevent the double-crediting issue
+      if (currentUser.paidCredits === user.paidCredits) {
+        // Webhook hasn't processed yet, update credits manually
+        const updatedUser = await storage.updateUserCredits(
+          userId,
+          user.freeCreditsUsed,
+          (user.paidCredits || 0) + credits
+        );
+        
+        console.log(`Successfully added ${credits} credits to user ${userId}`);
+        
+        res.status(200).json({
+          success: true,
+          message: `Added ${credits} credits to your account`,
+          paidCredits: updatedUser.paidCredits,
+        });
+      } else {
+        // Credits were already updated by webhook, just return current state
+        console.log(`Credits already updated for user ${userId} by webhook, returning current state`);
+        
+        res.status(200).json({
+          success: true,
+          message: `Your purchase was successful. You now have ${currentUser.paidCredits} credits.`,
+          paidCredits: currentUser.paidCredits,
+        });
+      }
     } catch (error: any) {
       console.error("Error purchasing credits:", error);
       res.status(500).json({ 
