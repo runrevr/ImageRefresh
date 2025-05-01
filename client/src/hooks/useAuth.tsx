@@ -17,6 +17,7 @@ type RegisterData = {
   username: string;
   password: string;
   email?: string;
+  freeCreditsUsed?: boolean;
 };
 
 type AuthContextType = {
