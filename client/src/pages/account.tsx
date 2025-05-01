@@ -191,12 +191,12 @@ export default function AccountPage() {
                     <div className="bg-gray-50 p-6 rounded-lg border">
                       <h3 className="text-xl font-bold mb-2 text-[#333333]">Available Credits</h3>
                       <p className="text-4xl font-bold text-[#333333]">
-                        {subscriptionData?.credits || user.paidCredits || 0} <span className="text-gray-500 text-lg ml-1">credits</span>
+                        {(subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 0 : 1) + (subscriptionData?.credits || user.paidCredits || 0)} <span className="text-gray-500 text-lg ml-1">{(subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 0 : 1) + (subscriptionData?.credits || user.paidCredits || 0) === 1 ? 'credit' : 'credits'}</span>
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
                         {subscriptionData?.freeCreditsUsed || user.freeCreditsUsed ? 
-                          "You've used your free credit" : 
-                          "You have 1 free credit available"}
+                          "You've used your free monthly credit" : 
+                          "Includes your free monthly credit"}
                       </p>
                       {subscriptionData?.subscriptionTier && subscriptionData?.subscriptionStatus === 'active' && (
                         <div className="mt-2 pt-2 border-t border-gray-200">
