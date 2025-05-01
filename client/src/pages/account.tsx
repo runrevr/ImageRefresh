@@ -188,7 +188,7 @@ export default function AccountPage() {
                 <div className="space-y-6">
                   <div className="bg-gray-50 p-6 rounded-lg border">
                     <h3 className="text-xl font-bold mb-2 text-[#333333]">Available Credits</h3>
-                    <p className="text-4xl font-bold">
+                    <p className="text-4xl font-bold text-[#333333]">
                       {subscriptionData?.credits || user.paidCredits || 0} <span className="text-gray-500 text-lg ml-1">credits</span>
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
