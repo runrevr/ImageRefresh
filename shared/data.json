@@ -2,9 +2,9 @@
   "categories": [
     {
       "id": "animation",
-      "name": "Animation & Cartoon",
-      "description": "Transform your photos into animated characters and cartoon styles",
-      "icon": "ImageIcon",
+      "name": "Kids",
+      "description": "Fun transformations perfect for children's photos",
+      "icon": "Sparkles",
       "styles": [
         {
           "id": "super-mario",
