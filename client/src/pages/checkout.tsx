@@ -1,6 +1,11 @@
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { useEffect, useState } from 'react';
+import {
+  useStripe,
+  Elements,
+  PaymentElement,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { useEffect, useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
@@ -13,7 +18,7 @@ import { Loader2 } from "lucide-react";
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
+  throw new Error("Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY");
 }
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -23,7 +28,7 @@ const CheckoutForm = () => {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -35,9 +40,10 @@ const CheckoutForm = () => {
 
     const { error } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: window.location.origin,
-      },
+      // confirmParams: {
+      //   return_url: window.location.origin,
+      // },
+      redirect: "if_required",
     });
 
     if (error) {
@@ -54,13 +60,17 @@ const CheckoutForm = () => {
       });
       navigate("/account");
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement />
       <div className="flex justify-between items-center mt-6">
-        <Button type="button" variant="outline" onClick={() => navigate("/account")}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => navigate("/account")}
+        >
           Cancel
         </Button>
         <Button
@@ -87,7 +97,7 @@ export default function Checkout() {
   const { user } = useAuth();
   const [freeCredits, setFreeCredits] = useState(0);
   const [paidCredits, setPaidCredits] = useState(0);
-  
+
   useEffect(() => {
     if (user) {
       setFreeCredits(!user.freeCreditsUsed ? 1 : 0);
@@ -97,16 +107,16 @@ export default function Checkout() {
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    apiRequest("POST", "/api/create-payment-intent", { 
+    apiRequest("POST", "/api/create-payment-intent", {
       planType: "basic",
       credits: 10,
-      amount: 1000  // $10.00
+      amount: 1000, // $10.00
     })
       .then((res) => res.json())
       .then((data) => {
         setClientSecret(data.clientSecret);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error creating payment intent:", error);
       });
   }, []);
@@ -123,7 +133,7 @@ export default function Checkout() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
@@ -133,7 +143,9 @@ export default function Checkout() {
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
-                <h2 className="font-semibold text-[#FF7B54]">Basic Subscription</h2>
+                <h2 className="font-semibold text-[#FF7B54]">
+                  Basic Subscription
+                </h2>
                 <p className="text-sm text-gray-500">10 credits monthly</p>
               </div>
               <div className="text-lg font-bold">$10/month</div>
@@ -143,11 +155,18 @@ export default function Checkout() {
             </Elements>
           </div>
           <div className="text-sm text-gray-500 text-center">
-            By subscribing, you agree to our <a href="#" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+            By subscribing, you agree to our{" "}
+            <a href="#" className="text-blue-600 hover:underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="#" className="text-blue-600 hover:underline">
+              Privacy Policy
+            </a>
           </div>
         </div>
       </div>
       <Footer />
     </div>
   );
-};
+}
