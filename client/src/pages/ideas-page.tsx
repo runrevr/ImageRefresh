@@ -13,6 +13,7 @@ import {
   BoxIcon,
   Sparkles,
   ChevronLeft,
+  ArrowRight,
 } from "lucide-react";
 
 // Import specific images
@@ -79,7 +80,7 @@ const CategoryCard = ({
 
   return (
     <Card 
-      className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B]"
+      className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer"
     >
       <div className="relative">
         {/* Background image with overlay */}
@@ -100,12 +101,15 @@ const CategoryCard = ({
             
             <p className="text-sm text-white/90 mb-4">{category.description}</p>
             
-            {/* View Styles button inside the overlay */}
+            {/* Explore Styles button with animated arrow */}
             <Button
-              className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1"
+              className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1 group"
               onClick={() => onClick(category.id)}
             >
-              View Styles
+              <span className="flex items-center">
+                Explore Styles 
+                <ArrowRight className="h-4 w-4 ml-1 transform transition-transform group-hover:translate-x-1" />
+              </span>
             </Button>
           </div>
         </div>
@@ -144,7 +148,7 @@ const StyleCard = ({
   
   return (
     <Card 
-      className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-[#2A7B9B] h-full"
+      className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full"
     >
       <div className="relative w-full h-64 overflow-hidden">
         <img 
@@ -181,12 +185,15 @@ const StyleCard = ({
       </CardHeader>
 
       <CardFooter className="flex justify-center p-3">
-        <Link href="/?showUpload=true">
+        <Link href="/?showUpload=true" className="w-full">
           <Button 
-            className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full"
+            className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
             onClick={() => onSelect(style)}
           >
-            Use This Style
+            <span className="flex items-center justify-center">
+              Use This Style
+              <ArrowRight className="h-4 w-4 ml-1 transform transition-transform group-hover:translate-x-1" />
+            </span>
           </Button>
         </Link>
       </CardFooter>
