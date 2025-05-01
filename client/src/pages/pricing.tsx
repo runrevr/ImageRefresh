@@ -3,17 +3,20 @@ import Navbar from '@/components/Navbar';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
 import { apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function PricingPage() {
-  const [userId, setUserId] = useState<number>(1); // Default user ID
+  const { user } = useAuth();
   const [freeCredits, setFreeCredits] = useState<number>(0);
   const [paidCredits, setPaidCredits] = useState<number>(0);
 
   useEffect(() => {
     // Fetch user credits
     const fetchCredits = async () => {
+      if (!user) return;
+      
       try {
-        const response = await apiRequest('GET', `/api/credits/${userId}`);
+        const response = await apiRequest('GET', `/api/credits/${user.id}`);
         const data = await response.json();
         
         setFreeCredits(data.freeCreditsUsed ? 0 : 1);
@@ -24,7 +27,7 @@ export default function PricingPage() {
     };
 
     fetchCredits();
-  }, [userId]);
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
@@ -38,7 +41,7 @@ export default function PricingPage() {
           </p>
         </div>
         
-        <PricingSection userId={userId} />
+        <PricingSection userId={user?.id || 0} />
       </main>
       
       <Footer />

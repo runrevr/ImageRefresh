@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
 
 interface PricingSectionProps {
-  userId: number;
+  userId?: number;
 }
 
 const pricingTiers: PricingTier[] = [
