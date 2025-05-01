@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Wand2 className="h-6 w-6 text-white" />
-              <span className="font-bold text-xl text-white">Imagerefresh.com</span>
+              <span className="font-bold text-xl text-white">ImageRefresh.com</span>
             </div>
             <p className="text-gray-400 mb-4">
               Transform your photos with the power of AI. 

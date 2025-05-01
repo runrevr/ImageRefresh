@@ -73,9 +73,9 @@ const StyleCard = ({
     >
       <div className="relative w-full h-48 overflow-hidden">
         <img 
-          src={style.id === "lego" ? "lego-character.png" : 
-               style.id === "old-western" ? "Western.png" : 
-               style.previewImage.replace(/^\//, '')}
+          src={style.id === "lego" ? "/lego-character.png" : 
+               style.id === "old-western" ? "/Western.png" : 
+               style.previewImage}
           alt={style.name}
           className="w-full h-full object-cover"
         />
