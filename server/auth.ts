@@ -7,6 +7,7 @@ import { promisify } from "util";
 import { storage } from "./storage.js";
 import { User } from "../shared/schema.js";
 import MemoryStore from "memorystore";
+import { activeCampaignService } from "./activecampaign-service.js";
 
 declare global {
   namespace Express {
@@ -125,6 +126,19 @@ export function setupAuth(app: Express) {
       };
       
       const user = await storage.createUser(insertUser);
+
+      // Add user to ActiveCampaign
+      try {
+        if (activeCampaignService.isConfigured()) {
+          await activeCampaignService.addOrUpdateContact(user);
+          // Add "Free User" tag for new signups
+          await activeCampaignService.updateMembershipStatus(user);
+          console.log(`User ${user.id} added to ActiveCampaign`);
+        }
+      } catch (acError) {
+        // Log but don't fail registration if ActiveCampaign fails
+        console.error("ActiveCampaign integration error:", acError);
+      }
 
       // Log the user in
       req.login(user, (err: any) => {

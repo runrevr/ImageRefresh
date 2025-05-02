@@ -24,17 +24,23 @@ export class ActiveCampaignService {
    * Add or update a contact in ActiveCampaign when a user registers
    * @param user User object from the database
    */
-  async addOrUpdateContact(user: User): Promise<boolean> {
+  async addOrUpdateContact(user: any): Promise<boolean> {
     if (!this.isConfigured()) {
       log('ActiveCampaign not configured, skipping contact add/update', 'activecampaign-service');
       return false;
     }
 
     try {
+      // Ensure we have valid data before sending to ActiveCampaign
+      if (!user.email) {
+        log('Cannot add contact to ActiveCampaign: missing email', 'activecampaign-service');
+        return false;
+      }
+
       const contactData: ActiveCampaignContact = {
         email: user.email,
-        firstName: user.name?.split(' ')[0] || '',
-        lastName: user.name?.split(' ').slice(1).join(' ') || '',
+        firstName: user.name ? user.name.split(' ')[0] : '',
+        lastName: user.name ? user.name.split(' ').slice(1).join(' ') : '',
       };
 
       const result = await activeCampaign.createOrUpdateContact(contactData);
@@ -50,13 +56,19 @@ export class ActiveCampaignService {
    * @param user User object from the database
    * @param membership Optional membership object if available
    */
-  async updateMembershipStatus(user: User, membership?: Membership): Promise<boolean> {
+  async updateMembershipStatus(user: any, membership?: Membership): Promise<boolean> {
     if (!this.isConfigured()) {
       log('ActiveCampaign not configured, skipping membership update', 'activecampaign-service');
       return false;
     }
 
     try {
+      // Validate required fields
+      if (!user || !user.email) {
+        log('Cannot update membership status: invalid user data', 'activecampaign-service');
+        return false;
+      }
+
       // Find the contact in ActiveCampaign
       const contact = await activeCampaign.findContactByEmail(user.email);
       if (!contact) {
@@ -110,18 +122,24 @@ export class ActiveCampaignService {
    * @param user User object from the database
    * @param status New subscription status
    */
-  async updateSubscriptionStatus(user: User, status: string): Promise<boolean> {
+  async updateSubscriptionStatus(user: any, status: string): Promise<boolean> {
     if (!this.isConfigured()) {
       log('ActiveCampaign not configured, skipping subscription update', 'activecampaign-service');
       return false;
     }
 
     try {
+      // Validate required fields
+      if (!user || !user.email) {
+        log('Cannot update subscription status: invalid user data', 'activecampaign-service');
+        return false;
+      }
+
       // Find or create contact
       const contactData: ActiveCampaignContact = {
         email: user.email,
-        firstName: user.name?.split(' ')[0] || '',
-        lastName: user.name?.split(' ').slice(1).join(' ') || '',
+        firstName: user.name ? user.name.split(' ')[0] : '',
+        lastName: user.name ? user.name.split(' ').slice(1).join(' ') : '',
         fieldValues: [{
           field: MEMBERSHIP_STATUS_FIELD,
           value: status

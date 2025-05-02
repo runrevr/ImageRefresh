@@ -14,6 +14,7 @@ import { setupAuth } from "./auth";
 import axios from "axios";
 import sharp from "sharp";
 import { setupTestStatusRoute } from "./test-status";
+import { activeCampaignService } from "./activecampaign-service";
 
 /**
  * Generate visual description and art prompt from image.
@@ -1149,6 +1150,22 @@ style, environment, lighting, and background rather than changing the main subje
       );
 
       console.log(`Updated user subscription: ${userId} to ${subscriptionTier} (${subscriptionStatus})`);
+      
+      // Add or update the user in ActiveCampaign with new subscription status
+      try {
+        if (activeCampaignService.isConfigured()) {
+          // Add/update contact
+          await activeCampaignService.addOrUpdateContact(updatedUser);
+          
+          // Update membership status and tags in ActiveCampaign
+          await activeCampaignService.updateMembershipStatus(updatedUser);
+          
+          console.log(`User ${userId} subscription status updated in ActiveCampaign`);
+        }
+      } catch (acError) {
+        // Log but don't fail the process if ActiveCampaign integration fails
+        console.error("ActiveCampaign update error:", acError);
+      }
 
       // Then update credits if provided - for initial credits with subscription
       if (credits && credits > 0) {
@@ -1268,10 +1285,21 @@ style, environment, lighting, and background rather than changing the main subje
               // This is a subscription purchase
               const tier = planType === "basic" ? "basic" : "premium";
               paymentDescription = `${tier.charAt(0).toUpperCase() + tier.slice(1)} Subscription`;
-              await storage.updateUserSubscription(userId, tier, "active");
+              const updatedUser = await storage.updateUserSubscription(userId, tier, "active");
               console.log(
                 `Updated user ${userId} subscription status to active (${tier})`,
               );
+              
+              // Update ActiveCampaign with new subscription status
+              try {
+                if (activeCampaignService.isConfigured() && updatedUser) {
+                  await activeCampaignService.addOrUpdateContact(updatedUser);
+                  await activeCampaignService.updateMembershipStatus(updatedUser);
+                  console.log(`User ${userId} subscription status updated in ActiveCampaign via webhook`);
+                }
+              } catch (acError) {
+                console.error("ActiveCampaign update error in webhook:", acError);
+              }
             } else {
               // This is a one-time credit purchase
               paymentDescription = `${creditsToAdd} Credit Purchase`;
