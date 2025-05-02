@@ -200,7 +200,7 @@ const StyleCard = ({
     imageSrc = trumpMulletNewImage;
   } else if (style.id === "pet-as-human") {
     imageSrc = petToHumanImage;
-  } else if (style.id === "self-as-animal") {
+  } else if (style.id === "custom-other") {
     imageSrc = beerDrinkingDeerImage;
   }
 
@@ -347,28 +347,27 @@ export default function IdeasPage() {
         tags: ["pets", "transformation", "fun"],
       },
       {
-        id: "self-as-animal",
-        name: "What Would I Look Like as an Animal",
+        id: "self-as-cat",
+        name: "What Would I Look Like as a Cat",
         description:
-          "Turn yourself into a beer-drinking deer or any other animal with human-like characteristics.",
+          "Transform a human into a cat with recognizable traits from the original subject.",
         category: "other",
         prompt:
-          "Transform the subject into a photorealistic animal with human-like characteristics and behaviors, such as standing upright or drinking from a beer can.",
-        previewImage: beerDrinkingDeerImage,
+          "Transform into a cat while preserving distinctive human features.",
+        previewImage: "/assets/couple-field-painting.png",
         beforeImage: "/assets/couple-field.png",
         featured: true,
-        new: true,
-        tags: ["animals", "transformation", "fun", "beer"],
+        tags: ["pets", "transformation", "fun"],
       },
       {
         id: "custom-other",
         name: "Create Your Own Fun Transformation",
-        description: "Describe your own custom fun transformation.",
+        description: "Describe your own custom fun transformation like this beer-drinking deer.",
         category: "other",
         prompt: "",
-        previewImage: "/assets/couple-field-painting.png",
+        previewImage: beerDrinkingDeerImage,
         beforeImage: "/assets/couple-field.png",
-        tags: ["custom", "creative"],
+        tags: ["custom", "creative", "fun"],
       },
     ];
   }
