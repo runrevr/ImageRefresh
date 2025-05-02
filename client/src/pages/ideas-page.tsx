@@ -39,6 +39,8 @@ import agingImage from "../assets/aging.png";
 import twentyYearsImage from "../assets/20years.png";
 import ghibliImage from "../assets/ghibli.png";
 import theKingImage from "../assets/the-king.png";
+import petToHumanImage from "../assets/pet-to-human.png";
+import beerDrinkingDeerImage from "../assets/beer-drinking-deer.png";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
@@ -196,6 +198,10 @@ const StyleCard = ({
     imageSrc = theKingImage;
   } else if (style.id === "mullets") {
     imageSrc = trumpMulletNewImage;
+  } else if (style.id === "pet-as-human") {
+    imageSrc = petToHumanImage;
+  } else if (style.id === "self-as-animal") {
+    imageSrc = beerDrinkingDeerImage;
   }
 
   return (
@@ -335,23 +341,24 @@ export default function IdeasPage() {
           "Reimagine a pet as a human while keeping recognizable traits and personality.",
         category: "other",
         prompt: "Transform the pet into a human character.",
-        previewImage: "/assets/couple-field-painting.png",
+        previewImage: petToHumanImage, // Using the new Pet-to-Human image
         beforeImage: "/assets/couple-field.png",
         new: true,
         tags: ["pets", "transformation", "fun"],
       },
       {
-        id: "self-as-cat",
-        name: "What Would I Look Like as a Cat",
+        id: "self-as-animal",
+        name: "What Would I Look Like as an Animal",
         description:
-          "Transform a human into a cat with recognizable traits from the original subject.",
+          "Turn yourself into a beer-drinking deer or any other animal with human-like characteristics.",
         category: "other",
         prompt:
-          "Transform into a cat while preserving distinctive human features.",
-        previewImage: "/assets/couple-field-painting.png",
+          "Transform the subject into a photorealistic animal with human-like characteristics and behaviors, such as standing upright or drinking from a beer can.",
+        previewImage: beerDrinkingDeerImage,
         beforeImage: "/assets/couple-field.png",
         featured: true,
-        tags: ["pets", "transformation", "fun"],
+        new: true,
+        tags: ["animals", "transformation", "fun", "beer"],
       },
       {
         id: "custom-other",
