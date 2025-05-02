@@ -585,7 +585,7 @@ export default function Home() {
         remainingCredits={userCredits?.paidCredits || 0}
       />
 
-      <main className="relative w-full pt-16 sm:pt-20">
+      <main className="relative w-full" style={{ paddingTop: '4rem' }}>
         {/* Hero Section - Carousel Style */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>

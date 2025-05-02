@@ -374,7 +374,7 @@ export default function BuyCredits() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 page-container">
         <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
           <p className="text-lg text-gray-600">Please log in to purchase credits.</p>
@@ -390,9 +390,9 @@ export default function BuyCredits() {
   // Show loading spinner while subscription status is being checked
   if (subscriptionLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 page-container">
         <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-        <div className="container mx-auto py-10 px-4">
+        <div className="container mx-auto py-10 px-4 pt-20">
           <div className="max-w-2xl mx-auto flex flex-col items-center justify-center py-12">
             <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
             <p className="text-lg text-gray-600">Checking your subscription status...</p>
@@ -410,9 +410,9 @@ export default function BuyCredits() {
   
   if (!hasActiveSubscription) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 page-container">
         <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-        <div className="container mx-auto py-10 px-4">
+        <div className="container mx-auto py-10 px-4 pt-20">
           <div className="max-w-2xl mx-auto">
             <Card className="border-amber-200 bg-amber-50">
               <CardContent className="pt-6">
@@ -439,9 +439,9 @@ export default function BuyCredits() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 page-container">
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-      <div className="container mx-auto py-10 px-4">
+      <div className="container mx-auto py-10 px-4 pt-20">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-2xl font-bold mb-6">Purchase Additional Credits</h1>
           
