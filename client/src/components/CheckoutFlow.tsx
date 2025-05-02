@@ -97,7 +97,10 @@ const UploadStep = ({ onNext, onBack, onImageSelected, selectedImage }: UploadSt
 
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-8">Upload Image</h2>
+      <h2 className="text-2xl font-bold mb-3">Upload Image</h2>
+      <p className="text-red-500 font-medium mb-4">
+        Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+      </p>
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 w-full max-w-md flex flex-col items-center justify-center min-h-[300px]">
         {selectedImage ? (
           <div className="w-full h-64 relative">
@@ -179,7 +182,10 @@ const CategoryStep = ({ onNext, onBack, selectedCategoryId }: CategoryStepProps)
   
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-8">Choose a Category</h2>
+      <h2 className="text-2xl font-bold mb-3">Choose a Category</h2>
+      <p className="text-red-500 font-medium mb-4">
+        Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+      </p>
       
       {/* Categories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
@@ -255,7 +261,10 @@ const StyleStep = ({ onNext, onBack, categoryId, selectedStyleId }: StyleStepPro
         <span className="font-medium text-gray-900">{category?.name || 'Category'}</span>
       </div>
       
-      <h2 className="text-2xl font-bold mb-6">Select a Style</h2>
+      <h2 className="text-2xl font-bold mb-3">Select a Style</h2>
+      <p className="text-red-500 font-medium mb-4">
+        Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+      </p>
       
       {/* Style grid - 3 columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">

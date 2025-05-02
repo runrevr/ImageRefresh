@@ -427,6 +427,9 @@ export default function IdeasPage() {
               ? `Choose from our ${styles.length} ${currentCategory?.name.toLowerCase()} styles to transform your images.`
               : "Explore different categories and styles to inspire your next image transformation."}
           </p>
+          <p className="text-base text-red-500 font-medium mt-2">
+            Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+          </p>
         </div>
 
         {/* Breadcrumb navigation when a category is selected */}
