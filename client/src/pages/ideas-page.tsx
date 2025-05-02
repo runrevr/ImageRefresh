@@ -30,6 +30,7 @@ import babyImage from "../assets/tk-ts-baby.jpg";
 import agingImage from "../assets/aging.png";
 import twentyYearsImage from "../assets/20years.png";
 import ghibliImage from "../assets/ghibli.png";
+import theKingImage from "../assets/the-king.png";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
@@ -178,6 +179,8 @@ const StyleCard = ({
     imageSrc = twentyYearsImage;
   } else if (style.id === "ghibli-style") {
     imageSrc = ghibliImage;
+  } else if (style.id === "ai-action-figure") {
+    imageSrc = theKingImage;
   }
   
   return (
