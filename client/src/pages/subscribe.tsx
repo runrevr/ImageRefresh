@@ -1,7 +1,7 @@
 import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -23,6 +23,7 @@ const SubscribeForm = () => {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
+  const selectedPlan = "Pro"; // The current plan is Pro
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,10 +49,54 @@ const SubscribeForm = () => {
       });
       setIsProcessing(false);
     } else {
-      toast({
-        title: "Payment Successful",
-        description: "You are now subscribed!",
-      });
+      // If payment succeeded with redirect, manually update subscription status and create payment record 
+      // since we can't access the payment intent details directly
+      try {
+        // First, create a manual payment record for the subscription
+        const timestamp = Date.now();
+        const paymentResponse = await apiRequest('POST', '/api/record-subscription-payment', {
+          amount: 2000, // $20.00
+          credits: 30,
+          description: 'Pro Subscription (Monthly)',
+          timestamp: timestamp
+        });
+        
+        if (!paymentResponse.ok) {
+          console.error('Failed to record subscription payment');
+        } else {
+          console.log('Subscription payment recorded successfully');
+        }
+        
+        // Call the user subscription endpoint to check status
+        const response = await apiRequest('GET', '/api/user/subscription');
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Invalidate queries to force a refetch of data
+          queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/user/payment-history"] });
+          
+          toast({
+            title: "Subscription Successful",
+            description: `Your ${selectedPlan} subscription is now active! You now have ${data.credits || 30} credits available.`,
+          });
+        } else {
+          console.error('Failed to get subscription status after payment');
+          toast({
+            title: "Payment Successful",
+            description: "Your subscription has been processed. You may need to refresh to see updated credits.",
+          });
+        }
+      } catch (err) {
+        console.error('Error processing subscription:', err);
+        toast({
+          title: "Payment Successful",
+          description: "You are now subscribed! Please refresh to see your updated credits.",
+        });
+      }
+      
+      // Redirect to account page
       navigate("/account");
     }
   }

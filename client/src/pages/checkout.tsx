@@ -38,10 +38,10 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    console.log('Starting payment process...');
+    console.log("Starting payment process...");
 
     if (!stripe || !elements) {
-      console.log('Stripe or elements not loaded');
+      console.log("Stripe or elements not loaded");
       setIsProcessing(false);
       return;
     }
@@ -50,12 +50,12 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
       // Process the payment directly without redirect
       const result = await stripe.confirmPayment({
         elements,
-        redirect: 'if_required'
+        redirect: "if_required",
       });
 
       // If there's a payment error
       if (result.error) {
-        console.error('Payment error:', result.error);
+        console.error("Payment error:", result.error);
         toast({
           title: "Payment Failed",
           description: result.error.message,
@@ -64,59 +64,68 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
         setIsProcessing(false);
         return;
       }
-      
+
       // No error means success
-      console.log('Payment successful:', result);
-      
+      console.log("Payment successful:", result);
+
       // Call purchase-credits endpoint directly
       const timestamp = Date.now().toString();
       const paymentId = `payment_${timestamp}`;
-      
+
       // Check if this payment was already processed (using localStorage)
-      if (localStorage.getItem(paymentId) === 'processed') {
-        console.log(`Payment ${paymentId} was already processed - skipping API call`);
-        navigate('/account');
+      if (localStorage.getItem(paymentId) === "processed") {
+        console.log(
+          `Payment ${paymentId} was already processed - skipping API call`,
+        );
+        navigate("/account");
         return;
       }
-      
+
       // Mark this payment as processed
-      localStorage.setItem(paymentId, 'processed');
-      
+      localStorage.setItem(paymentId, "processed");
+
       // Update credits through API
       const response = await apiRequest("POST", "/api/purchase-credits", {
         userId: user.id,
         credits: 10,
-        timestamp
+        amount: 1000, // $10.00 in cents
+        paymentIntentId: result.paymentIntent?.id || paymentId,
+        description: "10 Credit Purchase",
+        timestamp,
       });
-      
+
       if (response.ok) {
         // Show success toast
         toast({
           title: "Payment Successful",
-          description: "Thank you for your purchase! Your credits have been added to your account.",
+          description:
+            "Thank you for your purchase! Your credits have been added to your account.",
           duration: 5000,
         });
-        
+
         // Invalidate relevant queries to refresh the data
-        console.log('Invalidating query caches to refresh data');
+        console.log("Invalidating query caches to refresh data");
         queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-        
+        queryClient.invalidateQueries({ queryKey: ["/api/user/payment-history"] });
+
         // Redirect to account page, credits tab
-        navigate('/account?tab=credits');
+        navigate("/account?tab=credits");
       } else {
-        console.error('Failed to update credits:', await response.text());
+        console.error("Failed to update credits:", await response.text());
         toast({
           title: "Credits Update Failed",
-          description: "Your payment was successful, but we couldn't update your credits. Please contact support.",
+          description:
+            "Your payment was successful, but we couldn't update your credits. Please contact support.",
           variant: "destructive",
         });
       }
     } catch (err) {
-      console.error('Payment process error:', err);
+      console.error("Payment process error:", err);
       toast({
         title: "Payment Processing Error",
-        description: err instanceof Error ? err.message : "An unknown error occurred",
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
         variant: "destructive",
       });
       setIsProcessing(false);
@@ -145,7 +154,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
               Processing...
             </>
           ) : (
-            "Subscribe - $10/month"
+            "Pay $10.00"
           )}
         </Button>
       </div>
@@ -205,18 +214,18 @@ export default function Checkout() {
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
                 <h2 className="font-semibold text-[#FF7B54]">
-                  Basic Subscription
+                  10 Credit Package
                 </h2>
-                <p className="text-sm text-gray-500">10 credits monthly</p>
+                <p className="text-sm text-gray-500">One-time purchase</p>
               </div>
-              <div className="text-lg font-bold">$10/month</div>
+              <div className="text-lg font-bold">$10.00</div>
             </div>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutForm user={user} />
             </Elements>
           </div>
           <div className="text-sm text-gray-500 text-center">
-            By subscribing, you agree to our{" "}
+            By purchasing, you agree to our{" "}
             <a href="#" className="text-blue-600 hover:underline">
               Terms of Service
             </a>{" "}

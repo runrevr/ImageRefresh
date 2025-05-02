@@ -95,10 +95,18 @@ const CreditPurchaseForm = ({ selectedPackage }: CreditPurchaseFormProps) => {
       // Step 2: If payment was successful, manually update the credits
       if (paymentIntent && paymentIntent.status === 'succeeded') {
         try {
+          // Get timestamp to prevent duplicate processing
+          const timestamp = Date.now();
+          
           // Call the purchase-credits endpoint to update the user's credits
+          // Include payment information for proper record keeping
           const response = await apiRequest('POST', '/api/purchase-credits', {
             userId: user.id,
-            credits: selectedPackage.credits
+            credits: selectedPackage.credits,
+            amount: selectedPackage.price, // Price in cents
+            paymentIntentId: paymentIntent.id,
+            description: `${selectedPackage.credits} Credit Purchase`,
+            timestamp: timestamp
           });
           
           if (!response.ok) {
@@ -107,14 +115,23 @@ const CreditPurchaseForm = ({ selectedPackage }: CreditPurchaseFormProps) => {
           
           const data = await response.json();
           
-          // Invalidate queries to force a refetch of data
-          queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
-          queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-          
-          toast({
-            title: "Payment Successful!",
-            description: `You now have ${data.paidCredits} credits available for use.`,
-          });
+          // If credits were already processed (by webhook), just show confirmation
+          if (data.alreadyProcessed) {
+            toast({
+              title: "Payment Already Processed",
+              description: data.message || `Your credits have already been added to your account.`,
+            });
+          } else {
+            // Invalidate queries to force a refetch of data
+            queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/user/payment-history"] });
+            
+            toast({
+              title: "Payment Successful!",
+              description: `You now have ${data.paidCredits} credits available for use.`,
+            });
+          }
           
           // Redirect to account page with credits tab selected
           setTimeout(() => {

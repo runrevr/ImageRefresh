@@ -12,16 +12,11 @@ import OpenAI from "openai";
 import Stripe from "stripe";
 import { setupAuth } from "./auth";
 import axios from "axios";
-
-import path from "path";
-import axios from "axios";
-import { Request } from "express";
 import sharp from "sharp";
+
 /**
  * Generate visual description and art prompt from image.
  */
-import path from "path";
-import axios from "axios";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
@@ -476,9 +471,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 "Transforming image with prompt 3rd:",
                 validatedData.prompt,
               );
-              let finalPrompt = validatedData.prompt;
+              let finalPrompt = validatedData.prompt || "";
 
-              if (true || !finalPrompt || finalPrompt.trim() === "") {
+              // Generate a prompt from the image if needed
+              if (!finalPrompt || finalPrompt.trim() === "") {
                 console.log(
                   "No prompt provided, generating prompt from image...",
                 );
@@ -487,7 +483,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   const { description, artPrompt } =
                     await getDescriptionAndPromptFromImage_OpenAI(
                       fullImagePath,
-                      `${req.protocol}://${req.get("host")}`,
                     );
                   console.log("Auto-generated image description:", description);
                   console.log("Auto-generated art prompt:", artPrompt);
@@ -643,7 +638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get payment history
-  app.get("/api/user/payments", async (req, res) => {
+  app.get("/api/user/payment-history", async (req, res) => {
     try {
       // Check if the user is authenticated
       if (!req.isAuthenticated()) {
@@ -651,7 +646,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
+      console.log(`Fetching payment history for user ${userId}`);
+      
       const payments = await storage.getUserPayments(userId);
+      console.log(`Found ${payments.length} payment records`);
+      
+      if (payments.length > 0) {
+        console.log('First payment:', JSON.stringify(payments[0], null, 2));
+      } else {
+        console.log('No payment records found');
+      }
 
       // Return payment history
       res.json({
@@ -715,33 +719,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Purchase credits (mock implementation)
-  app.post("/api/purchase-credits", async (req, res) => {
-    try {
-      const { userId, credits } = req.body;
+  // Track processed purchases to prevent duplicates
+  const processedPurchases = new Set<string>(); 
 
-      if (!userId || !credits || credits <= 0) {
-        return res.status(400).json({ message: "Invalid request" });
+  // Purchase credits and record payment
+  app.post("/api/purchase-credits", async (req, res) => {
+    // Check authentication
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const { userId, credits, amount, paymentIntentId, description, timestamp } = req.body;
+      const user = req.user as Express.User;
+
+      // Security check: ensure user can only update their own credits
+      if (user.id !== userId) {
+        return res
+          .status(403)
+          .json({ message: "Forbidden: Cannot update another user's credits" });
       }
 
-      const user = await storage.getUser(userId);
-      if (!user) {
+      if (!credits || credits <= 0) {
+        return res.status(400).json({ message: "Invalid request: credits required" });
+      }
+
+      // Create a unique purchase identifier to prevent duplicates
+      const purchaseId = paymentIntentId || `${userId}:${timestamp || Date.now()}`;
+      
+      // Check if we've already processed this purchase
+      if (processedPurchases.has(purchaseId)) {
+        console.log(`DUPLICATE PURCHASE PREVENTED: ${purchaseId}`);
+        return res.status(200).json({
+          success: true,
+          message: "This purchase has already been processed.",
+          alreadyProcessed: true,
+        });
+      }
+
+      // Get current user state
+      const currentUser = await storage.getUser(userId);
+      if (!currentUser) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Update user credits (in a real app, this would happen after payment processing)
-      const updatedUser = await storage.updateUserCredits(
-        userId,
-        user.freeCreditsUsed,
-        user.paidCredits + credits,
-      );
+      // Only add credits if the webhook hasn't already processed this payment
+      if (currentUser.paidCredits === user.paidCredits) {
+        // Update user credits
+        const updatedUser = await storage.updateUserCredits(
+          userId,
+          currentUser.freeCreditsUsed,
+          currentUser.paidCredits + credits,
+        );
 
-      res.json({
-        freeCreditsUsed: updatedUser.freeCreditsUsed,
-        paidCredits: updatedUser.paidCredits,
-        message: `Successfully purchased ${credits} credits`,
-      });
+        // Create payment record if paymentIntentId is provided
+        if (paymentIntentId && amount) {
+          try {
+            // Check if a payment record already exists for this payment intent
+            const existingPayment = await storage.getPaymentByIntentId(paymentIntentId);
+            
+            if (!existingPayment) {
+              // Create a new payment record
+              await storage.createPayment({
+                userId: userId,
+                amount: amount,
+                paymentIntentId: paymentIntentId,
+                description: description || `${credits} Credit Purchase`,
+                credits: credits,
+                status: 'succeeded',
+                paymentMethod: 'card',
+              });
+              console.log(`Payment record created for payment intent: ${paymentIntentId}`);
+            } else {
+              console.log(`Payment record already exists for intent: ${paymentIntentId}`);
+            }
+          } catch (paymentError) {
+            console.error('Error creating payment record:', paymentError);
+            // Continue anyway - we don't want to fail the purchase if just the record creation fails
+          }
+        }
+
+        // Mark this purchase as processed to prevent duplicates
+        processedPurchases.add(purchaseId);
+
+        res.json({
+          freeCreditsUsed: updatedUser.freeCreditsUsed,
+          paidCredits: updatedUser.paidCredits,
+          message: `Successfully purchased ${credits} credits`,
+        });
+      } else {
+        // Credits were already added via webhook, just acknowledge it
+        console.log('Credits already added, likely by webhook. Current credits:', currentUser.paidCredits);
+        res.json({
+          freeCreditsUsed: currentUser.freeCreditsUsed,
+          paidCredits: currentUser.paidCredits,
+          message: `Credits already added to your account`,
+          alreadyProcessed: true,
+        });
+      }
     } catch (error: any) {
+      console.error('Error in purchase-credits endpoint:', error);
       res.status(500).json({ message: error.message || "Unknown error" });
     }
   });
@@ -919,6 +996,39 @@ style, environment, lighting, and background rather than changing the main subje
   });
 
   // Stripe payment intent creation endpoint
+  // Record subscription payment (for subscriptions initiated from the frontend)
+  app.post("/api/record-subscription-payment", async (req, res) => {
+    try {
+      // Check if the user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { amount, credits, description, timestamp } = req.body;
+      const userId = req.user.id;
+
+      // Create a unique identifier for this subscription payment
+      const paymentId = `sub_${userId}_${timestamp || Date.now()}`;
+
+      // Create the payment record
+      await storage.createPayment({
+        userId: userId,
+        amount: amount,
+        paymentIntentId: paymentId,
+        description: description || 'Pro Subscription (Monthly)',
+        credits: credits || 30,
+        status: 'succeeded',
+        paymentMethod: 'card',
+      });
+
+      console.log(`Subscription payment record created for user: ${userId}`);
+      res.status(200).json({ success: true, message: "Subscription payment recorded" });
+    } catch (error: any) {
+      console.error("Error recording subscription payment:", error);
+      res.status(500).json({ message: error.message || "Error recording subscription payment" });
+    }
+  });
+
   // Create payment intent for subscription/one-time purchase
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
@@ -960,99 +1070,6 @@ style, environment, lighting, and background rather than changing the main subje
       res
         .status(500)
         .json({ message: `Error creating payment intent: ${error.message}` });
-    }
-  });
-
-  // Direct credit purchase endpoint (for immediate credit updates after payment)
-  // EMERGENCY FIX: Added purchase tracking to prevent duplicate credits
-  const processedPurchases = new Set<string>(); // Track processed purchases by userId:timestamp
-  
-  app.post("/api/purchase-credits", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    try {
-      const { userId, credits, timestamp } = req.body;
-      const user = req.user as Express.User;
-
-      // Security check: ensure user can only update their own credits
-      if (user.id !== userId) {
-        return res
-          .status(403)
-          .json({ message: "Forbidden: Cannot update another user's credits" });
-      }
-      
-      // EMERGENCY FIX: Create a unique purchase identifier
-      const purchaseId = `${userId}:${timestamp || Date.now()}`;
-      
-      // EMERGENCY FIX: Check if we've already processed this purchase
-      if (processedPurchases.has(purchaseId)) {
-        console.log(`DUPLICATE PURCHASE PREVENTED: ${purchaseId}`);
-        return res.status(200).json({
-          success: true,
-          message: "This purchase has already been processed.",
-          alreadyProcessed: true,
-        });
-      }
-
-      // Get the current user state from the database to ensure
-      // we're not accidentally adding credits twice if the webhook already processed this
-      const currentUser = await storage.getUser(userId);
-      if (!currentUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // EMERGENCY FIX: Log the request to help debug multiple credit additions
-      console.log('Processing purchase credits request:', {
-        userId,
-        credits,
-        timestamp,
-        purchaseId,
-        currentCredits: currentUser.paidCredits
-      });
-
-      // Only add credits if the webhook hasn't already processed this payment
-      // This check helps prevent the double-crediting issue
-      if (currentUser.paidCredits === user.paidCredits) {
-        // EMERGENCY FIX: Mark this purchase as processed
-        processedPurchases.add(purchaseId);
-        
-        // Webhook hasn't processed yet, update credits manually
-        const updatedUser = await storage.updateUserCredits(
-          userId,
-          user.freeCreditsUsed,
-          (user.paidCredits || 0) + credits,
-        );
-
-        console.log(`Successfully added ${credits} credits to user ${userId}`);
-
-        res.status(200).json({
-          success: true,
-          message: `Added ${credits} credits to your account`,
-          paidCredits: updatedUser.paidCredits,
-        });
-      } else {
-        // Credits were already updated by webhook, just return current state
-        console.log(
-          `Credits already updated for user ${userId} by webhook, returning current state`,
-        );
-
-        // EMERGENCY FIX: Mark this purchase as processed to prevent duplicate processing
-        processedPurchases.add(purchaseId);
-
-        res.status(200).json({
-          success: true,
-          message: `Your purchase was successful. You now have ${currentUser.paidCredits} credits.`,
-          paidCredits: currentUser.paidCredits,
-        });
-      }
-    } catch (error: any) {
-      console.error("Error purchasing credits:", error);
-      res.status(500).json({
-        message: `Error purchasing credits: ${error.message}`,
-        success: false,
-      });
     }
   });
 

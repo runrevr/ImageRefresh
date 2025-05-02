@@ -11,18 +11,77 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Transformation } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { Layout } from "@/components/Layout";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AccountPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const [isUpdating, setIsUpdating] = useState(false);
   const [location, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("profile");
   const { toast } = useToast();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [updatedEmail, setUpdatedEmail] = useState("");
+  
+  // Set the initial email when user data loads
+  useEffect(() => {
+    if (user && user.email) {
+      setUpdatedEmail(user.email);
+    }
+  }, [user]);
+  
+  // Update email mutation
+  const updateEmailMutation = useMutation({
+    mutationFn: async (email: string) => {
+      if (!user) throw new Error("You must be logged in");
+      const res = await apiRequest("POST", "/api/update-email", { userId: user.id, email });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to update email");
+      }
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      // Update the user data in the cache
+      queryClient.setQueryData(["/api/user"], { ...user, email: updatedEmail });
+      toast({
+        title: "Profile Updated",
+        description: "Your email has been successfully updated.",
+      });
+      setIsUpdateModalOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Handle submit
+  const handleUpdateProfile = async () => {
+    setIsUpdating(true);
+    try {
+      await updateEmailMutation.mutateAsync(updatedEmail);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   // Check for tab parameter to activate the right tab
   useEffect(() => {
@@ -61,10 +120,10 @@ export default function AccountPage() {
 
   // Fetch payment history
   const { data: paymentData, isLoading: paymentsLoading } = useQuery({
-    queryKey: ["/api/user/payments"],
+    queryKey: ["/api/user/payment-history"],
     queryFn: async () => {
       if (!user) return null;
-      const res = await apiRequest("GET", "/api/user/payments");
+      const res = await apiRequest("GET", "/api/user/payment-history");
       if (!res.ok) throw new Error("Failed to fetch payment history");
       return res.json();
     },
@@ -105,7 +164,48 @@ export default function AccountPage() {
       <div className="container mx-auto p-6">
         <div className="w-full max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">My Account</h1>
-
+          
+          {/* Profile Update Dialog */}
+          <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Update Profile</DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    placeholder="your-email@example.com"
+                    value={updatedEmail}
+                    onChange={(e) => setUpdatedEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsUpdateModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleUpdateProfile} 
+                  disabled={isUpdating}
+                >
+                  {isUpdating ? (
+                    <>
+                      <span className="mr-2">Saving...</span>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-8">
               <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -133,7 +233,7 @@ export default function AccountPage() {
                     </div>
 
                     <div className="pt-4">
-                      <Button variant="outline" onClick={() => {}}>
+                      <Button variant="outline" onClick={() => setIsUpdateModalOpen(true)}>
                         Update Profile
                       </Button>
                     </div>
@@ -427,30 +527,45 @@ export default function AccountPage() {
                               <Skeleton className="h-16 w-full mb-4" />
                               <Skeleton className="h-16 w-full" />
                             </div>
-                          ) : paymentData && paymentData.payments && paymentData.payments.length > 0 ? (
+                          ) : paymentData &&
+                            paymentData.payments &&
+                            paymentData.payments.length > 0 ? (
                             paymentData.payments.map((payment: any) => (
-                              <div key={payment.id} className="p-4 flex justify-between items-center">
+                              <div
+                                key={payment.id}
+                                className="p-4 flex justify-between items-center"
+                              >
                                 <div>
                                   <p className="font-medium">
                                     {payment.description}
                                   </p>
                                   <p className="text-sm text-gray-500">
-                                    {new Date(payment.createdAt).toLocaleDateString()}
+                                    {new Date(
+                                      payment.createdAt,
+                                    ).toLocaleDateString()}
                                   </p>
                                 </div>
                                 <div className="text-right">
                                   <p className="font-medium">
                                     ${(payment.amount / 100).toFixed(2)}
                                   </p>
-                                  <p className={`text-xs ${payment.status === 'succeeded' ? 'text-green-600' : payment.status === 'pending' ? 'text-yellow-600' : 'text-red-600'}`}>
-                                    {payment.status === 'succeeded' ? 'Success' : payment.status === 'pending' ? 'Pending' : 'Failed'}
+                                  <p
+                                    className={`text-xs ${payment.status === "succeeded" ? "text-green-600" : payment.status === "pending" ? "text-yellow-600" : "text-red-600"}`}
+                                  >
+                                    {payment.status === "succeeded"
+                                      ? "Success"
+                                      : payment.status === "pending"
+                                        ? "Pending"
+                                        : "Failed"}
                                   </p>
                                 </div>
                               </div>
                             ))
                           ) : (
                             <div className="p-4 text-center">
-                              <p className="text-gray-500">No billing history available</p>
+                              <p className="text-gray-500">
+                                No billing history available
+                              </p>
                             </div>
                           )}
                         </div>
