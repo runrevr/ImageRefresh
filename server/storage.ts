@@ -2,12 +2,15 @@ import {
   transformations,
   users,
   memberships,
+  payments,
   type User,
   type InsertUser,
   type Transformation,
   type InsertTransformation,
   type Membership,
   type InsertMembership,
+  type Payment,
+  type InsertPayment,
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and } from "drizzle-orm";
@@ -38,6 +41,13 @@ export interface IStorage {
   getUserMemberships(userId: number): Promise<Membership[]>;
   getActiveMembership(userId: number): Promise<Membership | undefined>;
   updateMembershipStatus(id: number, status: string): Promise<Membership>;
+
+  // Payment operations
+  createPayment(payment: InsertPayment): Promise<Payment>;
+  getPayment(id: number): Promise<Payment | undefined>;
+  getPaymentByIntentId(paymentIntentId: string): Promise<Payment | undefined>;
+  getUserPayments(userId: number): Promise<Payment[]>;
+  updatePaymentStatus(id: number, status: string): Promise<Payment>;
 
   // Transformation operations
   createTransformation(
@@ -324,6 +334,50 @@ export class DatabaseStorage implements IStorage {
       .from(transformations)
       .where(eq(transformations.userId, userId))
       .orderBy(desc(transformations.id));
+  }
+
+  // Payment operations
+  async createPayment(insertPayment: InsertPayment): Promise<Payment> {
+    const [payment] = await db.insert(payments).values(insertPayment).returning();
+    return payment;
+  }
+
+  async getPayment(id: number): Promise<Payment | undefined> {
+    const [payment] = await db
+      .select()
+      .from(payments)
+      .where(eq(payments.id, id));
+
+    return payment;
+  }
+
+  async getPaymentByIntentId(paymentIntentId: string): Promise<Payment | undefined> {
+    const [payment] = await db
+      .select()
+      .from(payments)
+      .where(eq(payments.paymentIntentId, paymentIntentId));
+
+    return payment;
+  }
+
+  async getUserPayments(userId: number): Promise<Payment[]> {
+    const paymentResults = await db
+      .select()
+      .from(payments)
+      .where(eq(payments.userId, userId))
+      .orderBy(desc(payments.createdAt));
+
+    return paymentResults;
+  }
+
+  async updatePaymentStatus(id: number, status: string): Promise<Payment> {
+    const [payment] = await db
+      .update(payments)
+      .set({ status })
+      .where(eq(payments.id, id))
+      .returning();
+
+    return payment;
   }
 }
 

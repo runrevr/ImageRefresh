@@ -642,6 +642,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get payment history
+  app.get("/api/user/payments", async (req, res) => {
+    try {
+      // Check if the user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const userId = req.user.id;
+      const payments = await storage.getUserPayments(userId);
+
+      // Return payment history
+      res.json({
+        userId: userId,
+        payments: payments.map(payment => ({
+          id: payment.id,
+          amount: payment.amount,
+          credits: payment.credits,
+          description: payment.description,
+          status: payment.status,
+          createdAt: payment.createdAt,
+          paymentMethod: payment.paymentMethod,
+        })),
+      });
+    } catch (error: any) {
+      console.error("Error fetching payment history:", error);
+      res.status(500).json({ message: "Error fetching payment history" });
+    }
+  });
+
   // Get transformation history
   app.get("/api/transformations/:userId", async (req, res) => {
     try {
@@ -1086,19 +1116,38 @@ style, environment, lighting, and background rather than changing the main subje
               (user.paidCredits || 0) + creditsToAdd,
             );
 
-            // If this is a subscription payment, update the subscription status
+            // Determine description based on plan type
+            let paymentDescription;
             if (planType === "basic" || planType === "pro") {
               // This is a subscription purchase
               const tier = planType === "basic" ? "basic" : "premium";
+              paymentDescription = `${tier.charAt(0).toUpperCase() + tier.slice(1)} Subscription`;
               await storage.updateUserSubscription(userId, tier, "active");
               console.log(
                 `Updated user ${userId} subscription status to active (${tier})`,
               );
-            } else if (planType === "credit_purchase") {
-              // This is a one-time credit purchase, don't change subscription status
+            } else {
+              // This is a one-time credit purchase
+              paymentDescription = `${creditsToAdd} Credit Purchase`;
               console.log(
                 `Processed one-time credit purchase for user ${userId}`,
               );
+            }
+
+            // Create payment record
+            try {
+              await storage.createPayment({
+                userId: userId,
+                amount: paymentIntent.amount,
+                paymentIntentId: paymentIntent.id,
+                description: paymentDescription,
+                credits: creditsToAdd,
+                status: paymentIntent.status,
+                paymentMethod: paymentIntent.payment_method_types?.[0] || 'card',
+              });
+              console.log(`Payment record created for payment intent: ${paymentIntent.id}`);
+            } catch (error) {
+              console.error(`Error creating payment record: ${error}`);
             }
 
             console.log(

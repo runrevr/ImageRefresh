@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, timestamp, doublePrecision } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -41,6 +41,19 @@ export const transformations = pgTable("transformations", {
   error: text("error"),
 });
 
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  amount: integer("amount").notNull(), // Amount in cents
+  credits: integer("credits").notNull(), // Number of credits purchased
+  description: text("description").notNull(), // e.g., "12 Credit Pack", "30 Credit Subscription"
+  status: text("status").notNull().default("pending"), // pending, succeeded, failed
+  paymentIntentId: text("payment_intent_id"), // Stripe payment intent ID
+  paymentMethod: text("payment_method").default("stripe"), // Payment method used
+  metadata: jsonb("metadata"), // Additional payment data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations are defined through foreign keys in the tables above
 // userId in memberships references users.id
 // userId in transformations references users.id
@@ -62,6 +75,17 @@ export const insertMembershipSchema = createInsertSchema(memberships).pick({
   endDate: true,
 });
 
+export const insertPaymentSchema = createInsertSchema(payments).pick({
+  userId: true,
+  amount: true,
+  credits: true,
+  description: true,
+  status: true,
+  paymentIntentId: true,
+  paymentMethod: true,
+  metadata: true,
+});
+
 // Create the schema and extend it to increase prompt length limit
 const baseInsertTransformationSchema = createInsertSchema(transformations).pick({
   userId: true,
@@ -80,6 +104,8 @@ export type InsertMembership = z.infer<typeof insertMembershipSchema>;
 export type Membership = typeof memberships.$inferSelect;
 export type InsertTransformation = z.infer<typeof insertTransformationSchema>;
 export type Transformation = typeof transformations.$inferSelect;
+export type InsertPayment = z.infer<typeof insertPaymentSchema>;
+export type Payment = typeof payments.$inferSelect;
 
 // Custom types for frontend
 export type ImageUploadResponse = {

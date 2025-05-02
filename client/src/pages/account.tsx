@@ -59,6 +59,18 @@ export default function AccountPage() {
     enabled: !!user,
   });
 
+  // Fetch payment history
+  const { data: paymentData, isLoading: paymentsLoading } = useQuery({
+    queryKey: ["/api/user/payments"],
+    queryFn: async () => {
+      if (!user) return null;
+      const res = await apiRequest("GET", "/api/user/payments");
+      if (!res.ok) throw new Error("Failed to fetch payment history");
+      return res.json();
+    },
+    enabled: !!user,
+  });
+
   // Fetch user transformations
   const { data: transformations, isLoading: transformationsLoading } = useQuery<
     any[]
@@ -410,34 +422,37 @@ export default function AccountPage() {
                       </h3>
                       <div className="bg-white rounded-lg border">
                         <div className="divide-y">
-                          {/* Mock billing history - to be replaced with real data */}
-                          <div className="p-4 flex justify-between items-center">
-                            <div>
-                              <p className="font-medium">
-                                30 Credit Subscription
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                Apr 26, 2025
-                              </p>
+                          {paymentsLoading ? (
+                            <div className="p-4">
+                              <Skeleton className="h-16 w-full mb-4" />
+                              <Skeleton className="h-16 w-full" />
                             </div>
-                            <div className="text-right">
-                              <p className="font-medium">$20.00</p>
-                              <p className="text-xs text-green-600">Success</p>
+                          ) : paymentData && paymentData.payments && paymentData.payments.length > 0 ? (
+                            paymentData.payments.map((payment: any) => (
+                              <div key={payment.id} className="p-4 flex justify-between items-center">
+                                <div>
+                                  <p className="font-medium">
+                                    {payment.description}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    {new Date(payment.createdAt).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-medium">
+                                    ${(payment.amount / 100).toFixed(2)}
+                                  </p>
+                                  <p className={`text-xs ${payment.status === 'succeeded' ? 'text-green-600' : payment.status === 'pending' ? 'text-yellow-600' : 'text-red-600'}`}>
+                                    {payment.status === 'succeeded' ? 'Success' : payment.status === 'pending' ? 'Pending' : 'Failed'}
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="p-4 text-center">
+                              <p className="text-gray-500">No billing history available</p>
                             </div>
-                          </div>
-
-                          <div className="p-4 flex justify-between items-center">
-                            <div>
-                              <p className="font-medium">12 Credit Pack</p>
-                              <p className="text-sm text-gray-500">
-                                Apr 12, 2025
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-medium">$10.00</p>
-                              <p className="text-xs text-green-600">Success</p>
-                            </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                       <div className="mt-4">
