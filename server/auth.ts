@@ -130,10 +130,14 @@ export function setupAuth(app: Express) {
       // Add user to ActiveCampaign
       try {
         if (activeCampaignService.isConfigured()) {
-          await activeCampaignService.addOrUpdateContact(user);
-          // Add "Free User" tag for new signups
-          await activeCampaignService.updateMembershipStatus(user);
-          console.log(`User ${user.id} added to ActiveCampaign`);
+          // First add/update the contact
+          const contactSuccess = await activeCampaignService.addOrUpdateContact(user);
+          
+          if (contactSuccess) {
+            // Then add appropriate tag based on user tier (#free is default for new registrations)
+            await activeCampaignService.updateMembershipStatus(user);
+            console.log(`User ${user.id} (${user.email}) added to ActiveCampaign with appropriate tags`);
+          }
         }
       } catch (acError) {
         // Log but don't fail registration if ActiveCampaign fails

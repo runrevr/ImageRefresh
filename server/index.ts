@@ -7,9 +7,14 @@ import { runCleanupTasks } from "./cleanup";
 process.env.ACTIVECAMPAIGN_API_KEY = process.env.ACTIVECAMPAIGN_API_KEY || '1579e89bd0548efef9178b71b72c6a85d641f3ebc7806d86d6154c41a9a67af6c360fdc6';
 process.env.ACTIVECAMPAIGN_BASE_URL = process.env.ACTIVECAMPAIGN_BASE_URL || 'https://thecollectivealchemy.api-us1.com';
 process.env.ACTIVECAMPAIGN_MEMBERSHIP_LIST = process.env.ACTIVECAMPAIGN_MEMBERSHIP_LIST || '';
-process.env.ACTIVECAMPAIGN_FREE_USER_TAG = process.env.ACTIVECAMPAIGN_FREE_USER_TAG || 'Free User';
-process.env.ACTIVECAMPAIGN_BASIC_USER_TAG = process.env.ACTIVECAMPAIGN_BASIC_USER_TAG || 'Basic Subscription';
-process.env.ACTIVECAMPAIGN_PREMIUM_USER_TAG = process.env.ACTIVECAMPAIGN_PREMIUM_USER_TAG || 'Premium Subscription';
+
+// Tags for different user tiers
+process.env.ACTIVECAMPAIGN_FREE_USER_TAG = process.env.ACTIVECAMPAIGN_FREE_USER_TAG || 'free';
+process.env.ACTIVECAMPAIGN_CORE_USER_TAG = process.env.ACTIVECAMPAIGN_CORE_USER_TAG || 'core';
+process.env.ACTIVECAMPAIGN_PLUS_USER_TAG = process.env.ACTIVECAMPAIGN_PLUS_USER_TAG || 'plus';
+process.env.ACTIVECAMPAIGN_TRIAL_TAG = process.env.ACTIVECAMPAIGN_TRIAL_TAG || 'trial';
+
+// Custom fields
 process.env.ACTIVECAMPAIGN_MEMBERSHIP_STATUS_FIELD = process.env.ACTIVECAMPAIGN_MEMBERSHIP_STATUS_FIELD || 'Membership Status';
 
 const app = express();

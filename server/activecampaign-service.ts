@@ -4,9 +4,14 @@ import { User, Membership } from '../shared/schema';
 
 // Environment variables with defaults for development
 const MEMBERSHIP_LIST_ID = process.env.ACTIVECAMPAIGN_MEMBERSHIP_LIST || '';
-const FREE_USER_TAG = process.env.ACTIVECAMPAIGN_FREE_USER_TAG || 'Free User';
-const BASIC_USER_TAG = process.env.ACTIVECAMPAIGN_BASIC_USER_TAG || 'Basic Subscription';
-const PREMIUM_USER_TAG = process.env.ACTIVECAMPAIGN_PREMIUM_USER_TAG || 'Premium Subscription';
+
+// Membership tier tags
+const FREE_USER_TAG = process.env.ACTIVECAMPAIGN_FREE_USER_TAG || 'free';
+const CORE_USER_TAG = process.env.ACTIVECAMPAIGN_CORE_USER_TAG || 'core';
+const PLUS_USER_TAG = process.env.ACTIVECAMPAIGN_PLUS_USER_TAG || 'plus';
+const TRIAL_TAG = process.env.ACTIVECAMPAIGN_TRIAL_TAG || 'trial';
+
+// Custom fields
 const MEMBERSHIP_STATUS_FIELD = process.env.ACTIVECAMPAIGN_MEMBERSHIP_STATUS_FIELD || 'Membership Status';
 
 /**
@@ -87,15 +92,29 @@ export class ActiveCampaignService {
 
       // Add appropriate tag based on membership tier
       let tagName = FREE_USER_TAG;
-      if (membershipTier === 'premium') {
-        tagName = PREMIUM_USER_TAG;
-      } else if (membershipTier === 'basic') {
-        tagName = BASIC_USER_TAG;
+      
+      // Map the membership tier to the correct tag
+      if (membershipTier === 'premium' || membershipTier === 'plus') {
+        tagName = PLUS_USER_TAG;
+      } else if (membershipTier === 'basic' || membershipTier === 'core') {
+        tagName = CORE_USER_TAG;
       }
       
+      // If this is a trial user (has free credits only), add the trial tag
+      if (user.freeCreditsUsed === false && (!user.paidCredits || user.paidCredits === 0)) {
+        // They're on free trial - add trial tag
+        const trialTagId = await activeCampaign.findOrCreateTag(TRIAL_TAG);
+        if (trialTagId) {
+          await activeCampaign.addTagToContact(contact.id, trialTagId);
+          log(`Added trial tag to contact ${user.email}`, 'activecampaign-service');
+        }
+      }
+      
+      // Add the primary membership tag
       const tagId = await activeCampaign.findOrCreateTag(tagName);
       if (tagId) {
         await activeCampaign.addTagToContact(contact.id, tagId);
+        log(`Added ${tagName} tag to contact ${user.email}`, 'activecampaign-service');
       }
       
       // Update membership status custom field if configured
