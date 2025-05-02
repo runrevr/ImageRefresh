@@ -80,7 +80,6 @@ export type EraSubcategory =
   | "90s-hip-hop"
   | "1980s"
   | "renaissance"
-  | "caricature"
   | "victorian-era"
   | "disco-era"
   | "cyberpunk"
@@ -94,6 +93,7 @@ export type OtherSubcategory =
   | "ai-action-figure"
   | "pet-as-human"
   | "self-as-cat"
+  | "caricature"
   | "custom-other";
 
 // Writing tips for better prompts
