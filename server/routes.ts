@@ -13,6 +13,7 @@ import Stripe from "stripe";
 import { setupAuth } from "./auth";
 import axios from "axios";
 import sharp from "sharp";
+import { setupTestStatusRoute } from "./test-status";
 
 /**
  * Generate visual description and art prompt from image.
@@ -137,6 +138,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  
+  // Set up test status route for diagnostics
+  app.use(setupTestStatusRoute());
 
   // Serve uploaded files
   app.use("/uploads", (req, res, next) => {
