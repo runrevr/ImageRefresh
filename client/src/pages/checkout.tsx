@@ -85,24 +85,19 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
       localStorage.setItem(subscriptionId, "processed");
 
       // Update subscription status
-      const response = await apiRequest(
-        "POST",
-        "/api/update-user-subscription",
-        {
-          userId: user.id,
-          subscriptionTier: "core",
-          subscriptionStatus: "active",
-          stripeCustomerId:
-            user.stripeCustomerId || `cus_${user.id}_${timestamp}`,
-          stripeSubscriptionId: subscriptionId,
-          // Also include initial credits
-          credits: 12,
-          amount: 1000, // $10.00 in cents
-          paymentIntentId: result.paymentIntent?.id || subscriptionId,
-          description: "Core Subscription (Monthly)",
-          timestamp,
-        },
-      );
+      const response = await apiRequest("POST", "/api/update-user-subscription", {
+        userId: user.id,
+        subscriptionTier: "core",
+        subscriptionStatus: "active",
+        stripeCustomerId: user.stripeCustomerId || `cus_${user.id}_${timestamp}`,
+        stripeSubscriptionId: subscriptionId,
+        // Also include initial credits
+        credits: 10,
+        amount: 1000, // $10.00 in cents
+        paymentIntentId: result.paymentIntent?.id || subscriptionId,
+        description: "Core Subscription (Monthly)",
+        timestamp,
+      });
 
       if (response.ok) {
         // Show success toast
@@ -117,9 +112,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
         console.log("Invalidating query caches to refresh data");
         queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-        queryClient.invalidateQueries({
-          queryKey: ["/api/user/payment-history"],
-        });
+        queryClient.invalidateQueries({ queryKey: ["/api/user/payment-history"] });
 
         // Redirect to account page, subscription tab
         navigate("/account?tab=subscription");
@@ -221,9 +214,7 @@ export default function Checkout() {
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
       <div className="container mx-auto py-10 px-4">
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold mb-6">
-            Complete Your Subscription
-          </h1>
+          <h1 className="text-2xl font-bold mb-6">Complete Your Subscription</h1>
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
@@ -232,9 +223,7 @@ export default function Checkout() {
                 </h2>
                 <p className="text-sm text-gray-500">10 credits monthly</p>
               </div>
-              <div className="text-lg font-bold">
-                $10.00<span className="text-sm text-gray-500">/month</span>
-              </div>
+              <div className="text-lg font-bold">$10.00<span className="text-sm text-gray-500">/month</span></div>
             </div>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutForm user={user} />
@@ -249,10 +238,7 @@ export default function Checkout() {
             <a href="#" className="text-blue-600 hover:underline">
               Privacy Policy
             </a>
-            <p className="mt-2">
-              You will be charged $10.00 monthly and receive 10 credits each
-              month.
-            </p>
+            <p className="mt-2">You will be charged $10.00 monthly and receive 10 credits each month.</p>
           </div>
         </div>
       </div>
