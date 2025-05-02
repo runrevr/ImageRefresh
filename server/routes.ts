@@ -1481,6 +1481,66 @@ style, environment, lighting, and background rather than changing the main subje
     }
   });
 
+  // Test endpoint for updating user subscription and triggering ActiveCampaign updates
+  app.post("/api/admin/test-update-subscription", async (req, res) => {
+    // Block this endpoint in production mode
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({
+        message: "This endpoint is only available in development mode",
+      });
+    }
+
+    try {
+      const { userId, subscriptionTier, subscriptionStatus, stripeCustomerId, stripeSubscriptionId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          message: "userId is required"
+        });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+      
+      // Update user subscription details
+      const updatedUser = await storage.updateUserSubscription(
+        userId,
+        subscriptionTier || null,
+        subscriptionStatus || null,
+        stripeCustomerId || null,
+        stripeSubscriptionId || null
+      );
+      
+      // Update ActiveCampaign with new subscription status
+      const acSuccess = await activeCampaignService.updateMembershipStatus(updatedUser);
+      
+      return res.json({
+        success: true,
+        message: "User subscription updated and ActiveCampaign notified",
+        user: {
+          id: updatedUser.id,
+          email: updatedUser.email,
+          name: updatedUser.name,
+          subscriptionTier: updatedUser.subscriptionTier,
+          subscriptionStatus: updatedUser.subscriptionStatus
+        },
+        activeCampaignUpdated: acSuccess
+      });
+    } catch (error) {
+      console.error("Subscription update error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Error updating subscription: ${error instanceof Error ? error.message : String(error)}`
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
