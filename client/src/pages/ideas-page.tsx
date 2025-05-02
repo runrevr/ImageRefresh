@@ -364,6 +364,19 @@ export default function IdeasPage() {
         tags: ["pets", "transformation", "fun", "business", "cat"],
       },
       {
+        id: "caricature",
+        name: "Caricature",
+        description:
+          "Exaggerated features with humorous intent while maintaining recognition.",
+        category: "other",
+        prompt:
+          "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
+        previewImage: "/caricature.png",
+        beforeImage: "/assets/couple-field.png",
+        popular: true,
+        tags: ["funny", "portrait", "humorous"],
+      },
+      {
         id: "custom-other",
         name: "Create Your Own Fun Transformation",
         description: "Describe your own custom fun transformation like this beer-drinking deer.",
@@ -476,7 +489,7 @@ export default function IdeasPage() {
 
                     {/* Styles count */}
                     <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full mb-2">
-                      8 styles
+                      9 styles
                     </div>
 
                     <p className="text-sm text-white/90 mb-4">
