@@ -111,6 +111,9 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
 
   return (
     <div className="p-8 flex flex-col items-center justify-center">
+      <p className="text-red-500 font-medium mb-4 text-center">
+        Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+      </p>
       <div className="w-full max-w-xl mx-auto">
         <div
           className={`border-2 border-dashed ${

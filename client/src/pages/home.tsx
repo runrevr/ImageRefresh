@@ -782,9 +782,12 @@ export default function Home() {
           >
             {currentStep === Step.Upload && (
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-2xl font-bold mb-6 text-center">
+                <h2 className="text-2xl font-bold mb-3 text-center">
                   Upload Your Photo
                 </h2>
+                <p className="text-red-500 font-medium mb-4 text-center">
+                  Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+                </p>
                 <ImageUploader onImageUploaded={handleUpload} />
                 <div className="mt-4 text-center">
                   <Button
