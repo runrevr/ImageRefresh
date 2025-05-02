@@ -265,6 +265,17 @@ export default function IdeasPage() {
     // Fun/Viral styles - simplified with existing images to avoid errors
     styles = [
       {
+        id: "mullets",
+        name: "Mullets",
+        description: "It's well known that everyone secretly wants to look like Joe Dirt.",
+        category: "other",
+        prompt: "Transform the person in the image into a version of themselves with an impressive, over-the-top mullet hairstyle. The mullet should be business in the front, party in the back - with short, styled hair on top and sides, but long, flowing hair in the back. Maintain the person's facial features and expression, but add the iconic mullet hairstyle that was popular in the 80s and 90s. The transformation should be realistic but slightly exaggerated for humorous effect, similar to Joe Dirt's iconic look.",
+        previewImage: "/assets/couple-field-painting.png", // Using fallback image until we resolve the issue
+        beforeImage: "/assets/couple-field.png",
+        popular: true,
+        tags: ["hairstyle", "retro", "funny"],
+      },
+      {
         id: "baby-prediction",
         name: "What Will Our Baby Look Like",
         description:
@@ -449,7 +460,7 @@ export default function IdeasPage() {
 
                     {/* Styles count */}
                     <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full mb-2">
-                      7 styles
+                      8 styles
                     </div>
 
                     <p className="text-sm text-white/90 mb-4">
