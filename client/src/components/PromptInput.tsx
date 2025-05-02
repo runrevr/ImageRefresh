@@ -856,40 +856,6 @@ export default function PromptInput({
 
               <Button
                 className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "product"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("product")}
-              >
-                <div className="flex items-center">
-                  <BoxIcon className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Product Enhancement
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "painting"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("painting")}
-              >
-                <div className="flex items-center">
-                  <Paintbrush className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Painting Styles
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
                   primaryCategory === "era"
                     ? "border-black bg-black text-white"
                     : "border-black bg-white text-black hover:bg-gray-50"
@@ -917,6 +883,40 @@ export default function PromptInput({
                   <Sparkles className="h-5 w-5 mr-2 flex-shrink-0" />
                   <span className="font-medium whitespace-normal break-words">
                     Fun/Viral Ideas
+                  </span>
+                </div>
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
+              </Button>
+
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "product"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("product")}
+              >
+                <div className="flex items-center">
+                  <BoxIcon className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">
+                    Product Enhancement
+                  </span>
+                </div>
+                <ChevronRight className="h-5 w-5 flex-shrink-0" />
+              </Button>
+
+              <Button
+                className={`w-full justify-between text-left border-2 h-auto py-3 ${
+                  primaryCategory === "painting"
+                    ? "border-black bg-black text-white"
+                    : "border-black bg-white text-black hover:bg-gray-50"
+                }`}
+                onClick={() => handlePrimaryCategorySelect("painting")}
+              >
+                <div className="flex items-center">
+                  <Paintbrush className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <span className="font-medium whitespace-normal break-words">
+                    Painting Styles
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
