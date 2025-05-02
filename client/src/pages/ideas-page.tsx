@@ -112,7 +112,9 @@ const CategoryCard = ({
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center px-4 py-8 text-center">
             {IconComponent}
-            <h3 className="text-xl font-bold mb-2 text-white">{category.name}</h3>
+            <h3 className="text-xl font-bold mb-2 text-white">
+              {category.id === 'historical' ? 'Pop Culture Thru The Years' : category.name}
+            </h3>
             
             {/* Styles count above description */}
             <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full mb-2">
