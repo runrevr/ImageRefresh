@@ -42,6 +42,7 @@ import theKingImage from "../assets/the-king.png";
 import petToHumanImage from "../assets/pet-to-human.png";
 import beerDrinkingDeerImage from "../assets/beer-drinking-deer.png";
 import prisonCatImage from "../assets/prison-cat.png";
+import caricatureImage from "@assets/caricature.png";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
@@ -205,6 +206,8 @@ const StyleCard = ({
     imageSrc = beerDrinkingDeerImage;
   } else if (style.id === "self-as-cat") {
     imageSrc = prisonCatImage;
+  } else if (style.id === "caricature") {
+    imageSrc = caricatureImage;
   }
 
   return (
@@ -371,7 +374,7 @@ export default function IdeasPage() {
         category: "other",
         prompt:
           "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
-        previewImage: "/caricature.png",
+        previewImage: caricatureImage,
         beforeImage: "/assets/couple-field.png",
         popular: true,
         tags: ["funny", "portrait", "humorous"],
