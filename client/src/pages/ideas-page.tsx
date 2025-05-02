@@ -54,10 +54,30 @@ const CategoryCard = ({
   // Count styles in this category
   const styleCount = category.styles.length;
   
-  // Get the icon component or default to ImageIcon
-  const IconComponent = category.icon && iconMap[category.icon] 
-    ? iconMap[category.icon]
-    : <ImageIcon className="h-12 w-12 mb-2 text-white" />;
+  // Get the icon component or default to an appropriate icon based on category id
+  let IconComponent;
+  
+  if (category.icon && iconMap[category.icon]) {
+    IconComponent = iconMap[category.icon];
+  } else {
+    // Default icons based on category id
+    switch(category.id) {
+      case 'animation':
+        IconComponent = <Sparkles className="h-12 w-12 mb-2 text-white" />;
+        break;
+      case 'historical':
+        IconComponent = <Clock className="h-12 w-12 mb-2 text-white" />;
+        break;
+      case 'product':
+        IconComponent = <BoxIcon className="h-12 w-12 mb-2 text-white" />;
+        break;
+      case 'artistic':
+        IconComponent = <Paintbrush className="h-12 w-12 mb-2 text-white" />;
+        break;
+      default:
+        IconComponent = <ImageIcon className="h-12 w-12 mb-2 text-white" />;
+    }
+  }
     
   // Map category ID to background image
   let backgroundImage;
