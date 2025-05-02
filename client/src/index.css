@@ -71,6 +71,12 @@
     flex-direction: column;
   }
   
+  /* Add padding for fixed navbar */
+  .page-container {
+    @apply pt-16 sm:pt-20;
+    /* Padding to account for the fixed navbar height */
+  }
+  
   #root {
     @apply flex flex-col;
     flex: 1;

@@ -25,8 +25,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
   const totalCredits = freeCredits + paidCredits;
 
   return (
-    <header className="z-40 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
-      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
+      <div className="container mx-auto px-3 sm:px-4 py-2 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
             <img
@@ -134,13 +134,14 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="md:hidden z-50 flex items-center justify-center hover:bg-opacity-90"
+                className="md:hidden z-50 flex items-center justify-center hover:bg-opacity-90 relative"
                 style={{
-                  backgroundColor: 'rgba(255, 123, 84, 0.8)', // Using #FF7B54 (secondary color) with opacity
+                  backgroundColor: 'rgba(255, 123, 84, 0.95)', // Using #FF7B54 (secondary color) with high opacity
                   color: 'white',
-                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
                   backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)'
+                  border: '2px solid white',
+                  position: 'relative'
                 }}
               >
                 <svg
