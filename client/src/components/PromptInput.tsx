@@ -915,7 +915,7 @@ export default function PromptInput({
                 <div className="flex items-center">
                   <Sparkles className="h-5 w-5 mr-2 flex-shrink-0" />
                   <span className="font-medium whitespace-normal break-words">
-                    Other Styles
+                    Fun/Viral Ideas
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 flex-shrink-0" />
