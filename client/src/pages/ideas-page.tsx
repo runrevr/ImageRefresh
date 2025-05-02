@@ -291,7 +291,57 @@ export default function IdeasPage() {
         {/* Category Grid (3x3) */}
         {!selectedCategory && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {categories.map((category) => (
+            {/* First two category cards */}
+            {categories.slice(0, 2).map((category) => (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                onClick={setSelectedCategory}
+              />
+            ))}
+            
+            {/* Custom card in position 3 */}
+            <Card 
+              className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer"
+            >
+              <div className="relative">
+                {/* Background image with overlay */}
+                <div className="h-64 overflow-hidden">
+                  <img 
+                    src="/caricature.png"
+                    alt="Fun/Viral Ideas"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center px-4 py-8 text-center">
+                    <Sparkles className="h-12 w-12 mb-2 text-white" />
+                    <h3 className="text-xl font-bold mb-2 text-white">
+                      Fun/Viral Ideas
+                    </h3>
+                    
+                    {/* Styles count */}
+                    <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full mb-2">
+                      7 styles
+                    </div>
+                    
+                    <p className="text-sm text-white/90 mb-4">Creative and trending transformations for social sharing</p>
+                    
+                    {/* Explore Styles button with animated arrow */}
+                    <Button
+                      className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1 group"
+                      onClick={() => setSelectedCategory("other")}
+                    >
+                      <span className="flex items-center">
+                        Explore Styles 
+                        <ArrowRight className="h-4 w-4 ml-1 transform transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+            
+            {/* Remaining category cards */}
+            {categories.slice(2).map((category) => (
               <CategoryCard
                 key={category.id}
                 category={category}
