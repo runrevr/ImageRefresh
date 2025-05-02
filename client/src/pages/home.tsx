@@ -90,11 +90,14 @@ export default function Home() {
       try {
         const response = await apiRequest("GET", `/api/credits/${userCredits.id}`);
         const data = await response.json();
-        setUserCredits((prev) => ({
-          ...prev!,
-          freeCreditsUsed: data.freeCreditsUsed,
-          paidCredits: data.paidCredits,
-        }));
+        if (prev) {
+          setUserCredits({
+            ...prev,
+            freeCreditsUsed: data.freeCreditsUsed,
+            paidCredits: data.paidCredits,
+            id: prev.id
+          });
+        }
       } catch (error) {
         console.error("Error fetching user credits:", error);
       }
@@ -582,7 +585,7 @@ export default function Home() {
         remainingCredits={userCredits?.paidCredits || 0}
       />
 
-      <main className="relative w-full">
+      <main className="relative w-full pt-16 sm:pt-20">
         {/* Hero Section - Carousel Style */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>

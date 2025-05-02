@@ -36,7 +36,7 @@ export default function PricingPage() {
         <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
       </div>
       
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 pt-16 sm:pt-20">
         <div className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Pricing Plans</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">

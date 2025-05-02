@@ -35,7 +35,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className="flex flex-col w-full h-full min-h-screen" style={{ minHeight: '100vh', height: '100%' }}>
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-      <main className="flex-grow flex flex-col" style={{ flex: '1 1 auto' }}>
+      <main className="flex-grow flex flex-col pt-16 sm:pt-20" style={{ flex: '1 1 auto' }}>
         {children}
       </main>
       <Footer />
