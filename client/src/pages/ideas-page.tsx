@@ -26,6 +26,7 @@ import victorianImage from "../assets/Victorian era.png";
 import medievalImage from "../assets/medieval.png";
 import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 import trumpMulletImage from "../assets/trump-mullet.png";
+import babyImage from "../assets/tk-ts-baby.jpg";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
@@ -168,6 +169,8 @@ const StyleCard = ({
     imageSrc = victorianImage;
   } else if (style.id === "medieval") {
     imageSrc = medievalImage;
+  } else if (style.id === "baby-prediction") {
+    imageSrc = babyImage;
   }
   
   return (
