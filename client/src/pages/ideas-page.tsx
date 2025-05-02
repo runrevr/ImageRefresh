@@ -33,6 +33,7 @@ import victorianImage from "../assets/Victorian era.png";
 import medievalImage from "../assets/medieval.png";
 import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 import trumpMulletImage from "../assets/trump-mullet.png";
+import trumpMulletNewImage from "../assets/trump-mullet-new.png";
 import babyImage from "../assets/tk-ts-baby.jpg";
 import agingImage from "../assets/aging.png";
 import twentyYearsImage from "../assets/20years.png";
@@ -44,7 +45,7 @@ import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego im
 import artisticBackgroundImage from "../assets/Renaissance.png"; // Using Renaissance image for Artistic category
 import historicalBackgroundImage from "../assets/80s.png"; // Using 80s image for Historical category
 import productBackgroundImage from "../assets/sunset-shampoo.jpg"; // Using sunset shampoo image for Product category
-import funViralBackgroundImage from "../assets/trump-mullet.png"; // Using Trump Mullet image for Fun/Viral category
+import funViralBackgroundImage from "../assets/trump-mullet-new.png"; // Using new Trump Mullet image for Fun/Viral category
 
 // Import data utilities
 import {
@@ -193,6 +194,8 @@ const StyleCard = ({
     imageSrc = ghibliImage;
   } else if (style.id === "ai-action-figure") {
     imageSrc = theKingImage;
+  } else if (style.id === "mullets") {
+    imageSrc = trumpMulletNewImage;
   }
 
   return (
@@ -270,7 +273,7 @@ export default function IdeasPage() {
         description: "It's well known that everyone secretly wants to look like Joe Dirt.",
         category: "other",
         prompt: "Transform the person in the image into a version of themselves with an impressive, over-the-top mullet hairstyle. The mullet should be business in the front, party in the back - with short, styled hair on top and sides, but long, flowing hair in the back. Maintain the person's facial features and expression, but add the iconic mullet hairstyle that was popular in the 80s and 90s. The transformation should be realistic but slightly exaggerated for humorous effect, similar to Joe Dirt's iconic look.",
-        previewImage: "/assets/couple-field-painting.png", // Using fallback image until we resolve the issue
+        previewImage: trumpMulletNewImage, // Using the new Trump Mullet image
         beforeImage: "/assets/couple-field.png",
         popular: true,
         tags: ["hairstyle", "retro", "funny"],
