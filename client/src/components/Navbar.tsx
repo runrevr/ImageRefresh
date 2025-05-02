@@ -25,7 +25,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
   const totalCredits = freeCredits + paidCredits;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
+    <header className="z-40 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
       <div className="container mx-auto px-4 py-2 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
@@ -131,7 +131,18 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
 
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="md:hidden z-50 flex items-center justify-center hover:bg-opacity-90"
+                style={{
+                  backgroundColor: 'rgba(255, 123, 84, 0.8)', // Using #FF7B54 (secondary color) with opacity
+                  color: 'white',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)'
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"

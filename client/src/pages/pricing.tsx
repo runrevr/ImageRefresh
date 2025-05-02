@@ -31,7 +31,10 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+      {/* Custom styling for navbar on dark background */}
+      <div className="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg">
+        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+      </div>
       
       <main className="container mx-auto px-4 py-12">
         <div className="mb-10 text-center">
