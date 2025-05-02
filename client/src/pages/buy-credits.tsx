@@ -39,6 +39,13 @@ const creditPackages: CreditPackage[] = [
   },
   { 
     id: 'bundle-small', 
+    credits: 5, 
+    price: 500, 
+    priceLabel: '$5.00', 
+    savings: 'No discount' 
+  },
+  { 
+    id: 'bundle-medium', 
     credits: 12, 
     price: 1000, 
     priceLabel: '$10.00', 
@@ -51,6 +58,13 @@ const creditPackages: CreditPackage[] = [
     price: 2000, 
     priceLabel: '$20.00', 
     savings: 'Save 33%' 
+  },
+  { 
+    id: 'bundle-xl', 
+    credits: 100, 
+    price: 5000, 
+    priceLabel: '$50.00', 
+    savings: 'Save 50%' 
   }
 ];
 
@@ -301,36 +315,7 @@ export default function BuyCredits() {
     );
   }
   
-  // If user doesn't have active subscription, redirect to pricing page
-  if (
-    subscriptionData && 
-    !subscriptionData.hasActiveSubscription && 
-    subscriptionData.subscriptionStatus !== 'active'
-  ) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-        <div className="container mx-auto py-10 px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6 text-center">
-              <h2 className="text-xl font-bold mb-2 text-amber-800">Subscription Required</h2>
-              <p className="text-amber-700 mb-4">
-                You need an active subscription to purchase additional credits. 
-                Please subscribe to one of our plans to unlock this feature.
-              </p>
-              <Button 
-                className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white" 
-                onClick={() => window.location.href = "/pricing"}
-              >
-                View Subscription Plans
-              </Button>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  // Anyone can buy credits, we removed the subscription requirement
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -68,9 +68,9 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   {totalCredits} credits
                 </span>
               </div>
-              <Link href="/pricing">
+              <Link href="/buy-credits">
                 <Button className="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
-                  Get More Credits
+                  Buy Credits
                 </Button>
               </Link>
             </>
@@ -190,12 +190,12 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                           {totalCredits} credits
                         </span>
                       </div>
-                      <Link href="/pricing">
+                      <Link href="/buy-credits">
                         <Button
                           className="w-full mb-3 bg-[#FF7B54] hover:bg-secondary-600 text-white border-none"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          Get More Credits
+                          Buy Credits
                         </Button>
                       </Link>
                     </>

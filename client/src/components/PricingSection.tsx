@@ -15,10 +15,10 @@ const pricingTiers: PricingTier[] = [
     name: "Free",
     price: "$0",
     features: [
-      { available: true, text: "1 free credit" },
+      { available: true, text: "1 free credit monthly" },
       { available: true, text: "Each credit = 1 image + 1 edit" },
       { available: true, text: "Standard resolution output" },
-      { available: false, text: "Access prior images in your account." }
+      { available: false, text: "Access prior images in your account" }
     ],
     buttonText: "Get Started",
     buttonClass: "border border-gray-300 text-gray-700 hover:bg-gray-50",
@@ -130,10 +130,14 @@ export default function PricingSection({ userId }: PricingSectionProps) {
       </div>
       
       <div className="bg-gray-50 rounded-xl p-6 max-w-5xl mx-auto mt-8">
-        <h3 className="text-lg font-bold mb-3">Need more transformations?</h3>
-        <p className="text-gray-600 mb-4">Contact us for custom enterprise plans or bulk pricing.</p>
-        <Button variant="default" className="bg-[#FF7B54] text-white hover:bg-[#e56c49]">
-          Contact Sales
+        <h3 className="text-lg font-bold mb-3">Need additional credits?</h3>
+        <p className="text-gray-600 mb-4">You can purchase additional credits anytime at $1 each, with volume discounts available.</p>
+        <Button 
+          variant="default" 
+          className="bg-[#FF7B54] text-white hover:bg-[#e56c49]"
+          onClick={() => navigate("/buy-credits")}
+        >
+          Buy Credits
         </Button>
       </div>
     </section>
