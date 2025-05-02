@@ -365,14 +365,7 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
     suggestedPrompt:
       "Transform into a Renaissance portrait painting in the style of masters like Leonardo da Vinci or Raphael (1400-1600). Apply oil painting technique with rich, muted color palette and subtle glazing effects. Convert clothing to period Renaissance attire including high collars, elaborate embroidery, velvet, brocade fabrics, ornate jewelry, and formal headwear. Position the subject in a three-quarter view with dignified posture against a dark backdrop or classical architectural elements. Add symbolic Renaissance objects that reflect status or character like books, scientific instruments, religious items, or flora. Apply characteristic Renaissance lighting with soft modeling and sfumato technique creating subtle transitions between light and shadow. The final portrait should convey the solemnity, dignity and intellectual character of Renaissance portraiture while maintaining clear likeness to the original subject.",
   },
-  caricature: {
-    title: "Caricature",
-    description:
-      "Exaggerated features with humorous intent while maintaining recognition",
-    placeholder: "E.g., Exaggerate eyes and mouth for humorous effect",
-    suggestedPrompt:
-      "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
-  },
+
   "victorian-era": {
     title: "Victorian Era",
     description:
@@ -463,6 +456,14 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     placeholder: "E.g., Turn me into a cat that resembles my features",
     suggestedPrompt:
       "Transform into a cat/cats while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
+  },
+  caricature: {
+    title: "Caricature",
+    description:
+      "Exaggerated features with humorous intent while maintaining recognition",
+    placeholder: "E.g., Exaggerate eyes and mouth for humorous effect",
+    suggestedPrompt:
+      "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
   },
   "custom-other": {
     title: "Create Your Own",
