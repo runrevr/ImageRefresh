@@ -467,7 +467,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
       "Transform into a cat/cats while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
   },
   "custom-other": {
-    title: "Create Your Own Image",
+    title: "Create Your Own",
     description: "Describe your own custom transformation.",
     placeholder:
       "E.g., Make it look like it's underwater with fish swimming around",
