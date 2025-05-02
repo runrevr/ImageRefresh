@@ -19,9 +19,10 @@ The integration requires the following environment variables:
 - `ACTIVECAMPAIGN_API_KEY`: Your ActiveCampaign API key
 - `ACTIVECAMPAIGN_BASE_URL`: Your ActiveCampaign API URL (e.g., https://youraccountname.api-us1.com)
 - `ACTIVECAMPAIGN_MEMBERSHIP_LIST`: (Optional) The ID of the list to add all members to
-- `ACTIVECAMPAIGN_FREE_USER_TAG`: (Optional) Custom tag name for free users (default: "Free User")
-- `ACTIVECAMPAIGN_BASIC_USER_TAG`: (Optional) Custom tag name for basic subscribers (default: "Basic Subscription")
-- `ACTIVECAMPAIGN_PREMIUM_USER_TAG`: (Optional) Custom tag name for premium subscribers (default: "Premium Subscription")
+- `ACTIVECAMPAIGN_FREE_USER_TAG`: (Optional) Custom tag name for free users (default: "free")
+- `ACTIVECAMPAIGN_CORE_USER_TAG`: (Optional) Custom tag name for core subscribers (default: "core")
+- `ACTIVECAMPAIGN_PLUS_USER_TAG`: (Optional) Custom tag name for plus subscribers (default: "plus")
+- `ACTIVECAMPAIGN_TRIAL_TAG`: (Optional) Custom tag name for users in trial period (default: "trial")
 - `ACTIVECAMPAIGN_MEMBERSHIP_STATUS_FIELD`: (Optional) Custom field name for membership status (default: "Membership Status")
 
 ## Implementation Details
@@ -47,7 +48,7 @@ Higher-level service that provides business-logic operations:
 
 The integration is triggered at the following points:
 
-1. User Registration - When a user registers, they are added as a contact with the "Free User" tag
+1. User Registration - When a user registers, they are added as a contact with the "#free" tag
 2. Subscription Changes - When a user subscribes or changes their subscription tier, their tags and membership status are updated
 3. Stripe Webhook Events - When subscription events occur through Stripe, the membership status is updated accordingly
 
