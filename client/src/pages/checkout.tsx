@@ -38,7 +38,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    console.log("Starting payment process...");
+    console.log("Starting subscription payment process...");
 
     if (!stripe || !elements) {
       console.log("Stripe or elements not loaded");
@@ -57,7 +57,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
       if (result.error) {
         console.error("Payment error:", result.error);
         toast({
-          title: "Payment Failed",
+          title: "Subscription Failed",
           description: result.error.message,
           variant: "destructive",
         });
@@ -66,40 +66,45 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
       }
 
       // No error means success
-      console.log("Payment successful:", result);
+      console.log("Subscription payment successful:", result);
 
-      // Call purchase-credits endpoint directly
+      // Create a unique subscription ID
       const timestamp = Date.now().toString();
-      const paymentId = `payment_${timestamp}`;
+      const subscriptionId = `sub_core_${timestamp}`;
 
-      // Check if this payment was already processed (using localStorage)
-      if (localStorage.getItem(paymentId) === "processed") {
+      // Check if this subscription was already processed (using localStorage)
+      if (localStorage.getItem(subscriptionId) === "processed") {
         console.log(
-          `Payment ${paymentId} was already processed - skipping API call`,
+          `Subscription ${subscriptionId} was already processed - skipping API call`,
         );
         navigate("/account");
         return;
       }
 
-      // Mark this payment as processed
-      localStorage.setItem(paymentId, "processed");
+      // Mark this subscription as processed
+      localStorage.setItem(subscriptionId, "processed");
 
-      // Update credits through API
-      const response = await apiRequest("POST", "/api/purchase-credits", {
+      // Update subscription status
+      const response = await apiRequest("POST", "/api/update-user-subscription", {
         userId: user.id,
+        subscriptionTier: "core",
+        subscriptionStatus: "active",
+        stripeCustomerId: user.stripeCustomerId || `cus_${user.id}_${timestamp}`,
+        stripeSubscriptionId: subscriptionId,
+        // Also include initial credits
         credits: 10,
         amount: 1000, // $10.00 in cents
-        paymentIntentId: result.paymentIntent?.id || paymentId,
-        description: "10 Credit Purchase",
+        paymentIntentId: result.paymentIntent?.id || subscriptionId,
+        description: "Core Subscription (Monthly)",
         timestamp,
       });
 
       if (response.ok) {
         // Show success toast
         toast({
-          title: "Payment Successful",
+          title: "Subscription Successful",
           description:
-            "Thank you for your purchase! Your credits have been added to your account.",
+            "Thank you for subscribing to the Core plan! Your monthly credits have been added to your account.",
           duration: 5000,
         });
 
@@ -109,21 +114,21 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
         queryClient.invalidateQueries({ queryKey: ["/api/user/payment-history"] });
 
-        // Redirect to account page, credits tab
-        navigate("/account?tab=credits");
+        // Redirect to account page, subscription tab
+        navigate("/account?tab=subscription");
       } else {
-        console.error("Failed to update credits:", await response.text());
+        console.error("Failed to update subscription:", await response.text());
         toast({
-          title: "Credits Update Failed",
+          title: "Subscription Update Failed",
           description:
-            "Your payment was successful, but we couldn't update your credits. Please contact support.",
+            "Your payment was successful, but we couldn't update your subscription. Please contact support.",
           variant: "destructive",
         });
       }
     } catch (err) {
-      console.error("Payment process error:", err);
+      console.error("Subscription process error:", err);
       toast({
-        title: "Payment Processing Error",
+        title: "Subscription Processing Error",
         description:
           err instanceof Error ? err.message : "An unknown error occurred",
         variant: "destructive",
@@ -154,7 +159,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
               Processing...
             </>
           ) : (
-            "Pay $10.00"
+            "Subscribe - $10.00/month"
           )}
         </Button>
       </div>
@@ -178,7 +183,7 @@ export default function Checkout() {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     apiRequest("POST", "/api/create-payment-intent", {
-      planType: "basic",
+      planType: "core_subscription",
       credits: 10,
       amount: 1000, // $10.00
     })
@@ -209,23 +214,23 @@ export default function Checkout() {
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
       <div className="container mx-auto py-10 px-4">
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold mb-6">Complete Your Purchase</h1>
+          <h1 className="text-2xl font-bold mb-6">Complete Your Subscription</h1>
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
-                <h2 className="font-semibold text-[#FF7B54]">
-                  10 Credit Package
+                <h2 className="font-semibold text-[#2A7B9B]">
+                  Core Subscription
                 </h2>
-                <p className="text-sm text-gray-500">One-time purchase</p>
+                <p className="text-sm text-gray-500">10 credits monthly</p>
               </div>
-              <div className="text-lg font-bold">$10.00</div>
+              <div className="text-lg font-bold">$10.00<span className="text-sm text-gray-500">/month</span></div>
             </div>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutForm user={user} />
             </Elements>
           </div>
           <div className="text-sm text-gray-500 text-center">
-            By purchasing, you agree to our{" "}
+            By subscribing, you agree to our{" "}
             <a href="#" className="text-blue-600 hover:underline">
               Terms of Service
             </a>{" "}
@@ -233,6 +238,7 @@ export default function Checkout() {
             <a href="#" className="text-blue-600 hover:underline">
               Privacy Policy
             </a>
+            <p className="mt-2">You will be charged $10.00 monthly and receive 10 credits each month.</p>
           </div>
         </div>
       </div>

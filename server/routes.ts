@@ -731,7 +731,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { userId, credits, amount, paymentIntentId, description, timestamp } = req.body;
-      const user = req.user as Express.User;
+      const user = req.user as Express.User
+      
+      // Check if user has an active subscription
+      if (!user.subscriptionStatus || user.subscriptionStatus !== "active") {
+        return res.status(403).json({ 
+          message: "Subscription required: You need an active subscription to purchase additional credits."
+        });
+      };
 
       // Security check: ensure user can only update their own credits
       if (user.id !== userId) {
@@ -1070,6 +1077,124 @@ style, environment, lighting, and background rather than changing the main subje
       res
         .status(500)
         .json({ message: `Error creating payment intent: ${error.message}` });
+    }
+  });
+
+  // Track processed subscriptions to prevent duplicates
+  const processedSubscriptions = new Set<string>();
+
+  // Handle user subscription (Core or Premium) and add initial credits
+  app.post("/api/update-user-subscription", async (req, res) => {
+    // Check authentication
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const { 
+        userId, 
+        subscriptionTier, 
+        subscriptionStatus, 
+        stripeCustomerId, 
+        stripeSubscriptionId,
+        credits,
+        amount,
+        paymentIntentId,
+        description,
+        timestamp 
+      } = req.body;
+      
+      // Security check: ensure user can only update their own subscription
+      const currentUserId = req.user.id;
+      if (currentUserId !== userId) {
+        return res
+          .status(403)
+          .json({ message: "Forbidden: Cannot update another user's subscription" });
+      }
+
+      if (!subscriptionTier || !subscriptionStatus) {
+        return res.status(400).json({ message: "Invalid request: subscription details required" });
+      }
+
+      // Create a unique subscription identifier to prevent duplicates
+      const subscriptionKey = stripeSubscriptionId || `${userId}:${timestamp || Date.now()}`;
+      
+      // Check if we've already processed this subscription
+      if (processedSubscriptions.has(subscriptionKey)) {
+        console.log(`DUPLICATE SUBSCRIPTION PREVENTED: ${subscriptionKey}`);
+        return res.status(200).json({
+          success: true,
+          message: "This subscription has already been processed.",
+          alreadyProcessed: true,
+        });
+      }
+
+      // Get current user state
+      const currentUser = await storage.getUser(userId);
+      if (!currentUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // First update user subscription details
+      const updatedUser = await storage.updateUserSubscription(
+        userId,
+        subscriptionTier,
+        subscriptionStatus,
+        stripeCustomerId,
+        stripeSubscriptionId
+      );
+
+      console.log(`Updated user subscription: ${userId} to ${subscriptionTier} (${subscriptionStatus})`);
+
+      // Then update credits if provided - for initial credits with subscription
+      if (credits && credits > 0) {
+        // Add the purchased credits to their account
+        const userWithCredits = await storage.updateUserCredits(
+          userId,
+          currentUser.freeCreditsUsed, // Don't change free credit status
+          (currentUser.paidCredits || 0) + credits
+        );
+
+        console.log(`Added ${credits} initial subscription credits to user ${userId}`);
+
+        // Record the payment
+        const payment = await storage.createPayment({
+          userId,
+          amount,
+          credits,
+          description: description || `Initial ${subscriptionTier} Subscription Credits`,
+          paymentIntentId: paymentIntentId || subscriptionKey,
+          status: "completed",
+        });
+
+        console.log(`Created payment record: ${payment.id}`);
+
+        // Add to our processed set
+        processedSubscriptions.add(subscriptionKey);
+
+        // Return full user state with updated credits
+        res.json({
+          success: true,
+          subscriptionTier: updatedUser.subscriptionTier,
+          subscriptionStatus: updatedUser.subscriptionStatus,
+          freeCreditsUsed: userWithCredits.freeCreditsUsed,
+          paidCredits: userWithCredits.paidCredits,
+          message: `Successfully subscribed to ${subscriptionTier} plan with ${credits} initial credits`,
+        });
+      } else {
+        // Just return the updated subscription info
+        res.json({
+          success: true,
+          subscriptionTier: updatedUser.subscriptionTier,
+          subscriptionStatus: updatedUser.subscriptionStatus,
+          freeCreditsUsed: updatedUser.freeCreditsUsed,
+          paidCredits: updatedUser.paidCredits,
+          message: `Successfully subscribed to ${subscriptionTier} plan`,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error in update-user-subscription endpoint:', error);
+      res.status(500).json({ message: error.message || "Unknown error" });
     }
   });
 
