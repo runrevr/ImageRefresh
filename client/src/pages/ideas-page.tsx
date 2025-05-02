@@ -231,9 +231,92 @@ export default function IdeasPage() {
   const categories = getCategories();
   
   // Get styles for the selected category
-  const styles = selectedCategory 
+  let styles = selectedCategory 
     ? getStylesByCategory(selectedCategory)
     : [];
+    
+  // Special handling for "other" category (Fun/Viral)
+  if (selectedCategory === "other") {
+    // Fun/Viral styles - simplified with existing images to avoid errors
+    styles = [
+      {
+        id: "baby-prediction",
+        name: "What Will Our Baby Look Like",
+        description: "Envision how a future baby might look based on the people in the image.",
+        category: "other",
+        prompt: "Create a realistic image of a baby that would result from the genetics of the two people in the uploaded photos.",
+        previewImage: "/assets/couple-field-painting.png",
+        beforeImage: "/assets/couple-field.png",
+        popular: true,
+        tags: ["family", "future", "prediction"]
+      },
+      {
+        id: "future-self",
+        name: "What Will I Look Like in 20 Years",
+        description: "Age the subject in the image to show how they might look 20 years in the future.",
+        category: "other",
+        prompt: "Show how the person might look 20 years in the future.",
+        previewImage: "/assets/couple-field-painting.png", 
+        beforeImage: "/assets/couple-field.png",
+        popular: true,
+        tags: ["aging", "future", "prediction"]
+      },
+      {
+        id: "ghibli-style",
+        name: "Ghibli Style",
+        description: "Transform into the beautiful, painterly anime style of Studio Ghibli films.",
+        category: "other",
+        prompt: "Transform into the distinctive Studio Ghibli animation style.",
+        previewImage: "/assets/couple-field-painting.png", 
+        beforeImage: "/assets/couple-field.png",
+        featured: true,
+        tags: ["anime", "watercolor", "magical"]
+      },
+      {
+        id: "ai-action-figure",
+        name: "AI Action Figure",
+        description: "Turn the subject into a realistic, detailed action figure or toy.",
+        category: "other",
+        prompt: "Create a picture of an action figure toy in a blister package.",
+        previewImage: "/assets/couple-field-painting.png", 
+        beforeImage: "/assets/couple-field.png",
+        new: true,
+        tags: ["toy", "product", "collectible"]
+      },
+      {
+        id: "pet-as-human",
+        name: "What Would My Pet Look Like as a Human",
+        description: "Reimagine a pet as a human while keeping recognizable traits and personality.",
+        category: "other",
+        prompt: "Transform the pet into a human character.",
+        previewImage: "/assets/couple-field-painting.png", 
+        beforeImage: "/assets/couple-field.png",
+        new: true,
+        tags: ["pets", "transformation", "fun"]
+      },
+      {
+        id: "self-as-cat",
+        name: "What Would I Look Like as a Cat",
+        description: "Transform a human into a cat with recognizable traits from the original subject.",
+        category: "other",
+        prompt: "Transform into a cat while preserving distinctive human features.",
+        previewImage: "/assets/couple-field-painting.png", 
+        beforeImage: "/assets/couple-field.png",
+        featured: true,
+        tags: ["pets", "transformation", "fun"]
+      },
+      {
+        id: "custom-other",
+        name: "Create Your Own Fun Transformation",
+        description: "Describe your own custom fun transformation.",
+        category: "other",
+        prompt: "",
+        previewImage: "/assets/couple-field-painting.png", 
+        beforeImage: "/assets/couple-field.png",
+        tags: ["custom", "creative"]
+      }
+    ];
+  }
 
   // Function to save the selected style to localStorage
   const saveStylePrompt = (style: Style) => {
@@ -257,7 +340,9 @@ export default function IdeasPage() {
 
   // Selected category object
   const currentCategory = selectedCategory
-    ? categories.find(c => c.id === selectedCategory)
+    ? (selectedCategory === "other"
+        ? { id: "other", name: "Fun/Viral Ideas", description: "Creative and trending transformations for social sharing", icon: "Sparkles", styles: [] }
+        : categories.find(c => c.id === selectedCategory))
     : null;
 
   return (
@@ -308,7 +393,7 @@ export default function IdeasPage() {
                 {/* Background image with overlay */}
                 <div className="h-64 overflow-hidden">
                   <img 
-                    src="/caricature.png"
+                    src={artisticBackgroundImage}
                     alt="Fun/Viral Ideas"
                     className="w-full h-full object-cover"
                   />
