@@ -20,7 +20,7 @@ export default function HelpPage() {
     <div className="min-h-screen bg-white">
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
       
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 pt-20">
         <div className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Help & Support</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">

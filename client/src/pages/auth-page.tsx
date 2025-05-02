@@ -101,7 +101,7 @@ export default function AuthPage() {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen flex items-center justify-center p-4 pt-20 bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Auth form */}
         <Card className="w-full max-w-md mx-auto">

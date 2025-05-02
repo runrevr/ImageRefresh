@@ -362,7 +362,7 @@ export default function IdeasPage() {
 
   return (
     <Layout>
-      <div className="max-w-screen-xl mx-auto px-4 py-8">
+      <div className="max-w-screen-xl mx-auto px-4 py-8 pt-20">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-3 text-[#2A7B9B]">
             {selectedCategory ? currentCategory?.name || 'Transformation Styles' : 'Transformation Ideas'}
