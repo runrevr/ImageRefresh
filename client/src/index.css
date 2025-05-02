@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Lato:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee:wght@400;700&family=Rubik:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -65,7 +65,7 @@
   }
 
   body {
-    @apply font-lato font-normal antialiased text-foreground;
+    @apply font-rubik font-normal antialiased text-foreground;
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -82,35 +82,35 @@
 
   /* Typography styles */
   h1, .h1 {
-    @apply font-nunito font-bold text-3xl leading-tight md:text-4xl lg:text-5xl;
+    @apply font-bungee font-bold text-[2.5rem] uppercase leading-tight;
   }
 
   h2, .h2 {
-    @apply font-nunito font-semibold text-2xl leading-tight md:text-3xl lg:text-4xl;
+    @apply font-bungee font-bold text-[1.75rem] leading-tight md:text-[2rem];
   }
 
   h3, .h3 {
-    @apply font-nunito font-medium text-xl leading-snug md:text-2xl lg:text-3xl;
+    @apply font-rubik font-semibold text-[1.25rem] leading-snug md:text-[1.5rem];
   }
 
   h4, .h4 {
-    @apply font-nunito font-medium text-lg leading-snug md:text-xl;
+    @apply font-rubik font-semibold text-base leading-snug;
   }
 
   p {
-    @apply font-lato font-normal leading-relaxed;
+    @apply font-rubik font-normal text-base leading-relaxed;
   }
 
   button, .button {
-    @apply font-lato font-semibold;
+    @apply font-rubik font-[500] text-base;
   }
 
   .small, small, .caption {
-    @apply font-lato font-light text-sm;
+    @apply font-rubik font-light text-sm;
   }
 
   .header-menu {
-    @apply font-lato font-semibold text-[15px];
+    @apply font-rubik font-medium text-base;
   }
 }
 

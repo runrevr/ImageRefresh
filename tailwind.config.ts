@@ -6,8 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        nunito: ['Nunito', 'sans-serif'],
-        lato: ['Lato', 'sans-serif'],
+        bungee: ['Bungee', 'cursive'],
+        rubik: ['Rubik', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
