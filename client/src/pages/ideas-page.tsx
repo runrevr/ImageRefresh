@@ -41,6 +41,7 @@ import ghibliImage from "../assets/ghibli.png";
 import theKingImage from "../assets/the-king.png";
 import petToHumanImage from "../assets/pet-to-human.png";
 import beerDrinkingDeerImage from "../assets/beer-drinking-deer.png";
+import prisonCatImage from "../assets/prison-cat.png";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
@@ -202,6 +203,8 @@ const StyleCard = ({
     imageSrc = petToHumanImage;
   } else if (style.id === "custom-other") {
     imageSrc = beerDrinkingDeerImage;
+  } else if (style.id === "self-as-cat") {
+    imageSrc = prisonCatImage;
   }
 
   return (
@@ -350,14 +353,15 @@ export default function IdeasPage() {
         id: "self-as-cat",
         name: "What Would I Look Like as a Cat",
         description:
-          "Transform a human into a cat with recognizable traits from the original subject.",
+          "Turn yourself into a business cat with a suit, tie, and bandana - perfect for the corporate jungle.",
         category: "other",
         prompt:
-          "Transform into a cat while preserving distinctive human features.",
-        previewImage: "/assets/couple-field-painting.png",
+          "Transform the person into a photorealistic cat wearing business attire including a suit, tie, and a purple bandana. Maintain the person's expression and personality traits.",
+        previewImage: prisonCatImage,
         beforeImage: "/assets/couple-field.png",
         featured: true,
-        tags: ["pets", "transformation", "fun"],
+        new: true, 
+        tags: ["pets", "transformation", "fun", "business", "cat"],
       },
       {
         id: "custom-other",
