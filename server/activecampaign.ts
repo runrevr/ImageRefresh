@@ -50,7 +50,13 @@ export class ActiveCampaignClient {
    * Check if ActiveCampaign is configured with valid credentials
    */
   isConfigured(): boolean {
-    return !!(this.baseUrl && this.apiKey);
+    const configured = !!(this.baseUrl && this.apiKey);
+    console.log('ActiveCampaign isConfigured check:', {
+      baseUrl: this.baseUrl ? `${this.baseUrl.slice(0, 20)}...` : 'not set',
+      apiKey: this.apiKey ? `${this.apiKey.slice(0, 5)}...` : 'not set',
+      result: configured
+    });
+    return configured;
   }
 
   /**
