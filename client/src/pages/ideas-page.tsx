@@ -28,6 +28,7 @@ import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 import trumpMulletImage from "../assets/trump-mullet.png";
 import babyImage from "../assets/tk-ts-baby.jpg";
 import agingImage from "../assets/aging.png";
+import twentyYearsImage from "../assets/20years.png";
 import ghibliImage from "../assets/ghibli.png";
 
 // Import category background images
@@ -174,7 +175,7 @@ const StyleCard = ({
   } else if (style.id === "baby-prediction") {
     imageSrc = babyImage;
   } else if (style.id === "future-self") {
-    imageSrc = agingImage;
+    imageSrc = twentyYearsImage;
   } else if (style.id === "ghibli-style") {
     imageSrc = ghibliImage;
   }
