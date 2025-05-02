@@ -525,15 +525,45 @@ export default function BuyCredits() {
                       Quantity
                     </Label>
                     <div className="flex items-center">
-                      <input
-                        id="quantity"
-                        type="number"
-                        min="1"
-                        max="100"
-                        value={quantity}
-                        onChange={handleQuantityChange}
-                        className="w-20 px-3 py-2 border rounded-md mr-4 text-center"
-                      />
+                      <div className="flex items-center w-24 border rounded-md mr-4 overflow-hidden">
+                        <button 
+                          type="button"
+                          className="px-2 py-2 bg-gray-100 hover:bg-gray-200 focus:outline-none text-gray-700"
+                          onClick={() => {
+                            const newQty = Math.max(1, quantity - 1);
+                            setQuantity(newQty);
+                            calculateCustomPriceAndCredits(selectedPackage, newQty);
+                            if (newQty > 0) {
+                              updatePaymentIntentWithQuantity(selectedPackage, newQty);
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <input
+                          id="quantity"
+                          type="number"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          min="1"
+                          max="100"
+                          value={quantity}
+                          onChange={handleQuantityChange}
+                          className="w-full px-1 py-2 text-center focus:outline-none"
+                        />
+                        <button 
+                          type="button"
+                          className="px-2 py-2 bg-gray-100 hover:bg-gray-200 focus:outline-none text-gray-700"
+                          onClick={() => {
+                            const newQty = Math.min(100, quantity + 1);
+                            setQuantity(newQty);
+                            calculateCustomPriceAndCredits(selectedPackage, newQty);
+                            updatePaymentIntentWithQuantity(selectedPackage, newQty);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
                       <div className="flex-1">
                         <div className="font-medium">
                           {customCredits !== null ? customCredits : selectedPackage.credits} Credits Total
