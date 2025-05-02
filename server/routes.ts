@@ -1410,6 +1410,76 @@ style, environment, lighting, and background rather than changing the main subje
       });
     }
   });
+  
+  // Test endpoint for ActiveCampaign integration
+  app.get("/api/admin/test-activecampaign", async (req, res) => {
+    // Block this endpoint in production mode for unauthenticated users
+    if (process.env.NODE_ENV === "production" && !req.isAuthenticated()) {
+      return res.status(403).json({
+        message: "Authentication required",
+      });
+    }
+
+    try {
+      if (!activeCampaignService.isConfigured()) {
+        return res.status(400).json({
+          success: false,
+          message: "ActiveCampaign is not configured. Check API credentials in environment variables.",
+          configStatus: {
+            apiKeySet: !!process.env.ACTIVECAMPAIGN_API_KEY,
+            baseUrlSet: !!process.env.ACTIVECAMPAIGN_BASE_URL
+          }
+        });
+      }
+      
+      // Only allow admin users or in development
+      if (process.env.NODE_ENV !== "development" && !req.user) {
+        return res.status(403).json({
+          message: "Admin access required",
+        });
+      }
+      
+      // Get the currently logged in user
+      const userId = req.user?.id || 1; // Use user 1 for testing in dev mode
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+      
+      // Test ActiveCampaign contact creation or update
+      const contactResult = await activeCampaignService.addOrUpdateContact(user);
+      
+      // Test tag and membership status update
+      const membershipResult = await activeCampaignService.updateMembershipStatus(user);
+      
+      res.json({
+        success: true,
+        message: "ActiveCampaign integration test completed",
+        results: {
+          contactCreation: contactResult,
+          membershipUpdate: membershipResult,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            subscriptionTier: user.subscriptionTier || 'free',
+            subscriptionStatus: user.subscriptionStatus || 'inactive'
+          }
+        }
+      });
+    } catch (error: any) {
+      console.error("Error testing ActiveCampaign integration:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error testing ActiveCampaign integration",
+        error: error.message
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

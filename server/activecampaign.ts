@@ -28,6 +28,13 @@ export class ActiveCampaignClient {
     this.baseUrl = process.env.ACTIVECAMPAIGN_BASE_URL || '';
     this.apiKey = process.env.ACTIVECAMPAIGN_API_KEY || '';
     
+    console.log('ActiveCampaign Config:', {
+      baseUrlSet: !!this.baseUrl,
+      apiKeySet: !!this.apiKey,
+      baseUrlValue: this.baseUrl ? `${this.baseUrl.slice(0, 10)}...` : 'not set',
+      apiKeyValue: this.apiKey ? `${this.apiKey.slice(0, 5)}...` : 'not set'
+    });
+    
     // Create an Axios instance for API requests
     this.api = axios.create({
       baseURL: this.baseUrl + '/api/3',
