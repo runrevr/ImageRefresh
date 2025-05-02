@@ -27,6 +27,7 @@ import medievalImage from "../assets/medieval.png";
 import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 import trumpMulletImage from "../assets/trump-mullet.png";
 import babyImage from "../assets/tk-ts-baby.jpg";
+import agingImage from "../assets/aging.png";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
@@ -171,6 +172,8 @@ const StyleCard = ({
     imageSrc = medievalImage;
   } else if (style.id === "baby-prediction") {
     imageSrc = babyImage;
+  } else if (style.id === "future-self") {
+    imageSrc = agingImage;
   }
   
   return (
