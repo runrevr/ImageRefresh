@@ -29,7 +29,7 @@ import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 // Import category background images
 import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
 import artisticBackgroundImage from "../assets/Renaissance.png"; // Using Renaissance image for Artistic category
-import historicalBackgroundImage from "../assets/Victorian era.png"; // Using Victorian era image for Historical category
+import historicalBackgroundImage from "../assets/80s.png"; // Using 80s image for Historical category
 import productBackgroundImage from "../assets/sunset-shampoo.jpg"; // Using sunset shampoo image for Product category
 
 // Import data utilities
