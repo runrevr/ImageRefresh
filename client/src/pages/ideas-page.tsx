@@ -281,11 +281,11 @@ export default function IdeasPage() {
         name: "Mullets",
         description: "It's well known that everyone secretly wants to look like Joe Dirt.",
         category: "other",
-        prompt: "Transform the person in the image into a version of themselves with an impressive, over-the-top mullet hairstyle. The mullet should be business in the front, party in the back - with short, styled hair on top and sides, but long, flowing hair in the back. Maintain the person's facial features and expression, but add the iconic mullet hairstyle that was popular in the 80s and 90s. The transformation should be realistic but slightly exaggerated for humorous effect, similar to Joe Dirt's iconic look.",
+        prompt: "Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity. Create a \"business in the front, party in the back\" hairstyle with short, styled hair on top and sides while adding longer, flowing hair extending down the neck and back. Vary the mullet style to include classic 80s volume, modern mullet interpretations, or extreme versions with dramatic length contrasts. For some variations, include distinctive side elements like sideburns, \"chops,\" or temple hair that connects to the mustache area. Add subtle rock-and-roll styling elements like slight dishevelment, styled volume, or a hint of rebellious attitude in the expression that suggests the person enjoys rock music. Ensure the mullet looks natural yet distinctive on the subject, adapting to their face shape while maintaining the exact same hair color as the original photo. The result should appear as if the person genuinely styled their hair this way for a rock concert or performance, preserving lighting and photographic qualities of the original image.",
         previewImage: trumpMulletNewImage, // Using the new Trump Mullet image
         beforeImage: "/assets/couple-field.png",
         popular: true,
-        tags: ["hairstyle", "retro", "funny"],
+        tags: ["hairstyle", "retro", "funny", "rock", "80s"],
       },
       {
         id: "baby-prediction",
