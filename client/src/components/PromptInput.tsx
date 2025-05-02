@@ -830,7 +830,10 @@ export default function PromptInput({
 
           {/* Right column - Style selection and prompt input */}
           <div className="md:col-span-4">
-            <h3 className="text-xl font-medium mb-4">Choose Your Style</h3>
+            <h3 className="text-xl font-medium mb-2">Choose Your Style</h3>
+            <p className="text-red-500 font-medium mb-4">
+              Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+            </p>
 
             {/* Primary Category Selection (Step 1) */}
             <div className="mb-6 space-y-3">
