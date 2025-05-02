@@ -6,7 +6,9 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect, useState } from "react";
-import { apiRequest } from "@/lib/queryClient";
+// No longer using redirect approach
+// import { createPaymentRedirectUrl } from "@/lib/paymentUtils";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import Navbar from "@/components/Navbar";
@@ -22,7 +24,11 @@ if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 }
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-const CheckoutForm = () => {
+interface CheckoutFormProps {
+  user: any; // Use proper type from your auth context
+}
+
+const CheckoutForm = ({ user }: CheckoutFormProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -32,33 +38,88 @@ const CheckoutForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
+    console.log('Starting payment process...');
 
     if (!stripe || !elements) {
+      console.log('Stripe or elements not loaded');
       setIsProcessing(false);
       return;
     }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      // confirmParams: {
-      //   return_url: window.location.origin,
-      // },
-      redirect: "if_required",
-    });
+    try {
+      // Process the payment directly without redirect
+      const result = await stripe.confirmPayment({
+        elements,
+        redirect: 'if_required'
+      });
 
-    if (error) {
+      // If there's a payment error
+      if (result.error) {
+        console.error('Payment error:', result.error);
+        toast({
+          title: "Payment Failed",
+          description: result.error.message,
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+      
+      // No error means success
+      console.log('Payment successful:', result);
+      
+      // Call purchase-credits endpoint directly
+      const timestamp = Date.now().toString();
+      const paymentId = `payment_${timestamp}`;
+      
+      // Check if this payment was already processed (using localStorage)
+      if (localStorage.getItem(paymentId) === 'processed') {
+        console.log(`Payment ${paymentId} was already processed - skipping API call`);
+        navigate('/account');
+        return;
+      }
+      
+      // Mark this payment as processed
+      localStorage.setItem(paymentId, 'processed');
+      
+      // Update credits through API
+      const response = await apiRequest("POST", "/api/purchase-credits", {
+        userId: user.id,
+        credits: 10,
+        timestamp
+      });
+      
+      if (response.ok) {
+        // Show success toast
+        toast({
+          title: "Payment Successful",
+          description: "Thank you for your purchase! Your credits have been added to your account.",
+          duration: 5000,
+        });
+        
+        // Invalidate relevant queries to refresh the data
+        console.log('Invalidating query caches to refresh data');
+        queryClient.invalidateQueries({ queryKey: ["/api/user/subscription"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+        
+        // Redirect to account page, credits tab
+        navigate('/account?tab=credits');
+      } else {
+        console.error('Failed to update credits:', await response.text());
+        toast({
+          title: "Credits Update Failed",
+          description: "Your payment was successful, but we couldn't update your credits. Please contact support.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error('Payment process error:', err);
       toast({
-        title: "Payment Failed",
-        description: error.message,
+        title: "Payment Processing Error",
+        description: err instanceof Error ? err.message : "An unknown error occurred",
         variant: "destructive",
       });
       setIsProcessing(false);
-    } else {
-      toast({
-        title: "Payment Successful",
-        description: "Thank you for your purchase!",
-      });
-      navigate("/account");
     }
   };
 
@@ -151,7 +212,7 @@ export default function Checkout() {
               <div className="text-lg font-bold">$10/month</div>
             </div>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm />
+              <CheckoutForm user={user} />
             </Elements>
           </div>
           <div className="text-sm text-gray-500 text-center">

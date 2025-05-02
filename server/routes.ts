@@ -934,13 +934,16 @@ style, environment, lighting, and background rather than changing the main subje
   });
 
   // Direct credit purchase endpoint (for immediate credit updates after payment)
+  // EMERGENCY FIX: Added purchase tracking to prevent duplicate credits
+  const processedPurchases = new Set<string>(); // Track processed purchases by userId:timestamp
+  
   app.post("/api/purchase-credits", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
-      const { userId, credits } = req.body;
+      const { userId, credits, timestamp } = req.body;
       const user = req.user as Express.User;
 
       // Security check: ensure user can only update their own credits
@@ -948,6 +951,19 @@ style, environment, lighting, and background rather than changing the main subje
         return res
           .status(403)
           .json({ message: "Forbidden: Cannot update another user's credits" });
+      }
+      
+      // EMERGENCY FIX: Create a unique purchase identifier
+      const purchaseId = `${userId}:${timestamp || Date.now()}`;
+      
+      // EMERGENCY FIX: Check if we've already processed this purchase
+      if (processedPurchases.has(purchaseId)) {
+        console.log(`DUPLICATE PURCHASE PREVENTED: ${purchaseId}`);
+        return res.status(200).json({
+          success: true,
+          message: "This purchase has already been processed.",
+          alreadyProcessed: true,
+        });
       }
 
       // Get the current user state from the database to ensure
@@ -957,9 +973,21 @@ style, environment, lighting, and background rather than changing the main subje
         return res.status(404).json({ message: "User not found" });
       }
 
+      // EMERGENCY FIX: Log the request to help debug multiple credit additions
+      console.log('Processing purchase credits request:', {
+        userId,
+        credits,
+        timestamp,
+        purchaseId,
+        currentCredits: currentUser.paidCredits
+      });
+
       // Only add credits if the webhook hasn't already processed this payment
       // This check helps prevent the double-crediting issue
       if (currentUser.paidCredits === user.paidCredits) {
+        // EMERGENCY FIX: Mark this purchase as processed
+        processedPurchases.add(purchaseId);
+        
         // Webhook hasn't processed yet, update credits manually
         const updatedUser = await storage.updateUserCredits(
           userId,
@@ -979,6 +1007,9 @@ style, environment, lighting, and background rather than changing the main subje
         console.log(
           `Credits already updated for user ${userId} by webhook, returning current state`,
         );
+
+        // EMERGENCY FIX: Mark this purchase as processed to prevent duplicate processing
+        processedPurchases.add(purchaseId);
 
         res.status(200).json({
           success: true,
