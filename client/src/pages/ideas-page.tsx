@@ -25,7 +25,7 @@ import {
 
 // Import specific images
 import westernImage from "../assets/Western.png";
-import legoCharacterImage from "../assets/lego-character.png";
+import legoCharacterImage from "../assets/Lego.png";
 import hiphopImage from "../assets/Hiphop.png";
 import eightyImage from "../assets/80s.png";
 import renaissanceImage from "../assets/Renaissance.png";
@@ -45,7 +45,7 @@ import prisonCatImage from "../assets/prison-cat.png";
 import caricatureImage from "@assets/caricature.png";
 
 // Import category background images
-import kidsBackgroundImage from "../assets/lego-character.png"; // Using Lego image for Kids category
+import kidsBackgroundImage from "../assets/Lego.png"; // Using Lego image for Kids category
 import artisticBackgroundImage from "../assets/Renaissance.png"; // Using Renaissance image for Artistic category
 import historicalBackgroundImage from "../assets/80s.png"; // Using 80s image for Historical category
 import productBackgroundImage from "../assets/sunset-shampoo.jpg"; // Using sunset shampoo image for Product category
