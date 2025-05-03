@@ -67,8 +67,27 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    console.log(`Storage getUser called with id: ${id}, type: ${typeof id}`);
+    
+    // Enhanced validation - ensure id is a valid positive number
+    if (id === undefined || id === null || typeof id !== 'number') {
+      console.error(`Invalid user ID type: ${typeof id}`);
+      return undefined;
+    }
+    
+    if (isNaN(id) || !Number.isFinite(id) || id <= 0) {
+      console.error(`Invalid user ID value: ${id}`);
+      return undefined;
+    }
+    
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      console.log(`User lookup result for id ${id}:`, user ? 'Found' : 'Not found');
+      return user;
+    } catch (error) {
+      console.error(`Error in getUser(${id}):`, error);
+      return undefined;
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {

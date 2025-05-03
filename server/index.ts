@@ -3,6 +3,33 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { runCleanupTasks } from "./cleanup";
 import * as dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+
+// Create a debug logger that writes to stdout and a file
+const DEBUG_LOG_PATH = path.join(process.cwd(), 'logs', 'debug.log');
+// Make sure the logs directory exists
+if (!fs.existsSync(path.join(process.cwd(), 'logs'))) {
+  fs.mkdirSync(path.join(process.cwd(), 'logs'), { recursive: true });
+}
+// Clear the log file
+fs.writeFileSync(DEBUG_LOG_PATH, '');
+
+// Create global debug function
+global.debugLog = function(...args: any[]) {
+  const message = args.map(arg => 
+    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+  ).join(' ');
+  
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}\n`;
+  
+  // Write to stdout
+  process.stdout.write(logMessage);
+  
+  // Append to log file
+  fs.appendFileSync(DEBUG_LOG_PATH, logMessage);
+};
 
 // Load environment variables from .env file
 dotenv.config();
