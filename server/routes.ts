@@ -209,18 +209,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Transform image endpoint
   app.post("/api/transform", async (req, res) => {
     try {
-      // Validate request body
+      // Log the raw request body for debugging
+      console.log("API TRANSFORM - Raw request body:", JSON.stringify(req.body));
+      
+      // Log the user ID specifically
+      console.log("API TRANSFORM - User ID from request:", req.body.userId, "Type:", typeof req.body.userId);
+      
+      // Log if user is authenticated
+      console.log("API TRANSFORM - Is authenticated:", req.isAuthenticated ? req.isAuthenticated() : false);
+      if (req.isAuthenticated && req.isAuthenticated()) {
+        console.log("API TRANSFORM - Authenticated user:", req.user);
+      }
+      
+      // Modified schema for better validation
       const transformSchema = z.object({
         originalImagePath: z.string(),
         prompt: z.string().max(5000).optional(), // Increased max length and made optional for preset transformations
-        userId: z.number().optional(),
+        userId: z.union([z.string(), z.number()]).transform(val => {
+          if (typeof val === 'string') {
+            // Handle string input - convert to number if possible
+            const parsed = parseInt(val, 10);
+            console.log("API TRANSFORM - Parsed userId from string:", val, "->", parsed);
+            return Number.isFinite(parsed) ? parsed : val;
+          }
+          return val; // return as is if already a number
+        }).optional(),
         isEdit: z.boolean().optional(),
         previousTransformation: z.union([z.string(), z.number()]).optional(), // Accept either string or number ID
         imageSize: z.string().optional(),
         preset: z.string().optional(), // For predefined transformation types like 'cartoon' or 'product'
       });
 
-      const validatedData = transformSchema.parse(req.body);
+      let validatedData;
+      try {
+        validatedData = transformSchema.parse(req.body);
+        console.log("API TRANSFORM - Validated data:", JSON.stringify(validatedData));
+      } catch (parseError: any) { // Cast to any to access message property
+        console.error("API TRANSFORM - Validation error:", parseError);
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          error: parseError.message || "Schema validation failed"
+        });
+      }
 
       // Check if image exists
       const fullImagePath = path.join(
@@ -232,13 +262,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create transformation record
-      const userId = validatedData.userId || 1; // Use default for unauthenticated users
-
+      // Log userId handling
+      console.log("API TRANSFORM - Processing userId:", validatedData.userId, "Type:", typeof validatedData.userId);
+      
+      let userId: number; 
+      
+      // If userId is undefined or null, default to 1 (anonymous user)
+      if (validatedData.userId === undefined || validatedData.userId === null) {
+        userId = 1;
+        console.log("API TRANSFORM - Using default userId: 1");
+      } 
+      // If userId is a string that can't be parsed as a number, handle the error
+      else if (typeof validatedData.userId === 'string' && !/^\d+$/.test(validatedData.userId)) {
+        console.error("API TRANSFORM - Invalid userId string format:", validatedData.userId);
+        return res.status(400).json({ message: "Invalid user ID format. Must be a positive integer." });
+      }
+      // If userId is a number or a string that can be parsed as a number
+      else {
+        // Convert to number if it's a string
+        if (typeof validatedData.userId === 'string') {
+          userId = parseInt(validatedData.userId, 10);
+        } else {
+          userId = validatedData.userId as number;
+        }
+        
+        // Final validation check
+        if (!Number.isFinite(userId) || userId <= 0) {
+          console.error("API TRANSFORM - Invalid userId after conversion:", userId);
+          return res.status(400).json({ message: "Invalid user ID. Must be a positive integer." });
+        }
+        
+        console.log("API TRANSFORM - Using validated userId:", userId);
+      }
+      
       // Check if user has credits
+      console.log("API TRANSFORM - Looking up user with ID:", userId);
       const user = await storage.getUser(userId);
       if (!user) {
+        console.error("API TRANSFORM - User not found for ID:", userId);
         return res.status(404).json({ message: "User not found" });
       }
+      
+      console.log("API TRANSFORM - Found user:", user.id, user.username);
 
       // Check for preset transformations
       const presetType = validatedData.preset as string | undefined;
