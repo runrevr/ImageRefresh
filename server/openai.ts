@@ -235,7 +235,7 @@ export async function transformImage(
             throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
           }
         } else {
-          throw new Error("No image data returned. The DALL-E 3 generation failed.");
+          throw new Error("No image data returned. The gpt-image-1 generation failed.");
         }
       } catch (genError: any) {
         console.error("Error generating image with gpt-image-1:", genError);
@@ -247,15 +247,15 @@ export async function transformImage(
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with DALL-E 3 model:", err);
+      console.error("Error with gpt-image-1 model:", err);
       
       // Check for specific error types
       if (err.message && err.message.includes("organization verification")) {
-        throw new Error("Your OpenAI account needs organization verification to use this feature. Error: " + err.message);
+        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
       } else if (err.code === "invalid_api_key") {
         throw new Error("Invalid OpenAI API key. Please check your configuration.");
       } else {
-        throw new Error("Failed to generate image with DALL-E 3: " + err.message);
+        throw new Error("Failed to generate image with gpt-image-1: " + err.message);
       }
     }
   } catch (error: any) {
@@ -326,8 +326,8 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       const detailedDescription = content ? content : "A detailed product image";
       console.log("Image analysis complete for variation. Description length:", detailedDescription.length);
       
-      // Stage 2: Generate a variation with DALL-E 3
-      console.log("Stage 2: Generating image variation with DALL-E 3...");
+      // Stage 2: Generate a variation with gpt-image-1
+      console.log("Stage 2: Generating image variation with gpt-image-1...");
       
       // Create an enhanced prompt with special emphasis on preserving the object's identity
       // Add safety guardrails to avoid content policy violations
@@ -377,7 +377,7 @@ ${safetyGuards}`;
           imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
         } else {
           console.log("Unknown variation response format:", JSON.stringify(imageResult.data[0]));
-          throw new Error("Unexpected response format from DALL-E 3 for variation. Could not find url or b64_json in the response.");
+          throw new Error("Unexpected response format from gpt-image-1 for variation. Could not find url or b64_json in the response.");
         }
       } else {
         throw new Error("No image data returned for variation. The DALL-E 3 model is not available for your account.");
@@ -388,15 +388,15 @@ ${safetyGuards}`;
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with DALL-E 3 model for variation:", err);
+      console.error("Error with gpt-image-1 model for variation:", err);
       
       // Check for specific errors related to DALL-E 3 access
       if (err.message && err.message.includes("organization verification")) {
-        throw new Error("Your OpenAI account needs organization verification to use DALL-E 3. Error: " + err.message);
+        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
       } else if (err.code === "unknown_parameter" && err.param === "response_format") {
-        throw new Error("The DALL-E 3 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
+        throw new Error("The gpt-image-1 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
       } else {
-        throw new Error("Failed to generate image variation with DALL-E 3: " + err.message);
+        throw new Error("Failed to generate image variation with gpt-image-1: " + err.message);
       }
     }
   } catch (error: any) {
