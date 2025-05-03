@@ -319,33 +319,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Guard against NaN when parsing previousTransformation
           // The ID could be a number, a URL, or an ID extracted from a filename pattern
-          let prevTransformationId: number;
+          let prevTransformationId: number | null = null;
 
           // Handle different types of previousTransformation value
           if (typeof validatedData.previousTransformation === "number") {
-            // If it's already a number, use it directly
-            prevTransformationId = validatedData.previousTransformation;
+            // If it's already a number, verify it's not NaN before using
+            prevTransformationId = Number.isFinite(validatedData.previousTransformation) 
+              ? validatedData.previousTransformation 
+              : null;
           } else {
             // If it's a string, try to parse it as a number first
             const prevTransformationStr = String(
               validatedData.previousTransformation,
             );
-            prevTransformationId = parseInt(prevTransformationStr);
-
-            // If that failed, check if there's a transformation ID pattern in the string
-            if (isNaN(prevTransformationId)) {
+            const parsedId = parseInt(prevTransformationStr);
+            
+            if (!isNaN(parsedId) && Number.isFinite(parsedId)) {
+              prevTransformationId = parsedId;
+            } else {
+              // If that failed, check if there's a transformation ID pattern in the string
               // Look for patterns like transformed-12345-filename.jpg (where 12345 is the ID)
               const match = prevTransformationStr.match(/transformed-(\d+)-/);
               if (match && match[1]) {
-                prevTransformationId = parseInt(match[1]);
+                const extractedId = parseInt(match[1]);
+                if (!isNaN(extractedId) && Number.isFinite(extractedId)) {
+                  prevTransformationId = extractedId;
+                }
               }
             }
           }
 
           // If we still don't have a valid ID, return an error
-          if (isNaN(prevTransformationId)) {
+          if (prevTransformationId === null || isNaN(prevTransformationId) || !Number.isFinite(prevTransformationId)) {
             console.error(
-              "Could not extract transformation ID from:",
+              "Could not extract valid transformation ID from:",
               validatedData.previousTransformation,
             );
             return res
@@ -601,7 +608,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user credits
   app.get("/api/credits/:userId", async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const parsedUserId = parseInt(req.params.userId);
+      
+      // Enhanced validation to ensure we have a valid integer
+      if (isNaN(parsedUserId) || !Number.isFinite(parsedUserId) || parsedUserId <= 0) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const userId = parsedUserId;
       const user = await storage.getUser(userId);
 
       if (!user) {
@@ -690,7 +704,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get transformation history
   app.get("/api/transformations/:userId", async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const parsedUserId = parseInt(req.params.userId);
+      
+      // Enhanced validation to ensure we have a valid integer
+      if (isNaN(parsedUserId) || !Number.isFinite(parsedUserId) || parsedUserId <= 0) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const userId = parsedUserId;
       console.log(`Getting transformations for user ID: ${userId}`);
 
       const transformations = await storage.getUserTransformations(userId);
@@ -851,11 +872,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const userId = parseInt(req.params.userId);
-
-      if (isNaN(userId)) {
+      const parsedUserId = parseInt(req.params.userId);
+      
+      // Enhanced validation to ensure we have a valid integer
+      if (isNaN(parsedUserId) || !Number.isFinite(parsedUserId) || parsedUserId <= 0) {
         return res.status(400).json({ message: "Invalid user ID" });
       }
+      
+      const userId = parsedUserId;
 
       const user = await storage.getUser(userId);
 

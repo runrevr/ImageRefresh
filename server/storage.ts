@@ -94,8 +94,18 @@ export class DatabaseStorage implements IStorage {
       throw new Error("User not found");
     }
 
+    // Ensure paidCredits is a valid number
+    let validPaidCredits = user.paidCredits;
+    if (paidCredits !== undefined) {
+      if (isNaN(paidCredits) || !Number.isFinite(paidCredits)) {
+        console.error(`Invalid paidCredits value: ${paidCredits}, using existing value: ${user.paidCredits}`);
+      } else {
+        validPaidCredits = paidCredits;
+      }
+    }
+
     const updateData: any = {
-      paidCredits: paidCredits !== undefined ? paidCredits : user.paidCredits,
+      paidCredits: validPaidCredits,
     };
     console.log("updateData", updateData);
 
