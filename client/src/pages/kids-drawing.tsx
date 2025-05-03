@@ -166,48 +166,6 @@ Feel free to interpret what this might be, but do not add any elements not prese
                   <div className="p-1">
                     <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
                       <div className="flex-1 p-1 bg-white rounded-lg">
-                        <img src="/assets/kids-drawing-carousel-1-before.svg" alt="Child's Dinosaur Drawing" className="w-full h-64 object-contain" />
-                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
-                      </div>
-                      <div className="flex-1 p-1 bg-white rounded-lg">
-                        <img src="/assets/kids-drawing-carousel-1-after.svg" alt="Realistic Dinosaur" className="w-full h-64 object-contain" />
-                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="p-1">
-                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white rounded-lg">
-                        <img src="/assets/kids-drawing-carousel-3-before.svg" alt="Child's Superhero Drawing" className="w-full h-64 object-contain" />
-                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
-                      </div>
-                      <div className="flex-1 p-1 bg-white rounded-lg">
-                        <img src="/assets/kids-drawing-carousel-3-after.svg" alt="Realistic Superhero" className="w-full h-64 object-contain" />
-                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="p-1">
-                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white rounded-lg">
-                        <img src="/assets/kids-drawing-carousel-4-before.svg" alt="Child's Castle Drawing" className="w-full h-64 object-contain" />
-                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
-                      </div>
-                      <div className="flex-1 p-1 bg-white rounded-lg">
-                        <img src="/assets/kids-drawing-carousel-4-after.svg" alt="Realistic Castle" className="w-full h-64 object-contain" />
-                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="p-1">
-                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src={dogCatDrawing} alt="Child's Dog and Cat Drawing" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
                       </div>
