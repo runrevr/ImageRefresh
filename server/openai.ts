@@ -12,8 +12,11 @@ const pipeline = promisify(stream.pipeline);
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || "sk-dummy-key-for-development" 
+  apiKey: process.env.OPENAI_API_KEY
 });
+
+// Log OpenAI configuration but mask the key
+console.log(`OpenAI configured with API key: ${process.env.OPENAI_API_KEY ? "****" + process.env.OPENAI_API_KEY.slice(-4) : "NOT CONFIGURED"}`);
 
 export const imageVariationFormats = [
   "image/jpeg",
@@ -32,7 +35,7 @@ interface OpenAIImageResponse {
  * Checks if OpenAI API key is configured
  */
 export function isOpenAIConfigured(): boolean {
-  return !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== "sk-dummy-key-for-development";
+  return !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.startsWith('sk-');
 }
 
 /**
@@ -210,7 +213,7 @@ export async function transformImage(
           size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
             ? sizeParam 
             : "1024x1024",
-          quality: "auto"
+          quality: "standard" // Using standard quality for better compatibility
         });
         
         // Define imageResponse in outer scope to access it later
@@ -218,6 +221,9 @@ export async function transformImage(
         
         // Write verbose error handling
         try {
+          // Use the DALL-E 3 model as a fallback if gpt-image-1 isn't working
+          // Try with both "standard" quality parameter
+          console.log("Attempting to use gpt-image-1 model with standard quality...");
           imageResponse = await openai.images.generate({
             model: "gpt-image-1", // Use gpt-image-1 model as requested
             prompt: generationPrompt,
@@ -225,7 +231,7 @@ export async function transformImage(
             size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
               ? sizeParam as any 
               : "1024x1024" as any,
-            quality: "auto",
+            quality: "standard",
           });
           console.log("OpenAI API call completed successfully");
         } catch (apiError: any) {
@@ -378,7 +384,7 @@ ${safetyGuards}`;
         prompt: enhancedVariationPrompt,
         n: 1,
         size: "1024x1024" as any,
-        quality: "auto"
+        quality: "standard"
       });
       
       console.log("Successfully generated variation with gpt-image-1 model");
