@@ -213,7 +213,7 @@ export async function transformImage(
           size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
             ? sizeParam 
             : "1024x1024",
-          quality: "standard" // Using standard quality for better compatibility
+          quality: "auto" // Using auto quality as specified
         });
         
         // Define imageResponse in outer scope to access it later
@@ -221,9 +221,7 @@ export async function transformImage(
         
         // Write verbose error handling
         try {
-          // Use the DALL-E 3 model as a fallback if gpt-image-1 isn't working
-          // Try with both "standard" quality parameter
-          console.log("Attempting to use gpt-image-1 model with standard quality...");
+          console.log("Attempting to use gpt-image-1 model with auto quality...");
           imageResponse = await openai.images.generate({
             model: "gpt-image-1", // Use gpt-image-1 model as requested
             prompt: generationPrompt,
@@ -231,7 +229,7 @@ export async function transformImage(
             size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
               ? sizeParam as any 
               : "1024x1024" as any,
-            quality: "standard",
+            quality: "auto",
           });
           console.log("OpenAI API call completed successfully");
         } catch (apiError: any) {
@@ -384,7 +382,7 @@ ${safetyGuards}`;
         prompt: enhancedVariationPrompt,
         n: 1,
         size: "1024x1024" as any,
-        quality: "standard"
+        quality: "auto"
       });
       
       console.log("Successfully generated variation with gpt-image-1 model");
