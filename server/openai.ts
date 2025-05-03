@@ -87,7 +87,7 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 /**
  * Two-stage process for image transformation:
  * 1. First analyze the image with GPT-4o to get a detailed description
- * 2. Then create a new image with DALL-E 3 based on both the prompt and the description
+ * 2. Then create a new image with gpt-image-1 based on both the prompt and the description
  */
 export async function transformImage(
   imagePath: string, 
@@ -153,8 +153,8 @@ export async function transformImage(
       const detailedDescription = content ? content : "A detailed product image";
       console.log("Image analysis complete. Description length:", detailedDescription.length);
       
-      // Now use DALL-E 3 to generate a new image based on the prompt and the detailed description
-      console.log("Stage 2: Generating transformed image with DALL-E 3...");
+      // Now use gpt-image-1 to generate a new image based on the prompt and the detailed description
+      console.log("Stage 2: Generating transformed image with gpt-image-1...");
       
       // Create a comprehensive prompt that incorporates both the user's request and the image details
       // The key is to emphasize preserving the original image's subject while applying the transformation
@@ -200,11 +200,11 @@ export async function transformImage(
       
       try {
         console.log(`Using enhanced generation prompt: ${generationPrompt.substring(0, 100)}...`);
-        console.log(`Using GPT-4o for vision analysis and DALL-E 3 for image generation`);
+        console.log(`Using GPT-4o for vision analysis and gpt-image-1 for image generation`);
         
-        // Use DALL-E 3 instead of gpt-image-1 for more reliable results
+        // Use gpt-image-1 for image generation
         const imageResponse = await openai.images.generate({
-          model: "dall-e-3", // Use DALL-E 3 model which is more widely available
+          model: "gpt-image-1", // Use gpt-image-1 model as requested
           prompt: generationPrompt,
           n: 1,
           size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
@@ -214,7 +214,7 @@ export async function transformImage(
         });
         
         console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
-        console.log("Successfully generated image with DALL-E 3 model");
+        console.log("Successfully generated image with gpt-image-1 model");
         
         // Check what format we received
         if (imageResponse.data && imageResponse.data.length > 0) {
@@ -232,13 +232,13 @@ export async function transformImage(
             imageUrl = `data:image/png;base64,${b64Content}`;
           } else {
             console.log("Unknown response format:", JSON.stringify(imageResponse.data[0]));
-            throw new Error("Unexpected response format from DALL-E 3. Could not find url or b64_json in the response.");
+            throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
           }
         } else {
           throw new Error("No image data returned. The DALL-E 3 generation failed.");
         }
       } catch (genError: any) {
-        console.error("Error generating image with DALL-E 3:", genError);
+        console.error("Error generating image with gpt-image-1:", genError);
         throw new Error(`Failed to generate image: ${genError.message}`);
       }
   
@@ -268,7 +268,7 @@ export async function transformImage(
 /**
  * Creates an image variation using the same two-stage process as transformImage
  * 1. Analyze the image with GPT-4o Vision
- * 2. Create a variation with DALL-E 3 based on the analysis
+ * 2. Create a variation with gpt-image-1 based on the analysis
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
@@ -341,18 +341,18 @@ ${safetyGuards}`;
       
       console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       
-      // Use DALL-E 3 for more reliable results
-      console.log("Using DALL-E 3 for image variation generation");
+      // Use gpt-image-1 for image variation
+      console.log("Using gpt-image-1 for image variation generation");
       
       const imageResult = await openai.images.generate({
-        model: "dall-e-3", // Switch to DALL-E 3 which is more widely available and reliable
+        model: "gpt-image-1", // Use gpt-image-1 as requested
         prompt: enhancedVariationPrompt,
         n: 1,
         size: "1024x1024" as any,
         quality: "standard"
       });
       
-      console.log("Successfully generated variation with DALL-E 3 model");
+      console.log("Successfully generated variation with gpt-image-1 model");
       console.log("Variation response format:", JSON.stringify(imageResult, null, 2));
       
       // Generate unique name for the transformed image
