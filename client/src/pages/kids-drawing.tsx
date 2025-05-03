@@ -22,7 +22,19 @@ export default function KidsDrawingPage() {
   const demoAfterImage = "/assets/kids-drawing-after.svg";
 
   // Special prompt for kids drawing transformation
-  const kidsDrawingPrompt = "Transform this child's drawing into a photorealistic image. Preserve the child's artistic style while making it look like a real photo of what they were trying to draw. Keep it family-friendly and maintain all the important details from the original drawing.";
+  const kidsDrawingPrompt = `Transform this child's drawing into a hyper-realistic photograph or professional 3D render. Maintain absolute fidelity to the original artwork - preserve all proportions, line placements, and deliberate "imperfections" that make this creation unique. Do not correct, straighten, symmetrize, or "improve" any aspect of the original design.
+
+The final image should appear as if this creation exists in our physical world, with:
+- Realistic textures appropriate to what the subject might be (skin, scales, fur, metal, fabric, etc.)
+- Natural lighting with proper shadows and highlights
+- Environmental context that complements the subject without distracting from it
+- Physical properties suggesting weight, material, and dimension
+
+Important: This must look like a high-quality photograph or CGI render - NOT a stylized, illustrated, or hand-drawn interpretation. The goal is to bring my child's imagination to life exactly as they conceived it, just with photorealistic rendering.
+
+For the background/environment: Keep it simple and complementary. If the drawing appears to be a creature, place it in a fitting natural habitat. If it's an object, place it in a contextually appropriate setting with soft focus.
+
+Feel free to interpret what this might be, but do not add any elements not present in the original drawing. Maintain the exact personality and character of the original creation.`;
 
   const handleImageUploaded = (imagePath: string, imageUrl: string) => {
     setOriginalImage(imageUrl);
@@ -88,10 +100,10 @@ export default function KidsDrawingPage() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
-            Turn Your Child's Drawings Into Reality
+            Bring Your Child's Drawings to Life
           </h1>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-            Watch as our AI magically transforms your child's creative artwork into stunning photorealistic images they'll love!
+            Our AI transforms children's artwork into hyper-realistic 3D renders and photographs while preserving every detail that makes their creation unique!
           </p>
           
           <div className="flex justify-center">
@@ -202,17 +214,22 @@ export default function KidsDrawingPage() {
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">What types of drawings work best?</h3>
-              <p className="text-gray-700">Simple, clear drawings with distinct elements work best. Colorful drawings are ideal, but black and white sketches work too!</p>
+              <p className="text-gray-700">All children's drawings work great! The AI preserves every detail, proportion, and characteristic that makes their art unique. Both colorful drawings and simple sketches transform beautifully.</p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-xl font-semibold mb-2">How does the transformation work?</h3>
+              <p className="text-gray-700">Our AI analyzes your child's drawing and creates a hyper-realistic 3D render or photograph of exactly what they drew - maintaining all proportions and details. The image will appear as if their creation exists in real life, with appropriate textures, lighting, and environmental context.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">How long does the transformation take?</h3>
-              <p className="text-gray-700">Most transformations complete within 30 seconds, depending on the complexity of the drawing and current system load.</p>
+              <p className="text-gray-700">Most transformations complete within 30-45 seconds, depending on the complexity of the drawing and current system load. The AI puts in extra effort to ensure all details are preserved exactly as your child intended.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">Can I save the transformed images?</h3>
-              <p className="text-gray-700">Yes! Right-click on the transformed image and select "Save image as" to download it to your device.</p>
+              <p className="text-gray-700">Yes! Right-click on the transformed image and select "Save image as" to download it to your device. Many parents love to print these transformations as keepsakes or gifts.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow">
