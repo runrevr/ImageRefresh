@@ -91,11 +91,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.username, username));
-    return user;
+    console.log(`Storage getUserByUsername called with username: ${username}`);
+    try {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.username, username));
+      console.log(`User lookup by username result:`, user ? {
+        id: user.id,
+        typeOfId: typeof user.id,
+        username: user.username
+      } : 'Not found');
+      return user;
+    } catch (error) {
+      console.error(`Error in getUserByUsername(${username}):`, error);
+      return undefined;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {

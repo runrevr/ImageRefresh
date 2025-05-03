@@ -8,6 +8,11 @@ import path from 'path';
 
 // Create a debug logger that writes to stdout and a file
 const DEBUG_LOG_PATH = path.join(process.cwd(), 'logs', 'debug.log');
+
+// Ensure the logs directory exists
+if (!fs.existsSync(path.dirname(DEBUG_LOG_PATH))) {
+  fs.mkdirSync(path.dirname(DEBUG_LOG_PATH), { recursive: true });
+}
 // Make sure the logs directory exists
 if (!fs.existsSync(path.join(process.cwd(), 'logs'))) {
   fs.mkdirSync(path.join(process.cwd(), 'logs'), { recursive: true });
@@ -57,6 +62,27 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Create a special middleware just for debugging request bodies
+app.use((req, res, next) => {
+  // Only log POST requests to specific endpoints
+  if (req.method === 'POST' && req.path === '/api/transform') {
+    console.log('\n\n==== TRANSFORM REQUEST BODY ====');
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+    console.log('Query:', JSON.stringify(req.query, null, 2));
+    console.log('================================\n\n');
+    
+    // Write to debug log file as well
+    fs.appendFileSync(DEBUG_LOG_PATH, `\n\n==== TRANSFORM REQUEST [${new Date().toISOString()}] ====\n`);
+    fs.appendFileSync(DEBUG_LOG_PATH, `URL: ${req.url}\n`);
+    fs.appendFileSync(DEBUG_LOG_PATH, `Headers: ${JSON.stringify(req.headers, null, 2)}\n`);
+    fs.appendFileSync(DEBUG_LOG_PATH, `Body: ${JSON.stringify(req.body, null, 2)}\n`);
+    fs.appendFileSync(DEBUG_LOG_PATH, `Query: ${JSON.stringify(req.query, null, 2)}\n`);
+    fs.appendFileSync(DEBUG_LOG_PATH, `================================\n\n`);
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -65,6 +91,23 @@ app.use((req, res, next) => {
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
+    
+    // Special logging for errors on transform endpoint
+    if (path === '/api/transform' && bodyJson && bodyJson.message) {
+      console.log('\n\n==== TRANSFORM RESPONSE ERROR ====');
+      console.log('Status:', res.statusCode);
+      console.log('Error:', bodyJson.message);
+      console.log('Full response:', JSON.stringify(bodyJson, null, 2));
+      console.log('================================\n\n');
+      
+      // Write to debug log file
+      fs.appendFileSync(DEBUG_LOG_PATH, `\n\n==== TRANSFORM RESPONSE ERROR [${new Date().toISOString()}] ====\n`);
+      fs.appendFileSync(DEBUG_LOG_PATH, `Status: ${res.statusCode}\n`);
+      fs.appendFileSync(DEBUG_LOG_PATH, `Error: ${bodyJson.message}\n`);
+      fs.appendFileSync(DEBUG_LOG_PATH, `Full response: ${JSON.stringify(bodyJson, null, 2)}\n`);
+      fs.appendFileSync(DEBUG_LOG_PATH, `================================\n\n`);
+    }
+    
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
