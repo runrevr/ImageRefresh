@@ -87,7 +87,7 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 /**
  * Two-stage process for image transformation:
  * 1. First analyze the image with GPT-4o to get a detailed description
- * 2. Then create a new image with gpt-image-1 based on both the prompt and the description
+ * 2. Then create a new image with DALL-E 3 based on both the prompt and the description
  */
 export async function transformImage(
   imagePath: string, 
@@ -232,13 +232,13 @@ export async function transformImage(
             imageUrl = `data:image/png;base64,${b64Content}`;
           } else {
             console.log("Unknown response format:", JSON.stringify(imageResponse.data[0]));
-            throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
+            throw new Error("Unexpected response format from DALL-E 3. Could not find url or b64_json in the response.");
           }
         } else {
-          throw new Error("No image data returned. The gpt-image-1 generation failed.");
+          throw new Error("No image data returned. The DALL-E 3 generation failed.");
         }
       } catch (genError: any) {
-        console.error("Error generating image with gpt-image-1:", genError);
+        console.error("Error generating image with DALL-E 3:", genError);
         throw new Error(`Failed to generate image: ${genError.message}`);
       }
   
@@ -247,7 +247,7 @@ export async function transformImage(
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with gpt-image-1 model:", err);
+      console.error("Error with DALL-E 3 model:", err);
       
       // Check for specific error types
       if (err.message && err.message.includes("organization verification")) {
@@ -255,7 +255,7 @@ export async function transformImage(
       } else if (err.code === "invalid_api_key") {
         throw new Error("Invalid OpenAI API key. Please check your configuration.");
       } else {
-        throw new Error("Failed to generate image with gpt-image-1: " + err.message);
+        throw new Error("Failed to generate image with DALL-E 3: " + err.message);
       }
     }
   } catch (error: any) {
@@ -388,15 +388,15 @@ ${safetyGuards}`;
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with gpt-image-1 model for variation:", err);
+      console.error("Error with DALL-E 3 model for variation:", err);
       
-      // Check for specific errors related to gpt-image-1 access
+      // Check for specific errors related to DALL-E 3 access
       if (err.message && err.message.includes("organization verification")) {
-        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
+        throw new Error("Your OpenAI account needs organization verification to use DALL-E 3. Error: " + err.message);
       } else if (err.code === "unknown_parameter" && err.param === "response_format") {
-        throw new Error("The gpt-image-1 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
+        throw new Error("The DALL-E 3 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
       } else {
-        throw new Error("Failed to generate image variation with gpt-image-1: " + err.message);
+        throw new Error("Failed to generate image variation with DALL-E 3: " + err.message);
       }
     }
   } catch (error: any) {
