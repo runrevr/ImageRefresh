@@ -17,6 +17,36 @@ import { setupTestStatusRoute } from "./test-status";
 import { activeCampaignService } from "./activecampaign-service";
 
 /**
+ * Validates and parses a user ID parameter
+ * @param userIdParam The user ID parameter to validate
+ * @returns Object containing validation result and parsed ID or error message
+ */
+function validateUserId(userIdParam: string | undefined): { isValid: boolean; userId?: number; errorMessage?: string } {
+  // Check if the parameter is present and not empty
+  if (!userIdParam) {
+    return { isValid: false, errorMessage: "User ID is required" };
+  }
+  
+  // Sanitize the input - trim whitespace and ensure it's a string
+  const sanitizedParam = String(userIdParam).trim();
+  
+  // Parse to integer, only if it looks like a number
+  const numericRegex = /^\d+$/;
+  if (!numericRegex.test(sanitizedParam)) {
+    return { isValid: false, errorMessage: "Invalid user ID format. Must be a positive integer." };
+  }
+  
+  const parsedId = parseInt(sanitizedParam);
+  
+  // Enhanced validation to ensure we have a valid positive integer
+  if (isNaN(parsedId) || !Number.isFinite(parsedId) || parsedId <= 0) {
+    return { isValid: false, errorMessage: "Invalid user ID. Must be a positive integer." };
+  }
+  
+  return { isValid: true, userId: parsedId };
+}
+
+/**
  * Generate visual description and art prompt from image.
  */
 
@@ -704,14 +734,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get transformation history
   app.get("/api/transformations/:userId", async (req, res) => {
     try {
-      const parsedUserId = parseInt(req.params.userId);
+      // Use our centralized userId validation function
+      const validation = validateUserId(req.params.userId);
       
-      // Enhanced validation to ensure we have a valid integer
-      if (isNaN(parsedUserId) || !Number.isFinite(parsedUserId) || parsedUserId <= 0) {
-        return res.status(400).json({ message: "Invalid user ID" });
+      if (!validation.isValid) {
+        return res.status(400).json({ message: validation.errorMessage });
       }
       
-      const userId = parsedUserId;
+      const userId = validation.userId!;
       console.log(`Getting transformations for user ID: ${userId}`);
 
       const transformations = await storage.getUserTransformations(userId);
@@ -872,14 +902,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const parsedUserId = parseInt(req.params.userId);
+      // Use our centralized userId validation function
+      const validation = validateUserId(req.params.userId);
       
-      // Enhanced validation to ensure we have a valid integer
-      if (isNaN(parsedUserId) || !Number.isFinite(parsedUserId) || parsedUserId <= 0) {
-        return res.status(400).json({ message: "Invalid user ID" });
+      if (!validation.isValid) {
+        return res.status(400).json({ message: validation.errorMessage });
       }
       
-      const userId = parsedUserId;
+      const userId = validation.userId!;
 
       const user = await storage.getUser(userId);
 
