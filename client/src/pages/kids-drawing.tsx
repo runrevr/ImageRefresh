@@ -21,6 +21,8 @@ import alicornDrawing from "../assets/alicorn-drawing.jpg";
 import alicornReal from "../assets/alicorn-real.png";
 import dogCatDrawing from "../assets/dog-and-cat-drawing.png";
 import dogCatReal from "../assets/dog-and-cat-real.png";
+import giraffeDrawing from "../assets/giraffe-drawing.png";
+import giraffeReal from "../assets/giraffe-real.png";
 
 export default function KidsDrawingPage() {
   const { user } = useAuth();
@@ -209,6 +211,20 @@ Feel free to interpret what this might be, but do not add any elements not prese
                       </div>
                       <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src={dogCatReal} alt="Realistic Dog and Cat" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="p-1">
+                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
+                        <img src={giraffeDrawing} alt="Child's Giraffe Drawing" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
+                      </div>
+                      <div className="flex-1 p-1 bg-white rounded-lg">
+                        <img src={giraffeReal} alt="Realistic Giraffe" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
                       </div>
                     </div>
