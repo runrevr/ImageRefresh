@@ -380,7 +380,7 @@ ${safetyGuards}`;
           throw new Error("Unexpected response format from gpt-image-1 for variation. Could not find url or b64_json in the response.");
         }
       } else {
-        throw new Error("No image data returned for variation. The DALL-E 3 model is not available for your account.");
+        throw new Error("No image data returned for variation. The gpt-image-1 model is not available for your account.");
       }
   
       return {
@@ -390,7 +390,7 @@ ${safetyGuards}`;
     } catch (err: any) {
       console.error("Error with gpt-image-1 model for variation:", err);
       
-      // Check for specific errors related to DALL-E 3 access
+      // Check for specific errors related to gpt-image-1 access
       if (err.message && err.message.includes("organization verification")) {
         throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
       } else if (err.code === "unknown_parameter" && err.param === "response_format") {
