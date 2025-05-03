@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import ImageUploader from "@/components/ImageUploader";
 import ComparisonSlider from "@/components/ComparisonSlider";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WandSparkles, Paintbrush, Upload } from "lucide-react";
+import { WandSparkles, Paintbrush, Upload, Download } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -262,12 +262,20 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 <div className="flex-1">
                   <h3 className="text-lg font-medium mb-2">Transformed Image</h3>
                   {transformedImage ? (
-                    <div className="rounded-lg overflow-hidden border border-gray-200 h-64 flex items-center justify-center">
+                    <div className="rounded-lg overflow-hidden border border-gray-200 h-64 flex items-center justify-center relative">
                       <img
                         src={transformedImage}
                         alt="Transformed"
                         className="object-contain max-h-full max-w-full"
                       />
+                      <a 
+                        href={transformedImage} 
+                        download="transformed-drawing.png"
+                        className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg"
+                        title="Download Image"
+                      >
+                        <Download className="h-5 w-5" />
+                      </a>
                     </div>
                   ) : (
                     <div className="bg-gray-100 rounded-lg p-4 h-64 flex flex-col items-center justify-center border border-gray-200">
@@ -335,7 +343,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
             
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">Can I save the transformed images?</h3>
-              <p className="text-gray-700">Yes! Right-click on the transformed image and select "Save image as" to download it to your device. Many parents love to print these transformations as keepsakes or gifts.</p>
+              <p className="text-gray-700">Yes! Simply click the download button that appears in the corner of your transformed image. Many parents love to print these transformations as keepsakes or gifts.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow">
