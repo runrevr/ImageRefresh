@@ -265,35 +265,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log userId handling
       console.log("API TRANSFORM - Processing userId:", validatedData.userId, "Type:", typeof validatedData.userId);
       
-      let userId: number; 
+      let userId: number = 1; // Default to guest user ID 1
+      let isGuestUser = true;
       
-      // If userId is undefined or null, default to 1 (anonymous user)
-      if (validatedData.userId === undefined || validatedData.userId === null) {
-        userId = 1;
-        console.log("API TRANSFORM - Using default userId: 1");
+      if (req.isAuthenticated && req.isAuthenticated() && req.user && (req.user as any).id) {
+        // If user is authenticated, use their ID from the session
+        userId = (req.user as any).id;
+        isGuestUser = false;
+        console.log("API TRANSFORM - Using authenticated user ID:", userId);
       } 
-      // If userId is a string that can't be parsed as a number, handle the error
-      else if (typeof validatedData.userId === 'string' && !/^\d+$/.test(validatedData.userId)) {
-        console.error("API TRANSFORM - Invalid userId string format:", validatedData.userId);
-        return res.status(400).json({ message: "Invalid user ID format. Must be a positive integer." });
-      }
-      // If userId is a number or a string that can be parsed as a number
-      else {
-        // Convert to number if it's a string
+      else if (validatedData.userId !== undefined && validatedData.userId !== null) {
+        // If userId is provided in the request and is valid, use it
         if (typeof validatedData.userId === 'string') {
-          userId = parseInt(validatedData.userId, 10);
-        } else {
-          userId = validatedData.userId as number;
+          // If userId is a string, try to parse it
+          if (/^\d+$/.test(validatedData.userId)) {
+            userId = parseInt(validatedData.userId, 10);
+            isGuestUser = false;
+          } else {
+            console.log("API TRANSFORM - Ignoring invalid userId string format:", validatedData.userId);
+            // Continue with default guest ID instead of returning an error
+          }
+        } else if (typeof validatedData.userId === 'number') {
+          // If userId is already a number and valid, use it
+          if (Number.isFinite(validatedData.userId) && validatedData.userId > 0) {
+            userId = validatedData.userId;
+            isGuestUser = false;
+          } else {
+            console.log("API TRANSFORM - Ignoring invalid userId number:", validatedData.userId);
+            // Continue with default guest ID instead of returning an error
+          }
         }
-        
-        // Final validation check
-        if (!Number.isFinite(userId) || userId <= 0) {
-          console.error("API TRANSFORM - Invalid userId after conversion:", userId);
-          return res.status(400).json({ message: "Invalid user ID. Must be a positive integer." });
-        }
-        
-        console.log("API TRANSFORM - Using validated userId:", userId);
       }
+      
+      console.log("API TRANSFORM - Final userId:", userId, "isGuestUser:", isGuestUser);
       
       // Support for anonymous/guest users
       console.log("API TRANSFORM - Looking up user with ID:", userId);
@@ -301,19 +305,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a default guest user object for demo/anonymous requests
       let user;
       
-      // For development mode only, create a guest user with unlimited credits
-      if (process.env.NODE_ENV !== "production") {
-        console.log("API TRANSFORM - Creating guest user for development mode only");
+      // For development mode or guest users in development, create a guest user with unlimited credits
+      if (process.env.NODE_ENV !== "production" || isGuestUser) {
+        console.log("API TRANSFORM - Creating guest user because:", 
+          process.env.NODE_ENV !== "production" ? "development mode" : "guest user request");
         // Create a guest user object with unlimited credits
         user = {
-          id: 1,
+          id: userId,
           name: "Guest User",
           username: "guest",
           password: "",
           email: "guest@example.com",
           freeCreditsUsed: false,
           lastFreeCredit: null,
-          paidCredits: 999,
+          paidCredits: 999, // Unlimited credits for development/testing
           stripeCustomerId: null,
           stripeSubscriptionId: null,
           subscriptionTier: null,
@@ -576,11 +581,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // In production, enforce the credit limit (monthly free credit or paid credits)
         else {
           // First check if the user has a free monthly credit available
-          // In development mode, always allow transformations
-          // In production, enforce the credit limit (monthly free credit or paid credits)
+          // In development mode or for guest users, always allow transformations
+          // In production with regular users, enforce the credit limit (monthly free credit or paid credits)
           const hasFreeMonthlyCredit = 
-            process.env.NODE_ENV !== "production" ? 
-            true : // Always true in development mode
+            process.env.NODE_ENV !== "production" || isGuestUser ? 
+            true : // Always true in development mode or for guest users
             (await storage.checkAndResetMonthlyFreeCredit(userId)); // Check in production
 
           if (hasFreeMonthlyCredit || user.paidCredits > 0) {
@@ -663,9 +668,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 );
 
               // Update user credits for initial transformations
-              // In production, enforce credit deduction; in development mode, bypass it
-              if (process.env.NODE_ENV === "production") {
-                // Only deduct credits in production mode
+              // In production with non-guest users, enforce credit deduction; in development mode or guest mode, bypass it
+              if (process.env.NODE_ENV === "production" && !isGuestUser) {
+                // Only deduct credits in production mode for real users
+                console.log("PRODUCTION MODE: Deducting credits for user", userId);
                 if (!user.freeCreditsUsed) {
                   await storage.updateUserCredits(userId, true);
                 } else if (user.paidCredits > 0) {
@@ -676,7 +682,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   );
                 }
               } else {
-                console.log("DEV MODE: Bypassing credit deduction");
+                console.log("Credit deduction bypassed:", 
+                  process.env.NODE_ENV !== "production" ? "DEV MODE" : "GUEST USER");
               }
 
               // Return the transformation
