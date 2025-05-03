@@ -24,7 +24,7 @@ import dogCatReal from "../assets/dog-and-cat-real.png";
 import giraffeDrawing from "../assets/giraffe-drawing.png";
 import giraffeReal from "../assets/giraffe-real.png";
 import bearDrawing from "../assets/bear-drawing.png";
-import bearReal from "../assets/bear-real.png";
+import bearReal from "../assets/bear-after.png";
 
 export default function KidsDrawingPage() {
   const { user } = useAuth();
