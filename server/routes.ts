@@ -301,9 +301,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a default guest user object for demo/anonymous requests
       let user;
       
-      // For demo mode, create a guest user with unlimited credits
-      if (process.env.NODE_ENV !== "production" || userId === 1) {
-        console.log("API TRANSFORM - Creating guest user for demo mode");
+      // For development mode only, create a guest user with unlimited credits
+      if (process.env.NODE_ENV !== "production") {
+        console.log("API TRANSFORM - Creating guest user for development mode only");
         // Create a guest user object with unlimited credits
         user = {
           id: 1,
@@ -576,9 +576,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // In production, enforce the credit limit (monthly free credit or paid credits)
         else {
           // First check if the user has a free monthly credit available
-          const hasFreeMonthlyCredit =
-            process.env.NODE_ENV !== "production" ||
-            (await storage.checkAndResetMonthlyFreeCredit(userId));
+          // In development mode, always allow transformations
+          // In production, enforce the credit limit (monthly free credit or paid credits)
+          const hasFreeMonthlyCredit = 
+            process.env.NODE_ENV !== "production" ? 
+            true : // Always true in development mode
+            (await storage.checkAndResetMonthlyFreeCredit(userId)); // Check in production
 
           if (hasFreeMonthlyCredit || user.paidCredits > 0) {
             // Create a transformation record
@@ -660,14 +663,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 );
 
               // Update user credits for initial transformations
-              if (!user.freeCreditsUsed) {
-                await storage.updateUserCredits(userId, true);
-              } else if (user.paidCredits > 0) {
-                await storage.updateUserCredits(
-                  userId,
-                  true,
-                  user.paidCredits - 1,
-                );
+              // In production, enforce credit deduction; in development mode, bypass it
+              if (process.env.NODE_ENV === "production") {
+                // Only deduct credits in production mode
+                if (!user.freeCreditsUsed) {
+                  await storage.updateUserCredits(userId, true);
+                } else if (user.paidCredits > 0) {
+                  await storage.updateUserCredits(
+                    userId,
+                    true,
+                    user.paidCredits - 1,
+                  );
+                }
+              } else {
+                console.log("DEV MODE: Bypassing credit deduction");
               }
 
               // Return the transformation
