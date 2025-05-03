@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,13 @@ import ImageUploader from "@/components/ImageUploader";
 import ComparisonSlider from "@/components/ComparisonSlider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WandSparkles, Paintbrush, Upload } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function KidsDrawingPage() {
   const { user } = useAuth();
@@ -20,6 +27,21 @@ export default function KidsDrawingPage() {
   // Example demo images for before/after showcase
   const demoBeforeImage = "/assets/kids-drawing-before.svg";
   const demoAfterImage = "/assets/kids-drawing-after.svg";
+  
+  // For carousel auto-scrolling
+  const [carouselApi, setCarouselApi] = useState<any>(null);
+  
+  useEffect(() => {
+    if (carouselApi) {
+      // Set up a timer to auto-advance the carousel
+      const autoplayInterval = setInterval(() => {
+        carouselApi.scrollNext();
+      }, 5000); // Change slide every 5 seconds
+      
+      // Clean up interval when component unmounts
+      return () => clearInterval(autoplayInterval);
+    }
+  }, [carouselApi]);
 
   // Special prompt for kids drawing transformation
   const kidsDrawingPrompt = `Transform this child's drawing into a hyper-realistic photograph or professional 3D render. Maintain absolute fidelity to the original artwork - preserve all proportions, line placements, and deliberate "imperfections" that make this creation unique. Do not correct, straighten, symmetrize, or "improve" any aspect of the original design.
@@ -113,7 +135,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 align: "start",
                 loop: true,
               }}
-              autoplay={true}
+              setApi={setCarouselApi}
               >
               <CarouselContent>
                 <CarouselItem>

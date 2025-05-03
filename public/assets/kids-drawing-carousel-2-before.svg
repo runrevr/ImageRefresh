@@ -3,44 +3,44 @@
   <!-- Background representing a child's paper -->
   <rect width="800" height="500" fill="#fafafa" />
   
-  <!-- Space rocket ship drawing -->
-  <g transform="translate(250, 100)">
+  <!-- Rocket ship drawing -->
+  <g transform="translate(200, 50)">
     <!-- Rocket body -->
-    <rect x="100" y="100" width="100" height="200" rx="20" fill="#FF6B6B" stroke="#000000" stroke-width="4" />
+    <rect x="150" y="150" width="100" height="200" rx="20" fill="#FF6B6B" stroke="#000000" stroke-width="4" />
     
     <!-- Rocket tip -->
-    <polygon points="150,50 100,100 200,100" fill="#4ECDC4" stroke="#000000" stroke-width="4" />
+    <polygon points="150,150 200,80 250,150" fill="#4ECDC4" stroke="#000000" stroke-width="3" />
     
     <!-- Windows -->
-    <circle cx="150" cy="150" r="20" fill="#F7FFF7" stroke="#000000" stroke-width="3" />
-    <circle cx="150" cy="200" r="15" fill="#F7FFF7" stroke="#000000" stroke-width="3" />
+    <circle cx="200" cy="200" r="20" fill="#F7FFF7" stroke="#000000" stroke-width="2" />
     
-    <!-- Astronaut inside -->
-    <circle cx="150" cy="150" r="10" fill="#FFE66D" stroke="#000000" stroke-width="1" />
-    <line x1="150" y1="160" x2="150" y2="170" stroke="#000000" stroke-width="1" />
-    <line x1="140" y1="155" x2="160" y2="155" stroke="#000000" stroke-width="1" />
+    <circle cx="200" cy="250" r="15" fill="#F7FFF7" stroke="#000000" stroke-width="2" />
     
     <!-- Rocket fins -->
-    <polygon points="100,300 50,350 100,350" fill="#1A535C" stroke="#000000" stroke-width="3" />
-    <polygon points="200,300 250,350 200,350" fill="#1A535C" stroke="#000000" stroke-width="3" />
+    <polygon points="150,350 100,400 150,400" fill="#1A535C" stroke="#000000" stroke-width="3" />
+    <polygon points="250,350 300,400 250,400" fill="#1A535C" stroke="#000000" stroke-width="3" />
     
-    <!-- Flame -->
-    <polygon points="125,300 150,350 175,300" fill="#FF9F1C" stroke="#000000" stroke-width="3" />
+    <!-- Flames -->
+    <path d="M175,350 Q200,400 225,350" fill="#FFE66D" stroke="#FF6B6B" stroke-width="3" />
   </g>
   
   <!-- Stars -->
-  <circle cx="100" cy="100" r="5" fill="#FFD700" />
-  <circle cx="200" cy="150" r="4" fill="#FFD700" />
-  <circle cx="150" cy="200" r="6" fill="#FFD700" />
-  <circle cx="600" cy="120" r="5" fill="#FFD700" />
-  <circle cx="500" cy="80" r="4" fill="#FFD700" />
-  <circle cx="650" cy="200" r="6" fill="#FFD700" />
-  <circle cx="700" cy="250" r="5" fill="#FFD700" />
-  <circle cx="400" cy="50" r="7" fill="#FFD700" />
+  <circle cx="100" cy="100" r="5" fill="#FFE66D" />
+  <circle cx="200" cy="150" r="3" fill="#FFE66D" />
+  <circle cx="300" cy="80" r="4" fill="#FFE66D" />
+  <circle cx="400" cy="120" r="5" fill="#FFE66D" />
+  <circle cx="500" cy="70" r="3" fill="#FFE66D" />
+  <circle cx="600" cy="110" r="4" fill="#FFE66D" />
+  <circle cx="700" cy="90" r="5" fill="#FFE66D" />
+  <circle cx="130" cy="200" r="3" fill="#FFE66D" />
+  <circle cx="650" cy="180" r="4" fill="#FFE66D" />
+  <circle cx="720" cy="230" r="3" fill="#FFE66D" />
+  <circle cx="80" cy="280" r="4" fill="#FFE66D" />
+  <circle cx="550" cy="320" r="3" fill="#FFE66D" />
   
   <!-- Planet -->
   <circle cx="650" cy="350" r="60" fill="#FF6B6B" stroke="#000000" stroke-width="3" />
-  <ellipse cx="650" cy="330" rx="40" ry="15" fill="#FF9F1C" />
+  <ellipse cx="650" cy="330" rx="40" ry="15" fill="#FFE66D" stroke="#000000" stroke-width="1" />
   
   <!-- Child's handwriting -->
   <text x="400" y="450" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="24" fill="#333">My Spaceship to Mars</text>
