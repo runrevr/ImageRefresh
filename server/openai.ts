@@ -210,7 +210,7 @@ export async function transformImage(
           size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
             ? sizeParam as any 
             : "1024x1024" as any,
-          quality: "standard",
+          quality: "auto",
         });
         
         console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
@@ -349,7 +349,7 @@ ${safetyGuards}`;
         prompt: enhancedVariationPrompt,
         n: 1,
         size: "1024x1024" as any,
-        quality: "standard"
+        quality: "auto"
       });
       
       console.log("Successfully generated variation with gpt-image-1 model");
