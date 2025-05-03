@@ -1,4 +1,5 @@
 import { Wand2, Twitter, Instagram, Facebook } from 'lucide-react';
+import { Link } from 'wouter';
 
 export default function Footer() {
   return (
@@ -33,6 +34,7 @@ export default function Footer() {
               <li><a href="#" className="text-gray-400 hover:text-white transition">AI Image Editing</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white transition">Style Transfer</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white transition">Transformation Ideas</a></li>
+              <li><Link href="/kids-drawing" className="text-gray-400 hover:text-white transition">Drawing to Reality</Link></li>
             </ul>
           </div>
           
