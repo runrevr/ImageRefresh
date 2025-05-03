@@ -88,7 +88,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
   const renderSlider = (ref: React.RefObject<HTMLDivElement>, isFullscreenView: boolean = false) => (
     <div 
       ref={ref}
-      className={`relative w-full h-full cursor-ew-resize border-4 border-black ${isFullscreenView ? 'rounded-lg overflow-hidden' : ''}`}
+      className={`relative w-full h-full cursor-ew-resize border border-gray-200 ${isFullscreenView ? 'rounded-lg overflow-hidden' : ''}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
