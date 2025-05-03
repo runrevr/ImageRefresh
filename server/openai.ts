@@ -199,16 +199,22 @@ export async function transformImage(
       console.log("Using generation prompt:", generationPrompt);
       
       try {
-        // Use the official SDK method instead of direct fetch for better reliability
+        console.log(`Using enhanced generation prompt: ${generationPrompt.substring(0, 100)}...`);
+        console.log(`Using GPT-4o for vision analysis and DALL-E 3 for image generation`);
+        
+        // Use DALL-E 3 instead of gpt-image-1 for more reliable results
         const imageResponse = await openai.images.generate({
-          model: "gpt-image-1",
+          model: "dall-e-3", // Use DALL-E 3 model which is more widely available
           prompt: generationPrompt,
           n: 1,
-          size: sizeParam as any,
+          size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
+            ? sizeParam as any 
+            : "1024x1024" as any,
+          quality: "standard",
         });
         
         console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
-        console.log("Successfully generated image with gpt-image-1 model");
+        console.log("Successfully generated image with DALL-E 3 model");
         
         // Check what format we received
         if (imageResponse.data && imageResponse.data.length > 0) {
@@ -262,7 +268,7 @@ export async function transformImage(
 /**
  * Creates an image variation using the same two-stage process as transformImage
  * 1. Analyze the image with GPT-4o Vision
- * 2. Create a variation with gpt-image-1 based on the analysis
+ * 2. Create a variation with DALL-E 3 based on the analysis
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
@@ -321,7 +327,7 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       console.log("Image analysis complete for variation. Description length:", detailedDescription.length);
       
       // Stage 2: Generate a variation with gpt-image-1
-      console.log("Stage 2: Generating image variation with gpt-image-1...");
+      console.log("Stage 2: Generating image variation with DALL-E 3...");
       
       // Create an enhanced prompt with special emphasis on preserving the object's identity
       // Add safety guardrails to avoid content policy violations
@@ -335,16 +341,18 @@ ${safetyGuards}`;
       
       console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
       
-      // We'll stick with the images/generate endpoint since the edit endpoint is complex
-      // Note: We tried using the moderate parameter but it's not supported by the API
+      // Use DALL-E 3 for more reliable results
+      console.log("Using DALL-E 3 for image variation generation");
+      
       const imageResult = await openai.images.generate({
-        model: "gpt-image-1",
+        model: "dall-e-3", // Switch to DALL-E 3 which is more widely available and reliable
         prompt: enhancedVariationPrompt,
         n: 1,
-        size: "1024x1024" as any
+        size: "1024x1024" as any,
+        quality: "standard"
       });
       
-      console.log("Successfully generated variation with gpt-image-1 model");
+      console.log("Successfully generated variation with DALL-E 3 model");
       console.log("Variation response format:", JSON.stringify(imageResult, null, 2));
       
       // Generate unique name for the transformed image
@@ -369,10 +377,10 @@ ${safetyGuards}`;
           imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
         } else {
           console.log("Unknown variation response format:", JSON.stringify(imageResult.data[0]));
-          throw new Error("Unexpected response format from gpt-image-1 for variation. Could not find url or b64_json in the response.");
+          throw new Error("Unexpected response format from DALL-E 3 for variation. Could not find url or b64_json in the response.");
         }
       } else {
-        throw new Error("No image data returned for variation. The gpt-image-1 model is not available for your account.");
+        throw new Error("No image data returned for variation. The DALL-E 3 model is not available for your account.");
       }
   
       return {

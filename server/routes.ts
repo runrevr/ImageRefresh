@@ -476,6 +476,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 "Transforming image with prompt 3rd:",
                 validatedData.prompt,
               );
+              
+              // Enhanced logging for debugging
+              const timestamp = new Date().toISOString();
+              fs.appendFileSync('./logs/app.log', 
+                `${timestamp} - TRANSFORM REQUEST: Image path: ${fullImagePath}, Prompt: ${validatedData.prompt || 'NONE'}, Image exists: ${fs.existsSync(fullImagePath)}\n`);
+                
               let finalPrompt = validatedData.prompt || "";
 
               // Generate a prompt from the image if needed
