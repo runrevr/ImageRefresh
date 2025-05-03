@@ -109,6 +109,22 @@
             "blocks",
             "construction"
           ]
+        },
+        {
+          "id": "kids-drawing",
+          "name": "Kids Drawing",
+          "description": "Transform children's drawings into hyper-realistic photos or 3D renders",
+          "category": "animation",
+          "prompt": "Transform this child's drawing into a hyper-realistic photograph or professional 3D render. Maintain absolute fidelity to the original artwork - preserve all proportions, line placements, and deliberate 'imperfections' that make this creation unique. Do not correct, straighten, symmetrize, or 'improve' any aspect of the original design. The final image should appear as if this creation exists in our physical world, with realistic textures appropriate to what the subject might be (skin, scales, fur, metal, fabric, etc.), natural lighting with proper shadows and highlights, environmental context that complements the subject without distracting from it, and physical properties suggesting weight, material, and dimension. This must look like a high-quality photograph or CGI render - NOT a stylized, illustrated, or hand-drawn interpretation. The goal is to bring a child's imagination to life exactly as they conceived it, just with photorealistic rendering. For the background/environment, keep it simple and complementary. If the drawing appears to be a creature, place it in a fitting natural habitat. If it's an object, place it in a contextually appropriate setting with soft focus.",
+          "previewImage": "/bear-real.png",
+          "beforeImage": "/bear-drawing.png",
+          "featured": true,
+          "new": true,
+          "tags": [
+            "realistic",
+            "3D",
+            "children's art"
+          ]
         }
       ]
     },
