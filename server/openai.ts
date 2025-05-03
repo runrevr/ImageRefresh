@@ -203,15 +203,41 @@ export async function transformImage(
         console.log(`Using GPT-4o for vision analysis and gpt-image-1 for image generation`);
         
         // Use gpt-image-1 for image generation
-        const imageResponse = await openai.images.generate({
-          model: "gpt-image-1", // Use gpt-image-1 model as requested
-          prompt: generationPrompt,
+        console.log(`About to call OpenAI API with payload:`, {
+          model: "gpt-image-1",
+          prompt: generationPrompt.substring(0, 50) + "...",
           n: 1,
           size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
-            ? sizeParam as any 
-            : "1024x1024" as any,
-          quality: "auto",
+            ? sizeParam 
+            : "1024x1024",
+          quality: "auto"
         });
+        
+        // Write verbose error handling
+        try {
+          const imageResponse = await openai.images.generate({
+            model: "gpt-image-1", // Use gpt-image-1 model as requested
+            prompt: generationPrompt,
+            n: 1,
+            size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
+              ? sizeParam as any 
+              : "1024x1024" as any,
+            quality: "auto",
+          });
+          console.log("OpenAI API call completed successfully");
+        } catch (apiError: any) {
+          console.error("DETAILED API ERROR:", apiError);
+          console.error("Error type:", typeof apiError);
+          console.error("Error code:", apiError.code);
+          console.error("Error message:", apiError.message);
+          console.error("Error status:", apiError.status);
+          
+          if (apiError.response) {
+            console.error("API Response error:", apiError.response.data);
+          }
+          
+          throw apiError; // Re-throw to be caught by outer handler
+        }
         
         console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
         console.log("Successfully generated image with gpt-image-1 model");
