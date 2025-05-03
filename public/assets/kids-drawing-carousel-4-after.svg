@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fantasy castle landscape -->
+  <defs>
+    <!-- Sky gradient background -->
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2980B9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6DD5FA;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Sun glow effect -->
+    <filter id="sunGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+    </filter>
+    
+    <!-- Castle material gradients -->
+    <linearGradient id="stoneGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffccdd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d199b7;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="roofGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8e44ad;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6A0DAD;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Grass texture -->
+    <linearGradient id="grassGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7CFC00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#228B22;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Water texture -->
+    <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00BFFF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0052A5;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <!-- Cloud pattern -->
+    <filter id="cloudFilter" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+    </filter>
+  </defs>
+
+  <!-- Sky background -->
+  <rect width="800" height="500" fill="url(#skyGradient)" />
+  
+  <!-- Sun with glow effect -->
+  <circle cx="100" cy="100" r="45" fill="#FFC125" filter="url(#sunGlow)" />
+  <circle cx="100" cy="100" r="40" fill="#FFDB58" />
+  
+  <!-- Mountains in background -->
+  <path d="M0,300 L100,200 L200,280 L300,180 L400,250 L500,150 L600,220 L700,170 L800,250 L800,350 L0,350 Z" fill="#A7C0CD" opacity="0.6" />
+  
+  <!-- Distant forest -->
+  <ellipse cx="100" cy="350" rx="80" ry="20" fill="#1E8449" />
+  <ellipse cx="250" cy="350" rx="100" ry="25" fill="#196F3D" />
+  <ellipse cx="450" cy="350" rx="120" ry="30" fill="#1D8348" />
+  <ellipse cx="650" cy="350" rx="90" ry="25" fill="#186A3B" />
+  <ellipse cx="780" cy="350" rx="60" ry="20" fill="#145A32" />
+  
+  <!-- Grass field -->
+  <rect x="0" y="350" width="800" height="150" fill="url(#grassGradient)" />
+  
+  <!-- Moat around castle -->
+  <ellipse cx="400" cy="350" rx="220" ry="60" fill="url(#waterGradient)" />
+  
+  <!-- Castle with 3D and texture effects -->
+  <g transform="translate(250, 50)">
+    <!-- Castle main structure with stone texture -->
+    <rect x="98" y="148" width="204" height="204" fill="#b3758a" />
+    <rect x="100" y="150" width="200" height="200" fill="url(#stoneGradient)" />
+    
+    <!-- Castle towers with 3D effect -->
+    <rect x="48" y="148" width="54" height="254" fill="#b3758a" />
+    <rect x="50" y="150" width="50" height="250" fill="url(#stoneGradient)" />
+    
+    <rect x="298" y="148" width="54" height="254" fill="#b3758a" />
+    <rect x="300" y="150" width="50" height="250" fill="url(#stoneGradient)" />
+    
+    <!-- Stone texture details -->
+    <g opacity="0.2">
+      <line x1="125" y1="170" x2="160" y2="170" stroke="#000000" stroke-width="1" />
+      <line x1="175" y1="170" x2="220" y2="170" stroke="#000000" stroke-width="1" />
+      <line x1="235" y1="170" x2="275" y2="170" stroke="#000000" stroke-width="1" />
+      
+      <line x1="125" y1="195" x2="170" y2="195" stroke="#000000" stroke-width="1" />
+      <line x1="185" y1="195" x2="230" y2="195" stroke="#000000" stroke-width="1" />
+      <line x1="245" y1="195" x2="275" y2="195" stroke="#000000" stroke-width="1" />
+      
+      <line x1="125" y1="220" x2="150" y2="220" stroke="#000000" stroke-width="1" />
+      <line x1="165" y1="220" x2="210" y2="220" stroke="#000000" stroke-width="1" />
+      <line x1="225" y1="220" x2="275" y2="220" stroke="#000000" stroke-width="1" />
+      
+      <line x1="125" y1="245" x2="180" y2="245" stroke="#000000" stroke-width="1" />
+      <line x1="195" y1="245" x2="240" y2="245" stroke="#000000" stroke-width="1" />
+      <line x1="255" y1="245" x2="275" y2="245" stroke="#000000" stroke-width="1" />
+      
+      <line x1="125" y1="270" x2="160" y2="270" stroke="#000000" stroke-width="1" />
+      <line x1="175" y1="270" x2="220" y2="270" stroke="#000000" stroke-width="1" />
+      <line x1="235" y1="270" x2="275" y2="270" stroke="#000000" stroke-width="1" />
+      
+      <line x1="125" y1="295" x2="170" y2="295" stroke="#000000" stroke-width="1" />
+      <line x1="175" y1="295" x2="158" y2="295" stroke="#000000" stroke-width="1" />
+      <line x1="235" y1="295" x2="275" y2="295" stroke="#000000" stroke-width="1" />
+      
+      <line x1="125" y1="320" x2="150" y2="320" stroke="#000000" stroke-width="1" />
+      <line x1="240" y1="320" x2="275" y2="320" stroke="#000000" stroke-width="1" />
+      
+      <!-- Tower stone details -->
+      <line x1="60" y1="170" x2="90" y2="170" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="195" x2="90" y2="195" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="220" x2="90" y2="220" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="245" x2="90" y2="245" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="270" x2="90" y2="270" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="295" x2="90" y2="295" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="320" x2="90" y2="320" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="345" x2="90" y2="345" stroke="#000000" stroke-width="1" />
+      <line x1="60" y1="370" x2="90" y2="370" stroke="#000000" stroke-width="1" />
+      
+      <line x1="310" y1="170" x2="340" y2="170" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="195" x2="340" y2="195" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="220" x2="340" y2="220" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="245" x2="340" y2="245" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="270" x2="340" y2="270" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="295" x2="340" y2="295" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="320" x2="340" y2="320" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="345" x2="340" y2="345" stroke="#000000" stroke-width="1" />
+      <line x1="310" y1="370" x2="340" y2="370" stroke="#000000" stroke-width="1" />
+    </g>
+    
+    <!-- Tower tops with realistic shading -->
+    <polygon points="48,148 75,98 102,148" fill="#54186b" />
+    <polygon points="50,150 75,100 100,150" fill="url(#roofGradient)" />
+    
+    <polygon points="298,148 325,98 352,148" fill="#54186b" />
+    <polygon points="300,150 325,100 350,150" fill="url(#roofGradient)" />
+    
+    <polygon points="98,148 200,48 302,148" fill="#54186b" />
+    <polygon points="100,150 200,50 300,150" fill="url(#roofGradient)" />
+    
+    <!-- Windows with glass effect -->
+    <rect x="128" y="198" width="34" height="34" rx="6" fill="#003366" />
+    <rect x="130" y="200" width="30" height="30" rx="5" fill="#0055AA" />
+    <rect x="132" y="202" width="26" height="26" rx="4" fill="#00BFFF" opacity="0.9" />
+    <line x1="145" y1="202" x2="145" y2="228" stroke="white" stroke-width="1" opacity="0.5" />
+    <line x1="132" y1="215" x2="158" y2="215" stroke="white" stroke-width="1" opacity="0.5" />
+    
+    <rect x="238" y="198" width="34" height="34" rx="6" fill="#003366" />
+    <rect x="240" y="200" width="30" height="30" rx="5" fill="#0055AA" />
+    <rect x="242" y="202" width="26" height="26" rx="4" fill="#00BFFF" opacity="0.9" />
+    <line x1="255" y1="202" x2="255" y2="228" stroke="white" stroke-width="1" opacity="0.5" />
+    <line x1="242" y1="215" x2="268" y2="215" stroke="white" stroke-width="1" opacity="0.5" />
+    
+    <rect x="63" y="198" width="24" height="24" rx="6" fill="#003366" />
+    <rect x="65" y="200" width="20" height="20" rx="5" fill="#0055AA" />
+    <rect x="67" y="202" width="16" height="16" rx="4" fill="#00BFFF" opacity="0.9" />
+    <line x1="75" y1="202" x2="75" y2="218" stroke="white" stroke-width="1" opacity="0.5" />
+    <line x1="67" y1="210" x2="83" y2="210" stroke="white" stroke-width="1" opacity="0.5" />
+    
+    <rect x="313" y="198" width="24" height="24" rx="6" fill="#003366" />
+    <rect x="315" y="200" width="20" height="20" rx="5" fill="#0055AA" />
+    <rect x="317" y="202" width="16" height="16" rx="4" fill="#00BFFF" opacity="0.9" />
+    <line x1="325" y1="202" x2="325" y2="218" stroke="white" stroke-width="1" opacity="0.5" />
+    <line x1="317" y1="210" x2="333" y2="210" stroke="white" stroke-width="1" opacity="0.5" />
+    
+    <!-- Wooden door with metal accents -->
+    <rect x="173" y="298" width="54" height="54" rx="12" fill="#5D4037" />
+    <rect x="175" y="300" width="50" height="50" rx="10" fill="#8B4513" />
+    <rect x="178" y="303" width="44" height="44" rx="8" fill="#A1887F" />
+    
+    <!-- Door details -->
+    <path d="M178,325 L222,325" stroke="#5D4037" stroke-width="2" />
+    <path d="M200,303 L200,347" stroke="#5D4037" stroke-width="2" />
+    <circle cx="190" cy="325" r="6" fill="#CD7F32" />
+    <circle cx="190" cy="325" r="5" fill="#FFD700" />
+    <circle cx="190" cy="325" r="3" fill="#DAA520" />
+    
+    <!-- Flags with movement -->
+    <line x1="75" y1="100" x2="75" y2="50" stroke="#444444" stroke-width="3" />
+    <path d="M75,50 Q85,55 95,60 Q85,65 75,70" fill="#CC0000" />
+    <path d="M75,50 Q85,55 95,60 Q85,65 75,70" fill="#FF0000" stroke="#000000" stroke-width="1" />
+    
+    <line x1="325" y1="100" x2="325" y2="50" stroke="#444444" stroke-width="3" />
+    <path d="M325,50 Q335,55 345,60 Q335,65 325,70" fill="#CC0000" />
+    <path d="M325,50 Q335,55 345,60 Q335,65 325,70" fill="#FF0000" stroke="#000000" stroke-width="1" />
+    
+    <line x1="200" y1="50" x2="200" y2="15" stroke="#444444" stroke-width="3" />
+    <path d="M200,15 Q210,20 220,25 Q210,30 200,35" fill="#CC0000" />
+    <path d="M200,15 Q210,20 220,25 Q210,30 200,35" fill="#FF0000" stroke="#000000" stroke-width="1" />
+  </g>
+  
+  <!-- Photorealistic Trees -->
+  <g transform="translate(0,0)">
+    <!-- Tree 1 -->
+    <rect x="150" y="350" width="20" height="50" fill="#6D4C41" />
+    <rect x="148" y="348" width="24" height="54" fill="#5D4037" stroke="#3E2723" stroke-width="1" opacity="0.9" />
+    <ellipse cx="160" cy="323" rx="40" ry="37" fill="#388E3C" stroke="#1B5E20" stroke-width="1" opacity="0.9" />
+    <ellipse cx="160" cy="320" rx="35" ry="33" fill="#43A047" stroke="#2E7D32" stroke-width="1" opacity="0.9" />
+    <ellipse cx="160" cy="317" rx="30" ry="28" fill="#4CAF50" />
+    
+    <!-- Tree 2 -->
+    <rect x="650" y="350" width="20" height="50" fill="#6D4C41" />
+    <rect x="648" y="348" width="24" height="54" fill="#5D4037" stroke="#3E2723" stroke-width="1" opacity="0.9" />
+    <ellipse cx="660" cy="323" rx="40" ry="37" fill="#388E3C" stroke="#1B5E20" stroke-width="1" opacity="0.9" />
+    <ellipse cx="660" cy="320" rx="35" ry="33" fill="#43A047" stroke="#2E7D32" stroke-width="1" opacity="0.9" />
+    <ellipse cx="660" cy="317" rx="30" ry="28" fill="#4CAF50" />
+  </g>
+  
+  <!-- Clouds with depth -->
+  <g filter="url(#cloudFilter)">
+    <ellipse cx="600" cy="80" rx="60" ry="35" fill="white" opacity="0.9" />
+    <ellipse cx="580" cy="75" rx="40" ry="25" fill="white" opacity="0.95" />
+    <ellipse cx="620" cy="70" rx="30" ry="20" fill="white" />
+    
+    <ellipse cx="700" cy="120" rx="80" ry="45" fill="white" opacity="0.9" />
+    <ellipse cx="680" cy="110" rx="50" ry="30" fill="white" opacity="0.95" />
+    <ellipse cx="730" cy="105" rx="40" ry="25" fill="white" />
+  </g>
+  
+  <!-- Subtle light rays from castle -->
+  <path d="M200,150 L150,100 M300,150 L350,100 M400,200 L450,150" stroke="white" stroke-width="1" opacity="0.3" />
+  
+  <!-- Title with elegant font -->
+  <text x="400" y="460" text-anchor="middle" font-family="serif" font-weight="bold" font-size="24" fill="white" stroke="#333" stroke-width="0.5">My Fairy Tale Castle - Brought to Life</text>
+</svg>

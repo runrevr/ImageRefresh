@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background representing a child's paper -->
+  <rect width="800" height="500" fill="#fafafa" />
+  
+  <!-- Dinosaur drawing -->
+  <g transform="translate(100, 50) scale(0.8)">
+    <!-- Body -->
+    <ellipse cx="300" cy="300" rx="150" ry="80" fill="#7BC8A4" stroke="#000000" stroke-width="4" />
+    
+    <!-- Neck -->
+    <path d="M430,270 C500,200 520,150 500,100" fill="none" stroke="#000000" stroke-width="4" />
+    
+    <!-- Head -->
+    <ellipse cx="490" cy="90" rx="40" ry="25" fill="#7BC8A4" stroke="#000000" stroke-width="4" />
+    
+    <!-- Eye -->
+    <circle cx="505" cy="85" r="5" fill="#000000" />
+    
+    <!-- Mouth -->
+    <path d="M490,100 C510,110 530,105 535,95" fill="none" stroke="#000000" stroke-width="2" />
+    
+    <!-- Legs -->
+    <rect x="220" y="350" width="20" height="80" fill="#7BC8A4" stroke="#000000" stroke-width="3" />
+    <rect x="360" y="350" width="20" height="80" fill="#7BC8A4" stroke="#000000" stroke-width="3" />
+    
+    <!-- Tail -->
+    <path d="M160,300 C100,320 50,310 30,280" fill="none" stroke="#000000" stroke-width="4" />
+    
+    <!-- Spikes on back -->
+    <polygon points="300,220 310,200 320,220" fill="#FF6B6B" stroke="#000000" stroke-width="2" />
+    <polygon points="330,220 340,190 350,220" fill="#FF6B6B" stroke="#000000" stroke-width="2" />
+    <polygon points="360,220 370,195 380,220" fill="#FF6B6B" stroke="#000000" stroke-width="2" />
+    <polygon points="390,230 400,205 410,230" fill="#FF6B6B" stroke="#000000" stroke-width="2" />
+    
+    <!-- Sun -->
+    <circle cx="650" cy="100" r="40" fill="#FFC857" stroke="#FF8C00" stroke-width="3" />
+    <line x1="650" y1="40" x2="650" y2="20" stroke="#FF8C00" stroke-width="3" />
+    <line x1="650" y1="160" x2="650" y2="180" stroke="#FF8C00" stroke-width="3" />
+    <line x1="590" y1="100" x2="570" y2="100" stroke="#FF8C00" stroke-width="3" />
+    <line x1="710" y1="100" x2="730" y2="100" stroke="#FF8C00" stroke-width="3" />
+    <line x1="607" y1="57" x2="587" y2="37" stroke="#FF8C00" stroke-width="3" />
+    <line x1="693" y1="143" x2="713" y2="163" stroke="#FF8C00" stroke-width="3" />
+    <line x1="693" y1="57" x2="713" y2="37" stroke="#FF8C00" stroke-width="3" />
+    <line x1="607" y1="143" x2="587" y2="163" stroke="#FF8C00" stroke-width="3" />
+  </g>
+  
+  <!-- Child's handwriting -->
+  <text x="400" y="450" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="24" fill="#333">My Dinosaur</text>
+</svg>

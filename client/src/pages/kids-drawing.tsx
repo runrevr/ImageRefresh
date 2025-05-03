@@ -106,6 +106,80 @@ Feel free to interpret what this might be, but do not add any elements not prese
             Our AI transforms children's artwork into hyper-realistic 3D renders and photographs while preserving every detail that makes their creation unique!
           </p>
           
+          {/* Image Carousel */}
+          <div className="w-full max-w-4xl mx-auto mb-10 overflow-hidden">
+            <Carousel className="w-full"
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              autoplay={true}
+              >
+              <CarouselContent>
+                <CarouselItem>
+                  <div className="p-1">
+                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-1-before.svg" alt="Child's Dinosaur Drawing" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
+                      </div>
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-1-after.svg" alt="Realistic Dinosaur" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="p-1">
+                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-2-before.svg" alt="Child's Spaceship Drawing" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
+                      </div>
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-2-after.svg" alt="Realistic Spaceship" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="p-1">
+                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-3-before.svg" alt="Child's Superhero Drawing" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
+                      </div>
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-3-after.svg" alt="Realistic Superhero" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="p-1">
+                    <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-4-before.svg" alt="Child's Castle Drawing" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
+                      </div>
+                      <div className="flex-1 p-1 bg-white">
+                        <img src="/assets/kids-drawing-carousel-4-after.svg" alt="Realistic Castle" className="w-full h-64 object-contain" />
+                        <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <div className="flex justify-center mt-4">
+                <CarouselPrevious className="static transform-none mx-2" />
+                <CarouselNext className="static transform-none mx-2" />
+              </div>
+            </Carousel>
+          </div>
+          
           <div className="flex justify-center">
             <Button 
               size="lg" 
