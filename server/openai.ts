@@ -213,9 +213,12 @@ export async function transformImage(
           quality: "auto"
         });
         
+        // Define imageResponse in outer scope to access it later
+        let imageResponse;
+        
         // Write verbose error handling
         try {
-          const imageResponse = await openai.images.generate({
+          imageResponse = await openai.images.generate({
             model: "gpt-image-1", // Use gpt-image-1 model as requested
             prompt: generationPrompt,
             n: 1,
