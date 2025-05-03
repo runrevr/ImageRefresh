@@ -295,15 +295,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("API TRANSFORM - Using validated userId:", userId);
       }
       
-      // Check if user has credits
+      // Support for anonymous/guest users
       console.log("API TRANSFORM - Looking up user with ID:", userId);
-      const user = await storage.getUser(userId);
-      if (!user) {
-        console.error("API TRANSFORM - User not found for ID:", userId);
-        return res.status(404).json({ message: "User not found" });
+      
+      // Create a default guest user object for demo/anonymous requests
+      let user;
+      
+      // For demo mode, create a guest user with unlimited credits
+      if (process.env.NODE_ENV !== "production" || userId === 1) {
+        console.log("API TRANSFORM - Creating guest user for demo mode");
+        // Create a guest user object with unlimited credits
+        user = {
+          id: 1,
+          name: "Guest User",
+          username: "guest",
+          password: "",
+          email: "guest@example.com",
+          freeCreditsUsed: false,
+          lastFreeCredit: null,
+          paidCredits: 999,
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+          subscriptionTier: null,
+          subscriptionStatus: null,
+          createdAt: new Date(),
+        };
+      } else {
+        // For production with a real user, check the database
+        user = await storage.getUser(userId);
+        if (!user) {
+          console.error("API TRANSFORM - User not found for ID:", userId);
+          return res.status(404).json({ message: "User not found" });
+        }
       }
       
-      console.log("API TRANSFORM - Found user:", user.id, user.username);
+      console.log("API TRANSFORM - Using user:", user.id, user.username);
 
       // Check for preset transformations
       const presetType = validatedData.preset as string | undefined;
