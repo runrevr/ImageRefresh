@@ -43,6 +43,7 @@ import petToHumanImage from "../assets/pet-to-human.png";
 import beerDrinkingDeerImage from "../assets/beer-drinking-deer.png";
 import prisonCatImage from "../assets/prison-cat.png";
 import caricatureImage from "@assets/caricature.png";
+import bearAfterImage from "../assets/bear-after.png";
 
 // Import category background images
 import kidsBackgroundImage from "../assets/Lego.png"; // Using Lego image for Kids category
@@ -208,6 +209,8 @@ const StyleCard = ({
     imageSrc = prisonCatImage;
   } else if (style.id === "caricature") {
     imageSrc = caricatureImage;
+  } else if (style.id === "kids-drawing") {
+    imageSrc = bearAfterImage;
   }
 
   return (
