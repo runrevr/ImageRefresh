@@ -189,62 +189,51 @@ export async function transformImage(
       
       let imageUrl;
       
-      // For edits, we use the images/edits endpoint
-      // Use the images/edits endpoint with form-data
-      const formData = new FormData();
+      // Instead of using the edits endpoint, let's switch to using generate
+      // Use the images/generations endpoint with the enhanced prompt
+      console.log("Switching to use images/generations instead of images/edits for more reliable results");
       
-      // Append the image file directly from the buffer
-      formData.append('image', imageBuffer, {
-        filename: path.basename(imagePath),
-        contentType: mimeType,
-      });
-      formData.append('prompt', enhancedPrompt);
-      formData.append('n', '1');
-      formData.append('size', sizeParam);
-      formData.append('model', 'gpt-image-1');
+      // Create a DALL-E like modified prompt that incorporates the image analysis
+      const generationPrompt = `Based on this detailed description: "${detailedDescription}". ${prompt}. Create a photorealistic image that maintains the integrity and identity of the original subject.`;
       
-      // Call the images/edits endpoint directly
-      const response = await fetch('https://api.openai.com/v1/images/edits', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: formData as any, // Cast to any to avoid TypeScript errors
-      });
+      console.log("Using generation prompt:", generationPrompt);
       
-      if (!response.ok) {
-        const errorData = await response.json() as any;
-        throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
-      }
-      
-      const imageResult = await response.json() as {
-        data?: Array<{
-          url?: string;
-          b64_json?: string;
-        }>
-      };
-      
-      console.log("Successfully generated image with gpt-image-1 model");
-      
-      // Check what format we received
-      if (imageResult.data && imageResult.data.length > 0) {
-        if (imageResult.data[0].url) {
-          // URL format - use saveImageFromUrl
-          imageUrl = imageResult.data[0].url;
-          console.log("Using URL format from response");
-          await saveImageFromUrl(imageUrl, transformedPath);
-        } else if (imageResult.data[0].b64_json) {
-          // Base64 format - save directly
-          console.log("Using b64_json format from response");
-          const imageBuffer = Buffer.from(imageResult.data[0].b64_json, "base64");
-          fs.writeFileSync(transformedPath, imageBuffer);
-          imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
+      try {
+        // Use the official SDK method instead of direct fetch for better reliability
+        const imageResponse = await openai.images.generate({
+          model: "gpt-image-1",
+          prompt: generationPrompt,
+          n: 1,
+          size: sizeParam as any,
+        });
+        
+        console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
+        console.log("Successfully generated image with gpt-image-1 model");
+        
+        // Check what format we received
+        if (imageResponse.data && imageResponse.data.length > 0) {
+          if (imageResponse.data[0].url) {
+            // URL format - use saveImageFromUrl
+            imageUrl = imageResponse.data[0].url;
+            console.log("Using URL format from response");
+            await saveImageFromUrl(imageUrl, transformedPath);
+          } else if ('b64_json' in imageResponse.data[0]) {
+            // Base64 format - save directly (TypeScript doesn't recognize b64_json property)
+            const b64Content = (imageResponse.data[0] as any).b64_json;
+            console.log("Using b64_json format from response");
+            const imageBuffer = Buffer.from(b64Content, "base64");
+            fs.writeFileSync(transformedPath, imageBuffer);
+            imageUrl = `data:image/png;base64,${b64Content}`;
+          } else {
+            console.log("Unknown response format:", JSON.stringify(imageResponse.data[0]));
+            throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
+          }
         } else {
-          console.log("Unknown response format:", JSON.stringify(imageResult.data[0]));
-          throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
+          throw new Error("No image data returned. The gpt-image-1 generation failed.");
         }
-      } else {
-        throw new Error("No image data returned. The gpt-image-1 generation failed.");
+      } catch (genError: any) {
+        console.error("Error generating image with gpt-image-1:", genError);
+        throw new Error(`Failed to generate image: ${genError.message}`);
       }
   
       return {
