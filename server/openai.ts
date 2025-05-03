@@ -153,8 +153,8 @@ export async function transformImage(
       const detailedDescription = content ? content : "A detailed product image";
       console.log("Image analysis complete. Description length:", detailedDescription.length);
       
-      // Now use gpt-image-1 to generate a new image based on the prompt and the detailed description
-      console.log("Stage 2: Generating transformed image with gpt-image-1...");
+      // Now use DALL-E 3 to generate a new image based on the prompt and the detailed description
+      console.log("Stage 2: Generating transformed image with DALL-E 3...");
       
       // Create a comprehensive prompt that incorporates both the user's request and the image details
       // The key is to emphasize preserving the original image's subject while applying the transformation
@@ -326,7 +326,7 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       const detailedDescription = content ? content : "A detailed product image";
       console.log("Image analysis complete for variation. Description length:", detailedDescription.length);
       
-      // Stage 2: Generate a variation with gpt-image-1
+      // Stage 2: Generate a variation with DALL-E 3
       console.log("Stage 2: Generating image variation with DALL-E 3...");
       
       // Create an enhanced prompt with special emphasis on preserving the object's identity
