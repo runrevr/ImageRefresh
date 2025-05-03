@@ -145,11 +145,11 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 <CarouselItem>
                   <div className="p-1">
                     <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src={alicornDrawing} alt="Child's Alicorn Drawing" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
                       </div>
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src={alicornReal} alt="Realistic Alicorn" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
                       </div>
@@ -159,11 +159,11 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 <CarouselItem>
                   <div className="p-1">
                     <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src="/assets/kids-drawing-carousel-1-before.svg" alt="Child's Dinosaur Drawing" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
                       </div>
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src="/assets/kids-drawing-carousel-1-after.svg" alt="Realistic Dinosaur" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
                       </div>
@@ -173,11 +173,11 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 <CarouselItem>
                   <div className="p-1">
                     <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src="/assets/kids-drawing-carousel-3-before.svg" alt="Child's Superhero Drawing" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
                       </div>
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src="/assets/kids-drawing-carousel-3-after.svg" alt="Realistic Superhero" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
                       </div>
@@ -187,11 +187,11 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 <CarouselItem>
                   <div className="p-1">
                     <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src="/assets/kids-drawing-carousel-4-before.svg" alt="Child's Castle Drawing" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
                       </div>
-                      <div className="flex-1 p-1 bg-white border-4 border-black rounded-lg">
+                      <div className="flex-1 p-1 bg-white rounded-lg">
                         <img src="/assets/kids-drawing-carousel-4-after.svg" alt="Realistic Castle" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
                       </div>
@@ -244,7 +244,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
                   <h3 className="text-lg font-medium mb-2">Original Drawing</h3>
-                  <div className="rounded-lg overflow-hidden border-4 border-black h-64 flex items-center justify-center">
+                  <div className="rounded-lg overflow-hidden border border-gray-200 h-64 flex items-center justify-center">
                     <img
                       src={originalImage}
                       alt="Original Drawing"
@@ -256,7 +256,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 <div className="flex-1">
                   <h3 className="text-lg font-medium mb-2">Transformed Image</h3>
                   {transformedImage ? (
-                    <div className="rounded-lg overflow-hidden border-4 border-black h-64 flex items-center justify-center">
+                    <div className="rounded-lg overflow-hidden border border-gray-200 h-64 flex items-center justify-center">
                       <img
                         src={transformedImage}
                         alt="Transformed"
@@ -264,7 +264,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
                       />
                     </div>
                   ) : (
-                    <div className="bg-gray-100 rounded-lg p-4 h-64 flex flex-col items-center justify-center border-4 border-black">
+                    <div className="bg-gray-100 rounded-lg p-4 h-64 flex flex-col items-center justify-center border border-gray-200">
                       {isTransforming ? (
                         <>
                           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
