@@ -25,8 +25,8 @@ export default function KidsDrawingPage() {
   const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null);
 
   // Example demo images for before/after showcase
-  const demoBeforeImage = "/assets/kids-drawing/alicorn-drawing.jpg";
-  const demoAfterImage = "/assets/kids-drawing/alicorn-real.png";
+  const demoBeforeImage = "/assets/alicorn-drawing.jpg";
+  const demoAfterImage = "/assets/alicorn-real.png";
   
   // For carousel auto-scrolling
   const [carouselApi, setCarouselApi] = useState<any>(null);
@@ -142,11 +142,11 @@ Feel free to interpret what this might be, but do not add any elements not prese
                   <div className="p-1">
                     <div className="flex items-center justify-between rounded-xl overflow-hidden shadow-lg">
                       <div className="flex-1 p-1 bg-white">
-                        <img src="/assets/kids-drawing/alicorn-drawing.jpg" alt="Child's Alicorn Drawing" className="w-full h-64 object-contain" />
+                        <img src="/assets/alicorn-drawing.jpg" alt="Child's Alicorn Drawing" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">Original Drawing</p>
                       </div>
                       <div className="flex-1 p-1 bg-white">
-                        <img src="/assets/kids-drawing/alicorn-real.png" alt="Realistic Alicorn" className="w-full h-64 object-contain" />
+                        <img src="/assets/alicorn-real.png" alt="Realistic Alicorn" className="w-full h-64 object-contain" />
                         <p className="text-center text-sm font-medium mt-2">AI Transformation</p>
                       </div>
                     </div>
