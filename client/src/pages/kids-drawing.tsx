@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import ImageUploader from "@/components/ImageUploader";
 import ComparisonSlider from "@/components/ComparisonSlider";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MagicWandIcon, Paintbrush, Upload } from "lucide-react";
+import { WandSparkles, Paintbrush, Upload } from "lucide-react";
 
 export default function KidsDrawingPage() {
   const { user } = useAuth();
@@ -18,8 +18,8 @@ export default function KidsDrawingPage() {
   const [uploadedImagePath, setUploadedImagePath] = useState<string | null>(null);
 
   // Example demo images for before/after showcase
-  const demoBeforeImage = "/assets/kids-drawing-before.jpg";
-  const demoAfterImage = "/assets/kids-drawing-after.jpg";
+  const demoBeforeImage = "/assets/kids-drawing-before.svg";
+  const demoAfterImage = "/assets/kids-drawing-after.svg";
 
   // Special prompt for kids drawing transformation
   const kidsDrawingPrompt = "Transform this child's drawing into a photorealistic image. Preserve the child's artistic style while making it look like a real photo of what they were trying to draw. Keep it family-friendly and maintain all the important details from the original drawing.";
@@ -115,10 +115,8 @@ export default function KidsDrawingPage() {
           <h2 className="text-2xl font-bold mb-6 text-center">See the Magic in Action</h2>
           <div className="bg-white p-6 rounded-xl">
             <ComparisonSlider
-              originalImage={demoBeforeImage}
-              transformedImage={demoAfterImage}
-              originalLabel="Child's Drawing"
-              transformedLabel="AI-Transformed"
+              beforeImage={demoBeforeImage}
+              afterImage={demoAfterImage}
             />
           </div>
         </div>
@@ -163,7 +161,7 @@ export default function KidsDrawingPage() {
                         </>
                       ) : (
                         <>
-                          <MagicWandIcon className="h-12 w-12 text-gray-400 mb-4" />
+                          <WandSparkles className="h-12 w-12 text-gray-400 mb-4" />
                           <p className="text-gray-500">Click the button below to transform</p>
                         </>
                       )}
