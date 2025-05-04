@@ -752,9 +752,6 @@ export default function Home() {
                         alt="Child's Drawing of a Bear" 
                         className="w-full h-full object-contain"
                       />
-                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        BEFORE
-                      </div>
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
                       <img 
@@ -762,9 +759,6 @@ export default function Home() {
                         alt="AI Transformed Bear Drawing" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        AFTER
-                      </div>
                     </div>
                   </div>
                   
@@ -776,9 +770,6 @@ export default function Home() {
                         alt="Child's Drawing of a Giraffe" 
                         className="w-full h-full object-contain"
                       />
-                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        BEFORE
-                      </div>
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
                       <img 
@@ -786,9 +777,6 @@ export default function Home() {
                         alt="AI Transformed Giraffe Drawing" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        AFTER
-                      </div>
                     </div>
                   </div>
                   
@@ -800,9 +788,6 @@ export default function Home() {
                         alt="Child's Drawing of a Dog and Cat" 
                         className="w-full h-full object-contain"
                       />
-                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        BEFORE
-                      </div>
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
                       <img 
@@ -810,9 +795,6 @@ export default function Home() {
                         alt="AI Transformed Dog and Cat Drawing" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        AFTER
-                      </div>
                     </div>
                   </div>
                   
@@ -824,9 +806,6 @@ export default function Home() {
                         alt="Child's Drawing of an Alicorn" 
                         className="w-full h-full object-contain"
                       />
-                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        BEFORE
-                      </div>
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
                       <img 
@@ -834,9 +813,6 @@ export default function Home() {
                         alt="AI Transformed Alicorn Drawing" 
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        AFTER
-                      </div>
                     </div>
                   </div>
                 </div>
