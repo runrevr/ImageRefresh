@@ -84,7 +84,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-[#333333] mb-12 text-center">My Values</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card className="border-none shadow-lg">
+              <Card className="border-none shadow-lg bg-[#2A7B9B]">
                 <CardContent className="pt-6">
                   <div className="text-center mb-4">
                     <div className="w-16 h-16 bg-[#A3E4D7] rounded-full flex items-center justify-center mx-auto">
@@ -92,15 +92,15 @@ export default function AboutPage() {
                         <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
                       </svg>
                     </div>
-                    <h3 className="text-xl font-semibold text-[#333333] mt-4">Creativity First</h3>
+                    <h3 className="text-xl font-semibold text-white mt-4">Creativity First</h3>
                   </div>
-                  <p className="text-[#333333] text-center">
+                  <p className="text-white text-center">
                     I believe in enhancing human creativity, not replacing it. ImageRefresh is designed to inspire and amplify your creative vision.
                   </p>
                 </CardContent>
               </Card>
               
-              <Card className="border-none shadow-lg">
+              <Card className="border-none shadow-lg bg-[#2A7B9B]">
                 <CardContent className="pt-6">
                   <div className="text-center mb-4">
                     <div className="w-16 h-16 bg-[#A3E4D7] rounded-full flex items-center justify-center mx-auto">
@@ -108,15 +108,15 @@ export default function AboutPage() {
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                       </svg>
                     </div>
-                    <h3 className="text-xl font-semibold text-[#333333] mt-4">Safety & Privacy</h3>
+                    <h3 className="text-xl font-semibold text-white mt-4">Safety & Privacy</h3>
                   </div>
-                  <p className="text-[#333333] text-center">
+                  <p className="text-white text-center">
                     I prioritize your privacy and the ethical use of AI. Your images are processed securely and aren't used to train our models.
                   </p>
                 </CardContent>
               </Card>
               
-              <Card className="border-none shadow-lg">
+              <Card className="border-none shadow-lg bg-[#2A7B9B]">
                 <CardContent className="pt-6">
                   <div className="text-center mb-4">
                     <div className="w-16 h-16 bg-[#A3E4D7] rounded-full flex items-center justify-center mx-auto">
@@ -126,9 +126,9 @@ export default function AboutPage() {
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                       </svg>
                     </div>
-                    <h3 className="text-xl font-semibold text-[#333333] mt-4">Simplicity</h3>
+                    <h3 className="text-xl font-semibold text-white mt-4">Simplicity</h3>
                   </div>
-                  <p className="text-[#333333] text-center">
+                  <p className="text-white text-center">
                     Advanced technology should be accessible to everyone. I've designed ImageRefresh to be intuitive and easy to use, regardless of technical skill.
                   </p>
                 </CardContent>
