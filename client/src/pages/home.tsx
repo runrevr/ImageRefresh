@@ -601,7 +601,7 @@ export default function Home() {
             )}
 
             {/* Feature Highlights */}
-            <div className="w-full bg-gray-800 py-12 mt-0 pt-12">
+            <div className="w-full bg-[#333333] py-12 mt-0 pt-12">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
                 <div className="rounded-xl overflow-hidden relative group h-80">
                   {/* Background image with overlay */}
