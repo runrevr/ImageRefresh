@@ -31,7 +31,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white mb-4">Features</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition">AI Image Editing</a></li>
+              <li><Link href="/" className="text-gray-400 hover:text-white transition">AI Image Editing</Link></li>
               <li><Link href="/ideas" className="text-gray-400 hover:text-white transition">Transformation Ideas</Link></li>
               <li><Link href="/kids-drawing" className="text-gray-400 hover:text-white transition">Drawing to Reality</Link></li>
             </ul>
@@ -40,16 +40,14 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white mb-4">Pricing</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Pricing & Credits</a></li>
-
+              <li><Link href="/pricing" className="text-gray-400 hover:text-white transition">Pricing & Credits</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-bold text-white mb-4">Company</h3>
+            <h3 className="font-bold text-white mb-4">Help</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition">About Us</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Contact</a></li>
+              <li><Link href="/help" className="text-gray-400 hover:text-white transition">Help Center</Link></li>
             </ul>
           </div>
         </div>
