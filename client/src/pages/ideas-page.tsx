@@ -239,7 +239,7 @@ const StyleCard = ({
         />
 
         {/* Tags */}
-        <div className="absolute top-2 right-2 flex gap-1">
+        <div className="absolute top-2 right-2 flex gap-1 z-10">
           {style.featured && (
             <span className="bg-[#FF7B54] text-white px-2 py-1 rounded text-xs font-medium">
               Featured
@@ -258,7 +258,7 @@ const StyleCard = ({
         </div>
       </div>
 
-      <CardHeader className="p-3 pb-1 bg-[#FF7B54] rounded-t-lg">
+      <CardHeader className="p-3 pb-1 bg-black/50 backdrop-blur-sm rounded-t-lg absolute bottom-0 left-0 right-0">
         <CardTitle className="text-lg font-bold text-center mb-2 text-white">
           {style.name}
         </CardTitle>
@@ -267,7 +267,8 @@ const StyleCard = ({
         </CardDescription>
       </CardHeader>
 
-      <CardFooter className="flex justify-center p-3">
+      <div className="h-16"></div>
+      <CardFooter className="flex justify-center p-3 mt-4">
         <Link href="/?showUpload=true" className="w-full" onClick={(e) => e.stopPropagation()}>
           <Button
             className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
