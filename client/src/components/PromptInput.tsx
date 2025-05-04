@@ -42,6 +42,8 @@ export type TransformationType =
   | "product"
   | "painting"
   | "era"
+  | "historical"
+  | "other"
   | "custom";
 
 // Subcategory types
