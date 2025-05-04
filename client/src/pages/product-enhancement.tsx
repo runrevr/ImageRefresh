@@ -10,6 +10,8 @@ import shampoo1 from "../assets/shampoo-1.jpg";
 import shampoo2 from "../assets/shampoo-2.png";
 import shampoo3 from "../assets/shampoo-3.png";
 import shampoo4 from "../assets/shampoo-4.png";
+import mexicanFoodOriginal from "../assets/mexican-food-original.png";
+import mexicanFoodEnhanced from "../assets/mexican-food-enhanced.png";
 
 // Define UserCredits type
 type UserCredits = {
@@ -64,22 +66,37 @@ export default function ProductEnhancementPage() {
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
-              {/* Image 1 - Shampoo Gold Glamour */}
+              {/* Before - After Pair: Mexican Food */}
+              <div className="flex flex-col mb-5 shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <div className="bg-[#333333] text-white text-center py-2 font-semibold">
+                  BEFORE
+                </div>
+                <img src={mexicanFoodOriginal} alt="Basic food photography" className="w-full h-auto" />
+              </div>
+              
+              <div className="flex flex-col mb-5 shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <div className="bg-[#333333] text-white text-center py-2 font-semibold">
+                  AFTER
+                </div>
+                <img src={mexicanFoodEnhanced} alt="Enhanced food photography" className="w-full h-auto" />
+              </div>
+              
+              {/* Shampoo Gold Glamour */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo4} alt="Shampoo with gold luxury styling" className="w-full h-auto" />
               </div>
               
-              {/* Image 2 - Shampoo Bathroom Setting */}
+              {/* Shampoo Bathroom Setting */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo3} alt="Shampoo in luxury bathroom setting" className="w-full h-auto" />
               </div>
               
-              {/* Image 3 - Shampoo with Towels */}
+              {/* Shampoo with Towels */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo2} alt="Shampoo with spa towels and greenery" className="w-full h-auto" />
               </div>
               
-              {/* Image 4 - Shampoo Original Product Shot */}
+              {/* Shampoo Original Product Shot */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo1} alt="Original product photography" className="w-full h-auto" />
               </div>
