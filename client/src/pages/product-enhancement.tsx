@@ -12,6 +12,9 @@ import shampoo3 from "../assets/shampoo-3.png";
 import shampoo4 from "../assets/shampoo-4.png";
 import mexicanFoodOriginal from "../assets/mexican-food-original.png";
 import mexicanFoodEnhanced from "../assets/mexican-food-enhanced.png";
+import sweatshirtBasic from "../assets/sweatshirt-basic.png";
+import sweatshirtLifestyle from "../assets/sweatshirt-lifestyle.png";
+import sweatshirtDynamic from "../assets/sweatshirt-dynamic.png";
 
 // Define UserCredits type
 type UserCredits = {
@@ -71,13 +74,29 @@ export default function ProductEnhancementPage() {
                 <img src={mexicanFoodOriginal} alt="Basic food photography" className="w-full h-auto" />
               </div>
               
+              {/* Sweatshirt Dynamic Version */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <img src={sweatshirtDynamic} alt="Sweatshirt with dynamic background" className="w-full h-auto" />
+              </div>
+              
+              {/* Enhanced Mexican Food */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={mexicanFoodEnhanced} alt="Enhanced food photography" className="w-full h-auto" />
+              </div>
+              
+              {/* Sweatshirt Lifestyle */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <img src={sweatshirtLifestyle} alt="Sweatshirt lifestyle photography" className="w-full h-auto" />
               </div>
               
               {/* Shampoo Gold Glamour */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo4} alt="Shampoo with gold luxury styling" className="w-full h-auto" />
+              </div>
+              
+              {/* Original Sweatshirt */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <img src={sweatshirtBasic} alt="Basic sweatshirt product photo" className="w-full h-auto" />
               </div>
               
               {/* Shampoo Bathroom Setting */}
