@@ -14,6 +14,7 @@ import CtaSection from "@/components/CtaSection";
 import Footer from "@/components/Footer";
 import HeroCarousel from "@/components/HeroCarousel";
 import AccountNeededDialog from "@/components/AccountNeededDialog";
+import trumpMulletImage from "@assets/Trump Mullet.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -600,6 +601,63 @@ export default function Home() {
               </div>
             )}
 
+            {/* Mullet Transformation Highlight */}
+            <div className="w-full bg-white py-16 mb-0">
+              <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center">
+                {/* Left side image (30%) */}
+                <div className="w-full md:w-[30%] mb-8 md:mb-0">
+                  <div className="relative rounded-xl overflow-hidden shadow-lg">
+                    <img 
+                      src={trumpMulletImage} 
+                      alt="Mullet Transformation Example" 
+                      className="w-full h-auto"
+                    />
+                    <div className="absolute top-3 right-3 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
+                      FREE & NEW!
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Right side content (70%) */}
+                <div className="w-full md:w-[70%] md:pl-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[#333333] mb-3">
+                    Business in the Front, Party in The Back
+                  </h2>
+                  <h3 className="text-xl text-[#2A7B9B] font-semibold mb-4">
+                    Transform Anyone Into a Mullet Legend - Free & New!
+                  </h3>
+                  <p className="text-gray-700 mb-6 leading-relaxed">
+                    Wonder how you or your friends would rock the iconic mullet? Upload any photo to instantly see magnificent "business in front, party in back" transformations! Our free new feature preserves natural hair color while adding perfect rock-and-roll attitude. Try it now and discover the mullet you were born to wear!
+                  </p>
+                  <Button
+                    className="bg-[#2A7B9B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
+                    onClick={() => {
+                      // If user is logged in, skip email check
+                      if (userCredits?.id) {
+                        setShowUploadForm(true);
+                        scrollToUploader();
+                        // Set transformation to mullet
+                        setSelectedTransformation("other");
+                        // Set prompt for mullets
+                        setPrompt("Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.");
+                      } else if (storedEmail) {
+                        setShowAccountNeededDialog(true);
+                      } else {
+                        setShowUploadForm(true);
+                        scrollToUploader();
+                        // Set transformation to mullet
+                        setSelectedTransformation("other");
+                        // Set prompt for mullets
+                        setPrompt("Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.");
+                      }
+                    }}
+                  >
+                    UNLEASH THE MULLET
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
             {/* Feature Highlights */}
             <div className="w-full bg-[#333333] py-12 mt-0 pt-12">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
