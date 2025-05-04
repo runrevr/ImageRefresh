@@ -1,14 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
+
+// Define UserCredits type similar to home.tsx
+type UserCredits = {
+  freeCreditsUsed: boolean;
+  paidCredits: number;
+  id: number;
+};
 
 export default function AboutPage() {
+  const authContext = useAuth();
+  const authUser = authContext?.user || null;
+  // Initialize local user state with data from auth
+  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
+  
+  // Update local user state when auth user changes
+  useEffect(() => {
+    if (authUser) {
+      setUserCredits({
+        id: authUser.id,
+        freeCreditsUsed: authUser.freeCreditsUsed,
+        paidCredits: authUser.paidCredits
+      });
+    }
+  }, [authUser]);
+  
+  // Default to 0 if userCredits is not available
+  const freeCredits = userCredits && !userCredits.freeCreditsUsed ? 1 : 0;
+  const paidCredits = userCredits?.paidCredits || 0;
+  
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
       
       <main className="flex-grow">
         {/* Hero section */}
