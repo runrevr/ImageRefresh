@@ -224,7 +224,7 @@ const StyleCard = ({
 
   return (
     <Card 
-      className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full"
+      className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full flex flex-col"
       onClick={() => {
         onSelect(style);
         // Navigate to upload page
@@ -258,7 +258,7 @@ const StyleCard = ({
         </div>
       </div>
 
-      <CardHeader className="p-3 pb-1 bg-black rounded-t-lg absolute bottom-0 left-0 right-0">
+      <CardHeader className="p-3 pb-1 bg-black">
         <CardTitle className="text-lg font-bold text-center mb-2 text-white">
           {style.name}
         </CardTitle>
@@ -267,8 +267,7 @@ const StyleCard = ({
         </CardDescription>
       </CardHeader>
 
-      <div className="h-16"></div>
-      <CardFooter className="flex justify-center p-3 mt-4">
+      <CardFooter className="flex justify-center p-3">
         <Link href="/?showUpload=true" className="w-full" onClick={(e) => e.stopPropagation()}>
           <Button
             className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
