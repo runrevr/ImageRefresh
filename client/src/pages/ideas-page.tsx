@@ -258,7 +258,7 @@ const StyleCard = ({
         </div>
       </div>
 
-      <CardHeader className="p-3 pb-1 bg-black">
+      <CardHeader className="p-3 pb-1 bg-[#333333]">
         <CardTitle className="text-lg font-bold text-center mb-2 text-white">
           {style.name}
         </CardTitle>
