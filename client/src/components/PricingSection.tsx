@@ -28,7 +28,7 @@ const pricingTiers: PricingTier[] = [
     name: "Core",
     price: "$10/month",
     features: [
-      { available: true, text: "10 credits per month" },
+      { available: true, text: "12 credits per month" },
       { available: true, text: "Credits reset monthly" },
       { available: true, text: "HD resolution output" },
       { available: true, text: "All images created are stored in your account" }
