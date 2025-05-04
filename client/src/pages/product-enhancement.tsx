@@ -44,15 +44,17 @@ export default function ProductEnhancementPage() {
       
       <main className="flex-grow">
         {/* Hero section */}
-        <div className="bg-[#2A7B9B] text-white py-16 px-4 sm:px-6 lg:px-8">
+        <div className="bg-[#2A7B9B] text-white pt-24 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Turn Your Product Photos into Scroll-Stopping Sensations
+            <h1 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
+              TURN YOUR PRODUCT PHOTOS INTO
+              <br />
+              SCROLL-STOPPING SENSATIONS
             </h1>
-            <p className="text-xl md:text-2xl mb-10 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
               AI-powered image transformations that make your products pop—across social feeds, ads & your website.
             </p>
-            <Button size="lg" className="bg-[#FF7B54] text-white hover:bg-[#e56c49]">
+            <Button size="lg" className="bg-[#FF7B54] text-white hover:bg-[#e56c49] px-8 py-6 text-lg">
               Start Your Free Trial
             </Button>
           </div>
