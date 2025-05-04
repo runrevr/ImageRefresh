@@ -28,6 +28,7 @@ import westernImage from "../assets/Western.png";
 import legoCharacterImage from "../assets/Lego.png";
 import hiphopImage from "../assets/Hiphop.png";
 import eightyImage from "../assets/80s.png";
+import discoImage from "../assets/Disco.png";
 import renaissanceImage from "../assets/Renaissance.png";
 import victorianImage from "../assets/Victorian era.png";
 import medievalImage from "../assets/medieval.png";
@@ -191,6 +192,8 @@ const StyleCard = ({
     imageSrc = hiphopImage;
   } else if (style.id === "1980s") {
     imageSrc = eightyImage;
+  } else if (style.id === "disco") {
+    imageSrc = discoImage;
   } else if (style.id === "renaissance") {
     imageSrc = renaissanceImage;
   } else if (style.id === "victorian-era") {
