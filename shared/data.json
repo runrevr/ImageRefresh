@@ -180,6 +180,23 @@
           ]
         },
         {
+          "id": "disco",
+          "name": "Disco Era",
+          "description": "Glamorous 70s disco style with glitter balls, colorful lights and dance floor vibes",
+          "category": "historical",
+          "prompt": "Transform this image into an authentic 1970s disco era style. Use a vibrant color palette featuring rich purples, electric blues, hot pinks, and gold accents with dramatic lighting effects. Apply iconic 70s disco fashion elements such as sequined or metallic clothing, bell-bottoms, platform shoes, wide collars, and voluminous hairstyles. For backgrounds, include disco balls, colorful dance floors with geometric patterns, mirror balls casting speckled light reflections, and atmospheric lighting with spotlights and lasers. Create the energetic atmosphere of a bustling disco club with dance poses, celebratory expressions, and dynamic composition. The final image should capture the glamorous, exuberant aesthetic that defined the disco era of the 1970s, with its characteristic blend of fashion, music, and nightlife culture.",
+          "previewImage": "/Disco.png",
+          "beforeImage": "/examples/example-portrait.png",
+          "featured": true,
+          "new": true,
+          "tags": [
+            "70s",
+            "dance",
+            "nightlife",
+            "retro"
+          ]
+        },
+        {
           "id": "renaissance",
           "name": "Renaissance",
           "description": "Classical European art style with realistic proportions and religious/mythological themes",
