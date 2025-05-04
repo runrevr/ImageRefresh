@@ -63,34 +63,34 @@ export default function ProductEnhancementPage() {
         {/* Masonry grid with product images */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 masonry">
-              {/* Image 1 - Bear After */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden">
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
+              {/* Image 1 - Bear After - Larger Image */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={bearAfter} alt="Enhanced product" className="w-full h-auto" />
               </div>
               
-              {/* Image 2 - Bear Drawing */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden">
-                <img src={bear} alt="Product before enhancement" className="w-full h-auto" />
-              </div>
-              
-              {/* Image 3 - Deer */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden">
+              {/* Image 2 - Deer - Medium Image */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={deerDrinking} alt="Enhanced product" className="w-full h-auto" />
               </div>
               
-              {/* Image 4 - Giraffe */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden">
-                <img src={giraffe} alt="Enhanced giraffe" className="w-full h-auto" />
+              {/* Image 3 - Bear Drawing - Smaller Image */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <img src={bear} alt="Product before enhancement" className="w-full h-auto" />
               </div>
               
-              {/* Image 5 - Dog and Cat */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden">
+              {/* Image 4 - Dog and Cat - Medium Image */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={dogAndCat} alt="Enhanced dog and cat" className="w-full h-auto" />
               </div>
               
-              {/* Image 6 - Lego */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden">
+              {/* Image 5 - Giraffe - Larger Image */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
+                <img src={giraffe} alt="Enhanced giraffe" className="w-full h-auto" />
+              </div>
+              
+              {/* Image 6 - Lego - Medium Image */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={lego} alt="Enhanced lego character" className="w-full h-auto" />
               </div>
             </div>
