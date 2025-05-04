@@ -843,13 +843,14 @@ export default function Home() {
                 
                 {/* CTA Button */}
                 <div className="text-center">
-                  <Link href="/kids-drawing">
-                    <Button
-                      className="bg-[#2A7B9B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
-                    >
-                      EXPLORE KIDS DRAWING TRANSFORMATIONS
-                    </Button>
-                  </Link>
+                  <Button
+                    className="bg-[#2A7B9B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
+                    onClick={() => {
+                      window.location.href = "/kids-drawing";
+                    }}
+                  >
+                    EXPLORE KIDS DRAWING TRANSFORMATIONS
+                  </Button>
                   <p className="text-sm text-gray-500 mt-3">
                     Perfect for gifts, keepsakes, and fostering children's creativity!
                   </p>
