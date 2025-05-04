@@ -15,7 +15,7 @@ import Footer from "@/components/Footer";
 import HeroCarousel from "@/components/HeroCarousel";
 import AccountNeededDialog from "@/components/AccountNeededDialog";
 import trumpMulletImage from "../assets/trump-mullet.png";
-import eightyStyleImage from "../assets/80s-image-card.png";
+import eightyStyleImage from "../assets/80s.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -661,17 +661,17 @@ export default function Home() {
             </div>
 
             {/* 80's Style Transformation Highlight */}
-            <div className="w-full bg-gray-50 py-16 mb-0">
+            <div className="w-full bg-[#333333] py-16 mb-0">
               <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center">
                 {/* Left side content (70%) */}
                 <div className="w-full md:w-[70%] md:pr-12 order-2 md:order-1">
-                  <h2 className="text-3xl md:text-4xl font-bold text-[#333333] mb-3">
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
                     Totally Rad 80's Time Machine!
                   </h2>
-                  <h3 className="text-xl text-[#2A7B9B] font-semibold mb-4">
+                  <h3 className="text-xl text-[#FF7B54] font-semibold mb-4">
                     No 80's Pics? No Problem - Turn Back The Clock
                   </h3>
-                  <p className="text-gray-700 mb-6 leading-relaxed">
+                  <p className="text-gray-200 mb-6 leading-relaxed">
                     Did you crush it in the 80's but don't have a picture to prove to your kids you were hip? Well now you do! Upload any photo and watch as we transform you with big hair, neon colors, and all that awesome 80's style. Time to relive the glory days – totally free!
                   </p>
                   <Button
