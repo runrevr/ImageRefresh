@@ -131,7 +131,7 @@ const CategoryCard = ({
           <img
             src={backgroundImage}
             alt={category.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center px-4 py-8 text-center">
             {IconComponent}
@@ -219,7 +219,7 @@ const StyleCard = ({
         <img
           src={imageSrc}
           alt={style.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-top"
         />
 
         {/* Tags */}
@@ -485,7 +485,7 @@ export default function IdeasPage() {
                   <img
                     src={funViralBackgroundImage}
                     alt="Fun/Viral Ideas"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80 flex flex-col items-center justify-center px-4 py-8 text-center">
                     <Sparkles className="h-12 w-12 mb-2 text-white" />
