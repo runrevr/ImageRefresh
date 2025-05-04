@@ -5,13 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
 
-// Import some product images for the masonry grid
-import bearAfter from "../assets/bear-after.png";
-import bear from "../assets/bear-drawing.png";
-import deerDrinking from "../assets/beer-drinking-deer.png";
-import giraffe from "../assets/giraffe-real.png"; 
-import dogAndCat from "../assets/dog-and-cat-real.png";
-import lego from "../assets/lego-character.png";
+// Import product images for the masonry grid
+import shampoo1 from "../assets/shampoo-1.jpg";
+import shampoo2 from "../assets/shampoo-2.png";
+import shampoo3 from "../assets/shampoo-3.png";
+import shampoo4 from "../assets/shampoo-4.png";
 
 // Define UserCredits type
 type UserCredits = {
@@ -64,34 +62,24 @@ export default function ProductEnhancementPage() {
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
-              {/* Image 1 - Bear After - Larger Image */}
+              {/* Image 1 - Shampoo Gold Glamour */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <img src={bearAfter} alt="Enhanced product" className="w-full h-auto" />
+                <img src={shampoo4} alt="Shampoo with gold luxury styling" className="w-full h-auto" />
               </div>
               
-              {/* Image 2 - Deer - Medium Image */}
+              {/* Image 2 - Shampoo Bathroom Setting */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <img src={deerDrinking} alt="Enhanced product" className="w-full h-auto" />
+                <img src={shampoo3} alt="Shampoo in luxury bathroom setting" className="w-full h-auto" />
               </div>
               
-              {/* Image 3 - Bear Drawing - Smaller Image */}
+              {/* Image 3 - Shampoo with Towels */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <img src={bear} alt="Product before enhancement" className="w-full h-auto" />
+                <img src={shampoo2} alt="Shampoo with spa towels and greenery" className="w-full h-auto" />
               </div>
               
-              {/* Image 4 - Dog and Cat - Medium Image */}
+              {/* Image 4 - Shampoo Original Product Shot */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <img src={dogAndCat} alt="Enhanced dog and cat" className="w-full h-auto" />
-              </div>
-              
-              {/* Image 5 - Giraffe - Larger Image */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <img src={giraffe} alt="Enhanced giraffe" className="w-full h-auto" />
-              </div>
-              
-              {/* Image 6 - Lego - Medium Image */}
-              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <img src={lego} alt="Enhanced lego character" className="w-full h-auto" />
+                <img src={shampoo1} alt="Original product photography" className="w-full h-auto" />
               </div>
             </div>
           </div>
