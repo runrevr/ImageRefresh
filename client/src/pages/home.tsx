@@ -16,6 +16,14 @@ import HeroCarousel from "@/components/HeroCarousel";
 import AccountNeededDialog from "@/components/AccountNeededDialog";
 import trumpMulletImage from "../assets/trump-mullet.png";
 import eightyStyleImage from "../assets/80s.png";
+import bearDrawingImage from "../assets/bear-drawing.png";
+import bearRealImage from "../assets/bear-real.png";
+import giraffeDrawingImage from "../assets/giraffe-drawing.png";
+import giraffeRealImage from "../assets/giraffe-real.png";
+import dogCatDrawingImage from "../assets/dog-and-cat-drawing.png";
+import dogCatRealImage from "../assets/dog-and-cat-real.png";
+import alicornDrawingImage from "../assets/alicorn-drawing.jpg";
+import alicornRealImage from "../assets/alicorn-real.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -713,6 +721,138 @@ export default function Home() {
                       FREE & NEW!
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Kids Drawing Transformation Section */}
+            <div className="w-full bg-white py-16 mb-0">
+              <div className="max-w-6xl mx-auto px-4">
+                {/* Section Header */}
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[#333333] mb-3">
+                    Turn Children's Drawings Into Magical Reality
+                  </h2>
+                  <h3 className="text-xl text-[#2A7B9B] font-semibold mb-4">
+                    Watch Kids' Imaginations Come to Life - Makes a Perfect Gift!
+                  </h3>
+                  <p className="text-gray-700 mb-6 max-w-3xl mx-auto">
+                    Transform your child's artwork into stunning, realistic images they'll treasure forever. 
+                    Our AI brings imagination to life - from beloved pets to magical creatures.
+                  </p>
+                </div>
+                
+                {/* 4-Column Grid of Before/After Images */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                  {/* Column 1: Bear */}
+                  <div className="flex flex-col space-y-2">
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={bearDrawingImage} 
+                        alt="Child's Drawing of a Bear" 
+                        className="w-full h-full object-contain"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        BEFORE
+                      </div>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={bearRealImage} 
+                        alt="AI Transformed Bear Drawing" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        AFTER
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Column 2: Giraffe */}
+                  <div className="flex flex-col space-y-2">
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={giraffeDrawingImage} 
+                        alt="Child's Drawing of a Giraffe" 
+                        className="w-full h-full object-contain"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        BEFORE
+                      </div>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={giraffeRealImage} 
+                        alt="AI Transformed Giraffe Drawing" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        AFTER
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Column 3: Dog and Cat */}
+                  <div className="flex flex-col space-y-2">
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={dogCatDrawingImage} 
+                        alt="Child's Drawing of a Dog and Cat" 
+                        className="w-full h-full object-contain"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        BEFORE
+                      </div>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={dogCatRealImage} 
+                        alt="AI Transformed Dog and Cat Drawing" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        AFTER
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Column 4: Alicorn */}
+                  <div className="flex flex-col space-y-2">
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={alicornDrawingImage} 
+                        alt="Child's Drawing of an Alicorn" 
+                        className="w-full h-full object-contain"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#2A7B9B] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        BEFORE
+                      </div>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <img 
+                        src={alicornRealImage} 
+                        alt="AI Transformed Alicorn Drawing" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
+                        AFTER
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* CTA Button */}
+                <div className="text-center">
+                  <Link href="/kids-drawing">
+                    <Button
+                      className="bg-[#2A7B9B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
+                    >
+                      EXPLORE KIDS DRAWING TRANSFORMATIONS
+                    </Button>
+                  </Link>
+                  <p className="text-sm text-gray-500 mt-3">
+                    Perfect for gifts, keepsakes, and fostering children's creativity!
+                  </p>
                 </div>
               </div>
             </div>

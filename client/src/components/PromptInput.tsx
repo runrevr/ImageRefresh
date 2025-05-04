@@ -44,6 +44,7 @@ export type TransformationType =
   | "era"
   | "historical"
   | "other"
+  | "kids"
   | "custom";
 
 // Subcategory types
