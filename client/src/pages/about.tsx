@@ -46,41 +46,42 @@ export default function AboutPage() {
               About ImageRefresh
             </h1>
             <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-              We're revolutionizing how people transform and enhance their images using cutting-edge AI technology.
+              Hi! I'm Cory, and I've created ImageRefresh to share the magic of AI image transformation with families everywhere.
             </p>
           </div>
         </div>
         
-        {/* Our Story section */}
+        {/* My Story section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Story</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">My Story</h2>
             
             <div className="prose prose-lg max-w-4xl mx-auto text-gray-700">
               <p>
-                ImageRefresh was born from a simple observation: while AI image generation technology was becoming increasingly powerful, 
-                it remained inaccessible to everyday users who just wanted to transform their personal photos in fun and creative ways.
+                ImageRefresh began as a family project. I started using AI image transformations with my daughter, turning her drawings 
+                into incredible artwork that amazed her and sparked her imagination. What began as a fun family activity quickly grew 
+                into something more meaningful.
               </p>
               
               <p>
-                Founded in 2025, our mission is to democratize access to advanced AI image transformation technology, 
-                making it easy, affordable, and fun for everyone to use. Whether you're a parent wanting to transform your child's 
+                After sharing these transformations with friends and family, I noticed how much joy and wonder they brought to everyone. 
+                The ability to see a child's drawing turn into a vibrant, realistic image or transform an ordinary photo into something extraordinary 
+                created magical moments that strengthened connections and inspired creativity.
+              </p>
+              
+              <p>
+                Founded in 2025, ImageRefresh aims to bring this magic to everyone. Whether you're a parent wanting to transform your child's 
                 drawing into a masterpiece, a product photographer in need of professional-quality images, or simply someone looking 
-                to have fun with your photos, ImageRefresh is designed for you.
-              </p>
-              
-              <p>
-                Our team combines expertise in artificial intelligence, user experience design, and visual arts to create a platform 
-                that's both powerful and intuitive. We believe that technology should enhance human creativity, not replace it.
+                to have fun with your photos, ImageRefresh is designed to make AI image transformation accessible, affordable, and fun for everyone.
               </p>
             </div>
           </div>
         </div>
         
-        {/* Our Values section */}
+        {/* My Values section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Values</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">My Values</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="border-none shadow-lg">
@@ -94,7 +95,7 @@ export default function AboutPage() {
                     <h3 className="text-xl font-semibold text-gray-900 mt-4">Creativity First</h3>
                   </div>
                   <p className="text-gray-700 text-center">
-                    We believe in enhancing human creativity, not replacing it. Our tools are designed to inspire and amplify your creative vision.
+                    I believe in enhancing human creativity, not replacing it. ImageRefresh is designed to inspire and amplify your creative vision.
                   </p>
                 </CardContent>
               </Card>
@@ -110,7 +111,7 @@ export default function AboutPage() {
                     <h3 className="text-xl font-semibold text-gray-900 mt-4">Safety & Privacy</h3>
                   </div>
                   <p className="text-gray-700 text-center">
-                    We prioritize your privacy and the ethical use of AI. Your images are processed securely and aren't used to train our models.
+                    I prioritize your privacy and the ethical use of AI. Your images are processed securely and aren't used to train our models.
                   </p>
                 </CardContent>
               </Card>
@@ -128,7 +129,7 @@ export default function AboutPage() {
                     <h3 className="text-xl font-semibold text-gray-900 mt-4">Simplicity</h3>
                   </div>
                   <p className="text-gray-700 text-center">
-                    Advanced technology should be accessible to everyone. We've designed our platform to be intuitive and easy to use, regardless of technical skill.
+                    Advanced technology should be accessible to everyone. I've designed ImageRefresh to be intuitive and easy to use, regardless of technical skill.
                   </p>
                 </CardContent>
               </Card>
@@ -136,57 +137,28 @@ export default function AboutPage() {
           </div>
         </div>
         
-        {/* Team section */}
+        {/* Founder section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Team</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Meet The Founder</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Team member card */}
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="bg-gray-200 h-64 flex items-center justify-center">
+            <div className="max-w-2xl mx-auto">
+              {/* Founder card */}
+              <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row">
+                <div className="bg-gray-200 h-64 md:w-1/3 flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Alex Chen</h3>
-                  <p className="text-blue-600 mb-4">Founder & CEO</p>
+                <div className="p-6 md:w-2/3">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-1">Cory T.</h3>
+                  <p className="text-blue-600 mb-4">Founder & AI Specialist</p>
                   <p className="text-gray-700">
-                    With a background in AI and computer vision, Alex founded ImageRefresh to make advanced image transformation technology accessible to everyone.
+                    As an AI specialist and coach, I decided to create ImageRefresh after using similar AI transformations with my friends, family, and especially my daughter. We had so much fun as a family transforming otherwise boring images that we decided we needed to share this experience with the world.
                   </p>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="bg-gray-200 h-64 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Sophia Rodriguez</h3>
-                  <p className="text-blue-600 mb-4">CTO</p>
-                  <p className="text-gray-700">
-                    Sophia leads our technical team, bringing expertise in machine learning and AI model development to create our powerful transformation engine.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="bg-gray-200 h-64 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Marcus Johnson</h3>
-                  <p className="text-blue-600 mb-4">Design Director</p>
-                  <p className="text-gray-700">
-                    Marcus oversees the user experience and design of our platform, ensuring that powerful technology is wrapped in an intuitive, beautiful interface.
+                  <p className="text-gray-700 mt-4">
+                    My passion lies in making advanced AI technology accessible to everyone, creating magical moments that bring joy and spark creativity. I hope you enjoy using ImageRefresh as much as we enjoy building it!
                   </p>
                 </div>
               </div>
