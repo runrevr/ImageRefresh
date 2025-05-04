@@ -124,7 +124,10 @@ const CategoryCard = ({
   }
 
   return (
-    <Card className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer">
+    <Card 
+      className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer"
+      onClick={() => onClick(category.id)}
+    >
       <div className="relative">
         {/* Background image with overlay */}
         <div className="h-64 overflow-hidden">
@@ -151,7 +154,10 @@ const CategoryCard = ({
             {/* Explore Styles button with animated arrow */}
             <Button
               className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1 group"
-              onClick={() => onClick(category.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent double navigation
+                onClick(category.id);
+              }}
             >
               <span className="flex items-center">
                 Explore Styles
@@ -214,7 +220,14 @@ const StyleCard = ({
   }
 
   return (
-    <Card className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full">
+    <Card 
+      className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full"
+      onClick={() => {
+        onSelect(style);
+        // Navigate to upload page
+        window.location.href = "/?showUpload=true";
+      }}
+    >
       <div className="relative w-full h-64 overflow-hidden">
         <img
           src={imageSrc}
@@ -252,10 +265,13 @@ const StyleCard = ({
       </CardHeader>
 
       <CardFooter className="flex justify-center p-3">
-        <Link href="/?showUpload=true" className="w-full">
+        <Link href="/?showUpload=true" className="w-full" onClick={(e) => e.stopPropagation()}>
           <Button
             className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
-            onClick={() => onSelect(style)}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent double navigation/action
+              onSelect(style);
+            }}
           >
             <span className="flex items-center justify-center">
               Use This Style
@@ -478,7 +494,10 @@ export default function IdeasPage() {
             ))}
 
             {/* Custom card in position 3 */}
-            <Card className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer">
+            <Card 
+              className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer"
+              onClick={() => setSelectedCategory("other")}
+            >
               <div className="relative">
                 {/* Background image with overlay */}
                 <div className="h-64 overflow-hidden">
@@ -505,7 +524,10 @@ export default function IdeasPage() {
                     {/* Explore Styles button with animated arrow */}
                     <Button
                       className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1 group"
-                      onClick={() => setSelectedCategory("other")}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent double navigation
+                        setSelectedCategory("other");
+                      }}
                     >
                       <span className="flex items-center">
                         Explore Styles
