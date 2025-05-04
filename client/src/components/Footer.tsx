@@ -32,8 +32,7 @@ export default function Footer() {
             <h3 className="font-bold text-white mb-4">Features</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-400 hover:text-white transition">AI Image Editing</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Style Transfer</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">Transformation Ideas</a></li>
+              <li><Link href="/ideas" className="text-gray-400 hover:text-white transition">Transformation Ideas</Link></li>
               <li><Link href="/kids-drawing" className="text-gray-400 hover:text-white transition">Drawing to Reality</Link></li>
             </ul>
           </div>
