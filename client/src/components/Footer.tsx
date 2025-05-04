@@ -34,6 +34,7 @@ export default function Footer() {
               <li><Link href="/" className="text-gray-400 hover:text-white transition">AI Image Editing</Link></li>
               <li><Link href="/ideas" className="text-gray-400 hover:text-white transition">Transformation Ideas</Link></li>
               <li><Link href="/kids-drawing" className="text-gray-400 hover:text-white transition">Drawing to Reality</Link></li>
+              <li><Link href="/product-enhancement" className="text-gray-400 hover:text-white transition">Product Enhancement</Link></li>
             </ul>
           </div>
           

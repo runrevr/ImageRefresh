@@ -11,6 +11,7 @@ import IdeasPage from "@/pages/ideas-page";
 import HelpPage from "@/pages/help";
 import KidsDrawingPage from "@/pages/kids-drawing";
 import AboutPage from "@/pages/about";
+import ProductEnhancementPage from "@/pages/product-enhancement";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/help" component={HelpPage} />
       <Route path="/kids-drawing" component={KidsDrawingPage} />
       <Route path="/about" component={AboutPage} />
+      <Route path="/product-enhancement" component={ProductEnhancementPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login">
         {() => <Redirect to="/auth?tab=login" />}
