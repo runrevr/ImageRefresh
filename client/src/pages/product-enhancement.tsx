@@ -66,18 +66,12 @@ export default function ProductEnhancementPage() {
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
-              {/* Before - After Pair: Mexican Food */}
-              <div className="flex flex-col mb-5 shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <div className="bg-[#333333] text-white text-center py-2 font-semibold">
-                  BEFORE
-                </div>
+              {/* Mexican Food Pair */}
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={mexicanFoodOriginal} alt="Basic food photography" className="w-full h-auto" />
               </div>
               
-              <div className="flex flex-col mb-5 shadow-lg rounded-lg overflow-hidden break-inside-avoid">
-                <div className="bg-[#333333] text-white text-center py-2 font-semibold">
-                  AFTER
-                </div>
+              <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={mexicanFoodEnhanced} alt="Enhanced food photography" className="w-full h-auto" />
               </div>
               
