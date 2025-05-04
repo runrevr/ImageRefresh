@@ -14,8 +14,8 @@ import CtaSection from "@/components/CtaSection";
 import Footer from "@/components/Footer";
 import HeroCarousel from "@/components/HeroCarousel";
 import AccountNeededDialog from "@/components/AccountNeededDialog";
-import trumpMulletImage from "@assets/trump-mullet.png";
-import eightyStyleImage from "@assets/80s-image-card.png";
+import trumpMulletImage from "../assets/trump-mullet.png";
+import eightyStyleImage from "../assets/80s-image-card.png";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -233,11 +233,11 @@ export default function Home() {
           `/api/credits/${userCredits?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUserCredits((prev) => ({
-          ...prev,
+        setUserCredits((prevUser) => prevUser ? {
+          ...prevUser,
           freeCreditsUsed: creditsData.freeCreditsUsed,
           paidCredits: creditsData.paidCredits,
-        }));
+        } : null);
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -390,11 +390,11 @@ export default function Home() {
           `/api/credits/${userCredits?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUserCredits((prev) => ({
-          ...prev,
+        setUserCredits((prevUser) => prevUser ? {
+          ...prevUser,
           freeCreditsUsed: creditsData.freeCreditsUsed,
           paidCredits: creditsData.paidCredits,
-        }));
+        } : null);
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
