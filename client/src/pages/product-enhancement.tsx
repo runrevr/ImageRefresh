@@ -59,9 +59,11 @@ export default function ProductEnhancementPage() {
             <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
               AI-powered image transformations that make your products pop—across social feeds, ads & your website.
             </p>
-            <Button size="lg" className="bg-[#FF7B54] text-white hover:bg-[#e56c49] px-8 py-6 text-lg">
-              Let's Enhance My Product Photos
-            </Button>
+            <Link href="/upload">
+              <Button size="lg" className="bg-[#FF7B54] text-white hover:bg-[#e56c49] px-8 py-6 text-lg">
+                Let's Enhance My Product Photos
+              </Button>
+            </Link>
           </div>
         </div>
         
@@ -176,9 +178,11 @@ export default function ProductEnhancementPage() {
         <div className="bg-[#2A7B9B] py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-white mb-6">Get your first transformed image on us</h2>
-            <Button size="lg" className="bg-[#FF7B54] text-white hover:bg-[#e56c49]">
-              Let's Enhance My Product Photos
-            </Button>
+            <Link href="/upload">
+              <Button size="lg" className="bg-[#FF7B54] text-white hover:bg-[#e56c49]">
+                Let's Enhance My Product Photos
+              </Button>
+            </Link>
           </div>
         </div>
       </main>
