@@ -742,6 +742,19 @@ export default function PromptInput({
           Back to Image Upload
         </Button>
       </div>
+      
+      {/* Show the uploaded image */}
+      {originalImage && (
+        <div className="w-full flex justify-center">
+          <div className="w-full max-w-md rounded-lg overflow-hidden shadow-md">
+            <img 
+              src={originalImage}
+              alt="Uploaded image"
+              className="w-full h-auto object-contain"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Step 1: Transformation Category Selection */}
       <div className="space-y-3">
@@ -921,7 +934,7 @@ export default function PromptInput({
               disabled={isLoading || !originalImage}
             >
               <Wand2 className="h-3.5 w-3.5 mr-1" />
-              {isLoading ? "Thinking..." : "Suggest Prompt"}
+              {isLoading ? "Thinking..." : "Enhance My Prompt with AI"}
             </Button>
           </div>
         </div>
