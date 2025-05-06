@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "../components/Layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import { saveStyle } from "@/components/StyleIntegration";
+import { saveStyle, clearSavedStyle, getSavedStyle, hasSavedStyle } from "@/components/StyleIntegration";
 
 // Import icons
 import {
@@ -305,6 +305,7 @@ const StyleCard = ({
 export default function IdeasPage() {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedStyle, setSelectedStyle] = useState<Style | null>(null);
 
   // Get all categories from our data structure
   const categories = getCategories();
@@ -438,10 +439,24 @@ export default function IdeasPage() {
       category: style.category
     };
     saveStyle(savedStyle);
+    
+    // Update the selected style
+    setSelectedStyle(style);
 
     toast({
       title: "Style selected!",
       description: `The "${style.name}" style will be applied to your next image.`,
+    });
+  };
+  
+  // Function to cancel the selected style
+  const cancelSelectedStyle = () => {
+    setSelectedStyle(null);
+    clearSavedStyle();
+    
+    toast({
+      title: "Style canceled",
+      description: "You can select another style or continue without a preset style.",
     });
   };
 
@@ -485,7 +500,7 @@ export default function IdeasPage() {
 
         {/* Breadcrumb navigation when a category is selected */}
         {selectedCategory && (
-          <div className="flex items-center mb-6">
+          <div className="flex items-center justify-between mb-6">
             <Button
               variant="ghost"
               className="flex items-center text-[#2A7B9B] hover:text-[#2A7B9B]/80 pl-0"
@@ -494,6 +509,22 @@ export default function IdeasPage() {
               <ChevronLeft className="h-4 w-4 mr-1" />
               Back to Categories
             </Button>
+            
+            {/* Show selected style info and cancel button if a style is selected */}
+            {selectedStyle && (
+              <div className="flex items-center space-x-3">
+                <div className="text-sm font-medium px-3 py-1.5 bg-secondary/20 text-secondary rounded-md">
+                  Style selected: {selectedStyle.name}
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="text-red-500 border-red-500 hover:bg-red-500/10"
+                  onClick={cancelSelectedStyle}
+                >
+                  Cancel Selection
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
