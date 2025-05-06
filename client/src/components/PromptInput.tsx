@@ -791,17 +791,6 @@ export default function PromptInput({
         <h2 className="text-lg font-medium">Step 1: Select a Transformation Type</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2">
           <Button
-            variant={primaryCategory === "cartoon" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "cartoon" ? "bg-secondary text-white" : "text-white bg-black"
-            }`}
-            onClick={() => handleCategorySelect("cartoon")}
-          >
-            <ImageIcon className="h-5 w-5 mr-2" />
-            Cartoon
-          </Button>
-          {/* Pop culture button removed */}
-          <Button
             variant={primaryCategory === "other" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
               primaryCategory === "other" ? "bg-secondary text-white" : "text-white bg-black"
@@ -810,6 +799,26 @@ export default function PromptInput({
           >
             <Sparkles className="h-5 w-5 mr-2" />
             Fun/Viral
+          </Button>
+          <Button
+            variant={primaryCategory === "era" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "era" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("era")}
+          >
+            <Clock className="h-5 w-5 mr-2" />
+            Pop Culture Thru The Years
+          </Button>
+          <Button
+            variant={primaryCategory === "cartoon" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "cartoon" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("cartoon")}
+          >
+            <ImageIcon className="h-5 w-5 mr-2" />
+            Cartoon
           </Button>
           <Button
             variant={primaryCategory === "kids-real" ? "default" : "outline"}
@@ -840,16 +849,6 @@ export default function PromptInput({
           >
             <Paintbrush className="h-5 w-5 mr-2" />
             Painting
-          </Button>
-          <Button
-            variant={primaryCategory === "era" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "era" ? "bg-secondary text-white" : "text-white bg-black"
-            }`}
-            onClick={() => handleCategorySelect("era")}
-          >
-            <Clock className="h-5 w-5 mr-2" />
-            Pop Culture Thru The Years
           </Button>
         </div>
       </div>
