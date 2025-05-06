@@ -18,6 +18,7 @@ import {
   Paintbrush,
   Sparkles,
   Clock, // For era category
+  Baby, // For kids to real
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -41,6 +42,7 @@ export type TransformationType =
   | "historical"
   | "other"
   | "kids"
+  | "kids-real"
   | "custom";
 
 // Subcategory types
@@ -95,7 +97,6 @@ export type OtherSubcategory =
   | "self-as-cat"
   | "caricature"
   | "custom-other";
-
 // Writing tips for better prompts
 const PROMPT_TIPS = [
   "Be specific about style (e.g., 'watercolor', 'photorealistic', 'cartoon')",
@@ -112,6 +113,8 @@ type StyleOption = {
   placeholder: string;
   suggestedPrompt: string;
 };
+
+
 
 // Cartoon subcategories
 const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
@@ -248,86 +251,84 @@ const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
       "Creates a soft, fluid look with translucent colors, similar to watercolor paintings.",
     placeholder: "E.g., Add delicate color washes and soft edges",
     suggestedPrompt:
-      "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted with broader, more impressionistic areas. The colors should appear light, luminous and slightly diluted with a fresh, airy quality. Add subtle paper texture to enhance the authentic watercolor feel. The final image should convey a dreamy, ethereal atmosphere with the gentle, translucent quality that makes watercolor paintings so distinctive.",
+      "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted against looser, more impressionistic areas to create visual interest. Use a light, airy color palette with luminous quality and the slightly granular texture typical of watercolor pigments on paper. The final painting should maintain the essence and mood of the original image while having the delicate, ethereal quality of a skillfully executed watercolor.",
   },
   impressionist: {
     title: "Impressionist",
     description:
-      "Focuses on capturing light and movement with loose brushstrokes, like the works of Monet and Renoir.",
-    placeholder: "E.g., Use short, visible brushstrokes to capture light",
+      "Captures light and atmosphere with visible brushstrokes like Monet or Renoir.",
+    placeholder: "E.g., Focus on light and atmosphere",
     suggestedPrompt:
-      "Transform this image into an Impressionist painting in the style of Monet, Renoir, or Degas. Use small, thin brush strokes that are visible to the naked eye, creating a sense of spontaneity and movement. Focus on accurately depicting the changing qualities of light with vivid colors applied side-by-side for a vibrant, shimmering effect. Capture the fleeting moment and overall visual impression rather than exact details. Apply an open composition with unusual visual angles and emphasis on light in its changing qualities. Include elements of ordinary subject matter transformed by the play of natural light. The color palette should be bright yet natural, with particular attention to the reflection of colors from objects to one another. The final image should convey the sense of atmosphere and the shifting effect of light and color that characterizes Impressionist works.",
+      "Transform this image into an impressionist painting in the style of artists like Monet or Renoir. Use visible, sketch-like brushstrokes and dabs of unmixed colors placed side-by-side to create a vibrant, shimmering effect when viewed from a distance. Focus on capturing the fleeting quality of light, atmosphere, and movement rather than sharp details. Apply a bright, vibrant color palette that emphasizes blues, greens, and complementary colors typical of impressionist works. Use broken color technique where multiple colors are layered to create optical blending. Add soft edges between elements and give particular attention to how light plays across the scene, with areas of brightness and color reflections. The final result should feel alive with energy and movement, evoking the sensory impression of the moment rather than a strictly realistic representation.",
   },
   abstract: {
     title: "Abstract",
     description:
-      "Uses non-representational forms and colors to create a visually striking image, focusing on shape, color and form.",
-    placeholder: "E.g., Create a bold, geometric abstract interpretation",
+      "Non-representational art focusing on shapes, colors, and textures.",
+    placeholder: "E.g., Bold geometric forms in primary colors",
     suggestedPrompt:
-      "Transform this image into an abstract composition that uses color, form, line, and texture to create a non-representational interpretation of the subject. Break down the original image into its essential elements, emphasizing shapes, patterns, and color relationships rather than realistic depiction. Create a bold visual rhythm with geometric or organic forms, dynamic lines, and contrasting colors. The composition should balance tension and harmony, with focal points created through color intensity, size, or position. The palette can be vibrant and expressive or subtle and monochromatic, depending on the emotional quality you wish to convey. The final result should evoke emotional or intellectual responses through its compositional elements alone, without relying on recognizable imagery, capturing the essence rather than the appearance of the original subject.",
+      "Transform this image into an abstract painting that focuses on shapes, colors, forms, and textures rather than realistic representation. Deconstruct the original image into fundamental geometric or organic shapes, emphasizing bold lines, dynamic composition, and strong color relationships. Use a distinctive color palette with vibrant contrasting colors or harmonious color schemes depending on the mood. Add layers of visual interest through varied textures, drips, splatters, or scraped areas typical of abstract expressionism. Create focal points using variations in color intensity, scale, or textural contrast. Express emotions and concepts through the relationship between shapes and colors rather than literal depictions. While the final image should be completely abstract, it should still maintain some essence or emotional quality of the original image, translated into a non-representational visual language.",
   },
   "pop-surrealism": {
     title: "Pop Surrealism",
     description:
-      "Blends surreal and dreamlike elements with bright, exaggerated colors, creating eye-catching results.",
-    placeholder: "E.g., Add whimsical, dreamlike elements",
+      "Playful, dreamlike imagery with vibrant colors and pop culture references.",
+    placeholder: "E.g., Add dreamlike elements and cultural references",
     suggestedPrompt:
-      "Transform this image into a pop surrealist artwork that combines dreamlike, fantastical elements with bright, cartoon-influenced aesthetics. Create a whimsical, slightly unsettling scene that juxtaposes the familiar with the bizarre. Use a vibrant, high-saturation color palette with bold outlines and smooth gradients reminiscent of lowbrow art and comic book styles. Incorporate unexpected elements, altered scale relationships, and imaginative details that challenge reality while maintaining a polished, illustrative quality. Add symbolic objects, anthropomorphic creatures, or nostalgic pop culture references that create narrative tension and intrigue. The final image should balance technical precision with imaginative fantasy, creating a visually striking composition that feels both accessible and otherworldly, inviting viewers into an alternate reality that's both familiar and strange.",
+      "Transform this image into a pop surrealist artwork that blends dreamlike imagery with pop culture elements in a technically refined painting style. Create a playful, whimsical scene with unexpected juxtapositions and imaginative elements that challenge reality. Maintain high-quality, detailed rendering with crisp edges and smooth gradients reminiscent of lowbrow art and comic illustration. Use a vibrant, saturated color palette with bold contrasts and carefully crafted lighting effects. Add subtle references to mainstream culture, vintage advertisements, cartoons, or toys that create narrative depth and cultural connection. Include at least one surreal element like impossible scale relationships, objects floating or melting, or unexpected combinations of unrelated items. Apply a glossy, polished finish to the entire piece that enhances its contemporary yet nostalgic appeal. The final result should be visually striking, immediately engaging, and contain layers of meaning and discovery while maintaining technical excellence in execution.",
   },
   "art-deco": {
     title: "Art Deco",
     description:
-      "Features bold geometric shapes, rich colors, and a luxurious, elegant aesthetic.",
+      "Elegant, stylized designs with bold geometric patterns from the 1920s-30s.",
     placeholder: "E.g., Add geometric patterns and metallic accents",
     suggestedPrompt:
-      "Transform this image into an Art Deco style artwork featuring the bold geometric forms, symmetry, and lavish ornamentation characteristic of 1920s and 1930s design. Apply a color palette of rich, deep colors accented with gold, silver, or black, creating a sense of luxury and sophistication. Incorporate strong vertical lines, stepped forms, sweeping curves, and sunburst patterns typical of Art Deco architecture and design. Add elegant, stylized representations of natural or mechanical elements with the clean lines and geometric precision that defines the style. The composition should feel balanced yet dynamic, with a sense of sleek modernity and celebration of urban life and technological progress. The final image should capture the glamour, elegance, and bold confidence of the Art Deco period, combining ornamental richness with geometric simplicity.",
+      "Transform this image into an Art Deco style artwork reminiscent of the elegant, glamorous aesthetic of the 1920s and 1930s. Convert elements into streamlined, geometric forms with symmetrical compositions and clean lines. Apply a sophisticated color palette using bold, contrasting colors alongside metallic gold, silver, or bronze accents. Include characteristic Art Deco patterns like sunbursts, chevrons, zigzags, and stylized floral motifs. Simplify and stylize any figurative elements with elongated proportions and elegant poses. Add architectural details inspired by skyscrapers, machinery, or ancient cultures (Egyptian, Aztec) that influenced the Art Deco movement. Incorporate luxury materials or their appearance such as polished wood, lacquer, marble, or exotic materials. The overall composition should feel balanced, ornate yet restrained, with an emphasis on luxury, modernity, and graphic boldness that characterized the Art Deco period.",
   },
   "pixel-art": {
     title: "Pixel Art",
     description:
-      "Transforms images into blocky, low-resolution visuals reminiscent of 8-bit and 16-bit games for a retro feel.",
-    placeholder:
-      "E.g., Convert to 16-bit pixel style with limited color palette",
+      "Retro digital aesthetic with visible pixels and limited color palette.",
+    placeholder: "E.g., 16-bit style with limited color palette",
     suggestedPrompt:
-      "Transform this image into pixelated digital art reminiscent of classic 8-bit or 16-bit video games. Convert all elements into a grid-based format with distinct, visible square pixels as the building blocks of the image. Apply a limited color palette with few shades per color channel, creating the characteristic constrained spectrum of retro games. Simplify complex forms and details into blocky representations using careful pixel placement to suggest shape and dimension. Use techniques like dithering (alternating patterns of pixels) to create the illusion of additional colors or shading. Implement clean edges and distinct color boundaries with minimal anti-aliasing. The final image should have a charming, nostalgic quality that celebrates the aesthetic constraints of early digital art while still being recognizable as the original subject.",
+      "Transform this image into classic pixel art reminiscent of vintage video games and early computer graphics. Reduce the image to a limited color palette of 16-32 colors maximum with deliberate color choices that create cohesive areas and clear distinctions. Convert all elements to a grid-based structure where individual pixels are clearly visible and aligned to a consistent grid. Apply careful pixel-by-pixel placement with clean edges and no anti-aliasing to maintain the authentic pixelated aesthetic. Use dithering techniques (checkerboard or other patterns) to create the illusion of additional colors or gradients where needed. Include characteristic pixel art techniques like outlined forms, limited detail that emphasizes recognizable silhouettes, and deliberate use of negative space. The final result should evoke the nostalgic charm of 8-bit or 16-bit era games while clearly representing the subject from the original image in an instantly recognizable way despite the technical limitations of the pixel art format.",
   },
   "anime-manga": {
     title: "Anime/Manga",
     description:
-      "Captures the dynamic energy of Japanese comics and animation with detailed shading and vibrant colors.",
-    placeholder: "E.g., Create a detailed anime character style",
+      "Japanese animation and comic book style with distinctive eyes and expressions.",
+    placeholder: "E.g., Specific anime like Studio Ghibli or Shonen style",
     suggestedPrompt:
-      "Transform this image into a high-quality anime/manga art style that captures the distinctive aesthetic of Japanese animation and comics. Apply bold, clean outlines with variable line weight to define forms. Create large, expressive eyes with detailed highlights and reflections, simplified facial features, and stylized hair with exaggerated volume and distinctive color. Use cell-shaded coloring with flat color areas separated by hard edges for shadows rather than gradual blending. Include characteristic anime visual elements like speed lines for movement, expressive symbols to show emotion, and dramatic lighting effects. The background should be detailed but somewhat simplified compared to the foreground elements. The overall composition should have a dynamic quality with dramatic angles or perspectives and a vibrant color palette that emphasizes character expression and mood. The final image should feel like a frame from a high-quality anime production or a page from a professionally illustrated manga.",
+      "Transform into a high-quality anime/manga illustration with clean lines and distinctive Japanese animation styling. Apply the characteristic anime facial features including larger, expressive eyes with light reflections, simplified nose and mouth, and distinctive hair styling with sleek, gravity-defying locks in vibrant colors. For clothing, create flowing fabrics with dynamic movement and clean fold lines. Use a cell-shaded coloring style with flat color areas separated by clean lines, minimal gradients, and strategic shadows. Add anime-specific emotion indicators like blush marks, sweat drops, or expression lines when appropriate. Set against a background with simplified details and depth-of-field effects typical of anime scenes. The final image should maintain the distinctive anime aesthetic that balances stylization with emotion, using simplified yet expressive features to convey character and mood.",
   },
   "cartoon-style": {
     title: "Cartoon Style",
     description:
-      "Brings a playful energy to an image with exaggerated features.",
-    placeholder: "E.g., Create a fun, stylized cartoon version",
+      "Simplified, exaggerated features with bold outlines in various cartoon styles.",
+    placeholder: "E.g., Modern cartoon with bold lines",
     suggestedPrompt:
-      "Transform this image into a vibrant, playful cartoon style with bold outlines, simplified forms, and exaggerated features. Create a clean, graphic look with smooth, flat colors and simplified shadows that give dimension without complex shading. Apply slightly exaggerated proportions to emphasize distinctive character features while maintaining recognizability. Use thick, consistent outlines around the main elements to give that classic cartoon definition. The color palette should be bright and saturated with good contrast between elements. Add a sense of energy and expressiveness to poses and facial expressions, capturing personality with simple but effective details. The background should be slightly simplified compared to the foreground elements, with a focus on supporting the main subject. The final result should have that instantly recognizable cartoon aesthetic that feels lighthearted, accessible, and full of personality.",
+      "Transform this image into a modern cartoon style with clean, bold outlines and simplified forms. Apply exaggerated proportions and features that enhance expression and character while maintaining recognizability. Use a bright, vibrant color palette with flat color areas and minimal shading for a contemporary cartoon look. Add characteristic cartoon elements like simplified backgrounds, expression lines, or minor motion effects that enhance the playful, animated feel. The styling should feel contemporary and polished, similar to modern animated shows, with attention to line weight variation and appealing character design. The final image should capture the fun, engaging quality of contemporary cartoons while clearly representing the subject from the original image.",
   },
   "gothic-noir": {
     title: "Gothic Noir",
     description:
-      "Combines high contrast and eerie shadows to create an atmosphere of suspense.",
-    placeholder: "E.g., Add dramatic shadows and mysterious atmosphere",
+      "Dark, atmospheric style with high contrast and dramatic shadows.",
+    placeholder: "E.g., Add dramatic shadows and gothic elements",
     suggestedPrompt:
-      "Transform this image into a gothic noir style artwork featuring dramatic shadows, high contrast, and an atmosphere of mystery and suspense. Create a moody, atmospheric scene with deep, inky blacks and stark highlights that sculpt the subject with dramatic lighting. Apply a limited, desaturated color palette dominated by dark tones with occasional accents of deep red, midnight blue, or purple. Incorporate gothic elements like ornate architecture, wrought iron details, or victorian-inspired styling that suggests a sense of decaying grandeur. The lighting should create long, dramatic shadows and slivers of illumination that partially reveal the subject, leaving much to the imagination. Add subtle details like mist, smoke, or environmental elements that enhance the sense of foreboding. The final image should evoke the feeling of classic film noir combined with gothic sensibilities, creating a haunting, cinematic quality that suggests hidden stories and unseen dangers lurking just beyond the frame.",
+      "Transform this image into a gothic noir style with dark, moody atmosphere and dramatic high-contrast lighting. Apply a predominantly dark color palette with deep blacks, rich shadows, and selective highlights that create a stark, dramatic effect. Include gothic architectural elements or decorative motifs like ornate frames, arched windows, or decorative ironwork when appropriate to the composition. Add atmospheric effects such as fog, mist, or smoke that enhance the mysterious quality. Style any figures with elegant, dramatic poses and period-appropriate gothic fashion elements or noir styling. Incorporate symbolism typical of gothic imagery such as ravens, roses, or other elements that suggest mystery and foreboding. The final image should evoke a sense of atmospheric tension, elegant darkness, and dramatic emotional weight, blending elements of classic film noir with gothic romanticism.",
   },
   "charcoal-pencil": {
-    title: "Charcoal Pencil Drawing",
+    title: "Charcoal & Pencil",
     description:
-      "Creates a dramatic, textured black and white drawing with rich shadows and expressive lines.",
-    placeholder: "E.g., Focus on dramatic shading and textural elements",
+      "Black and white sketchy style mimicking traditional drawing media.",
+    placeholder: "E.g., Emphasis on texture and contrast",
     suggestedPrompt:
-      "Transform this image into a sophisticated charcoal pencil drawing with rich tonal contrasts and expressive mark-making. Create a dramatic interplay of light and shadow using a range of values from velvety blacks to bright highlights, with various gray tones for depth. Apply visible, deliberate strokes that capture both fine details and broader gestural marks, varying pressure to create both sharp lines and soft, smudged areas. Include characteristic charcoal drawing elements like bold, decisive outlines, intricate cross-hatching for shadow areas, and strategic highlighting through erasure. The texture should show the grain of the paper with light smudging and blending in places, while maintaining crisp details in focal areas. Emphasize composition through careful balance of negative space and detailed areas. The final image should have the intimate, immediate quality of hand-drawn charcoal artwork with its distinctive dramatic contrast, atmospheric depth, and expressive, tactile surface qualities.",
+      "Transform this image into a realistic charcoal and pencil drawing that captures the texture and depth of traditional hand-drawn techniques. Apply a monochromatic palette ranging from rich blacks to bright whites with a full range of grays, mimicking the look of charcoal, graphite pencil, and white chalk on textured paper. Create varied mark-making including bold, expressive charcoal strokes for darker areas, fine pencil lines for details, and subtle smudging for smooth transitions. Show the texture of the drawing medium with visible strokes, hatching, cross-hatching, and the characteristic granular quality of charcoal. Include strategic areas where the paper texture shows through, and use deliberate eraser marks or highlights to add dimension. Focus on creating strong contrasts between light and shadow while maintaining rich detail in mid-tones. The final drawing should appear convincingly hand-crafted with the spontaneous, expressive quality of traditional drawing media while clearly representing the subject from the original image.",
   },
   "custom-painting": {
     title: "Create Your Own Painting Style",
     description: "Describe your own custom painting transformation.",
-    placeholder:
-      "E.g., Create a mixed-media collage with watercolor and sketch elements",
+    placeholder: "E.g., Combine impressionist style with modern elements",
     suggestedPrompt: "",
   },
 };
@@ -336,24 +337,25 @@ const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
 const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
   "old-western": {
     title: "Old Western",
-    description: "Rugged frontier aesthetic with sepia tones (1860-1890)",
-    placeholder: "E.g., Add cowboy hat or sheriff badge",
+    description:
+      "Capture the rustic, sepia-toned aesthetic of the American Wild West.",
+    placeholder: "E.g., Add cowboy/cowgirl attire and western setting",
     suggestedPrompt:
-      "Transform this photograph of people into an authentic Old Western style, circa 1860-1890. Render the subjects as rugged frontier figures with period-appropriate clothing including cowboy hats, bandanas, leather vests, or prairie dresses. Apply a sepia-toned color palette with dusty textures and weathered appearance. Add contextual elements like wooden boardwalks, saloon backgrounds, or desert landscapes. Create the look of early photography with slight vignetting around edges and the characteristic formal posing of Wild West portraiture, while maintaining recognizable likenesses of the original subjects with a clear likeness to the original subjects.",
+      "Transform into an authentic American Old West (1850s-1890s) portrait. Apply a vintage color treatment with warm sepia tones, subtle vignetting, and slight photo degradation with dust/scratch effects. Convert clothing to period-accurate western wear including options like cowboy hats, leather vests, bandanas, prairie dresses, or period-appropriate formal attire. Add characteristic Western elements such as leather gun belts, pocket watches, lace details, or brooches as appropriate. Include Old West environmental context with wooden buildings, saloons, rural landscapes, or painted studio backdrops typical of period photography. Position subjects with the formal, slightly stiff poses characteristic of long-exposure photography from the era. The final image should authentically capture the rugged frontier aesthetic of Old West photography while maintaining clear likeness to the original subject.",
   },
   "90s-hip-hop": {
-    title: "90's Hip-Hop",
+    title: "90s Hip-Hop",
     description:
-      "Bold fashion with baggy clothes, gold chains, and urban backdrops",
-    placeholder: "E.g., Add backward cap and boom box",
+      "Vibrant urban style with iconic fashion and visual elements from 90s hip-hop culture.",
+    placeholder: "E.g., Add 90s hip-hop fashion and urban setting",
     suggestedPrompt:
-      "Transform into an authentic 90's hip-hop music video style portrait. Apply high-contrast photography with slight film grain and bold colors. Convert clothing to iconic 90's hip-hop fashion including oversized jerseys, baggy jeans, Timberland boots, bright tracksuits, backward caps, or bandanas. Add statement gold chains, large medallions, chunky watches, and rectangular sunglasses. Set against urban backdrops like graffiti walls, basketball courts, city streets, or luxury cars. Include 90's props like boomboxes, pagers, early cell phones, or basketball sneakers. The final image should capture the confident, bold aesthetic of 90's hip-hop culture while maintaining clear likeness to the original subject.",
+      "Transform into an authentic 1990s hip-hop style portrait with bold, vibrant colors and slightly overexposed flash photography aesthetic. Convert clothing to iconic 90s hip-hop fashion including baggy jeans, oversized sports jerseys, branded tracksuits, Timberland boots, or streetwear with bold logos and bright colors. Add characteristic 90s hip-hop accessories like chunky gold chains, door-knocker earrings, snapback caps worn at angles, bandanas, or sports team apparel. Style hair in 90s trends like high-top fades, box braids, flat tops, or other era-specific styles. Set against urban backdrops featuring graffiti art, basketball courts, city streets, or other iconic 90s hip-hop environments. Apply color effects reminiscent of 90s film photography with saturated colors, slight film grain, and the characteristic look of 90s music videos and album covers. The final image should authentically capture the bold, expressive aesthetic of 90s hip-hop culture while maintaining clear likeness to the original subject.",
   },
   "1980s": {
-    title: "1980's",
+    title: "1980s",
     description:
-      "Vibrant neon colors, big hair, shoulder pads, and maximalist style",
-    placeholder: "E.g., Add neon background and retro sunglasses",
+      "Vibrant neon aesthetics, distinctive fashion, and visual style of the 1980s era.",
+    placeholder: "E.g., Add 80s fashion, hairstyle, and background",
     suggestedPrompt:
       "Transform into an authentic 1980's portrait with vibrant neon aesthetics. Apply high-saturation, high-contrast photography with slight airbrushing effect. Convert hairstyles to characteristic 80's looks including big permed hair, mullets, side ponytails, or feathered styles. Update clothing to iconic 80's fashion with shoulder pads, Members Only jackets, leg warmers, acid-wash jeans, neon colors, or power suits. Add period accessories like large plastic earrings, Ray-Ban Wayfarers, scrunchies, sweatbands, or chunky digital watches. Set against 80's backdrops featuring laser grids, chrome effects, geometric patterns, or airbrushed gradients. Include 80's technology like boomboxes, Walkmans, early video game systems, or brick phones. The final image should capture the maximalist, energetic spirit of the 1980's while maintaining clear likeness to the original subject.",
   },
@@ -365,75 +367,54 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
     suggestedPrompt:
       "Transform into a Renaissance portrait painting in the style of masters like Leonardo da Vinci or Raphael (1400-1600). Apply oil painting technique with rich, muted color palette and subtle glazing effects. Convert clothing to period Renaissance attire including high collars, elaborate embroidery, velvet, brocade fabrics, ornate jewelry, and formal headwear. Position the subject in a three-quarter view with dignified posture against a dark backdrop or classical architectural elements. Add symbolic Renaissance objects that reflect status or character like books, scientific instruments, religious items, or flora. Apply characteristic Renaissance lighting with soft modeling and sfumato technique creating subtle transitions between light and shadow. The final portrait should convey the solemnity, dignity and intellectual character of Renaissance portraiture while maintaining clear likeness to the original subject.",
   },
-
   "victorian-era": {
     title: "Victorian Era",
     description:
-      "Formal portraiture with period clothing and restrained dignity (1837-1901)",
-    placeholder: "E.g., Add ornate background or pocket watch",
+      "Formal, ornate style reflecting the fashions and photographs of the late 1800s.",
+    placeholder: "E.g., Add Victorian clothing and formal pose",
     suggestedPrompt:
-      "Transform into an authentic Victorian era photographic portrait (1837-1901). Apply sepia or black and white tones with formal composition and static poses characteristic of early photography. Convert clothing to period-appropriate Victorian attire including high collars, waistcoats, pocket watches, brooches, formal dresses with corseted waists, or military uniforms with medals. Position the subject with a dignified, serious expression in front of painted backdrops, ornate furniture, columns, or velvet drapes. Add Victorian accessories like walking sticks, parasols, top hats, gloves, or Victorian jewelry. The final portrait should capture the formality, restraint and social propriety of Victorian society with the technical limitations of period photography while maintaining clear likeness to the original subject.",
+      "Transform into an authentic Victorian era (1837-1901) portrait. Apply a vintage photographic style with sepia toning, formal composition, and the slight blur characteristic of early photography's long exposure times. Convert clothing to period-accurate Victorian fashion including high-necked dresses with bustles, corsets, and lace details for women, or formal frock coats, waistcoats, and high collars for men. Add Victorian accessories such as cameo brooches, pocket watches with chains, lace gloves, or walking sticks. Style hair in Victorian fashions including updos with center parts for women or neat side parts with facial hair for men. Set against Victorian backdrops such as formal parlors with heavy drapery, ornate furniture, painted scenic backgrounds, or formal gardens. Position the subject with the stiff, formal poses typical of Victorian photography where subjects had to remain still for long exposures. The final portrait should authentically capture the formal, restrained aesthetic of Victorian photography while maintaining clear likeness to the original subject.",
   },
   "disco-era": {
     title: "Disco Era",
     description:
-      "Glamorous 70's style with sequins, platform shoes, and vibrant lighting",
-    placeholder: "E.g., Add disco ball and dance floor",
+      "Glittering, colorful 1970s disco style with characteristic fashion and lighting.",
+    placeholder: "E.g., Add disco fashion and dance floor setting",
     suggestedPrompt:
-      "Transform into a quintessential Disco Era (1975-1980) portrait. Apply vivid, slightly oversaturated colors with glamorous lighting and lens flare effects. Convert hairstyles to characteristic disco looks including feathered cuts, afros, or Farrah Fawcett waves. Update clothing to iconic disco fashion with sequins, metallic fabrics, satin shirts with wide collars, bell bottoms, platform shoes, or wrap dresses. Add disco accessories like oversized sunglasses, chunky gold jewelry, or medallions. Set against disco nightclub backdrops featuring mirror balls, colored lights, illuminated dance floors, or sparkly decorations. The final image should capture the energetic, liberated spirit of the disco era while maintaining clear likeness to the original subject.",
+      "Transform the uploaded photo of a person or couple into a 1970s disco scene, altering only their hair, clothing, and background—do not change any facial features or body proportions.  \n1. **Isolate regions**  \n   - Use the image's hair mask to replace hairstyles.  \n   - Use the clothing mask to swap in disco outfits.  \n   - Use a background mask to recreate a dance‐floor setting.  \n2. **Preserve identity**  \n   - Keep all facial attributes (skin tone, bone structure, eye color & shape, lip shape, expression) exactly as in the original—no age shifts, no new wrinkles or blemishes.  \n   - Maintain original body posture and proportions.  \n3. **Randomize key disco elements** (choose one per run):  \n   - **Hair style:** classic rounded afro | feathered shag with curtain bangs | voluminous blowout waves  \n   - **Outfit:** sequin jumpsuit with flared legs | polyester wrap dress with geometric prints | satin shirt with wide collar + bell-bottom trousers  \n   - **Accessory:** mirrored aviator sunglasses | wide paisley headband | metallic platform shoes  \n4. **Background & lighting**  \n   - Place the subjects on a reflective dance floor with a spinning disco ball overhead.  \n   - Add colored spotlights (amber, magenta, teal) and subtle lens flares.  \n5. **Seamless integration**  \n   - Blend shadows, highlights, and color cast so the new hair, clothes, and background look like one cohesive photograph.  \n6. **Negative constraints** (do **not**):  \n   - Alter any facial detail, skin texture, or age cues.  \n   - Change body poses, hand positions, or cropping.  \n   - Introduce modern elements (smartphones, modern jewelry, contemporary hairstyles).",
   },
   cyberpunk: {
     title: "Cyberpunk",
     description:
-      "Futuristic dystopian aesthetic with neon accents and technological elements",
-    placeholder: "E.g., Add cybernetic implants and city backdrop",
+      "Futuristic dystopian aesthetic with neon lights, urban decay, and high-tech elements.",
+    placeholder: "E.g., Add neon lights and cybernetic elements",
     suggestedPrompt:
-      "Transform into a cyberpunk-style portrait set in a high-tech dystopian future. Apply dark, contrasty photography with vibrant neon accents and cinematic color grading in teals and magentas. Add subtle technological augmentations like glowing cybernetic implants, neural interfaces, AR displays, or bionic enhancements that merge seamlessly with the subject. Update clothing to futuristic urban streetwear with technical fabrics, asymmetrical cuts, utility straps, and tech accessories. Set against dystopian city backdrops featuring neon signs, holographic advertisements, industrial elements, and rainy reflective streets. Include cyberpunk elements like data visualizations, glitch effects, or floating UI elements. The final image should capture the gritty yet high-tech aesthetic of cyberpunk while maintaining clear likeness to the original subject.",
+      "Transform into a cyberpunk scene set in a high-tech dystopian future. Apply a cinematic color grade with dominant blue and magenta neon tones contrasting with dark shadows and urban decay. Add technological modifications like subtle cybernetic implants, neural interface ports, augmented reality displays, or holographic elements integrated with the subject. Update clothing to cyberpunk fashion featuring a mix of high-tech elements with street-level grit - technical fabrics, asymmetric designs, utility garments with functional pockets/straps, and practical urban wear with futuristic details. Set against a dystopian cityscape background with dense urban architecture, neon signs in multiple languages, holographic advertisements, industrial elements, and signs of both technological advancement and social decay. Add atmospheric elements like rain, fog, or steam illuminated by colored lights to enhance the mood. The final image should capture the gritty, high-tech/low-life aesthetic that defines cyberpunk while maintaining clear likeness to the original subject.",
   },
   medieval: {
     title: "Medieval",
     description:
-      "Stylized representation with period attire and symbolic elements (1000-1400)",
-    placeholder: "E.g., Add crown or armor and castle background",
+      "Historical style depicting the Middle Ages with period costumes and settings.",
+    placeholder: "E.g., Add medieval attire and castle background",
     suggestedPrompt:
-      "Transform into an authentic Medieval art style reminiscent of illuminated manuscripts and early European paintings (1000-1400). Apply flat, iconic painting technique with rich, primary colors, minimal shading, and pronounced outlines. Convert clothing to period Medieval attire including tunics, cloaks, chainmail, plate armor, wimples, or long robes with symbolic colors. Add Medieval status symbols like crowns, scepters, heraldic emblems, hawks, or swords. Set against simplified backgrounds with gold leaf accents, Norman arches, castle elements, or natural scenes with stylized trees and flowers. Include Medieval iconography related to the subject's characteristics or profession. The final image should capture the symbolic, somewhat flattened perspective of Medieval art with its bold colors and religious or courtly themes while still maintaining some likeness to the original subject.",
+      "Transform into an authentic medieval portrait set between 1100-1400 CE. Convert into the style of medieval illuminated manuscripts or early Renaissance painting with rich colors, flat perspective, and decorative elements. Update clothing to historically accurate medieval attire including period-appropriate tunics, surcoats, cloaks, or gowns with appropriate layering and construction for the subject's apparent social status. Add medieval accessories such as belts with pouches, simple jewelry, head coverings like coifs or veils, and status-appropriate items. Set against medieval environments featuring castle interiors, countryside with period architecture, or simple colored backgrounds with decorative borders as seen in manuscript illustrations. Include medieval symbolic elements or activities appropriate to the setting such as religious symbols, heraldry, or period-accurate tools/weapons. The final portrait should authentically capture the aesthetic of medieval European art while maintaining recognizable likeness to the original subject.",
   },
   "custom-era": {
     title: "Create Your Own Era",
-    description: "Describe your own custom historical era transformation",
-    placeholder:
-      "E.g., Transform into Ancient Egyptian style with hieroglyphic elements",
+    description: "Describe your own custom historical era transformation.",
+    placeholder: "E.g., Transform into 1920s Gatsby-era style",
     suggestedPrompt: "",
   },
 };
 
 // Other subcategories
+
 const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   "mullets": {
     title: "Mullets",
     description: "It's well known that everyone secretly wants to look like Joe Dirt.",
     placeholder: "E.g., Make my mullet more dramatic with volume",
-    suggestedPrompt: "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.  
-      1. Use the image’s hair mask to isolate the hair—do not touch the face, body, clothing, or background.  
-      2. Match the original hair color, texture, and density exactly.  
-      3. Randomly choose one of these top-hair styles for each run:  
-         - curly, teased volume  
-         - short, textured spikes  
-         - feathered, classic ’80s layers  
-         - sleek, modern taper  
-      4. In every variation, the back must be noticeably longer than the front (“business in front, party in back”).  
-      5. Preserve **all** facial attributes exactly as in the original, including:  
-         - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)  
-         - Facial proportions and bone structure  
-         - Eye color, eye shape, lips, and expression  
-         - Age appearance (do **not** make the subject look older or younger)  
-      6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.  
-
-      **Negative constraints** (do **not**):  
-      - Alter any aspect of the face, skin texture, or age cues.  
-      - Introduce wrinkles, sagging, or any aging artifacts.  
-      - Change posture, clothing, background, or cropping.  
-",
+    suggestedPrompt: "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.\n1. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background.\n2. Match the original hair color, texture, and density exactly.\n3. Randomly choose one of these top-hair styles for each run:\n   - curly, teased volume\n   - short, textured spikes\n   - feathered, classic '80s layers\n   - sleek, modern taper\n4. In every variation, the back must be noticeably longer than the front (\"business in front, party in back\").\n5. Preserve **all** facial attributes exactly as in the original, including:\n   - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)\n   - Facial proportions and bone structure\n   - Eye color, eye shape, lips, and expression\n   - Age appearance (do **not** make the subject look older or younger)\n6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.\n\n**Negative constraints** (do **not**):\n- Alter any aspect of the face, skin texture, or age cues.\n- Introduce wrinkles, sagging, or any aging artifacts.\n- Change posture, clothing, background, or cropping.",
   },
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
@@ -455,9 +436,9 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     title: "Ghibli Style",
     description:
       "Transform into the beautiful, painterly anime style of Studio Ghibli films.",
-    placeholder: "E.g., Make it look like a scene from a Miyazaki film",
+    placeholder: "E.g., Create a whimsical Miyazaki-inspired scene",
     suggestedPrompt:
-      "Transform into the distinctive Studio Ghibli animation style while preserving the subject's essential features and likeness. Apply the characteristic hand-painted watercolor aesthetic with soft, diffused lighting and a gentle color palette of muted pastels and natural tones. Add delicate line work and careful attention to small details that give depth to the scene. Recreate backgrounds with the studio's signature nature elements - billowing clouds, wind-swept grasses, detailed foliage, or charming rural/traditional architecture. Maintain the subject's core identity but render them with slightly simplified features, larger expressive eyes, and natural-looking hair with visible strands that might flow in a gentle breeze. The overall atmosphere should capture that dreamlike quality between fantasy and reality that defines the Ghibli look - where everyday moments feel magical and environments breathe with life. Include subtle environmental touches like floating dust particles, dappled sunlight, or small background movements that suggest a living world.",
+      "Transform into the distinctive Studio Ghibli animation style reminiscent of films by Hayao Miyazaki. Use the characteristic soft, painterly animation style with watercolor-inspired backgrounds and attention to natural elements. Apply the signature Ghibli character design including simplified but expressive faces with large, detailed eyes and minimal facial lines. Update the scene with warm, natural lighting and atmospheric effects like gentle wind or soft shadows. Add Ghibli-inspired environmental details such as lush vegetation, detailed clouds, charming architecture, or magical subtle elements that suggest wonder. Include the sense of movement and liveliness typical of Ghibli films with hair or clothing that appears to flow naturally. The final image should capture the heartfelt, nostalgic quality and connection to nature that characterizes Studio Ghibli's unique aesthetic while maintaining recognizable likeness to the original subject.",
   },
   "ai-action-figure": {
     title: "AI Action Figure",
@@ -465,15 +446,15 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
       "Turn the subject into a realistic, detailed action figure or toy.",
     placeholder: "E.g., Put the name on the packaging with accessories",
     suggestedPrompt:
-      "Use this uploaded image to create a picture of an action figure toy in a blister package, displayed from head to toe. The action figure should accurately represent the character/person from the uploaded image while giving it a mass-produced toy aesthetic with visible joints and plastic texture. Include relevant accessories that match the character's theme, abilities, or items visible in the original image. The package should have clear plastic with cardboard backing featuring bright colors and marketing text. The packaging should prominently display an appropriate name/title at the top that fits the character/person shown in the image.",
+      "Transform into a highly detailed, collectible action figure presented in professional packaging. Create a realistic toy version with visible plastic texture, molded details, articulation points at major joints, and slight manufacturing imperfections. Design custom blister packaging featuring character artwork, logos, and product details including a character name and special features listed on the card. Add accessory items relevant to the character's identity displayed alongside the figure. Position the packaged figure against a clean background with professional product photography lighting that shows reflections on the plastic packaging. The final image should realistically depict how the subject would appear if manufactured as a premium collectible action figure in unopened retail packaging, presented as a professional product photograph.",
   },
   "pet-as-human": {
     title: "What Would My Pet Look Like as a Human",
     description:
       "Reimagine a pet as a human while keeping recognizable traits and personality.",
-    placeholder: "E.g., Transform my dog into a human with similar features",
+    placeholder: "E.g., Turn my cat into a human with feline features",
     suggestedPrompt:
-      "Transform the pet into a human character while preserving distinctive features, coloration, and personality. Maintain the essence and character in human form, with subtle references to fur color, eye shape, and distinctive markings. Create a humanoid that feels connected to the original pet's identity and spirit.",
+      "Transform a pet into a human character while preserving the pet's distinctive traits, coloration, and personality. Create a human face and body that incorporates subtle animal features reminiscent of the original pet - such as similar eye color, hair color/pattern matching fur color/pattern, and facial expressions that capture the pet's typical demeanor. Dress the human character in clothing that reflects the pet's personality and status - elegant for dignified pets, casual for playful pets, etc. The character should feel like a natural human embodiment of the specific pet's essence and personality, not a generic animal-human hybrid. Position in a setting or with props that connect to the pet's lifestyle or preferences. The final image should create an immediate sense of recognition while being fully humanized.",
   },
   "self-as-cat": {
     title: "What Would I Look Like as a Cat",
@@ -500,729 +481,610 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   },
 };
 
+// This is the main component
 export default function PromptInput({
   originalImage,
   onSubmit,
   onBack,
   selectedTransformation,
-  defaultPrompt = "", // Default to empty string if not provided
-  savedStyle = null, // Default to null if not provided
+  defaultPrompt,
+  savedStyle,
 }: PromptInputProps) {
-  // State variables
-  const [prompt, setPrompt] = useState(defaultPrompt);
-  const [charCount, setCharCount] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<string>("1024x1024"); // Default to square
-  const [isEnhancing, setIsEnhancing] = useState(false);
-  const [primaryCategory, setPrimaryCategory] = useState<
-    "cartoon" | "product" | "painting" | "era" | "other" | null
-  >(null);
+  const { toast } = useToast();
+  const [promptText, setPromptText] = useState(defaultPrompt || "");
+  const [imageSize, setImageSize] = useState<"default" | "mobile" | "square">("square");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showTips, setShowTips] = useState(false);
+  const [randomTip, setRandomTip] = useState("");
+
+  // Transformation selection state
+  const [primaryCategory, setPrimaryCategory] =
+    useState<TransformationType | null>(
+      selectedTransformation || savedStyle?.category || null
+    );
+
+  // Subcategory selections
   const [cartoonSubcategory, setCartoonSubcategory] =
     useState<CartoonSubcategory | null>(null);
   const [productSubcategory, setProductSubcategory] =
     useState<ProductSubcategory | null>(null);
   const [paintingSubcategory, setPaintingSubcategory] =
     useState<PaintingSubcategory | null>(null);
-  const [eraSubcategory, setEraSubcategory] = useState<EraSubcategory | null>(
-    null,
-  );
+  const [eraSubcategory, setEraSubcategory] =
+    useState<EraSubcategory | null>(null);
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
+  // No pop culture subcategory needed
 
-  const { toast } = useToast();
-  const maxChars = 500;
-
-  // Update character count when prompt changes
-  useEffect(() => {
-    setCharCount(prompt.length);
-  }, [prompt]);
-
-  // Set initial selection from parent component if provided
-  useEffect(() => {
-    if (selectedTransformation === "cartoon") {
-      setPrimaryCategory("cartoon");
-    } else if (selectedTransformation === "product") {
-      setPrimaryCategory("product");
-    } else if (selectedTransformation === "painting") {
-      setPrimaryCategory("painting");
-    } else if (selectedTransformation === "custom") {
-      setPrimaryCategory("other");
+  // Determine subcategory options based on primary category
+  const getSubcategoryOptions = () => {
+    switch (primaryCategory) {
+      case "cartoon":
+        return Object.keys(CARTOON_STYLES) as CartoonSubcategory[];
+      case "product":
+        return Object.keys(PRODUCT_STYLES) as ProductSubcategory[];
+      case "painting":
+        return Object.keys(PAINTING_STYLES) as PaintingSubcategory[];
+      case "era":
+        return Object.keys(ERA_STYLES) as EraSubcategory[];
+      case "other":
+        return Object.keys(OTHER_STYLES) as OtherSubcategory[];
+      case "pop-culture":
+        return Object.keys(POP_CULTURE_STYLES) as PopCultureSubcategory[];
+      case "kids-real":
+        // No subcategories for kids-real
+        return [];
+      default:
+        return [];
     }
-  }, [selectedTransformation]);
-  
-  // Handle saved style from Ideas page if present
+  };
+
+  // Get random writing tip
   useEffect(() => {
-    if (savedStyle && savedStyle.category === "Fun/Viral" && savedStyle.title === "Mullet") {
-      console.log("Setting primary category to other and subcategory to mullets from saved style");
-      setPrimaryCategory("other");
-      setOtherSubcategory("mullets");
+    if (PROMPT_TIPS.length > 0) {
+      const tipIndex = Math.floor(Math.random() * PROMPT_TIPS.length);
+      setRandomTip(PROMPT_TIPS[tipIndex]);
+    }
+  }, []);
+
+  // Initialize from saved style if available
+  useEffect(() => {
+    if (savedStyle && savedStyle.prompt) {
+      console.log("Setting prompt from saved style:", savedStyle.prompt);
+      setPromptText(savedStyle.prompt);
+
+      // Handle style category
+      if (savedStyle.category) {
+        console.log("Setting primary category to", savedStyle.category, "from saved style");
+        setPrimaryCategory(savedStyle.category as TransformationType);
+      }
+
+      // Special handling for mullets saved style
+      if (savedStyle.title === "Mullets") {
+        console.log("Setting primary category to other and subcategory to mullets from saved style");
+        setPrimaryCategory("other");
+        setOtherSubcategory("mullets");
+      }
     }
   }, [savedStyle]);
 
   // Handle form submission
   const handleSubmit = () => {
-    // Remove validation to allow empty prompts - the suggestedPrompt will be used
-    // if (prompt.trim().length === 0) return;
-
-    // Build the complete prompt based on selections
-    let finalPrompt = prompt.trim();
-
-    // Always include the full Super Mario prompt, regardless of user input
-    if (primaryCategory === "cartoon" && cartoonSubcategory === "super-mario") {
-      const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
-      if (suggestion) {
-        finalPrompt = suggestion + " " + finalPrompt;
-      }
-    }
-    // Always include the full Lego prompt, regardless of user input
-    else if (primaryCategory === "cartoon" && cartoonSubcategory === "lego") {
-      const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
-      if (suggestion) {
-        finalPrompt = suggestion + " " + finalPrompt;
-      }
-    }
-    // Always include the full Princess prompt, regardless of user input
-    else if (
-      primaryCategory === "cartoon" &&
-      cartoonSubcategory === "princess"
-    ) {
-      const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
-      if (suggestion) {
-        finalPrompt = suggestion + " " + finalPrompt;
-      }
-    }
-    // Add suggested prompts from chosen categories
-    else {
-      // If no subcategory is selected but primary is cartoon, use a generic prompt
-      if (primaryCategory === "cartoon" && !cartoonSubcategory) {
-        finalPrompt =
-          "Transform into a cartoon style with vibrant colors and exaggerated features. " +
-          finalPrompt;
-      }
-      // If no subcategory is selected but primary is product, use a generic prompt
-      else if (primaryCategory === "product" && !productSubcategory) {
-        finalPrompt =
-          "Enhance with professional lighting and a clean background. " +
-          finalPrompt;
-      }
-      // If no subcategory is selected but primary is painting, use a generic prompt
-      else if (primaryCategory === "painting" && !paintingSubcategory) {
-        finalPrompt =
-          "Transform into a beautiful artistic painting with rich textures and expressive brushwork. " +
-          finalPrompt;
-      }
-      // If no subcategory is selected but primary is era, use a generic prompt
-      else if (primaryCategory === "era" && !eraSubcategory) {
-        finalPrompt =
-          "Transform into a historical or cultural era style with period-appropriate elements. " +
-          finalPrompt;
-      }
-      // If no subcategory is selected but primary is other, use a generic prompt
-      else if (primaryCategory === "other" && !otherSubcategory) {
-        finalPrompt =
-          "Transform with creative artistic effects. " + finalPrompt;
-      }
-      // If subcategory is selected, use its suggested prompt for minimal user input
-      else if (prompt.length < 20) {
-        if (
-          primaryCategory === "cartoon" &&
-          cartoonSubcategory &&
-          cartoonSubcategory in CARTOON_STYLES
-        ) {
-          const suggestion = CARTOON_STYLES[cartoonSubcategory].suggestedPrompt;
-          if (suggestion) {
-            finalPrompt = suggestion + " " + finalPrompt;
-          }
-        } else if (
-          primaryCategory === "product" &&
-          productSubcategory &&
-          productSubcategory in PRODUCT_STYLES
-        ) {
-          const suggestion = PRODUCT_STYLES[productSubcategory].suggestedPrompt;
-          if (suggestion) {
-            finalPrompt = suggestion + " " + finalPrompt;
-          }
-        } else if (
-          primaryCategory === "painting" &&
-          paintingSubcategory &&
-          paintingSubcategory in PAINTING_STYLES
-        ) {
-          const suggestion =
-            PAINTING_STYLES[paintingSubcategory].suggestedPrompt;
-          if (suggestion) {
-            finalPrompt = suggestion + " " + finalPrompt;
-          }
-        } else if (
-          primaryCategory === "era" &&
-          eraSubcategory &&
-          eraSubcategory in ERA_STYLES
-        ) {
-          const suggestion = ERA_STYLES[eraSubcategory].suggestedPrompt;
-          if (suggestion) {
-            finalPrompt = suggestion + " " + finalPrompt;
-          }
-        } else if (
-          primaryCategory === "other" &&
-          otherSubcategory &&
-          otherSubcategory in OTHER_STYLES
-        ) {
-          const suggestion = OTHER_STYLES[otherSubcategory].suggestedPrompt;
-          if (suggestion) {
-            finalPrompt = suggestion + " " + finalPrompt;
-          }
-        }
-      }
-    }
-
-    onSubmit(finalPrompt, selectedSize);
-  };
-
-  // Handle prompt input changes
-  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= maxChars) {
-      setPrompt(value);
-    }
-  };
-
-  // Handle size selection
-  const handleSizeSelection = (size: string) => {
-    setSelectedSize(size);
-  };
-
-  // Reset subcategory selections when primary category changes
-  const handlePrimaryCategorySelect = (
-    category: "cartoon" | "product" | "painting" | "era" | "other",
-  ) => {
-    setPrimaryCategory(category);
-    setCartoonSubcategory(null);
-    setProductSubcategory(null);
-    setPaintingSubcategory(null);
-    setEraSubcategory(null);
-    setOtherSubcategory(null);
-  };
-
-  // Set subcategory selection
-  const handleCartoonSelect = (subcategory: CartoonSubcategory) => {
-    setCartoonSubcategory(subcategory);
-  };
-
-  const handleProductSelect = (subcategory: ProductSubcategory) => {
-    setProductSubcategory(subcategory);
-  };
-
-  const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
-    setPaintingSubcategory(subcategory);
-  };
-
-  const handleEraSelect = (subcategory: EraSubcategory) => {
-    setEraSubcategory(subcategory);
-  };
-
-  const handleOtherSelect = (subcategory: OtherSubcategory) => {
-    setOtherSubcategory(subcategory);
-  };
-
-  // AI prompt enhancement
-  const enhancePrompt = async () => {
-    if (prompt.trim().length === 0) {
+    if (!promptText.trim()) {
       toast({
-        title: "Empty prompt",
-        description: "Please enter a prompt to enhance.",
+        title: "Prompt required",
+        description: "Please enter a description of how to transform the image.",
         variant: "destructive",
       });
       return;
     }
 
-    try {
-      setIsEnhancing(true);
+    setIsLoading(true);
+    onSubmit(promptText, imageSize);
+  };
 
-      const response = await apiRequest("POST", "/api/enhance-prompt", {
-        prompt: prompt.trim(),
+  // Handle primary category selection
+  const handleCategorySelect = (category: TransformationType) => {
+    setPrimaryCategory(category);
+    // Reset all subcategories when changing the main category
+    setCartoonSubcategory(null);
+    setProductSubcategory(null);
+    setPaintingSubcategory(null);
+    setEraSubcategory(null);
+    setOtherSubcategory(null);
+    setPopCultureSubcategory(null);
+    
+    // Set default prompt for Kids to Real
+    if (category === "kids-real") {
+      setPromptText("Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.");
+    }
+  };
+
+  // Handle subcategory selections
+  const handleCartoonSelect = (subcategory: CartoonSubcategory) => {
+    setCartoonSubcategory(subcategory);
+    if (subcategory !== "custom-cartoon") {
+      setPromptText(CARTOON_STYLES[subcategory].suggestedPrompt);
+    }
+  };
+
+  const handleProductSelect = (subcategory: ProductSubcategory) => {
+    setProductSubcategory(subcategory);
+    if (subcategory !== "custom-product") {
+      setPromptText(PRODUCT_STYLES[subcategory].suggestedPrompt);
+    }
+  };
+
+  const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
+    setPaintingSubcategory(subcategory);
+    if (subcategory !== "custom-painting") {
+      setPromptText(PAINTING_STYLES[subcategory].suggestedPrompt);
+    }
+  };
+
+  const handleEraSelect = (subcategory: EraSubcategory) => {
+    setEraSubcategory(subcategory);
+    if (subcategory !== "custom-era") {
+      setPromptText(ERA_STYLES[subcategory].suggestedPrompt);
+    }
+  };
+
+  const handleOtherSelect = (subcategory: OtherSubcategory) => {
+    setOtherSubcategory(subcategory);
+    if (subcategory !== "custom-other") {
+      setPromptText(OTHER_STYLES[subcategory].suggestedPrompt);
+    }
+  };
+  
+  const handlePopCultureSelect = (subcategory: PopCultureSubcategory) => {
+    setPopCultureSubcategory(subcategory);
+    if (subcategory !== "custom-pop-culture") {
+      setPromptText(POP_CULTURE_STYLES[subcategory].suggestedPrompt);
+    }
+  };
+
+  // Get the current subcategory title and description
+  const getCurrentSubcategoryInfo = () => {
+    if (primaryCategory === "cartoon" && cartoonSubcategory) {
+      return CARTOON_STYLES[cartoonSubcategory];
+    } else if (primaryCategory === "product" && productSubcategory) {
+      return PRODUCT_STYLES[productSubcategory];
+    } else if (primaryCategory === "painting" && paintingSubcategory) {
+      return PAINTING_STYLES[paintingSubcategory];
+    } else if (primaryCategory === "era" && eraSubcategory) {
+      return ERA_STYLES[eraSubcategory];
+    } else if (primaryCategory === "other" && otherSubcategory) {
+      return OTHER_STYLES[otherSubcategory];
+    } else if (primaryCategory === "pop-culture" && popCultureSubcategory) {
+      return POP_CULTURE_STYLES[popCultureSubcategory];
+    } else if (primaryCategory === "kids-real") {
+      // Custom info for kids-real category
+      return {
+        title: "Sketch to Reality",
+        description: "Transform children's drawings, simple sketches, or doodles into realistic photographic images while preserving the original composition and creative elements.",
+        placeholder: "Tip: Upload a simple drawing or sketch and see it transformed into a realistic photograph.",
+        suggestedPrompt: "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm."
+      };
+    }
+    return null;
+  };
+
+  // Get the appropriate icon based on the transformation type
+  const getCategoryIcon = (category: TransformationType) => {
+    switch (category) {
+      case "cartoon":
+        return <ImageIcon className="h-5 w-5 mr-2" />;
+      case "product":
+        return <BoxIcon className="h-5 w-5 mr-2" />;
+      case "painting":
+        return <Paintbrush className="h-5 w-5 mr-2" />;
+      case "era":
+        return <Clock className="h-5 w-5 mr-2" />;
+      case "other":
+        return <Sparkles className="h-5 w-5 mr-2" />;
+      case "kids-real":
+        return <Baby className="h-5 w-5 mr-2" />;
+      case "pop-culture":
+        return <Film className="h-5 w-5 mr-2" />;
+      default:
+        return <Wand2 className="h-5 w-5 mr-2" />;
+    }
+  };
+
+  // Function to check for active subcategory
+  const isSubcategoryActive = (category: string, subcategory: string) => {
+    switch (category) {
+      case "cartoon":
+        return cartoonSubcategory === subcategory;
+      case "product":
+        return productSubcategory === subcategory;
+      case "painting":
+        return paintingSubcategory === subcategory;
+      case "era":
+        return eraSubcategory === subcategory;
+      case "other":
+        return otherSubcategory === subcategory;
+      case "pop-culture":
+        return popCultureSubcategory === subcategory;
+      default:
+        return false;
+    }
+  };
+
+  // Function to get custom prompt placeholder
+  const getCustomPlaceholder = () => {
+    if (primaryCategory === "cartoon" && cartoonSubcategory === "custom-cartoon") {
+      return "Describe your custom cartoon transformation...";
+    } else if (primaryCategory === "product" && productSubcategory === "custom-product") {
+      return "Describe your custom product transformation...";
+    } else if (primaryCategory === "painting" && paintingSubcategory === "custom-painting") {
+      return "Describe your custom painting transformation...";
+    } else if (primaryCategory === "era" && eraSubcategory === "custom-era") {
+      return "Describe your custom historical era transformation...";
+    } else if (primaryCategory === "other" && otherSubcategory === "custom-other") {
+      return "Describe your custom transformation...";
+    } else if (primaryCategory === "pop-culture" && popCultureSubcategory === "custom-pop-culture") {
+      return "Describe your custom pop culture transformation...";
+    } else {
+      return "Describe how to transform your image...";
+    }
+  };
+
+  // Function to handle suggest prompt button
+  const handleSuggestPrompt = async () => {
+    if (!originalImage) {
+      toast({
+        title: "Image required",
+        description: "Please upload an image first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await apiRequest("/api/suggest-prompt", {
+        method: "POST",
+        body: JSON.stringify({ image: originalImage }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to enhance prompt");
-      }
-
-      const data = await response.json();
-
-      if (data.enhancedPrompt) {
-        setPrompt(data.enhancedPrompt);
+      if (response.prompt) {
+        setPromptText(response.prompt);
         toast({
-          title: "Prompt Enhanced",
-          description: "Your prompt has been enhanced with AI assistance.",
+          title: "Prompt suggested",
+          description: "AI has analyzed your image and suggested a prompt.",
         });
       }
     } catch (error) {
-      console.error("Error enhancing prompt:", error);
+      console.error("Error suggesting prompt:", error);
       toast({
-        title: "Enhancement Failed",
-        description:
-          "There was an error enhancing your prompt. Please try again.",
+        title: "Error",
+        description: "Could not generate a prompt suggestion.",
         variant: "destructive",
       });
-    } finally {
-      setIsEnhancing(false);
     }
+    setIsLoading(false);
   };
 
-  // Get current description based on selections
-  const getCurrentDescription = () => {
-    if (
-      primaryCategory === "cartoon" &&
-      cartoonSubcategory &&
-      cartoonSubcategory in CARTOON_STYLES
-    ) {
-      return CARTOON_STYLES[cartoonSubcategory].description;
-    } else if (
-      primaryCategory === "product" &&
-      productSubcategory &&
-      productSubcategory in PRODUCT_STYLES
-    ) {
-      return PRODUCT_STYLES[productSubcategory].description;
-    } else if (
-      primaryCategory === "painting" &&
-      paintingSubcategory &&
-      paintingSubcategory in PAINTING_STYLES
-    ) {
-      return PAINTING_STYLES[paintingSubcategory].description;
-    } else if (
-      primaryCategory === "era" &&
-      eraSubcategory &&
-      eraSubcategory in ERA_STYLES
-    ) {
-      return ERA_STYLES[eraSubcategory].description;
-    } else if (
-      primaryCategory === "other" &&
-      otherSubcategory &&
-      otherSubcategory in OTHER_STYLES
-    ) {
-      return OTHER_STYLES[otherSubcategory].description;
-    }
-
-    return "Be specific about what changes you want. For best results, include details about style, mood, and elements.";
-  };
-
-  // Get current placeholder based on selections
-  const getCurrentPlaceholder = () => {
-    // For cartoon styles, always use the same placeholder regardless of subcategory
-    if (primaryCategory === "cartoon") {
-      return "E.g., Place the name Jack somewhere in the image";
-    } else if (
-      primaryCategory === "product" &&
-      productSubcategory &&
-      productSubcategory in PRODUCT_STYLES
-    ) {
-      return PRODUCT_STYLES[productSubcategory].placeholder;
-    } else if (
-      primaryCategory === "painting" &&
-      paintingSubcategory &&
-      paintingSubcategory in PAINTING_STYLES
-    ) {
-      return PAINTING_STYLES[paintingSubcategory].placeholder;
-    } else if (
-      primaryCategory === "era" &&
-      eraSubcategory &&
-      eraSubcategory in ERA_STYLES
-    ) {
-      return ERA_STYLES[eraSubcategory].placeholder;
-    } else if (
-      primaryCategory === "other" &&
-      otherSubcategory &&
-      otherSubcategory in OTHER_STYLES
-    ) {
-      return OTHER_STYLES[otherSubcategory].placeholder;
-    }
-
-    return "E.g., 'Turn this portrait into an oil painting with vibrant colors in the style of Van Gogh'";
-  };
+  const currentSubcategoryInfo = getCurrentSubcategoryInfo();
+  const subcategoryOptions = getSubcategoryOptions();
 
   return (
-    <div className="p-4 md:p-8">
-      <div className="w-full max-w-4xl mx-auto">
-        <div className="grid md:grid-cols-7 gap-6">
-          {/* Left column - Image preview */}
-          <div className="md:col-span-3">
-            <div className="bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center h-80 md:h-96">
-              <img
-                src={originalImage}
-                className="max-w-full max-h-full object-contain"
-                alt="Your uploaded image"
-              />
-
-              {/* Saved Style Notification Banner */}
-              {savedStyle && (
-                <div className="mt-3 w-full bg-secondary text-white p-3 rounded-md text-sm">
-                  <div className="font-medium">
-                    Applied Style: {savedStyle.title}
-                  </div>
-                  <div className="text-xs opacity-90">
-                    Category: {savedStyle.category}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right column - Style selection and prompt input */}
-          <div className="md:col-span-4">
-            <h3 className="text-xl font-medium mb-2">Choose Your Style</h3>
-            <p className="text-red-500 font-medium mb-4">
-              Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
-            </p>
-
-            {/* Primary Category Selection (Step 1) */}
-            <div className="mb-6 space-y-3">
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "cartoon"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("cartoon")}
-              >
-                <div className="flex items-center">
-                  <PaintBucket className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Cartoon Style
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "era"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("era")}
-              >
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Pop Culture Through the Eras
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "other"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("other")}
-              >
-                <div className="flex items-center">
-                  <Sparkles className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Fun/Viral Ideas
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "product"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("product")}
-              >
-                <div className="flex items-center">
-                  <BoxIcon className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Product Enhancement
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-
-              <Button
-                className={`w-full justify-between text-left border-2 h-auto py-3 ${
-                  primaryCategory === "painting"
-                    ? "border-black bg-black text-white"
-                    : "border-black bg-white text-black hover:bg-gray-50"
-                }`}
-                onClick={() => handlePrimaryCategorySelect("painting")}
-              >
-                <div className="flex items-center">
-                  <Paintbrush className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span className="font-medium whitespace-normal break-words">
-                    Painting Styles
-                  </span>
-                </div>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" />
-              </Button>
-            </div>
-
-            {/* Secondary Category Selection (Step 2) - Cartoon Subcategories */}
-            {primaryCategory === "cartoon" && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(CARTOON_STYLES).map(([key, style]) => (
-                  <Button
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
-                      cartoonSubcategory === key
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
-                    }`}
-                    onClick={() =>
-                      handleCartoonSelect(key as CartoonSubcategory)
-                    }
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-
-            {/* Secondary Category Selection (Step 2) - Product Subcategories */}
-            {primaryCategory === "product" && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(PRODUCT_STYLES).map(([key, style]) => (
-                  <Button
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
-                      productSubcategory === key
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
-                    }`}
-                    onClick={() =>
-                      handleProductSelect(key as ProductSubcategory)
-                    }
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-
-            {/* Secondary Category Selection (Step 2) - Painting Subcategories */}
-            {primaryCategory === "painting" && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(PAINTING_STYLES).map(([key, style]) => (
-                  <Button
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
-                      paintingSubcategory === key
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
-                    }`}
-                    onClick={() =>
-                      handlePaintingSelect(key as PaintingSubcategory)
-                    }
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-
-            {/* Secondary Category Selection (Step 2) - Era Subcategories */}
-            {primaryCategory === "era" && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(ERA_STYLES).map(([key, style]) => (
-                  <Button
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
-                      eraSubcategory === key
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
-                    }`}
-                    onClick={() => handleEraSelect(key as EraSubcategory)}
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-
-            {/* Secondary Category Selection (Step 2) - Other Subcategories */}
-            {primaryCategory === "other" && (
-              <div className="mb-6 grid grid-cols-2 gap-2 overflow-y-auto max-h-52">
-                {Object.entries(OTHER_STYLES).map(([key, style]) => (
-                  <Button
-                    key={key}
-                    className={`justify-start text-left h-auto py-2 px-3 whitespace-normal break-words ${
-                      otherSubcategory === key
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border border-gray-300 hover:bg-gray-50"
-                    }`}
-                    onClick={() => handleOtherSelect(key as OtherSubcategory)}
-                    title={
-                      key === "baby-prediction"
-                        ? "Must have an image with two people in it to work correctly"
-                        : key === "pet-as-human"
-                          ? "Must have image of your pet with a visible face to work correctly"
-                          : key === "self-as-cat"
-                            ? "Must have image of a person with a visible face to work correctly"
-                            : key === "future-self"
-                              ? "Must have a clear image of a person's face to work correctly"
-                              : key === "ai-action-figure"
-                                ? "Works best with a clear image of a person or object"
-                                : ""
-                    }
-                  >
-                    <span className="line-clamp-2">{style.title}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-
-            {/* Display preselected style from Ideas page */}
-            {savedStyle && (
-              <div className="mb-4 p-3 bg-[#2A7B9B]/10 border border-[#2A7B9B]/30 rounded-md">
-                <div className="flex items-center">
-                  <Wand2 className="h-5 w-5 mr-2 text-[#2A7B9B]" />
-                  <span className="font-medium text-[#2A7B9B]">
-                    Using "{savedStyle.title}" style from {savedStyle.category}
-                  </span>
-                </div>
-              </div>
-            )}
-            
-            {/* Description of selected style */}
-            {(cartoonSubcategory ||
-              productSubcategory ||
-              paintingSubcategory ||
-              eraSubcategory ||
-              otherSubcategory) && (
-              <div className="mb-4">
-                <p className="text-gray-700">{getCurrentDescription()}</p>
-              </div>
-            )}
-
-            {/* Optional Detailed Prompt Input (Step 3) */}
-            <div className="mb-4">
-              <h4 className="text-lg font-medium mb-2">
-                {primaryCategory
-                  ? "Optional: Tell us more!"
-                  : "Describe your transformation"}
-              </h4>
-              <div className="relative">
-                <Textarea
-                  value={prompt}
-                  onChange={handlePromptChange}
-                  className="w-full border border-gray-300 rounded-lg p-4 h-32 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-white bg-black"
-                  placeholder={getCurrentPlaceholder()}
-                  maxLength={maxChars}
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-gray-100 rounded-full p-1.5"
-                  onClick={enhancePrompt}
-                  disabled={isEnhancing || prompt.trim().length === 0}
-                  title="Enhance prompt with AI"
-                >
-                  {isEnhancing ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
-                  ) : (
-                    <Wand2 className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-
-              <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
-                <div className="flex items-center">
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="text-xs text-primary-500 p-1 h-auto"
-                    onClick={enhancePrompt}
-                    disabled={isEnhancing || prompt.trim().length === 0}
-                  >
-                    <Wand2 className="h-3 w-3 mr-1" />
-                    {isEnhancing ? "Enhancing..." : "Enhance with AI"}
-                  </Button>
-                </div>
-                <span id="char-count">
-                  {charCount}/{maxChars}
-                </span>
-              </div>
-            </div>
-
-            {/* Size Selection */}
-            <div className="mb-5">
-              <h4 className="text-sm font-medium mb-2">Image Size</h4>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1024" ? "border-2 bg-gray-100" : "border"}`}
-                  onClick={() => handleSizeSelection("1024x1024")}
-                >
-                  Square (1024×1024)
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1536" ? "border-2 bg-gray-100" : "border"}`}
-                  onClick={() => handleSizeSelection("1024x1536")}
-                >
-                  Portrait (1024×1536)
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1536x1024" ? "border-2 bg-gray-100" : "border"}`}
-                  onClick={() => handleSizeSelection("1536x1024")}
-                >
-                  Landscape (1536×1024)
-                </Button>
-              </div>
-            </div>
-
-            {/* Writing Tips */}
-            <div className="flex items-center space-x-3 mb-6">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="link"
-                    className="text-sm text-primary-500 p-0 h-auto"
-                  >
-                    <CircleHelp className="h-4 w-4 mr-1" /> Writing tips
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Tips for Better Results</h4>
-                    <ul className="space-y-2 text-sm">
-                      {PROMPT_TIPS.map((tip, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="text-primary-500 mr-2">•</span>
-                          <span>{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex space-x-3">
-              <Button
-                variant="outline"
-                onClick={onBack}
-                className="text-white bg-black"
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" /> Back
-              </Button>
-              <Button
-                className="flex-1 text-white bg-black hover:bg-black/80"
-                onClick={handleSubmit}
-                disabled={!primaryCategory && prompt.trim().length === 0}
-              >
-                Generate Transformation
-              </Button>
-            </div>
+    <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
+      {/* Back button */}
+      <div>
+        <Button
+          variant="ghost"
+          className="pl-0 text-muted-foreground hover:text-foreground"
+          onClick={onBack}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back to Image Upload
+        </Button>
+      </div>
+      
+      {/* Show the uploaded image */}
+      {originalImage && (
+        <div className="w-full flex justify-center">
+          <div className="w-full max-w-md rounded-lg overflow-hidden shadow-md">
+            <img 
+              src={originalImage}
+              alt="Uploaded image"
+              className="w-full h-auto object-contain"
+            />
           </div>
         </div>
+      )}
+
+      {/* Step 1: Transformation Category Selection */}
+      <div className="space-y-3">
+        <h2 className="text-lg font-medium">Step 1: Select a Transformation Type</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2">
+          <Button
+            variant={primaryCategory === "cartoon" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "cartoon" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("cartoon")}
+          >
+            <ImageIcon className="h-5 w-5 mr-2" />
+            Cartoon
+          </Button>
+          <Button
+            variant={primaryCategory === "pop-culture" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "pop-culture" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("pop-culture")}
+          >
+            <Film className="h-5 w-5 mr-2" />
+            Pop Culture
+          </Button>
+          <Button
+            variant={primaryCategory === "other" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "other" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("other")}
+          >
+            <Sparkles className="h-5 w-5 mr-2" />
+            Fun/Viral
+          </Button>
+          <Button
+            variant={primaryCategory === "kids-real" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "kids-real" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("kids-real")}
+          >
+            <Baby className="h-5 w-5 mr-2" />
+            Sketch to Reality
+          </Button>
+          <Button
+            variant={primaryCategory === "product" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "product" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("product")}
+          >
+            <BoxIcon className="h-5 w-5 mr-2" />
+            Product
+          </Button>
+          <Button
+            variant={primaryCategory === "painting" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "painting" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("painting")}
+          >
+            <Paintbrush className="h-5 w-5 mr-2" />
+            Painting
+          </Button>
+          <Button
+            variant={primaryCategory === "era" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "era" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("era")}
+          >
+            <Clock className="h-5 w-5 mr-2" />
+            Historical Era
+          </Button>
+        </div>
+      </div>
+
+      {/* Step 2: Subcategory Selection (if applicable) */}
+      {primaryCategory && subcategoryOptions.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-medium">
+            Step 2: Select a {primaryCategory.charAt(0).toUpperCase() + primaryCategory.slice(1)}{" "}
+            Style
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            {subcategoryOptions.map((key) => {
+              let title = "";
+              switch (primaryCategory) {
+                case "cartoon":
+                  title = CARTOON_STYLES[key as CartoonSubcategory].title;
+                  break;
+                case "product":
+                  title = PRODUCT_STYLES[key as ProductSubcategory].title;
+                  break;
+                case "painting":
+                  title = PAINTING_STYLES[key as PaintingSubcategory].title;
+                  break;
+                case "era":
+                  title = ERA_STYLES[key as EraSubcategory].title;
+                  break;
+                case "other":
+                  title = OTHER_STYLES[key as OtherSubcategory].title;
+                  break;
+                case "pop-culture":
+                  title = POP_CULTURE_STYLES[key as PopCultureSubcategory].title;
+                  break;
+              }
+
+              return (
+                <Button
+                  key={key}
+                  variant={isSubcategoryActive(primaryCategory, key) ? "default" : "outline"}
+                  className={`flex items-center justify-start h-auto py-2 px-3 text-sm ${
+                    isSubcategoryActive(primaryCategory, key) ? "bg-secondary text-white" : "text-white bg-black"
+                  }`}
+                  onClick={() => {
+                    switch (primaryCategory) {
+                      case "cartoon":
+                        handleCartoonSelect(key as CartoonSubcategory);
+                        break;
+                      case "product":
+                        handleProductSelect(key as ProductSubcategory);
+                        break;
+                      case "painting":
+                        handlePaintingSelect(key as PaintingSubcategory);
+                        break;
+                      case "era":
+                        handleEraSelect(key as EraSubcategory);
+                        break;
+                      case "other":
+                        handleOtherSelect(key as OtherSubcategory);
+                        break;
+                      case "pop-culture":
+                        handlePopCultureSelect(key as PopCultureSubcategory);
+                        break;
+                    }
+                  }}
+                >
+                  <span className="truncate">{title}</span>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Display current subcategory info if available */}
+      {currentSubcategoryInfo && (
+        <div className="bg-muted/50 p-4 rounded-lg">
+          <h3 className="font-medium text-lg flex items-center">
+            {getCategoryIcon(primaryCategory as TransformationType)}
+            {currentSubcategoryInfo.title}
+          </h3>
+          <p className="text-muted-foreground mt-1">{currentSubcategoryInfo.description}</p>
+          {currentSubcategoryInfo.placeholder && (
+            <p className="text-sm text-muted-foreground italic mt-2">
+              Tip: {currentSubcategoryInfo.placeholder}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Step 3: Prompt Input */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-medium">
+            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 3: Enter Any Other Details Here"}
+          </h2>
+          
+          <div className="flex space-x-2">
+            <Popover open={showTips} onOpenChange={setShowTips}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center text-xs text-white bg-black"
+                >
+                  <Lightbulb className="h-3.5 w-3.5 mr-1" />
+                  Writing Tips
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4">
+                <div className="space-y-2">
+                  <h3 className="font-medium text-sm">Prompt Writing Tips</h3>
+                  <ul className="text-xs space-y-1">
+                    {PROMPT_TIPS.map((tip, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="mr-1.5 text-brand">•</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center text-xs text-white bg-black"
+              onClick={handleSuggestPrompt}
+              disabled={isLoading || !originalImage}
+            >
+              <Wand2 className="h-3.5 w-3.5 mr-1" />
+              {isLoading ? "Thinking..." : "Enhance My Prompt with AI"}
+            </Button>
+          </div>
+        </div>
+
+        <Textarea
+          placeholder={
+            currentSubcategoryInfo?.placeholder ||
+            getCustomPlaceholder()
+          }
+          value={promptText}
+          onChange={(e) => setPromptText(e.target.value)}
+          className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 px-3"
+          rows={1}
+        />
+
+        {randomTip && (
+          <p className="text-sm text-muted-foreground flex items-start">
+            <Lightbulb className="h-4 w-4 mr-1 mt-0.5 text-amber-500" />
+            <span>
+              <span className="font-medium">Tip:</span> {randomTip}
+            </span>
+          </p>
+        )}
+      </div>
+
+      {/* Image Size Selection */}
+      <div className="space-y-3">
+        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "4"}: Choose Image Size</h2>
+        <div className="flex space-x-2">
+          <Button
+            variant={imageSize === "mobile" ? "default" : "outline"}
+            className={`flex flex-col items-center py-2 px-4 h-auto ${
+              imageSize === "mobile" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => setImageSize("mobile")}
+          >
+            <div className="h-8 w-4 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+              <div className="h-6 w-2 bg-current rounded-sm"></div>
+            </div>
+            <span className="text-xs">Mobile</span>
+            <span className="text-xs opacity-80 mt-1">2:3</span>
+          </Button>
+          
+          <Button
+            variant={imageSize === "square" ? "default" : "outline"}
+            className={`flex flex-col items-center py-2 px-4 h-auto ${
+              imageSize === "square" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => setImageSize("square")}
+          >
+            <div className="h-6 w-6 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+              <div className="h-4 w-4 bg-current rounded-sm"></div>
+            </div>
+            <span className="text-xs">Square</span>
+            <span className="text-xs opacity-80 mt-1">1:1</span>
+          </Button>
+          
+          <Button
+            variant={imageSize === "default" ? "default" : "outline"}
+            className={`flex flex-col items-center py-2 px-4 h-auto ${
+              imageSize === "default" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => setImageSize("default")}
+          >
+            <div className="h-4 w-8 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+              <div className="h-2 w-6 bg-current rounded-sm"></div>
+            </div>
+            <span className="text-xs">Landscape</span>
+            <span className="text-xs opacity-80 mt-1">16:9</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex justify-end mt-4">
+        <Button 
+          onClick={handleSubmit} 
+          disabled={isLoading || !promptText.trim()} 
+          className="bg-secondary hover:bg-secondary/80 text-white"
+          size="lg"
+        >
+          {isLoading ? "Processing..." : "Transform Image"} 
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

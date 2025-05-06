@@ -529,8 +529,7 @@ export default function PromptInput({
         return Object.keys(ERA_STYLES) as EraSubcategory[];
       case "other":
         return Object.keys(OTHER_STYLES) as OtherSubcategory[];
-      case "pop-culture":
-        return Object.keys(POP_CULTURE_STYLES) as PopCultureSubcategory[];
+      // Pop culture category removed
       case "kids-real":
         // No subcategories for kids-real
         return [];
@@ -592,7 +591,7 @@ export default function PromptInput({
     setPaintingSubcategory(null);
     setEraSubcategory(null);
     setOtherSubcategory(null);
-    setPopCultureSubcategory(null);
+    // Pop culture reference removed
     
     // Set default prompt for Kids to Real
     if (category === "kids-real") {
@@ -636,12 +635,7 @@ export default function PromptInput({
     }
   };
   
-  const handlePopCultureSelect = (subcategory: PopCultureSubcategory) => {
-    setPopCultureSubcategory(subcategory);
-    if (subcategory !== "custom-pop-culture") {
-      setPromptText(POP_CULTURE_STYLES[subcategory].suggestedPrompt);
-    }
-  };
+  // Pop culture handler removed
 
   // Get the current subcategory title and description
   const getCurrentSubcategoryInfo = () => {
@@ -684,8 +678,7 @@ export default function PromptInput({
         return <Sparkles className="h-5 w-5 mr-2" />;
       case "kids-real":
         return <Baby className="h-5 w-5 mr-2" />;
-      case "pop-culture":
-        return <Film className="h-5 w-5 mr-2" />;
+      // Pop culture case removed
       default:
         return <Wand2 className="h-5 w-5 mr-2" />;
     }
@@ -704,8 +697,7 @@ export default function PromptInput({
         return eraSubcategory === subcategory;
       case "other":
         return otherSubcategory === subcategory;
-      case "pop-culture":
-        return popCultureSubcategory === subcategory;
+      // Pop culture case removed
       default:
         return false;
     }
@@ -810,16 +802,7 @@ export default function PromptInput({
             <ImageIcon className="h-5 w-5 mr-2" />
             Cartoon
           </Button>
-          <Button
-            variant={primaryCategory === "pop-culture" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "pop-culture" ? "bg-secondary text-white" : "text-white bg-black"
-            }`}
-            onClick={() => handleCategorySelect("pop-culture")}
-          >
-            <Film className="h-5 w-5 mr-2" />
-            Pop Culture
-          </Button>
+          {/* Pop culture button removed */}
           <Button
             variant={primaryCategory === "other" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
