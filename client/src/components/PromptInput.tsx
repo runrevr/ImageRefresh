@@ -488,7 +488,7 @@ export default function PromptInput({
 }: PromptInputProps) {
   const { toast } = useToast();
   const [promptText, setPromptText] = useState(defaultPrompt || "");
-  const [imageSize, setImageSize] = useState("default"); // default, hd
+  const [imageSize, setImageSize] = useState<"default" | "mobile" | "square">("default");
   const [isLoading, setIsLoading] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [randomTip, setRandomTip] = useState("");
@@ -947,16 +947,47 @@ export default function PromptInput({
         )}
       </div>
 
-      {/* Quality Selection */}
+      {/* Image Size Selection */}
       <div className="space-y-3">
-        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "4"}: Select Image Quality</h2>
+        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "4"}: Choose Image Size</h2>
         <div className="flex space-x-2">
           <Button
-            variant="default"
-            className="bg-secondary text-white"
+            variant={imageSize === "mobile" ? "default" : "outline"}
+            className={`flex flex-col items-center py-2 px-4 h-auto ${
+              imageSize === "mobile" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => setImageSize("mobile")}
+          >
+            <div className="h-8 w-4 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+              <div className="h-6 w-2 bg-current rounded-sm"></div>
+            </div>
+            <span className="text-xs">Mobile</span>
+          </Button>
+          
+          <Button
+            variant={imageSize === "square" ? "default" : "outline"}
+            className={`flex flex-col items-center py-2 px-4 h-auto ${
+              imageSize === "square" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => setImageSize("square")}
+          >
+            <div className="h-6 w-6 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+              <div className="h-4 w-4 bg-current rounded-sm"></div>
+            </div>
+            <span className="text-xs">Square</span>
+          </Button>
+          
+          <Button
+            variant={imageSize === "default" ? "default" : "outline"}
+            className={`flex flex-col items-center py-2 px-4 h-auto ${
+              imageSize === "default" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
             onClick={() => setImageSize("default")}
           >
-            Standard Quality
+            <div className="h-4 w-8 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+              <div className="h-2 w-6 bg-current rounded-sm"></div>
+            </div>
+            <span className="text-xs">Landscape</span>
           </Button>
         </div>
       </div>
