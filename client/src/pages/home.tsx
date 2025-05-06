@@ -189,30 +189,17 @@ export default function Home() {
 
         // Notify the user that a style is being applied
         toast({
-          title: `Applying "${style.title}" style`,
-          description: `The ${style.category} style will be applied to your next image.`,
+          title: `"${style.title}" style selected`,
+          description: `Your image has been uploaded. Click "Generate" to apply the transformation.`,
         });
 
         // Clear the saved style to avoid reapplying it
         clearSavedStyle();
 
-        // Since we have a preset style, we can automatically submit the transformation
-        // with a small delay to allow the user to see the toast notification
+        // Since we have a preset style, show the user we're ready to proceed
+        // but wait for image upload before submitting
         setCurrentStep(Step.Prompt);
-        console.log("Auto-submitting with prompt in 1.5 seconds:", style.prompt);
-        setTimeout(() => {
-          console.log("Now auto-submitting prompt:", style.prompt);
-          if (!style.prompt || style.prompt.trim().length === 0) {
-            console.error("Auto-submit has empty prompt, cannot proceed");
-            toast({
-              title: "Error with saved style",
-              description: "The saved style doesn't have a valid prompt. Please select a transformation manually.",
-              variant: "destructive",
-            });
-            return;
-          }
-          handlePromptSubmit(style.prompt);
-        }, 1500);
+        console.log("Saved the prompt for later submission:", style.prompt);
         return;
       }
     }
