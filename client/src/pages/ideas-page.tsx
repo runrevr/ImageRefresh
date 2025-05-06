@@ -228,11 +228,12 @@ const StyleCard = ({
       className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full flex flex-col"
       onClick={() => {
         // Save style to local storage before navigation
-        saveStyle({
+        const savedStyle = {
           prompt: style.prompt,
           title: style.name,
           category: style.category
-        });
+        };
+        saveStyle(savedStyle);
         onSelect(style);
         // Navigate to upload page
         window.location.href = "/?showUpload=true";
@@ -281,12 +282,12 @@ const StyleCard = ({
             onClick={(e) => {
               e.stopPropagation(); // Prevent double navigation/action
               // Save style to local storage before navigation
-              saveStyle({
+              const savedStyle = {
                 prompt: style.prompt,
                 title: style.name,
-                category: style.category,
-                id: style.id
-              });
+                category: style.category
+              };
+              saveStyle(savedStyle);
               onSelect(style);
             }}
           >
@@ -431,12 +432,12 @@ export default function IdeasPage() {
   // Function to save the selected style to localStorage
   const saveStylePrompt = (style: Style) => {
     // Save the selected style in localStorage for use on the home page using the saveStyle function
-    saveStyle({
+    const savedStyle = {
       prompt: style.prompt,
       title: style.name,
-      category: style.category,
-      id: style.id
-    });
+      category: style.category
+    };
+    saveStyle(savedStyle);
 
     toast({
       title: "Style selected!",
