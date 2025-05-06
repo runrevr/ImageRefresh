@@ -172,6 +172,8 @@ export default function Home() {
 
   // When a user uploads an image, check if they previously selected a style from the Ideas page
   const handleUpload = (imagePath: string, imageUrl: string) => {
+    console.log("Image uploaded, path:", imagePath);
+    console.log("Image URL:", imageUrl);
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
 
@@ -181,6 +183,7 @@ export default function Home() {
       console.log("Found saved style:", style);
       if (style) {
         // Set the prompt from the saved style
+        console.log("Setting prompt from saved style:", style.prompt);
         setPrompt(style.prompt);
         setSavedStyle(style);
 
@@ -211,6 +214,11 @@ export default function Home() {
     promptText: string,
     imageSize: string = "1024x1024",
   ) => {
+    console.log("Submitting prompt:", promptText);
+    console.log("Image size:", imageSize);
+    console.log("Original image path:", originalImagePath);
+    console.log("User credits:", userCredits);
+    
     setPrompt(promptText);
     setCurrentStep(Step.Processing);
 
@@ -221,6 +229,13 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     try {
+      console.log("Sending transformation request with data:", {
+        originalImagePath,
+        promptLength: promptText?.length || 0,
+        userId: userCredits?.id,
+        imageSize: imageSize,
+      });
+      
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
         prompt: promptText,

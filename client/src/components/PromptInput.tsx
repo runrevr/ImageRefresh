@@ -29,11 +29,7 @@ interface PromptInputProps {
   onBack: () => void;
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
-  savedStyle?: {
-    prompt: string;
-    title: string;
-    category: string;
-  } | null; // Style information from Ideas page
+  savedStyle?: SavedStyle | null; // Style information from Ideas page
 }
 
 // Main transformation categories
