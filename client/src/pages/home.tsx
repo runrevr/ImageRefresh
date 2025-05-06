@@ -43,9 +43,9 @@ enum Step {
 }
 
 // Import transformation types from PromptInput
-import {
-  TransformationType,
-  CartoonSubcategory,
+import { 
+  Category,
+  AnimationSubcategory as CartoonSubcategory,
   ProductSubcategory,
   OtherSubcategory,
 } from "@/components/PromptInput";
@@ -88,8 +88,11 @@ export default function Home() {
     }
   }, [authUser]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
+  // Define a type for transformations
+  type TransformationType = Category | null;
+  
   const [selectedTransformation, setSelectedTransformation] =
-    useState<TransformationType | null>(null);
+    useState<TransformationType>(null);
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
   const [showAccountNeededDialog, setShowAccountNeededDialog] =
     useState<boolean>(false);

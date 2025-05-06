@@ -6,83 +6,63 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  ChevronLeft,
-  Lightbulb,
-  CircleHelp,
-  Wand2,
-  ChevronRight,
-  ImageIcon,
-  BoxIcon,
-  PaintBucket,
-  Paintbrush,
-  Sparkles,
-  Clock, // For era category
-} from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { SavedStyle } from "./StyleIntegration";
-import { apiRequest } from "@/lib/queryClient";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Label } from "@/components/ui/label";
 
-interface PromptInputProps {
-  originalImage: string;
-  onSubmit: (prompt: string, imageSize: string) => void;
-  onBack: () => void;
-  selectedTransformation?: TransformationType | null;
-  defaultPrompt?: string; // Default prompt text (can come from saved style)
-  savedStyle?: SavedStyle | null; // Style information from Ideas page
-}
+// Icons
+import { Paintbrush, Sparkles, Clock, Wand2, Image, Info, Box } from "lucide-react";
 
-// Main transformation categories
-export type TransformationType =
-  | "cartoon"
-  | "product"
-  | "painting"
-  | "era"
-  | "historical"
-  | "other"
-  | "kids"
-  | "custom";
-
-// Subcategory types
-export type CartoonSubcategory =
-  | "super-mario"
+// Define categories and styles
+export type AnimationSubcategory =
+  | "lego-character"
   | "minecraft"
   | "pixar"
-  | "dreamworks"
-  | "princess"
-  | "superhero"
-  | "lego"
-  | "custom-cartoon";
-export type ProductSubcategory =
-  | "remove-background"
-  | "enhanced-lighting"
-  | "natural-scene"
-  | "product-mockup"
-  | "social-media-ready"
-  | "custom-product";
-export type PaintingSubcategory =
+  | "mario"
+  | "disney-princess"
+  | "chibi-anime"
+  | "kids-drawing";
+
+export type ArtisticSubcategory =
   | "oil-painting"
   | "watercolor"
-  | "impressionist"
-  | "abstract"
-  | "pop-surrealism"
-  | "art-deco"
+  | "comic-book"
   | "pixel-art"
-  | "anime-manga"
-  | "cartoon-style"
-  | "gothic-noir"
-  | "charcoal-pencil"
-  | "custom-painting";
+  | "neon-glow"
+  | "impressionist"
+  | "van-gogh"
+  | "cyberpunk"
+  | "custom-art";
 
-export type EraSubcategory =
-  | "old-western"
-  | "90s-hip-hop"
+export type HistoricalSubcategory =
   | "1980s"
+  | "90s-hip-hop"
+  | "disco"
+  | "1950s"
   | "renaissance"
   | "victorian-era"
-  | "disco-era"
-  | "cyberpunk"
   | "medieval"
+  | "old-western"
+  | "ancient-greece"
   | "custom-era";
 
 export type OtherSubcategory =
@@ -96,263 +76,124 @@ export type OtherSubcategory =
   | "caricature"
   | "custom-other";
 
-// Writing tips for better prompts
-const PROMPT_TIPS = [
-  "Be specific about style (e.g., 'watercolor', 'photorealistic', 'cartoon')",
-  "Mention colors and lighting (e.g., 'vibrant colors', 'dramatic lighting')",
-  "Reference artists or styles (e.g., 'like Van Gogh', 'cyberpunk aesthetic')",
-  "Include mood or atmosphere (e.g., 'mysterious', 'cheerful', 'serene')",
-  "Specify what elements to modify (e.g., 'replace the background with mountains')",
-];
+export type ProductSubcategory =
+  | "product-advertisement"
+  | "perfume-ad"
+  | "lifestyle-brand"
+  | "book-cover"
+  | "album-cover"
+  | "shampoo-commercial"
+  | "luxury-watch"
+  | "car-advertisement"
+  | "custom-product";
 
-// Descriptions and example prompts for subcategories
-type StyleOption = {
+export type Category =
+  | "animation"
+  | "historical"
+  | "artistic"
+  | "product"
+  | "other";
+
+export type Subcategory =
+  | AnimationSubcategory
+  | HistoricalSubcategory
+  | ArtisticSubcategory
+  | ProductSubcategory
+  | OtherSubcategory;
+
+export type StyleOption = {
   title: string;
   description: string;
   placeholder: string;
   suggestedPrompt: string;
 };
 
-// Cartoon subcategories
-const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
-  "super-mario": {
-    title: "Super Mario Bros",
+// Animation styles
+const ANIMATION_STYLES: Record<AnimationSubcategory, StyleOption> = {
+  "lego-character": {
+    title: "LEGO Character",
+    description: "Transform into a charming LEGO minifigure",
+    placeholder: "E.g., Add a police officer hat",
+    suggestedPrompt:
+      "Transform into an authentic-looking LEGO minifigure with the characteristic plastic yellow skin, simplified body proportions, and C-shaped hands. Add the distinctive LEGO facial features with simple black eyes and a minimal smile. Include classic LEGO hair or hat piece appropriate to the character. Set against a playful LEGO brick background. The final image should look exactly like an official LEGO minifigure that could exist in a LEGO set while maintaining a clear connection to the original subject.",
+  },
+  minecraft: {
+    title: "Minecraft",
+    description:
+      "Convert into the iconic blocky, pixelated style of Minecraft",
+    placeholder: "E.g., Place me in a Minecraft forest biome",
+    suggestedPrompt:
+      "Transform into the distinct blocky, pixelated style of Minecraft. Convert all elements into perfectly square cubes with the characteristic 16x16 pixel textures. Adapt clothing and features to match Minecraft's limited palette and simplified designs. Place in a recognizable Minecraft environment such as a forest, desert, or cave setting with appropriate block types. Include subtle Minecraft elements like tools, blocks, or mobs in the background. The final image should look exactly like an authentic Minecraft character or scene while maintaining a clear connection to the original subject.",
+  },
+  pixar: {
+    title: "Pixar Animation",
+    description: "Transform into the heart-warming Pixar 3D animation style",
+    placeholder: "E.g., Make me look like a Pixar dad character",
+    suggestedPrompt:
+      "Transform into the distinctive 3D animated style of Pixar. Apply the characteristic exaggerated facial features with expressive, slightly oversized eyes and smooth, simplified skin textures. Convert body proportions to Pixar's stylized but believable form with subtle exaggeration of distinctive features. Add the signature soft lighting with gentle shadows and ambient occlusion typical in Pixar films. Include subtle environmental details that suggest a Pixar movie setting. The final image should look exactly like a character that could appear in a Pixar film while maintaining a clear connection to the original subject.",
+  },
+  mario: {
+    title: "Super Mario World",
     description:
       "Transform into the colorful, blocky style of the Super Mario universe.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
     suggestedPrompt: `Create a colorful 8-bit pixel art scene inspired by classic retro video games. Design a small pixel-style adventurer character (boy or girl) with a playful, confident, or determined expression, sitting or standing on a brown brick platform, holding a glowing orb.
 
-For a boy, the character should have a more rugged and adventurous look, with a bold, structured design — like a simple but strong chest emblem and energetic pose.
-For a girl, the character should have a playful, whimsical design — a floral-inspired chest emblem or softer, rounded features with a joyful expression and fluid motion in the pose.
+Create a vibrant video game landscape with these specific elements:
+- A Super Mario-inspired setting with blue sky, fluffy pixel clouds, green pipes, and iconic block formations
+- The background should include 2-3 small mountains, occasional bushes, and one or two small castle structures
+- Include 1-2 small enemy characters like Goombas or Koopas in the scene
+- Add floating power-up blocks with question marks
+- Include classic coins scattered throughout
 
-The character should wear a bright green shirt and blue pants. The scene features a bright solid blue sky, pixelated white clouds outlined in black, rolling green hills, rounded pixelated trees, and colorful pixel flowers growing from floating brick blocks. Add a large green warp pipe with a red-and-green plant emerging from it, small turtle-like pixel creatures walking nearby, and floating question mark blocks above.
-
-The overall style should feel cheerful, energetic, bright, and nostalgic, capturing the playful, lively atmosphere of classic side-scrolling adventure games. The character should have a playful attitude, but do not copy real-world facial features or likenesses.
-
-  `,
+Please maintain a pure 8-bit/16-bit pixel art aesthetic with square pixels, limited color palette, and no anti-aliasing. The overall composition should be cheerful, adventurous, and immediately recognizable as inspired by classic Nintendo games, particularly Super Mario World.`,
   },
-  minecraft: {
-    title: "Minecraft",
-    description: "Convert to the iconic blocky, pixel style of Minecraft.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt:
-      "Transform into the iconic Minecraft blocky pixel art style. Convert all elements into perfect cubes with 16x16 pixel textures and limited color palette. Characters should have the distinctive squared-off head and body proportions with simple facial features and blocky limbs. The environment should be rendered with recognizable Minecraft block types - dirt blocks with grass tops, stone textures, wooden planks, etc. Include characteristic Minecraft elements like floating blocks, right-angled water/lava, and simple shadow effects. Apply the game's distinctive flat lighting with minimal gradients. The overall scene should capture the charm of Minecraft's procedurally generated worlds with their charming simplicity, block-based construction, and instantly recognizable aesthetic where everything is made of textured cubes.",
-  },
-  pixar: {
-    title: "Pixar",
+  "disney-princess": {
+    title: "Disney Princess",
     description:
-      "Stylize in the smooth, expressive 3D animation style of Pixar films.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
+      "Transform into a classic Disney princess with magical elements",
+    placeholder: "E.g., Add a forest background with animal friends",
     suggestedPrompt:
-      "Transform into the distinctive Pixar animation style, featuring slightly exaggerated proportions with larger eyes and expressive faces. Apply the characteristic smooth, polished 3D rendering with soft lighting and subtle texturing. Maintain vibrant but realistic color palette with careful attention to light reflection and shadow detail. Add the signature Pixar depth of field with slightly blurred backgrounds and sharp foreground elements. Enhance facial expressions to convey emotion while keeping the overall look friendly and appealing with a touch of whimsy. The final result should capture that magical balance between cartoonish charm and believable realism that defines the Pixar aesthetic.",
+      "Transform into an authentic Disney princess in the classic 2D animation style from films like Snow White or Sleeping Beauty. Apply the characteristic large, expressive eyes with defined lashes and graceful facial features with a small nose and pronounced lips. Convert clothing to elaborate, flowing princess attire with rich colors and delicate details like ribbons, brocade, and subtle sparkles. Include Disney princess elements like a tiara, magical objects, animal companions, or enchanted background elements. Set against a fairytale background such as a castle, forest, or royal garden. The final image should look exactly like an official Disney princess that could appear in a classic animated Disney film while maintaining a clear connection to the original subject.",
   },
-  dreamworks: {
-    title: "Trolls",
+  "chibi-anime": {
+    title: "Chibi Anime",
+    description: "Transform into an adorable, super-deformed anime character",
+    placeholder: "E.g., Add some kawaii accessories",
+    suggestedPrompt:
+      "Transform into an authentic chibi anime character with the characteristic super-deformed style. Apply the exaggerated proportions with an oversized head (approximately 1/3 of the total height), tiny body, and simplified limbs. Convert facial features to the classic chibi style with large, expressive eyes taking up much of the face, a tiny nose, and a small mouth capable of showing exaggerated emotions. Add chibi-style hair with simplified but recognizable styling that maintains the original hair color. Include anime elements like simple blush marks, sweat drops, or emotion symbols. Set against a simple, colorful background with minimal details. The final image should look exactly like an authentic chibi anime character while maintaining a clear connection to the original subject.",
+  },
+  "kids-drawing": {
+    title: "Child's Drawing",
     description:
-      "Transform into a vibrant, whimsical world with exaggerated expressions and detailed environments.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt:
-      "Use the uploaded image only as inspiration for the mood and attitude of a whimsical fantasy hero character. Create a colorful cartoon-style character with a playful, lively, and adventurous spirit. Design the character with wild, gravity-defying neon or pastel-colored hair shaped like a crown, and textured clothing inspired by forest leaves, vines, and magical plants. Set the scene in a vivid, high-contrast fantasy world filled with oversized flowers, sparkling waterfalls, candy-colored forests, and rhythmic, musical patterns. The character can have a joyful smile or a determined expression, depending on the mood. Add glowing, magical accents around the character to enhance the fantasy feel. All elements should be original, imaginative, and inspired by classic musical fairy-tale traditions. Do not copy real-world facial features or likeness from the uploaded image.",
-  },
-  princess: {
-    title: "Princess",
-    description: "Create a fairytale princess style with magical elements.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt:
-      "Transform into a fairytale princess illustration with an enchanted atmosphere. Use soft, dreamy colors and magical light effects with sparkles and glowing accents. Apply an artistic style reminiscent of Disney princess films with fantasy elements like castle backgrounds, royal attire, and elegant accessories. For female subjects, add a beautiful flowing gown in pastel colors with intricate decorative elements, a delicate tiara or crown, and enhanced feminine features. For male subjects, transform into a charming prince with royal attire including formal jacket with gold accents, decorated shoulders, and a small crown or royal insignia. The overall scene should have a romantic, magical quality with elegant details and fantastical lighting that captures the essence of classic princess fairytales.",
-  },
-  superhero: {
-    title: "Superhero",
-    description: "Convert to a dynamic comic book superhero style.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt: "Create a dynamic comic book-style superhero character inspired by classic superhero adventures. Design an original hero with a confident, determined expression wearing a vibrant costume with bold primary colors and a distinctive emblem centered on the chest. For the costume, include a well-fitted superhero suit with textured panels, decorative seams, and complementary color blocking. Add distinctive identity-concealing elements like a sleek mask, advanced visor system, or specialized glasses that enhance the heroic appearance while maintaining the character's expressive eyes.The character should have a powerful stance with shoulders back and chin up, suggesting readiness for action. Include superhero accessories like a flowing cape with dramatic movement, specialized gauntlets, or a utility belt with gadgets. Surround the hero with dynamic energy effects, motion lines, or power signatures that match their color scheme.     Set the scene in a stylized city environment with dramatic perspective, featuring tall buildings, a setting sun creating dramatic lighting, and subtle hints of action or danger in the background. The overall style should feel empowering, bold, and reminiscent of beloved comic book art.Use the uploaded AI-generated reference image as the direct basis for the character's pose, proportions, and general appearance, transforming it into this superhero version while preserving its essential character.",
-  },
-  lego: {
-    title: "Lego",
-    description: "Reconstruct in the distinctive blocky Lego brick style.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt:
-      "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
-  },
-  "custom-cartoon": {
-    title: "Create Your Own Cartoon",
-    description: "Describe your own custom cartoon transformation.",
-    placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt: "",
+      "Transform your photo into a charming, simple drawing as created by a child",
+    placeholder: "E.g., Add a rainbow and sun in the corner",
+    suggestedPrompt: `Transform this image into a charming, authentic child's drawing that looks like it was created by a 5-7 year old. 
+
+Apply these specific characteristics:
+- Simple, uneven line work with visible pencil or crayon-like texture
+- Disproportionate features with larger heads and simplified body parts
+- Basic shapes for facial features without sophisticated details
+- Limited understanding of anatomy and perspective
+- Simplified clothing and accessories with basic shapes and bold colors
+- Slightly wobbly, imprecise coloring that occasionally goes outside the lines
+- Vibrant, unrealistic color choices with minimal shading or blending
+- Simplified background with basic elements like a sun, clouds, or grass
+- Charming mistakes and quirky additions that reflect a child's imagination
+
+For the background/environment: Keep it simple and complementary. If the drawing appears to be a creature, place it in a fitting natural habitat. If it's an object, place it in a contextually appropriate setting with soft focus.
+
+Feel free to interpret what this might be, but do not add any elements not present in the original drawing. Maintain the exact personality and character of the original creation.`,
   },
 };
 
-// Product subcategories
-const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
-  "remove-background": {
-    title: "Remove Background",
-    description:
-      "Isolate the product with a clean, solid or transparent background.",
-    placeholder: "E.g., Place on a pure white background with subtle shadow",
-    suggestedPrompt:
-      "Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.",
-  },
-  "enhanced-lighting": {
-    title: "Enhanced Lighting & Colors",
-    description:
-      "Improve product appearance with professional studio lighting and color enhancement.",
-    placeholder: "E.g., Add dramatic side lighting to highlight texture",
-    suggestedPrompt:
-      "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
-  },
-  "natural-scene": {
-    title: "Lifestyle Integration",
-    description:
-      "Place the product in a realistic outdoor or natural environment.",
-    placeholder:
-      "E.g., Indoor or outdoor, which environment [modern/rustic/minimalist]",
-    suggestedPrompt:
-      "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
-  },
-  "product-mockup": {
-    title: "Product Mockup",
-    description: "Show the product in context of use in realistic scenarios.",
-    placeholder: "E.g., Show being used by a model in a living room",
-    suggestedPrompt:
-      "Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.",
-  },
-  "social-media-ready": {
-    title: "Social Media Ready",
-    description: "Optimize product presentation for social media platforms.",
-    placeholder: "Color Style: vibrant, pastel or contrasting",
-    suggestedPrompt:
-      "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with [vibrant/pastel/contrasting] colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay, incorporate trending visual elements, and ensure the product pops against a carefully designed background that suggests lifestyle without overwhelming.",
-  },
-  "custom-product": {
-    title: "Create Your Own Product Image",
-    description: "Describe your own custom product transformation.",
-    placeholder:
-      "E.g., Place product on a marble countertop with morning light",
-    suggestedPrompt: "",
-  },
-};
-
-// Painting subcategories
-const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
-  "oil-painting": {
-    title: "Oil Painting",
-    description:
-      "Emulates traditional oil paintings with rich colors, textures, and visible brushstrokes.",
-    placeholder: "E.g., In the style of Van Gogh or Rembrandt",
-    suggestedPrompt:
-      "Transform this image into a traditional oil painting with rich, deep colors and visible textured brushstrokes. Create a masterful composition with careful attention to light and shadow, capturing the dimensional quality and depth that oil paint provides. Apply thick impasto technique for highlights and finer brush detail for shadows. Use a warm, slightly muted color palette reminiscent of classical oil paintings, with subtle glazing effects and the characteristic luminosity that comes from layered oil paint. The final result should have the timeless, elegant aesthetic of museum-quality oil paintings while maintaining the essence and emotional quality of the original image.",
-  },
-  watercolor: {
-    title: "Watercolor",
-    description:
-      "Creates a soft, fluid look with translucent colors, similar to watercolor paintings.",
-    placeholder: "E.g., Add delicate color washes and soft edges",
-    suggestedPrompt:
-      "Transform this image into a delicate watercolor painting with soft, flowing colors and gentle transparency. Create subtle color washes that blend seamlessly at the edges, allowing the white of the paper to show through in lighter areas. Apply the characteristic diffused edges and gentle color bleeding that defines watercolor technique. Include small areas of increased detail with fine brushwork contrasted against looser, more impressionistic areas to create visual interest. Use a light, airy color palette with luminous quality and the slightly granular texture typical of watercolor pigments on paper. The final painting should maintain the essence and mood of the original image while having the delicate, ethereal quality of a skillfully executed watercolor.",
-  },
-  impressionist: {
-    title: "Impressionist",
-    description:
-      "Captures light and atmosphere with visible brushstrokes like Monet or Renoir.",
-    placeholder: "E.g., Focus on light and atmosphere",
-    suggestedPrompt:
-      "Transform this image into an impressionist painting in the style of artists like Monet or Renoir. Use visible, sketch-like brushstrokes and dabs of unmixed colors placed side-by-side to create a vibrant, shimmering effect when viewed from a distance. Focus on capturing the fleeting quality of light, atmosphere, and movement rather than sharp details. Apply a bright, vibrant color palette that emphasizes blues, greens, and complementary colors typical of impressionist works. Use broken color technique where multiple colors are layered to create optical blending. Add soft edges between elements and give particular attention to how light plays across the scene, with areas of brightness and color reflections. The final result should feel alive with energy and movement, evoking the sensory impression of the moment rather than a strictly realistic representation.",
-  },
-  abstract: {
-    title: "Abstract",
-    description:
-      "Non-representational art focusing on shapes, colors, and textures.",
-    placeholder: "E.g., Bold geometric forms in primary colors",
-    suggestedPrompt:
-      "Transform this image into an abstract painting that focuses on shapes, colors, forms, and textures rather than realistic representation. Deconstruct the original image into fundamental geometric or organic shapes, emphasizing bold lines, dynamic composition, and strong color relationships. Use a distinctive color palette with vibrant contrasting colors or harmonious color schemes depending on the mood. Add layers of visual interest through varied textures, drips, splatters, or scraped areas typical of abstract expressionism. Create focal points using variations in color intensity, scale, or textural contrast. Express emotions and concepts through the relationship between shapes and colors rather than literal depictions. While the final image should be completely abstract, it should still maintain some essence or emotional quality of the original image, translated into a non-representational visual language.",
-  },
-  "pop-surrealism": {
-    title: "Pop Surrealism",
-    description:
-      "Playful, dreamlike imagery with vibrant colors and pop culture references.",
-    placeholder: "E.g., Add dreamlike elements and cultural references",
-    suggestedPrompt:
-      "Transform this image into a pop surrealist artwork that blends dreamlike imagery with pop culture elements in a technically refined painting style. Create a playful, whimsical scene with unexpected juxtapositions and imaginative elements that challenge reality. Maintain high-quality, detailed rendering with crisp edges and smooth gradients reminiscent of lowbrow art and comic illustration. Use a vibrant, saturated color palette with bold contrasts and carefully crafted lighting effects. Add subtle references to mainstream culture, vintage advertisements, cartoons, or toys that create narrative depth and cultural connection. Include at least one surreal element like impossible scale relationships, objects floating or melting, or unexpected combinations of unrelated items. Apply a glossy, polished finish to the entire piece that enhances its contemporary yet nostalgic appeal. The final result should be visually striking, immediately engaging, and contain layers of meaning and discovery while maintaining technical excellence in execution.",
-  },
-  "art-deco": {
-    title: "Art Deco",
-    description:
-      "Elegant, stylized designs with bold geometric patterns from the 1920s-30s.",
-    placeholder: "E.g., Add geometric patterns and metallic accents",
-    suggestedPrompt:
-      "Transform this image into an Art Deco style artwork reminiscent of the elegant, glamorous aesthetic of the 1920s and 1930s. Convert elements into streamlined, geometric forms with symmetrical compositions and clean lines. Apply a sophisticated color palette using bold, contrasting colors alongside metallic gold, silver, or bronze accents. Include characteristic Art Deco patterns like sunbursts, chevrons, zigzags, and stylized floral motifs. Simplify and stylize any figurative elements with elongated proportions and elegant poses. Add architectural details inspired by skyscrapers, machinery, or ancient cultures (Egyptian, Aztec) that influenced the Art Deco movement. Incorporate luxury materials or their appearance such as polished wood, lacquer, marble, or exotic materials. The overall composition should feel balanced, ornate yet restrained, with an emphasis on luxury, modernity, and graphic boldness that characterized the Art Deco period.",
-  },
-  "pixel-art": {
-    title: "Pixel Art",
-    description:
-      "Retro digital aesthetic with visible pixels and limited color palette.",
-    placeholder: "E.g., 16-bit style with limited color palette",
-    suggestedPrompt:
-      "Transform this image into classic pixel art reminiscent of vintage video games and early computer graphics. Reduce the image to a limited color palette of 16-32 colors maximum with deliberate color choices that create cohesive areas and clear distinctions. Convert all elements to a grid-based structure where individual pixels are clearly visible and aligned to a consistent grid. Apply careful pixel-by-pixel placement with clean edges and no anti-aliasing to maintain the authentic pixelated aesthetic. Use dithering techniques (checkerboard or other patterns) to create the illusion of additional colors or gradients where needed. Include characteristic pixel art techniques like outlined forms, limited detail that emphasizes recognizable silhouettes, and deliberate use of negative space. The final result should evoke the nostalgic charm of 8-bit or 16-bit era games while clearly representing the subject from the original image in an instantly recognizable way despite the technical limitations of the pixel art format.",
-  },
-  "anime-manga": {
-    title: "Anime/Manga",
-    description:
-      "Japanese animation and comic book style with distinctive eyes and expressions.",
-    placeholder: "E.g., Specific anime like Studio Ghibli or Shonen style",
-    suggestedPrompt:
-      "Transform into a high-quality anime/manga illustration with clean lines and distinctive Japanese animation styling. Apply the characteristic anime facial features including larger, expressive eyes with light reflections, simplified nose and mouth, and distinctive hair styling with sleek, gravity-defying locks in vibrant colors. For clothing, create flowing fabrics with dynamic movement and clean fold lines. Use a cell-shaded coloring style with flat color areas separated by clean lines, minimal gradients, and strategic shadows. Add anime-specific emotion indicators like blush marks, sweat drops, or expression lines when appropriate. Set against a background with simplified details and depth-of-field effects typical of anime scenes. The final image should maintain the distinctive anime aesthetic that balances stylization with emotion, using simplified yet expressive features to convey character and mood.",
-  },
-  "cartoon-style": {
-    title: "Cartoon Style",
-    description:
-      "Simplified, exaggerated features with bold outlines in various cartoon styles.",
-    placeholder: "E.g., Modern cartoon with bold lines",
-    suggestedPrompt:
-      "Transform this image into a modern cartoon style with clean, bold outlines and simplified forms. Apply exaggerated proportions and features that enhance expression and character while maintaining recognizability. Use a bright, vibrant color palette with flat color areas and minimal shading for a contemporary cartoon look. Add characteristic cartoon elements like simplified backgrounds, expression lines, or minor motion effects that enhance the playful, animated feel. The styling should feel contemporary and polished, similar to modern animated shows, with attention to line weight variation and appealing character design. The final image should capture the fun, engaging quality of contemporary cartoons while clearly representing the subject from the original image.",
-  },
-  "gothic-noir": {
-    title: "Gothic Noir",
-    description:
-      "Dark, atmospheric style with high contrast and dramatic shadows.",
-    placeholder: "E.g., Add dramatic shadows and gothic elements",
-    suggestedPrompt:
-      "Transform this image into a gothic noir style with dark, moody atmosphere and dramatic high-contrast lighting. Apply a predominantly dark color palette with deep blacks, rich shadows, and selective highlights that create a stark, dramatic effect. Include gothic architectural elements or decorative motifs like ornate frames, arched windows, or decorative ironwork when appropriate to the composition. Add atmospheric effects such as fog, mist, or smoke that enhance the mysterious quality. Style any figures with elegant, dramatic poses and period-appropriate gothic fashion elements or noir styling. Incorporate symbolism typical of gothic imagery such as ravens, roses, or other elements that suggest mystery and foreboding. The final image should evoke a sense of atmospheric tension, elegant darkness, and dramatic emotional weight, blending elements of classic film noir with gothic romanticism.",
-  },
-  "charcoal-pencil": {
-    title: "Charcoal & Pencil",
-    description:
-      "Black and white sketchy style mimicking traditional drawing media.",
-    placeholder: "E.g., Emphasis on texture and contrast",
-    suggestedPrompt:
-      "Transform this image into a realistic charcoal and pencil drawing that captures the texture and depth of traditional hand-drawn techniques. Apply a monochromatic palette ranging from rich blacks to bright whites with a full range of grays, mimicking the look of charcoal, graphite pencil, and white chalk on textured paper. Create varied mark-making including bold, expressive charcoal strokes for darker areas, fine pencil lines for details, and subtle smudging for smooth transitions. Show the texture of the drawing medium with visible strokes, hatching, cross-hatching, and the characteristic granular quality of charcoal. Include strategic areas where the paper texture shows through, and use deliberate eraser marks or highlights to add dimension. Focus on creating strong contrasts between light and shadow while maintaining rich detail in mid-tones. The final drawing should appear convincingly hand-crafted with the spontaneous, expressive quality of traditional drawing media while clearly representing the subject from the original image.",
-  },
-  "custom-painting": {
-    title: "Create Your Own Painting Style",
-    description: "Describe your own custom painting transformation.",
-    placeholder: "E.g., Combine impressionist style with modern elements",
-    suggestedPrompt: "",
-  },
-};
-
-// Era subcategories
-const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
-  "old-western": {
-    title: "Old Western",
-    description:
-      "Capture the rustic, sepia-toned aesthetic of the American Wild West.",
-    placeholder: "E.g., Add cowboy/cowgirl attire and western setting",
-    suggestedPrompt:
-      "Transform into an authentic American Old West (1850s-1890s) portrait. Apply a vintage color treatment with warm sepia tones, subtle vignetting, and slight photo degradation with dust/scratch effects. Convert clothing to period-accurate western wear including options like cowboy hats, leather vests, bandanas, prairie dresses, or period-appropriate formal attire. Add characteristic Western elements such as leather gun belts, pocket watches, lace details, or brooches as appropriate. Include Old West environmental context with wooden buildings, saloons, rural landscapes, or painted studio backdrops typical of period photography. Position subjects with the formal, slightly stiff poses characteristic of long-exposure photography from the era. The final image should authentically capture the rugged frontier aesthetic of Old West photography while maintaining clear likeness to the original subject.",
-  },
-  "90s-hip-hop": {
-    title: "90s Hip-Hop",
-    description:
-      "Vibrant urban style with iconic fashion and visual elements from 90s hip-hop culture.",
-    placeholder: "E.g., Add 90s hip-hop fashion and urban setting",
-    suggestedPrompt:
-      "Transform into an authentic 1990s hip-hop style portrait with bold, vibrant colors and slightly overexposed flash photography aesthetic. Convert clothing to iconic 90s hip-hop fashion including baggy jeans, oversized sports jerseys, branded tracksuits, Timberland boots, or streetwear with bold logos and bright colors. Add characteristic 90s hip-hop accessories like chunky gold chains, door-knocker earrings, snapback caps worn at angles, bandanas, or sports team apparel. Style hair in 90s trends like high-top fades, box braids, flat tops, or other era-specific styles. Set against urban backdrops featuring graffiti art, basketball courts, city streets, or other iconic 90s hip-hop environments. Apply color effects reminiscent of 90s film photography with saturated colors, slight film grain, and the characteristic look of 90s music videos and album covers. The final image should authentically capture the bold, expressive aesthetic of 90s hip-hop culture while maintaining clear likeness to the original subject.",
-  },
+// Historical era styles
+const HISTORICAL_STYLES: Record<HistoricalSubcategory, StyleOption> = {
   "1980s": {
     title: "1980s",
     description:
-      "Vibrant neon aesthetics, distinctive fashion, and visual style of the 1980s era.",
-    placeholder: "E.g., Add 80s fashion, hairstyle, and background",
+      "Vibrant neon colors, big hair, shoulder pads, and maximalist style",
+    placeholder: "E.g., Add neon background and retro sunglasses",
     suggestedPrompt:
       "Transform into an authentic 1980's portrait with vibrant neon aesthetics. Apply high-saturation, high-contrast photography with slight airbrushing effect. Convert hairstyles to characteristic 80's looks including big permed hair, mullets, side ponytails, or feathered styles. Update clothing to iconic 80's fashion with shoulder pads, Members Only jackets, leg warmers, acid-wash jeans, neon colors, or power suits. Add period accessories like large plastic earrings, Ray-Ban Wayfarers, scrunchies, sweatbands, or chunky digital watches. Set against 80's backdrops featuring laser grids, chrome effects, geometric patterns, or airbrushed gradients. Include 80's technology like boomboxes, Walkmans, early video game systems, or brick phones. The final image should capture the maximalist, energetic spirit of the 1980's while maintaining clear likeness to the original subject.",
   },
@@ -367,40 +208,223 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
   "victorian-era": {
     title: "Victorian Era",
     description:
-      "Formal, ornate style reflecting the fashions and photographs of the late 1800s.",
-    placeholder: "E.g., Add Victorian clothing and formal pose",
+      "Formal, ornate portrait style with sepia tones (1837-1901)",
+    placeholder: "E.g., Add Victorian formal wear and props",
     suggestedPrompt:
-      "Transform into an authentic Victorian era (1837-1901) portrait. Apply a vintage photographic style with sepia toning, formal composition, and the slight blur characteristic of early photography's long exposure times. Convert clothing to period-accurate Victorian fashion including high-necked dresses with bustles, corsets, and lace details for women, or formal frock coats, waistcoats, and high collars for men. Add Victorian accessories such as cameo brooches, pocket watches with chains, lace gloves, or walking sticks. Style hair in Victorian fashions including updos with center parts for women or neat side parts with facial hair for men. Set against Victorian backdrops such as formal parlors with heavy drapery, ornate furniture, painted scenic backgrounds, or formal gardens. Position the subject with the stiff, formal poses typical of Victorian photography where subjects had to remain still for long exposures. The final portrait should authentically capture the formal, restrained aesthetic of Victorian photography while maintaining clear likeness to the original subject.",
-  },
-  "disco-era": {
-    title: "Disco Era",
-    description:
-      "Glittering, colorful 1970s disco style with characteristic fashion and lighting.",
-    placeholder: "E.g., Add disco fashion and dance floor setting",
-    suggestedPrompt:
-      "Transform into an authentic 1970s disco era portrait with vibrant colors and glamorous disco lighting effects. Apply the characteristic photo style of the late 70s with slightly faded colors, film grain, and dramatic lighting. Convert clothing to iconic disco fashion including sequined/metallic fabrics, wide-collar shirts open at the chest, flared pants, platform shoes, wrap dresses, or jumpsuits in bold patterns. Style hair in classic 70s disco looks including feathered styles, afros, long sideburns, or other era-defining haircuts. Add disco-appropriate accessories such as oversized sunglasses, chunky jewelry, headbands, or medallion necklaces. Set against disco environments featuring illuminated dance floors, mirror balls, colorful lighting effects, or wood-paneled lounges with retro furniture. The final image should authentically capture the glamorous, energetic spirit of the disco era (1975-1980) while maintaining clear likeness to the original subject.",
-  },
-  cyberpunk: {
-    title: "Cyberpunk",
-    description:
-      "Futuristic dystopian aesthetic with neon lights, urban decay, and high-tech elements.",
-    placeholder: "E.g., Add neon lights and cybernetic elements",
-    suggestedPrompt:
-      "Transform into a cyberpunk scene set in a high-tech dystopian future. Apply a cinematic color grade with dominant blue and magenta neon tones contrasting with dark shadows and urban decay. Add technological modifications like subtle cybernetic implants, neural interface ports, augmented reality displays, or holographic elements integrated with the subject. Update clothing to cyberpunk fashion featuring a mix of high-tech elements with street-level grit - technical fabrics, asymmetric designs, utility garments with functional pockets/straps, and practical urban wear with futuristic details. Set against a dystopian cityscape background with dense urban architecture, neon signs in multiple languages, holographic advertisements, industrial elements, and signs of both technological advancement and social decay. Add atmospheric elements like rain, fog, or steam illuminated by colored lights to enhance the mood. The final image should capture the gritty, high-tech/low-life aesthetic that defines cyberpunk while maintaining clear likeness to the original subject.",
+      "Transform into an authentic Victorian Era (1837-1901) portrait photograph or painting. Apply sepia-toned or muted color palette with formal, composed aesthetic. Convert clothing to period Victorian attire including high collars, corsets, bustles, waistcoats, cravats, petticoats, and formal suits with precisely tailored details. Position the subject in a formal, dignified pose with serious expression against ornate Victorian backdrop featuring heavy drapery, ornate furniture, architectural elements, or formal gardens. Add Victorian accessories like cameo brooches, pocket watches, gloves, top hats, parasols, or walking canes. Include period-appropriate Victorian objects like books, tea sets, family photos, or decorative items that convey status. The final portrait should capture the formal, restrained dignity of Victorian portraiture while maintaining clear likeness to the original subject.",
   },
   medieval: {
     title: "Medieval",
     description:
-      "Historical style depicting the Middle Ages with period costumes and settings.",
-    placeholder: "E.g., Add medieval attire and castle background",
+      "Illuminated manuscript or tapestry style with flat perspective (500-1400)",
+    placeholder: "E.g., Add medieval knight armor and a castle",
     suggestedPrompt:
-      "Transform into an authentic medieval portrait set between 1100-1400 CE. Convert into the style of medieval illuminated manuscripts or early Renaissance painting with rich colors, flat perspective, and decorative elements. Update clothing to historically accurate medieval attire including period-appropriate tunics, surcoats, cloaks, or gowns with appropriate layering and construction for the subject's apparent social status. Add medieval accessories such as belts with pouches, simple jewelry, head coverings like coifs or veils, and status-appropriate items. Set against medieval environments featuring castle interiors, countryside with period architecture, or simple colored backgrounds with decorative borders as seen in manuscript illustrations. Include medieval symbolic elements or activities appropriate to the setting such as religious symbols, heraldry, or period-accurate tools/weapons. The final portrait should authentically capture the aesthetic of medieval European art while maintaining recognizable likeness to the original subject.",
+      "Transform into an authentic Medieval Era (500-1400 CE) artwork, resembling illuminated manuscripts or tapestries. Apply flat perspective with limited depth and rich, symbolic color palette dominated by reds, blues, and gold highlights. Convert clothing to period Medieval attire including tunics, cottes, surcoats, chainmail, cloaks, or simple homespun garments depending on depicted social class. Add Medieval accessories like belts with pouches, simple jewelry, head coverings, religious symbols, or period-appropriate weapons. Position the subject in formal, stylized poses with religious or courtly themes against backgrounds featuring castles, walled gardens, forests, or simple decorative patterns. Include Medieval motifs like heraldic symbols, decorative borders, Gothic arches, or religious imagery. The final artwork should capture the symbolic, spiritual quality of Medieval art while maintaining some recognizable likeness to the original subject.",
+  },
+  "90s-hip-hop": {
+    title: "90s Hip-Hop",
+    description:
+      "Bold style with oversized clothing, gold chains, and urban settings",
+    placeholder: "E.g., Add a boombox and graffiti wall",
+    suggestedPrompt:
+      "Transform into an authentic 90's hip-hop music video style portrait. Apply high-contrast photography with slight film grain and bold colors. Convert clothing to iconic 90's hip-hop fashion including oversized jerseys, baggy jeans, Timberland boots, bright tracksuits, backward caps, or bandanas. Add statement gold chains, large medallions, chunky watches, and rectangular sunglasses. Set against urban backdrops like graffiti walls, basketball courts, city streets, or luxury cars. Include 90's props like boomboxes, pagers, early cell phones, or basketball sneakers. The final image should capture the confident, bold aesthetic of 90's hip-hop culture while maintaining clear likeness to the original subject.",
+  },
+  disco: {
+    title: "Disco Era",
+    description:
+      "Glamorous 70s style with sequins, platform shoes, and nightclub vibes",
+    placeholder: "E.g., Add a disco ball and colorful lighting",
+    suggestedPrompt:
+      "Transform into a quintessential Disco Era (1975-1980) portrait. Apply vivid, slightly oversaturated colors with glamorous lighting and lens flare effects. Convert hairstyles to characteristic disco looks including feathered cuts, afros, or Farrah Fawcett waves. Update clothing to iconic disco fashion with sequins, metallic fabrics, satin shirts with wide collars, bell bottoms, platform shoes, or wrap dresses. Add disco accessories like oversized sunglasses, chunky gold jewelry, or medallions. Set against disco nightclub backdrops featuring mirror balls, colored lights, illuminated dance floors, or sparkly decorations. The final image should capture the energetic, liberated spirit of the disco era while maintaining clear likeness to the original subject.",
+  },
+  "1950s": {
+    title: "1950s America",
+    description:
+      "Classic Americana with polished, idealized family-friendly aesthetic",
+    placeholder: "E.g., Add a vintage car and milkshake",
+    suggestedPrompt:
+      "Transform into an authentic 1950s American portrait with classic Americana aesthetic. Apply slightly oversaturated colors with polished, commercial photography style and perfect lighting. Convert hairstyles to iconic 50's looks including pompadours, victory rolls, crew cuts, or bouffants with precise styling. Update clothing to quintessential 50's fashion with full skirts, pencil dresses, high-waisted pants, bowling shirts, varsity jackets, or tailored suits with thin ties. Add 50's accessories like cat-eye glasses, pearl necklaces, pocket squares, silk scarves, or sturdy leather belts. Set against 1950s backdrops like diners, drive-in theaters, suburban homes, classic cars, or soda fountains. Include 50's cultural elements like vinyl records, jukeboxes, transistor radios, or classic Coca-Cola bottles. The final image should capture the optimistic, polished spirit of 1950s commercial photography while maintaining clear likeness to the original subject.",
+  },
+  "old-western": {
+    title: "Old Western",
+    description:
+      "Rugged frontier style with sepia tones and authentic period details",
+    placeholder: "E.g., Add cowboy hat and saloon background",
+    suggestedPrompt:
+      "Transform into an authentic Old Western (1865-1895) portrait photograph. Apply sepia-toned or black and white photography with slight aging effects, dust specks, and mild vignetting. Convert clothing to period Western attire including cowboy hats, bandanas, leather vests, dusters, wide-brimmed hats, cotton dresses, or chambray work shirts with authentic worn textures. Add Western accessories like leather gun belts, pocket watches with chains, cowboy boots with spurs, or simple frontier jewelry. Position the subject with a stoic, unsmiling expression against rustic Western backdrops like wooden buildings, saloons, general stores, rural landscapes, or wooden fences. Include Western elements like horseshoes, whiskey bottles, wanted posters, or simple farming/ranching tools. The final portrait should capture the rugged, frontier spirit of Old Western photography while maintaining clear likeness to the original subject.",
+  },
+  "ancient-greece": {
+    title: "Ancient Greece",
+    description:
+      "Classical sculpture or fresco style with idealized forms (800-31 BCE)",
+    placeholder: "E.g., Add Greek columns and ancient symbols",
+    suggestedPrompt:
+      "Transform into an authentic Ancient Greek (800-31 BCE) artwork resembling marble sculpture, pottery painting, or fresco. Apply the characteristic monochromatic white marble texture with subtle aging or classical red-figure pottery style with black and terracotta coloration. Convert attire to period Ancient Greek clothing including draped chitons, himations, or simple tunics with classical folds and movement. Position the subject in formal, idealized poses with contrapposto stance against backgrounds featuring Greek columns, temples, Mediterranean landscapes, or simple decorative Greek key patterns. Add Ancient Greek elements like olive wreaths, laurel crowns, lyres, scrolls, amphorae, or classical weapons. Include Greek motifs like meanders, acanthus leaves, olive branches, or mythological references. The final artwork should capture the idealized, harmonious aesthetic of Ancient Greek art while maintaining some recognizable likeness to the original subject.",
   },
   "custom-era": {
-    title: "Create Your Own Era",
-    description: "Describe your own custom historical era transformation.",
-    placeholder: "E.g., Transform into 1920s Gatsby-era style",
-    suggestedPrompt: "",
+    title: "Custom Historical Era",
+    description:
+      "Specify any historical time period and location for customization",
+    placeholder:
+      "E.g., 1920s Gatsby era with flapper dress and Art Deco background",
+    suggestedPrompt:
+      "Transform into a historically accurate portrait from your specified time period and location. Apply appropriate photographic or artistic techniques authentic to the era. Convert clothing, hairstyles, and accessories to period-appropriate styles with accurate details, fabrics, and construction. Position the subject in poses typical of the specified era's portraiture against historically accurate backgrounds, architecture, or landscapes. Include objects, symbols, and cultural elements specific to the time period and region that provide historical context. The final image should capture the distinctive aesthetic of the specified historical era while maintaining clear likeness to the original subject.",
+  },
+};
+
+// Artistic styles
+const ARTISTIC_STYLES: Record<ArtisticSubcategory, StyleOption> = {
+  "oil-painting": {
+    title: "Classic Oil Painting",
+    description:
+      "Rich texture and depth like traditional museum masterpieces",
+    placeholder: "E.g., Use an autumn color palette",
+    suggestedPrompt:
+      "Transform into a masterful oil painting with rich texture and depth. Apply visible brushwork with thick impasto technique in areas of highlight and smoother blending in middle tones and shadows. Use a sophisticated color palette with warm and cool tones balanced for visual harmony. Structure the composition with classical techniques including rule of thirds, leading lines, or atmospheric perspective. Incorporate traditional oil painting elements like glazing effects, subtle chiaroscuro lighting, and painterly rendering of textures. The final image should resemble a museum-quality oil painting with technical excellence while maintaining clear likeness to the original subject.",
+  },
+  watercolor: {
+    title: "Watercolor Painting",
+    description:
+      "Dreamy, translucent effects with visible paper texture and soft edges",
+    placeholder: "E.g., Use bright spring colors and loose brushwork",
+    suggestedPrompt:
+      "Transform into a beautiful watercolor painting with characteristic translucent quality. Apply visible watercolor techniques including wet-on-wet gradients, granulation effects, bleeding edges, and controlled transparency showing paper texture in lighter areas. Use a harmonious color palette with subtle color mixing and natural pigment variations. Incorporate watercolor-specific elements like soft edges, pooled pigment in details, delicate layering of transparent washes, and spontaneous blooms or backruns. Leave strategic white spaces for highlights and breathing room. The final image should capture the delicate, luminous quality of watercolor painting while maintaining clear likeness to the original subject.",
+  },
+  "comic-book": {
+    title: "Comic Book Style",
+    description:
+      "Bold outlines, flat colors, and dynamic superhero-inspired composition",
+    placeholder: "E.g., Add speech bubbles and action lines",
+    suggestedPrompt:
+      "Transform into an authentic comic book illustration with bold linework and dynamic styling. Apply strong black outlines with varying line weights and flat, vibrant coloring with simple shading through color blocking or halftones. Convert expressions to heightened, dramatic comic book emotions with exaggerated features for impact. Structure the composition with dynamic angles, foreshortening, or heroic poses inspired by superhero comics. Add comic book elements like action lines, speed streaks, impact stars, or simple background patterns to enhance movement and emotion. Include comic-specific details like expressive typography, speech/thought bubbles, panel borders, or caption boxes. The final image should look like it came straight from a professionally illustrated comic book while maintaining recognizable likeness to the original subject.",
+  },
+  "pixel-art": {
+    title: "Pixel Art",
+    description:
+      "Retro gaming aesthetic with limited colors and visible square pixels",
+    placeholder: "E.g., Make it look like a retro RPG character",
+    suggestedPrompt:
+      "Transform into authentic pixel art resembling classic video games. Apply a clearly visible pixel grid structure with perfectly square pixels and no anti-aliasing or blurring between color areas. Use a severely limited color palette with 8-32 distinct colors maximum including carefully selected shades for highlights and shadows. Create pixelated outlines and details at a consistent resolution throughout the image. Incorporate pixel art techniques including dithering for gradients, careful single-pixel highlighting, and simplified forms that work within pixel constraints. The final image should look like it belongs in a retro video game from the 8-bit or 16-bit era while maintaining recognizable likeness to the original subject within the pixel limitations.",
+  },
+  "neon-glow": {
+    title: "Neon Glow",
+    description:
+      "Vibrant colors with dramatic light effects on dark backgrounds",
+    placeholder: "E.g., Add cyberpunk city elements in the background",
+    suggestedPrompt:
+      "Transform into a striking neon-influenced artwork with vibrant, glowing elements. Apply dramatic neon lighting effects with bright, saturated colors that appear to emit light against a predominantly dark background. Create strong color contrast with complementary or split-complementary color schemes featuring electric blues, hot pinks, acid greens, or vibrant purples. Incorporate neon-specific elements like luminous outlines, light bloom effects, subtle lens flares, and realistic light reflection on surfaces. Add atmospheric effects such as mist, smoke, or rain to enhance the neon glow. The final image should capture the energetic, nocturnal quality of neon-lit scenes while maintaining clear likeness to the original subject.",
+  },
+  impressionist: {
+    title: "Impressionist Painting",
+    description:
+      "Soft, light-filled scenes with visible brushstrokes capturing atmosphere",
+    placeholder: "E.g., Set in a garden with dappled sunlight",
+    suggestedPrompt:
+      "Transform into an authentic Impressionist painting in the style of Monet, Renoir, or Degas. Apply visible, broken brushwork with distinct strokes of color placed side by side rather than blended. Use a light-filled color palette focusing on the effects of natural light with complementary color shadows and atmospheric color shifts. Soften details in favor of capturing the overall impression and mood of the scene. Incorporate typical Impressionist subject elements like outdoor settings, natural landscapes, everyday scenes, or leisure activities depicted in changing light conditions. The final image should capture the spontaneous, atmospheric quality of Impressionist art while maintaining somewhat recognizable likeness to the original subject.",
+  },
+  "van-gogh": {
+    title: "Van Gogh Style",
+    description:
+      "Expressive, swirling brushstrokes with vibrant colors and emotional intensity",
+    placeholder: "E.g., Add a starry night sky in the background",
+    suggestedPrompt:
+      "Transform into a painting in the distinctive style of Vincent van Gogh. Apply characteristic swirling, dynamic brushstrokes with thick impasto texture showing directionality and movement. Use Van Gogh's vibrant, emotionally expressive color palette with bold complementary color contrasts and distinctive yellows, blues, and greens. Incorporate Van Gogh's unique perspective with slightly tilted horizon lines, flattened depth, and animated backgrounds. Add typical Van Gogh elements like cypress trees, wheat fields, dramatic night skies, sunflowers, or humble interior scenes with exaggerated features. The final image should capture the passionate, dream-like quality of Van Gogh's work while maintaining somewhat recognizable likeness to the original subject within the stylistic interpretation.",
+  },
+  cyberpunk: {
+    title: "Cyberpunk",
+    description:
+      "Futuristic urban dystopia with high-tech elements and neon lighting",
+    placeholder:
+      "E.g., Add cybernetic implants and a rainy cityscape background",
+    suggestedPrompt:
+      "Transform into a striking cyberpunk-themed portrait set in a high-tech dystopian future. Apply dramatic lighting with neon colors, volumetric light beams, and strong contrast between shadows and illuminated areas. Convert clothing and accessories to cyberpunk aesthetics with futuristic materials, tactical urban wear, technological enhancements, or revealing club attire with a high-tech edge. Add cyberpunk elements like holographic displays, cybernetic implants, AR interfaces, neural connections, or technological modifications. Set against dystopian urban backgrounds featuring megastructures, neon signage, industrial zones, or densely packed urban sprawl. Include cyberpunk details like digital glitches, rain-slicked streets, steam vents, flying vehicles, or corporate logos. The final image should capture the gritty, high-tech, noir quality of cyberpunk while maintaining clear likeness to the original subject.",
+  },
+  "custom-art": {
+    title: "Custom Art Style",
+    description:
+      "Specify any artistic style for a completely customized transformation",
+    placeholder:
+      "E.g., Art Nouveau style with flowing organic lines and decorative elements",
+    suggestedPrompt:
+      "Transform into artwork in your specified artistic style with authentic techniques and visual elements. Apply appropriate color palette, brushwork, or rendering methods authentic to the requested style. Incorporate characteristic compositional approaches, perspective handling, and subject treatment typical of the specified artistic movement or artist. Add style-specific decorative elements, motifs, or symbolic components that define the requested aesthetic. Adjust the level of abstraction, realism, or stylization to accurately reflect the specified art style. The final image should authentically capture the distinctive quality of the requested artistic style while maintaining appropriate likeness to the original subject according to the style's typical approach to representation.",
+  },
+};
+
+// Product styles
+const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
+  "product-advertisement": {
+    title: "Product Advertisement",
+    description:
+      "Professional, polished commercial photography for product marketing",
+    placeholder: "E.g., Add a clean white background and product logo",
+    suggestedPrompt:
+      "Transform into a professional product advertisement photo with commercial-grade polish. Apply perfect studio lighting with appropriate highlights, fill lights, and subtle gradient backgrounds that emphasize the product's best features. Create a pristine, controlled environment with immaculate surfaces, perfect reflections, and precise shadows that enhance dimensional perception. Position the product using professional commercial photography techniques with optimal angles that showcase key design elements and features. Incorporate marketing-focused composition with balanced negative space for text placement, careful arrangement of supplementary elements, and strategic color psychology. The final image should have the flawless, persuasive quality of high-end commercial photography while maintaining complete accuracy to the original product.",
+  },
+  "perfume-ad": {
+    title: "Luxury Perfume Ad",
+    description:
+      "Elegant, sensual imagery with luxurious textures and mood lighting",
+    placeholder: "E.g., Add gold accents and misty background effects",
+    suggestedPrompt:
+      "Transform into an elegant luxury perfume advertisement with sensual, evocative imagery. Apply sophisticated studio lighting with carefully controlled highlights on glass or metal surfaces, subtle gradients, and atmospheric elements like mist, soft focus, or light rays. Create a luxurious mood through rich, premium color palettes featuring deep blacks, metallics, or signature brand colors with perfect exposure and contrast. Position the perfume bottle as the central focus with artistic angles that capture reflections, transparency effects, and the distinctive silhouette against complementary background elements. Incorporate luxury perfume ad techniques like water droplets, floating floral elements, fabric swirls, or abstract color forms that suggest scent through visual metaphor. The final image should embody the aspirational, sensory quality of high-end fragrance advertising while maintaining perfect representation of the perfume bottle design.",
+  },
+  "lifestyle-brand": {
+    title: "Lifestyle Brand",
+    description:
+      "Authentic, aspirational scenes showing products in attractive real-life use",
+    placeholder:
+      "E.g., Show the product being used in a beautiful beach setting",
+    suggestedPrompt:
+      "Transform into an authentic lifestyle brand photograph showing products in aspirational everyday use. Apply warm, inviting lighting with a slightly enhanced natural look that feels genuine while being more perfect than reality. Create a curated environment with thoughtfully selected, complementary elements that establish a cohesive aesthetic while keeping the product naturally integrated and visible. Position people and products in relaxed, candid-appearing (though carefully composed) arrangements that suggest enjoyable, effortless use without appearing staged. Incorporate lifestyle branding elements like contextually appropriate activities, beautiful locations, and a consistent color story that reinforces brand identity. The final image should capture the authentic yet idealized quality of premium lifestyle photography while maintaining clear visibility and appeal of the featured product.",
+  },
+  "book-cover": {
+    title: "Book Cover Design",
+    description:
+      "Eye-catching graphic design with integrated imagery and typography",
+    placeholder: "E.g., Create a thriller novel cover with dark mood",
+    suggestedPrompt:
+      "Transform into a professional book cover design with compelling visual appeal and commercial polish. Apply appropriate genre-specific visual styling with color palettes, imagery treatment, and compositional approach that clearly communicates the book's category (thriller, romance, literary fiction, etc.). Create a focal point with a striking central image, symbol, or typographic element that captures attention while leaving appropriate space for title and author name. Position visual elements using professional book design principles with balanced weight distribution, strategic use of negative space, and careful attention to the spine edge. Incorporate professional typography with appropriate hierarchy, genre-suitable fonts, and readable contrast even at thumbnail size. The final image should have the commercial quality of a professionally designed book cover with compelling visual storytelling that entices potential readers.",
+  },
+  "album-cover": {
+    title: "Album Cover Art",
+    description:
+      "Expressive, iconic imagery capturing musical style and artist identity",
+    placeholder: "E.g., Create an indie rock album cover with vintage feel",
+    suggestedPrompt:
+      "Transform into striking album cover art with visual impact and musical identity. Apply genre-appropriate visual styling with color treatment, texture, and compositional techniques that align with the implied musical style (rock, electronic, hip-hop, etc.). Create a memorable, iconic central concept with symbolic imagery, artist representation, or abstract elements that capture attention while allowing space for artist name and album title. Position visual elements using album art design principles with consideration for square format, potential vinyl record application, and both physical and digital display contexts. Incorporate music-related visual cues like instruments, sound visualization, subcultural symbolism, or emotional tone indicators that connect to musical content. The final image should have the distinctive, expressive quality of professional album artwork with a strong visual concept that represents the implied musical identity.",
+  },
+  "shampoo-commercial": {
+    title: "Shampoo Commercial",
+    description:
+      "Glossy, perfect hair imagery with dramatic movement and shine",
+    placeholder: "E.g., Add water droplets and flowing hair movement",
+    suggestedPrompt:
+      "Transform into a professional shampoo advertisement with perfect, glossy hair imagery. Apply specialized hair photography lighting with multiple light sources that create maximum shine, dimensional highlights, and silky reflections throughout the hair. Create flawless hair styling with voluminous body, zero frizz, and idealized texture appropriate to the hair type with perfect strand definition and movement. Position the model with dynamic hair motion frozen in time, showing dramatic flow, bounce, or elegant fall that emphasizes healthy movement. Incorporate shampoo commercial elements like water droplets, splashes, floating botanical ingredients, or abstract color forms suggesting freshness and vitality. The final image should have the ultra-polished, aspirational quality of high-end hair product advertising with impossibly perfect hair that appears touchably soft and supremely healthy.",
+  },
+  "luxury-watch": {
+    title: "Luxury Watch Ad",
+    description:
+      "Precise, high-end product photography highlighting craftsmanship and status",
+    placeholder: "E.g., Show the watch with dramatic shadows on marble",
+    suggestedPrompt:
+      "Transform into a premium luxury watch advertisement with meticulous attention to detail. Apply specialized watch photography lighting techniques with precisely controlled reflections on crystal, case, and bracelet that highlight the watch's materials and finish without distracting glare. Create a sophisticated environment using premium materials like marble, leather, brushed metal, or dark wood that complement the watch's design aesthetic and price positioning. Position the watch using professional horology photography techniques with the hands set to 10:10 (or similar) for balanced dial presentation, optimal angle to showcase case profile, and perfect focus on key design elements. Incorporate luxury watch advertising approaches like extreme macro details of movements or dials, elegant shadows emphasizing dimension, and careful arrangement of any supporting elements. The final image should have the exceptional, prestigious quality of high-end watch marketing with perfect representation of materials, proportions, and craftsmanship.",
+  },
+  "car-advertisement": {
+    title: "Car Advertisement",
+    description:
+      "Dynamic automotive photography with dramatic lighting and environment",
+    placeholder: "E.g., Place the car on a scenic mountain road at sunset",
+    suggestedPrompt:
+      "Transform into a professional automotive advertisement with dramatic vehicle presentation. Apply specialized car photography lighting that emphasizes the vehicle's body lines, creates perfect reflections on paint and glass, and highlights key design elements with precision. Create an impactful environment that complements the vehicle's character using appropriate locations like urban architecture, scenic natural landscapes, or abstract studio settings with professional ground reflections. Position the vehicle using automotive photography techniques with dynamic angles that emphasize performance, luxury, or utility based on the car type, perfect compositional balance, and strategic placement within the environment. Incorporate car advertising elements like motion effects for dynamic shots, atmospheric conditions that add mood, and careful color grading that enhances the vehicle's paint and features. The final image should have the high-impact, aspirational quality of premium automotive advertising with flawless representation of the vehicle's design and character.",
+  },
+  "custom-product": {
+    title: "Custom Product",
+    description:
+      "Specify any product type for a customized commercial transformation",
+    placeholder:
+      "E.g., Create a luxury chocolate packaging with gold foil details",
+    suggestedPrompt:
+      "Transform into professional product advertising for your specified product type with commercial-grade presentation. Apply appropriate professional photography techniques with lighting, composition, and styling specific to the product category and market positioning. Create an optimal product environment using setting, props, and contextual elements that enhance the product's appeal and communicate its purpose or benefits. Position the product using category-specific best practices that showcase its most important features, functional elements, or design details from the most flattering angle. Incorporate relevant advertising approaches for the specific product category including appropriate mood, supporting elements, and visual storytelling that builds desire and communicates value. The final image should have the polished, persuasive quality of category-specific commercial photography with perfect representation of the product and its appealing characteristics.",
   },
 };
 
@@ -415,573 +439,406 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
     description:
-      "Envision how a future baby might look based on the people in the image.",
-    placeholder: "E.g., Show what our future baby might look like",
+      "Envision how a future baby might look based on people in an image",
+    placeholder: "E.g., Create a baby girl with my eyes and his smile",
     suggestedPrompt:
-      "Create a realistic image of a baby that would result from the genetics of the two people in the uploaded photos. The baby should have a balanced blend of facial features from both parents, including eye shape/color, nose, mouth, face shape, and skin tone. Show only the baby in the final image, centered in frame with good lighting against a neutral background. The baby should appear healthy, happy, and around 6-12 months old with a natural expression. Dress the baby in appropriate baby clothing - such as a simple onesie, cute baby outfit, or comfortable infant attire - not attempting to match or replicate the clothing style of the parents. Add subtle details that clearly connect to features from both parent photos without directly copying them.",
+      "Create a realistic image of a baby that would result from the genetics of the two people in this photo. Analyze the facial features, skin tone, hair color/texture, and eye characteristics of both people. Generate a baby approximately 1 year old with a natural blend of genetic features from both potential parents, maintaining appropriate ethnic characteristics. Create a realistic facial structure with baby proportions including larger forehead, chubby cheeks, and smaller chin. Include specific inherited elements like eye shape/color, nose shape, lip fullness, hair color/texture, skin tone, and face shape that are visibly derived from the parent photos. The final image should look like a completely realistic, heartwarming baby photo with natural lighting and an appropriate simple background, not like an obvious composite or artificial creation.",
   },
   "future-self": {
     title: "What Will I Look Like in 20 Years",
     description:
-      "Age the subject in the image to show how they might look 20 years in the future.",
-    placeholder: "E.g., Show me as a distinguished older person",
+      "Age the subject in the image to show how they might look in the future",
+    placeholder: "E.g., Show me with gray hair and reading glasses",
     suggestedPrompt:
-      "Show how the person might look 20 years in the future. Age the face naturally with appropriate wrinkles, hair changes, and subtle physical aging. Maintain their core facial structure and identity while showing realistic aging effects. Keep the same general style and pose.",
+      "Create a realistic future version of this person aged approximately 20 years older. Add natural age-progression features including: appropriate gray/white hair based on current color and realistic pattern (temples, overall salt-and-pepper, etc.), deeper nasolabial folds and faint crow's feet around eyes, slightly thinner skin with minor age spots on exposed areas, slight decrease in skin elasticity around jawline, and subtle changes to facial fat distribution. Maintain the person's core identity, bone structure, and racial characteristics while aging them realistically. Update styling elements like hair (modern style for an older person), clothing (contemporary but age-appropriate), and any accessories to suit an older version. The final image should look like a completely natural future photograph of the same person, not a caricature of aging.",
   },
   "ghibli-style": {
     title: "Ghibli Style",
     description:
-      "Transform into the beautiful, painterly anime style of Studio Ghibli films.",
-    placeholder: "E.g., Create a whimsical Miyazaki-inspired scene",
+      "Transform into the beautiful, painterly anime style of Studio Ghibli films",
+    placeholder: "E.g., Add Totoro-inspired forest spirits nearby",
     suggestedPrompt:
-      "Transform into the distinctive Studio Ghibli animation style reminiscent of films by Hayao Miyazaki. Use the characteristic soft, painterly animation style with watercolor-inspired backgrounds and attention to natural elements. Apply the signature Ghibli character design including simplified but expressive faces with large, detailed eyes and minimal facial lines. Update the scene with warm, natural lighting and atmospheric effects like gentle wind or soft shadows. Add Ghibli-inspired environmental details such as lush vegetation, detailed clouds, charming architecture, or magical subtle elements that suggest wonder. Include the sense of movement and liveliness typical of Ghibli films with hair or clothing that appears to flow naturally. The final image should capture the heartfelt, nostalgic quality and connection to nature that characterizes Studio Ghibli's unique aesthetic while maintaining recognizable likeness to the original subject.",
+      "Transform into the distinctive Studio Ghibli animation style reminiscent of films like 'Spirited Away' or 'Howl's Moving Castle.' Apply the characteristic Ghibli watercolor-inspired backgrounds with soft, painterly textures and natural landscapes featuring lush greenery, detailed clouds, or charming architectural elements. Convert character design to Ghibli aesthetic with simplified but expressive facial features, natural body proportions (not exaggerated anime style), and slightly rounded, soft forms. Add Ghibli-specific elements like magical natural phenomena, whimsical spirits, detailed environmental textures, or intricate mechanical designs with fantasy elements. Include signature Ghibli atmospheric qualities like gentle wind effects, dappled light through trees, or peaceful environmental moments. The final image should capture the heartfelt, thoughtful quality of Studio Ghibli animation while maintaining recognizable likeness to the original subject within the style conventions.",
   },
   "ai-action-figure": {
-    title: "AI Action Figure",
+    title: "Action Figure",
     description:
-      "Turn the subject into a realistic, detailed action figure or toy.",
-    placeholder: "E.g., Put the name on the packaging with accessories",
+      "Transform into a realistic toy action figure with packaging",
+    placeholder: "E.g., Make the figure hold a tiny laser sword",
     suggestedPrompt:
-      "Transform into a highly detailed, collectible action figure presented in professional packaging. Create a realistic toy version with visible plastic texture, molded details, articulation points at major joints, and slight manufacturing imperfections. Design custom blister packaging featuring character artwork, logos, and product details including a character name and special features listed on the card. Add accessory items relevant to the character's identity displayed alongside the figure. Position the packaged figure against a clean background with professional product photography lighting that shows reflections on the plastic packaging. The final image should realistically depict how the subject would appear if manufactured as a premium collectible action figure in unopened retail packaging, presented as a professional product photograph.",
+      "Transform into a realistic, commercially-produced action figure toy in professional packaging. Apply authentic toy material textures with slight plastic sheen, simplified but recognizable facial features, and visible articulation points at shoulders, elbows, hips, and knees. Create realistic toy proportions with slightly enlarged head, simplified hands, and stable feet designed to stand independently. Position the figure in a dynamic but achievable pose inside a retail-ready blister package with clear plastic front and branded cardboard backing. Include action figure packaging elements like character name, toy line branding, included accessories, appropriate age warnings, and manufacturer logos. The final image should look exactly like a commercially available action figure toy that could be found in stores, with professional product photography quality.",
   },
   "pet-as-human": {
     title: "What Would My Pet Look Like as a Human",
     description:
-      "Reimagine a pet as a human while keeping recognizable traits and personality.",
-    placeholder: "E.g., Turn my cat into a human with feline features",
+      "Reimagine a pet as a human while keeping recognizable traits and personality",
+    placeholder: "E.g., Keep my cat's distinctive markings as clothing patterns",
     suggestedPrompt:
-      "Transform a pet into a human character while preserving the pet's distinctive traits, coloration, and personality. Create a human face and body that incorporates subtle animal features reminiscent of the original pet - such as similar eye color, hair color/pattern matching fur color/pattern, and facial expressions that capture the pet's typical demeanor. Dress the human character in clothing that reflects the pet's personality and status - elegant for dignified pets, casual for playful pets, etc. The character should feel like a natural human embodiment of the specific pet's essence and personality, not a generic animal-human hybrid. Position in a setting or with props that connect to the pet's lifestyle or preferences. The final image should create an immediate sense of recognition while being fully humanized.",
+      "Transform a pet into a human character while preserving the animal's distinctive traits, personality, and essence. Translate the pet's fur color, patterns, and markings into human hair color, clothing designs, or distinctive features. Convert the pet's most expressive physical features (eyes, ears, distinctive nose/muzzle) into human facial characteristics that subtly reference the animal features without looking bizarre. Capture the pet's personality and typical expressions (playful, serious, mischievous, aloof) in the human's pose, expression, and styling. Incorporate subtle references to the pet's species through appropriate styling choices like clothing colors, accessories, environment, or activities that reference typical animal behaviors. The final image should be a completely natural-looking human that creatively and subtly embodies the pet's most recognizable physical and personality traits.",
   },
   "self-as-cat": {
     title: "What Would I Look Like as a Cat",
     description:
-      "Transform a human into a cat with recognizable traits from the original subject.",
-    placeholder: "E.g., Turn me into a cat that resembles my features",
+      "Transform the subject into a photorealistic cat with personality traits preserved",
+    placeholder: "E.g., Make me a Maine Coon cat with my eye color",
     suggestedPrompt:
-      "Transform into a cat/cats while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
+      "Transform the person into a photorealistic cat with personality traits and distinctive features preserved. Translate the human's hair color, style, and texture into corresponding cat fur. Convert the person's most distinctive facial features (eye color, expression, unique characteristics) into feline equivalents that capture their essence. Choose a cat breed whose typical personality aligns with the human's apparent personality traits (serious, playful, elegant, etc.). Maintain any distinctive accessories or clothing elements as appropriate cat-sized versions (collar with pendant instead of necklace, etc.). Position the cat in a pose and environment that reflects the human's posture and background while being natural for a cat. The final image should be a completely photorealistic cat that subtly reminds viewers of the human subject through clever translation of their most distinctive traits.",
   },
-  caricature: {
+  "caricature": {
     title: "Caricature",
     description:
-      "Exaggerated features with humorous intent while maintaining recognition",
-    placeholder: "E.g., Exaggerate eyes and mouth for humorous effect",
+      "Exaggerated features with humorous artistic style while keeping likeness",
+    placeholder: "E.g., Exaggerate my smile and make the background colorful",
     suggestedPrompt:
-      "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
+      "Transform into an artistic caricature with exaggerated features while maintaining recognizable likeness. Identify and amplify the subject's most distinctive facial characteristics (large nose, prominent chin, distinctive smile, unique hairstyle) with playful exaggeration that's humorous without being mean-spirited. Apply a lively artistic style with bold linework, slightly cartoonish proportions, and expressive color choices that enhance the caricature effect. Create an appropriate caricature composition with enlarged head and smaller body, dynamic pose that suggests personality, and simplified background elements that provide context without distraction. Include subtle personality elements through exaggerated expressions, appropriate props that suggest hobbies/interests, or clothing details that reveal character. The final image should have the playful, instantly-recognizable quality of professional caricature art with skillful exaggeration that captures essence while clearly connecting to the original subject.",
   },
   "custom-other": {
-    title: "Create Your Own",
-    description: "Describe your own custom transformation.",
+    title: "Custom Transformation",
+    description:
+      "Specify any creative transformation for a completely custom result",
     placeholder:
-      "E.g., Make it look like it's underwater with fish swimming around",
-    suggestedPrompt: "",
+      "E.g., Transform me into a mythological creature with forest elements",
+    suggestedPrompt:
+      "Transform according to your custom creative direction with imaginative yet cohesive execution. Apply visual style, medium, and artistic approach as specified in your custom request with professional-quality rendering and attention to detail. Create an imaginative transformation that balances creativity with appropriate maintenance of recognizable elements from the original subject as needed for your concept. Position compositional elements in a visually engaging arrangement that best showcases the custom transformation concept while maintaining visual hierarchy and focus. Incorporate specified thematic elements, environments, accessories, or contextual details that enhance and complete your creative vision. The final image should be a polished, impressive realization of your custom transformation concept with skillful execution and attention to both technical quality and creative expression.",
   },
 };
 
-// This is the main component
+export type PromptCategory = {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  defaultPlaceholder: string;
+  styles: Record<string, StyleOption>;
+};
+
+const CATEGORIES: Record<Category, PromptCategory> = {
+  animation: {
+    title: "Kids & Animation",
+    description: "Transform into popular animation and kids' entertainment styles",
+    icon: <Box className="w-4 h-4" />,
+    defaultPlaceholder: "E.g., Add specific character details or background elements",
+    styles: ANIMATION_STYLES,
+  },
+  historical: {
+    title: "Historical Eras",
+    description: "Travel through time with authentic period transformations",
+    icon: <Clock className="w-4 h-4" />,
+    defaultPlaceholder: "E.g., Add era-specific clothing or background details",
+    styles: HISTORICAL_STYLES,
+  },
+  artistic: {
+    title: "Artistic Styles",
+    description: "Reimagine images in the style of famous art movements and techniques",
+    icon: <Paintbrush className="w-4 h-4" />,
+    defaultPlaceholder: "E.g., Adapt the style with specific artistic elements",
+    styles: ARTISTIC_STYLES,
+  },
+  product: {
+    title: "Product & Commercial",
+    description: "Create professional product imagery and commercial photography",
+    icon: <Image className="w-4 h-4" />,
+    defaultPlaceholder: "E.g., Add specific product details or marketing elements",
+    styles: PRODUCT_STYLES,
+  },
+  other: {
+    title: "Fun & Viral Styles",
+    description: "Enjoy popular and viral transformation styles",
+    icon: <Sparkles className="w-4 h-4" />,
+    defaultPlaceholder: "E.g., Add specific creative elements to enhance the style",
+    styles: OTHER_STYLES,
+  },
+};
+
+type PromptInputProps = {
+  initialCategory?: Category;
+  initialSubcategory?: Subcategory;
+  initialPrompt?: string;
+  onPromptChange: (prompt: string) => void;
+  onTitleChange?: (title: string) => void;
+  onCategoryChange?: (category: string) => void;
+  onStyleChange?: (style: StyleOption) => void;
+};
+
 export default function PromptInput({
-  originalImage,
-  onSubmit,
-  onBack,
-  selectedTransformation,
-  defaultPrompt,
-  savedStyle,
+  initialCategory,
+  initialSubcategory,
+  initialPrompt = "",
+  onPromptChange,
+  onTitleChange,
+  onCategoryChange,
+  onStyleChange,
 }: PromptInputProps) {
-  const { toast } = useToast();
-  const [promptText, setPromptText] = useState(defaultPrompt || "");
-  const [imageSize, setImageSize] = useState("default"); // default, hd
-  const [isLoading, setIsLoading] = useState(false);
-  const [showTips, setShowTips] = useState(false);
-  const [randomTip, setRandomTip] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<Category>(
+    initialCategory || "animation"
+  );
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(
+    initialSubcategory || null
+  );
+  const [prompt, setPrompt] = useState(initialPrompt);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  // Transformation selection state
-  const [primaryCategory, setPrimaryCategory] =
-    useState<TransformationType | null>(
-      selectedTransformation || savedStyle?.category || null
-    );
+  // Get the styles for the selected category
+  const categoryData = CATEGORIES[selectedCategory];
+  const styles = categoryData.styles;
 
-  // Subcategory selections
-  const [cartoonSubcategory, setCartoonSubcategory] =
-    useState<CartoonSubcategory | null>(null);
-  const [productSubcategory, setProductSubcategory] =
-    useState<ProductSubcategory | null>(null);
-  const [paintingSubcategory, setPaintingSubcategory] =
-    useState<PaintingSubcategory | null>(null);
-  const [eraSubcategory, setEraSubcategory] =
-    useState<EraSubcategory | null>(null);
-  const [otherSubcategory, setOtherSubcategory] =
-    useState<OtherSubcategory | null>(null);
-
-  // Determine subcategory options based on primary category
-  const getSubcategoryOptions = () => {
-    switch (primaryCategory) {
-      case "cartoon":
-        return Object.keys(CARTOON_STYLES) as CartoonSubcategory[];
-      case "product":
-        return Object.keys(PRODUCT_STYLES) as ProductSubcategory[];
-      case "painting":
-        return Object.keys(PAINTING_STYLES) as PaintingSubcategory[];
-      case "era":
-        return Object.keys(ERA_STYLES) as EraSubcategory[];
-      case "other":
-        return Object.keys(OTHER_STYLES) as OtherSubcategory[];
-      default:
-        return [];
+  // Handle category change
+  const handleCategoryChange = (category: string) => {
+    const validCategory = category as Category;
+    setSelectedCategory(validCategory);
+    setSelectedSubcategory(null); // Reset subcategory when category changes
+    if (onCategoryChange) {
+      onCategoryChange(validCategory);
     }
   };
 
-  // Get random writing tip
+  // Handle subcategory change
+  const handleSubcategoryChange = (subcategory: string) => {
+    const validSubcategory = subcategory as Subcategory;
+    setSelectedSubcategory(validSubcategory);
+    
+    // Get the style for the selected subcategory
+    const style = styles[validSubcategory];
+    
+    if (style) {
+      setPrompt(style.suggestedPrompt);
+      onPromptChange(style.suggestedPrompt);
+      
+      if (onTitleChange) {
+        onTitleChange(style.title);
+      }
+      
+      if (onStyleChange) {
+        onStyleChange(style);
+      }
+    }
+  };
+
+  // Handle prompt change
+  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPrompt(e.target.value);
+    onPromptChange(e.target.value);
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion: string) => {
+    setPrompt(suggestion);
+    onPromptChange(suggestion);
+    setIsPopoverOpen(false); // Close popover after selection
+  };
+
+  // Set initial values if provided
   useEffect(() => {
-    if (PROMPT_TIPS.length > 0) {
-      const tipIndex = Math.floor(Math.random() * PROMPT_TIPS.length);
-      setRandomTip(PROMPT_TIPS[tipIndex]);
+    if (initialPrompt) {
+      setPrompt(initialPrompt);
     }
-  }, []);
-
-  // Initialize from saved style if available
-  useEffect(() => {
-    if (savedStyle && savedStyle.prompt) {
-      console.log("Setting prompt from saved style:", savedStyle.prompt);
-      setPromptText(savedStyle.prompt);
-
-      // Handle style category
-      if (savedStyle.category) {
-        console.log("Setting primary category to", savedStyle.category, "from saved style");
-        setPrimaryCategory(savedStyle.category as TransformationType);
-      }
-
-      // Special handling for mullets saved style
-      if (savedStyle.title === "Mullets") {
-        console.log("Setting primary category to other and subcategory to mullets from saved style");
-        setPrimaryCategory("other");
-        setOtherSubcategory("mullets");
-      }
+    
+    if (initialCategory) {
+      setSelectedCategory(initialCategory);
     }
-  }, [savedStyle]);
-
-  // Handle form submission
-  const handleSubmit = () => {
-    if (!promptText.trim()) {
-      toast({
-        title: "Prompt required",
-        description: "Please enter a description of how to transform the image.",
-        variant: "destructive",
-      });
-      return;
+    
+    if (initialSubcategory) {
+      setSelectedSubcategory(initialSubcategory);
     }
-
-    setIsLoading(true);
-    onSubmit(promptText, imageSize);
-  };
-
-  // Handle primary category selection
-  const handleCategorySelect = (category: TransformationType) => {
-    setPrimaryCategory(category);
-    // Reset all subcategories when changing the main category
-    setCartoonSubcategory(null);
-    setProductSubcategory(null);
-    setPaintingSubcategory(null);
-    setEraSubcategory(null);
-    setOtherSubcategory(null);
-  };
-
-  // Handle subcategory selections
-  const handleCartoonSelect = (subcategory: CartoonSubcategory) => {
-    setCartoonSubcategory(subcategory);
-    if (subcategory !== "custom-cartoon") {
-      setPromptText(CARTOON_STYLES[subcategory].suggestedPrompt);
-    }
-  };
-
-  const handleProductSelect = (subcategory: ProductSubcategory) => {
-    setProductSubcategory(subcategory);
-    if (subcategory !== "custom-product") {
-      setPromptText(PRODUCT_STYLES[subcategory].suggestedPrompt);
-    }
-  };
-
-  const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
-    setPaintingSubcategory(subcategory);
-    if (subcategory !== "custom-painting") {
-      setPromptText(PAINTING_STYLES[subcategory].suggestedPrompt);
-    }
-  };
-
-  const handleEraSelect = (subcategory: EraSubcategory) => {
-    setEraSubcategory(subcategory);
-    if (subcategory !== "custom-era") {
-      setPromptText(ERA_STYLES[subcategory].suggestedPrompt);
-    }
-  };
-
-  const handleOtherSelect = (subcategory: OtherSubcategory) => {
-    setOtherSubcategory(subcategory);
-    if (subcategory !== "custom-other") {
-      setPromptText(OTHER_STYLES[subcategory].suggestedPrompt);
-    }
-  };
-
-  // Get the current subcategory title and description
-  const getCurrentSubcategoryInfo = () => {
-    if (primaryCategory === "cartoon" && cartoonSubcategory) {
-      return CARTOON_STYLES[cartoonSubcategory];
-    } else if (primaryCategory === "product" && productSubcategory) {
-      return PRODUCT_STYLES[productSubcategory];
-    } else if (primaryCategory === "painting" && paintingSubcategory) {
-      return PAINTING_STYLES[paintingSubcategory];
-    } else if (primaryCategory === "era" && eraSubcategory) {
-      return ERA_STYLES[eraSubcategory];
-    } else if (primaryCategory === "other" && otherSubcategory) {
-      return OTHER_STYLES[otherSubcategory];
-    }
-    return null;
-  };
-
-  // Get the appropriate icon based on the transformation type
-  const getCategoryIcon = (category: TransformationType) => {
-    switch (category) {
-      case "cartoon":
-        return <ImageIcon className="h-5 w-5 mr-2" />;
-      case "product":
-        return <BoxIcon className="h-5 w-5 mr-2" />;
-      case "painting":
-        return <Paintbrush className="h-5 w-5 mr-2" />;
-      case "era":
-        return <Clock className="h-5 w-5 mr-2" />;
-      case "other":
-        return <Sparkles className="h-5 w-5 mr-2" />;
-      default:
-        return <Wand2 className="h-5 w-5 mr-2" />;
-    }
-  };
-
-  // Function to check for active subcategory
-  const isSubcategoryActive = (category: string, subcategory: string) => {
-    switch (category) {
-      case "cartoon":
-        return cartoonSubcategory === subcategory;
-      case "product":
-        return productSubcategory === subcategory;
-      case "painting":
-        return paintingSubcategory === subcategory;
-      case "era":
-        return eraSubcategory === subcategory;
-      case "other":
-        return otherSubcategory === subcategory;
-      default:
-        return false;
-    }
-  };
-
-  // Function to get custom prompt placeholder
-  const getCustomPlaceholder = () => {
-    switch (primaryCategory) {
-      case "cartoon" && cartoonSubcategory === "custom-cartoon":
-        return "Describe your custom cartoon transformation...";
-      case "product" && productSubcategory === "custom-product":
-        return "Describe your custom product transformation...";
-      case "painting" && paintingSubcategory === "custom-painting":
-        return "Describe your custom painting transformation...";
-      case "era" && eraSubcategory === "custom-era":
-        return "Describe your custom historical era transformation...";
-      case "other" && otherSubcategory === "custom-other":
-        return "Describe your custom transformation...";
-      default:
-        return "Describe how to transform your image...";
-    }
-  };
-
-  // Function to handle suggest prompt button
-  const handleSuggestPrompt = async () => {
-    if (!originalImage) {
-      toast({
-        title: "Image required",
-        description: "Please upload an image first.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await apiRequest("/api/suggest-prompt", {
-        method: "POST",
-        body: JSON.stringify({ image: originalImage }),
-      });
-
-      if (response.prompt) {
-        setPromptText(response.prompt);
-        toast({
-          title: "Prompt suggested",
-          description: "AI has analyzed your image and suggested a prompt.",
-        });
-      }
-    } catch (error) {
-      console.error("Error suggesting prompt:", error);
-      toast({
-        title: "Error",
-        description: "Could not generate a prompt suggestion.",
-        variant: "destructive",
-      });
-    }
-    setIsLoading(false);
-  };
-
-  const currentSubcategoryInfo = getCurrentSubcategoryInfo();
-  const subcategoryOptions = getSubcategoryOptions();
+  }, [initialPrompt, initialCategory, initialSubcategory]);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
-      {/* Back button */}
-      <div>
-        <Button
-          variant="ghost"
-          className="pl-0 text-muted-foreground hover:text-foreground"
-          onClick={onBack}
-        >
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Back to Image Upload
-        </Button>
-      </div>
-
-      {/* Step 1: Transformation Category Selection */}
-      <div className="space-y-3">
-        <h2 className="text-lg font-medium">Step 1: Select a Transformation Type</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-          <Button
-            variant={primaryCategory === "cartoon" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "cartoon" ? "bg-brand text-white" : ""
-            }`}
-            onClick={() => handleCategorySelect("cartoon")}
-          >
-            <ImageIcon className="h-5 w-5 mr-2" />
-            Cartoon
-          </Button>
-          <Button
-            variant={primaryCategory === "product" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "product" ? "bg-brand text-white" : ""
-            }`}
-            onClick={() => handleCategorySelect("product")}
-          >
-            <BoxIcon className="h-5 w-5 mr-2" />
-            Product
-          </Button>
-          <Button
-            variant={primaryCategory === "painting" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "painting" ? "bg-brand text-white" : ""
-            }`}
-            onClick={() => handleCategorySelect("painting")}
-          >
-            <Paintbrush className="h-5 w-5 mr-2" />
-            Painting
-          </Button>
-          <Button
-            variant={primaryCategory === "era" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "era" ? "bg-brand text-white" : ""
-            }`}
-            onClick={() => handleCategorySelect("era")}
-          >
-            <Clock className="h-5 w-5 mr-2" />
-            Historical Era
-          </Button>
-          <Button
-            variant={primaryCategory === "other" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "other" ? "bg-brand text-white" : ""
-            }`}
-            onClick={() => handleCategorySelect("other")}
-          >
-            <Sparkles className="h-5 w-5 mr-2" />
-            Fun/Viral
-          </Button>
-        </div>
-      </div>
-
-      {/* Step 2: Subcategory Selection (if applicable) */}
-      {primaryCategory && subcategoryOptions.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-lg font-medium">
-            Step 2: Select a {primaryCategory.charAt(0).toUpperCase() + primaryCategory.slice(1)}{" "}
-            Style
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-            {subcategoryOptions.map((key) => {
-              let title = "";
-              switch (primaryCategory) {
-                case "cartoon":
-                  title = CARTOON_STYLES[key as CartoonSubcategory].title;
-                  break;
-                case "product":
-                  title = PRODUCT_STYLES[key as ProductSubcategory].title;
-                  break;
-                case "painting":
-                  title = PAINTING_STYLES[key as PaintingSubcategory].title;
-                  break;
-                case "era":
-                  title = ERA_STYLES[key as EraSubcategory].title;
-                  break;
-                case "other":
-                  title = OTHER_STYLES[key as OtherSubcategory].title;
-                  break;
-              }
-
-              return (
-                <Button
-                  key={key}
-                  variant={isSubcategoryActive(primaryCategory, key) ? "default" : "outline"}
-                  className={`flex items-center justify-start h-auto py-2 px-3 text-sm ${
-                    isSubcategoryActive(primaryCategory, key) ? "bg-brand text-white" : ""
-                  }`}
-                  onClick={() => {
-                    switch (primaryCategory) {
-                      case "cartoon":
-                        handleCartoonSelect(key as CartoonSubcategory);
-                        break;
-                      case "product":
-                        handleProductSelect(key as ProductSubcategory);
-                        break;
-                      case "painting":
-                        handlePaintingSelect(key as PaintingSubcategory);
-                        break;
-                      case "era":
-                        handleEraSelect(key as EraSubcategory);
-                        break;
-                      case "other":
-                        handleOtherSelect(key as OtherSubcategory);
-                        break;
-                    }
-                  }}
-                >
-                  <span className="truncate">{title}</span>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Display current subcategory info if available */}
-      {currentSubcategoryInfo && (
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <h3 className="font-medium text-lg flex items-center">
-            {getCategoryIcon(primaryCategory as TransformationType)}
-            {currentSubcategoryInfo.title}
-          </h3>
-          <p className="text-muted-foreground mt-1">{currentSubcategoryInfo.description}</p>
-          {currentSubcategoryInfo.placeholder && (
-            <p className="text-sm text-muted-foreground italic mt-2">
-              Tip: {currentSubcategoryInfo.placeholder}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Step 3: Prompt Input */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium">
-            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 2: Enter Your Prompt"}
-          </h2>
-          
-          <div className="flex space-x-2">
-            <Popover open={showTips} onOpenChange={setShowTips}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center text-xs"
-                >
-                  <Lightbulb className="h-3.5 w-3.5 mr-1" />
-                  Writing Tips
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-4">
-                <div className="space-y-2">
-                  <h3 className="font-medium text-sm">Prompt Writing Tips</h3>
-                  <ul className="text-xs space-y-1">
-                    {PROMPT_TIPS.map((tip, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="mr-1.5 text-brand">•</span>
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center text-xs"
-              onClick={handleSuggestPrompt}
-              disabled={isLoading || !originalImage}
+    <div className="w-full space-y-4">
+      <div className="flex flex-col space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* Category selection */}
+          <div>
+            <Label htmlFor="category" className="block text-sm font-medium mb-1">
+              Style Category
+            </Label>
+            <Select
+              value={selectedCategory}
+              onValueChange={handleCategoryChange}
             >
-              <Wand2 className="h-3.5 w-3.5 mr-1" />
-              {isLoading ? "Thinking..." : "Suggest Prompt"}
-            </Button>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(CATEGORIES).map(([key, category]) => (
+                  <SelectItem key={key} value={key}>
+                    <div className="flex items-center">
+                      <span className="mr-2">{category.icon}</span>
+                      {category.title}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Subcategory selection */}
+          <div>
+            <Label htmlFor="style" className="block text-sm font-medium mb-1">
+              Specific Style
+            </Label>
+            <Select
+              value={selectedSubcategory || ""}
+              onValueChange={handleSubcategoryChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select specific style" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(styles).map(([key, style]) => (
+                  <SelectItem key={key} value={key}>
+                    {style.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        <Textarea
-          placeholder={
-            currentSubcategoryInfo?.placeholder ||
-            getCustomPlaceholder()
-          }
-          value={promptText}
-          onChange={(e) => setPromptText(e.target.value)}
-          className="min-h-[150px] text-base"
-        />
-
-        {randomTip && (
-          <p className="text-sm text-muted-foreground flex items-start">
-            <Lightbulb className="h-4 w-4 mr-1 mt-0.5 text-amber-500" />
-            <span>
-              <span className="font-medium">Tip:</span> {randomTip}
-            </span>
-          </p>
+        {/* Style description if subcategory is selected */}
+        {selectedSubcategory && styles[selectedSubcategory] && (
+          <div className="bg-muted p-3 rounded-md text-sm">
+            <div className="font-medium mb-1">
+              {styles[selectedSubcategory].title}
+            </div>
+            <div className="text-muted-foreground">
+              {styles[selectedSubcategory].description}
+            </div>
+          </div>
         )}
-      </div>
 
-      {/* Quality Selection */}
-      <div className="space-y-3">
-        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "3"}: Select Image Quality</h2>
-        <div className="flex space-x-2">
-          <Button
-            variant={imageSize === "default" ? "default" : "outline"}
-            className={imageSize === "default" ? "bg-brand text-white" : ""}
-            onClick={() => setImageSize("default")}
-          >
-            Standard Quality
-          </Button>
-          <Button
-            variant={imageSize === "hd" ? "default" : "outline"}
-            className={imageSize === "hd" ? "bg-brand text-white" : ""}
-            onClick={() => setImageSize("hd")}
-          >
-            HD Quality
-            <span className="ml-1 text-xs px-1.5 py-0.5 bg-yellow-500 text-black rounded-full font-medium">
-              2 Credits
-            </span>
-          </Button>
+        {/* Prompt input with help popover */}
+        <div className="relative">
+          <div className="flex justify-between items-center mb-1">
+            <Label
+              htmlFor="prompt"
+              className="block text-sm font-medium"
+            >
+              Transformation Prompt
+            </Label>
+            
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-6 w-6">
+                  <Info className="h-4 w-4" />
+                  <span className="sr-only">Prompt help</span>
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80">
+                <div className="space-y-2">
+                  <h4 className="font-medium">Prompt Tips</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Be specific about the transformation you want. Include details about style, mood, colors, and elements to include or avoid.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    You can modify the suggested prompt or write your own completely custom instructions.
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+          
+          <Textarea
+            id="prompt"
+            value={prompt}
+            onChange={handlePromptChange}
+            placeholder={
+              selectedSubcategory && styles[selectedSubcategory]
+                ? styles[selectedSubcategory].placeholder
+                : categoryData.defaultPlaceholder
+            }
+            className="min-h-32 font-mono text-sm"
+          />
         </div>
       </div>
 
-      {/* Submit Button */}
-      <div className="flex justify-end mt-4">
-        <Button 
-          onClick={handleSubmit} 
-          disabled={isLoading || !promptText.trim()} 
-          className="bg-brand hover:bg-brand-dark"
-          size="lg"
-        >
-          {isLoading ? "Processing..." : "Transform Image"} 
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
+      {/* Magic wand button for suggestions */}
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto flex items-center"
+          >
+            <Wand2 className="mr-2 h-4 w-4" />
+            Get Prompt Suggestions
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-96 p-0" align="center">
+          <Tabs defaultValue="quick">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="quick">Quick Suggestions</TabsTrigger>
+              <TabsTrigger value="tips">Writing Tips</TabsTrigger>
+            </TabsList>
+            <TabsContent value="quick" className="p-4 space-y-2">
+              <h3 className="font-medium mb-2">Quick Suggestions</h3>
+              {/* Dynamically show suggestions based on selected category/style */}
+              {selectedSubcategory && styles[selectedSubcategory] ? (
+                <div className="space-y-2">
+                  <Card className="cursor-pointer hover:bg-muted/50" onClick={() => handleSuggestionClick(styles[selectedSubcategory].suggestedPrompt)}>
+                    <CardHeader className="p-3 pb-0">
+                      <CardTitle className="text-sm">Use Suggested Prompt</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-3 pt-1">
+                      <CardDescription className="text-xs line-clamp-2">
+                        {styles[selectedSubcategory].suggestedPrompt.substring(0, 100)}...
+                      </CardDescription>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="cursor-pointer hover:bg-muted/50" onClick={() => handleSuggestionClick(`${styles[selectedSubcategory].suggestedPrompt}\n\nAdditional details: Make the background more dramatic with deeper colors and atmospheric lighting.`)}>
+                    <CardHeader className="p-3 pb-0">
+                      <CardTitle className="text-sm">Dramatic Background</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-3 pt-1">
+                      <CardDescription className="text-xs">
+                        Add a more dramatic background with deeper colors and atmosphere.
+                      </CardDescription>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="cursor-pointer hover:bg-muted/50" onClick={() => handleSuggestionClick(`${styles[selectedSubcategory].suggestedPrompt}\n\nAdditional details: Enhance the emotional impact with more expressive facial features while maintaining likeness.`)}>
+                    <CardHeader className="p-3 pb-0">
+                      <CardTitle className="text-sm">More Expressive</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-3 pt-1">
+                      <CardDescription className="text-xs">
+                        Enhance emotional impact with more expressive features.
+                      </CardDescription>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Please select a specific style to see suggestions.
+                </p>
+              )}
+            </TabsContent>
+            <TabsContent value="tips" className="p-4 space-y-3">
+              <h3 className="font-medium">Prompt Writing Tips</h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <span className="font-medium">Be specific:</span> Include clear details about the style, elements, and mood you want.
+                </p>
+                <p>
+                  <span className="font-medium">Mention what to keep:</span> Specify which aspects of the original should be preserved.
+                </p>
+                <p>
+                  <span className="font-medium">Describe the atmosphere:</span> Mention lighting, color palette, and emotional tone.
+                </p>
+                <p>
+                  <span className="font-medium">Reference examples:</span> Mention specific artists, eras, or visual styles.
+                </p>
+                <p>
+                  <span className="font-medium">Add constraints:</span> Explicitly state what you don't want to see in the result.
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
+          <CardFooter className="p-2 border-t">
+            <p className="text-xs text-muted-foreground">
+              Click on any suggestion to use it as your prompt
+            </p>
+          </CardFooter>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
