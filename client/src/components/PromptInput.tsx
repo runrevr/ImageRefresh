@@ -488,7 +488,7 @@ export default function PromptInput({
 }: PromptInputProps) {
   const { toast } = useToast();
   const [promptText, setPromptText] = useState(defaultPrompt || "");
-  const [imageSize, setImageSize] = useState<"default" | "mobile" | "square">("default");
+  const [imageSize, setImageSize] = useState<"default" | "mobile" | "square">("square");
   const [isLoading, setIsLoading] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [randomTip, setRandomTip] = useState("");
@@ -962,6 +962,7 @@ export default function PromptInput({
               <div className="h-6 w-2 bg-current rounded-sm"></div>
             </div>
             <span className="text-xs">Mobile</span>
+            <span className="text-xs opacity-80 mt-1">2:3</span>
           </Button>
           
           <Button
@@ -975,6 +976,7 @@ export default function PromptInput({
               <div className="h-4 w-4 bg-current rounded-sm"></div>
             </div>
             <span className="text-xs">Square</span>
+            <span className="text-xs opacity-80 mt-1">1:1</span>
           </Button>
           
           <Button
@@ -988,6 +990,7 @@ export default function PromptInput({
               <div className="h-2 w-6 bg-current rounded-sm"></div>
             </div>
             <span className="text-xs">Landscape</span>
+            <span className="text-xs opacity-80 mt-1">16:9</span>
           </Button>
         </div>
       </div>
