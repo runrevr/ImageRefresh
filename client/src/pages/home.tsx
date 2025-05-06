@@ -178,6 +178,7 @@ export default function Home() {
     // Check if there's a saved style from the Ideas page
     if (hasSavedStyle()) {
       const style = getSavedStyle();
+      console.log("Found saved style:", style);
       if (style) {
         // Set the prompt from the saved style
         setPrompt(style.prompt);

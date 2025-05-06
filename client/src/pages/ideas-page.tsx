@@ -231,8 +231,7 @@ const StyleCard = ({
         saveStyle({
           prompt: style.prompt,
           title: style.name,
-          category: style.category,
-          id: style.id
+          category: style.category
         });
         onSelect(style);
         // Navigate to upload page
@@ -431,15 +430,13 @@ export default function IdeasPage() {
 
   // Function to save the selected style to localStorage
   const saveStylePrompt = (style: Style) => {
-    // Save the selected style in localStorage for use on the home page
-    localStorage.setItem(
-      "selectedStyle",
-      JSON.stringify({
-        prompt: style.prompt,
-        title: style.name,
-        category: style.category,
-      }),
-    );
+    // Save the selected style in localStorage for use on the home page using the saveStyle function
+    saveStyle({
+      prompt: style.prompt,
+      title: style.name,
+      category: style.category,
+      id: style.id
+    });
 
     toast({
       title: "Style selected!",
