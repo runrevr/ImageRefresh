@@ -883,7 +883,7 @@ export default function PromptInput({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">
-            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 2: Enter Your Prompt"}
+            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 3: Enter Your Prompt"}
           </h2>
           
           <div className="flex space-x-2">
@@ -892,7 +892,7 @@ export default function PromptInput({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center text-xs"
+                  className="flex items-center text-xs text-white bg-black"
                 >
                   <Lightbulb className="h-3.5 w-3.5 mr-1" />
                   Writing Tips
@@ -916,7 +916,7 @@ export default function PromptInput({
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center text-xs"
+              className="flex items-center text-xs text-white bg-black"
               onClick={handleSuggestPrompt}
               disabled={isLoading || !originalImage}
             >
@@ -933,7 +933,7 @@ export default function PromptInput({
           }
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          className="min-h-[150px] text-base"
+          className="h-[40px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all"
         />
 
         {randomTip && (
@@ -948,7 +948,7 @@ export default function PromptInput({
 
       {/* Quality Selection */}
       <div className="space-y-3">
-        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "3"}: Select Image Quality</h2>
+        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "4"}: Select Image Quality</h2>
         <div className="flex space-x-2">
           <Button
             variant={imageSize === "default" ? "default" : "outline"}
