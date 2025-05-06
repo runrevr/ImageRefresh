@@ -649,8 +649,7 @@ export default function PromptInput({
       return ERA_STYLES[eraSubcategory];
     } else if (primaryCategory === "other" && otherSubcategory) {
       return OTHER_STYLES[otherSubcategory];
-    } else if (primaryCategory === "pop-culture" && popCultureSubcategory) {
-      return POP_CULTURE_STYLES[popCultureSubcategory];
+    // Pop culture reference removed
     } else if (primaryCategory === "kids-real") {
       // Custom info for kids-real category
       return {
@@ -715,8 +714,7 @@ export default function PromptInput({
       return "Describe your custom historical era transformation...";
     } else if (primaryCategory === "other" && otherSubcategory === "custom-other") {
       return "Describe your custom transformation...";
-    } else if (primaryCategory === "pop-culture" && popCultureSubcategory === "custom-pop-culture") {
-      return "Describe your custom pop culture transformation...";
+    // Pop culture case removed
     } else {
       return "Describe how to transform your image...";
     }
@@ -882,9 +880,7 @@ export default function PromptInput({
                 case "other":
                   title = OTHER_STYLES[key as OtherSubcategory].title;
                   break;
-                case "pop-culture":
-                  title = POP_CULTURE_STYLES[key as PopCultureSubcategory].title;
-                  break;
+                // Pop culture case removed
               }
 
               return (
@@ -911,9 +907,7 @@ export default function PromptInput({
                       case "other":
                         handleOtherSelect(key as OtherSubcategory);
                         break;
-                      case "pop-culture":
-                        handlePopCultureSelect(key as PopCultureSubcategory);
-                        break;
+                      // Pop culture case removed
                     }
                   }}
                 >
