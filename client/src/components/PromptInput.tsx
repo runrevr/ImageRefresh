@@ -526,6 +526,9 @@ export default function PromptInput({
         return Object.keys(ERA_STYLES) as EraSubcategory[];
       case "other":
         return Object.keys(OTHER_STYLES) as OtherSubcategory[];
+      case "kids-real":
+        // No subcategories for kids-real
+        return [];
       default:
         return [];
     }
@@ -639,6 +642,14 @@ export default function PromptInput({
       return ERA_STYLES[eraSubcategory];
     } else if (primaryCategory === "other" && otherSubcategory) {
       return OTHER_STYLES[otherSubcategory];
+    } else if (primaryCategory === "kids-real") {
+      // Custom info for kids-real category
+      return {
+        title: "Sketch to Reality",
+        description: "Transform children's drawings, simple sketches, or doodles into realistic photographic images while preserving the original composition and creative elements.",
+        placeholder: "Tip: Upload a simple drawing or sketch and see it transformed into a realistic photograph.",
+        suggestedPrompt: "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm."
+      };
     }
     return null;
   };
@@ -797,7 +808,7 @@ export default function PromptInput({
             onClick={() => handleCategorySelect("kids-real")}
           >
             <Baby className="h-5 w-5 mr-2" />
-            Kids to Real
+            Sketch to Reality
           </Button>
           <Button
             variant={primaryCategory === "product" ? "default" : "outline"}
