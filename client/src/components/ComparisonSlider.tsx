@@ -175,20 +175,46 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
       {/* Fullscreen Modal */}
       {isFullscreen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4">
-          <div className="relative max-w-6xl w-full max-h-[90vh]">
+          <div className="relative max-w-6xl w-full h-[80vh]">
             {/* Close Button */}
             <button
               onClick={toggleFullscreen}
-              className="absolute -top-12 right-0 w-10 h-10 bg-black bg-opacity-60 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-opacity z-10"
+              className="absolute -top-12 right-0 w-12 h-12 bg-black bg-opacity-70 rounded-lg flex items-center justify-center hover:bg-opacity-90 transition-all shadow-lg z-10"
               aria-label="Close fullscreen"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 6L6 18M6 6L18 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
             
-            {/* Fullscreen Slider */}
-            {renderSlider(fullscreenRef, true)}
+            {/* Side-by-side view instead of slider in fullscreen */}
+            <div className="grid grid-cols-2 h-full gap-4 bg-black bg-opacity-50 rounded-lg p-4">
+              <div className="flex flex-col h-full">
+                <div className="flex-grow flex items-center justify-center bg-gray-900 rounded-lg overflow-hidden">
+                  <img 
+                    src={beforeImage} 
+                    className="max-w-full max-h-full object-contain" 
+                    alt="Original image" 
+                  />
+                </div>
+                <div className="bg-black bg-opacity-80 p-3 text-white text-center rounded-b-lg">
+                  <p className="font-medium text-base md:text-lg">Original Image</p>
+                </div>
+              </div>
+              
+              <div className="flex flex-col h-full">
+                <div className="flex-grow flex items-center justify-center bg-gray-900 rounded-lg overflow-hidden">
+                  <img 
+                    src={afterImage} 
+                    className="max-w-full max-h-full object-contain" 
+                    alt="Transformed image" 
+                  />
+                </div>
+                <div className="bg-black bg-opacity-80 p-3 text-white text-center rounded-b-lg">
+                  <p className="font-medium text-base md:text-lg">Transformed Image</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
