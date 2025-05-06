@@ -413,7 +413,27 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     title: "Mullets",
     description: "It's well known that everyone secretly wants to look like Joe Dirt.",
     placeholder: "E.g., Make my mullet more dramatic with volume",
-    suggestedPrompt: "Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity. Create a \"business in the front, party in the back\" hairstyle with short, styled hair on top and sides while adding longer, flowing hair extending down the neck and back. Vary the mullet style to include classic 80s volume, modern mullet interpretations, or extreme versions with dramatic length contrasts. For some variations, include distinctive side elements like sideburns, \"chops,\" or temple hair that connects to the mustache area. Add subtle rock-and-roll styling elements like slight dishevelment, styled volume, or a hint of rebellious attitude in the expression that suggests the person enjoys rock music. Ensure the mullet looks natural yet distinctive on the subject, adapting to their face shape while maintaining the exact same hair color as the original photo. The result should appear as if the person genuinely styled their hair this way for a rock concert or performance, preserving lighting and photographic qualities of the original image.",
+    suggestedPrompt: "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.  
+      1. Use the image’s hair mask to isolate the hair—do not touch the face, body, clothing, or background.  
+      2. Match the original hair color, texture, and density exactly.  
+      3. Randomly choose one of these top-hair styles for each run:  
+         - curly, teased volume  
+         - short, textured spikes  
+         - feathered, classic ’80s layers  
+         - sleek, modern taper  
+      4. In every variation, the back must be noticeably longer than the front (“business in front, party in back”).  
+      5. Preserve **all** facial attributes exactly as in the original, including:  
+         - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)  
+         - Facial proportions and bone structure  
+         - Eye color, eye shape, lips, and expression  
+         - Age appearance (do **not** make the subject look older or younger)  
+      6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.  
+
+      **Negative constraints** (do **not**):  
+      - Alter any aspect of the face, skin texture, or age cues.  
+      - Introduce wrinkles, sagging, or any aging artifacts.  
+      - Change posture, clothing, background, or cropping.  
+",
   },
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
