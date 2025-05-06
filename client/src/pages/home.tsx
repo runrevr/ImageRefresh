@@ -199,7 +199,18 @@ export default function Home() {
         // Since we have a preset style, we can automatically submit the transformation
         // with a small delay to allow the user to see the toast notification
         setCurrentStep(Step.Prompt);
+        console.log("Auto-submitting with prompt in 1.5 seconds:", style.prompt);
         setTimeout(() => {
+          console.log("Now auto-submitting prompt:", style.prompt);
+          if (!style.prompt || style.prompt.trim().length === 0) {
+            console.error("Auto-submit has empty prompt, cannot proceed");
+            toast({
+              title: "Error with saved style",
+              description: "The saved style doesn't have a valid prompt. Please select a transformation manually.",
+              variant: "destructive",
+            });
+            return;
+          }
           handlePromptSubmit(style.prompt);
         }, 1500);
         return;
@@ -232,9 +243,22 @@ export default function Home() {
       console.log("Sending transformation request with data:", {
         originalImagePath,
         promptLength: promptText?.length || 0,
+        promptPreview: promptText?.substring(0, 50) + "...",
         userId: userCredits?.id,
         imageSize: imageSize,
       });
+      
+      if (!originalImagePath) {
+        console.error("Missing originalImagePath. Upload may not have completed properly.");
+        throw new Error("Missing image path. Please upload an image again.");
+      }
+      
+      if (!promptText || promptText.trim().length === 0) {
+        console.error("Empty prompt text");
+        throw new Error("Missing prompt text. Please provide a description for the transformation.");
+      }
+      
+      console.log("Full prompt being sent:", promptText);
       
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
@@ -246,6 +270,7 @@ export default function Home() {
       const data = await response.json();
 
       if (response.ok) {
+        console.log("Transformation successful, result:", data);
         setTransformedImage(data.transformedImageUrl);
         // Store transformation data including the database ID
         setCurrentTransformation(data);
@@ -264,6 +289,7 @@ export default function Home() {
         } : null);
       } else {
         // Check for specific error types
+        console.error("Server returned error response:", data);
         if (data.error === "content_safety") {
           toast({
             title: "Content Safety Alert",
@@ -274,7 +300,7 @@ export default function Home() {
         } else {
           toast({
             title: "Transformation failed",
-            description: data.message,
+            description: data.message || "An unknown error occurred during transformation",
             variant: "destructive",
           });
         }
