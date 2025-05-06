@@ -459,7 +459,8 @@ export default function IdeasPage() {
     const savedStyle = {
       prompt: style.prompt,
       title: style.name,
-      category: style.category
+      category: style.category,
+      id: style.id
     };
     saveStyle(savedStyle);
     

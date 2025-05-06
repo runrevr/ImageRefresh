@@ -849,7 +849,7 @@ export default function PromptInput({
             onClick={() => handleCategorySelect("era")}
           >
             <Clock className="h-5 w-5 mr-2" />
-            Historical Era
+            Pop Culture Thru The Years
           </Button>
         </div>
       </div>
@@ -858,7 +858,7 @@ export default function PromptInput({
       {primaryCategory && subcategoryOptions.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-lg font-medium">
-            Step 2: Select a {primaryCategory.charAt(0).toUpperCase() + primaryCategory.slice(1)}{" "}
+            Step 2: Select a {primaryCategory === "era" ? "Pop Culture" : primaryCategory.charAt(0).toUpperCase() + primaryCategory.slice(1)}{" "}
             Style
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">

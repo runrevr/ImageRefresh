@@ -11,7 +11,7 @@ export interface SavedStyle {
   prompt: string;
   title: string;
   category: string;
-  id?: string;
+  id?: string;  // ID is optional, since it may not be provided in all cases
 }
 
 // Local storage key for the saved style
