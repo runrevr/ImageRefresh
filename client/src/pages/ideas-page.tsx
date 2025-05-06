@@ -309,6 +309,29 @@ export default function IdeasPage() {
 
   // Get all categories from our data structure
   const categories = getCategories();
+  
+  // Check for existing saved style on component mount
+  useEffect(() => {
+    if (hasSavedStyle()) {
+      const savedStyle = getSavedStyle();
+      
+      // Find the style in our styles data
+      const allStyles = categories.flatMap(cat => cat.styles);
+      const matchingStyle = allStyles.find(s => 
+        s.id === savedStyle?.id || 
+        (s.name === savedStyle?.title && s.category === savedStyle?.category)
+      );
+      
+      if (matchingStyle) {
+        setSelectedStyle(matchingStyle);
+        
+        // If we have a matching style, select its category too
+        if (matchingStyle.category) {
+          setSelectedCategory(matchingStyle.category);
+        }
+      }
+    }
+  }, []);
 
   // Get styles for the selected category
   let styles = selectedCategory ? getStylesByCategory(selectedCategory) : [];
