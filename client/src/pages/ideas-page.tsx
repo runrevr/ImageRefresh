@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
+import { saveStyle } from "@/components/StyleIntegration";
 
 // Import icons
 import {
@@ -226,6 +227,13 @@ const StyleCard = ({
     <Card 
       className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full flex flex-col"
       onClick={() => {
+        // Save style to local storage before navigation
+        saveStyle({
+          prompt: style.prompt,
+          title: style.name,
+          category: style.category,
+          id: style.id
+        });
         onSelect(style);
         // Navigate to upload page
         window.location.href = "/?showUpload=true";
@@ -273,6 +281,13 @@ const StyleCard = ({
             className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
             onClick={(e) => {
               e.stopPropagation(); // Prevent double navigation/action
+              // Save style to local storage before navigation
+              saveStyle({
+                prompt: style.prompt,
+                title: style.name,
+                category: style.category,
+                id: style.id
+              });
               onSelect(style);
             }}
           >
