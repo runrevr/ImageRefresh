@@ -36,6 +36,14 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
     e.stopPropagation();
     setIsFullscreen(!isFullscreen);
   };
+  
+  // Handle image click to open fullscreen
+  const handleImageClick = (e: React.MouseEvent) => {
+    // Only open fullscreen on click if not dragging
+    if (!isDragging) {
+      setIsFullscreen(true);
+    }
+  };
 
   // Close fullscreen on escape key
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -91,6 +99,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
       className={`relative w-full h-full cursor-ew-resize border border-gray-200 ${isFullscreenView ? 'rounded-lg overflow-hidden' : ''}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      onClick={!isFullscreenView ? handleImageClick : undefined}
     >
       {/* After Image (Transformed) */}
       <div className={`absolute inset-0 ${isFullscreenView ? 'bg-gray-900' : 'bg-gray-100'} flex flex-col items-center justify-center`}>
@@ -138,17 +147,22 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
         </div>
       </div>
 
-      {/* Expand/Collapse Icon */}
+      {/* Expand/Collapse Icon with hint */}
       {!isFullscreenView && (
-        <button
-          onClick={toggleFullscreen}
-          className="absolute top-2 right-2 w-10 h-10 bg-black bg-opacity-60 rounded-full flex items-center justify-center hover:bg-opacity-80 transition-opacity z-10"
-          aria-label="View fullscreen"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 15V18C3 19.1 3.9 20 5 20H8M21 9V6C21 4.9 20.1 4 19 4H16M3 9V6C3 4.9 3.9 4 5 4H8M21 15V18C21 19.1 20.1 20 19 20H16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
+        <div className="absolute top-2 right-2 z-10 flex items-center">
+          <div className="bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-lg mr-2 hidden sm:block">
+            Click image to view larger
+          </div>
+          <button
+            onClick={toggleFullscreen}
+            className="w-12 h-12 bg-black bg-opacity-70 rounded-lg flex items-center justify-center hover:bg-opacity-90 transition-all shadow-lg hover:scale-105 transform"
+            aria-label="View fullscreen"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 15V18C3 19.1 3.9 20 5 20H8M21 9V6C21 4.9 20.1 4 19 4H16M3 9V6C3 4.9 3.9 4 5 4H8M21 15V18C21 19.1 20.1 20 19 20H16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
       )}
     </div>
   );

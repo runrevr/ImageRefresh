@@ -98,11 +98,21 @@ export default function ResultView({
         </div>
         
         {/* Comparison slider */}
-        <div className="w-full h-96 rounded-lg overflow-hidden mb-8">
-          <ComparisonSlider 
-            beforeImage={originalImage} 
-            afterImage={transformedImage} 
-          />
+        <div className="relative">
+          <div className="w-full h-96 rounded-lg overflow-hidden mb-2">
+            <ComparisonSlider 
+              beforeImage={originalImage} 
+              afterImage={transformedImage} 
+            />
+          </div>
+          <p className="text-center text-gray-500 text-sm mb-6">
+            <span className="inline-flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              Click on the image or use the fullscreen button to view in larger size
+            </span>
+          </p>
         </div>
         
         {/* Transformation Description - Gray text with collapsible content */}
