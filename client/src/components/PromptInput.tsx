@@ -528,6 +528,15 @@ export default function PromptInput({
       setPrimaryCategory("other");
     }
   }, [selectedTransformation]);
+  
+  // Handle saved style from Ideas page if present
+  useEffect(() => {
+    if (savedStyle && savedStyle.category === "Fun/Viral" && savedStyle.title === "Mullet") {
+      console.log("Setting primary category to other and subcategory to mullets from saved style");
+      setPrimaryCategory("other");
+      setOtherSubcategory("mullets");
+    }
+  }, [savedStyle]);
 
   // Handle form submission
   const handleSubmit = () => {
@@ -1187,7 +1196,7 @@ export default function PromptInput({
               <Button
                 className="flex-1 text-white bg-black hover:bg-black/80"
                 onClick={handleSubmit}
-                disabled={!primaryCategory}
+                disabled={!primaryCategory && prompt.trim().length === 0}
               >
                 Generate Transformation
               </Button>
