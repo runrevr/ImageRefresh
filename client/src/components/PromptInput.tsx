@@ -18,6 +18,7 @@ import {
   Paintbrush,
   Sparkles,
   Clock, // For era category
+  Baby, // For kids to real
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -41,6 +42,7 @@ export type TransformationType =
   | "historical"
   | "other"
   | "kids"
+  | "kids-real"
   | "custom";
 
 // Subcategory types
@@ -582,6 +584,11 @@ export default function PromptInput({
     setPaintingSubcategory(null);
     setEraSubcategory(null);
     setOtherSubcategory(null);
+    
+    // Set default prompt for Kids to Real
+    if (category === "kids-real") {
+      setPromptText("Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.");
+    }
   };
 
   // Handle subcategory selections
@@ -649,6 +656,8 @@ export default function PromptInput({
         return <Clock className="h-5 w-5 mr-2" />;
       case "other":
         return <Sparkles className="h-5 w-5 mr-2" />;
+      case "kids-real":
+        return <Baby className="h-5 w-5 mr-2" />;
       default:
         return <Wand2 className="h-5 w-5 mr-2" />;
     }
@@ -759,7 +768,7 @@ export default function PromptInput({
       {/* Step 1: Transformation Category Selection */}
       <div className="space-y-3">
         <h2 className="text-lg font-medium">Step 1: Select a Transformation Type</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-2">
           <Button
             variant={primaryCategory === "cartoon" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
@@ -769,6 +778,26 @@ export default function PromptInput({
           >
             <ImageIcon className="h-5 w-5 mr-2" />
             Cartoon
+          </Button>
+          <Button
+            variant={primaryCategory === "other" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "other" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("other")}
+          >
+            <Sparkles className="h-5 w-5 mr-2" />
+            Fun/Viral
+          </Button>
+          <Button
+            variant={primaryCategory === "kids-real" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "kids-real" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("kids-real")}
+          >
+            <Baby className="h-5 w-5 mr-2" />
+            Kids to Real
           </Button>
           <Button
             variant={primaryCategory === "product" ? "default" : "outline"}
@@ -799,16 +828,6 @@ export default function PromptInput({
           >
             <Clock className="h-5 w-5 mr-2" />
             Historical Era
-          </Button>
-          <Button
-            variant={primaryCategory === "other" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
-              primaryCategory === "other" ? "bg-secondary text-white" : "text-white bg-black"
-            }`}
-            onClick={() => handleCategorySelect("other")}
-          >
-            <Sparkles className="h-5 w-5 mr-2" />
-            Fun/Viral
           </Button>
         </div>
       </div>
