@@ -750,7 +750,7 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "cartoon" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "cartoon" ? "bg-brand text-white" : ""
+              primaryCategory === "cartoon" ? "bg-secondary text-white" : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("cartoon")}
           >
@@ -760,7 +760,7 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "product" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "product" ? "bg-brand text-white" : ""
+              primaryCategory === "product" ? "bg-secondary text-white" : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("product")}
           >
@@ -770,7 +770,7 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "painting" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "painting" ? "bg-brand text-white" : ""
+              primaryCategory === "painting" ? "bg-secondary text-white" : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("painting")}
           >
@@ -780,7 +780,7 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "era" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "era" ? "bg-brand text-white" : ""
+              primaryCategory === "era" ? "bg-secondary text-white" : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("era")}
           >
@@ -790,7 +790,7 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "other" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "other" ? "bg-brand text-white" : ""
+              primaryCategory === "other" ? "bg-secondary text-white" : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("other")}
           >
@@ -833,7 +833,7 @@ export default function PromptInput({
                   key={key}
                   variant={isSubcategoryActive(primaryCategory, key) ? "default" : "outline"}
                   className={`flex items-center justify-start h-auto py-2 px-3 text-sm ${
-                    isSubcategoryActive(primaryCategory, key) ? "bg-brand text-white" : ""
+                    isSubcategoryActive(primaryCategory, key) ? "bg-secondary text-white" : "text-white bg-black"
                   }`}
                   onClick={() => {
                     switch (primaryCategory) {
@@ -952,14 +952,14 @@ export default function PromptInput({
         <div className="flex space-x-2">
           <Button
             variant={imageSize === "default" ? "default" : "outline"}
-            className={imageSize === "default" ? "bg-brand text-white" : ""}
+            className={imageSize === "default" ? "bg-secondary text-white" : "text-white bg-black"}
             onClick={() => setImageSize("default")}
           >
             Standard Quality
           </Button>
           <Button
             variant={imageSize === "hd" ? "default" : "outline"}
-            className={imageSize === "hd" ? "bg-brand text-white" : ""}
+            className={imageSize === "hd" ? "bg-secondary text-white" : "text-white bg-black"}
             onClick={() => setImageSize("hd")}
           >
             HD Quality
@@ -975,7 +975,7 @@ export default function PromptInput({
         <Button 
           onClick={handleSubmit} 
           disabled={isLoading || !promptText.trim()} 
-          className="bg-brand hover:bg-brand-dark"
+          className="bg-secondary hover:bg-secondary/80 text-white"
           size="lg"
         >
           {isLoading ? "Processing..." : "Transform Image"} 
