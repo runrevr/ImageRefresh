@@ -883,7 +883,7 @@ export default function PromptInput({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">
-            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 3: Enter Your Prompt"}
+            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 3: Enter Any Other Details Here"}
           </h2>
           
           <div className="flex space-x-2">
@@ -933,7 +933,8 @@ export default function PromptInput({
           }
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          className="h-[40px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all"
+          className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 px-3"
+          rows={1}
         />
 
         {randomTip && (
@@ -951,21 +952,11 @@ export default function PromptInput({
         <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "4"}: Select Image Quality</h2>
         <div className="flex space-x-2">
           <Button
-            variant={imageSize === "default" ? "default" : "outline"}
-            className={imageSize === "default" ? "bg-secondary text-white" : "text-white bg-black"}
+            variant="default"
+            className="bg-secondary text-white"
             onClick={() => setImageSize("default")}
           >
             Standard Quality
-          </Button>
-          <Button
-            variant={imageSize === "hd" ? "default" : "outline"}
-            className={imageSize === "hd" ? "bg-secondary text-white" : "text-white bg-black"}
-            onClick={() => setImageSize("hd")}
-          >
-            HD Quality
-            <span className="ml-1 text-xs px-1.5 py-0.5 bg-yellow-500 text-black rounded-full font-medium">
-              2 Credits
-            </span>
           </Button>
         </div>
       </div>
