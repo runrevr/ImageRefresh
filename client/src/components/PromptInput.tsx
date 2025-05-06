@@ -19,6 +19,7 @@ import {
   Sparkles,
   Clock, // For era category
   Baby, // For kids to real
+  Film, // For pop culture
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -584,6 +585,8 @@ export default function PromptInput({
         return Object.keys(ERA_STYLES) as EraSubcategory[];
       case "other":
         return Object.keys(OTHER_STYLES) as OtherSubcategory[];
+      case "pop-culture":
+        return Object.keys(POP_CULTURE_STYLES) as PopCultureSubcategory[];
       case "kids-real":
         // No subcategories for kids-real
         return [];
@@ -645,6 +648,7 @@ export default function PromptInput({
     setPaintingSubcategory(null);
     setEraSubcategory(null);
     setOtherSubcategory(null);
+    setPopCultureSubcategory(null);
     
     // Set default prompt for Kids to Real
     if (category === "kids-real") {
@@ -707,6 +711,8 @@ export default function PromptInput({
       return ERA_STYLES[eraSubcategory];
     } else if (primaryCategory === "other" && otherSubcategory) {
       return OTHER_STYLES[otherSubcategory];
+    } else if (primaryCategory === "pop-culture" && popCultureSubcategory) {
+      return POP_CULTURE_STYLES[popCultureSubcategory];
     } else if (primaryCategory === "kids-real") {
       // Custom info for kids-real category
       return {
@@ -734,6 +740,8 @@ export default function PromptInput({
         return <Sparkles className="h-5 w-5 mr-2" />;
       case "kids-real":
         return <Baby className="h-5 w-5 mr-2" />;
+      case "pop-culture":
+        return <Film className="h-5 w-5 mr-2" />;
       default:
         return <Wand2 className="h-5 w-5 mr-2" />;
     }
@@ -752,6 +760,8 @@ export default function PromptInput({
         return eraSubcategory === subcategory;
       case "other":
         return otherSubcategory === subcategory;
+      case "pop-culture":
+        return popCultureSubcategory === subcategory;
       default:
         return false;
     }
@@ -844,7 +854,7 @@ export default function PromptInput({
       {/* Step 1: Transformation Category Selection */}
       <div className="space-y-3">
         <h2 className="text-lg font-medium">Step 1: Select a Transformation Type</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2">
           <Button
             variant={primaryCategory === "cartoon" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
@@ -854,6 +864,16 @@ export default function PromptInput({
           >
             <ImageIcon className="h-5 w-5 mr-2" />
             Cartoon
+          </Button>
+          <Button
+            variant={primaryCategory === "pop-culture" ? "default" : "outline"}
+            className={`flex items-center justify-center h-12 ${
+              primaryCategory === "pop-culture" ? "bg-secondary text-white" : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("pop-culture")}
+          >
+            <Film className="h-5 w-5 mr-2" />
+            Pop Culture
           </Button>
           <Button
             variant={primaryCategory === "other" ? "default" : "outline"}
@@ -934,6 +954,9 @@ export default function PromptInput({
                 case "other":
                   title = OTHER_STYLES[key as OtherSubcategory].title;
                   break;
+                case "pop-culture":
+                  title = POP_CULTURE_STYLES[key as PopCultureSubcategory].title;
+                  break;
               }
 
               return (
@@ -959,6 +982,9 @@ export default function PromptInput({
                         break;
                       case "other":
                         handleOtherSelect(key as OtherSubcategory);
+                        break;
+                      case "pop-culture":
+                        handlePopCultureSelect(key as PopCultureSubcategory);
                         break;
                     }
                   }}
