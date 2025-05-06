@@ -88,11 +88,11 @@ export default function Home() {
     }
   }, [authUser]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  // Define a type for transformations
-  type TransformationType = Category | null;
+  // Define a local type for transformations
+  type TransformationType = string;
   
   const [selectedTransformation, setSelectedTransformation] =
-    useState<TransformationType>(null);
+    useState<TransformationType>("");
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
   const [showAccountNeededDialog, setShowAccountNeededDialog] =
     useState<boolean>(false);
@@ -359,7 +359,7 @@ export default function Home() {
     setOriginalImagePath(null);
     setTransformedImage(null);
     setPrompt("");
-    setSelectedTransformation(null);
+    setSelectedTransformation("");
     setCurrentTransformation(null); // Clear current transformation data
     setHasTriedAnotherPrompt(false); // Reset the "tried another prompt" flag
     setCurrentStep(Step.Upload);
