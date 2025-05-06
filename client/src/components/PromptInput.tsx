@@ -90,6 +90,7 @@ export type EraSubcategory =
   | "custom-era";
 
 export type OtherSubcategory =
+  | "mullets"
   | "baby-prediction"
   | "future-self"
   | "ghibli-style"
