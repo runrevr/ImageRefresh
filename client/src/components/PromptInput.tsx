@@ -19,7 +19,6 @@ import {
   Sparkles,
   Clock, // For era category
   Baby, // For kids to real
-  Film, // For pop culture
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -44,7 +43,6 @@ export type TransformationType =
   | "other"
   | "kids"
   | "kids-real"
-  | "pop-culture"
   | "custom";
 
 // Subcategory types
@@ -99,16 +97,6 @@ export type OtherSubcategory =
   | "self-as-cat"
   | "caricature"
   | "custom-other";
-  
-export type PopCultureSubcategory =
-  | "star-wars"
-  | "harry-potter"
-  | "avatar"
-  | "game-of-thrones"
-  | "marvel-heroes"
-  | "anime"
-  | "custom-pop-culture";
-
 // Writing tips for better prompts
 const PROMPT_TIPS = [
   "Be specific about style (e.g., 'watercolor', 'photorealistic', 'cartoon')",
@@ -126,51 +114,7 @@ type StyleOption = {
   suggestedPrompt: string;
 };
 
-// Pop Culture subcategories
-const POP_CULTURE_STYLES: Record<PopCultureSubcategory, StyleOption> = {
-  "star-wars": {
-    title: "Star Wars",
-    description: "Transform your image into the iconic Star Wars universe style.",
-    placeholder: "E.g., Add Star Wars elements, costumes, and aesthetic",
-    suggestedPrompt: "Transform into an epic Star Wars character standing in a dramatic sci-fi scene. Create a cinematic portrait with the distinctive Star Wars aesthetic featuring futuristic elements, iconic costume designs, and dramatic lighting. The character should have a heroic or determined pose with a blue or green lightsaber glowing in hand. Set against a striking alien landscape with multiple moons, distant spacecraft, or an impressive space station in the background. Add atmospheric haze, lens flares, and dynamic lighting effects to capture the cinematic quality of the Star Wars universe. The final image should evoke the epic sci-fi adventure feeling of the iconic franchise while maintaining the face and general likeness of the original person."
-  },
-  "harry-potter": {
-    title: "Harry Potter",
-    description: "Convert your image into the magical world of Harry Potter.",
-    placeholder: "E.g., Add wizard robes and magical elements",
-    suggestedPrompt: "Transform into a character from the wizarding world of Harry Potter, wearing detailed wizard robes with a school house emblem, and holding a wand creating magical energy effects. Add a magical environment with floating candles, moving staircases, or enchanted objects. Include castle architecture with gothic elements in the background, and add warm golden lighting with magical particles floating in the air. The atmosphere should feel enchanted and mysterious while maintaining facial features and general likeness of the original person."
-  },
-  "avatar": {
-    title: "Avatar Na'vi",
-    description: "Turn yourself into a Na'vi character from the Avatar universe.",
-    placeholder: "E.g., Add blue skin and other Na'vi features",
-    suggestedPrompt: "Transform into a Na'vi character from the world of Avatar. Create tall blue humanoid with striped skin patterns, large expressive eyes, and a strong athletic build. Include the distinctive features such as pointed ears, flat nose, high cheekbones, and a tail. Add tribal clothing with natural materials, colorful beads, and native ornaments. Set against a lush bioluminescent alien forest background with floating mountains, strange plants with spiral patterns, and exotic alien wildlife. Include glowing elements throughout the scene to emphasize the otherworldly beauty while maintaining some facial resemblance to the original person."
-  },
-  "game-of-thrones": {
-    title: "Game of Thrones",
-    description: "Transform into a character from the world of Westeros.",
-    placeholder: "E.g., Add medieval fantasy clothing and environment",
-    suggestedPrompt: "Transform into a noble character from the Game of Thrones universe, wearing detailed period-appropriate medieval fantasy attire with house sigils, fur cloaks, leather armor, or ornate royal garments. Add fantasy elements like swords, shields, or dragons subtly incorporated into the background. Set against a dramatic northern landscape with castles, stone architecture, or snowy mountains. Use a desaturated color palette with dramatic lighting to capture the show's distinctive visual style. The atmosphere should feel gritty, realistic, and epic while maintaining the original person's facial features and general likeness."
-  },
-  "marvel-heroes": {
-    title: "Marvel Superhero",
-    description: "Turn yourself into a Marvel superhero character.",
-    placeholder: "E.g., Add superhero costume and powers",
-    suggestedPrompt: "Transform into a Marvel-inspired superhero character standing in an action-ready pose against a cityscape background with dramatic lighting. Create a custom superhero costume with a distinctive color scheme, reflective materials, textured panels, and an emblem that suggests unique powers. Add superhero elements like energy effects around hands, glowing eyes, or other visual power manifestations. The background should include urban elements with dramatic lighting, superhero action elements, and subtle destruction or danger cues. The overall look should be powerful, confident, and heroic while maintaining facial resemblance to the original person."
-  },
-  "anime": {
-    title: "Anime Character",
-    description: "Convert your image into a Japanese anime-style character.",
-    placeholder: "E.g., Add anime features and stylized elements",
-    suggestedPrompt: "Transform into a detailed anime-style character with large expressive eyes, simplified facial features, and colorful stylized hair with physically impossible spikes or shapes. Create a distinctive anime outfit featuring bold colors, unconventional designs, school uniforms, or fantasy-inspired attire. Set against a background with simple but effective details using flat colors, minimal shading, and speed lines or pattern effects to convey emotion or energy. Add anime-specific visual elements like exaggerated expressions, motion lines, or stylized energy effects. The character should have the core essence of the original person while fully embracing the distinctive Japanese anime aesthetic style."
-  },
-  "custom-pop-culture": {
-    title: "Custom Pop Culture",
-    description: "Create your own custom pop culture transformation.",
-    placeholder: "Describe your custom pop culture transformation...",
-    suggestedPrompt: ""
-  }
-};
+
 
 // Cartoon subcategories
 const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
@@ -570,8 +514,7 @@ export default function PromptInput({
     useState<EraSubcategory | null>(null);
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
-  const [popCultureSubcategory, setPopCultureSubcategory] =
-    useState<PopCultureSubcategory | null>(null);
+  // No pop culture subcategory needed
 
   // Determine subcategory options based on primary category
   const getSubcategoryOptions = () => {
