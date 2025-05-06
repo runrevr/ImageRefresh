@@ -78,6 +78,13 @@ export default function Home() {
         freeCreditsUsed: authUser.freeCreditsUsed,
         paidCredits: authUser.paidCredits
       });
+    } else {
+      // For demo purposes when no user is authenticated, create a default guest user
+      setUserCredits({
+        id: 1,  // Use ID 1 as a default guest user
+        freeCreditsUsed: false,
+        paidCredits: 100  // Give demo users plenty of credits
+      });
     }
   }, [authUser]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
