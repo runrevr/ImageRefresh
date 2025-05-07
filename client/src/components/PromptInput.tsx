@@ -761,24 +761,32 @@ export default function PromptInput({
 
     setIsLoading(true);
     try {
+      console.log("Requesting prompt suggestion for image:", originalImage);
       const response = await apiRequest("POST", "/api/suggest-prompt", {
         image: originalImage,
       });
       
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`API returned status ${response.status}`);
+      }
       
-      if (data.prompt) {
+      const data = await response.json();
+      console.log("Received prompt suggestion data:", data);
+
+      if (data && data.prompt) {
         setPromptText(data.prompt);
         toast({
           title: "Prompt suggested",
           description: "AI has analyzed your image and suggested a prompt.",
         });
+      } else {
+        throw new Error("No prompt returned from the API");
       }
     } catch (error) {
       console.error("Error suggesting prompt:", error);
       toast({
         title: "Error",
-        description: "Could not generate a prompt suggestion.",
+        description: "Could not generate a prompt suggestion. Please try again.",
         variant: "destructive",
       });
     }

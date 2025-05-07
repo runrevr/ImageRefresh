@@ -150,29 +150,58 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
+  // Try to serve the app on port 5000 first
   // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-    
-    // Run cleanup once at startup
-    runCleanupTasks()
-      .then(() => log('Initial cleanup tasks completed'))
-      .catch(err => console.error('Error during initial cleanup:', err));
-    
-    // Schedule daily cleanup (86400000 ms = 24 hours)
-    const CLEANUP_INTERVAL = 86400000;
-    setInterval(() => {
-      log('Running scheduled cleanup tasks...');
+  // Port 5000 is the default port that is not firewalled.
+  const defaultPort = 5000;
+  const altPorts = [3000, 3001, 8080, 8000]; // Alternative ports to try
+  
+  // Function to attempt starting server on different ports
+  const startServer = (portToUse: number, remainingPorts: number[] = []): void => {
+    server.listen({
+      port: portToUse,
+      host: "0.0.0.0",
+      reusePort: true,
+    })
+    .on('listening', () => {
+      // Server started successfully
+      log(`Server started successfully on port ${portToUse}`);
+      
+      // Run cleanup once at startup
       runCleanupTasks()
-        .then(() => log('Scheduled cleanup tasks completed'))
-        .catch(err => console.error('Error during scheduled cleanup:', err));
-    }, CLEANUP_INTERVAL);
-  });
+        .then(() => log('Initial cleanup tasks completed'))
+        .catch(err => console.error('Error during initial cleanup:', err));
+      
+      // Schedule daily cleanup (86400000 ms = 24 hours)
+      const CLEANUP_INTERVAL = 86400000;
+      setInterval(() => {
+        log('Running scheduled cleanup tasks...');
+        runCleanupTasks()
+          .then(() => log('Scheduled cleanup tasks completed'))
+          .catch(err => console.error('Error during scheduled cleanup:', err));
+      }, CLEANUP_INTERVAL);
+    })
+    .on('error', (err: any) => {
+      if (err.code === 'EADDRINUSE') {
+        log(`Port ${portToUse} is already in use.`);
+        
+        // Try the next port if there are any remaining ports
+        if (remainingPorts.length > 0) {
+          const nextPort = remainingPorts[0];
+          log(`Attempting to use alternative port ${nextPort}`);
+          startServer(nextPort, remainingPorts.slice(1));
+        } else {
+          console.error('All ports are in use. Please close some applications and try again.');
+          process.exit(1);
+        }
+      } else {
+        // Handle other server errors
+        console.error('Error starting server:', err);
+        process.exit(1);
+      }
+    });
+  };
+  
+  // Start with the default port and fallback to alternatives
+  startServer(defaultPort, altPorts);
 })();

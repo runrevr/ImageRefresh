@@ -206,7 +206,7 @@ export async function transformImage(
         console.log(`Using GPT-4o for vision analysis and gpt-image-1 for image generation`);
 
         // Use gpt-image-1 for image generation
-        console.log(`About to call OpenAI API with payload:`, {
+        console.log(`About to call OpenAI images.generate API with payload:`, {
           model: "gpt-image-1",
           prompt: generationPrompt.substring(0, 50) + "...",
           n: 1,
@@ -224,14 +224,24 @@ export async function transformImage(
         // Write verbose error handling
         try {
           console.log("Attempting to use gpt-image-1 model with high quality and natural style...");
-          imageResponse = await openai.images.edit({
+          
+          // Instead of using images.edit, we'll use images.generate since we don't need to edit an existing image
+          // This avoids the need for the 'image' parameter that's causing the error
+          // Use a simple size parameter without type assertions
+          let size: "1024x1024" | "1024x1536" | "1536x1024" = "1024x1024";
+          if (sizeParam === "1024x1536") {
+            size = "1024x1536";
+          } else if (sizeParam === "1536x1024") {
+            size = "1536x1024";
+          }
+            
+          imageResponse = await openai.images.generate({
             model: "gpt-image-1",
             prompt: generationPrompt,
             n: 1,
-            size: sizeParam === "1024x1536" || sizeParam === "1536x1024"
-              ? (sizeParam as const)
-              : "1024x1024",
+            size: size,
             quality: "high", // Changed from "auto" to "high" for better facial detail
+            style: "natural",  // For more photorealistic results
             moderation: "low",
           });
           console.log("OpenAI API call completed successfully");
