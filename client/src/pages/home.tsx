@@ -108,8 +108,7 @@ export default function Home() {
       if (!userCredits) return;
       
       try {
-        const response = await apiRequest("GET", `/api/credits/${userCredits.id}`);
-        const data = await response.json();
+        const data = await apiRequest(`/api/credits/${userCredits.id}`, { method: "GET" });
         setUserCredits(prevState => {
           if (!prevState) return null;
           return {
@@ -126,8 +125,7 @@ export default function Home() {
 
     const fetchConfig = async () => {
       try {
-        const response = await apiRequest("GET", "/api/config");
-        const data = await response.json();
+        const data = await apiRequest("/api/config", { method: "GET" });
         setIsOpenAIConfigured(data.openaiConfigured);
       } catch (error) {
         console.error("Error fetching configuration:", error);
@@ -257,16 +255,18 @@ export default function Home() {
       
       console.log("Full prompt being sent:", promptText);
       
-      const response = await apiRequest("POST", "/api/transform", {
-        originalImagePath,
-        prompt: promptText,
-        userId: userCredits?.id,
-        imageSize: imageSize,
-      });
+      try {
+        const data = await apiRequest("/api/transform", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            originalImagePath,
+            prompt: promptText,
+            userId: userCredits?.id,
+            imageSize: imageSize,
+          })
+        });
 
-      const data = await response.json();
-
-      if (response.ok) {
         console.log("Transformation successful, result:", data);
         setTransformedImage(data.transformedImageUrl);
         // Store transformation data including the database ID
@@ -274,17 +274,16 @@ export default function Home() {
         setCurrentStep(Step.Result);
 
         // Refresh user credits
-        const creditsResponse = await apiRequest(
-          "GET",
-          `/api/credits/${userCredits?.id}`,
-        );
-        const creditsData = await creditsResponse.json();
+        const creditsData = await apiRequest(`/api/credits/${userCredits?.id}`, {
+          method: "GET"
+        });
+        
         setUserCredits((prevUser) => prevUser ? {
           ...prevUser,
           freeCreditsUsed: creditsData.freeCreditsUsed,
           paidCredits: creditsData.paidCredits,
         } : null);
-      } else {
+      } catch (error) {
         // Check for specific error types
         console.error("Server returned error response:", data);
         if (data.error === "content_safety") {
