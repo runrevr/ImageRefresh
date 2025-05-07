@@ -213,7 +213,9 @@ export async function transformImage(
           size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
             ? sizeParam 
             : "1024x1024",
-          quality: "auto" // Using auto quality as specified
+          quality: "high",    // Changed from "auto" to "high" for better facial detail
+          style: "natural",   // Add this parameter for more photorealistic results
+          moderation: "low",
         });
 
         // Define imageResponse in outer scope to access it later
@@ -221,7 +223,7 @@ export async function transformImage(
 
         // Write verbose error handling
         try {
-          console.log("Attempting to use gpt-image-1 model with auto quality...");
+          console.log("Attempting to use gpt-image-1 model with high quality and natural style...");
           imageResponse = await openai.images.generate({
             model: "gpt-image-1", // Use gpt-image-1 model as requested
             prompt: generationPrompt,
@@ -229,7 +231,8 @@ export async function transformImage(
             size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
               ? (sizeParam as const)
               : "1024x1024",
-            quality: "auto",
+            quality: "high",    // Changed from "auto" to "high" for better facial detail
+            style: "natural",   // Add this parameter for more photorealistic results
             moderation: "low", // Added moderation parameter
           });
           console.log("OpenAI API call completed successfully");
@@ -383,7 +386,8 @@ ${safetyGuards}`;
         prompt: enhancedVariationPrompt,
         n: 1,
         size: "1024x1024",
-        quality: "auto",
+        quality: "high", //Changed to high
+        style: "natural", //Added style parameter
         moderation: "low" //Added moderation parameter
       });
 
