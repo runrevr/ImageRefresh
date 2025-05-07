@@ -7,27 +7,20 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-// Function to get the base API URL from environment or use default
-function getApiBaseUrl(): string {
-  return import.meta.env.VITE_API_BASE_URL || '';
-}
-
-export async function apiRequest<T = any>(
+export async function apiRequest(
+  method: string,
   url: string,
-  options?: RequestInit,
-): Promise<T> {
-  // Prefix URL with base URL if it starts with /api
-  const fullUrl = url.startsWith('/api') 
-    ? `${getApiBaseUrl()}${url}` 
-    : url;
-    
-  const res = await fetch(fullUrl, {
-    ...options,
+  data?: unknown | undefined,
+): Promise<Response> {
+  const res = await fetch(url, {
+    method,
+    headers: data ? { "Content-Type": "application/json" } : {},
+    body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
 
   await throwIfResNotOk(res);
-  return res.json();
+  return res;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
@@ -36,12 +29,7 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const url = queryKey[0] as string;
-    const fullUrl = url.startsWith('/api') 
-      ? `${getApiBaseUrl()}${url}` 
-      : url;
-    
-    const res = await fetch(fullUrl, {
+    const res = await fetch(queryKey[0] as string, {
       credentials: "include",
     });
 
