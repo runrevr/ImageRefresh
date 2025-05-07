@@ -274,19 +274,19 @@ export default function Home() {
         setCurrentStep(Step.Result);
 
         // Refresh user credits
-        const creditsData = await apiRequest(`/api/credits/${userCredits?.id}`, {
+        const creditsResponse = await apiRequest(`/api/credits/${userCredits?.id}`, {
           method: "GET"
         });
         
         setUserCredits((prevUser) => prevUser ? {
           ...prevUser,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
+          freeCreditsUsed: creditsResponse.freeCreditsUsed,
+          paidCredits: creditsResponse.paidCredits,
         } : null);
-      } catch (error) {
+      } catch (error: any) {
         // Check for specific error types
-        console.error("Server returned error response:", data);
-        if (data.error === "content_safety") {
+        console.error("Server returned error response:", error);
+        if (error.error === "content_safety") {
           toast({
             title: "Content Safety Alert",
             description:
@@ -296,7 +296,7 @@ export default function Home() {
         } else {
           toast({
             title: "Transformation failed",
-            description: data.message || "An unknown error occurred during transformation",
+            description: error.message || "An unknown error occurred during transformation",
             variant: "destructive",
           });
         }
@@ -412,13 +412,17 @@ export default function Home() {
       console.log("Previous transformation ID:", previousTransformationId);
 
       // Send the edit request - using the transformed image as the base for editing
-      const response = await apiRequest("POST", "/api/transform", {
-        originalImagePath: transformedImagePath, // Use the transformed image as the new base
-        prompt: editPrompt,
-        userId: userCredits?.id,
-        imageSize: imageSize,
-        isEdit: true, // Flag to indicate this is an edit
-        previousTransformation: previousTransformationId, // Pass the extracted transformation ID
+      const response = await apiRequest("/api/transform", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalImagePath: transformedImagePath, // Use the transformed image as the new base
+          prompt: editPrompt,
+          userId: userCredits?.id,
+          imageSize: imageSize,
+          isEdit: true, // Flag to indicate this is an edit
+          previousTransformation: previousTransformationId, // Pass the extracted transformation ID
+        })
       });
 
       const data = await response.json();
@@ -432,14 +436,13 @@ export default function Home() {
 
         // Refresh user credits
         const creditsResponse = await apiRequest(
-          "GET",
           `/api/credits/${userCredits?.id}`,
+          { method: "GET" }
         );
-        const creditsData = await creditsResponse.json();
         setUserCredits((prevUser) => prevUser ? {
           ...prevUser,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
+          freeCreditsUsed: creditsResponse.freeCreditsUsed,
+          paidCredits: creditsResponse.paidCredits,
         } : null);
       } else {
         // Check for specific error types
@@ -515,11 +518,15 @@ export default function Home() {
 
     try {
       console.log(`Applying ${presetType} preset transformation`);
-      const response = await apiRequest("POST", "/api/transform", {
-        originalImagePath,
-        userId: userCredits?.id,
-        preset: presetType,
-        imageSize,
+      const response = await apiRequest("/api/transform", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalImagePath,
+          userId: userCredits?.id,
+          preset: presetType,
+          imageSize,
+        })
       });
 
       const data = await response.json();
@@ -533,18 +540,17 @@ export default function Home() {
 
         // Refetch user credits
         const creditsResponse = await apiRequest(
-          "GET",
           `/api/credits/${userCredits?.id}`,
+          { method: "GET" }
         );
-        const creditsData = await creditsResponse.json();
         setUserCredits((prevUser) => prevUser ? {
           ...prevUser,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
+          freeCreditsUsed: creditsResponse.freeCreditsUsed,
+          paidCredits: creditsResponse.paidCredits,
         } : {
           id: userCredits?.id || 0,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
+          freeCreditsUsed: creditsResponse.freeCreditsUsed,
+          paidCredits: creditsResponse.paidCredits,
         });
       } else {
         // Check for specific error types
