@@ -114,8 +114,6 @@ type StyleOption = {
   suggestedPrompt: string;
 };
 
-
-
 // Cartoon subcategories
 const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   "super-mario": {
@@ -168,7 +166,8 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     title: "Superhero",
     description: "Convert to a dynamic comic book superhero style.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt: "Create a dynamic comic book-style superhero character inspired by classic superhero adventures. Design an original hero with a confident, determined expression wearing a vibrant costume with bold primary colors and a distinctive emblem centered on the chest. For the costume, include a well-fitted superhero suit with textured panels, decorative seams, and complementary color blocking. Add distinctive identity-concealing elements like a sleek mask, advanced visor system, or specialized glasses that enhance the heroic appearance while maintaining the character's expressive eyes.The character should have a powerful stance with shoulders back and chin up, suggesting readiness for action. Include superhero accessories like a flowing cape with dramatic movement, specialized gauntlets, or a utility belt with gadgets. Surround the hero with dynamic energy effects, motion lines, or power signatures that match their color scheme.     Set the scene in a stylized city environment with dramatic perspective, featuring tall buildings, a setting sun creating dramatic lighting, and subtle hints of action or danger in the background. The overall style should feel empowering, bold, and reminiscent of beloved comic book art.Use the uploaded AI-generated reference image as the direct basis for the character's pose, proportions, and general appearance, transforming it into this superhero version while preserving its essential character.",
+    suggestedPrompt:
+      "Create a dynamic comic book-style superhero character inspired by classic superhero adventures. Design an original hero with a confident, determined expression wearing a vibrant costume with bold primary colors and a distinctive emblem centered on the chest. For the costume, include a well-fitted superhero suit with textured panels, decorative seams, and complementary color blocking. Add distinctive identity-concealing elements like a sleek mask, advanced visor system, or specialized glasses that enhance the heroic appearance while maintaining the character's expressive eyes.The character should have a powerful stance with shoulders back and chin up, suggesting readiness for action. Include superhero accessories like a flowing cape with dramatic movement, specialized gauntlets, or a utility belt with gadgets. Surround the hero with dynamic energy effects, motion lines, or power signatures that match their color scheme.     Set the scene in a stylized city environment with dramatic perspective, featuring tall buildings, a setting sun creating dramatic lighting, and subtle hints of action or danger in the background. The overall style should feel empowering, bold, and reminiscent of beloved comic book art.Use the uploaded AI-generated reference image as the direct basis for the character's pose, proportions, and general appearance, transforming it into this superhero version while preserving its essential character.",
   },
   lego: {
     title: "Lego",
@@ -410,11 +409,13 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
 // Other subcategories
 
 const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
-  "mullets": {
+  mullets: {
     title: "Mullets",
-    description: "It's well known that everyone secretly wants to look like Joe Dirt.",
+    description:
+      "It's well known that everyone secretly wants to look like Joe Dirt.",
     placeholder: "E.g., Make my mullet more dramatic with volume",
-    suggestedPrompt: "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.\n1. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background.\n2. Match the original hair color, texture, and density exactly.\n3. Randomly choose one of these top-hair styles for each run:\n   - curly, teased volume\n   - short, textured spikes\n   - feathered, classic '80s layers\n   - sleek, modern taper\n4. In every variation, the back must be noticeably longer than the front (\"business in front, party in back\").\n5. Preserve **all** facial attributes exactly as in the original, including:\n   - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)\n   - Facial proportions and bone structure\n   - Eye color, eye shape, lips, and expression\n   - Age appearance (do **not** make the subject look older or younger)\n6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.\n\n**Negative constraints** (do **not**):\n- Alter any aspect of the face, skin texture, or age cues.\n- Introduce wrinkles, sagging, or any aging artifacts.\n- Change posture, clothing, background, or cropping.",
+    suggestedPrompt:
+      "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.\n1. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background.\n2. Match the original hair color, texture, and density exactly.\n3. Randomly choose one of these top-hair styles for each run:\n   - curly, teased volume\n   - short, textured spikes\n   - feathered, classic '80s layers\n   - sleek, modern taper\n4. In every variation, the back must be noticeably longer than the front (\"business in front, party in back\").\n5. Preserve **all** facial attributes exactly as in the original, including:\n   - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)\n   - Facial proportions and bone structure\n   - Eye color, eye shape, lips, and expression\n   - Age appearance (do **not** make the subject look older or younger)\n6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.\n\n**Negative constraints** (do **not**):\n- Alter any aspect of the face, skin texture, or age cues.\n- Introduce wrinkles, sagging, or any aging artifacts.\n- Change posture, clothing, background, or cropping.",
   },
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
@@ -492,7 +493,9 @@ export default function PromptInput({
 }: PromptInputProps) {
   const { toast } = useToast();
   const [promptText, setPromptText] = useState(defaultPrompt || "");
-  const [imageSize, setImageSize] = useState<"default" | "mobile" | "square">("square");
+  const [imageSize, setImageSize] = useState<"default" | "mobile" | "square">(
+    "square",
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [randomTip, setRandomTip] = useState("");
@@ -500,7 +503,7 @@ export default function PromptInput({
   // Transformation selection state
   const [primaryCategory, setPrimaryCategory] =
     useState<TransformationType | null>(
-      selectedTransformation || savedStyle?.category || null
+      selectedTransformation || savedStyle?.category || null,
     );
 
   // Subcategory selections
@@ -510,8 +513,9 @@ export default function PromptInput({
     useState<ProductSubcategory | null>(null);
   const [paintingSubcategory, setPaintingSubcategory] =
     useState<PaintingSubcategory | null>(null);
-  const [eraSubcategory, setEraSubcategory] =
-    useState<EraSubcategory | null>(null);
+  const [eraSubcategory, setEraSubcategory] = useState<EraSubcategory | null>(
+    null,
+  );
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
   // No pop culture subcategory needed
@@ -554,13 +558,19 @@ export default function PromptInput({
 
       // Handle style category
       if (savedStyle.category) {
-        console.log("Setting primary category to", savedStyle.category, "from saved style");
+        console.log(
+          "Setting primary category to",
+          savedStyle.category,
+          "from saved style",
+        );
         setPrimaryCategory(savedStyle.category as TransformationType);
       }
 
       // Special handling for mullets saved style
       if (savedStyle.title === "Mullets") {
-        console.log("Setting primary category to other and subcategory to mullets from saved style");
+        console.log(
+          "Setting primary category to other and subcategory to mullets from saved style",
+        );
         setPrimaryCategory("other");
         setOtherSubcategory("mullets");
       }
@@ -572,7 +582,8 @@ export default function PromptInput({
     if (!promptText.trim()) {
       toast({
         title: "Prompt required",
-        description: "Please enter a description of how to transform the image.",
+        description:
+          "Please enter a description of how to transform the image.",
         variant: "destructive",
       });
       return;
@@ -592,10 +603,12 @@ export default function PromptInput({
     setEraSubcategory(null);
     setOtherSubcategory(null);
     // Pop culture reference removed
-    
+
     // Set default prompt for Kids to Real
     if (category === "kids-real") {
-      setPromptText("Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.");
+      setPromptText(
+        "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.",
+      );
     }
   };
 
@@ -634,7 +647,7 @@ export default function PromptInput({
       setPromptText(OTHER_STYLES[subcategory].suggestedPrompt);
     }
   };
-  
+
   // Pop culture handler removed
 
   // Get the current subcategory title and description
@@ -649,14 +662,17 @@ export default function PromptInput({
       return ERA_STYLES[eraSubcategory];
     } else if (primaryCategory === "other" && otherSubcategory) {
       return OTHER_STYLES[otherSubcategory];
-    // Pop culture reference removed
+      // Pop culture reference removed
     } else if (primaryCategory === "kids-real") {
       // Custom info for kids-real category
       return {
         title: "Sketch to Reality",
-        description: "Transform children's drawings, simple sketches, or doodles into realistic photographic images while preserving the original composition and creative elements.",
-        placeholder: "Tip: Upload a simple drawing or sketch and see it transformed into a realistic photograph.",
-        suggestedPrompt: "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm."
+        description:
+          "Transform children's drawings, simple sketches, or doodles into realistic photographic images while preserving the original composition and creative elements.",
+        placeholder:
+          "Tip: Upload a simple drawing or sketch and see it transformed into a realistic photograph.",
+        suggestedPrompt:
+          "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.",
       };
     }
     return null;
@@ -704,17 +720,29 @@ export default function PromptInput({
 
   // Function to get custom prompt placeholder
   const getCustomPlaceholder = () => {
-    if (primaryCategory === "cartoon" && cartoonSubcategory === "custom-cartoon") {
+    if (
+      primaryCategory === "cartoon" &&
+      cartoonSubcategory === "custom-cartoon"
+    ) {
       return "Describe your custom cartoon transformation...";
-    } else if (primaryCategory === "product" && productSubcategory === "custom-product") {
+    } else if (
+      primaryCategory === "product" &&
+      productSubcategory === "custom-product"
+    ) {
       return "Describe your custom product transformation...";
-    } else if (primaryCategory === "painting" && paintingSubcategory === "custom-painting") {
+    } else if (
+      primaryCategory === "painting" &&
+      paintingSubcategory === "custom-painting"
+    ) {
       return "Describe your custom painting transformation...";
     } else if (primaryCategory === "era" && eraSubcategory === "custom-era") {
       return "Describe your custom historical era transformation...";
-    } else if (primaryCategory === "other" && otherSubcategory === "custom-other") {
+    } else if (
+      primaryCategory === "other" &&
+      otherSubcategory === "custom-other"
+    ) {
       return "Describe your custom transformation...";
-    // Pop culture case removed
+      // Pop culture case removed
     } else {
       return "Describe how to transform your image...";
     }
@@ -733,9 +761,8 @@ export default function PromptInput({
 
     setIsLoading(true);
     try {
-      const response = await apiRequest("/api/suggest-prompt", {
-        method: "POST",
-        body: JSON.stringify({ image: originalImage }),
+      const response = await apiRequest("POST", "/api/suggest-prompt", {
+        image: originalImage,
       });
 
       if (response.prompt) {
@@ -772,12 +799,12 @@ export default function PromptInput({
           Back to Image Upload
         </Button>
       </div>
-      
+
       {/* Show the uploaded image */}
       {originalImage && (
         <div className="w-full flex justify-center">
           <div className="w-full max-w-md rounded-lg overflow-hidden shadow-md">
-            <img 
+            <img
               src={originalImage}
               alt="Uploaded image"
               className="w-full h-auto object-contain"
@@ -788,12 +815,16 @@ export default function PromptInput({
 
       {/* Step 1: Transformation Category Selection */}
       <div className="space-y-3">
-        <h2 className="text-lg font-medium">Step 1: Select a Transformation Type</h2>
+        <h2 className="text-lg font-medium">
+          Step 1: Select a Transformation Type
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2">
           <Button
             variant={primaryCategory === "other" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "other" ? "bg-secondary text-white" : "text-white bg-black"
+              primaryCategory === "other"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("other")}
           >
@@ -803,7 +834,9 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "era" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "era" ? "bg-secondary text-white" : "text-white bg-black"
+              primaryCategory === "era"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("era")}
           >
@@ -813,7 +846,9 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "cartoon" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "cartoon" ? "bg-secondary text-white" : "text-white bg-black"
+              primaryCategory === "cartoon"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("cartoon")}
           >
@@ -823,7 +858,9 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "kids-real" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "kids-real" ? "bg-secondary text-white" : "text-white bg-black"
+              primaryCategory === "kids-real"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("kids-real")}
           >
@@ -833,7 +870,9 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "product" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "product" ? "bg-secondary text-white" : "text-white bg-black"
+              primaryCategory === "product"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("product")}
           >
@@ -843,7 +882,9 @@ export default function PromptInput({
           <Button
             variant={primaryCategory === "painting" ? "default" : "outline"}
             className={`flex items-center justify-center h-12 ${
-              primaryCategory === "painting" ? "bg-secondary text-white" : "text-white bg-black"
+              primaryCategory === "painting"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("painting")}
           >
@@ -857,7 +898,11 @@ export default function PromptInput({
       {primaryCategory && subcategoryOptions.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-lg font-medium">
-            Step 2: Select a {primaryCategory === "era" ? "Pop Culture" : primaryCategory.charAt(0).toUpperCase() + primaryCategory.slice(1)}{" "}
+            Step 2: Select a{" "}
+            {primaryCategory === "era"
+              ? "Pop Culture"
+              : primaryCategory.charAt(0).toUpperCase() +
+                primaryCategory.slice(1)}{" "}
             Style
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -885,9 +930,15 @@ export default function PromptInput({
               return (
                 <Button
                   key={key}
-                  variant={isSubcategoryActive(primaryCategory, key) ? "default" : "outline"}
+                  variant={
+                    isSubcategoryActive(primaryCategory, key)
+                      ? "default"
+                      : "outline"
+                  }
                   className={`flex items-center justify-start h-auto py-2 px-3 text-sm ${
-                    isSubcategoryActive(primaryCategory, key) ? "bg-secondary text-white" : "text-white bg-black"
+                    isSubcategoryActive(primaryCategory, key)
+                      ? "bg-secondary text-white"
+                      : "text-white bg-black"
                   }`}
                   onClick={() => {
                     switch (primaryCategory) {
@@ -925,7 +976,9 @@ export default function PromptInput({
             {getCategoryIcon(primaryCategory as TransformationType)}
             {currentSubcategoryInfo.title}
           </h3>
-          <p className="text-muted-foreground mt-1">{currentSubcategoryInfo.description}</p>
+          <p className="text-muted-foreground mt-1">
+            {currentSubcategoryInfo.description}
+          </p>
           {currentSubcategoryInfo.placeholder && (
             <p className="text-sm text-muted-foreground italic mt-2">
               Tip: {currentSubcategoryInfo.placeholder}
@@ -938,9 +991,11 @@ export default function PromptInput({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">
-            {currentSubcategoryInfo ? "Step 3: Customize Your Prompt" : "Step 3: Enter Any Other Details Here"}
+            {currentSubcategoryInfo
+              ? "Step 3: Customize Your Prompt"
+              : "Step 3: Enter Any Other Details Here"}
           </h2>
-          
+
           <div className="flex space-x-2">
             <Popover open={showTips} onOpenChange={setShowTips}>
               <PopoverTrigger asChild>
@@ -983,8 +1038,7 @@ export default function PromptInput({
 
         <Textarea
           placeholder={
-            currentSubcategoryInfo?.placeholder ||
-            getCustomPlaceholder()
+            currentSubcategoryInfo?.placeholder || getCustomPlaceholder()
           }
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
@@ -1004,12 +1058,16 @@ export default function PromptInput({
 
       {/* Image Size Selection */}
       <div className="space-y-3">
-        <h2 className="text-lg font-medium">Step {currentSubcategoryInfo ? "4" : "4"}: Choose Image Size</h2>
+        <h2 className="text-lg font-medium">
+          Step {currentSubcategoryInfo ? "4" : "4"}: Choose Image Size
+        </h2>
         <div className="flex space-x-2">
           <Button
             variant={imageSize === "mobile" ? "default" : "outline"}
             className={`flex flex-col items-center py-2 px-4 h-auto ${
-              imageSize === "mobile" ? "bg-secondary text-white" : "text-white bg-black"
+              imageSize === "mobile"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => setImageSize("mobile")}
           >
@@ -1019,11 +1077,13 @@ export default function PromptInput({
             <span className="text-xs">Mobile</span>
             <span className="text-xs opacity-80 mt-1">2:3</span>
           </Button>
-          
+
           <Button
             variant={imageSize === "square" ? "default" : "outline"}
             className={`flex flex-col items-center py-2 px-4 h-auto ${
-              imageSize === "square" ? "bg-secondary text-white" : "text-white bg-black"
+              imageSize === "square"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => setImageSize("square")}
           >
@@ -1033,11 +1093,13 @@ export default function PromptInput({
             <span className="text-xs">Square</span>
             <span className="text-xs opacity-80 mt-1">1:1</span>
           </Button>
-          
+
           <Button
             variant={imageSize === "default" ? "default" : "outline"}
             className={`flex flex-col items-center py-2 px-4 h-auto ${
-              imageSize === "default" ? "bg-secondary text-white" : "text-white bg-black"
+              imageSize === "default"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
             }`}
             onClick={() => setImageSize("default")}
           >
@@ -1052,13 +1114,13 @@ export default function PromptInput({
 
       {/* Submit Button */}
       <div className="flex justify-end mt-4">
-        <Button 
-          onClick={handleSubmit} 
-          disabled={isLoading || !promptText.trim()} 
+        <Button
+          onClick={handleSubmit}
+          disabled={isLoading || !promptText.trim()}
           className="bg-secondary hover:bg-secondary/80 text-white"
           size="lg"
         >
-          {isLoading ? "Processing..." : "Transform Image"} 
+          {isLoading ? "Processing..." : "Transform Image"}
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
