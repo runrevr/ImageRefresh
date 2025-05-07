@@ -712,14 +712,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   relativePath,
                 );
 
-              // Update user credits for initial transformations
-              // In production with non-guest users, enforce credit deduction; in development mode or guest mode, bypass it
-              if (process.env.NODE_ENV === "production" && !isGuestUser) {
-                // Only deduct credits in production mode for real users
-                console.log("PRODUCTION MODE: Deducting credits for user", userId);
+              // Update user credits for transformations
+              // Only bypass credit deduction for guest users
+              if (!isGuestUser) {
+                // Deduct credits for real users
+                console.log("Deducting credits for user", userId);
                 if (!user.freeCreditsUsed) {
+                  console.log("Using free credit for user", userId);
                   await storage.updateUserCredits(userId, true);
                 } else if (user.paidCredits > 0) {
+                  console.log("Deducting 1 paid credit from user", userId, "Current credits:", user.paidCredits);
                   await storage.updateUserCredits(
                     userId,
                     true,
@@ -727,8 +729,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   );
                 }
               } else {
-                console.log("Credit deduction bypassed:", 
-                  process.env.NODE_ENV !== "production" ? "DEV MODE" : "GUEST USER");
+                console.log("Credit deduction bypassed for GUEST USER");
               }
 
               // Return the transformation
