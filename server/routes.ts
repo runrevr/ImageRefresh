@@ -1074,7 +1074,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Enhance prompt with AI
+  // Suggest a prompt based on image analysis
+  app.post("/api/suggest-prompt", async (req, res) => {
+    try {
+      const { image } = req.body;
+
+      if (!image) {
+        return res.status(400).json({ message: "Image is required" });
+      }
+
+      if (!isOpenAIConfigured()) {
+        return res
+          .status(500)
+          .json({ message: "OpenAI API key is not configured" });
+      }
+
+      // Extract the image path from the URL
+      // The image URL is in format "/uploads/filename.jpg"
+      const imageFileName = image.split('/').pop();
+      const imagePath = path.join(uploadDir, imageFileName);
+
+      // Check if image exists
+      if (!fs.existsSync(imagePath)) {
+        return res.status(400).json({ message: "Image not found" });
+      }
+
+      console.log(`Suggesting prompt for image: ${imageFileName}`);
+      
+      // Get description and art prompt using OpenAI
+      const { description, artPrompt } = await getDescriptionAndPromptFromImage_OpenAI(imagePath);
+      
+      // Return the art prompt to the client
+      return res.json({ 
+        prompt: artPrompt,
+        description: description 
+      });
+    } catch (error) {
+      console.error("Error suggesting prompt:", error);
+      return res.status(500).json({ 
+        message: "Failed to suggest prompt", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+
   app.post("/api/enhance-prompt", async (req, res) => {
     try {
       const { prompt, imageDescription } = req.body;

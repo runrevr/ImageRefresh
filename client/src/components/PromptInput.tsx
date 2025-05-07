@@ -764,9 +764,11 @@ export default function PromptInput({
       const response = await apiRequest("POST", "/api/suggest-prompt", {
         image: originalImage,
       });
-
-      if (response.prompt) {
-        setPromptText(response.prompt);
+      
+      const data = await response.json();
+      
+      if (data.prompt) {
+        setPromptText(data.prompt);
         toast({
           title: "Prompt suggested",
           description: "AI has analyzed your image and suggested a prompt.",
