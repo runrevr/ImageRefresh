@@ -224,16 +224,15 @@ export async function transformImage(
         // Write verbose error handling
         try {
           console.log("Attempting to use gpt-image-1 model with high quality and natural style...");
-          imageResponse = await openai.images.generate({
-            model: "gpt-image-1", // Use gpt-image-1 model as requested
+          imageResponse = await openai.images.edit({
+            model: "gpt-image-1",
             prompt: generationPrompt,
             n: 1,
-            size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
+            size: sizeParam === "1024x1536" || sizeParam === "1536x1024"
               ? (sizeParam as const)
               : "1024x1024",
-            quality: "high",    // Changed from "auto" to "high" for better facial detail
-            style: "natural",   // Add this parameter for more photorealistic results
-            moderation: "low", // Added moderation parameter
+            quality: "high", // Changed from "auto" to "high" for better facial detail
+            moderation: "low",
           });
           console.log("OpenAI API call completed successfully");
         } catch (apiError: any) {
