@@ -235,13 +235,16 @@ export async function transformImage(
             size = "1536x1024";
           }
             
+          // Modified to remove unsupported 'style' parameter for gpt-image-1 model
+          // Instead we'll incorporate style instructions in the prompt
+          const enhancedPrompt = `${generationPrompt} Create a natural, photorealistic result with fine details.`;
+          
           imageResponse = await openai.images.generate({
             model: "gpt-image-1",
-            prompt: generationPrompt,
+            prompt: enhancedPrompt,
             n: 1,
             size: size,
             quality: "high", // Changed from "auto" to "high" for better facial detail
-            style: "natural",  // For more photorealistic results
             moderation: "low",
           });
           console.log("OpenAI API call completed successfully");
@@ -390,14 +393,17 @@ ${safetyGuards}`;
       // Use gpt-image-1 for image variation
       console.log("Using gpt-image-1 for image variation generation");
 
+      // Modified to remove unsupported 'style' parameter for gpt-image-1 model
+      // Instead we'll incorporate style instructions in the prompt
+      const finalVariationPrompt = `${enhancedVariationPrompt} Render in a natural, photorealistic style with fine details.`;
+      
       const imageResult = await openai.images.generate({
         model: "gpt-image-1", // Use gpt-image-1 as requested
-        prompt: enhancedVariationPrompt,
+        prompt: finalVariationPrompt,
         n: 1,
         size: "1024x1024",
-        quality: "high", //Changed to high
-        style: "natural", //Added style parameter
-        moderation: "low" //Added moderation parameter
+        quality: "high", // Changed to high
+        moderation: "low" // Added moderation parameter
       });
 
       console.log("Successfully generated variation with gpt-image-1 model");
