@@ -90,14 +90,14 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 /**
  * Two-stage process for image transformation:
  * 1. First analyze the image with GPT-4o to get a detailed description
- * 2. Then create a new image with gpt-image-1 based on both the prompt and the description
+ * 2. Then create new images with gpt-image-1 based on both the prompt and the description
  */
 export async function transformImage(
   imagePath: string, 
   prompt: string,
   imageSize?: string | undefined,
   isEdit: boolean = false
-): Promise<{ url: string; transformedPath: string }> {
+): Promise<{ url: string; transformedPath: string; secondUrl?: string; secondTransformedPath?: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");
   }
@@ -242,7 +242,7 @@ export async function transformImage(
           imageResponse = await openai.images.generate({
             model: "gpt-image-1",
             prompt: enhancedPrompt,
-            n: 1,
+            n: 2, // Generate 2 variations instead of 1
             size: size,
             quality: "high", // Changed from "auto" to "high" for better facial detail
             moderation: "low",
@@ -265,24 +265,56 @@ export async function transformImage(
         console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
         console.log("Successfully generated image with gpt-image-1 model");
 
-        // Check what format we received
+        // Check what format we received and handle both images
         if (imageResponse.data && imageResponse.data.length > 0) {
+          // Handle first image
+          let imageUrl;
           if (imageResponse.data[0].url) {
             // URL format - use saveImageFromUrl
             imageUrl = imageResponse.data[0].url;
-            console.log("Using URL format from response");
+            console.log("Using URL format from response for first image");
             await saveImageFromUrl(imageUrl, transformedPath);
           } else if ('b64_json' in imageResponse.data[0]) {
             // Base64 format - save directly (TypeScript doesn't recognize b64_json property)
             const b64Content = (imageResponse.data[0] as any).b64_json;
-            console.log("Using b64_json format from response");
+            console.log("Using b64_json format from response for first image");
             const imageBuffer = Buffer.from(b64Content, "base64");
             fs.writeFileSync(transformedPath, imageBuffer);
             imageUrl = `data:image/png;base64,${b64Content}`;
           } else {
-            console.log("Unknown response format:", JSON.stringify(imageResponse.data[0]));
+            console.log("Unknown response format for first image:", JSON.stringify(imageResponse.data[0]));
             throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
           }
+          
+          // Handle second image if it exists
+          let secondUrl;
+          let secondTransformedPath;
+          if (imageResponse.data.length > 1) {
+            // Generate unique name for the second transformed image
+            const secondFileName = `transformed-2-${Date.now()}-${path.basename(imagePath)}`;
+            secondTransformedPath = path.join(process.cwd(), "uploads", secondFileName);
+            
+            if (imageResponse.data[1].url) {
+              // URL format for second image
+              secondUrl = imageResponse.data[1].url;
+              console.log("Using URL format from response for second image");
+              await saveImageFromUrl(secondUrl, secondTransformedPath);
+            } else if ('b64_json' in imageResponse.data[1]) {
+              // Base64 format for second image
+              const b64Content = (imageResponse.data[1] as any).b64_json;
+              console.log("Using b64_json format from response for second image");
+              const imageBuffer = Buffer.from(b64Content, "base64");
+              fs.writeFileSync(secondTransformedPath, imageBuffer);
+              secondUrl = `data:image/png;base64,${b64Content}`;
+            }
+          }
+          
+          return {
+            url: imageUrl,
+            transformedPath,
+            secondUrl,
+            secondTransformedPath
+          };
         } else {
           throw new Error("No image data returned. The gpt-image-1 generation failed.");
         }
@@ -290,11 +322,6 @@ export async function transformImage(
         console.error("Error generating image with gpt-image-1:", genError);
         throw new Error(`Failed to generate image: ${genError.message}`);
       }
-
-      return {
-        url: imageUrl,
-        transformedPath,
-      };
     } catch (err: any) {
       console.error("Error with gpt-image-1 model:", err);
 
