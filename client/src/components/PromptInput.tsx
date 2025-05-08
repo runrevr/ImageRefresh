@@ -828,78 +828,78 @@ export default function PromptInput({
         <h2 className="text-lg font-medium">
           Step 1: Select a Transformation Type
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
           <Button
             variant={primaryCategory === "other" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
+            className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "other"
                 ? "bg-secondary text-white"
                 : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("other")}
           >
-            <Sparkles className="h-5 w-5 mr-2" />
-            Fun/Viral
+            <Sparkles className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Fun/Viral</span>
           </Button>
           <Button
             variant={primaryCategory === "era" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
+            className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "era"
                 ? "bg-secondary text-white"
                 : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("era")}
           >
-            <Clock className="h-5 w-5 mr-2" />
-            Pop Culture Thru The Years
+            <Clock className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Pop Culture</span>
           </Button>
           <Button
             variant={primaryCategory === "cartoon" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
+            className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "cartoon"
                 ? "bg-secondary text-white"
                 : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("cartoon")}
           >
-            <ImageIcon className="h-5 w-5 mr-2" />
-            Cartoon
+            <ImageIcon className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Cartoon</span>
           </Button>
           <Button
             variant={primaryCategory === "kids-real" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
+            className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "kids-real"
                 ? "bg-secondary text-white"
                 : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("kids-real")}
           >
-            <Baby className="h-5 w-5 mr-2" />
-            Sketch to Reality
+            <Baby className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Sketch to Reality</span>
           </Button>
           <Button
             variant={primaryCategory === "product" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
+            className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "product"
                 ? "bg-secondary text-white"
                 : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("product")}
           >
-            <BoxIcon className="h-5 w-5 mr-2" />
-            Product
+            <BoxIcon className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Product</span>
           </Button>
           <Button
             variant={primaryCategory === "painting" ? "default" : "outline"}
-            className={`flex items-center justify-center h-12 ${
+            className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "painting"
                 ? "bg-secondary text-white"
                 : "text-white bg-black"
             }`}
             onClick={() => handleCategorySelect("painting")}
           >
-            <Paintbrush className="h-5 w-5 mr-2" />
-            Painting
+            <Paintbrush className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Painting</span>
           </Button>
         </div>
       </div>
