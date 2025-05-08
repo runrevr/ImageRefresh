@@ -503,7 +503,7 @@ export default function PromptInput({
   // Transformation selection state
   const [primaryCategory, setPrimaryCategory] =
     useState<TransformationType | null>(
-      selectedTransformation || savedStyle?.category || null,
+      selectedTransformation || (savedStyle?.category as TransformationType) || null,
     );
 
   // Subcategory selections

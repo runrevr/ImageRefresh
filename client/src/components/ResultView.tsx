@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { Download, ArrowLeftRight, Upload, ImageIcon, Edit } from 'lucide-react';
 import ComparisonSlider from './ComparisonSlider';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
@@ -47,7 +47,6 @@ export default function ResultView({
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [actionRequiringEmail, setActionRequiringEmail] = useState<'download' | 'edit' | null>(null);
   const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected || !!user);
-  const [showFullDescription, setShowFullDescription] = useState(false);
   const userId = user?.id || 1; // Use logged in user ID if available
   
   const handleEmailSubmitted = () => {
@@ -70,12 +69,6 @@ export default function ResultView({
     
     // Otherwise proceed with download
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
-  };
-  
-  // Helper function to truncate long prompt text
-  const getTruncatedPrompt = (text: string, maxLength = 150) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
   };
 
   return (
@@ -122,41 +115,19 @@ export default function ResultView({
           </p>
         </div>
         
-        {/* Transformation Description - Gray text with collapsible content */}
+        {/* Transformation completed message - replaced the original prompt display */}
         <div className="p-4 rounded-lg mb-8 border border-gray-200">
           <div className="flex items-start">
             <ImageIcon className="text-gray-700 h-5 w-5 mt-1 mr-3 flex-shrink-0" />
             <div className="w-full">
               <div className="flex justify-between items-center mb-1">
-                <h3 className="text-gray-700 font-medium">Description:</h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-7 w-7 p-0" 
-                  onClick={() => setShowFullDescription(!showFullDescription)}
-                  title={showFullDescription ? "Hide full description" : "Show full description"}
-                >
-                  {showFullDescription ? 
-                    <ChevronUp className="h-4 w-4 text-gray-500" /> : 
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
-                  }
-                </Button>
+                <h3 className="text-gray-700 font-medium">Ready for edits:</h3>
               </div>
-              <div className={`overflow-hidden transition-all duration-300 ${showFullDescription ? 'max-h-screen' : 'max-h-16'}`}>
+              <div>
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  {showFullDescription ? prompt : getTruncatedPrompt(prompt)}
+                  Your image has been transformed successfully. Click the "Edit This Image" button below to make changes.
                 </p>
               </div>
-              {!showFullDescription && prompt.length > 150 && (
-                <div className="text-right mt-1">
-                  <button 
-                    className="text-xs text-primary-500 hover:underline"
-                    onClick={() => setShowFullDescription(true)}
-                  >
-                    Show more
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
