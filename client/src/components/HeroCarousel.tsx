@@ -23,13 +23,13 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
       <div className="absolute inset-0 bg-white/60 z-1"></div>
 
       {/* Content overlay */}
-      <div className="relative z-10 h-full w-full flex items-center justify-center pt-16 sm:pt-2">
+      <div className="relative z-10 h-full w-full flex items-center justify-center pt-24 sm:pt-12">
         <div className="container mx-auto px-6 md:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 text-black leading-[1.1] tracking-normal px-2 sm:px-4 md:px-8">
+          <div className="max-w-5xl mx-auto text-center">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-6 text-black leading-[1.15] tracking-normal px-4 sm:px-6 md:px-10 max-w-screen-lg mx-auto">
               Turn Ordinary Photos Into Scroll-Stopping Visuals in Seconds — No Design Skills Needed
             </h1>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-medium mb-4 sm:mb-6 text-black/80 px-2">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-medium mb-4 sm:mb-6 text-black/80 px-4 sm:px-6 md:px-10 max-w-screen-lg mx-auto">
               Upload any image. Choose a vibe. Get a custom-enhanced version that's funny, artistic, or brand-ready. First one's on us.
             </h2>
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-gray-700 mx-auto px-4">
