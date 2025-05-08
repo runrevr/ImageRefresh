@@ -92,7 +92,7 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
         stripeCustomerId: user.stripeCustomerId || `cus_${user.id}_${timestamp}`,
         stripeSubscriptionId: subscriptionId,
         // Also include initial credits
-        credits: 10,
+        credits: 20,
         amount: 1000, // $10.00 in cents
         paymentIntentId: result.paymentIntent?.id || subscriptionId,
         description: "Core Subscription (Monthly)",
@@ -184,7 +184,7 @@ export default function Checkout() {
     // Create PaymentIntent as soon as the page loads
     apiRequest("POST", "/api/create-payment-intent", {
       planType: "core_subscription",
-      credits: 10,
+      credits: 20,
       amount: 1000, // $10.00
     })
       .then((res) => res.json())
@@ -221,7 +221,7 @@ export default function Checkout() {
                 <h2 className="font-semibold text-[#2A7B9B]">
                   Core Subscription
                 </h2>
-                <p className="text-sm text-gray-500">10 credits monthly</p>
+                <p className="text-sm text-gray-500">20 credits monthly</p>
               </div>
               <div className="text-lg font-bold">$10.00<span className="text-sm text-gray-500">/month</span></div>
             </div>
@@ -238,7 +238,7 @@ export default function Checkout() {
             <a href="#" className="text-blue-600 hover:underline">
               Privacy Policy
             </a>
-            <p className="mt-2">You will be charged $10.00 monthly and receive 10 credits each month.</p>
+            <p className="mt-2">You will be charged $10.00 monthly and receive 20 credits each month.</p>
           </div>
         </div>
       </div>

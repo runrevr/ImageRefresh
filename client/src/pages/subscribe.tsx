@@ -56,7 +56,7 @@ const SubscribeForm = () => {
         const timestamp = Date.now();
         const paymentResponse = await apiRequest('POST', '/api/record-subscription-payment', {
           amount: 2000, // $20.00
-          credits: 30,
+          credits: 50,
           description: 'Pro Subscription (Monthly)',
           timestamp: timestamp
         });
@@ -79,7 +79,7 @@ const SubscribeForm = () => {
           
           toast({
             title: "Subscription Successful",
-            description: `Your ${selectedPlan} subscription is now active! You now have ${data.credits || 30} credits available.`,
+            description: `Your ${selectedPlan} subscription is now active! You now have ${data.credits || 50} credits available.`,
           });
         } else {
           console.error('Failed to get subscription status after payment');
@@ -144,7 +144,7 @@ export default function Subscribe() {
     // Create PaymentIntent as soon as the page loads
     apiRequest("POST", "/api/create-payment-intent", { 
       planType: "pro",
-      credits: 30,
+      credits: 50,
       amount: 2000  // $20.00
     })
       .then((res) => res.json())
@@ -179,7 +179,7 @@ export default function Subscribe() {
             <div className="flex justify-between items-center pb-4 border-b mb-4">
               <div>
                 <h2 className="font-semibold text-[#FF7B54]">Pro Subscription</h2>
-                <p className="text-sm text-gray-500">30 credits monthly</p>
+                <p className="text-sm text-gray-500">50 credits monthly</p>
               </div>
               <div className="text-lg font-bold">$20/month</div>
             </div>
@@ -189,7 +189,7 @@ export default function Subscribe() {
               <ul className="space-y-2 text-[#333333]">
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
-                  <span>30 credits each month</span>
+                  <span>50 credits each month</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="h-5 w-5 text-[#FF7B54] mt-0.5 mr-2 flex-shrink-0" />
