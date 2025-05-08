@@ -59,6 +59,8 @@ export interface IStorage {
     status: string,
     transformedImagePath?: string,
     error?: string,
+    secondTransformedImagePath?: string,
+    selectedImagePath?: string,
   ): Promise<Transformation>;
   incrementEditsUsed(id: number): Promise<Transformation>;
   getUserTransformations(userId: number): Promise<Transformation[]>;
@@ -326,11 +328,21 @@ export class DatabaseStorage implements IStorage {
     status: string,
     transformedImagePath?: string,
     error?: string,
+    secondTransformedImagePath?: string,
+    selectedImagePath?: string,
   ): Promise<Transformation> {
     const updateData: any = { status };
 
     if (transformedImagePath !== undefined) {
       updateData.transformedImagePath = transformedImagePath;
+    }
+
+    if (secondTransformedImagePath !== undefined) {
+      updateData.secondTransformedImagePath = secondTransformedImagePath;
+    }
+
+    if (selectedImagePath !== undefined) {
+      updateData.selectedImagePath = selectedImagePath;
     }
 
     if (error !== undefined) {

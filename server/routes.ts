@@ -692,18 +692,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 }
               }
 
-              const { transformedPath } = await transformImage(
+              const { transformedPath, secondTransformedPath } = await transformImage(
                 fullImagePath,
                 validatedData.prompt || "Custom transformation", // Default value if prompt is undefined
                 // finalPrompt,
                 validatedData.imageSize,
               );
 
-              // Get relative path for storage
+              // Get relative paths for storage
               const relativePath = path.relative(
                 process.cwd(),
                 transformedPath,
               );
+              
+              let secondRelativePath = undefined;
+              if (secondTransformedPath) {
+                secondRelativePath = path.relative(
+                  process.cwd(),
+                  secondTransformedPath,
+                );
+              }
 
               // Update transformation with the result
               const updatedTransformation =
@@ -711,6 +719,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   transformation.id,
                   "completed",
                   relativePath,
+                  undefined, // no error
+                  secondRelativePath,
                 );
 
               // Update user credits for transformations
@@ -733,11 +743,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 console.log("Credit deduction bypassed for GUEST USER");
               }
 
-              // Return the transformation
+              // Return the transformation including both generated images
               res.json({
                 id: updatedTransformation.id,
                 originalImageUrl: `/uploads/${path.basename(fullImagePath)}`,
                 transformedImageUrl: `/uploads/${path.basename(transformedPath)}`,
+                secondTransformedImageUrl: secondTransformedPath ? `/uploads/${path.basename(secondTransformedPath)}` : null,
                 prompt: updatedTransformation.prompt,
                 status: updatedTransformation.status,
               });
@@ -935,6 +946,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         transformedImagePath: t.transformedImagePath,
         transformedImageUrl: t.transformedImagePath
           ? `/uploads/${path.basename(t.transformedImagePath)}`
+          : null,
+        secondTransformedImagePath: t.secondTransformedImagePath,
+        secondTransformedImageUrl: t.secondTransformedImagePath
+          ? `/uploads/${path.basename(t.secondTransformedImagePath)}`
+          : null,
+        selectedImagePath: t.selectedImagePath,
+        selectedImageUrl: t.selectedImagePath
+          ? `/uploads/${path.basename(t.selectedImagePath)}`
           : null,
         prompt: t.prompt,
         status: t.status,
