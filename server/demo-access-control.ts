@@ -44,7 +44,9 @@ function hasValidDemoCookie(req: Request): boolean {
 /**
  * Check if the IP address has already used the demo
  */
-async function ipHasUsedDemo(ip: string): Promise<boolean> {
+async function ipHasUsedDemo(ip: string | undefined): Promise<boolean> {
+  if (!ip) return false;
+  
   // Remove potential IPv6 prefix from IPv4 addresses
   const cleanIp = ip.replace(/^::ffff:/, '');
   
@@ -54,7 +56,9 @@ async function ipHasUsedDemo(ip: string): Promise<boolean> {
       sql`SELECT COUNT(*) as count FROM demo_usage WHERE ip_address = ${cleanIp}`
     );
     
-    return parseInt(result[0]?.count) > 0;
+    // Safely handle the result which could have different format based on database driver
+    const count = result[0] ? parseInt(String(result[0].count)) : 0;
+    return count > 0;
   } catch (error) {
     console.error('Error checking IP demo usage:', error);
     // In case of error, default to false to avoid blocking legitimate users
@@ -65,7 +69,7 @@ async function ipHasUsedDemo(ip: string): Promise<boolean> {
 /**
  * Check if the device fingerprint has already used the demo
  */
-async function deviceFingerprintUsedBefore(fingerprint: string): Promise<boolean> {
+async function deviceFingerprintUsedBefore(fingerprint: string | undefined): Promise<boolean> {
   if (!fingerprint) return false;
   
   try {
@@ -74,7 +78,9 @@ async function deviceFingerprintUsedBefore(fingerprint: string): Promise<boolean
       sql`SELECT COUNT(*) as count FROM demo_usage WHERE device_fingerprint = ${fingerprint}`
     );
     
-    return parseInt(result[0]?.count) > 0;
+    // Safely handle the result which could have different format based on database driver
+    const count = result[0] ? parseInt(String(result[0].count)) : 0;
+    return count > 0;
   } catch (error) {
     console.error('Error checking fingerprint demo usage:', error);
     // In case of error, default to false to avoid blocking legitimate users
@@ -123,12 +129,13 @@ async function allowOrDenyBasedOnCookie(req: Request): Promise<boolean> {
     const [token, expirationStr] = demoCookie.split(':');
     
     // Check if the token is valid in our database
-    const result = await db.query(
-      'SELECT COUNT(*) as count FROM demo_usage WHERE token = $1 AND expires_at > NOW()',
-      [token]
+    const result = await db.execute(
+      sql`SELECT COUNT(*) as count FROM demo_usage WHERE token = ${token} AND expires_at > NOW()`
     );
     
-    return result.rows[0].count > 0;
+    // Safely handle the result which could have different format based on database driver
+    const count = result[0] ? parseInt(String(result[0].count)) : 0;
+    return count > 0;
   } catch (error) {
     console.error('Error validating demo cookie:', error);
     return false;
@@ -140,7 +147,7 @@ async function allowOrDenyBasedOnCookie(req: Request): Promise<boolean> {
  */
 export async function demoAccessMiddleware(req: Request, res: Response, next: NextFunction) {
   // Skip middleware for authenticated users
-  if (req.session.userId) {
+  if (req.session && (req.session as any).userId) {
     return next();
   }
   

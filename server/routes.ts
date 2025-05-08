@@ -15,6 +15,7 @@ import axios from "axios";
 import sharp from "sharp";
 import { setupTestStatusRoute } from "./test-status";
 import { activeCampaignService } from "./activecampaign-service";
+import { demoAccessMiddleware } from "./demo-access-control";
 
 /**
  * Validates and parses a user ID parameter
@@ -252,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Transform image endpoint
-  app.post("/api/transform", async (req, res) => {
+  app.post("/api/transform", demoAccessMiddleware, async (req, res) => {
     try {
       // Log the raw request body for debugging
       console.log("API TRANSFORM - Raw request body:", JSON.stringify(req.body));
