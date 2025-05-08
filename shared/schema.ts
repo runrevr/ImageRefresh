@@ -34,6 +34,8 @@ export const transformations = pgTable("transformations", {
   userId: integer("user_id").references(() => users.id),
   originalImagePath: text("original_image_path").notNull(),
   transformedImagePath: text("transformed_image_path"),
+  secondTransformedImagePath: text("second_transformed_image_path"), // Added second transformed image path
+  selectedImagePath: text("selected_image_path"), // Track which image was selected for edits
   prompt: text("prompt").notNull(),
   status: text("status").notNull().default("pending"), // pending, processing, completed, failed
   editsUsed: integer("edits_used").default(0).notNull(),
