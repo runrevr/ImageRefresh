@@ -4,7 +4,10 @@ import { db } from './db';
 import { sql } from 'drizzle-orm';
 
 // Declare a type for database query results
-type DbQueryResult = Array<{ [key: string]: any }>;
+// Define a type that works with drizzle-orm query results
+interface CountQueryResult {
+  count: string | number;
+}
 
 // Cookie name for demo access
 const DEMO_COOKIE_NAME = 'image_refresh_demo_access';
@@ -60,7 +63,8 @@ async function ipHasUsedDemo(ip: string | undefined): Promise<boolean> {
     );
     
     // Safely handle the result which could have different format based on database driver
-    const count = result[0] ? parseInt(String(result[0].count)) : 0;
+    const rows = result as unknown as Array<CountQueryResult>;
+    const count = rows[0] ? parseInt(String(rows[0].count)) : 0;
     return count > 0;
   } catch (error) {
     console.error('Error checking IP demo usage:', error);
@@ -82,7 +86,8 @@ async function deviceFingerprintUsedBefore(fingerprint: string | undefined): Pro
     );
     
     // Safely handle the result which could have different format based on database driver
-    const count = result[0] ? parseInt(String(result[0].count)) : 0;
+    const rows = result as unknown as Array<CountQueryResult>;
+    const count = rows[0] ? parseInt(String(rows[0].count)) : 0;
     return count > 0;
   } catch (error) {
     console.error('Error checking fingerprint demo usage:', error);
@@ -137,7 +142,8 @@ async function allowOrDenyBasedOnCookie(req: Request): Promise<boolean> {
     );
     
     // Safely handle the result which could have different format based on database driver
-    const count = result[0] ? parseInt(String(result[0].count)) : 0;
+    const rows = result as unknown as Array<CountQueryResult>;
+    const count = rows[0] ? parseInt(String(rows[0].count)) : 0;
     return count > 0;
   } catch (error) {
     console.error('Error validating demo cookie:', error);
