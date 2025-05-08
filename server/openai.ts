@@ -324,12 +324,30 @@ export async function transformImage(
       }
     } catch (err: any) {
       console.error("Error with gpt-image-1 model:", err);
+      
+      // Add more detailed error logging
+      console.error("OpenAI Error Details:");
+      console.error("Error type:", typeof err);
+      console.error("Error code:", err.code);
+      console.error("Error message:", err.message);
+      console.error("Error status:", err.status);
+      console.error("Error stack:", err.stack);
+      
+      if (err.response) {
+        console.error("API Response error data:", JSON.stringify(err.response.data || {}, null, 2));
+        console.error("API Response error status:", err.response.status);
+        console.error("API Response error headers:", JSON.stringify(err.response.headers || {}, null, 2));
+      }
 
       // Check for specific error types
       if (err.message && err.message.includes("organization verification")) {
         throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
       } else if (err.code === "invalid_api_key") {
         throw new Error("Invalid OpenAI API key. Please check your configuration.");
+      } else if (err.message && err.message.toLowerCase().includes("rate limit")) {
+        throw new Error("OpenAI rate limit exceeded. Please try again in a few minutes.");
+      } else if (err.message && err.message.toLowerCase().includes("billing")) {
+        throw new Error("OpenAI billing issue: " + err.message);
       } else {
         throw new Error("Failed to generate image with gpt-image-1: " + err.message);
       }
@@ -470,12 +488,30 @@ ${safetyGuards}`;
       };
     } catch (err: any) {
       console.error("Error with gpt-image-1 model for variation:", err);
+      
+      // Add more detailed error logging
+      console.error("OpenAI Variation Error Details:");
+      console.error("Error type:", typeof err);
+      console.error("Error code:", err.code);
+      console.error("Error message:", err.message);
+      console.error("Error status:", err.status);
+      console.error("Error stack:", err.stack);
+      
+      if (err.response) {
+        console.error("API Response error data:", JSON.stringify(err.response.data || {}, null, 2));
+        console.error("API Response error status:", err.response.status);
+        console.error("API Response error headers:", JSON.stringify(err.response.headers || {}, null, 2));
+      }
 
       // Check for specific errors related to gpt-image-1 access
       if (err.message && err.message.includes("organization verification")) {
         throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
       } else if (err.code === "unknown_parameter" && err.param === "response_format") {
         throw new Error("The gpt-image-1 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
+      } else if (err.message && err.message.toLowerCase().includes("rate limit")) {
+        throw new Error("OpenAI rate limit exceeded. Please try again in a few minutes.");
+      } else if (err.message && err.message.toLowerCase().includes("billing")) {
+        throw new Error("OpenAI billing issue: " + err.message);
       } else {
         throw new Error("Failed to generate image variation with gpt-image-1: " + err.message);
       }

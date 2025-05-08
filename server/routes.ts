@@ -794,8 +794,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      res.status(500).json({
-        message: `Error transforming image: ${error.message || "Unknown error occurred"}`,
+      // Format a more user-friendly error message based on the error type
+      let userErrorMessage = "An error occurred while transforming your image.";
+      let statusCode = 500;
+      
+      if (error.message?.includes("Invalid OpenAI API key")) {
+        userErrorMessage = "Our image service is temporarily unavailable. Please try again later.";
+      } else if (error.message?.toLowerCase().includes("rate limit")) {
+        userErrorMessage = "Our image service is experiencing high demand. Please try again in a few minutes.";
+        statusCode = 429; // Too Many Requests
+      } else if (error.message?.toLowerCase().includes("billing")) {
+        userErrorMessage = "Our image service is temporarily unavailable. Please try again later.";
+      } else if (error.message?.includes("organization verification")) {
+        userErrorMessage = "Our image service is temporarily unavailable. Please try again later.";
+      } else if (error.message?.toLowerCase().includes("timed out") || error.message?.toLowerCase().includes("timeout")) {
+        userErrorMessage = "The image generation is taking longer than expected. Please try again.";
+      }
+      
+      res.status(statusCode).json({
+        message: userErrorMessage,
+        technicalError: error.message || "Unknown error occurred",
       });
     }
   });
