@@ -971,6 +971,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API endpoint to save the user's selected image from the two transformed images
+  app.post("/api/transformation/:id/select-image", async (req, res) => {
+    try {
+      const transformationId = parseInt(req.params.id);
+      
+      if (isNaN(transformationId)) {
+        return res.status(400).json({ message: "Invalid transformation ID" });
+      }
+      
+      const { selectedImagePath } = req.body;
+      
+      if (!selectedImagePath) {
+        return res.status(400).json({ message: "Selected image path is required" });
+      }
+      
+      // Get the transformation to make sure it exists
+      const transformation = await storage.getTransformation(transformationId);
+      
+      if (!transformation) {
+        return res.status(404).json({ message: "Transformation not found" });
+      }
+      
+      // Update the transformation with the selected image path
+      const updatedTransformation = await storage.updateTransformationStatus(
+        transformationId,
+        transformation.status,
+        transformation.transformedImagePath,
+        transformation.error,
+        transformation.secondTransformedImagePath,
+        selectedImagePath
+      );
+      
+      res.json({
+        message: "Image selection saved successfully",
+        transformation: {
+          id: updatedTransformation.id,
+          selectedImagePath: updatedTransformation.selectedImagePath
+        }
+      });
+    } catch (error: any) {
+      console.error("Error saving selected image:", error);
+      res.status(500).json({ message: error.message || "Unknown error" });
+    }
+  });
+
   // Track processed purchases to prevent duplicates
   const processedPurchases = new Set<string>(); 
 

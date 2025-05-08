@@ -86,14 +86,20 @@ export default function ResultView({
   const saveImageSelection = async (imagePath: string) => {
     if (transformationId) {
       try {
-        await fetch(`/api/transformation/${transformationId}/select-image`, {
+        const response = await fetch(`/api/transformation/${transformationId}/select-image`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ selectedImagePath: imagePath }),
         });
-        console.log('Image selection saved');
+        
+        if (response.ok) {
+          console.log('Image selection saved successfully');
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to save image selection:', errorData.message || 'Unknown error');
+        }
       } catch (error) {
         console.error('Failed to save image selection:', error);
       }
