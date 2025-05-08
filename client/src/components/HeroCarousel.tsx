@@ -27,10 +27,10 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
         <div className="container mx-auto px-6 md:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-4 text-black leading-[1.1] tracking-normal px-2 sm:px-4 md:px-8">
-              Create Viral-Worthy Images In Just 3 Clicks
+              Turn Ordinary Photos Into Scroll-Stopping Visuals in Seconds — No Design Skills Needed
             </h1>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-medium mb-4 sm:mb-6 text-black/80 px-2">
-              Upload Your Image, Unload Your Imagination
+              Upload any image. Choose a vibe. Get a custom-enhanced version that's funny, artistic, or brand-ready. First one's on us.
             </h2>
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-gray-700 mx-auto px-4">
               Imagine your kid as a cartoon hero. Your product as the next viral
