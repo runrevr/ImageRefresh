@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import { db } from './db';
+import { sql } from 'drizzle-orm';
 
 // Cookie name for demo access
 const DEMO_COOKIE_NAME = 'image_refresh_demo_access';
@@ -49,12 +50,11 @@ async function ipHasUsedDemo(ip: string): Promise<boolean> {
   
   try {
     // Check if this IP has been recorded
-    const result = await db.query(
-      'SELECT COUNT(*) as count FROM demo_usage WHERE ip_address = $1',
-      [cleanIp]
+    const result = await db.execute(
+      sql`SELECT COUNT(*) as count FROM demo_usage WHERE ip_address = ${cleanIp}`
     );
     
-    return result.rows[0].count > 0;
+    return parseInt(result[0]?.count) > 0;
   } catch (error) {
     console.error('Error checking IP demo usage:', error);
     // In case of error, default to false to avoid blocking legitimate users
@@ -70,12 +70,11 @@ async function deviceFingerprintUsedBefore(fingerprint: string): Promise<boolean
   
   try {
     // Check if this fingerprint has been recorded
-    const result = await db.query(
-      'SELECT COUNT(*) as count FROM demo_usage WHERE device_fingerprint = $1',
-      [fingerprint]
+    const result = await db.execute(
+      sql`SELECT COUNT(*) as count FROM demo_usage WHERE device_fingerprint = ${fingerprint}`
     );
     
-    return result.rows[0].count > 0;
+    return parseInt(result[0]?.count) > 0;
   } catch (error) {
     console.error('Error checking fingerprint demo usage:', error);
     // In case of error, default to false to avoid blocking legitimate users
@@ -102,10 +101,11 @@ async function issueDemoAndSetCookie(req: Request, res: Response): Promise<void>
   try {
     const ip = (req.ip || '').replace(/^::ffff:/, '');
     const fingerprint = req.body.fingerprint || req.query.fingerprint || null;
+    const expiresAt = new Date(expiration);
     
-    await db.query(
-      'INSERT INTO demo_usage (ip_address, device_fingerprint, token, created_at, expires_at) VALUES ($1, $2, $3, NOW(), $4)',
-      [ip, fingerprint, token, new Date(expiration)]
+    await db.execute(
+      sql`INSERT INTO demo_usage (ip_address, device_fingerprint, token, created_at, expires_at) 
+          VALUES (${ip}, ${fingerprint}, ${token}, NOW(), ${expiresAt})`
     );
   } catch (error) {
     console.error('Error recording demo usage:', error);

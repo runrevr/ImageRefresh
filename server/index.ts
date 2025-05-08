@@ -2,6 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { runCleanupTasks } from "./cleanup";
+import { demoAccessMiddleware } from "./demo-access-control";
+import cookieParser from "cookie-parser";
 import * as dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
@@ -61,6 +63,7 @@ process.env.ACTIVECAMPAIGN_MEMBERSHIP_STATUS_FIELD = process.env.ACTIVECAMPAIGN_
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Create a special middleware just for debugging request bodies
 app.use((req, res, next) => {
