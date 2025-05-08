@@ -42,11 +42,9 @@ export default function ResultView({
   const isEdit = editsUsed > 0;
   const emailAlreadyCollected = localStorage.getItem('emailCollected') === 'true';
   
-  // Only show email dialog if:
-  // 1. It's not an edit, AND
-  // 2. Email hasn't been collected yet, AND
-  // 3. User is not logged in (users who are logged in already have their emails)
-  const [showEmailDialog, setShowEmailDialog] = useState(!isEdit && !emailAlreadyCollected && !user);
+  // Email collection has been disabled for trial users
+  // Set to false to never show the email dialog
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected || !!user);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const userId = user?.id || 1; // Use logged in user ID if available
