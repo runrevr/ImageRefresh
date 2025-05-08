@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getDeviceFingerprint, addFingerprintToUrl } from "./fingerprint";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -12,6 +13,19 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  // Add fingerprint to the data if it exists
+  if (data && typeof data === 'object') {
+    data = {
+      ...data as Record<string, any>,
+      fingerprint: getDeviceFingerprint()
+    };
+  }
+
+  // Add fingerprint as a query parameter for GET requests or if no data is provided
+  if (method.toUpperCase() === 'GET' || !data) {
+    url = addFingerprintToUrl(url);
+  }
+
   const res = await fetch(url, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
@@ -29,7 +43,9 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    // Add fingerprint to the URL
+    const url = addFingerprintToUrl(queryKey[0] as string);
+    const res = await fetch(url, {
       credentials: "include",
     });
 

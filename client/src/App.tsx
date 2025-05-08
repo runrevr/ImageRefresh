@@ -14,6 +14,7 @@ import AboutPage from "@/pages/about";
 import ProductEnhancementPage from "@/pages/product-enhancement";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
+import DeviceFingerprint from "@/components/DeviceFingerprint";
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -71,6 +72,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
+          {/* Generate and store device fingerprint */}
+          <DeviceFingerprint />
           <Toaster />
           <Router />
         </TooltipProvider>

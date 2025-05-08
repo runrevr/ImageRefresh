@@ -3,6 +3,9 @@ import crypto from 'crypto';
 import { db } from './db';
 import { sql } from 'drizzle-orm';
 
+// Declare a type for database query results
+type DbQueryResult = Array<{ [key: string]: any }>;
+
 // Cookie name for demo access
 const DEMO_COOKIE_NAME = 'image_refresh_demo_access';
 // Demo cookie duration (7 days)
