@@ -42,9 +42,10 @@ export default function ResultView({
   const isEdit = editsUsed > 0;
   const emailAlreadyCollected = localStorage.getItem('emailCollected') === 'true';
   
-  // Email collection has been disabled for trial users
-  // Set to false to never show the email dialog
+  // Show email dialog for guests who try to download or edit images
+  const isGuest = !user; // If there's no user, we're in guest mode
   const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [actionRequiringEmail, setActionRequiringEmail] = useState<'download' | 'edit' | null>(null);
   const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected || !!user);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const userId = user?.id || 1; // Use logged in user ID if available
@@ -60,6 +61,14 @@ export default function ResultView({
   };
   
   const handleDownload = () => {
+    // If user is not logged in and email hasn't been collected, show email dialog
+    if (isGuest && !emailAlreadyCollected) {
+      setActionRequiringEmail('download');
+      setShowEmailDialog(true);
+      return;
+    }
+    
+    // Otherwise proceed with download
     downloadImage(transformedImage, getFilenameFromPath(transformedImage));
   };
   
@@ -158,7 +167,17 @@ export default function ResultView({
             {canEdit && onEditImage && (
               <Button
                 className="text-[#FF7B54] bg-[#333333] hover:bg-[#333333]/90 flex-1"
-                onClick={onEditImage}
+                onClick={() => {
+                  // If user is not logged in and email hasn't been collected, show email dialog
+                  if (isGuest && !emailAlreadyCollected) {
+                    setActionRequiringEmail('edit');
+                    setShowEmailDialog(true);
+                    return;
+                  }
+                  
+                  // Otherwise, proceed with edit
+                  onEditImage();
+                }}
                 title={editsUsed > 0 ? "Additional edits will use credits" : "You have 1 free edit available"}
               >
                 <Edit className="h-4 w-4 mr-2" />
