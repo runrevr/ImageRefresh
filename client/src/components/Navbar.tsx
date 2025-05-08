@@ -162,7 +162,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 </svg>
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="bg-[#333333]">
               <div className="flex items-center mb-6 pt-4">
                 <img
                   src={logoImage}
@@ -174,26 +174,26 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <div className="flex flex-col space-y-4">
                 <Link
                   href="/ideas"
-                  className="header-menu py-2 text-[#333333] hover:text-[#2A7B9B] transition"
+                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Ideas
                 </Link>
                 <Link
                   href="/pricing"
-                  className="header-menu py-2 block text-[#333333] hover:text-[#2A7B9B] transition"
+                  className="header-menu py-2 block text-white hover:text-[#FF7B54] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Pricing
                 </Link>
                 <Link
                   href="/help"
-                  className="header-menu py-2 text-[#333333] hover:text-[#2A7B9B] transition"
+                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Help
                 </Link>
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-gray-600">
                   {user && (
                     <>
                       <div className="text-sm font-medium mb-2">
@@ -239,7 +239,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                       </Link>
                       <Button
                         variant="ghost"
-                        className="w-full text-secondary-600"
+                        className="w-full text-white hover:text-[#FF7B54]"
                         onClick={() => {
                           logoutMutation.mutate();
                           setIsMenuOpen(false);
