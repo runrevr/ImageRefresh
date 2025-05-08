@@ -49,20 +49,20 @@ const creditPackages: CreditPackage[] = [
   },
   { 
     id: 'bundle-medium', 
-    credits: 12, 
+    credits: 20, 
     price: 1000, 
     priceLabel: '$10.00', 
-    savings: 'Save 16%', 
+    savings: 'Save 50%', 
     recommended: true,
-    pricePerCredit: 83 // ~$0.83 per credit
+    pricePerCredit: 50 // $0.50 per credit
   },
   { 
     id: 'bundle-large', 
-    credits: 30, 
+    credits: 50, 
     price: 2000, 
     priceLabel: '$20.00', 
-    savings: 'Save 33%',
-    pricePerCredit: 67 // ~$0.67 per credit
+    savings: 'Save 60%',
+    pricePerCredit: 40 // $0.40 per credit
   },
   { 
     id: 'bundle-xl', 
