@@ -997,9 +997,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedTransformation = await storage.updateTransformationStatus(
         transformationId,
         transformation.status,
-        transformation.transformedImagePath,
-        transformation.error,
-        transformation.secondTransformedImagePath,
+        transformation.transformedImagePath || undefined,
+        transformation.error || undefined,
+        transformation.secondTransformedImagePath || undefined,
         selectedImagePath
       );
       
