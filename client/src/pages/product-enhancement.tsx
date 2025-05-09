@@ -257,7 +257,8 @@ export default function ProductEnhancement() {
             if (
               (value === EnhancementStep.Upload) || 
               (value === EnhancementStep.SelectOptions && enhancementId) ||
-              (value === EnhancementStep.Results && enhancementData && 'images' in enhancementData && Array.isArray(enhancementData.images) && 
+              (value === EnhancementStep.Results && enhancementData && typeof enhancementData === 'object' && enhancementData !== null && 
+                'images' in enhancementData && Array.isArray(enhancementData.images) && 
                 enhancementData.images.some((img: any) => img.resultImagePaths && img.resultImagePaths.length > 0))
             ) {
               setCurrentStep(value as EnhancementStep);
@@ -277,7 +278,9 @@ export default function ProductEnhancement() {
             </TabsTrigger>
             <TabsTrigger 
               value={EnhancementStep.Results}
-              disabled={!enhancementData?.images?.some(img => img.resultImagePaths?.length > 0)}
+              disabled={!(enhancementData && typeof enhancementData === 'object' && enhancementData !== null && 
+                'images' in enhancementData && Array.isArray(enhancementData.images) && 
+                enhancementData.images.some((img: any) => img.resultImagePaths && img.resultImagePaths.length > 0))}
             >
               3. View Results
             </TabsTrigger>
@@ -380,18 +383,20 @@ export default function ProductEnhancement() {
               </Alert>
             ) : enhancementData ? (
               <EnhancementOptions
-                enhancementData={enhancementData}
+                enhancementData={enhancementData as EnhancementData}
+                isLoading={false}
                 onSubmit={handleSubmitSelections}
-                isSubmitting={isSubmittingSelections}
+                isPending={isSubmittingSelections}
               />
             ) : null}
           </TabsContent>
 
           {/* Step 3: Results */}
           <TabsContent value={EnhancementStep.Results} className="mt-6">
-            {enhancementData && (
+            {enhancementData && typeof enhancementData === 'object' && enhancementData !== null && 'images' in enhancementData && (
               <EnhancementResults
-                enhancementData={enhancementData}
+                enhancementData={enhancementData as EnhancementData}
+                isLoading={isEnhancementLoading}
                 onStartOver={handleStartOver}
               />
             )}
