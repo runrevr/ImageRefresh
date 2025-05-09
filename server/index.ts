@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { runCleanupTasks } from "./cleanup";
 import { demoAccessMiddleware } from "./demo-access-control";
+import { runMigration as addProductEnhancementTables } from "./migrations/add-product-enhancement-tables.js";
 import cookieParser from "cookie-parser";
 import * as dotenv from 'dotenv';
 import fs from 'fs';
@@ -170,6 +171,11 @@ app.use((req, res, next) => {
       // Server started successfully
       log(`Server started successfully on port ${portToUse}`);
       
+      // Run database migrations at startup
+      addProductEnhancementTables()
+        .then(() => log('Product enhancement tables migration completed'))
+        .catch(err => console.error('Error during product enhancement tables migration:', err));
+        
       // Run cleanup once at startup
       runCleanupTasks()
         .then(() => log('Initial cleanup tasks completed'))

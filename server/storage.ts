@@ -3,6 +3,8 @@ import {
   users,
   memberships,
   payments,
+  productEnhancements,
+  productEnhancementImages,
   type User,
   type InsertUser,
   type Transformation,
@@ -11,6 +13,11 @@ import {
   type InsertMembership,
   type Payment,
   type InsertPayment,
+  type ProductEnhancement,
+  type InsertProductEnhancement,
+  type ProductEnhancementImage,
+  type InsertProductEnhancementImage,
+  type ProductEnhancementOption,
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and } from "drizzle-orm";
@@ -64,6 +71,35 @@ export interface IStorage {
   ): Promise<Transformation>;
   incrementEditsUsed(id: number): Promise<Transformation>;
   getUserTransformations(userId: number): Promise<Transformation[]>;
+  
+  // Product Enhancement operations
+  createProductEnhancement(enhancement: InsertProductEnhancement): Promise<ProductEnhancement>;
+  getProductEnhancement(id: number): Promise<ProductEnhancement | undefined>;
+  updateProductEnhancementStatus(
+    id: number, 
+    status: string, 
+    webhookRequestId?: string,
+    error?: string
+  ): Promise<ProductEnhancement>;
+  updateProductEnhancementCredits(id: number, creditsUsed: number): Promise<ProductEnhancement>;
+  getUserProductEnhancements(userId: number): Promise<ProductEnhancement[]>;
+  
+  // Product Enhancement Image operations
+  createProductEnhancementImage(image: InsertProductEnhancementImage): Promise<ProductEnhancementImage>;
+  getProductEnhancementImage(id: number): Promise<ProductEnhancementImage | undefined>;
+  getEnhancementImages(enhancementId: number): Promise<ProductEnhancementImage[]>;
+  updateProductEnhancementImageOptions(
+    id: number, 
+    optionsJson: ProductEnhancementOption[]
+  ): Promise<ProductEnhancementImage>;
+  updateProductEnhancementImageSelections(
+    id: number, 
+    selectedOptions: string[]
+  ): Promise<ProductEnhancementImage>;
+  updateProductEnhancementImageResults(
+    id: number, 
+    resultImagePaths: string[]
+  ): Promise<ProductEnhancementImage>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -430,6 +466,160 @@ export class DatabaseStorage implements IStorage {
       .returning();
 
     return payment;
+  }
+
+  // Product Enhancement operations
+  async createProductEnhancement(
+    insertEnhancement: InsertProductEnhancement
+  ): Promise<ProductEnhancement> {
+    const [enhancement] = await db
+      .insert(productEnhancements)
+      .values(insertEnhancement)
+      .returning();
+
+    return enhancement;
+  }
+
+  async getProductEnhancement(id: number): Promise<ProductEnhancement | undefined> {
+    const [enhancement] = await db
+      .select()
+      .from(productEnhancements)
+      .where(eq(productEnhancements.id, id));
+
+    return enhancement;
+  }
+
+  async updateProductEnhancementStatus(
+    id: number,
+    status: string,
+    webhookRequestId?: string,
+    error?: string
+  ): Promise<ProductEnhancement> {
+    const updateData: any = { status };
+
+    if (webhookRequestId !== undefined) {
+      updateData.webhookRequestId = webhookRequestId;
+    }
+
+    if (error !== undefined) {
+      updateData.error = error;
+    }
+
+    const [updatedEnhancement] = await db
+      .update(productEnhancements)
+      .set(updateData)
+      .where(eq(productEnhancements.id, id))
+      .returning();
+
+    if (!updatedEnhancement) {
+      throw new Error("Product enhancement not found");
+    }
+
+    return updatedEnhancement;
+  }
+
+  async updateProductEnhancementCredits(
+    id: number,
+    creditsUsed: number
+  ): Promise<ProductEnhancement> {
+    const [updatedEnhancement] = await db
+      .update(productEnhancements)
+      .set({ creditsUsed })
+      .where(eq(productEnhancements.id, id))
+      .returning();
+
+    if (!updatedEnhancement) {
+      throw new Error("Product enhancement not found");
+    }
+
+    return updatedEnhancement;
+  }
+
+  async getUserProductEnhancements(userId: number): Promise<ProductEnhancement[]> {
+    return await db
+      .select()
+      .from(productEnhancements)
+      .where(eq(productEnhancements.userId, userId))
+      .orderBy(desc(productEnhancements.id));
+  }
+
+  // Product Enhancement Image operations
+  async createProductEnhancementImage(
+    insertImage: InsertProductEnhancementImage
+  ): Promise<ProductEnhancementImage> {
+    const [image] = await db
+      .insert(productEnhancementImages)
+      .values(insertImage)
+      .returning();
+
+    return image;
+  }
+
+  async getProductEnhancementImage(id: number): Promise<ProductEnhancementImage | undefined> {
+    const [image] = await db
+      .select()
+      .from(productEnhancementImages)
+      .where(eq(productEnhancementImages.id, id));
+
+    return image;
+  }
+
+  async getEnhancementImages(enhancementId: number): Promise<ProductEnhancementImage[]> {
+    return await db
+      .select()
+      .from(productEnhancementImages)
+      .where(eq(productEnhancementImages.enhancementId, enhancementId));
+  }
+
+  async updateProductEnhancementImageOptions(
+    id: number,
+    optionsJson: ProductEnhancementOption[]
+  ): Promise<ProductEnhancementImage> {
+    const [updatedImage] = await db
+      .update(productEnhancementImages)
+      .set({ optionsJson })
+      .where(eq(productEnhancementImages.id, id))
+      .returning();
+
+    if (!updatedImage) {
+      throw new Error("Product enhancement image not found");
+    }
+
+    return updatedImage;
+  }
+
+  async updateProductEnhancementImageSelections(
+    id: number,
+    selectedOptions: string[]
+  ): Promise<ProductEnhancementImage> {
+    const [updatedImage] = await db
+      .update(productEnhancementImages)
+      .set({ selectedOptions })
+      .where(eq(productEnhancementImages.id, id))
+      .returning();
+
+    if (!updatedImage) {
+      throw new Error("Product enhancement image not found");
+    }
+
+    return updatedImage;
+  }
+
+  async updateProductEnhancementImageResults(
+    id: number,
+    resultImagePaths: string[]
+  ): Promise<ProductEnhancementImage> {
+    const [updatedImage] = await db
+      .update(productEnhancementImages)
+      .set({ resultImagePaths })
+      .where(eq(productEnhancementImages.id, id))
+      .returning();
+
+    if (!updatedImage) {
+      throw new Error("Product enhancement image not found");
+    }
+
+    return updatedImage;
   }
 }
 

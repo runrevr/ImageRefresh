@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, jsonb, timestamp, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, timestamp, doublePrecision, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -145,4 +145,78 @@ export type PricingTier = {
 export type FAQ = {
   question: string;
   answer: string;
+};
+
+// Product enhancement tables and types
+export const productEnhancements = pgTable("product_enhancements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  industry: text("industry").notNull(),
+  status: text("status").notNull().default("pending"), // pending, processing, completed, failed
+  webhookRequestId: text("webhook_request_id"), // ID returned from the webhook
+  creditsUsed: integer("credits_used").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  error: text("error"),
+});
+
+export const productEnhancementImages = pgTable("product_enhancement_images", {
+  id: serial("id").primaryKey(),
+  enhancementId: integer("enhancement_id").references(() => productEnhancements.id).notNull(),
+  originalImagePath: text("original_image_path").notNull(),
+  // Store the options returned by the webhook
+  optionsJson: jsonb("options_json"),
+  // Selected options (user selects up to 5 per image)
+  selectedOptions: text("selected_options").array(),
+  // Result images (received after submitting selections)
+  resultImagePaths: text("result_image_paths").array(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertProductEnhancementSchema = createInsertSchema(productEnhancements).pick({
+  userId: true,
+  industry: true,
+});
+
+export const insertProductEnhancementImageSchema = createInsertSchema(productEnhancementImages).pick({
+  enhancementId: true,
+  originalImagePath: true,
+});
+
+export type InsertProductEnhancement = z.infer<typeof insertProductEnhancementSchema>;
+export type ProductEnhancement = typeof productEnhancements.$inferSelect;
+export type InsertProductEnhancementImage = z.infer<typeof insertProductEnhancementImageSchema>;
+export type ProductEnhancementImage = typeof productEnhancementImages.$inferSelect;
+
+// Types for product enhancement API requests/responses
+export type ProductEnhancementRequest = {
+  industry: string;
+  originalImagePaths: string[];
+  userId: number;
+};
+
+export type ProductEnhancementOption = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+export type ProductEnhancementImageOptions = {
+  originalImagePath: string;
+  options: ProductEnhancementOption[];
+};
+
+export type ProductEnhancementSelectionRequest = {
+  enhancementId: number;
+  selections: {
+    imageId: number;
+    selectedOptions: string[];
+  }[];
+};
+
+export type ProductEnhancementResult = {
+  enhancementId: number;
+  images: {
+    imageId: number;
+    resultImagePaths: string[];
+  }[];
 };
