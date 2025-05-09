@@ -212,6 +212,91 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2023-10-16" as any,
 });
 
+/**
+ * Helper function to convert an image file to base64
+ */
+async function imageToBase64(imagePath: string): Promise<string> {
+  const fullPath = path.join(process.cwd(), imagePath);
+  const imageBuffer = await fs.promises.readFile(fullPath);
+  return imageBuffer.toString('base64');
+}
+
+/**
+ * Helper function to handle webhook requests for product enhancements
+ */
+async function sendToProductEnhancementWebhook(
+  industry: string,
+  imagePaths: string[]
+): Promise<any> {
+  // Convert images to base64
+  const imagesBase64 = await Promise.all(
+    imagePaths.map(async (imagePath) => await imageToBase64(imagePath))
+  );
+
+  // Prepare data for webhook
+  const webhookData = {
+    industry,
+    images: imagesBase64
+  };
+
+  // Send request to webhook
+  try {
+    const response = await fetch('https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(webhookData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Webhook responded with status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error sending to product enhancement webhook:', error);
+    throw error;
+  }
+}
+
+/**
+ * Helper function to handle webhook requests for product enhancement selections
+ */
+async function sendSelectionsToWebhook(
+  webhookRequestId: string,
+  selections: { 
+    originalImagePath: string;
+    selectedOptions: string[];
+  }[]
+): Promise<any> {
+  // Prepare data for webhook
+  const webhookData = {
+    requestId: webhookRequestId,
+    selections: selections
+  };
+
+  // Send request to webhook
+  try {
+    const response = await fetch('https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(webhookData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Webhook responded with status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error sending selections to product enhancement webhook:', error);
+    throw error;
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
@@ -1588,6 +1673,365 @@ style, environment, lighting, and background rather than changing the main subje
     } catch (error: any) {
       console.error('Error in update-user-subscription endpoint:', error);
       res.status(500).json({ message: error.message || "Unknown error" });
+    }
+  });
+
+  // Product enhancement endpoints
+  // Create new product enhancement
+  app.post("/api/product-enhancement", upload.array("images", 5), async (req, res) => {
+    try {
+      // Validate the request
+      const enhancementSchema = z.object({
+        industry: z.string().min(1, "Industry is required"),
+        userId: z.union([z.string(), z.number()]).transform(val => {
+          if (typeof val === 'string') {
+            const parsed = parseInt(val, 10);
+            return Number.isFinite(parsed) ? parsed : val;
+          }
+          return val;
+        }).optional(),
+      });
+
+      let validatedData;
+      try {
+        validatedData = enhancementSchema.parse(req.body);
+      } catch (parseError: any) {
+        return res.status(400).json({
+          message: "Invalid request data",
+          error: parseError.message || "Schema validation failed"
+        });
+      }
+
+      // Determine user ID (similar to transform endpoint)
+      let userId: number = 1; // Default to guest user ID 1
+      let isGuestUser = true;
+      
+      if (req.isAuthenticated && req.isAuthenticated() && req.user && (req.user as any).id) {
+        userId = (req.user as any).id;
+        isGuestUser = false;
+      } 
+      else if (validatedData.userId !== undefined && validatedData.userId !== null) {
+        if (typeof validatedData.userId === 'string') {
+          if (/^\d+$/.test(validatedData.userId)) {
+            userId = parseInt(validatedData.userId, 10);
+            isGuestUser = false;
+          }
+        } else if (typeof validatedData.userId === 'number') {
+          if (Number.isFinite(validatedData.userId) && validatedData.userId > 0) {
+            userId = validatedData.userId;
+            isGuestUser = false;
+          }
+        }
+      }
+
+      // Get or create user (similar to transform endpoint)
+      let user;
+      if (process.env.NODE_ENV !== "production" || isGuestUser) {
+        user = {
+          id: userId,
+          name: "Guest User",
+          username: "guest",
+          password: "",
+          email: "guest@example.com",
+          freeCreditsUsed: false,
+          lastFreeCredit: null,
+          paidCredits: 999, // Unlimited credits for development/testing
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+          subscriptionTier: null,
+          subscriptionStatus: null,
+          createdAt: new Date(),
+        };
+      } else {
+        user = await storage.getUser(userId);
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+      }
+
+      // Check if there are uploaded images
+      if (!req.files || !(req.files as Express.Multer.File[]).length) {
+        return res.status(400).json({ message: "No images uploaded" });
+      }
+
+      const files = req.files as Express.Multer.File[];
+      if (files.length > 5) {
+        return res.status(400).json({ message: "Maximum 5 images allowed" });
+      }
+
+      // Create enhancement record
+      const enhancement = await storage.createProductEnhancement({
+        userId,
+        industry: validatedData.industry,
+      });
+
+      // Store image paths
+      const imagePaths: string[] = [];
+      for (const file of files) {
+        const imagePath = file.path;
+        const relativePath = path.relative(process.cwd(), imagePath);
+
+        // Create enhancement image record
+        await storage.createProductEnhancementImage({
+          enhancementId: enhancement.id,
+          originalImagePath: relativePath,
+        });
+
+        imagePaths.push(relativePath);
+      }
+
+      // Send to webhook
+      try {
+        const webhookResponse = await sendToProductEnhancementWebhook(
+          validatedData.industry,
+          imagePaths
+        );
+
+        // Update enhancement with webhook request ID
+        if (webhookResponse.requestId) {
+          await storage.updateProductEnhancementStatus(
+            enhancement.id,
+            "processing",
+            webhookResponse.requestId
+          );
+        }
+
+        // Update enhancement image options
+        if (webhookResponse.imageOptions && Array.isArray(webhookResponse.imageOptions)) {
+          const enhancementImages = await storage.getEnhancementImages(enhancement.id);
+          
+          for (let i = 0; i < enhancementImages.length; i++) {
+            const image = enhancementImages[i];
+            const options = webhookResponse.imageOptions.find(
+              (opt: any) => opt.originalImagePath === image.originalImagePath
+            );
+            
+            if (options && options.options) {
+              await storage.updateProductEnhancementImageOptions(
+                image.id,
+                options.options
+              );
+            }
+          }
+        }
+
+        // Return success response
+        res.json({
+          enhancementId: enhancement.id,
+          status: enhancement.status,
+          imagePaths,
+          imageOptions: webhookResponse.imageOptions || [],
+        });
+
+      } catch (webhookError: any) {
+        // Update enhancement status to failed
+        await storage.updateProductEnhancementStatus(
+          enhancement.id,
+          "failed",
+          undefined,
+          webhookError.message || "Webhook request failed"
+        );
+
+        throw webhookError;
+      }
+
+    } catch (error: any) {
+      console.error("Error creating product enhancement:", error);
+      res.status(500).json({
+        message: "Failed to process product enhancement",
+        error: error.message
+      });
+    }
+  });
+
+  // Get product enhancement status and options
+  app.get("/api/product-enhancement/:id", async (req, res) => {
+    try {
+      const enhancementId = parseInt(req.params.id, 10);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+
+      // Get enhancement record
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
+      }
+
+      // Get enhancement images
+      const images = await storage.getEnhancementImages(enhancementId);
+
+      // Format response
+      const response = {
+        id: enhancement.id,
+        status: enhancement.status,
+        industry: enhancement.industry,
+        creditsUsed: enhancement.creditsUsed,
+        createdAt: enhancement.createdAt,
+        images: images.map(image => ({
+          id: image.id,
+          originalImagePath: image.originalImagePath,
+          imageUrl: `/uploads/${path.basename(image.originalImagePath)}`,
+          options: image.optionsJson || [],
+          selectedOptions: image.selectedOptions || [],
+          resultImagePaths: image.resultImagePaths || [],
+          resultImageUrls: image.resultImagePaths 
+            ? image.resultImagePaths.map(p => `/uploads/${path.basename(p)}`)
+            : [],
+        })),
+      };
+
+      res.json(response);
+    } catch (error: any) {
+      console.error("Error getting product enhancement:", error);
+      res.status(500).json({
+        message: "Failed to get product enhancement",
+        error: error.message
+      });
+    }
+  });
+
+  // Submit selections for a product enhancement
+  app.post("/api/product-enhancement/:id/selections", async (req, res) => {
+    try {
+      const enhancementId = parseInt(req.params.id, 10);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+
+      // Validate request body
+      const selectionSchema = z.object({
+        selections: z.array(z.object({
+          imageId: z.number(),
+          selectedOptions: z.array(z.string()),
+        })),
+      });
+
+      let validatedData;
+      try {
+        validatedData = selectionSchema.parse(req.body);
+      } catch (parseError: any) {
+        return res.status(400).json({
+          message: "Invalid request data",
+          error: parseError.message || "Schema validation failed"
+        });
+      }
+
+      // Get enhancement record
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
+      }
+
+      if (!enhancement.webhookRequestId) {
+        return res.status(400).json({ message: "Enhancement has no webhook request ID" });
+      }
+
+      // Update enhancement status
+      await storage.updateProductEnhancementStatus(enhancementId, "processing");
+
+      // Process selections
+      const selectionsForWebhook: { originalImagePath: string; selectedOptions: string[] }[] = [];
+      let totalCreditsUsed = 0;
+
+      for (const selection of validatedData.selections) {
+        // Get enhancement image
+        const image = await storage.getProductEnhancementImage(selection.imageId);
+        if (!image || image.enhancementId !== enhancementId) {
+          return res.status(404).json({ 
+            message: "Image not found or doesn't belong to this enhancement" 
+          });
+        }
+
+        // Update image selections
+        await storage.updateProductEnhancementImageSelections(
+          image.id,
+          selection.selectedOptions
+        );
+
+        // Add to webhook selections
+        selectionsForWebhook.push({
+          originalImagePath: image.originalImagePath,
+          selectedOptions: selection.selectedOptions,
+        });
+
+        // Count credits (1 per selected option)
+        totalCreditsUsed += selection.selectedOptions.length;
+      }
+
+      // Update total credits used
+      await storage.updateProductEnhancementCredits(enhancementId, totalCreditsUsed);
+
+      // Update user credits if not in development mode and not a guest user
+      const userId = enhancement.userId;
+      if (userId && process.env.NODE_ENV === "production") {
+        const user = await storage.getUser(userId);
+        if (user) {
+          const newPaidCredits = Math.max(0, user.paidCredits - totalCreditsUsed);
+          await storage.updateUserCredits(userId, false, newPaidCredits);
+        }
+      }
+
+      // Send selections to webhook
+      try {
+        const webhookResponse = await sendSelectionsToWebhook(
+          enhancement.webhookRequestId,
+          selectionsForWebhook
+        );
+
+        // Process webhook response - store result images
+        if (webhookResponse.results && Array.isArray(webhookResponse.results)) {
+          for (const result of webhookResponse.results) {
+            const image = await storage.getProductEnhancementImage(result.imageId);
+            if (image && image.enhancementId === enhancementId && result.resultImagePaths) {
+              await storage.updateProductEnhancementImageResults(
+                image.id,
+                result.resultImagePaths
+              );
+            }
+          }
+        }
+
+        // Update enhancement status to completed
+        await storage.updateProductEnhancementStatus(enhancementId, "completed");
+
+        // Get updated images
+        const updatedImages = await storage.getEnhancementImages(enhancementId);
+
+        // Format response
+        const response = {
+          id: enhancement.id,
+          status: "completed",
+          creditsUsed: totalCreditsUsed,
+          images: updatedImages.map(image => ({
+            id: image.id,
+            resultImagePaths: image.resultImagePaths || [],
+            resultImageUrls: image.resultImagePaths 
+              ? image.resultImagePaths.map(p => `/uploads/${path.basename(p)}`)
+              : [],
+          })),
+        };
+
+        res.json(response);
+
+      } catch (webhookError: any) {
+        // Update enhancement status to failed
+        await storage.updateProductEnhancementStatus(
+          enhancementId,
+          "failed",
+          enhancement.webhookRequestId,
+          webhookError.message || "Webhook request failed"
+        );
+
+        throw webhookError;
+      }
+
+    } catch (error: any) {
+      console.error("Error submitting product enhancement selections:", error);
+      res.status(500).json({
+        message: "Failed to process product enhancement selections",
+        error: error.message
+      });
     }
   });
 
