@@ -87,7 +87,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hidden md:flex items-center">
-                  <span className="mr-1">{user.username}</span>
+                  <span className="mr-1">{user.name}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

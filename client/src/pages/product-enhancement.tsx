@@ -257,7 +257,8 @@ export default function ProductEnhancement() {
             if (
               (value === EnhancementStep.Upload) || 
               (value === EnhancementStep.SelectOptions && enhancementId) ||
-              (value === EnhancementStep.Results && enhancementData?.images?.some(img => img.resultImagePaths?.length > 0))
+              (value === EnhancementStep.Results && enhancementData && 'images' in enhancementData && Array.isArray(enhancementData.images) && 
+                enhancementData.images.some((img: any) => img.resultImagePaths && img.resultImagePaths.length > 0))
             ) {
               setCurrentStep(value as EnhancementStep);
             }

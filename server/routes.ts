@@ -283,15 +283,22 @@ async function sendSelectionsToWebhook(
     selectedOptions: string[];
   }[]
 ): Promise<any> {
-  // Prepare data for webhook
-  const webhookData = {
-    requestId: webhookRequestId,
-    selections: selections
-  };
-
-  // Send request to webhook
   try {
-    const response = await fetch('https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections', {
+    const webhookUrl = process.env.PRODUCT_ENHANCEMENT_WEBHOOK_URL 
+                       ? `${process.env.PRODUCT_ENHANCEMENT_WEBHOOK_URL}/selections`
+                       : 'https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections';
+    
+    // Prepare data for webhook
+    const webhookData = {
+      requestId: webhookRequestId,
+      selections: selections
+    };
+
+    console.log(`Sending selections to webhook for request ID: ${webhookRequestId}`);
+    console.log(`Selections count: ${selections.length}`);
+    
+    // Send request to webhook
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -300,10 +307,15 @@ async function sendSelectionsToWebhook(
     });
 
     if (!response.ok) {
-      throw new Error(`Webhook responded with status: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Webhook selections request failed with status ${response.status}: ${errorText}`);
     }
 
-    return await response.json();
+    // Parse response
+    const responseData = await response.json();
+    console.log('Webhook selections response received');
+    
+    return responseData;
   } catch (error) {
     console.error('Error sending selections to product enhancement webhook:', error);
     throw error;

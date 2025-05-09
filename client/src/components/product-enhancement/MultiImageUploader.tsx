@@ -1,153 +1,156 @@
-import { useState, useRef, DragEvent, ChangeEvent } from 'react';
-import { Button } from '@/components/ui/button';
-import { UploadCloud, X, Image, AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useRef, ChangeEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { UploadCloud, X, Image } from "lucide-react";
 
 interface MultiImageUploaderProps {
   onFilesSelected: (files: File[]) => void;
   maxFiles?: number;
-  acceptedTypes?: string; // e.g. "image/jpeg,image/png,image/webp"
 }
 
 export default function MultiImageUploader({
   onFilesSelected,
-  maxFiles = 5,
-  acceptedTypes = "image/jpeg,image/png,image/webp"
+  maxFiles = 5
 }: MultiImageUploaderProps) {
-  const [dragActive, setDragActive] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [dragActive, setDragActive] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  // Handle file validation
-  const validateFiles = (files: File[]): { valid: File[], error?: string } => {
-    // Check if there are too many files
-    if (files.length > maxFiles) {
-      return { 
-        valid: files.slice(0, maxFiles), 
-        error: `Maximum ${maxFiles} images allowed. Only the first ${maxFiles} will be used.`
-      };
-    }
-    
-    // Check file types
-    const acceptedTypesArray = acceptedTypes.split(',');
-    const invalidFiles = files.filter(file => !acceptedTypesArray.includes(file.type));
-    
-    if (invalidFiles.length > 0) {
-      const validFiles = files.filter(file => acceptedTypesArray.includes(file.type));
-      return {
-        valid: validFiles,
-        error: `Some files have unsupported formats. Only ${acceptedTypes.split(',').join(', ')} are supported.`
-      };
-    }
-    
-    return { valid: files };
-  };
 
   // Handle file selection
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setError(null);
-    if (e.target.files && e.target.files.length > 0) {
-      const filesArray = Array.from(e.target.files);
-      const validation = validateFiles(filesArray);
-      
-      if (validation.error) {
-        setError(validation.error);
-      }
-      
-      onFilesSelected(validation.valid);
-    }
-  };
-
-  // Handle file drop
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    setError(null);
+    if (!e.target.files) return;
     
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const filesArray = Array.from(e.dataTransfer.files);
-      const validation = validateFiles(filesArray);
-      
-      if (validation.error) {
-        setError(validation.error);
-      }
-      
-      onFilesSelected(validation.valid);
-    }
+    const fileArray = Array.from(e.target.files);
+    const newFiles = [...selectedFiles, ...fileArray];
+    
+    // Enforce maximum file limit
+    const limitedFiles = newFiles.slice(0, maxFiles);
+    
+    setSelectedFiles(limitedFiles);
+    onFilesSelected(limitedFiles);
   };
 
   // Handle drag events
-  const handleDrag = (e: DragEvent<HTMLDivElement>, active: boolean) => {
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(active);
+    
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
   };
 
-  // Handle click to select files
-  const handleClick = () => {
+  // Handle drop event
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const fileArray = Array.from(e.dataTransfer.files);
+      
+      // Filter for only image files
+      const imageFiles = fileArray.filter(file => file.type.startsWith('image/'));
+      
+      // Combine with existing files
+      const newFiles = [...selectedFiles, ...imageFiles];
+      
+      // Enforce maximum file limit
+      const limitedFiles = newFiles.slice(0, maxFiles);
+      
+      setSelectedFiles(limitedFiles);
+      onFilesSelected(limitedFiles);
+    }
+  };
+
+  // Trigger file input click
+  const handleButtonClick = () => {
     fileInputRef.current?.click();
+  };
+
+  // Remove a file from the selection
+  const removeFile = (index: number) => {
+    const newFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(newFiles);
+    onFilesSelected(newFiles);
   };
 
   return (
     <div className="w-full">
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        accept={acceptedTypes}
-        onChange={handleFileChange}
-        className="hidden"
-      />
-      
-      <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-          dragActive 
-            ? 'border-primary bg-primary/5' 
-            : 'border-gray-300 hover:border-primary/50'
+      <div 
+        className={`border-2 border-dashed rounded-lg p-8 text-center ${
+          dragActive ? "border-primary bg-primary/5" : "border-border"
         }`}
-        onClick={handleClick}
-        onDragOver={(e) => handleDrag(e, true)}
-        onDragEnter={(e) => handleDrag(e, true)}
-        onDragLeave={(e) => handleDrag(e, false)}
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
         onDrop={handleDrop}
       >
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="p-3 rounded-full bg-primary/10">
-            <UploadCloud className="h-8 w-8 text-primary" />
-          </div>
-          <div>
-            <p className="text-base font-medium">
-              Drag and drop product images here, or click to select
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Upload up to {maxFiles} product images for enhancement
-            </p>
-          </div>
-          <Button 
-            variant="outline" 
-            type="button" 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClick();
-            }}
-          >
-            <Image className="mr-2 h-4 w-4" />
-            Select Images
-          </Button>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+        <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+        
+        <div className="mt-4">
+          <p className="text-base font-medium">
+            Drag and drop up to {maxFiles} product images
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Each image will be enhanced individually
+          </p>
         </div>
+        
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={handleButtonClick}
+          className="mt-4"
+        >
+          <Image className="mr-2 h-4 w-4" />
+          Select Images
+        </Button>
       </div>
-      
-      {error && (
-        <Alert variant="destructive" className="mt-3">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+
+      {/* Image preview section */}
+      {selectedFiles.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-sm font-medium mb-2">
+            Uploaded Images ({selectedFiles.length}/{maxFiles})
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {selectedFiles.map((file, index) => (
+              <div 
+                key={index} 
+                className="relative group border rounded-md overflow-hidden"
+              >
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`Preview ${index}`}
+                  className="w-full h-32 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeFile(index)}
+                  className="absolute top-1 right-1 p-1 bg-black/60 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-2 py-1">
+                  <p className="text-white text-xs truncate">
+                    {file.name}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
-      
-      <p className="text-xs text-muted-foreground mt-2">
-        Supported formats: JPG, PNG, WebP • Max {maxFiles} images • Max 10MB per image
-      </p>
     </div>
   );
 }

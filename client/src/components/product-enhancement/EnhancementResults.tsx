@@ -1,218 +1,263 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, Loader2, Share2, ArrowLeft } from 'lucide-react';
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { 
+  Download, 
+  ChevronLeft, 
+  ChevronRight, 
+  Loader2
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface EnhancementImage {
   id: number;
   originalImagePath: string;
   imageUrl: string;
+  options: string[];
   selectedOptions: string[];
-  resultImageUrls: string[];
-}
-
-interface EnhancementData {
-  id: number;
-  status: string;
-  industry: string;
-  creditsUsed: number;
-  images: EnhancementImage[];
+  resultImagePaths?: string[];
+  resultImageUrls?: string[];
 }
 
 interface EnhancementResultsProps {
-  enhancementData: EnhancementData;
+  enhancementData: {
+    id: number;
+    status: string;
+    industry: string;
+    creditsUsed: number;
+    images: EnhancementImage[];
+    webhookRequestId?: string;
+    createdAt?: string;
+  };
+  isLoading: boolean;
   onStartOver: () => void;
 }
 
 export default function EnhancementResults({
   enhancementData,
+  isLoading,
   onStartOver
 }: EnhancementResultsProps) {
-  // Track the current view tab for each image
-  const [currentImageViews, setCurrentImageViews] = useState<Record<number, string>>({});
-
-  // Calculate total result count
-  const totalResultCount = enhancementData.images.reduce(
-    (total, image) => total + (image.resultImageUrls?.length || 0), 
-    0
-  );
-
-  // Handle image view tab change
-  const handleTabChange = (imageId: number, value: string) => {
-    setCurrentImageViews(prev => ({
-      ...prev,
-      [imageId]: value
-    }));
-  };
-
-  // Get current tab value for an image
-  const getCurrentView = (imageId: number, defaultValue: string) => {
-    return currentImageViews[imageId] || defaultValue;
-  };
-
-  // Download an enhanced image
-  const downloadImage = async (imageUrl: string, optionName: string) => {
+  const { toast } = useToast();
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  
+  const handleDownload = async (url: string, filename: string) => {
     try {
-      const response = await fetch(imageUrl);
+      const response = await fetch(url);
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const blobUrl = URL.createObjectURL(blob);
       
+      // Create temporary link to download the image
       const link = document.createElement('a');
-      link.href = url;
-      link.download = `enhanced-${optionName.toLowerCase().replace(/\s+/g, '-')}.jpg`;
-      document.body.appendChild(link);
+      link.href = blobUrl;
+      link.download = filename;
       link.click();
-      document.body.removeChild(link);
+      
+      // Clean up
+      URL.revokeObjectURL(blobUrl);
+      
+      toast({
+        title: "Download started",
+        description: "Your enhanced image is downloading"
+      });
     } catch (error) {
-      console.error('Error downloading image:', error);
+      toast({
+        title: "Download failed",
+        description: "There was an error downloading your image",
+        variant: "destructive"
+      });
     }
   };
+  
+  // Navigate between images
+  const nextImage = () => {
+    if (activeImageIndex < enhancementData.images.length - 1) {
+      setActiveImageIndex(activeImageIndex + 1);
+    }
+  };
+  
+  const prevImage = () => {
+    if (activeImageIndex > 0) {
+      setActiveImageIndex(activeImageIndex - 1);
+    }
+  };
+  
+  // Check if results are still processing
+  const isProcessing = enhancementData.status === "processing";
+  
+  // Get current image
+  const currentImage = enhancementData.images[activeImageIndex];
+  const hasResults = currentImage && currentImage.resultImageUrls && currentImage.resultImageUrls.length > 0;
 
-  // Process is still in progress
-  if (enhancementData.status === 'processing') {
+  if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-        <h3 className="text-lg font-medium text-center mb-2">Processing Your Enhancements</h3>
-        <p className="text-center text-muted-foreground">
-          We're creating your enhanced images. This may take a minute or two.
-        </p>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-lg">Loading results...</span>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="bg-muted p-4 rounded-lg">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="font-medium">Enhancement Results</h3>
-            <p className="text-sm text-muted-foreground">
-              {totalResultCount} enhanced image{totalResultCount !== 1 ? 's' : ''} created
-            </p>
-          </div>
-          <div className="text-right">
-            <h3 className="font-medium">Credits Used</h3>
-            <p className="text-sm text-muted-foreground">
-              {enhancementData.creditsUsed} credit{enhancementData.creditsUsed !== 1 ? 's' : ''}
-            </p>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">Enhancement Results</h2>
+          <p className="text-muted-foreground mt-1">
+            {isProcessing 
+              ? "Your enhancements are being processed..." 
+              : `${enhancementData.creditsUsed} credits used for these enhancements`
+            }
+          </p>
+        </div>
+        
+        <div className="mt-4 md:mt-0">
+          <Button variant="outline" onClick={onStartOver}>
+            Start New Enhancement
+          </Button>
         </div>
       </div>
-
-      <div className="space-y-8">
-        {enhancementData.images.map((image) => {
-          // Skip images with no results
-          if (!image.resultImageUrls || image.resultImageUrls.length === 0) {
-            return null;
-          }
-          
-          // Group result images by option
-          const resultsByOption: Record<string, string[]> = {};
-          
-          // Assuming each pair of results corresponds to an option in the same order
-          // For each option, we should have 2 result images
-          if (image.selectedOptions && image.selectedOptions.length > 0) {
-            for (let i = 0; i < image.selectedOptions.length; i++) {
-              const option = image.selectedOptions[i];
-              const startIdx = i * 2;
-              const results = image.resultImageUrls.slice(startIdx, startIdx + 2);
+      
+      {isProcessing ? (
+        <Card className="overflow-hidden">
+          <CardContent className="p-8 text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+            <h3 className="text-lg font-medium mt-4">Processing Your Enhancements</h3>
+            <p className="text-muted-foreground mt-2 max-w-md mx-auto">
+              We're working on your image enhancements. This process typically takes 1-2 minutes per image.
+              Please check back soon.
+            </p>
+          </CardContent>
+        </Card>
+      ) : enhancementData.images.length === 0 ? (
+        <Card className="overflow-hidden">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-lg font-medium">No Results Available</h3>
+            <p className="text-muted-foreground mt-2">
+              There are no enhancement results to display. Please start a new enhancement.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Image navigation controls */}
+          {enhancementData.images.length > 1 && (
+            <div className="flex items-center justify-between mb-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={prevImage}
+                disabled={activeImageIndex === 0}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+              </Button>
               
-              if (results.length > 0) {
-                resultsByOption[option] = results;
-              }
-            }
-          }
+              <span className="text-sm">
+                Image {activeImageIndex + 1} of {enhancementData.images.length}
+              </span>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={nextImage}
+                disabled={activeImageIndex === enhancementData.images.length - 1}
+              >
+                Next <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          )}
           
-          const options = Object.keys(resultsByOption);
-          
-          return (
-            <Card key={image.id} className="overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="sm:w-1/3 flex flex-col">
-                    <h3 className="font-medium mb-3">Original Image</h3>
-                    <div className="relative h-64 sm:h-auto rounded-md overflow-hidden border">
-                      <img 
-                        src={image.imageUrl} 
-                        alt="Original product" 
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="mt-3">
-                      <p className="text-sm text-muted-foreground">
-                        Selected options: {image.selectedOptions.join(', ')}
-                      </p>
-                    </div>
+          {/* Current image results */}
+          <Card className="overflow-hidden">
+            <CardContent className="p-6">
+              <div className="grid md:grid-cols-12 gap-6">
+                <div className="md:col-span-3">
+                  <h3 className="font-medium mb-2">Original Image</h3>
+                  <div className="border rounded-md overflow-hidden">
+                    <img 
+                      src={currentImage.imageUrl} 
+                      alt="Original product" 
+                      className="w-full object-cover" 
+                    />
                   </div>
                   
-                  <div className="sm:w-2/3">
-                    <h3 className="font-medium mb-3">Enhanced Results</h3>
-                    
-                    {options.length > 0 ? (
-                      <Tabs 
-                        defaultValue={options[0]} 
-                        value={getCurrentView(image.id, options[0])}
-                        onValueChange={(value) => handleTabChange(image.id, value)}
-                        className="w-full"
-                      >
-                        <TabsList className="mb-4 flex-wrap h-auto py-1">
-                          {options.map((option) => (
-                            <TabsTrigger key={option} value={option} className="text-xs">
-                              {option}
+                  <div className="mt-4">
+                    <h4 className="font-medium text-sm mb-2">Applied Enhancements</h4>
+                    {currentImage.selectedOptions.length > 0 ? (
+                      <ul className="text-sm space-y-1">
+                        {currentImage.selectedOptions.map(option => (
+                          <li key={option} className="flex items-center">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary mr-2"></span>
+                            {option}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        No enhancements selected
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="md:col-span-9">
+                  {hasResults ? (
+                    <div className="space-y-4">
+                      <h3 className="font-medium">Enhanced Results ({currentImage.resultImageUrls?.length})</h3>
+                      
+                      <Tabs defaultValue="0" className="w-full">
+                        <TabsList className="mb-2">
+                          {currentImage.resultImageUrls?.map((_, index) => (
+                            <TabsTrigger key={index} value={index.toString()}>
+                              Result {index + 1}
                             </TabsTrigger>
                           ))}
                         </TabsList>
                         
-                        {options.map((option) => (
-                          <TabsContent key={option} value={option}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {resultsByOption[option].map((resultUrl, idx) => (
-                                <div key={idx} className="relative group">
-                                  <div className="border rounded-md overflow-hidden h-64">
-                                    <img 
-                                      src={resultUrl} 
-                                      alt={`Enhanced result ${idx + 1} for ${option}`} 
-                                      className="w-full h-full object-contain"
-                                    />
-                                  </div>
-                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Button 
-                                      variant="secondary"
-                                      size="sm"
-                                      onClick={() => downloadImage(resultUrl, `${option}-${idx+1}`)}
-                                    >
-                                      <Download className="h-4 w-4 mr-1" />
-                                      Download
-                                    </Button>
-                                  </div>
-                                  <p className="text-sm text-center mt-2">Variation {idx + 1}</p>
-                                </div>
-                              ))}
+                        {currentImage.resultImageUrls?.map((url, index) => (
+                          <TabsContent key={index} value={index.toString()}>
+                            <div className="border rounded-md overflow-hidden">
+                              <img 
+                                src={url} 
+                                alt={`Enhanced result ${index + 1}`} 
+                                className="w-full object-contain"
+                              />
+                              
+                              <div className="flex justify-end p-2 bg-muted/20 border-t">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDownload(
+                                    url, 
+                                    `enhanced-${activeImageIndex + 1}-${index + 1}.jpg`
+                                  )}
+                                >
+                                  <Download className="h-4 w-4 mr-1" />
+                                  Download
+                                </Button>
+                              </div>
                             </div>
                           </TabsContent>
                         ))}
                       </Tabs>
-                    ) : (
-                      <div className="border rounded-md p-8 text-center">
-                        <p className="text-muted-foreground">No enhanced results available</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-full bg-muted/20 rounded-md p-8">
+                      <div className="text-center">
+                        <h3 className="text-lg font-medium">No Results Yet</h3>
+                        <p className="text-muted-foreground mt-2">
+                          The enhanced results for this image are not available yet.
+                        </p>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      <div className="flex justify-between items-center mt-8">
-        <Button variant="outline" onClick={onStartOver}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Start New Enhancement
-        </Button>
-      </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }
