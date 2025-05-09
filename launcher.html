@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Launcher</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 15px; cursor: pointer; margin: 5px; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Server Launcher</h1>
+    <p>This page will help you access your application.</p>
+    
+    <h2>Open Your Application</h2>
+    <button onclick="openApp()">Open Application</button>
+    
+    <h2>Instructions</h2>
+    <ol>
+        <li>Click the "Open Application" button above</li>
+        <li>If it doesn't work, go back to the console and run: <code>npm run dev</code></li>
+        <li>Try accessing the site at <a href="https://yourrepl.username.repl.co" target="_blank">https://yourrepl.username.repl.co</a></li>
+    </ol>
+
+    <script>
+        function openApp() {
+            // Try to open the main site in a new tab
+            window.open('/', '_blank');
+        }
+    </script>
+</body>
+</html>
