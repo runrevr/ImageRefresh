@@ -44,8 +44,8 @@ enum Step {
 
 // Import transformation types from PromptInput
 import { 
-  Category,
-  AnimationSubcategory as CartoonSubcategory,
+  TransformationType,
+  CartoonSubcategory,
   ProductSubcategory,
   OtherSubcategory,
 } from "@/components/PromptInput";
@@ -65,6 +65,7 @@ export default function Home() {
     null,
   );
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
+  const [secondTransformedImage, setSecondTransformedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
   const { user: authUser } = useAuth();
   // Initialize local user state with data from auth
@@ -88,11 +89,9 @@ export default function Home() {
     }
   }, [authUser]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  // Define a local type for transformations
-  type TransformationType = string;
   
   const [selectedTransformation, setSelectedTransformation] =
-    useState<TransformationType>("");
+    useState<string>("");
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
   const [showAccountNeededDialog, setShowAccountNeededDialog] =
     useState<boolean>(false);
@@ -269,6 +268,15 @@ export default function Home() {
       if (response.ok) {
         console.log("Transformation successful, result:", data);
         setTransformedImage(data.transformedImageUrl);
+        
+        // Set the second transformed image if it exists
+        if (data.secondTransformedImageUrl) {
+          console.log("Found second transformed image:", data.secondTransformedImageUrl);
+          setSecondTransformedImage(data.secondTransformedImageUrl);
+        } else {
+          setSecondTransformedImage(null);
+        }
+        
         // Store transformation data including the database ID
         setCurrentTransformation(data);
         setCurrentStep(Step.Result);
@@ -358,6 +366,7 @@ export default function Home() {
     setOriginalImage(null);
     setOriginalImagePath(null);
     setTransformedImage(null);
+    setSecondTransformedImage(null); // Clear second transformed image
     setPrompt("");
     setSelectedTransformation("");
     setCurrentTransformation(null); // Clear current transformation data
@@ -489,7 +498,7 @@ export default function Home() {
   };
 
   // Handle preset transformations (cartoon, product photography, etc.)
-  const handlePresetTransformation = async (presetType: TransformationType) => {
+  const handlePresetTransformation = async (presetType: string) => {
     if (!originalImagePath) {
       toast({
         title: "No image selected",
@@ -501,7 +510,7 @@ export default function Home() {
     }
 
     // Set the selected transformation
-    setSelectedTransformation(presetType as TransformationType);
+    setSelectedTransformation(presetType);
 
     // Set a default image size for presets (square format)
     const imageSize = "1024x1024";
@@ -527,6 +536,15 @@ export default function Home() {
 
       if (response.ok) {
         setTransformedImage(data.transformedImageUrl);
+        
+        // Set the second transformed image if it exists
+        if (data.secondTransformedImageUrl) {
+          console.log("Found second transformed image:", data.secondTransformedImageUrl);
+          setSecondTransformedImage(data.secondTransformedImageUrl);
+        } else {
+          setSecondTransformedImage(null);
+        }
+        
         // Store transformation data including the database ID
         setCurrentTransformation(data);
         setCurrentStep(Step.Result);
@@ -1098,6 +1116,7 @@ export default function Home() {
                 <ResultView
                   originalImage={originalImage}
                   transformedImage={transformedImage}
+                  secondTransformedImage={secondTransformedImage}
                   onTryAgain={handleTryAgain}
                   onNewImage={handleNewImage}
                   onEditImage={handleStartEdit}
