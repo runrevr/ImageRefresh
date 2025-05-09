@@ -2,10 +2,15 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+// UI Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { 
   Alert,
   AlertTitle,
@@ -25,17 +30,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 
-// Import product-enhancement specific components 
-// (we'll create these next)
+// Import product enhancement specific components
 import MultiImageUploader from "@/components/product-enhancement/MultiImageUploader";
 import EnhancementOptions from "@/components/product-enhancement/EnhancementOptions";
 import EnhancementResults from "@/components/product-enhancement/EnhancementResults";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 // Define product enhancement types
 interface EnhancementImage {
@@ -76,6 +83,10 @@ export default function ProductEnhancement() {
   const [currentStep, setCurrentStep] = useState<EnhancementStep>(EnhancementStep.Upload);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [enhancementId, setEnhancementId] = useState<number | null>(null);
+  
+  // State for industry dialog
+  const [showIndustryDialog, setShowIndustryDialog] = useState(false);
+  const [processingImages, setProcessingImages] = useState(false);
   
   // Form for industry input
   const form = useForm<z.infer<typeof industryFormSchema>>({
@@ -118,12 +129,14 @@ export default function ProductEnhancement() {
     onSuccess: (data) => {
       setEnhancementId(data.enhancementId);
       setCurrentStep(EnhancementStep.SelectOptions);
+      setProcessingImages(false);
       toast({
         title: "Enhancement created",
         description: "Your images have been uploaded successfully.",
       });
     },
     onError: (error: any) => {
+      setProcessingImages(false);
       toast({
         title: "Error",
         description: `Failed to process images: ${error.message}`,
@@ -162,7 +175,7 @@ export default function ProductEnhancement() {
         description: "Your selections are being processed.",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
         title: "Error",
         description: `Failed to submit selections: ${error.message}`,
@@ -182,14 +195,10 @@ export default function ProductEnhancement() {
       return;
     }
 
-    if (uploadedFiles.length > 5) {
-      toast({
-        title: "Too many images",
-        description: "Please select a maximum of 5 images.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Close the industry dialog
+    setShowIndustryDialog(false);
+    // Show processing indicator
+    setProcessingImages(true);
 
     // Create form data
     const formData = new FormData();
@@ -211,7 +220,17 @@ export default function ProductEnhancement() {
 
   // Handle file uploads
   const handleFilesSelected = (files: File[]) => {
-    setUploadedFiles(files);
+    if (files.length > 0 && files.length <= 5) {
+      setUploadedFiles(files);
+      // Show industry dialog after files are selected
+      setShowIndustryDialog(true);
+    } else if (files.length > 5) {
+      toast({
+        title: "Too many images",
+        description: "Please select a maximum of 5 images.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Handle option selection submission
@@ -237,6 +256,7 @@ export default function ProductEnhancement() {
     setCurrentStep(EnhancementStep.Upload);
     setUploadedFiles([]);
     setEnhancementId(null);
+    setProcessingImages(false);
     form.reset();
   };
 
@@ -248,6 +268,28 @@ export default function ProductEnhancement() {
           <p className="text-muted-foreground mt-2">
             Upload product images and get professional enhancement options tailored to your industry
           </p>
+          
+          <div className="max-w-3xl mx-auto mt-8 text-left bg-muted/30 p-6 rounded-lg border">
+            <h2 className="text-xl font-semibold mb-4">How It Works:</h2>
+            <ol className="space-y-3">
+              <li className="flex items-start">
+                <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white font-bold mr-2">1</span>
+                <span>Upload 1-5 product images you want to enhance</span>
+              </li>
+              <li className="flex items-start">
+                <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white font-bold mr-2">2</span>
+                <span>Tell us your industry for tailored enhancement options</span>
+              </li>
+              <li className="flex items-start">
+                <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white font-bold mr-2">3</span>
+                <span>Select enhancement options for each image (each option costs 1 credit)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white font-bold mr-2">4</span>
+                <span>Receive 2 enhanced versions for each option you select</span>
+              </li>
+            </ol>
+          </div>
         </div>
 
         <Tabs 
@@ -290,58 +332,97 @@ export default function ProductEnhancement() {
           <TabsContent value={EnhancementStep.Upload} className="mt-6">
             <Card>
               <CardContent className="pt-6">
+                {processingImages ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Processing Your Images</h3>
+                    <p className="text-center text-muted-foreground mb-4 max-w-lg">
+                      Your images are being prepared for enhancement. This usually takes less than a minute.
+                    </p>
+                    <div className="bg-muted/30 p-4 rounded-lg max-w-lg w-full">
+                      <h4 className="font-medium mb-2">What happens next?</h4>
+                      <ol className="list-decimal pl-5 space-y-2 text-sm">
+                        <li>Our system analyzes your product images and industry</li>
+                        <li>We'll generate enhancement options tailored to your specific products</li>
+                        <li>You'll select which enhancements to apply (each costs 1 credit)</li>
+                        <li>You'll receive 2 high-quality enhanced versions for each option selected</li>
+                      </ol>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="bg-primary/5 p-4 rounded-lg mb-6">
+                      <h3 className="font-semibold mb-1">Get Started with Product Enhancement</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Upload 1-5 product images below. For best results, use high-quality images with good lighting.
+                      </p>
+                    </div>
+                    
+                    <MultiImageUploader 
+                      onFilesSelected={handleFilesSelected}
+                      maxFiles={5}
+                    />
+                    
+                    {uploadedFiles.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm font-medium mb-2">
+                          {uploadedFiles.length} {uploadedFiles.length === 1 ? 'image' : 'images'} selected
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {uploadedFiles.map((file, index) => (
+                            <div 
+                              key={index}
+                              className="relative w-24 h-24 border rounded overflow-hidden"
+                            >
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Industry Dialog */}
+            <Dialog open={showIndustryDialog} onOpenChange={setShowIndustryDialog}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Tell us about your industry</DialogTitle>
+                  <DialogDescription>
+                    We'll use this information to provide enhancement options tailored to your products.
+                  </DialogDescription>
+                </DialogHeader>
+                
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
                     <FormField
                       control={form.control}
                       name="industry"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Industry</FormLabel>
+                          <FormLabel>Your Industry</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Enter your industry (e.g., Fashion, Electronics, Food)" 
+                              placeholder="E.g., Fashion, Electronics, Food & Beverage" 
                               {...field} 
+                              autoFocus
                             />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
-                    <div className="mt-6">
-                      <MultiImageUploader 
-                        onFilesSelected={handleFilesSelected}
-                        maxFiles={5}
-                      />
-                      
-                      {uploadedFiles.length > 0 && (
-                        <div className="mt-4">
-                          <p className="text-sm font-medium mb-2">
-                            {uploadedFiles.length} {uploadedFiles.length === 1 ? 'image' : 'images'} selected
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {uploadedFiles.map((file, index) => (
-                              <div 
-                                key={index}
-                                className="relative w-24 h-24 border rounded overflow-hidden"
-                              >
-                                <img
-                                  src={URL.createObjectURL(file)}
-                                  alt={`Preview ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex justify-end">
+                    
+                    <DialogFooter className="mt-6">
                       <Button 
-                        type="submit" 
-                        disabled={isSubmittingEnhancement || uploadedFiles.length === 0}
+                        type="submit"
+                        disabled={isSubmittingEnhancement}
                       >
                         {isSubmittingEnhancement ? (
                           <>
@@ -352,11 +433,11 @@ export default function ProductEnhancement() {
                           'Continue'
                         )}
                       </Button>
-                    </div>
+                    </DialogFooter>
                   </form>
                 </Form>
-              </CardContent>
-            </Card>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
 
           {/* Step 2: Select Options */}
