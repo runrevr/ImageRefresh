@@ -348,7 +348,12 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
       "Vibrant urban style with iconic fashion and visual elements from 90s hip-hop culture.",
     placeholder: "E.g., Add 90s hip-hop fashion and urban setting",
     suggestedPrompt:
-      "Transform into an authentic 1990s hip-hop style portrait with bold, vibrant colors and slightly overexposed flash photography aesthetic. Convert clothing to iconic 90s hip-hop fashion including baggy jeans, oversized sports jerseys, branded tracksuits, Timberland boots, or streetwear with bold logos and bright colors. Add characteristic 90s hip-hop accessories like chunky gold chains, door-knocker earrings, snapback caps worn at angles, bandanas, or sports team apparel. Style hair in 90s trends like high-top fades, box braids, flat tops, or other era-specific styles. Set against urban backdrops featuring graffiti art, basketball courts, city streets, or other iconic 90s hip-hop environments. Apply color effects reminiscent of 90s film photography with saturated colors, slight film grain, and the characteristic look of 90s music videos and album covers. The final image should authentically capture the bold, expressive aesthetic of 90s hip-hop culture while maintaining clear likeness to the original subject.",
+      “Using the uploaded photo as your sole reference, generate an authentic 1990s hip-hop–style portrait that maintains the subject’s exact skin tone, facial features, and expression. Do not alter any aspect of their natural complexion. Apply the following:
+      • Fashion & Accessories: Convert clothing into iconic ’90s hip-hop fashion—baggy jeans, oversized sports jerseys, branded tracksuits, Timberland boots, or streetwear with bold logos and bright colors. Add chunky gold chains, door-knocker earrings, snapback caps at angles, bandanas, or sports team apparel.
+      • Hairstyles: Style hair in era-specific trends (high-top fades, box braids, flat tops, etc.), adapted to the subject’s original hair texture and color.
+      • Setting: Place against a graffiti-tagged wall, basketball court, city street, or similar urban backdrop.
+      • Color & Lighting: Emulate slightly overexposed flash photography and ’90s film/video color effects—saturated hues, light film grain, and high-contrast look—while keeping all skin tones exactly as in the source.
+      The result should capture the bold, expressive aesthetic of ’90s hip-hop culture without changing the subject’s natural skin color or identity.”,
   },
   "1980s": {
     title: "1980s",
