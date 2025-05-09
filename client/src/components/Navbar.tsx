@@ -38,12 +38,18 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
           </div>
         </Link>
 
-        <div className="hidden md:flex items-center space-x-24">
+        <div className="hidden md:flex items-center space-x-16">
           <Link
             href="/ideas"
             className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
           >
             Ideas
+          </Link>
+          <Link
+            href="/product-enhancement"
+            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
+          >
+            Product Enhancement
           </Link>
           <Link
             href="/pricing"
@@ -178,6 +184,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Ideas
+                </Link>
+                <Link
+                  href="/product-enhancement"
+                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Product Enhancement
                 </Link>
                 <Link
                   href="/pricing"
