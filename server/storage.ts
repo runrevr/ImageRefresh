@@ -3,6 +3,9 @@ import {
   users,
   memberships,
   payments,
+  productEnhancements,
+  productEnhancementImages,
+  productEnhancementSelections,
   type User,
   type InsertUser,
   type Transformation,
@@ -11,6 +14,12 @@ import {
   type InsertMembership,
   type Payment,
   type InsertPayment,
+  type ProductEnhancement,
+  type InsertProductEnhancement,
+  type ProductEnhancementImage,
+  type InsertProductEnhancementImage,
+  type ProductEnhancementSelection,
+  type InsertProductEnhancementSelection,
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and } from "drizzle-orm";
