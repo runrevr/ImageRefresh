@@ -1991,9 +1991,15 @@ style, environment, lighting, and background rather than changing the main subje
 
       // Send request to webhook
       try {
+        // Include our own webhook URL as a callback parameter
+        const appBaseUrl = process.env.APP_URL || `http://${req.headers.host}`;
+        const webhookCallbackUrl = `${appBaseUrl}/api/webhook/enhancement-ideas`;
+        console.log(`Using webhook callback URL: ${webhookCallbackUrl}`);
+        
         const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9", {
           industry: req.body.industry,
-          images
+          images,
+          callbackUrl: webhookCallbackUrl
         });
 
         // Update the product enhancement with webhook ID
@@ -2094,6 +2100,158 @@ style, environment, lighting, and background rather than changing the main subje
     }
   });
 
+  // Webhook endpoint to receive ideas from external service
+  app.post("/api/webhook/enhancement-ideas", async (req, res) => {
+    try {
+      console.log("Received webhook data:", JSON.stringify(req.body));
+      
+      // Validate the request body
+      if (!req.body || !req.body.id) {
+        return res.status(400).json({ message: "Invalid webhook data, missing id" });
+      }
+      
+      const webhookId = req.body.id;
+      
+      // Find the enhancement by webhookId
+      const enhancement = await storage.getProductEnhancementByWebhookId(webhookId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found for webhook ID: " + webhookId });
+      }
+      
+      // Validate the images data
+      if (!req.body.images || !Array.isArray(req.body.images)) {
+        return res.status(400).json({ message: "Invalid webhook data, missing or invalid images array" });
+      }
+      
+      // Get the enhancement images
+      const enhancementImages = await storage.getProductEnhancementImages(enhancement.id);
+      
+      // Update the options for each image
+      for (let i = 0; i < req.body.images.length; i++) {
+        const responseImage = req.body.images[i];
+        
+        // Validate the image data
+        if (typeof responseImage.originalIndex !== 'number' || !responseImage.options) {
+          console.warn(`Invalid image data at index ${i}:`, responseImage);
+          continue;
+        }
+        
+        // Find the matching enhancement image by index
+        if (responseImage.originalIndex < enhancementImages.length) {
+          const imageId = enhancementImages[responseImage.originalIndex].id;
+          
+          // Update the options
+          await storage.updateProductEnhancementImageOptions(
+            imageId,
+            responseImage.options
+          );
+        }
+      }
+      
+      // Update the enhancement status to completed
+      await storage.updateProductEnhancementStatus(
+        enhancement.id,
+        "completed",
+        webhookId
+      );
+      
+      // Return success
+      res.status(200).json({ success: true, message: "Ideas received and saved successfully" });
+    } catch (error: any) {
+      console.error("Error processing webhook ideas:", error);
+      res.status(500).json({ 
+        message: "Error processing webhook ideas",
+        error: error.message || "Unknown error"
+      });
+    }
+  });
+  
+  // Webhook endpoint to receive results from selections
+  app.post("/api/webhook/enhancement-results", async (req, res) => {
+    try {
+      console.log("Received webhook results:", JSON.stringify(req.body));
+      
+      // Validate the request body
+      if (!req.body || !req.body.id) {
+        return res.status(400).json({ message: "Invalid webhook data, missing id" });
+      }
+      
+      const webhookId = req.body.id;
+      
+      // Find the enhancement by webhookId
+      const enhancement = await storage.getProductEnhancementByWebhookId(webhookId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found for webhook ID: " + webhookId });
+      }
+      
+      // Validate the results data
+      if (!req.body.results || !Array.isArray(req.body.results)) {
+        return res.status(400).json({ message: "Invalid webhook data, missing or invalid results array" });
+      }
+      
+      // Get the enhancement images and selections
+      const enhancementImages = await storage.getProductEnhancementImages(enhancement.id);
+      const selections = await storage.getProductEnhancementSelections(enhancement.id);
+      
+      // Process each result
+      for (const result of req.body.results) {
+        // Validate the result data
+        if (typeof result.imageIndex !== 'number' || !result.option || !Array.isArray(result.resultImages)) {
+          console.warn("Invalid result data:", result);
+          continue;
+        }
+        
+        // Find the matching enhancement image
+        if (result.imageIndex < enhancementImages.length) {
+          const enhancementImage = enhancementImages[result.imageIndex];
+          
+          // Find the matching selection
+          const selection = selections.find(s => 
+            s.imageId === enhancementImage.id && 
+            s.optionKey === result.option
+          );
+          
+          if (selection) {
+            // Save the result images
+            const uploadDir = path.join(process.cwd(), "uploads");
+            
+            // Process the two result images if they exist
+            if (result.resultImages.length >= 2) {
+              // Save first image
+              const image1Path = path.join(uploadDir, `result-1-${Date.now()}-${result.imageIndex}-${result.option}.png`);
+              fs.writeFileSync(image1Path, Buffer.from(result.resultImages[0], 'base64'));
+              
+              // Save second image
+              const image2Path = path.join(uploadDir, `result-2-${Date.now()}-${result.imageIndex}-${result.option}.png`);
+              fs.writeFileSync(image2Path, Buffer.from(result.resultImages[1], 'base64'));
+              
+              // Get relative paths
+              const relativeImage1Path = path.relative(process.cwd(), image1Path);
+              const relativeImage2Path = path.relative(process.cwd(), image2Path);
+              
+              // Update the selection with the result image paths
+              await storage.updateProductEnhancementSelectionStatus(
+                selection.id,
+                "completed",
+                relativeImage1Path,
+                relativeImage2Path
+              );
+            }
+          }
+        }
+      }
+      
+      // Return success
+      res.status(200).json({ success: true, message: "Enhancement results received and saved successfully" });
+    } catch (error: any) {
+      console.error("Error processing webhook results:", error);
+      res.status(500).json({ 
+        message: "Error processing webhook results",
+        error: error.message || "Unknown error"
+      });
+    }
+  });
+  
   // Endpoint to submit selections and get final results
   app.post("/api/product-enhancement/:id/select", async (req, res) => {
     try {
@@ -2152,9 +2310,15 @@ style, environment, lighting, and background rather than changing the main subje
 
       // Send selections to webhook
       try {
+        // Include our own webhook URL as a callback parameter for results
+        const appBaseUrl = process.env.APP_URL || `http://${req.headers.host}`;
+        const webhookCallbackUrl = `${appBaseUrl}/api/webhook/enhancement-results`;
+        console.log(`Using webhook results callback URL: ${webhookCallbackUrl}`);
+        
         const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections", {
           id: enhancement.webhookId,
-          selections: webhookSelections
+          selections: webhookSelections,
+          callbackUrl: webhookCallbackUrl
         });
 
         // Process the webhook response
