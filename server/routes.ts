@@ -2105,6 +2105,16 @@ style, environment, lighting, and background rather than changing the main subje
     try {
       console.log("Received webhook data:", JSON.stringify(req.body));
       
+      // Basic authentication check - this could be improved with a proper authentication system
+      // You might want to add a secret key or token validation here
+      const authHeader = req.headers.authorization;
+      if (process.env.WEBHOOK_SECRET && (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] !== process.env.WEBHOOK_SECRET)) {
+        console.warn("Unauthorized webhook request attempted");
+        // Still process the request for now, but log a warning
+        // In a production environment, you might want to reject unauthorized requests
+        // return res.status(401).json({ message: "Unauthorized webhook request" });
+      }
+      
       // Validate the request body
       if (!req.body || !req.body.id) {
         return res.status(400).json({ message: "Invalid webhook data, missing id" });
@@ -2118,6 +2128,16 @@ style, environment, lighting, and background rather than changing the main subje
         return res.status(404).json({ message: "Enhancement not found for webhook ID: " + webhookId });
       }
       
+      // Check if we already processed this webhook - prevent duplicates
+      if (enhancement.status === "completed") {
+        console.log(`Enhancement ${enhancement.id} already completed, skipping duplicate webhook`);
+        return res.status(200).json({ 
+          success: true, 
+          message: "Ideas already processed", 
+          alreadyProcessed: true 
+        });
+      }
+      
       // Validate the images data
       if (!req.body.images || !Array.isArray(req.body.images)) {
         return res.status(400).json({ message: "Invalid webhook data, missing or invalid images array" });
@@ -2125,6 +2145,19 @@ style, environment, lighting, and background rather than changing the main subje
       
       // Get the enhancement images
       const enhancementImages = await storage.getProductEnhancementImages(enhancement.id);
+      
+      // Ensure there are enough images
+      if (enhancementImages.length === 0) {
+        await storage.updateProductEnhancementStatus(
+          enhancement.id,
+          "failed",
+          webhookId,
+          "No enhancement images found"
+        );
+        return res.status(400).json({ message: "No enhancement images found for this enhancement" });
+      }
+      
+      let updatedOptionsCount = 0;
       
       // Update the options for each image
       for (let i = 0; i < req.body.images.length; i++) {
@@ -2140,23 +2173,73 @@ style, environment, lighting, and background rather than changing the main subje
         if (responseImage.originalIndex < enhancementImages.length) {
           const imageId = enhancementImages[responseImage.originalIndex].id;
           
+          // Validate options format - should be an object with named properties
+          if (typeof responseImage.options !== 'object' || Array.isArray(responseImage.options)) {
+            console.warn(`Invalid options format for image at index ${i}:`, responseImage.options);
+            continue;
+          }
+          
+          // Check if we have at least one option
+          const optionKeys = Object.keys(responseImage.options);
+          if (optionKeys.length === 0) {
+            console.warn(`No options provided for image at index ${i}`);
+            continue;
+          }
+          
           // Update the options
           await storage.updateProductEnhancementImageOptions(
             imageId,
             responseImage.options
           );
+          
+          updatedOptionsCount++;
         }
       }
       
-      // Update the enhancement status to completed
-      await storage.updateProductEnhancementStatus(
-        enhancement.id,
-        "completed",
-        webhookId
-      );
-      
-      // Return success
-      res.status(200).json({ success: true, message: "Ideas received and saved successfully" });
+      // Only mark as completed if we processed at least one image
+      if (updatedOptionsCount > 0) {
+        // Update the enhancement status to completed
+        await storage.updateProductEnhancementStatus(
+          enhancement.id,
+          "completed",
+          webhookId
+        );
+        
+        // Notify the user if this is a feature you'd want to add
+        // This could be via email, push notification, or in-app notification
+        try {
+          // Example: Get user information
+          const user = await storage.getUser(enhancement.userId);
+          if (user && user.email) {
+            // You could send an email notification here
+            console.log(`Enhancement completed for user: ${user.email}`);
+          }
+        } catch (notifyError) {
+          console.error("Error sending notification:", notifyError);
+          // Continue processing, don't fail because of notification
+        }
+        
+        // Return success
+        res.status(200).json({ 
+          success: true, 
+          message: "Ideas received and saved successfully",
+          enhancementId: enhancement.id,
+          imagesProcessed: updatedOptionsCount
+        });
+      } else {
+        // If no images were processed successfully, mark as failed
+        await storage.updateProductEnhancementStatus(
+          enhancement.id,
+          "failed",
+          webhookId,
+          "Failed to process any images"
+        );
+        
+        res.status(400).json({ 
+          success: false, 
+          message: "Failed to process any images"
+        });
+      }
     } catch (error: any) {
       console.error("Error processing webhook ideas:", error);
       res.status(500).json({ 
