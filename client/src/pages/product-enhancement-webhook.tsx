@@ -817,11 +817,61 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
 
 // Processing section (while waiting for enhancement results)
 const ProcessingSection = () => {
+  // Status steps for the multi-step progress indicator
+  const statusSteps = [
+    "Analyzing Image....",
+    "Applying Prompt......",
+    "Texting Magic Artists.....",
+    "Making Magic....."
+  ];
+  
+  // Using useState to keep track of which step is active
+  const [activeStep, setActiveStep] = useState(0);
+  
+  // UseEffect for auto-advancing steps
+  useEffect(() => {
+    // If we reached the end, don't set another timer
+    if (activeStep >= statusSteps.length) return;
+    
+    // Set a timer to advance to the next step
+    const timer = setTimeout(() => {
+      setActiveStep(prev => prev + 1);
+    }, 5000);
+    
+    // Cleanup on unmount
+    return () => clearTimeout(timer);
+  }, [activeStep, statusSteps.length]);
+  
   return (
     <section className="container mx-auto text-center py-12">
-      <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-6"></div>
-      <h2 className="text-2xl font-bold mb-2 text-primary">Processing Your Images</h2>
-      <p className="text-gray-600">
+      <h2 className="text-2xl font-bold mb-8 text-primary-600">Processing Your Images</h2>
+      
+      <div className="mx-auto w-72 md:w-96 h-auto bg-white border rounded-lg shadow-md p-6">
+        <ul className="list-none w-full">
+          {statusSteps.map((step, index) => (
+            <li 
+              key={index}
+              className={`flex items-center p-2 my-1 rounded transition-colors duration-300 font-medium 
+                ${index === activeStep 
+                  ? 'text-gray-900' 
+                  : index < activeStep 
+                    ? 'text-gray-500' 
+                    : 'text-gray-300'}`}
+            >
+              <span className="mr-2 w-6 h-6 flex items-center justify-center">
+                {index < activeStep ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-success-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                ) : null}
+              </span>
+              <span className="font-bungee">{step}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <p className="text-gray-600 mt-6">
         We're applying the selected enhancements to your images. This may take a few moments...
       </p>
     </section>

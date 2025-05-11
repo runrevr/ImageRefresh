@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multi-Step Processing Screen</title>
+
+  <!-- Load Bungee & Rubik -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ========================================
+       VARIABLES & RESET
+    ========================================= */
+    :root {
+      --primary:    #2a7b9b;   /* active step color */
+      --accent:     #ff7b54;
+      --dark:       #000000;   /* for active text */
+      --grey-light: #cccccc;   /* for inactive text */
+      --success:    #28a745;   /* checkmark color */
+      --bg:         #ffffff;   /* card background */
+      --body-bg:    #a3e4d7;   /* page background */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--body-bg);
+      font-family: 'Rubik', sans-serif;
+    }
+
+
+    /* ========================================
+       CONTAINER & LAYOUT
+    ========================================= */
+    .waiting-screen {
+      width: 300px;
+      height: 300px;
+      background: var(--bg);
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-list {
+      list-style: none;
+      width: 90%;
+    }
+
+
+    /* ========================================
+       STATUS ITEMS
+    ========================================= */
+    .status-item {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      border-radius: 0.25rem;
+      font-family: 'Bungee', cursive;
+      color: var(--grey-light); /* default inactive */
+      transition: color 0.3s;
+    }
+
+    .status-item .icon {
+      width: 1em;
+      margin-right: 0.5rem;
+      /* we’ll inject the checkmark via pseudo */
+    }
+
+    /* active step = black text */
+    .status-item.active {
+      color: var(--dark);
+    }
+
+    /* completed steps get ✔ in green */
+    .status-item.completed .icon::before {
+      content: '✔';
+      color: var(--success);
+      font-size: 1em;
+      line-height: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="waiting-screen">
+    <ul class="status-list">
+      <li class="status-item active">
+        <span class="icon"></span>
+        <span class="text">Analyzing Image....</span>
+      </li>
+      <li class="status-item">
+        <span class="icon"></span>
+        <span class="text">Applying Prompt......</span>
+      </li>
+      <li class="status-item">
+        <span class="icon"></span>
+        <span class="text">Texting Magic Artists.....</span>
+      </li>
+      <li class="status-item">
+        <span class="icon"></span>
+        <span class="text">Making Magic.....</span>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    // Grab all the items
+    const items = document.querySelectorAll('.status-item');
+    let idx = 0;
+
+    // Advance every 5s
+    const advance = setInterval(() => {
+      // Mark current as completed
+      items[idx].classList.remove('active');
+      items[idx].classList.add('completed');
+
+      idx++;
+      if (idx >= items.length) {
+        clearInterval(advance);
+        return;
+      }
+
+      // Highlight next
+      items[idx].classList.add('active');
+    }, 5000);
+  </script>
+</body>
+</html>
