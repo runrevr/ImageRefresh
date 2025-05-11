@@ -2023,12 +2023,12 @@ style, environment, lighting, and background rather than changing the main subje
           // Simulate webhook processing delay
           setTimeout(async () => {
             try {
-              // Prepare mock response data
+              // Prepare mock response data with industry-specific options
               const mockResponseData = {
                 id: mockWebhookId,
                 images: enhancementImages.map((image, index) => ({
                   originalIndex: index,
-                  options: generateMockEnhancementOptions()
+                  options: generateMockEnhancementOptions(productEnhancement.industry)
                 }))
               };
               
