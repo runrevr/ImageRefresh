@@ -2213,8 +2213,10 @@ style, environment, lighting, and background rather than changing the main subje
         // This could be via email, push notification, or in-app notification
         try {
           // Example: Get user information
-          if (enhancement.userId !== null) {
-            const user = await storage.getUser(enhancement.userId);
+          if (enhancement.userId !== null && typeof enhancement.userId === 'number') {
+            // Type assertion to help TypeScript understand we've validated the ID
+            const userId = enhancement.userId as number;
+            const user = await storage.getUser(userId);
             if (user && user.email) {
               // You could send an email notification here
               console.log(`Enhancement completed for user: ${user.email}`);
