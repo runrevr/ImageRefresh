@@ -1992,7 +1992,11 @@ style, environment, lighting, and background rather than changing the main subje
       // Send request to webhook
       try {
         // Include our own webhook URL as a callback parameter
-        const appBaseUrl = process.env.APP_URL || `http://${req.headers.host}`;
+        // Use the configured domain, or fallback to request host
+        const domain = process.env.WEBHOOK_DOMAIN || req.headers.host;
+        // Use HTTPS for production domains, HTTP otherwise
+        const protocol = domain && !domain.includes('localhost') && !domain.includes(':') ? 'https' : 'http';
+        const appBaseUrl = `${protocol}://${domain}`;
         const webhookCallbackUrl = `${appBaseUrl}/api/webhook/enhancement-ideas`;
         console.log(`Using webhook callback URL: ${webhookCallbackUrl}`);
         
@@ -2209,10 +2213,12 @@ style, environment, lighting, and background rather than changing the main subje
         // This could be via email, push notification, or in-app notification
         try {
           // Example: Get user information
-          const user = await storage.getUser(enhancement.userId);
-          if (user && user.email) {
-            // You could send an email notification here
-            console.log(`Enhancement completed for user: ${user.email}`);
+          if (enhancement.userId !== null) {
+            const user = await storage.getUser(enhancement.userId);
+            if (user && user.email) {
+              // You could send an email notification here
+              console.log(`Enhancement completed for user: ${user.email}`);
+            }
           }
         } catch (notifyError) {
           console.error("Error sending notification:", notifyError);
@@ -2394,7 +2400,11 @@ style, environment, lighting, and background rather than changing the main subje
       // Send selections to webhook
       try {
         // Include our own webhook URL as a callback parameter for results
-        const appBaseUrl = process.env.APP_URL || `http://${req.headers.host}`;
+        // Use the configured domain, or fallback to request host
+        const domain = process.env.WEBHOOK_DOMAIN || req.headers.host;
+        // Use HTTPS for production domains, HTTP otherwise
+        const protocol = domain && !domain.includes('localhost') && !domain.includes(':') ? 'https' : 'http';
+        const appBaseUrl = `${protocol}://${domain}`;
         const webhookCallbackUrl = `${appBaseUrl}/api/webhook/enhancement-results`;
         console.log(`Using webhook results callback URL: ${webhookCallbackUrl}`);
         
