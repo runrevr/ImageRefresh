@@ -12,24 +12,43 @@ export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
+  isFormData: boolean = false,
 ): Promise<Response> {
-  // Add fingerprint to the data if it exists
-  if (data && typeof data === 'object') {
-    data = {
-      ...data as Record<string, any>,
-      fingerprint: getDeviceFingerprint()
-    };
-  }
-
-  // Add fingerprint as a query parameter for GET requests or if no data is provided
+  let requestBody: string | FormData | undefined = undefined;
+  let headers: Record<string, string> = {};
+  
+  // Add fingerprint to the URL for GET requests
   if (method.toUpperCase() === 'GET' || !data) {
     url = addFingerprintToUrl(url);
   }
 
+  // Process request body based on data type
+  if (data) {
+    if (isFormData) {
+      // Handle FormData
+      if (data instanceof FormData) {
+        // Use the FormData as is
+        requestBody = data;
+        // FormData already includes the necessary Content-Type header
+        data.append('fingerprint', getDeviceFingerprint() || '');
+      } else {
+        console.error('Data was specified as FormData but is not a FormData instance');
+        throw new Error('Invalid FormData');
+      }
+    } else {
+      // Handle JSON data
+      headers["Content-Type"] = "application/json";
+      requestBody = JSON.stringify({
+        ...data as Record<string, any>,
+        fingerprint: getDeviceFingerprint()
+      });
+    }
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
+    headers,
+    body: requestBody,
     credentials: "include",
   });
 

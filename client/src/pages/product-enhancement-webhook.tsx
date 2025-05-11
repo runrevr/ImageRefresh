@@ -233,6 +233,20 @@ const StyleSelectionSection = ({
     onSelectOption(currentImage.id, optionKey, !isCurrentlySelected);
   };
   
+  const selectAllOptionsForCurrentImage = () => {
+    if (!currentImage || !currentImage.options) return;
+    
+    // Get up to max options
+    const optionKeys = Object.keys(currentImage.options).slice(0, maxSelectionsPerImage);
+    
+    // Select each option
+    optionKeys.forEach(key => {
+      if (!currentImage.selectedOptions.has(key)) {
+        onSelectOption(currentImage.id, key, true);
+      }
+    });
+  };
+  
   if (images.length === 0) {
     return null;
   }
@@ -270,9 +284,17 @@ const StyleSelectionSection = ({
         <div className="lg:w-3/4 bg-white p-4 rounded-lg shadow-md">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-gray-800">AI Style Suggestions</h3>
-            <span className="text-gray-600">
-              {totalOptionsSelected} option{totalOptionsSelected !== 1 ? 's' : ''} selected
-            </span>
+            <div className="flex items-center space-x-4">
+              <button 
+                className="text-sm underline font-medium hover:text-[#2a7b9b] transition"
+                onClick={selectAllOptionsForCurrentImage}
+              >
+                Select All Styles
+              </button>
+              <span className="text-gray-600">
+                {currentImageSelectionsCount} of {maxSelectionsPerImage} selected
+              </span>
+            </div>
           </div>
           
           {currentImage && (
@@ -282,11 +304,11 @@ const StyleSelectionSection = ({
                   Each selection costs 1 credit. You can select up to {maxSelectionsPerImage} options per image.
                 </p>
                 <p className="text-sm mt-1 font-medium">
-                  {currentImageSelectionsCount} of {maxSelectionsPerImage} selected for this image
+                  Total selected: {totalOptionsSelected} option{totalOptionsSelected !== 1 ? 's' : ''}
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {currentImage.options && Object.entries(currentImage.options).map(([key, option]) => {
                   const isSelected = currentImage.selectedOptions.has(key);
                   return (
@@ -316,7 +338,7 @@ const StyleSelectionSection = ({
             disabled={totalOptionsSelected === 0 || isLoading}
             onClick={onSubmitSelections}
           >
-            {isLoading ? "Processing..." : "Enhance Selected Options"}
+            {isLoading ? "Processing..." : "Enhance Image(s)"}
           </button>
         </div>
       </div>
@@ -331,57 +353,117 @@ type EnhancementResult = {
   optionName: string;
   resultImage1Path: string;
   resultImage2Path: string;
+  description?: string;
 };
 
 const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+
   if (results.length === 0) {
     return null;
   }
 
+  const toggleImageSelection = (imagePath: string) => {
+    const newSelected = new Set(selectedImages);
+    if (newSelected.has(imagePath)) {
+      newSelected.delete(imagePath);
+    } else {
+      newSelected.add(imagePath);
+    }
+    setSelectedImages(newSelected);
+  };
+
+  const selectAllImages = () => {
+    const allImagePaths = new Set<string>();
+    results.forEach((result) => {
+      allImagePaths.add(result.resultImage1Path);
+      allImagePaths.add(result.resultImage2Path);
+    });
+    setSelectedImages(allImagePaths);
+  };
+
+  const downloadSelected = () => {
+    // In a real application, we would implement proper downloading here
+    // For now, we'll just show an alert
+    alert(`Downloading ${selectedImages.size} selected images`);
+    
+    // Mock implementation: create a download for each selected image
+    selectedImages.forEach((imagePath) => {
+      const link = document.createElement('a');
+      link.href = imagePath;
+      link.download = imagePath.split('/').pop() || 'enhanced-image.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  };
+
   return (
     <section className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-16">
-      <h2 className="text-2xl font-bold mb-4 text-[#2a7b9b]">Your Enhanced Images</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        {results.map((result, index) => (
-          <div key={index} className="border rounded-lg overflow-hidden">
-            <div className="p-3 bg-gray-50 border-b">
-              <h3 className="font-medium">{result.optionName}</h3>
-            </div>
-            <div className="p-4">
-              <div className="grid grid-cols-2 gap-2">
-                <a href={result.resultImage1Path} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src={result.resultImage1Path}
-                    alt={`Result ${index + 1} - Option 1`}
-                    className="w-full h-32 object-cover rounded hover:opacity-90 transition"
-                  />
-                </a>
-                <a href={result.resultImage2Path} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src={result.resultImage2Path}
-                    alt={`Result ${index + 1} - Option 2`}
-                    className="w-full h-32 object-cover rounded hover:opacity-90 transition"
-                  />
-                </a>
-              </div>
-              <div className="mt-3 text-center">
-                <a 
-                  href={result.resultImage1Path} 
-                  download
-                  className="text-[#2a7b9b] text-sm hover:underline"
-                >
-                  Download
-                </a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="text-center">
-        <button className="bg-[#ff7b54] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#ff7b54]/90 transition">
-          Download All Images
+      <h2 className="text-2xl font-bold mb-4 text-[#2a7b9b]">Review & Select Your Favorites</h2>
+      <div className="flex justify-end mb-4">
+        <button 
+          className="text-sm underline font-medium hover:text-[#2a7b9b] transition"
+          onClick={selectAllImages}
+        >
+          Select All
         </button>
       </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {results.flatMap((result, index) => [
+          // First image
+          <div key={`${index}-1`} className="relative border rounded-lg overflow-hidden p-2">
+            <input 
+              type="checkbox" 
+              className="absolute top-2 left-2 w-5 h-5 accent-[#2a7b9b]" 
+              checked={selectedImages.has(result.resultImage1Path)}
+              onChange={() => toggleImageSelection(result.resultImage1Path)}
+            />
+            <img
+              src={result.resultImage1Path}
+              alt={`Result ${index + 1} - Variation 1`}
+              className="w-full h-48 object-cover rounded mt-2"
+            />
+            <div className="mt-2">
+              <p className="font-medium text-sm">{result.optionName} - Variation 1</p>
+              {result.description && (
+                <p className="text-sm text-gray-600 mt-1">
+                  {result.description}
+                </p>
+              )}
+            </div>
+          </div>,
+          // Second image
+          <div key={`${index}-2`} className="relative border rounded-lg overflow-hidden p-2">
+            <input 
+              type="checkbox" 
+              className="absolute top-2 left-2 w-5 h-5 accent-[#2a7b9b]" 
+              checked={selectedImages.has(result.resultImage2Path)}
+              onChange={() => toggleImageSelection(result.resultImage2Path)}
+            />
+            <img
+              src={result.resultImage2Path}
+              alt={`Result ${index + 1} - Variation 2`}
+              className="w-full h-48 object-cover rounded mt-2"
+            />
+            <div className="mt-2">
+              <p className="font-medium text-sm">{result.optionName} - Variation 2</p>
+              {result.description && (
+                <p className="text-sm text-gray-600 mt-1">
+                  {result.description}
+                </p>
+              )}
+            </div>
+          </div>
+        ])}
+      </div>
+      <button 
+        className="bg-[#ff7b54] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#ff7b54]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={selectedImages.size === 0}
+        onClick={downloadSelected}
+      >
+        Download Selected Images ({selectedImages.size})
+      </button>
     </section>
   );
 };
@@ -471,19 +553,34 @@ export default function ProductEnhancementWebhook() {
     }
   });
   
+  // Define a type for our enhancement data
+  type EnhancementData = {
+    id: number;
+    status: string;
+    industry: string;
+    images: Array<{
+      id: number;
+      originalImagePath: string;
+      options?: Record<string, {
+        name: string;
+        description: string;
+      }>;
+    }>;
+  };
+  
   // Query to fetch enhancement data (images and options)
-  const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery({
+  const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery<EnhancementData>({
     queryKey: ['/api/product-enhancement', enhancementId],
     queryFn: async () => {
-      if (!enhancementId) return null;
+      if (!enhancementId) return null as any;
       const response = await apiRequest("GET", `/api/product-enhancement/${enhancementId}`);
       return await response.json();
     },
     enabled: !!enhancementId && step === 'selectStyles',
-    refetchInterval: (data) => {
+    refetchInterval: (data: EnhancementData | undefined) => {
       // Poll every 3 seconds until options are available
       if (data && data.status === 'completed') {
-        return false;
+        return false as const;
       }
       return 3000;
     },
