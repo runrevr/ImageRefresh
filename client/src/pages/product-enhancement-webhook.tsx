@@ -198,32 +198,42 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
     }
   };
 
-  const borderClass = dragging ? "border-primary" : "border-alt hover:border-primary";
+  const borderClass = dragging ? "border-primary-500" : "border-primary-200 hover:border-primary-400";
 
   return (
     <section id="demo" className="bg-white py-16">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">Try It Now In 3 Steps</h2>
-        <div className="flex flex-col md:flex-row items-start md:space-x-8 space-y-8 md:space-y-0">
+        <h2 className="text-3xl font-bold text-center text-primary-600 mb-12">Try It Now In 3 Steps</h2>
+        
+        <div className="flex flex-col md:flex-row items-stretch md:space-x-8 space-y-8 md:space-y-0">
           {/* Step 1 */}
-          <div className="flex-1 p-6 bg-alt/30 rounded-lg text-center">
-            <div className="text-4xl mb-4">1️⃣</div>
-            <h3 className="font-bold mb-2">Upload a Photo</h3>
-            <p className="mb-4">Drag & drop or click to select your product image.</p>
+          <div className="flex-1 p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition duration-300 text-center">
+            <div className="w-16 h-16 flex items-center justify-center bg-primary-600 text-white text-xl font-semibold rounded-full mx-auto mb-6">1</div>
+            <h3 className="text-xl font-bold mb-3 text-primary-700">Upload Your Photos</h3>
+            <p className="mb-6 text-gray-600">Drag & drop or click to select up to 5 product images.</p>
             <div 
-              className={`border-2 border-dashed ${borderClass} rounded-lg p-6 text-center transition mb-4`}
+              className={`border-2 border-dashed ${borderClass} rounded-lg p-6 text-center transition-all duration-200 mb-4`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <p className="mb-4 text-sm">Drag & Drop Here</p>
-              <button 
-                className="bg-primary text-white px-4 py-2 rounded font-medium hover:bg-primary/90 transition"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-              >
-                {isUploading ? "Uploading..." : "Choose File"}
-              </button>
+              {isUploading ? (
+                <div className="py-4">
+                  <div className="animate-spin w-10 h-10 border-4 border-primary-300 border-t-primary-600 rounded-full mx-auto mb-3"></div>
+                  <p className="text-primary-600">Uploading...</p>
+                </div>
+              ) : (
+                <>
+                  <p className="mb-4 text-gray-500">Drag & Drop Images Here</p>
+                  <button 
+                    className="bg-primary-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-700 transition"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                  >
+                    Choose Files
+                  </button>
+                </>
+              )}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -235,15 +245,15 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
               />
             </div>
             {uploadedFiles.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {uploadedFiles.map((file, index) => (
-                  <div key={index} className="relative">
+                  <div key={index} className="relative group overflow-hidden rounded-lg shadow-sm">
                     <img
                       src={URL.createObjectURL(file)}
                       alt={`Upload ${index + 1}`}
-                      className="w-full h-16 object-cover rounded"
+                      className="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <span className="absolute bottom-0 right-0 bg-dark text-white text-xs px-1 py-0.5 rounded-tl">
+                    <span className="absolute bottom-0 right-0 bg-primary-600 text-white text-xs px-2 py-1 rounded-tl">
                       {(file.size / (1024 * 1024)).toFixed(1)} MB
                     </span>
                   </div>
@@ -253,13 +263,13 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
           </div>
           
           {/* Step 2 */}
-          <div className="flex-1 p-6 bg-alt/30 rounded-lg text-center">
-            <div className="text-4xl mb-4">2️⃣</div>
-            <h3 className="font-bold mb-2">Pick Your Industry</h3>
-            <p className="mb-4">Select your product category to get optimized results.</p>
+          <div className="flex-1 p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition duration-300 text-center">
+            <div className="w-16 h-16 flex items-center justify-center bg-gray-300 text-gray-600 text-xl font-semibold rounded-full mx-auto mb-6">2</div>
+            <h3 className="text-xl font-bold mb-3 text-gray-700">Choose Your Industry</h3>
+            <p className="mb-6 text-gray-600">Select your product category to get optimized enhancement options.</p>
             <div className="space-y-2">
               <select 
-                className="w-full p-2 border border-gray-300 rounded focus:ring-primary focus:border-primary"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm"
                 defaultValue=""
               >
                 <option value="" disabled>Select your industry...</option>
@@ -275,11 +285,11 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
           </div>
           
           {/* Step 3 */}
-          <div className="flex-1 p-6 bg-alt/30 rounded-lg text-center">
-            <div className="text-4xl mb-4">3️⃣</div>
-            <h3 className="font-bold mb-2">Generate & Download</h3>
-            <p className="mb-4">Watch AI work its magic and download your enhanced image instantly.</p>
-            <button className="bg-secondary text-white px-4 py-2 rounded font-medium hover:bg-secondary/90 transition">
+          <div className="flex-1 p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition duration-300 text-center">
+            <div className="w-16 h-16 flex items-center justify-center bg-gray-300 text-gray-600 text-xl font-semibold rounded-full mx-auto mb-6">3</div>
+            <h3 className="text-xl font-bold mb-3 text-gray-700">Get Amazing Results</h3>
+            <p className="mb-6 text-gray-600">Choose from AI-suggested enhancements tailored to your products.</p>
+            <button className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm">
               Start Enhancement
             </button>
           </div>
@@ -292,17 +302,26 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
 // Testimonials section
 const TestimonialsSection = () => {
   return (
-    <section className="py-16">
+    <section className="py-16 bg-white">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">What Our Users Say</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <blockquote className="p-6 bg-white rounded-lg shadow">
-            <p className="italic mb-4">"I saved $2,000 on a single shoot — and the results look even better than a studio!"</p>
-            <footer className="font-medium">— Alex, Boutique Owner</footer>
+        <h2 className="text-3xl font-bold text-center text-primary-600 mb-12">What Our Users Say</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <blockquote className="p-6 bg-primary-50 rounded-lg shadow-sm hover:shadow-md transition duration-300 border-l-4 border-primary-500">
+            <div className="text-primary-500 text-3xl mb-4">"</div>
+            <p className="italic mb-6 text-gray-700">"I saved $2,000 on a single shoot — and the results look even better than a professional studio!"</p>
+            <footer className="font-medium text-primary-700">— Alex, Boutique Owner</footer>
           </blockquote>
-          <blockquote className="p-6 bg-white rounded-lg shadow">
-            <p className="italic mb-4">"As a one-person team, this tool is a game-changer. Professional photos in minutes."</p>
-            <footer className="font-medium">— Priya, E‑shop Manager</footer>
+          
+          <blockquote className="p-6 bg-primary-50 rounded-lg shadow-sm hover:shadow-md transition duration-300 border-l-4 border-primary-500">
+            <div className="text-primary-500 text-3xl mb-4">"</div>
+            <p className="italic mb-6 text-gray-700">"As a one-person team, this tool is a game-changer. I can create professional product photos in minutes."</p>
+            <footer className="font-medium text-primary-700">— Priya, E‑shop Manager</footer>
+          </blockquote>
+          
+          <blockquote className="p-6 bg-primary-50 rounded-lg shadow-sm hover:shadow-md transition duration-300 border-l-4 border-primary-500">
+            <div className="text-primary-500 text-3xl mb-4">"</div>
+            <p className="italic mb-6 text-gray-700">"Our conversion rate jumped 24% after we started using these AI-enhanced product images. Worth every penny!"</p>
+            <footer className="font-medium text-primary-700">— Marco, Marketing Director</footer>
           </blockquote>
         </div>
       </div>
@@ -351,21 +370,25 @@ const FAQSection = () => {
   ];
   
   return (
-    <section id="faq" className="bg-white py-16">
-      <div className="container mx-auto max-w-2xl">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">Frequently Asked Questions</h2>
-        <div className="space-y-4">
+    <section id="faq" className="py-16 bg-[#f8fafa]">
+      <div className="container mx-auto max-w-3xl">
+        <h2 className="text-3xl font-bold text-center text-primary-600 mb-12">Frequently Asked Questions</h2>
+        <div className="space-y-5">
           {faqs.map((faq, index) => (
-            <div key={index} className="border-b pb-4">
+            <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
               <button 
-                className="w-full text-left font-medium flex justify-between items-center"
+                className={`w-full p-4 text-left font-medium flex justify-between items-center ${openFAQ === index ? 'text-primary-600' : 'text-gray-700'}`}
                 onClick={() => toggleFAQ(index)}
               >
-                {faq.question}
-                <span>{openFAQ === index ? '−' : '+'}</span>
+                <span className="text-lg">{faq.question}</span>
+                <span className="text-xl h-7 w-7 flex items-center justify-center rounded-full bg-gray-100">
+                  {openFAQ === index ? '−' : '+'}
+                </span>
               </button>
               {openFAQ === index && (
-                <div className="mt-2 text-body">{faq.answer}</div>
+                <div className="px-4 pb-4 text-gray-600 animate-accordion-down border-t border-gray-100">
+                  <p className="pt-2">{faq.answer}</p>
+                </div>
               )}
             </div>
           ))}
