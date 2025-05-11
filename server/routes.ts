@@ -2001,7 +2001,7 @@ style, environment, lighting, and background rather than changing the main subje
         console.log(`Using webhook callback URL: ${webhookCallbackUrl}`);
         
         // For testing without the actual webhook service:
-        const USE_MOCK_WEBHOOK = true; // Toggle this for testing
+        const USE_MOCK_WEBHOOK = false; // Toggle this for testing
         
         if (USE_MOCK_WEBHOOK) {
           // Import mock webhook data
@@ -2477,7 +2477,7 @@ style, environment, lighting, and background rather than changing the main subje
         console.log(`Using webhook results callback URL: ${webhookCallbackUrl}`);
         
         // For testing without the actual webhook service:
-        const USE_MOCK_WEBHOOK = true; // Toggle this for testing
+        const USE_MOCK_WEBHOOK = false; // Toggle this for testing
         let webhookResponse;
         
         if (USE_MOCK_WEBHOOK) {
