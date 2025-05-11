@@ -2001,7 +2001,7 @@ style, environment, lighting, and background rather than changing the main subje
         console.log(`Using webhook callback URL: ${webhookCallbackUrl}`);
         
         // For testing without the actual webhook service:
-        const USE_MOCK_WEBHOOK = false; // Toggle this for testing
+        const USE_MOCK_WEBHOOK = true; // Toggle this for testing
         
         if (USE_MOCK_WEBHOOK) {
           // Import mock webhook data
@@ -2046,57 +2046,85 @@ style, environment, lighting, and background rather than changing the main subje
         }
         
         // Real webhook call (when USE_MOCK_WEBHOOK is false)
-        const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9", {
-          industry: req.body.industry,
-          images,
+        console.log("Attempting to call external webhook at: https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9");
+        console.log("Payload includes:", {
+          industryType: req.body.industry,
+          imageCount: images.length,
           callbackUrl: webhookCallbackUrl
         });
+        
+        try {
+          const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9", {
+            industry: req.body.industry,
+            images,
+            callbackUrl: webhookCallbackUrl
+          }, {
+            timeout: 30000, // 30 second timeout
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
 
-        // Update the product enhancement with webhook ID
-        if (webhookResponse.data && webhookResponse.data.id) {
-          await storage.updateProductEnhancementStatus(
-            productEnhancement.id,
-            "processing",
-            webhookResponse.data.id
-          );
+          // Update the product enhancement with webhook ID
+          if (webhookResponse.data && webhookResponse.data.id) {
+            await storage.updateProductEnhancementStatus(
+              productEnhancement.id,
+              "processing",
+              webhookResponse.data.id
+            );
 
-          // Update the image options from the webhook response
-          if (webhookResponse.data.images && Array.isArray(webhookResponse.data.images)) {
-            for (let i = 0; i < webhookResponse.data.images.length; i++) {
-              const responseImage = webhookResponse.data.images[i];
-              if (i < enhancementImages.length) {
-                const imageId = enhancementImages[i].id;
-                await storage.updateProductEnhancementImageOptions(
-                  imageId,
-                  responseImage.options
-                );
+            // Update the image options from the webhook response
+            if (webhookResponse.data.images && Array.isArray(webhookResponse.data.images)) {
+              for (let i = 0; i < webhookResponse.data.images.length; i++) {
+                const responseImage = webhookResponse.data.images[i];
+                if (i < enhancementImages.length) {
+                  const imageId = enhancementImages[i].id;
+                  await storage.updateProductEnhancementImageOptions(
+                    imageId,
+                    responseImage.options
+                  );
+                }
               }
             }
-          }
 
-          res.json({
-            id: productEnhancement.id,
-            webhookId: webhookResponse.data.id,
-            status: "processing",
-            images: enhancementImages
-          });
-        } else {
-          throw new Error("Invalid webhook response");
-        }
+            res.json({
+              id: productEnhancement.id,
+              webhookId: webhookResponse.data.id,
+              status: "processing",
+              images: enhancementImages
+            });
+          } else {
+            throw new Error("Invalid webhook response");
+          }
       } catch (webhookError: any) {
         console.error("Error calling product enhancement webhook:", webhookError);
+        console.error("Webhook error details:", webhookError.response?.data || "No response data");
+        console.error("Webhook error status:", webhookError.response?.status || "No status");
+        console.error("Webhook error code:", webhookError.code || "No error code");
+        
+        // Handle different error types
+        let errorMessage = "Error connecting to enhancement service";
+        
+        if (webhookError.code === 'ECONNREFUSED' || webhookError.code === 'ECONNABORTED') {
+          errorMessage = "Unable to connect to enhancement service - connection refused or timed out";
+        } else if (webhookError.response) {
+          errorMessage = `Enhancement service error (${webhookError.response.status}): ${webhookError.response.data?.message || webhookError.message}`;
+        }
         
         // Update the enhancement status to failed
         await storage.updateProductEnhancementStatus(
           productEnhancement.id,
           "failed",
           undefined,
-          webhookError.message || "Webhook error"
+          errorMessage
         );
 
         res.status(500).json({ 
           message: "Error processing product enhancement",
-          error: webhookError.message || "Unknown webhook error"
+          error: errorMessage,
+          details: webhookError.message || "Unknown webhook error",
+          id: productEnhancement.id
         });
       }
     } catch (error: any) {
