@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Product Image Enhancer</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2a7b9b',
+            secondary: '#ff7b54',
+            dark: '#333333',
+            alt: '#a3e4d7',
+          },
+          fontFamily: {
+            heading: ['Bungee', 'cursive'],
+            body: ['Rubik', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-dark font-body">
+
+  <!-- Hero -->
+  <header class="bg-white">
+    <div class="container mx-auto p-6 flex items-center justify-between">
+      <div class="text-2xl font-heading text-primary">BrandLogo</div>
+      <nav class="space-x-6 font-medium">
+        <a href="#features" class="hover:text-primary">Features</a>
+        <a href="#showcase" class="hover:text-primary">Showcase</a>
+        <a href="#demo" class="hover:text-primary">Demo</a>
+        <a href="#faq" class="hover:text-primary">FAQ</a>
+      </nav>
+      <a href="#demo" class="bg-secondary text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary/90">Try It Free</a>
+    </div>
+  </header>
+
+  <section class="container mx-auto text-center py-20">
+    <h1 class="text-5xl font-heading text-primary mb-4">Studio-quality product photos—no studio needed</h1>
+    <p class="text-lg text-dark mb-8 max-w-2xl mx-auto">Use AI as your virtual photo studio: generate amazing visuals from simple snaps—perfect for your store, ads, and socials.</p>
+    <a href="#demo" class="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary/90">Upload Your Photo</a>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="bg-white py-16">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-heading text-center text-primary mb-10">Your All-in-One AI Photo Studio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6">
+          <div class="text-4xl mb-4">🖼️</div>
+          <h3 class="font-heading text-xl mb-2">Background Generation</h3>
+          <p class="font-body">Create brand-aligned backgrounds instantly—no green screen required.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="font-heading text-xl mb-2">Lighting & Retouching</h3>
+          <p class="font-body">Auto-enhance color, contrast, and clarity for a polished, professional look.</p>
+        </div>
+        <div class="text-center p-6">
+          <div class="text-4xl mb-4">💡</div>
+          <h3 class="font-heading text-xl mb-2">Creative Prompts</h3>
+          <p class="font-body">Get multiple scene ideas tailored to your product—pick your favorite and go!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase Before/After -->
+  <section id="showcase" class="py-16">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-heading text-center text-primary mb-8">See the Transformation</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="relative">
+          <img src="before.jpg" alt="Before" class="w-full object-cover rounded-lg shadow" />
+          <span class="absolute top-2 left-2 bg-secondary text-white px-2 py-1 text-sm rounded">Before</span>
+        </div>
+        <div class="relative">
+          <img src="after.jpg" alt="After" class="w-full object-cover rounded-lg shadow" />
+          <span class="absolute top-2 left-2 bg-primary text-white px-2 py-1 text-sm rounded">After</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Flow -->
+  <section id="demo" class="bg-white py-16">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-heading text-center text-primary mb-8">Instant Demo in 3 Steps</h2>
+      <div class="flex flex-col md:flex-row items-start md:space-x-8 space-y-8 md:space-y-0">
+        <!-- Step 1 -->
+        <div class="flex-1 p-6 bg-alt rounded-lg text-center">
+          <div class="text-4xl mb-4">1️⃣</div>
+          <h3 class="font-heading mb-2">Upload a Photo</h3>
+          <p class="font-body mb-4">Drag & drop or click to select your product image.</p>
+          <button class="bg-primary text-white px-4 py-2 rounded font-medium">Choose File</button>
+        </div>
+        <!-- Step 2 -->
+        <div class="flex-1 p-6 bg-alt rounded-lg text-center">
+          <div class="text-4xl mb-4">2️⃣</div>
+          <h3 class="font-heading mb-2">Pick Your Style</h3>
+          <p class="font-body mb-4">Select from 3 AI-generated scene ideas tailored to your product.</p>
+          <div class="space-y-2">
+            <button class="block w-full bg-white border border-primary text-primary py-2 rounded font-medium">Modern Studio</button>
+            <button class="block w-full bg-white border border-primary text-primary py-2 rounded font-medium">Outdoor Lifestyle</button>
+            <button class="block w-full bg-white border border-primary text-primary py-2 rounded font-medium">Flatlay Vibes</button>
+          </div>
+        </div>
+        <!-- Step 3 -->
+        <div class="flex-1 p-6 bg-alt rounded-lg text-center">
+          <div class="text-4xl mb-4">3️⃣</div>
+          <h3 class="font-heading mb-2">Generate & Download</h3>
+          <p class="font-body mb-4">Watch AI work its magic and download your enhanced image instantly.</p>
+          <button class="bg-secondary text-white px-4 py-2 rounded font-medium">View Result</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-16">
+    <div class="container mx-auto">
+      <h2 class="text-3xl font-heading text-center text-primary mb-8">What Our Users Say</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <blockquote class="p-6 bg-white rounded-lg shadow">
+          <p class="italic mb-4">“I saved $2,000 on a single shoot — and the results look even better than a studio!”</p>
+          <footer class="font-medium">— Alex, Boutique Owner</footer>
+        </blockquote>
+        <blockquote class="p-6 bg-white rounded-lg shadow">
+          <p class="italic mb-4">“As a one-person team, this tool is a game-changer. Professional photos in minutes.”</p>
+          <footer class="font-medium">— Priya, E‑shop Manager</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="bg-primary py-16 text-center text-white">
+    <h2 class="text-4xl font-heading mb-4">Ready to Transform Your Images?</h2>
+    <p class="font-body mb-6">Try it for free—no credit card required.</p>
+    <a href="#demo" class="bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90">Get Started Now</a>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="bg-white py-16">
+    <div class="container mx-auto max-w-2xl">
+      <h2 class="text-3xl font-heading text-center text-primary mb-8">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        <div class="border-b pb-4">
+          <button class="w-full text-left font-medium flex justify-between items-center">Do I need professional equipment?<span>+</span></button>
+          <div class="mt-2 text-body">No—any clear photo from a smartphone works perfectly.</div>
+        </div>
+        <div class="border-b pb-4">
+          <button class="w-full text-left font-medium flex justify-between items-center">Can I use images commercially?<span>+</span></button>
+          <div class="mt-2 text-body">Yes—all generated images are yours to sell, advertise, and share.</div>
+        </div>
+        <div class="border-b pb-4">
+          <button class="w-full text-left font-medium flex justify-between items-center">Which products does it support?<span>+</span></button>
+          <div class="mt-2 text-body">Most physical products—fashion, electronics, decor, beauty, and more.</div>
+        </div>
+        <div class="border-b pb-4">
+          <button class="w-full text-left font-medium flex justify-between items-center">How much does it cost?<span>+</span></button>
+          <div class="mt-2 text-body">Plans start under $20/month. Start with a free trial—no card needed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-8">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+      <div class="font-heading text-lg">BrandLogo</div>
+      <div class="space-x-6 mt-4 md:mt-0">
+        <a href="#" class="hover:text-alt">Privacy</a>
+        <a href="#" class="hover:text-alt">Terms</a>
+        <a href="#" class="hover:text-alt">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
