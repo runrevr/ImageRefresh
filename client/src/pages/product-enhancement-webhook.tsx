@@ -472,22 +472,17 @@ const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (i
   };
   
   return (
-    <div className="mb-8">
-      <label className="block text-lg font-medium text-gray-800 mb-3 text-center">
-        Enter Your Industry
-      </label>
-      <div className="max-w-md mx-auto">
-        <input
-          type="text"
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm bg-white"
-          placeholder="e.g., Fashion, Electronics, Food & Beverage..."
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-        />
-      </div>
+    <div className="max-w-md mx-auto">
+      <input
+        type="text"
+        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm bg-white"
+        placeholder="e.g., Fashion, Electronics, Food & Beverage..."
+        value={inputValue}
+        onChange={handleInputChange}
+        onBlur={handleInputBlur}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+      />
       <p className="text-center text-gray-500 mt-2 text-sm">Your industry helps us optimize enhancement suggestions for your products</p>
     </div>
   );
