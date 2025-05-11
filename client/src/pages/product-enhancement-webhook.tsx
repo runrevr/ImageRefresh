@@ -28,7 +28,7 @@ const AnnouncementBanner = () => {
 const HeroSection = () => {
   return (
     <section className="container mx-auto text-center py-16">
-      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-[#FF7B54]">
+      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-[#2a7b9b]">
         Turn Ordinary Photos into Scroll-Stopping Product Shots
       </h1>
       <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
@@ -36,7 +36,7 @@ const HeroSection = () => {
       </p>
       <a 
         href="#upload" 
-        className="bg-[#FF7B54] text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-[#FF7B54]/90 transition"
+        className="bg-[#2a7b9b] text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-[#2a7b9b]/90 transition"
       >
         Enhance Your First Image →
       </a>
@@ -100,7 +100,7 @@ const UploadSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (f
 
   return (
     <section id="upload" className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-8">
-      <h2 className="text-2xl font-bold mb-2 text-[#FF7B54]">Upload Your Product Images</h2>
+      <h2 className="text-2xl font-bold mb-2 text-[#2a7b9b]">Upload Your Product Images</h2>
       <p className="text-sm text-gray-700 mb-4">
         Supported formats: JPG, PNG, WEBP. Max 10MB per image. Upload up to 5 images.
       </p>
@@ -286,7 +286,7 @@ const StyleSelectionSection = ({
             <h3 className="font-bold text-gray-800">AI Style Suggestions</h3>
             <div className="flex items-center space-x-4">
               <button 
-                className="text-sm underline font-medium hover:text-[#FF7B54] transition"
+                className="text-sm underline font-medium hover:text-[#2a7b9b] transition"
                 onClick={selectAllOptionsForCurrentImage}
               >
                 Select All Styles
@@ -334,7 +334,7 @@ const StyleSelectionSection = ({
           )}
           
           <button
-            className="mt-6 bg-[#FF7B54] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#FF7B54]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 bg-[#2a7b9b] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#2a7b9b]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={totalOptionsSelected === 0 || isLoading}
             onClick={onSubmitSelections}
           >
@@ -400,10 +400,10 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
 
   return (
     <section className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-16">
-      <h2 className="text-2xl font-bold mb-4 text-[#FF7B54]">Review & Select Your Favorites</h2>
+      <h2 className="text-2xl font-bold mb-4 text-[#2a7b9b]">Review & Select Your Favorites</h2>
       <div className="flex justify-end mb-4">
         <button 
-          className="text-sm underline font-medium hover:text-[#FF7B54] transition"
+          className="text-sm underline font-medium hover:text-[#2a7b9b] transition"
           onClick={selectAllImages}
         >
           Select All
