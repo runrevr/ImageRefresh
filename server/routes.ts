@@ -2354,25 +2354,45 @@ style, environment, lighting, and background rather than changing the main subje
             
             // Process the two result images if they exist
             if (result.resultImages.length >= 2) {
-              // Save first image
-              const image1Path = path.join(uploadDir, `result-1-${Date.now()}-${result.imageIndex}-${result.option}.png`);
-              fs.writeFileSync(image1Path, Buffer.from(result.resultImages[0], 'base64'));
-              
-              // Save second image
-              const image2Path = path.join(uploadDir, `result-2-${Date.now()}-${result.imageIndex}-${result.option}.png`);
-              fs.writeFileSync(image2Path, Buffer.from(result.resultImages[1], 'base64'));
-              
-              // Get relative paths
-              const relativeImage1Path = path.relative(process.cwd(), image1Path);
-              const relativeImage2Path = path.relative(process.cwd(), image2Path);
-              
-              // Update the selection with the result image paths
-              await storage.updateProductEnhancementSelectionStatus(
-                selection.id,
-                "completed",
-                relativeImage1Path,
-                relativeImage2Path
-              );
+              // Check if the images are already file paths (from the mock implementation)
+              if (typeof result.resultImages[0] === 'string' && 
+                  result.resultImages[0].startsWith('/') && 
+                  typeof result.resultImages[1] === 'string' && 
+                  result.resultImages[1].startsWith('/')) {
+                // These are already file paths, just update the selection with them
+                console.log("Using provided file paths for results");
+                
+                // Update the selection with the provided paths
+                await storage.updateProductEnhancementSelectionStatus(
+                  selection.id,
+                  "completed",
+                  result.resultImages[0],
+                  result.resultImages[1]
+                );
+              } else {
+                // These are base64 images, save them
+                // Save first image
+                const image1Path = path.join(uploadDir, `result-1-${Date.now()}-${result.imageIndex}-${result.option}.png`);
+                const image1Data = result.resultImages[0].replace(/^data:image\/\w+;base64,/, "");
+                fs.writeFileSync(image1Path, Buffer.from(image1Data, 'base64'));
+                
+                // Save second image
+                const image2Path = path.join(uploadDir, `result-2-${Date.now()}-${result.imageIndex}-${result.option}.png`);
+                const image2Data = result.resultImages[1].replace(/^data:image\/\w+;base64,/, "");
+                fs.writeFileSync(image2Path, Buffer.from(image2Data, 'base64'));
+                
+                // Get relative paths
+                const relativeImage1Path = path.relative(process.cwd(), image1Path);
+                const relativeImage2Path = path.relative(process.cwd(), image2Path);
+                
+                // Update the selection with the result image paths
+                await storage.updateProductEnhancementSelectionStatus(
+                  selection.id,
+                  "completed",
+                  relativeImage1Path,
+                  relativeImage2Path
+                );
+              }
             }
           }
         }
@@ -2575,10 +2595,19 @@ style, environment, lighting, and background rather than changing the main subje
             
             // Process payment if authenticated
             if (req.isAuthenticated && req.isAuthenticated()) {
-              const userId = (req.user as any).id;
-              const user = await storage.getUser(userId);
-              if (user) {
-                await storage.updateUserCredits(userId, false, user.paidCredits - req.body.selections.length);
+              try {
+                const userId = (req.user as any).id;
+                if (userId) {
+                  const user = await storage.getUser(userId);
+                  if (user) {
+                    const creditsToDeduct = req.body.selections.length;
+                    const newPaidCredits = Math.max(0, user.paidCredits - creditsToDeduct);
+                    console.log(`Deducting ${creditsToDeduct} credits. Old: ${user.paidCredits}, New: ${newPaidCredits}`);
+                    await storage.updateUserCredits(userId, false, newPaidCredits);
+                  }
+                }
+              } catch (error) {
+                console.error("Error processing payment:", error);
               }
             }
             
