@@ -2,12 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import shampooOriginal from "@assets/shampoo 3.png"; // Keep original import for fallback
 import shampooEnhanced from "@assets/shampoo 4.png";
 import sweatshirtOriginal from "@assets/sweatshirt.png";
 import sweatshirtEnhanced from "@assets/sweatshirt 2.png";
-
-// Direct reference to the NOUNOU shampoo bottle image
-const nounouShampooBase64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAUFBQkGCQkJCQwTDg4MDg4ZEg4SEBcOEBAXEBcXEBQXFBQaFxMTFxoUFxgjGBwZHxo";
+import nounouShampooImage from "@assets/51CItn4oOGL._SL1500_.jpg";
 
 // Type definitions
 type EnhancementOption = {
@@ -128,14 +127,14 @@ const ShowcaseSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
             <img 
-              src={`data:image/jpeg;base64,${nounouShampooBase64}`}
-              alt="Before" 
+              src={nounouShampooImage}
+              alt="NOUNOU Shampoo Bottle" 
               className="w-full h-[400px] object-contain bg-white rounded-lg group-hover:scale-105 transition-transform duration-500" 
             />
             <span className="absolute top-2 left-2 bg-secondary-500 text-white px-2 py-1 text-sm rounded">Before</span>
           </div>
           <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
-            <img src={shampooEnhanced} alt="After" className="w-full h-[400px] object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+            <img src={shampooEnhanced} alt="Enhanced NOUNOU Shampoo" className="w-full h-[400px] object-contain bg-white rounded-lg group-hover:scale-105 transition-transform duration-500" />
             <span className="absolute top-2 left-2 bg-primary-600 text-white px-2 py-1 text-sm rounded">After</span>
           </div>
         </div>
