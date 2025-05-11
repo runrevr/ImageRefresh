@@ -2496,9 +2496,12 @@ style, environment, lighting, and background rather than changing the main subje
             
             // Get option details
             const options = enhancementImages[imageIndex].options || {};
-            const optionDetails = selection.optionKey in options 
-              ? (options as any)[selection.optionKey] 
-              : { name: selection.optionKey };
+            let optionDetails = { name: selection.optionKey };
+            
+            // Safely access the option details if they exist
+            if (typeof options === 'object' && options !== null && selection.optionKey in (options as Record<string, any>)) {
+              optionDetails = (options as Record<string, any>)[selection.optionKey];
+            }
             
             // Get the enhancement image
             const enhancementImage = await storage.getProductEnhancementImage(selection.imageId);
@@ -2573,7 +2576,10 @@ style, environment, lighting, and background rather than changing the main subje
             // Process payment if authenticated
             if (req.isAuthenticated && req.isAuthenticated()) {
               const userId = (req.user as any).id;
-              await storage.updateUserCredits(userId, -req.body.selections.length);
+              const user = await storage.getUser(userId);
+              if (user) {
+                await storage.updateUserCredits(userId, false, user.paidCredits - req.body.selections.length);
+              }
             }
             
             return res.status(200).json({ results });
