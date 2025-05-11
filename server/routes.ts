@@ -2000,6 +2000,52 @@ style, environment, lighting, and background rather than changing the main subje
         const webhookCallbackUrl = `${appBaseUrl}/api/webhook/enhancement-ideas`;
         console.log(`Using webhook callback URL: ${webhookCallbackUrl}`);
         
+        // For testing without the actual webhook service:
+        const USE_MOCK_WEBHOOK = true; // Toggle this for testing
+        
+        if (USE_MOCK_WEBHOOK) {
+          // Import mock webhook data
+          const { simulateProcessingDelay, generateMockEnhancementOptions } = await import("./mock-webhook-data");
+          
+          // Generate a mock webhook ID
+          const mockWebhookId = `mock-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+          
+          // Update status to processing
+          await storage.updateProductEnhancementStatus(
+            productEnhancement.id,
+            "processing",
+            mockWebhookId
+          );
+          
+          // Get images for processing
+          const enhancementImages = await storage.getProductEnhancementImages(productEnhancement.id);
+          
+          // Simulate webhook processing delay
+          setTimeout(async () => {
+            try {
+              // Prepare mock response data
+              const mockResponseData = {
+                id: mockWebhookId,
+                images: enhancementImages.map((image, index) => ({
+                  originalIndex: index,
+                  options: generateMockEnhancementOptions()
+                }))
+              };
+              
+              // Call our own webhook endpoint to simulate the external service
+              await axios.post(webhookCallbackUrl, mockResponseData);
+              console.log("Mock webhook response sent to callback URL");
+            } catch (mockError) {
+              console.error("Error sending mock webhook data:", mockError);
+            }
+          }, 3000); // Simulate 3 second delay
+          
+          // Respond immediately with the enhancement ID
+          res.status(200).json({ id: productEnhancement.id });
+          return;
+        }
+        
+        // Real webhook call (when USE_MOCK_WEBHOOK is false)
         const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9", {
           industry: req.body.industry,
           images,
@@ -2410,17 +2456,130 @@ style, environment, lighting, and background rather than changing the main subje
         const webhookCallbackUrl = `${appBaseUrl}/api/webhook/enhancement-results`;
         console.log(`Using webhook results callback URL: ${webhookCallbackUrl}`);
         
-        const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections", {
-          id: enhancement.webhookId,
-          selections: webhookSelections,
-          callbackUrl: webhookCallbackUrl
-        });
+        // For testing without the actual webhook service:
+        const USE_MOCK_WEBHOOK = true; // Toggle this for testing
+        let webhookResponse;
+        
+        if (USE_MOCK_WEBHOOK) {
+          // Import mock webhook data
+          const { simulateProcessingDelay, generateMockEnhancementResults } = await import("./mock-webhook-data");
+          
+          // Create selection records
+          const selections = [];
+          for (const selection of req.body.selections) {
+            // Get the enhancement image
+            const enhancementImage = await storage.getProductEnhancementImage(selection.imageId);
+            if (!enhancementImage) continue;
+            
+            // Create a new selection record
+            const enhancementSelection = await storage.createProductEnhancementSelection({
+              enhancementId,
+              imageId: selection.imageId,
+              optionKey: selection.optionKey
+            });
+            
+            selections.push(enhancementSelection);
+          }
+          
+          // Get all enhancement images for the response
+          const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
+          
+          // Prepare mock results
+          const results = [];
+          for (const selection of selections) {
+            // Find the image index
+            const imageIndex = enhancementImages.findIndex(img => img.id === selection.imageId);
+            if (imageIndex === -1) continue;
+            
+            // Get image path
+            const imagePath = enhancementImages[imageIndex].originalImagePath;
+            
+            // Get option details
+            const options = enhancementImages[imageIndex].options || {};
+            const optionDetails = selection.optionKey in options 
+              ? (options as any)[selection.optionKey] 
+              : { name: selection.optionKey };
+            
+            // Get the enhancement image
+            const enhancementImage = await storage.getProductEnhancementImage(selection.imageId);
+            
+            // Mock results
+            const resultInfo = {
+              imageIndex,
+              option: selection.optionKey,
+              resultImages: [imagePath, imagePath], // Use original image for mock
+              optionName: optionDetails.name || selection.optionKey
+            };
+            
+            results.push(resultInfo);
+            
+            // Update the selection with paths (which are the same in mock case)
+            await storage.updateProductEnhancementSelectionStatus(
+              selection.id,
+              "completed",
+              imagePath,
+              imagePath
+            );
+          }
+          
+          // Create mock response
+          webhookResponse = {
+            data: {
+              id: enhancement.webhookId,
+              results
+            }
+          };
+          
+        } else {
+          // Real webhook call
+          webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections", {
+            id: enhancement.webhookId,
+            selections: webhookSelections,
+            callbackUrl: webhookCallbackUrl
+          });
+        }
 
         // Process the webhook response
         if (webhookResponse.data && webhookResponse.data.results) {
           const results = [];
 
-          // Save the result images and create selection records
+          // For mock webhook, we've already saved the images
+          if (USE_MOCK_WEBHOOK) {
+            // Just prepare the response for the frontend
+            for (const result of webhookResponse.data.results) {
+              const { imageIndex, option, resultImages, optionName } = result;
+              
+              // Get the enhancement image id
+              const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
+              if (imageIndex < enhancementImages.length) {
+                const imageId = enhancementImages[imageIndex].id;
+                
+                // Get the selection
+                const selections = await storage.getProductEnhancementSelections(enhancementId);
+                const selection = selections.find(s => s.imageId === imageId && s.optionKey === option);
+                
+                if (selection) {
+                  results.push({
+                    imageId,
+                    optionKey: option,
+                    optionName,
+                    resultImage1Path: selection.resultImage1Path,
+                    resultImage2Path: selection.resultImage2Path
+                  });
+                }
+              }
+            }
+            
+            // Process payment if authenticated
+            if (req.isAuthenticated && req.isAuthenticated()) {
+              const userId = (req.user as any).id;
+              await storage.updateUserCredits(userId, -req.body.selections.length);
+            }
+            
+            return res.status(200).json({ results });
+          }
+          
+          // For real webhook, save result images
           for (const result of webhookResponse.data.results) {
             // Get the original image index and option
             const { imageIndex, option, resultImages } = result;
