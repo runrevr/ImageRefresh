@@ -265,22 +265,14 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
           {/* Step 2 */}
           <div className="flex-1 p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition duration-300 text-center">
             <div className="w-16 h-16 flex items-center justify-center bg-gray-300 text-gray-600 text-xl font-semibold rounded-full mx-auto mb-6">2</div>
-            <h3 className="text-xl font-bold mb-3 text-gray-700">Choose Your Industry</h3>
-            <p className="mb-6 text-gray-600">Select your product category to get optimized enhancement options.</p>
+            <h3 className="text-xl font-bold mb-3 text-gray-700">Enter Your Industry</h3>
+            <p className="mb-6 text-gray-600">Tell us your product category to get tailored enhancement options.</p>
             <div className="space-y-2">
-              <select 
+              <input
+                type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm"
-                defaultValue=""
-              >
-                <option value="" disabled>Select your industry...</option>
-                <option value="fashion">Fashion & Apparel</option>
-                <option value="beauty">Beauty & Cosmetics</option>
-                <option value="home">Home & Furniture</option>
-                <option value="electronics">Electronics</option>
-                <option value="food">Food & Beverage</option>
-                <option value="jewelry">Jewelry & Accessories</option>
-                <option value="sports">Sports & Outdoor</option>
-              </select>
+                placeholder="e.g., Fashion, Food, Electronics..."
+              />
             </div>
           </div>
           
@@ -456,30 +448,42 @@ const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (i
     "Other"
   ];
 
+  const [inputValue, setInputValue] = useState("");
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+  
+  const handleInputBlur = () => {
+    if (inputValue.trim()) {
+      onIndustryChange(inputValue.trim());
+    }
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      onIndustryChange(inputValue.trim());
+    }
+  };
+  
   return (
     <div className="mb-8">
       <label className="block text-lg font-medium text-gray-800 mb-3 text-center">
-        Select Your Industry
+        Enter Your Industry
       </label>
-      <div className="max-w-md mx-auto relative">
-        <select
-          className="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm appearance-none bg-white"
-          onChange={(e) => onIndustryChange(e.target.value)}
+      <div className="max-w-md mx-auto">
+        <input
+          type="text"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm bg-white"
+          placeholder="e.g., Fashion, Electronics, Food & Beverage..."
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
-          defaultValue=""
-        >
-          <option value="" disabled>Select an industry...</option>
-          {industries.map((industry) => (
-            <option key={industry} value={industry}>{industry}</option>
-          ))}
-        </select>
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-          <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </div>
+        />
       </div>
-      <p className="text-center text-gray-500 mt-2 text-sm">Selecting your industry helps us optimize your results</p>
+      <p className="text-center text-gray-500 mt-2 text-sm">Your industry helps us optimize enhancement suggestions for your products</p>
     </div>
   );
 };
