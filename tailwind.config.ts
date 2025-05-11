@@ -15,13 +15,12 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
-        // Custom theme colors
-        primary: "#2A7B9B",
-        secondary: "#FF7B54",
+        // Custom theme colors for product enhancement page
         alt: "#A3E4D7",
         dark: "#333333",
         light: "#F2F2F2",
         body: "#666666",
+        // Brand colors
         brand: {
           primary: "#2A7B9B",
           secondary: "#FF7B54",

@@ -37,7 +37,7 @@ const AnnouncementBanner = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="bg-secondary text-white p-4 text-center font-medium">
+    <div className="bg-secondary-500 text-white p-4 text-center font-medium">
       New: Transform your product photos with AI in seconds!
       <button className="underline ml-2">Try it now</button>
       <button 
@@ -56,14 +56,14 @@ const Header = () => {
   return (
     <header className="bg-white">
       <div className="container mx-auto p-6 flex items-center justify-between">
-        <div className="text-2xl font-heading text-primary">ImageRefresh</div>
+        <div className="text-2xl font-heading text-primary-600">ImageRefresh</div>
         <nav className="hidden md:flex space-x-6 font-medium">
-          <a href="#features" className="hover:text-primary">Features</a>
-          <a href="#showcase" className="hover:text-primary">Showcase</a>
-          <a href="#demo" className="hover:text-primary">Demo</a>
-          <a href="#faq" className="hover:text-primary">FAQ</a>
+          <a href="#features" className="hover:text-primary-600">Features</a>
+          <a href="#showcase" className="hover:text-primary-600">Showcase</a>
+          <a href="#demo" className="hover:text-primary-600">Demo</a>
+          <a href="#faq" className="hover:text-primary-600">FAQ</a>
         </nav>
-        <a href="#demo" className="bg-secondary text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary/90">Try It Free</a>
+        <a href="#demo" className="bg-secondary-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary-600">Try It Free</a>
       </div>
     </header>
   );
@@ -73,7 +73,7 @@ const Header = () => {
 const HeroSection = () => {
   return (
     <section className="container mx-auto text-center py-20">
-      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-primary">
+      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-primary-600">
         Studio-quality product photos—no studio needed
       </h1>
       <p className="text-lg text-dark mb-8 max-w-2xl mx-auto">
@@ -81,7 +81,7 @@ const HeroSection = () => {
       </p>
       <a 
         href="#demo" 
-        className="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary/90 transition"
+        className="bg-primary-600 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-700 transition"
       >
         Upload Your Photo
       </a>
@@ -94,22 +94,22 @@ const FeaturesSection = () => {
   return (
     <section id="features" className="bg-white py-16">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center text-primary mb-10">Your All-in-One AI Photo Studio</h2>
+        <h2 className="text-3xl font-bold text-center text-primary-600 mb-10">Your All-in-One AI Photo Studio</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
+          <div className="text-center p-6 rounded-lg shadow-sm hover:shadow-md transition">
             <div className="text-4xl mb-4">🖼️</div>
-            <h3 className="font-bold text-xl mb-2">Background Generation</h3>
-            <p>Create brand-aligned backgrounds instantly—no green screen required.</p>
+            <h3 className="font-bold text-xl mb-2 text-primary-700">Background Generation</h3>
+            <p className="text-body">Create brand-aligned backgrounds instantly—no green screen required.</p>
           </div>
-          <div className="text-center p-6">
+          <div className="text-center p-6 rounded-lg shadow-sm hover:shadow-md transition">
             <div className="text-4xl mb-4">⚡</div>
-            <h3 className="font-bold text-xl mb-2">Lighting & Retouching</h3>
-            <p>Auto-enhance color, contrast, and clarity for a polished, professional look.</p>
+            <h3 className="font-bold text-xl mb-2 text-primary-700">Lighting & Retouching</h3>
+            <p className="text-body">Auto-enhance color, contrast, and clarity for a polished, professional look.</p>
           </div>
-          <div className="text-center p-6">
+          <div className="text-center p-6 rounded-lg shadow-sm hover:shadow-md transition">
             <div className="text-4xl mb-4">💡</div>
-            <h3 className="font-bold text-xl mb-2">Creative Prompts</h3>
-            <p>Get multiple scene ideas tailored to your product—pick your favorite and go!</p>
+            <h3 className="font-bold text-xl mb-2 text-primary-700">Creative Prompts</h3>
+            <p className="text-body">Get multiple scene ideas tailored to your product—pick your favorite and go!</p>
           </div>
         </div>
       </div>
@@ -120,27 +120,27 @@ const FeaturesSection = () => {
 // Showcase Before/After section
 const ShowcaseSection = () => {
   return (
-    <section id="showcase" className="py-16">
+    <section id="showcase" className="py-16 bg-[#f8fafa]">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center text-primary mb-8">See the Transformation</h2>
+        <h2 className="text-3xl font-bold text-center text-primary-600 mb-8">See the Transformation</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="relative">
-            <img src={shampooOriginal} alt="Before" className="w-full object-cover rounded-lg shadow" />
-            <span className="absolute top-2 left-2 bg-secondary text-white px-2 py-1 text-sm rounded">Before</span>
+          <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+            <img src={shampooOriginal} alt="Before" className="w-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+            <span className="absolute top-2 left-2 bg-secondary-500 text-white px-2 py-1 text-sm rounded">Before</span>
           </div>
-          <div className="relative">
-            <img src={shampooEnhanced} alt="After" className="w-full object-cover rounded-lg shadow" />
-            <span className="absolute top-2 left-2 bg-primary text-white px-2 py-1 text-sm rounded">After</span>
+          <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+            <img src={shampooEnhanced} alt="After" className="w-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+            <span className="absolute top-2 left-2 bg-primary-600 text-white px-2 py-1 text-sm rounded">After</span>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          <div className="relative">
-            <img src={sweatshirtOriginal} alt="Before" className="w-full object-cover rounded-lg shadow" />
-            <span className="absolute top-2 left-2 bg-secondary text-white px-2 py-1 text-sm rounded">Before</span>
+          <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+            <img src={sweatshirtOriginal} alt="Before" className="w-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+            <span className="absolute top-2 left-2 bg-secondary-500 text-white px-2 py-1 text-sm rounded">Before</span>
           </div>
-          <div className="relative">
-            <img src={sweatshirtEnhanced} alt="After" className="w-full object-cover rounded-lg shadow" />
-            <span className="absolute top-2 left-2 bg-primary text-white px-2 py-1 text-sm rounded">After</span>
+          <div className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+            <img src={sweatshirtEnhanced} alt="After" className="w-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
+            <span className="absolute top-2 left-2 bg-primary-600 text-white px-2 py-1 text-sm rounded">After</span>
           </div>
         </div>
       </div>
@@ -313,10 +313,12 @@ const TestimonialsSection = () => {
 // Final CTA section
 const FinalCTASection = () => {
   return (
-    <section className="bg-primary py-16 text-center text-white">
-      <h2 className="text-4xl font-bold mb-4">Ready to Transform Your Images?</h2>
-      <p className="mb-6">Try it for free—no credit card required.</p>
-      <a href="#demo" className="bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90">Get Started Now</a>
+    <section className="bg-primary-600 py-16 text-center text-white">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold mb-4">Ready to Transform Your Images?</h2>
+        <p className="mb-6 text-lg max-w-xl mx-auto">Try it for free—no credit card required. Start enhancing your product photos today!</p>
+        <a href="#demo" className="bg-secondary-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-secondary-600 transition-colors shadow-lg hover:shadow-xl">Get Started Now</a>
+      </div>
     </section>
   );
 };
@@ -890,7 +892,7 @@ export default function ProductEnhancementWebhook() {
   
   // Render landing page layout in all cases
   return (
-    <div className="min-h-screen bg-alt/10">
+    <div className="min-h-screen bg-[#f8fafa]">
       <AnnouncementBanner />
       <Header />
       <HeroSection />
@@ -913,7 +915,7 @@ export default function ProductEnhancementWebhook() {
               <button
                 onClick={handleUpload}
                 disabled={selectedFiles.length === 0 || !industry || uploadMutation.isPending}
-                className="bg-secondary text-white px-8 py-3 rounded-lg font-medium hover:bg-secondary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {uploadMutation.isPending ? "Uploading..." : "Continue"}
               </button>
