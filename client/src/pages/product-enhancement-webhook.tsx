@@ -2,15 +2,42 @@ import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import shampooOriginal from "@assets/shampoo 3.png";
+import shampooEnhanced from "@assets/shampoo 4.png";
+import sweatshirtOriginal from "@assets/sweatshirt.png";
+import sweatshirtEnhanced from "@assets/sweatshirt 2.png";
 
-// Component for the announcement banner
+// Type definitions
+type EnhancementOption = {
+  key: string;
+  name: string;
+  description: string;
+};
+
+type ImageWithOptions = {
+  id: number;
+  originalPath: string;
+  options: Record<string, EnhancementOption>;
+  selectedOptions: Set<string>;
+};
+
+type EnhancementResult = {
+  imageId: number;
+  optionKey: string;
+  optionName: string;
+  resultImage1Path: string;
+  resultImage2Path: string;
+  description?: string;
+};
+
+// Top announcement banner
 const AnnouncementBanner = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) return null;
 
   return (
-    <div className="bg-[#FF7B54] text-white p-4 text-center font-medium">
+    <div className="bg-secondary text-white p-4 text-center font-medium">
       New: Transform your product photos with AI in seconds!
       <button className="underline ml-2">Try it now</button>
       <button 
@@ -24,31 +51,108 @@ const AnnouncementBanner = () => {
   );
 };
 
-// Component for the hero section
+// Header component with logo and navigation
+const Header = () => {
+  return (
+    <header className="bg-white">
+      <div className="container mx-auto p-6 flex items-center justify-between">
+        <div className="text-2xl font-heading text-primary">ImageRefresh</div>
+        <nav className="hidden md:flex space-x-6 font-medium">
+          <a href="#features" className="hover:text-primary">Features</a>
+          <a href="#showcase" className="hover:text-primary">Showcase</a>
+          <a href="#demo" className="hover:text-primary">Demo</a>
+          <a href="#faq" className="hover:text-primary">FAQ</a>
+        </nav>
+        <a href="#demo" className="bg-secondary text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary/90">Try It Free</a>
+      </div>
+    </header>
+  );
+};
+
+// Hero section with main value proposition
 const HeroSection = () => {
   return (
-    <section className="container mx-auto text-center py-16">
-      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-[#2a7b9b]">
-        Turn Ordinary Photos into Scroll-Stopping Product Shots
+    <section className="container mx-auto text-center py-20">
+      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-primary">
+        Studio-quality product photos—no studio needed
       </h1>
-      <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-        Upload your images, choose from curated AI styles, and download stunning, high-converting visuals in moments—no designer needed.
+      <p className="text-lg text-dark mb-8 max-w-2xl mx-auto">
+        Use AI as your virtual photo studio: generate amazing visuals from simple snaps—perfect for your store, ads, and socials.
       </p>
       <a 
-        href="#upload" 
-        className="bg-[#2a7b9b] text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-[#2a7b9b]/90 transition"
+        href="#demo" 
+        className="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-primary/90 transition"
       >
-        Enhance Your First Image →
+        Upload Your Photo
       </a>
     </section>
   );
 };
 
-// Component for the upload section
-const UploadSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (files: File[]) => void, isUploading: boolean }) => {
+// Features section
+const FeaturesSection = () => {
+  return (
+    <section id="features" className="bg-white py-16">
+      <div className="container mx-auto">
+        <h2 className="text-3xl font-bold text-center text-primary mb-10">Your All-in-One AI Photo Studio</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="text-center p-6">
+            <div className="text-4xl mb-4">🖼️</div>
+            <h3 className="font-bold text-xl mb-2">Background Generation</h3>
+            <p>Create brand-aligned backgrounds instantly—no green screen required.</p>
+          </div>
+          <div className="text-center p-6">
+            <div className="text-4xl mb-4">⚡</div>
+            <h3 className="font-bold text-xl mb-2">Lighting & Retouching</h3>
+            <p>Auto-enhance color, contrast, and clarity for a polished, professional look.</p>
+          </div>
+          <div className="text-center p-6">
+            <div className="text-4xl mb-4">💡</div>
+            <h3 className="font-bold text-xl mb-2">Creative Prompts</h3>
+            <p>Get multiple scene ideas tailored to your product—pick your favorite and go!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Showcase Before/After section
+const ShowcaseSection = () => {
+  return (
+    <section id="showcase" className="py-16">
+      <div className="container mx-auto">
+        <h2 className="text-3xl font-bold text-center text-primary mb-8">See the Transformation</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="relative">
+            <img src={shampooOriginal} alt="Before" className="w-full object-cover rounded-lg shadow" />
+            <span className="absolute top-2 left-2 bg-secondary text-white px-2 py-1 text-sm rounded">Before</span>
+          </div>
+          <div className="relative">
+            <img src={shampooEnhanced} alt="After" className="w-full object-cover rounded-lg shadow" />
+            <span className="absolute top-2 left-2 bg-primary text-white px-2 py-1 text-sm rounded">After</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+          <div className="relative">
+            <img src={sweatshirtOriginal} alt="Before" className="w-full object-cover rounded-lg shadow" />
+            <span className="absolute top-2 left-2 bg-secondary text-white px-2 py-1 text-sm rounded">Before</span>
+          </div>
+          <div className="relative">
+            <img src={sweatshirtEnhanced} alt="After" className="w-full object-cover rounded-lg shadow" />
+            <span className="absolute top-2 left-2 bg-primary text-white px-2 py-1 text-sm rounded">After</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Demo 3-step section - This is where the actual upload functionality lives
+const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (files: File[]) => void, isUploading: boolean }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dragging, setDragging] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [dragging, setDragging] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -94,58 +198,194 @@ const UploadSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (f
     }
   };
 
-  const borderClass = dragging 
-    ? "border-[#2a7b9b]" 
-    : "border-[#a3e4d7] hover:border-[#2a7b9b]";
+  const borderClass = dragging ? "border-primary" : "border-alt hover:border-primary";
 
   return (
-    <section id="upload" className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-8">
-      <h2 className="text-2xl font-bold mb-2 text-[#2a7b9b]">Upload Your Product Images</h2>
-      <p className="text-sm text-gray-700 mb-4">
-        Supported formats: JPG, PNG, WEBP. Max 10MB per image. Upload up to 5 images.
-      </p>
-      <div 
-        className={`border-2 border-dashed ${borderClass} rounded-lg p-12 text-center transition`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <p className="mb-4">Drag & Drop Images Here</p>
-        <button 
-          className="bg-[#a3e4d7] text-gray-800 px-4 py-2 rounded font-medium hover:bg-[#a3e4d7]/90 transition"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading}
-        >
-          {isUploading ? "Uploading..." : "Browse Files"}
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileInputChange}
-          className="hidden"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-          disabled={isUploading}
-        />
-      </div>
-      
-      {uploadedFiles.length > 0 && (
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {uploadedFiles.map((file, index) => (
-            <div key={index} className="relative">
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`Upload ${index + 1}`}
-                className="w-full h-24 object-cover rounded-lg"
+    <section id="demo" className="bg-white py-16">
+      <div className="container mx-auto">
+        <h2 className="text-3xl font-bold text-center text-primary mb-8">Try It Now In 3 Steps</h2>
+        <div className="flex flex-col md:flex-row items-start md:space-x-8 space-y-8 md:space-y-0">
+          {/* Step 1 */}
+          <div className="flex-1 p-6 bg-alt/30 rounded-lg text-center">
+            <div className="text-4xl mb-4">1️⃣</div>
+            <h3 className="font-bold mb-2">Upload a Photo</h3>
+            <p className="mb-4">Drag & drop or click to select your product image.</p>
+            <div 
+              className={`border-2 border-dashed ${borderClass} rounded-lg p-6 text-center transition mb-4`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <p className="mb-4 text-sm">Drag & Drop Here</p>
+              <button 
+                className="bg-primary text-white px-4 py-2 rounded font-medium hover:bg-primary/90 transition"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading..." : "Choose File"}
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileInputChange}
+                className="hidden"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                disabled={isUploading}
               />
-              <span className="absolute bottom-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-tl-lg">
-                {(file.size / (1024 * 1024)).toFixed(1)} MB
-              </span>
+            </div>
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Upload ${index + 1}`}
+                      className="w-full h-16 object-cover rounded"
+                    />
+                    <span className="absolute bottom-0 right-0 bg-dark text-white text-xs px-1 py-0.5 rounded-tl">
+                      {(file.size / (1024 * 1024)).toFixed(1)} MB
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Step 2 */}
+          <div className="flex-1 p-6 bg-alt/30 rounded-lg text-center">
+            <div className="text-4xl mb-4">2️⃣</div>
+            <h3 className="font-bold mb-2">Pick Your Industry</h3>
+            <p className="mb-4">Select your product category to get optimized results.</p>
+            <div className="space-y-2">
+              <select 
+                className="w-full p-2 border border-gray-300 rounded focus:ring-primary focus:border-primary"
+                defaultValue=""
+              >
+                <option value="" disabled>Select your industry...</option>
+                <option value="fashion">Fashion & Apparel</option>
+                <option value="beauty">Beauty & Cosmetics</option>
+                <option value="home">Home & Furniture</option>
+                <option value="electronics">Electronics</option>
+                <option value="food">Food & Beverage</option>
+                <option value="jewelry">Jewelry & Accessories</option>
+                <option value="sports">Sports & Outdoor</option>
+              </select>
+            </div>
+          </div>
+          
+          {/* Step 3 */}
+          <div className="flex-1 p-6 bg-alt/30 rounded-lg text-center">
+            <div className="text-4xl mb-4">3️⃣</div>
+            <h3 className="font-bold mb-2">Generate & Download</h3>
+            <p className="mb-4">Watch AI work its magic and download your enhanced image instantly.</p>
+            <button className="bg-secondary text-white px-4 py-2 rounded font-medium hover:bg-secondary/90 transition">
+              Start Enhancement
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Testimonials section
+const TestimonialsSection = () => {
+  return (
+    <section className="py-16">
+      <div className="container mx-auto">
+        <h2 className="text-3xl font-bold text-center text-primary mb-8">What Our Users Say</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <blockquote className="p-6 bg-white rounded-lg shadow">
+            <p className="italic mb-4">"I saved $2,000 on a single shoot — and the results look even better than a studio!"</p>
+            <footer className="font-medium">— Alex, Boutique Owner</footer>
+          </blockquote>
+          <blockquote className="p-6 bg-white rounded-lg shadow">
+            <p className="italic mb-4">"As a one-person team, this tool is a game-changer. Professional photos in minutes."</p>
+            <footer className="font-medium">— Priya, E‑shop Manager</footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Final CTA section
+const FinalCTASection = () => {
+  return (
+    <section className="bg-primary py-16 text-center text-white">
+      <h2 className="text-4xl font-bold mb-4">Ready to Transform Your Images?</h2>
+      <p className="mb-6">Try it for free—no credit card required.</p>
+      <a href="#demo" className="bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90">Get Started Now</a>
+    </section>
+  );
+};
+
+// FAQ section
+const FAQSection = () => {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  
+  const toggleFAQ = (index: number) => {
+    setOpenFAQ(openFAQ === index ? null : index);
+  };
+  
+  const faqs = [
+    {
+      question: "Do I need professional equipment?",
+      answer: "No—any clear photo from a smartphone works perfectly."
+    },
+    {
+      question: "Can I use images commercially?",
+      answer: "Yes—all generated images are yours to sell, advertise, and share."
+    },
+    {
+      question: "Which products does it support?",
+      answer: "Most physical products—fashion, electronics, decor, beauty, and more."
+    },
+    {
+      question: "How much does it cost?",
+      answer: "Plans start under $20/month. Start with a free trial—no card needed."
+    }
+  ];
+  
+  return (
+    <section id="faq" className="bg-white py-16">
+      <div className="container mx-auto max-w-2xl">
+        <h2 className="text-3xl font-bold text-center text-primary mb-8">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <div key={index} className="border-b pb-4">
+              <button 
+                className="w-full text-left font-medium flex justify-between items-center"
+                onClick={() => toggleFAQ(index)}
+              >
+                {faq.question}
+                <span>{openFAQ === index ? '−' : '+'}</span>
+              </button>
+              {openFAQ === index && (
+                <div className="mt-2 text-body">{faq.answer}</div>
+              )}
             </div>
           ))}
         </div>
-      )}
+      </div>
     </section>
+  );
+};
+
+// Footer component
+const Footer = () => {
+  return (
+    <footer className="bg-dark text-white py-8">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+        <div className="font-bold text-lg">ImageRefresh</div>
+        <div className="space-x-6 mt-4 md:mt-0">
+          <a href="#" className="hover:text-alt">Privacy</a>
+          <a href="#" className="hover:text-alt">Terms</a>
+          <a href="#" className="hover:text-alt">Contact</a>
+        </div>
+      </div>
+    </footer>
   );
 };
 
@@ -171,7 +411,7 @@ const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (i
         Select Your Industry
       </label>
       <select 
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring-[#2a7b9b] focus:border-[#2a7b9b]"
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
         onChange={(e) => onIndustryChange(e.target.value)}
         disabled={disabled}
         defaultValue=""
@@ -186,19 +426,6 @@ const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (i
 };
 
 // Style selection component
-type EnhancementOption = {
-  key: string;
-  name: string;
-  description: string;
-};
-
-type ImageWithOptions = {
-  id: number;
-  originalPath: string;
-  options: Record<string, EnhancementOption>;
-  selectedOptions: Set<string>;
-};
-
 const StyleSelectionSection = ({ 
   images, 
   onSelectOption, 
@@ -252,15 +479,16 @@ const StyleSelectionSection = ({
   }
   
   return (
-    <section className="container mx-auto mb-8">
+    <section className="container mx-auto mb-8 py-8">
+      <h2 className="text-3xl font-bold text-center text-primary mb-8">Choose Your Enhancement Styles</h2>
       <div className="flex flex-col lg:flex-row gap-8">
         <aside className="lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
-          <h3 className="font-bold mb-2 text-gray-800">Images</h3>
+          <h3 className="font-bold mb-2 text-gray-800">Your Uploads</h3>
           <ul className="space-y-4">
             {images.map((image, index) => (
               <li 
                 key={image.id} 
-                className={`cursor-pointer p-2 rounded transition ${selectedImageIndex === index ? 'bg-[#a3e4d7]/30 border-l-4 border-[#2a7b9b]' : 'hover:bg-gray-100'}`}
+                className={`cursor-pointer p-2 rounded transition ${selectedImageIndex === index ? 'bg-alt/30 border-l-4 border-primary' : 'hover:bg-gray-100'}`}
                 onClick={() => setSelectedImageIndex(index)}
               >
                 <div className="flex items-center gap-3">
@@ -286,7 +514,7 @@ const StyleSelectionSection = ({
             <h3 className="font-bold text-gray-800">AI Style Suggestions</h3>
             <div className="flex items-center space-x-4">
               <button 
-                className="text-sm underline font-medium hover:text-[#2a7b9b] transition"
+                className="text-sm underline font-medium hover:text-primary transition"
                 onClick={selectAllOptionsForCurrentImage}
               >
                 Select All Styles
@@ -314,13 +542,13 @@ const StyleSelectionSection = ({
                   return (
                     <div 
                       key={key}
-                      className={`border rounded-lg overflow-hidden cursor-pointer transition ${isSelected ? 'border-[#2a7b9b] ring-2 ring-[#2a7b9b]/30' : 'border-gray-200 hover:border-gray-300'}`}
+                      className={`border rounded-lg overflow-hidden cursor-pointer transition ${isSelected ? 'border-primary ring-2 ring-primary/30' : 'border-gray-200 hover:border-gray-300'}`}
                       onClick={() => handleOptionClick(key)}
                     >
                       <div className="p-3">
                         <div className="flex justify-between items-start">
                           <h4 className="font-medium">{option.name}</h4>
-                          <div className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-[#2a7b9b] border-[#2a7b9b]' : 'border-gray-300'} flex items-center justify-center`}>
+                          <div className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-primary border-primary' : 'border-gray-300'} flex items-center justify-center`}>
                             {isSelected && <span className="text-white text-xs">✓</span>}
                           </div>
                         </div>
@@ -334,11 +562,11 @@ const StyleSelectionSection = ({
           )}
           
           <button
-            className="mt-6 bg-[#2a7b9b] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#2a7b9b]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={totalOptionsSelected === 0 || isLoading}
             onClick={onSubmitSelections}
           >
-            {isLoading ? "Processing..." : "Enhance Image(s)"}
+            {isLoading ? "Processing..." : "Enhance My Images"}
           </button>
         </div>
       </div>
@@ -347,15 +575,6 @@ const StyleSelectionSection = ({
 };
 
 // Results component
-type EnhancementResult = {
-  imageId: number;
-  optionKey: string;
-  optionName: string;
-  resultImage1Path: string;
-  resultImage2Path: string;
-  description?: string;
-};
-
 const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
 
@@ -400,10 +619,10 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
 
   return (
     <section className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-16">
-      <h2 className="text-2xl font-bold mb-4 text-[#2a7b9b]">Review & Select Your Favorites</h2>
+      <h2 className="text-3xl font-bold mb-4 text-primary">Review & Select Your Favorites</h2>
       <div className="flex justify-end mb-4">
         <button 
-          className="text-sm underline font-medium hover:text-[#2a7b9b] transition"
+          className="text-sm underline font-medium hover:text-primary transition"
           onClick={selectAllImages}
         >
           Select All
@@ -415,7 +634,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
           <div key={`${index}-1`} className="relative border rounded-lg overflow-hidden p-2">
             <input 
               type="checkbox" 
-              className="absolute top-2 left-2 w-5 h-5 accent-[#2a7b9b]" 
+              className="absolute top-2 left-2 w-5 h-5 accent-primary" 
               checked={selectedImages.has(result.resultImage1Path)}
               onChange={() => toggleImageSelection(result.resultImage1Path)}
             />
@@ -437,7 +656,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
           <div key={`${index}-2`} className="relative border rounded-lg overflow-hidden p-2">
             <input 
               type="checkbox" 
-              className="absolute top-2 left-2 w-5 h-5 accent-[#2a7b9b]" 
+              className="absolute top-2 left-2 w-5 h-5 accent-primary" 
               checked={selectedImages.has(result.resultImage2Path)}
               onChange={() => toggleImageSelection(result.resultImage2Path)}
             />
@@ -458,7 +677,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
         ])}
       </div>
       <button 
-        className="bg-[#ff7b54] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#ff7b54]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={selectedImages.size === 0}
         onClick={downloadSelected}
       >
@@ -468,12 +687,12 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   );
 };
 
-// Intermediary results page
+// Processing section (while waiting for enhancement results)
 const ProcessingSection = () => {
   return (
     <section className="container mx-auto text-center py-12">
-      <div className="animate-spin w-16 h-16 border-4 border-[#2a7b9b] border-t-transparent rounded-full mx-auto mb-6"></div>
-      <h2 className="text-2xl font-bold mb-2 text-[#2a7b9b]">Processing Your Images</h2>
+      <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-6"></div>
+      <h2 className="text-2xl font-bold mb-2 text-primary">Processing Your Images</h2>
       <p className="text-gray-600">
         We're applying the selected enhancements to your images. This may take a few moments...
       </p>
@@ -552,21 +771,6 @@ export default function ProductEnhancementWebhook() {
       setStep('selectStyles');
     }
   });
-  
-  // Define a type for our enhancement data
-  type EnhancementData = {
-    id: number;
-    status: string;
-    industry: string;
-    images: Array<{
-      id: number;
-      originalImagePath: string;
-      options?: Record<string, {
-        name: string;
-        description: string;
-      }>;
-    }>;
-  };
   
   // Query to fetch enhancement data (images and options)
   const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery({
@@ -684,30 +888,32 @@ export default function ProductEnhancementWebhook() {
     selectionsMutation.mutate(selections);
   };
   
+  // Render landing page layout in all cases
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-alt/10">
       <AnnouncementBanner />
-      
+      <Header />
       <HeroSection />
+      <FeaturesSection />
+      <ShowcaseSection />
       
+      {/* Dynamic content based on step */}
       {step === 'upload' && (
         <>
-          <UploadSection 
+          <DemoSection 
             onImagesSelected={handleImagesSelected} 
             isUploading={uploadMutation.isPending}
           />
-          
-          <div className="container mx-auto mb-8">
+          <div className="container mx-auto p-4 mb-8">
             <IndustrySelector 
               onIndustryChange={handleIndustryChange}
               disabled={uploadMutation.isPending}
             />
-            
             <div className="flex justify-center">
               <button
                 onClick={handleUpload}
                 disabled={selectedFiles.length === 0 || !industry || uploadMutation.isPending}
-                className="bg-[#2a7b9b] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#2a7b9b]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-secondary text-white px-8 py-3 rounded-lg font-medium hover:bg-secondary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {uploadMutation.isPending ? "Uploading..." : "Continue"}
               </button>
@@ -728,6 +934,11 @@ export default function ProductEnhancementWebhook() {
       {step === 'processing' && <ProcessingSection />}
       
       {step === 'results' && <ResultsSection results={results} />}
+      
+      <TestimonialsSection />
+      <FAQSection />
+      <FinalCTASection />
+      <Footer />
     </div>
   );
 }
