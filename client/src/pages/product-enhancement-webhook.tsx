@@ -401,13 +401,39 @@ const FAQSection = () => {
 // Footer component
 const Footer = () => {
   return (
-    <footer className="bg-dark text-white py-8">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-        <div className="font-bold text-lg">ImageRefresh</div>
-        <div className="space-x-6 mt-4 md:mt-0">
-          <a href="#" className="hover:text-alt">Privacy</a>
-          <a href="#" className="hover:text-alt">Terms</a>
-          <a href="#" className="hover:text-alt">Contact</a>
+    <footer className="bg-gray-900 text-white py-12">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-6 md:mb-0">
+            <div className="font-bold text-2xl text-primary-300 mb-2">ImageRefresh</div>
+            <p className="text-gray-400 text-sm">© {new Date().getFullYear()} ImageRefresh. All rights reserved.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-4 text-center md:text-left">
+            <div>
+              <h3 className="font-medium mb-2 text-gray-300">Product</h3>
+              <ul className="space-y-2">
+                <li><a href="#features" className="text-gray-400 hover:text-white transition">Features</a></li>
+                <li><a href="#demo" className="text-gray-400 hover:text-white transition">Demo</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition">Pricing</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2 text-gray-300">Company</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-400 hover:text-white transition">About</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition">Blog</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2 text-gray-300">Legal</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-400 hover:text-white transition">Privacy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition">Terms</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition">Security</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
@@ -431,21 +457,29 @@ const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (i
   ];
 
   return (
-    <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="mb-8">
+      <label className="block text-lg font-medium text-gray-800 mb-3 text-center">
         Select Your Industry
       </label>
-      <select 
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-        onChange={(e) => onIndustryChange(e.target.value)}
-        disabled={disabled}
-        defaultValue=""
-      >
-        <option value="" disabled>Select an industry...</option>
-        {industries.map((industry) => (
-          <option key={industry} value={industry}>{industry}</option>
-        ))}
-      </select>
+      <div className="max-w-md mx-auto relative">
+        <select
+          className="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm appearance-none bg-white"
+          onChange={(e) => onIndustryChange(e.target.value)}
+          disabled={disabled}
+          defaultValue=""
+        >
+          <option value="" disabled>Select an industry...</option>
+          {industries.map((industry) => (
+            <option key={industry} value={industry}>{industry}</option>
+          ))}
+        </select>
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </div>
+      </div>
+      <p className="text-center text-gray-500 mt-2 text-sm">Selecting your industry helps us optimize your results</p>
     </div>
   );
 };
@@ -504,29 +538,53 @@ const StyleSelectionSection = ({
   }
   
   return (
-    <section className="container mx-auto mb-8 py-8">
-      <h2 className="text-3xl font-bold text-center text-primary mb-8">Choose Your Enhancement Styles</h2>
+    <section className="container mx-auto mb-12 py-8">
+      <h2 className="text-3xl font-bold text-center text-primary-600 mb-10">Choose Your Enhancement Styles</h2>
+      <p className="text-center text-gray-600 max-w-2xl mx-auto mb-8">
+        Select up to {maxSelectionsPerImage} AI-suggested enhancements for each of your images. 
+        Each selection costs 1 credit.
+      </p>
       <div className="flex flex-col lg:flex-row gap-8">
-        <aside className="lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
-          <h3 className="font-bold mb-2 text-gray-800">Your Uploads</h3>
+        <aside className="lg:w-1/4 bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+          <h3 className="font-bold mb-4 text-gray-800 text-lg">Your Uploads</h3>
           <ul className="space-y-4">
             {images.map((image, index) => (
               <li 
                 key={image.id} 
-                className={`cursor-pointer p-2 rounded transition ${selectedImageIndex === index ? 'bg-alt/30 border-l-4 border-primary' : 'hover:bg-gray-100'}`}
+                className={`cursor-pointer p-3 rounded-lg transition-all duration-200 ${
+                  selectedImageIndex === index 
+                    ? 'bg-primary-50 border-l-4 border-primary-500 shadow-sm' 
+                    : 'hover:bg-gray-50 border-l-4 border-transparent'
+                }`}
                 onClick={() => setSelectedImageIndex(index)}
               >
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={image.originalPath} 
-                    alt={`Image ${index + 1}`} 
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                  <div className="relative group overflow-hidden rounded-lg w-16 h-16">
+                    <img 
+                      src={image.originalPath} 
+                      alt={`Image ${index + 1}`} 
+                      className="w-16 h-16 object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
                   <div>
                     <p className="font-medium">Image {index + 1}</p>
-                    <p className="text-sm text-gray-500">
-                      {image.selectedOptions.size} of {maxSelectionsPerImage} selected
-                    </p>
+                    <div className="flex items-center text-sm mt-1">
+                      <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full rounded-full ${
+                            image.selectedOptions.size === 0 
+                              ? 'bg-gray-300' 
+                              : image.selectedOptions.size < maxSelectionsPerImage/2 
+                                ? 'bg-primary-300' 
+                                : 'bg-primary-500'
+                          }`}
+                          style={{ width: `${(image.selectedOptions.size / maxSelectionsPerImage) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="ml-2 text-gray-500">
+                        {image.selectedOptions.size}/{maxSelectionsPerImage}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </li>
@@ -534,17 +592,17 @@ const StyleSelectionSection = ({
           </ul>
         </aside>
         
-        <div className="lg:w-3/4 bg-white p-4 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-800">AI Style Suggestions</h3>
+        <div className="lg:w-3/4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="flex flex-wrap items-center justify-between mb-6">
+            <h3 className="font-bold text-gray-800 text-lg">AI Style Suggestions</h3>
             <div className="flex items-center space-x-4">
               <button 
-                className="text-sm underline font-medium hover:text-primary transition"
+                className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline transition"
                 onClick={selectAllOptionsForCurrentImage}
               >
                 Select All Styles
               </button>
-              <span className="text-gray-600">
+              <span className="text-gray-600 bg-gray-100 px-3 py-1 rounded-full text-sm">
                 {currentImageSelectionsCount} of {maxSelectionsPerImage} selected
               </span>
             </div>
@@ -552,32 +610,57 @@ const StyleSelectionSection = ({
           
           {currentImage && (
             <>
-              <div className="mb-4 p-3 bg-gray-50 rounded">
-                <p className="text-sm">
-                  Each selection costs 1 credit. You can select up to {maxSelectionsPerImage} options per image.
-                </p>
-                <p className="text-sm mt-1 font-medium">
-                  Total selected: {totalOptionsSelected} option{totalOptionsSelected !== 1 ? 's' : ''}
-                </p>
+              <div className="mb-6 p-4 bg-primary-50 rounded-lg border border-primary-100">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 text-primary-500 mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-primary-700">
+                      Each selection costs 1 credit. You can select up to {maxSelectionsPerImage} options per image.
+                    </p>
+                    <p className="text-sm mt-1 font-medium text-primary-800">
+                      Total selected: {totalOptionsSelected} option{totalOptionsSelected !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
               </div>
               
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                 {currentImage.options && Object.entries(currentImage.options).map(([key, option]) => {
                   const isSelected = currentImage.selectedOptions.has(key);
                   return (
                     <div 
                       key={key}
-                      className={`border rounded-lg overflow-hidden cursor-pointer transition ${isSelected ? 'border-primary ring-2 ring-primary/30' : 'border-gray-200 hover:border-gray-300'}`}
+                      className={`border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-md ${
+                        isSelected 
+                          ? 'border-primary-500 ring-2 ring-primary-200 bg-primary-50' 
+                          : 'border-gray-200 hover:border-primary-300 bg-white'
+                      }`}
                       onClick={() => handleOptionClick(key)}
                     >
-                      <div className="p-3">
-                        <div className="flex justify-between items-start">
-                          <h4 className="font-medium">{option.name}</h4>
-                          <div className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-primary border-primary' : 'border-gray-300'} flex items-center justify-center`}>
-                            {isSelected && <span className="text-white text-xs">✓</span>}
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className={`font-semibold ${isSelected ? 'text-primary-700' : 'text-gray-800'}`}>
+                            {option.name}
+                          </h4>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+                            isSelected 
+                              ? 'bg-primary-500 text-white' 
+                              : 'border-2 border-gray-300'
+                          }`}>
+                            {isSelected && (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                            )}
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+                        <p className="text-sm text-gray-600">{option.description}</p>
                       </div>
                     </div>
                   );
@@ -586,13 +669,29 @@ const StyleSelectionSection = ({
             </>
           )}
           
-          <button
-            className="mt-6 bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={totalOptionsSelected === 0 || isLoading}
-            onClick={onSubmitSelections}
-          >
-            {isLoading ? "Processing..." : "Enhance My Images"}
-          </button>
+          <div className="mt-8 flex justify-center">
+            <button
+              className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
+                totalOptionsSelected === 0 || isLoading
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-secondary-500 text-white hover:bg-secondary-600 hover:shadow'
+              }`}
+              disabled={totalOptionsSelected === 0 || isLoading}
+              onClick={onSubmitSelections}
+            >
+              {isLoading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                "Enhance My Images"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </section>
