@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 // Component for the announcement banner
 const AnnouncementBanner = () => {
@@ -569,26 +569,29 @@ export default function ProductEnhancementWebhook() {
   };
   
   // Query to fetch enhancement data (images and options)
-  const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery<EnhancementData>({
+  const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery({
     queryKey: ['/api/product-enhancement', enhancementId],
     queryFn: async () => {
-      if (!enhancementId) return null as any;
+      if (!enhancementId) return null;
       const response = await apiRequest("GET", `/api/product-enhancement/${enhancementId}`);
       return await response.json();
     },
     enabled: !!enhancementId && step === 'selectStyles',
-    refetchInterval: (data: EnhancementData | undefined) => {
-      // Poll every 3 seconds until options are available
-      if (data && data.status === 'completed') {
-        return false as const;
-      }
-      return 3000;
-    },
+    // Poll every 3 seconds if not completed
+    refetchInterval: 3000,
   });
+  
+  // Custom polling logic to stop when completed
+  useEffect(() => {
+    if (enhancementData && 'status' in enhancementData && enhancementData.status === 'completed') {
+      // Stop polling once completed
+      queryClient.cancelQueries({ queryKey: ['/api/product-enhancement', enhancementId] });
+    }
+  }, [enhancementData, enhancementId]);
   
   // Update enhancement images when data changes
   useEffect(() => {
-    if (enhancementData && enhancementData.images) {
+    if (enhancementData && 'images' in enhancementData && Array.isArray(enhancementData.images)) {
       const imagesWithOptions = enhancementData.images.map((img: any) => ({
         id: img.id,
         originalPath: img.originalImagePath,
