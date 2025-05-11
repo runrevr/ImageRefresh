@@ -1,582 +1,633 @@
-import { useState, useRef, FormEvent, useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Upload, CheckCircle2, XCircle } from "lucide-react";
-import { Link } from "wouter";
 
-// Define types for our product enhancement data
-type EnhancementImage = {
-  id: number;
-  originalImageUrl: string;
-  options?: {
-    [key: string]: {
-      name: string;
-      description: string;
-    }
-  }
+// Component for the announcement banner
+const AnnouncementBanner = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="bg-[#2a7b9b] text-white p-4 text-center font-medium">
+      New: Transform your product photos with AI in seconds!
+      <button className="underline ml-2">Try it now</button>
+      <button 
+        className="ml-4 font-bold focus:outline-none" 
+        aria-label="Dismiss"
+        onClick={() => setIsVisible(false)}
+      >
+        ✕
+      </button>
+    </div>
+  );
 };
 
-type Enhancement = {
-  id: number;
-  status: "pending" | "processing" | "completed" | "failed";
-  industry: string;
-  webhookId?: string;
-  images: EnhancementImage[];
+// Component for the hero section
+const HeroSection = () => {
+  return (
+    <section className="container mx-auto text-center py-16">
+      <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 text-[#2a7b9b]">
+        Turn Ordinary Photos into Scroll-Stopping Product Shots
+      </h1>
+      <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+        Upload your images, choose from curated AI styles, and download stunning, high-converting visuals in moments—no designer needed.
+      </p>
+      <a 
+        href="#upload" 
+        className="bg-[#2a7b9b] text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-[#2a7b9b]/90 transition"
+      >
+        Enhance Your First Image →
+      </a>
+    </section>
+  );
 };
 
-type EnhancementResult = {
-  imageId: number;
-  optionKey: string;
-  resultImage1Url: string;
-  resultImage2Url: string;
-};
-
-type UserCredits = {
-  freeCreditsUsed: boolean;
-  paidCredits: number;
-  id: number;
-};
-
-export default function ProductEnhancementWebhookPage() {
-  const { user: authUser } = useAuth();
-  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
-  const [activeTab, setActiveTab] = useState("upload");
-  const [industry, setIndustry] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
-  const [currentEnhancement, setCurrentEnhancement] = useState<Enhancement | null>(null);
-  const [selectedOptions, setSelectedOptions] = useState<{imageId: number, imageIndex: number, optionKey: string}[]>([]);
-  const [isSubmittingSelections, setIsSubmittingSelections] = useState(false);
-  const [enhancementResults, setEnhancementResults] = useState<EnhancementResult[]>([]);
+// Component for the upload section
+const UploadSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (files: File[]) => void, isUploading: boolean }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const { toast } = useToast();
-  
-  // Update local user state when auth user changes
-  useEffect(() => {
-    if (authUser) {
-      setUserCredits({
-        id: authUser.id,
-        freeCreditsUsed: authUser.freeCreditsUsed,
-        paidCredits: authUser.paidCredits
-      });
-    }
-  }, [authUser]);
-  
-  // Default to 0 if userCredits is not available
-  const freeCredits = userCredits && !userCredits.freeCreditsUsed ? 1 : 0;
-  const paidCredits = userCredits?.paidCredits || 0;
+  const [dragging, setDragging] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  // Handle file selection
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(true);
+  };
 
-    const newFiles = Array.from(e.target.files);
+  const handleDragLeave = () => {
+    setDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
     
-    // Limit to 5 files total
-    if (selectedFiles.length + newFiles.length > 5) {
-      toast({
-        title: "Too many files",
-        description: "You can only upload up to 5 images at a time.",
-        variant: "destructive"
-      });
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const fileArray = Array.from(e.dataTransfer.files).filter(
+        file => file.type.startsWith("image/")
+      );
+      
+      if (fileArray.length > 5) {
+        alert("You can upload a maximum of 5 images at a time");
+        return;
+      }
+      
+      setUploadedFiles(fileArray);
+      onImagesSelected(fileArray);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const fileArray = Array.from(e.target.files).filter(
+        file => file.type.startsWith("image/")
+      );
+      
+      if (fileArray.length > 5) {
+        alert("You can upload a maximum of 5 images at a time");
+        return;
+      }
+      
+      setUploadedFiles(fileArray);
+      onImagesSelected(fileArray);
+    }
+  };
+
+  const borderClass = dragging 
+    ? "border-[#2a7b9b]" 
+    : "border-[#a3e4d7] hover:border-[#2a7b9b]";
+
+  return (
+    <section id="upload" className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-8">
+      <h2 className="text-2xl font-bold mb-2 text-[#2a7b9b]">Upload Your Product Images</h2>
+      <p className="text-sm text-gray-700 mb-4">
+        Supported formats: JPG, PNG, WEBP. Max 10MB per image. Upload up to 5 images.
+      </p>
+      <div 
+        className={`border-2 border-dashed ${borderClass} rounded-lg p-12 text-center transition`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <p className="mb-4">Drag & Drop Images Here</p>
+        <button 
+          className="bg-[#a3e4d7] text-gray-800 px-4 py-2 rounded font-medium hover:bg-[#a3e4d7]/90 transition"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+        >
+          {isUploading ? "Uploading..." : "Browse Files"}
+        </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileInputChange}
+          className="hidden"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          disabled={isUploading}
+        />
+      </div>
+      
+      {uploadedFiles.length > 0 && (
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {uploadedFiles.map((file, index) => (
+            <div key={index} className="relative">
+              <img
+                src={URL.createObjectURL(file)}
+                alt={`Upload ${index + 1}`}
+                className="w-full h-24 object-cover rounded-lg"
+              />
+              <span className="absolute bottom-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-tl-lg">
+                {(file.size / (1024 * 1024)).toFixed(1)} MB
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+};
+
+// Industry selector component
+const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (industry: string) => void, disabled: boolean }) => {
+  const industries = [
+    "Fashion & Apparel",
+    "Beauty & Cosmetics",
+    "Home & Furniture",
+    "Electronics",
+    "Food & Beverage",
+    "Jewelry & Accessories",
+    "Sports & Outdoor",
+    "Health & Wellness",
+    "Toys & Children",
+    "Pets",
+    "Other"
+  ];
+
+  return (
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Select Your Industry
+      </label>
+      <select 
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-[#2a7b9b] focus:border-[#2a7b9b]"
+        onChange={(e) => onIndustryChange(e.target.value)}
+        disabled={disabled}
+        defaultValue=""
+      >
+        <option value="" disabled>Select an industry...</option>
+        {industries.map((industry) => (
+          <option key={industry} value={industry}>{industry}</option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+// Style selection component
+type EnhancementOption = {
+  key: string;
+  name: string;
+  description: string;
+};
+
+type ImageWithOptions = {
+  id: number;
+  originalPath: string;
+  options: Record<string, EnhancementOption>;
+  selectedOptions: Set<string>;
+};
+
+const StyleSelectionSection = ({ 
+  images, 
+  onSelectOption, 
+  onSubmitSelections,
+  isLoading,
+  maxSelectionsPerImage = 5
+}: { 
+  images: ImageWithOptions[]; 
+  onSelectOption: (imageId: number, optionKey: string, selected: boolean) => void;
+  onSubmitSelections: () => void;
+  isLoading: boolean;
+  maxSelectionsPerImage?: number;
+}) => {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  
+  const currentImage = images[selectedImageIndex];
+  
+  const totalOptionsSelected = images.reduce((total, img) => total + img.selectedOptions.size, 0);
+  const currentImageSelectionsCount = currentImage ? currentImage.selectedOptions.size : 0;
+  
+  const handleOptionClick = (optionKey: string) => {
+    if (!currentImage) return;
+    
+    const isCurrentlySelected = currentImage.selectedOptions.has(optionKey);
+    
+    // If not selected and would exceed max, prevent
+    if (!isCurrentlySelected && currentImageSelectionsCount >= maxSelectionsPerImage) {
+      alert(`You can only select up to ${maxSelectionsPerImage} options per image`);
       return;
     }
     
-    // Create preview URLs
-    const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
-    
-    setSelectedFiles(prev => [...prev, ...newFiles]);
-    setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+    onSelectOption(currentImage.id, optionKey, !isCurrentlySelected);
   };
+  
+  if (images.length === 0) {
+    return null;
+  }
+  
+  return (
+    <section className="container mx-auto mb-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        <aside className="lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
+          <h3 className="font-bold mb-2 text-gray-800">Images</h3>
+          <ul className="space-y-4">
+            {images.map((image, index) => (
+              <li 
+                key={image.id} 
+                className={`cursor-pointer p-2 rounded transition ${selectedImageIndex === index ? 'bg-[#a3e4d7]/30 border-l-4 border-[#2a7b9b]' : 'hover:bg-gray-100'}`}
+                onClick={() => setSelectedImageIndex(index)}
+              >
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={image.originalPath} 
+                    alt={`Image ${index + 1}`} 
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                  <div>
+                    <p className="font-medium">Image {index + 1}</p>
+                    <p className="text-sm text-gray-500">
+                      {image.selectedOptions.size} of {maxSelectionsPerImage} selected
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </aside>
+        
+        <div className="lg:w-3/4 bg-white p-4 rounded-lg shadow-md">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-gray-800">AI Style Suggestions</h3>
+            <span className="text-gray-600">
+              {totalOptionsSelected} option{totalOptionsSelected !== 1 ? 's' : ''} selected
+            </span>
+          </div>
+          
+          {currentImage && (
+            <>
+              <div className="mb-4 p-3 bg-gray-50 rounded">
+                <p className="text-sm">
+                  Each selection costs 1 credit. You can select up to {maxSelectionsPerImage} options per image.
+                </p>
+                <p className="text-sm mt-1 font-medium">
+                  {currentImageSelectionsCount} of {maxSelectionsPerImage} selected for this image
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {currentImage.options && Object.entries(currentImage.options).map(([key, option]) => {
+                  const isSelected = currentImage.selectedOptions.has(key);
+                  return (
+                    <div 
+                      key={key}
+                      className={`border rounded-lg overflow-hidden cursor-pointer transition ${isSelected ? 'border-[#2a7b9b] ring-2 ring-[#2a7b9b]/30' : 'border-gray-200 hover:border-gray-300'}`}
+                      onClick={() => handleOptionClick(key)}
+                    >
+                      <div className="p-3">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium">{option.name}</h4>
+                          <div className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-[#2a7b9b] border-[#2a7b9b]' : 'border-gray-300'} flex items-center justify-center`}>
+                            {isSelected && <span className="text-white text-xs">✓</span>}
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+          
+          <button
+            className="mt-6 bg-[#2a7b9b] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#2a7b9b]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={totalOptionsSelected === 0 || isLoading}
+            onClick={onSubmitSelections}
+          >
+            {isLoading ? "Processing..." : "Enhance Selected Options"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
 
-  // Remove a file from the selection
-  const removeFile = (index: number) => {
-    // Revoke object URL to prevent memory leaks
-    URL.revokeObjectURL(previewUrls[index]);
-    
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
-  };
+// Results component
+type EnhancementResult = {
+  imageId: number;
+  optionKey: string;
+  optionName: string;
+  resultImage1Path: string;
+  resultImage2Path: string;
+};
 
-  // Clear all selected files
-  const clearFiles = () => {
-    // Revoke all object URLs
-    previewUrls.forEach(url => URL.revokeObjectURL(url));
-    
-    setSelectedFiles([]);
-    setPreviewUrls([]);
-    
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
+  if (results.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="container mx-auto bg-white p-8 rounded-lg shadow-md mb-16">
+      <h2 className="text-2xl font-bold mb-4 text-[#2a7b9b]">Your Enhanced Images</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {results.map((result, index) => (
+          <div key={index} className="border rounded-lg overflow-hidden">
+            <div className="p-3 bg-gray-50 border-b">
+              <h3 className="font-medium">{result.optionName}</h3>
+            </div>
+            <div className="p-4">
+              <div className="grid grid-cols-2 gap-2">
+                <a href={result.resultImage1Path} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src={result.resultImage1Path}
+                    alt={`Result ${index + 1} - Option 1`}
+                    className="w-full h-32 object-cover rounded hover:opacity-90 transition"
+                  />
+                </a>
+                <a href={result.resultImage2Path} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src={result.resultImage2Path}
+                    alt={`Result ${index + 1} - Option 2`}
+                    className="w-full h-32 object-cover rounded hover:opacity-90 transition"
+                  />
+                </a>
+              </div>
+              <div className="mt-3 text-center">
+                <a 
+                  href={result.resultImage1Path} 
+                  download
+                  className="text-[#2a7b9b] text-sm hover:underline"
+                >
+                  Download
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center">
+        <button className="bg-[#ff7b54] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#ff7b54]/90 transition">
+          Download All Images
+        </button>
+      </div>
+    </section>
+  );
+};
+
+// Intermediary results page
+const ProcessingSection = () => {
+  return (
+    <section className="container mx-auto text-center py-12">
+      <div className="animate-spin w-16 h-16 border-4 border-[#2a7b9b] border-t-transparent rounded-full mx-auto mb-6"></div>
+      <h2 className="text-2xl font-bold mb-2 text-[#2a7b9b]">Processing Your Images</h2>
+      <p className="text-gray-600">
+        We're applying the selected enhancements to your images. This may take a few moments...
+      </p>
+    </section>
+  );
+};
+
+// Main component
+export default function ProductEnhancementWebhook() {
+  const { toast } = useToast();
+  const [step, setStep] = useState<'upload' | 'selectStyles' | 'processing' | 'results'>('upload');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [industry, setIndustry] = useState<string>("");
+  const [enhancementId, setEnhancementId] = useState<number | null>(null);
+  const [enhancementImages, setEnhancementImages] = useState<ImageWithOptions[]>([]);
+  const [results, setResults] = useState<EnhancementResult[]>([]);
+  
+  // Mutations for uploading images and submitting selections
+  const uploadMutation = useMutation({
+    mutationFn: async ({ files, industry }: { files: File[], industry: string }) => {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append("images", file);
+      });
+      formData.append("industry", industry);
+      
+      const response = await apiRequest("POST", "/api/product-enhancement", formData, true);
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      if (data.id) {
+        setEnhancementId(data.id);
+        toast({
+          title: "Upload successful",
+          description: "Your images have been uploaded successfully. Waiting for enhancement options...",
+        });
+        setStep('selectStyles');
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "Failed to upload images. Please try again.",
+        variant: "destructive",
+      });
     }
+  });
+  
+  const selectionsMutation = useMutation({
+    mutationFn: async (selections: { imageId: number, optionKey: string }[]) => {
+      if (!enhancementId) throw new Error("Enhancement ID is missing");
+      
+      const response = await apiRequest(
+        "POST", 
+        `/api/product-enhancement/${enhancementId}/select`,
+        { selections }
+      );
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      if (data.results) {
+        setResults(data.results);
+        toast({
+          title: "Enhancement complete",
+          description: "Your images have been enhanced successfully.",
+        });
+        setStep('results');
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: "Enhancement failed",
+        description: error instanceof Error ? error.message : "Failed to enhance images. Please try again.",
+        variant: "destructive",
+      });
+      setStep('selectStyles');
+    }
+  });
+  
+  // Query to fetch enhancement data (images and options)
+  const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery({
+    queryKey: ['/api/product-enhancement', enhancementId],
+    queryFn: async () => {
+      if (!enhancementId) return null;
+      const response = await apiRequest("GET", `/api/product-enhancement/${enhancementId}`);
+      return await response.json();
+    },
+    enabled: !!enhancementId && step === 'selectStyles',
+    refetchInterval: (data) => {
+      // Poll every 3 seconds until options are available
+      if (data && data.status === 'completed') {
+        return false;
+      }
+      return 3000;
+    },
+  });
+  
+  // Update enhancement images when data changes
+  useEffect(() => {
+    if (enhancementData && enhancementData.images) {
+      const imagesWithOptions = enhancementData.images.map((img: any) => ({
+        id: img.id,
+        originalPath: img.originalImagePath,
+        options: img.options || {},
+        selectedOptions: new Set<string>()
+      }));
+      
+      setEnhancementImages(imagesWithOptions);
+    }
+  }, [enhancementData]);
+  
+  // Handle file selection
+  const handleImagesSelected = (files: File[]) => {
+    setSelectedFiles(files);
   };
-
+  
+  // Handle industry selection
+  const handleIndustryChange = (selectedIndustry: string) => {
+    setIndustry(selectedIndustry);
+  };
+  
   // Handle form submission
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    
+  const handleUpload = () => {
     if (selectedFiles.length === 0) {
       toast({
         title: "No files selected",
         description: "Please select at least one image to upload.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
     
-    if (!industry.trim()) {
+    if (!industry) {
       toast({
         title: "Industry required",
-        description: "Please enter your industry.",
-        variant: "destructive"
+        description: "Please select your industry before proceeding.",
+        variant: "destructive",
       });
       return;
     }
     
-    try {
-      setIsUploading(true);
-      
-      // Create form data
-      const formData = new FormData();
-      formData.append("industry", industry);
-      
-      // Append all selected files
-      selectedFiles.forEach(file => {
-        formData.append("images", file);
-      });
-      
-      // Send to API
-      const response = await fetch("/api/product-enhancement/start", {
-        method: "POST",
-        body: formData,
-        credentials: "include"
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error uploading images");
-      }
-      
-      const data = await response.json();
-      setCurrentEnhancement(data);
-      setActiveTab("options");
-      
-      // Start polling for processing status
-      pollEnhancementStatus(data.id);
-      
-      // Clear the form
-      clearFiles();
-      
-      toast({
-        title: "Upload successful",
-        description: "Your images are being processed.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Upload error",
-        description: error.message || "Error uploading images",
-        variant: "destructive"
-      });
-    } finally {
-      setIsUploading(false);
-    }
+    uploadMutation.mutate({ files: selectedFiles, industry });
   };
-
-  // Poll for enhancement status updates
-  const pollEnhancementStatus = async (enhancementId: number) => {
-    try {
-      const response = await apiRequest("GET", `/api/product-enhancement/${enhancementId}`);
-      const data = await response.json();
-      
-      setCurrentEnhancement(data);
-      
-      // If still processing, poll again after delay
-      if (data.status === "processing") {
-        setTimeout(() => pollEnhancementStatus(enhancementId), 3000);
-      }
-    } catch (error) {
-      console.error("Error polling enhancement status:", error);
-    }
-  };
-
-  // Toggle option selection
-  const toggleOption = (imageId: number, imageIndex: number, optionKey: string) => {
-    setSelectedOptions(prev => {
-      // Check if this option is already selected
-      const existingIndex = prev.findIndex(opt => 
-        opt.imageId === imageId && opt.optionKey === optionKey
-      );
-      
-      if (existingIndex >= 0) {
-        // Remove if already selected
-        return prev.filter((_, i) => i !== existingIndex);
-      } else {
-        // Add new selection
-        return [...prev, {imageId, imageIndex, optionKey}];
-      }
+  
+  // Handle option selection
+  const handleSelectOption = (imageId: number, optionKey: string, selected: boolean) => {
+    setEnhancementImages(prev => {
+      return prev.map(img => {
+        if (img.id === imageId) {
+          const newSelectedOptions = new Set(img.selectedOptions);
+          if (selected) {
+            newSelectedOptions.add(optionKey);
+          } else {
+            newSelectedOptions.delete(optionKey);
+          }
+          
+          return {
+            ...img,
+            selectedOptions: newSelectedOptions
+          };
+        }
+        return img;
+      });
     });
   };
-
-  // Submit the selected options
-  const submitSelections = async () => {
-    if (!currentEnhancement) return;
+  
+  // Handle selections submission
+  const handleSubmitSelections = () => {
+    const selections: { imageId: number, optionKey: string }[] = [];
     
-    if (selectedOptions.length === 0) {
+    enhancementImages.forEach(img => {
+      img.selectedOptions.forEach(optionKey => {
+        selections.push({
+          imageId: img.id,
+          optionKey
+        });
+      });
+    });
+    
+    if (selections.length === 0) {
       toast({
         title: "No options selected",
         description: "Please select at least one enhancement option.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Check if user has enough credits
-    if (userCredits && userCredits.paidCredits < selectedOptions.length) {
-      toast({
-        title: "Insufficient credits",
-        description: `You need ${selectedOptions.length} credits but only have ${userCredits.paidCredits}. Please purchase more credits.`,
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
     
-    try {
-      setIsSubmittingSelections(true);
-      
-      const selections = selectedOptions.map(option => ({
-        imageIndex: option.imageIndex,
-        optionKey: option.optionKey
-      }));
-      
-      const response = await apiRequest("POST", `/api/product-enhancement/${currentEnhancement.id}/select`, {
-        selections
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error submitting selections");
-      }
-      
-      const data = await response.json();
-      setEnhancementResults(data.results);
-      setActiveTab("results");
-      
-      // Update user's credits
-      if (userCredits) {
-        setUserCredits({
-          ...userCredits,
-          paidCredits: userCredits.paidCredits - selectedOptions.length
-        });
-      }
-      
-      toast({
-        title: "Selections submitted successfully",
-        description: "Your enhanced images are ready.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Submission error",
-        description: error.message || "Error submitting selections",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmittingSelections(false);
-    }
+    setStep('processing');
+    selectionsMutation.mutate(selections);
   };
-
+  
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+    <div className="min-h-screen bg-gray-50">
+      <AnnouncementBanner />
       
-      <main className="container mx-auto px-4 py-10 flex-grow">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8 text-center">Product Enhancement</h1>
+      <HeroSection />
+      
+      {step === 'upload' && (
+        <>
+          <UploadSection 
+            onImagesSelected={handleImagesSelected} 
+            isUploading={uploadMutation.isPending}
+          />
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="upload">1. Upload Images</TabsTrigger>
-              <TabsTrigger value="options" disabled={!currentEnhancement}>2. Select Options</TabsTrigger>
-              <TabsTrigger value="results" disabled={enhancementResults.length === 0}>3. View Results</TabsTrigger>
-            </TabsList>
+          <div className="container mx-auto mb-8">
+            <IndustrySelector 
+              onIndustryChange={handleIndustryChange}
+              disabled={uploadMutation.isPending}
+            />
             
-            <TabsContent value="upload" className="p-4 border rounded-lg mt-4">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="industry">Your Industry</Label>
-                  <Input 
-                    id="industry" 
-                    value={industry} 
-                    onChange={(e) => setIndustry(e.target.value)} 
-                    placeholder="Enter your industry (e.g., Fashion, Technology, Food)"
-                    className="mt-1"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="images">Upload Product Images (Max 5)</Label>
-                  <div 
-                    className="border-2 border-dashed rounded-lg p-8 mt-1 text-center cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-2 text-sm text-gray-600">Click to upload or drag and drop</p>
-                    <p className="text-xs text-gray-500">PNG, JPG, WEBP up to 10MB</p>
-                    <input
-                      type="file"
-                      id="images"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      multiple
-                      accept="image/jpeg,image/png,image/webp"
-                      className="hidden"
-                    />
-                  </div>
-                </div>
-                
-                {previewUrls.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-medium">Selected Images ({previewUrls.length}/5)</h3>
-                      <Button type="button" variant="outline" onClick={clearFiles}>Clear All</Button>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                      {previewUrls.map((url, index) => (
-                        <div key={index} className="relative group">
-                          <img 
-                            src={url} 
-                            alt={`Preview ${index + 1}`} 
-                            className="w-full h-32 object-cover rounded-lg"
-                          />
-                          <button 
-                            type="button"
-                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeFile(index)}
-                          >
-                            <XCircle size={16} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                <div className="flex justify-end pt-4">
-                  <Button type="submit" disabled={isUploading || selectedFiles.length === 0}>
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : "Submit Images"}
-                  </Button>
-                </div>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="options" className="p-4 border rounded-lg mt-4">
-              {currentEnhancement && (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold">Select Enhancement Options</h2>
-                    <div className="text-sm">
-                      <span className="font-medium">Available Credits:</span> {paidCredits}
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-600">
-                    Select the enhancement options you would like to apply to your images. 
-                    Each selection costs 1 credit.
-                  </p>
-                  
-                  {currentEnhancement.status === "processing" ? (
-                    <div className="text-center py-12">
-                      <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-                      <p className="mt-4 text-lg font-medium">Processing your images...</p>
-                      <p className="text-gray-500">This may take a minute or two.</p>
-                    </div>
-                  ) : currentEnhancement.status === "failed" ? (
-                    <div className="text-center py-12">
-                      <XCircle className="mx-auto h-12 w-12 text-red-500" />
-                      <p className="mt-4 text-lg font-medium">Enhancement failed</p>
-                      <p className="text-gray-500">There was an error processing your images. Please try again.</p>
-                      <Button 
-                        onClick={() => setActiveTab("upload")} 
-                        variant="outline" 
-                        className="mt-4"
-                      >
-                        Try Again
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="space-y-8">
-                        {currentEnhancement.images.map((image, imageIndex) => (
-                          <Card key={image.id} className="overflow-hidden">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div className="p-4">
-                                <h3 className="text-lg font-medium mb-2">Original Image</h3>
-                                <img 
-                                  src={image.originalImageUrl} 
-                                  alt="Original product" 
-                                  className="w-full h-auto rounded-md"
-                                />
-                              </div>
-                              
-                              <div className="p-4 md:col-span-2 bg-gray-50">
-                                <h3 className="text-lg font-medium mb-2">Enhancement Options</h3>
-                                
-                                {image.options && Object.keys(image.options).length > 0 ? (
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {Object.entries(image.options).map(([key, option]) => {
-                                      const isSelected = selectedOptions.some(
-                                        opt => opt.imageId === image.id && opt.optionKey === key
-                                      );
-                                      
-                                      return (
-                                        <div 
-                                          key={key}
-                                          className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                                            isSelected 
-                                              ? 'border-primary bg-primary/5' 
-                                              : 'border-gray-200 hover:bg-gray-100'
-                                          }`}
-                                          onClick={() => toggleOption(image.id, imageIndex, key)}
-                                        >
-                                          <div className="flex justify-between">
-                                            <h4 className="font-medium">{option.name}</h4>
-                                            {isSelected && (
-                                              <CheckCircle2 className="h-5 w-5 text-primary" />
-                                            )}
-                                          </div>
-                                          <p className="text-sm text-gray-600 mt-1">
-                                            {option.description}
-                                          </p>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                ) : (
-                                  <p className="text-gray-500">No enhancement options available for this image.</p>
-                                )}
-                              </div>
-                            </div>
-                          </Card>
-                        ))}
-                      </div>
-                      
-                      <div className="flex justify-between items-center pt-6">
-                        <div>
-                          <p className="text-sm font-medium">
-                            {selectedOptions.length} options selected 
-                            ({selectedOptions.length} {selectedOptions.length === 1 ? 'credit' : 'credits'})
-                          </p>
-                        </div>
-                        <Button 
-                          onClick={submitSelections} 
-                          disabled={isSubmittingSelections || selectedOptions.length === 0}
-                        >
-                          {isSubmittingSelections ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Processing...
-                            </>
-                          ) : "Generate Enhanced Images"}
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="results" className="p-4 border rounded-lg mt-4">
-              {enhancementResults.length > 0 ? (
-                <div className="space-y-8">
-                  <h2 className="text-xl font-bold">Your Enhanced Images</h2>
-                  
-                  <div className="grid grid-cols-1 gap-8">
-                    {enhancementResults.map((result, index) => (
-                      <Card key={index} className="overflow-hidden">
-                        <CardContent className="p-6">
-                          <h3 className="text-lg font-medium mb-4">{
-                            currentEnhancement?.images.find(img => img.id === result.imageId)?.options?.[result.optionKey]?.name || 
-                            `Enhancement ${index + 1}`
-                          }</h3>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                              <img 
-                                src={result.resultImage1Url} 
-                                alt="Enhanced image 1" 
-                                className="w-full h-auto rounded-lg"
-                              />
-                              <p className="text-sm text-center mt-2 text-gray-600">Version 1</p>
-                            </div>
-                            <div>
-                              <img 
-                                src={result.resultImage2Url} 
-                                alt="Enhanced image 2" 
-                                className="w-full h-auto rounded-lg"
-                              />
-                              <p className="text-sm text-center mt-2 text-gray-600">Version 2</p>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 flex justify-center space-x-4">
-                            <a 
-                              href={result.resultImage1Url} 
-                              download 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-primary hover:text-primary/80 text-sm font-medium"
-                            >
-                              Download Version 1
-                            </a>
-                            <a 
-                              href={result.resultImage2Url} 
-                              download 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-primary hover:text-primary/80 text-sm font-medium"
-                            >
-                              Download Version 2
-                            </a>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-center pt-4">
-                    <Button onClick={() => setActiveTab("upload")}>
-                      Start New Enhancement
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-lg font-medium">No results yet</p>
-                  <p className="text-gray-500">Select and submit enhancement options to see results here.</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
+            <div className="flex justify-center">
+              <button
+                onClick={handleUpload}
+                disabled={selectedFiles.length === 0 || !industry || uploadMutation.isPending}
+                className="bg-[#2a7b9b] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#2a7b9b]/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {uploadMutation.isPending ? "Uploading..." : "Continue"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
       
-      <Footer />
+      {step === 'selectStyles' && (
+        <StyleSelectionSection
+          images={enhancementImages}
+          onSelectOption={handleSelectOption}
+          onSubmitSelections={handleSubmitSelections}
+          isLoading={selectionsMutation.isPending || isLoadingEnhancement}
+        />
+      )}
+      
+      {step === 'processing' && <ProcessingSection />}
+      
+      {step === 'results' && <ResultsSection results={results} />}
     </div>
   );
 }

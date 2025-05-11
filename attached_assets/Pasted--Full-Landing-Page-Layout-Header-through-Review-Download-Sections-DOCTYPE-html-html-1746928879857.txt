@@ -1,0 +1,120 @@
+<!-- Full Landing Page Layout: Header through Review & Download Sections -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Product Image Enhancer</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2a7b9b',
+            secondary: '#ff7b54',
+            dark: '#333333',
+            alt: '#a3e4d7',
+          }
+        },
+        fontFamily: {
+          heading: ['Bungee', 'cursive'],
+          body: ['Rubik', 'sans-serif'],
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-dark font-body">
+  <!-- Announcement Banner -->
+  <div class="bg-primary text-white p-4 text-center font-medium">
+    New: Transform your product photos with AI in seconds!
+    <button class="underline ml-2">Try it now</button>
+    <button class="ml-4 font-bold focus:outline-none" aria-label="Dismiss">✕</button>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white shadow-lg">
+    <div class="container mx-auto flex items-center justify-between p-4">
+      <a href="#" class="text-2xl font-heading tracking-tight text-primary">BrandLogo</a>
+      <nav class="space-x-6 text-dark font-medium">
+        <a href="#features" class="hover:text-primary transition">Features</a>
+        <a href="#how-it-works" class="hover:text-primary transition">How it Works</a>
+        <a href="#pricing" class="hover:text-primary transition">Pricing</a>
+      </nav>
+      <a href="#upload" class="bg-secondary text-white px-4 py-2 rounded-lg shadow-sm hover:bg-secondary/90 transition font-medium">
+        Get Started
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="container mx-auto text-center py-20">
+    <h1 class="text-5xl font-heading leading-tight mb-6 text-primary">
+      Turn Ordinary Photos into Scroll-Stopping Product Shots
+    </h1>
+    <p class="text-lg text-dark mb-8 max-w-2xl mx-auto font-body">
+      Upload your images, choose from curated AI styles, and download stunning, high-converting visuals in moments—no designer needed.
+    </p>
+    <a href="#upload" class="bg-primary text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-primary/90 transition">
+      Enhance Your First Image →
+    </a>
+  </section>
+
+  <!-- Quick Upload CTA -->
+  <section class="bg-white py-12">
+    <div class="container mx-auto text-center">
+      <div class="inline-block border-2 border-dashed border-alt rounded-lg p-8 hover:border-primary transition">
+        <p class="mb-4 font-medium text-dark">Drag & Drop Your Photo Here</p>
+        <button class="bg-alt px-4 py-2 rounded font-medium hover:bg-alt/90 transition">
+          Browse Files
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upload Section -->
+  <section id="upload" class="container mx-auto bg-white p-8 rounded-lg shadow-md mb-8">
+    <h2 class="text-2xl font-heading mb-2 text-primary">Upload Your Product Images</h2>
+    <p class="text-sm text-dark mb-4 font-body">Supported formats: JPG, PNG, WEBP. Max 10MB per image.</p>
+    <div class="border-2 border-dashed border-alt rounded-lg p-12 text-center hover:border-primary transition">
+      <p class="mb-4">Drag & Drop Images Here</p>
+      <button class="bg-alt text-dark px-4 py-2 rounded font-medium hover:bg-alt/90 transition">Browse Files</button>
+    </div>
+    <div class="mt-6 grid grid-cols-3 gap-4" id="upload-thumbnails"></div>
+  </section>
+
+  <!-- Style Selection Section -->
+  <section class="container mx-auto mb-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <aside class="lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
+        <h3 class="font-heading mb-2 text-dark">Images</h3>
+        <ul id="image-list" class="space-y-4 text-body"></ul>
+      </aside>
+      <div class="lg:w-3/4 bg-white p-4 rounded-lg shadow-md">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading text-dark">AI Style Suggestions</h3>
+          <span id="style-counter" class="font-body">0 of 5 selected</span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="style-gallery"></div>
+        <button class="mt-6 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition" disabled id="generate-btn">
+          Enhance Image(s)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Review & Comparison Section -->
+  <section class="container mx-auto bg-white p-8 rounded-lg shadow-md mb-16">
+    <h2 class="text-2xl font-heading mb-4 text-primary">Review Your Enhanced Images</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6" id="generated-gallery"></div>
+    <button class="bg-secondary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary/90 transition" disabled id="download-btn">
+      Download Selected Images
+    </button>
+  </section>
+</body>
+</html>
