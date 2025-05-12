@@ -5,6 +5,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import axios from "axios";
+import { v4 as uuid } from "uuid";
 import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEnhancementResults } from "./mock-webhook-data";
 
 // Environment variable to control mock mode - will use mock data if true, real webhook if false
