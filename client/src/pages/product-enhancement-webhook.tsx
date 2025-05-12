@@ -963,6 +963,7 @@ export default function ProductEnhancementWebhook() {
   const [enhancementId, setEnhancementId] = useState<number | null>(null);
   const [enhancementImages, setEnhancementImages] = useState<ImageWithOptions[]>([]);
   const [results, setResults] = useState<EnhancementResult[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // Mutations for uploading images and submitting selections
   const uploadMutation = useMutation({
@@ -1038,12 +1039,19 @@ export default function ProductEnhancementWebhook() {
           queryClient.invalidateQueries({ queryKey: ['/api/product-enhancement', data.id] });
         } else if (status === 'error') {
           console.error("Server reported error:", data.message);
+          const errorMsg = data.message || "The enhancement service reported an error. Please try again later.";
+          
+          // Set error message to display in ProcessingSection
+          setErrorMessage(errorMsg);
+          
           toast({
             title: "Enhancement Error",
-            description: data.message || "The enhancement service reported an error. Please try again later.",
+            description: errorMsg,
             variant: "destructive",
           });
-          setStep('upload'); // Go back to upload on error
+          
+          // Set to processing step to show the error view
+          setStep('processing');
         } else {
           console.log("Options not ready yet, staying in processing state");
           // We're already in processing state
@@ -1216,12 +1224,18 @@ export default function ProductEnhancementWebhook() {
       } else if (enhancementData.status === 'error') {
         // Handle server error state
         console.error("Server reported webhook error:", enhancementData.message);
+        const errorMsg = enhancementData.message || "The webhook service reported an error. Please try again.";
+        
+        // Set error message to display in the ProcessingSection
+        setErrorMessage(errorMsg);
+        
         toast({
           title: "Enhancement Error",
-          description: enhancementData.message || "The webhook service reported an error. Please try again.",
+          description: errorMsg,
           variant: "destructive",
         });
-        setStep('upload'); // Go back to upload on error
+        
+        // Stay in processing step to show the error message display
       } else if (step === 'selectStyles' && enhancementData.status === 'pending') {
         // If we don't have options yet, go to processing step
         console.log("No options yet, moving to processing step");
@@ -1394,7 +1408,7 @@ export default function ProductEnhancementWebhook() {
       {/* Processing section takes full page */}
       {step === 'processing' && (
         <div className="container mx-auto py-16 px-4">
-          <ProcessingSection />
+          <ProcessingSection errorMessage={errorMessage} />
         </div>
       )}
       
