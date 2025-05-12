@@ -56,7 +56,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Direct approach bypassing storage layer for testing
       res.status(200).json({ 
         message: "Product enhancement started successfully", 
-        enhancementId: 1,
+        id: 1,  // Changed from enhancementId to id to match client expectations
         imageCount: uploadedImages.length,
         industry: req.body.industry,
         status: "pending"
