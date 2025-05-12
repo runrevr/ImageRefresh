@@ -7,7 +7,9 @@
  * Generates mock enhancement options for an image based on the industry
  */
 export function generateMockEnhancementOptions(industry?: string) {
-  // Base options available for all industries
+  console.log(`\n======= GENERATING EXACTLY 5 OPTIONS FOR INDUSTRY: "${industry}" =======`);
+  
+  // Base options available for all industries (always returning exactly 5)
   const baseOptions = {
     "lighting_enhancement": {
       name: "Professional Lighting",
@@ -182,17 +184,66 @@ export function generateMockEnhancementOptions(industry?: string) {
     if (hairCareVariations.some(v => normalizedIndustry.includes(v) || v.includes(normalizedIndustry))) {
       console.log(`Matched industry as hair care product: "${normalizedIndustry}" using pattern matching`);
       
-      // Log the options being returned
-      const combinedOptions = { ...baseOptions, ...industryOptions["hair care"] };
-      console.log(`Returning ${Object.keys(combinedOptions).length} combined options: ${Object.keys(combinedOptions).join(", ")}`);
+      // For hair care, create exactly 5 specialized options
+      const hairCareOptions = {
+        "natural_ingredients": {
+          name: "Natural Ingredients Showcase",
+          description: "Highlight the natural ingredients with botanical elements around your product"
+        },
+        "bathroom_context": {
+          name: "Bathroom Context",
+          description: "Show your hair care products in a modern, elegant bathroom setting"
+        },
+        "results_visualization": {
+          name: "Results Visualization",
+          description: "Display the expected hair results from using your product"
+        },
+        "moisturizing_effect": {
+          name: "Moisturizing Effect",
+          description: "Visualize the moisturizing and nourishing effects with water elements"
+        },
+        "premium_packaging": {
+          name: "Premium Packaging Showcase",
+          description: "Highlight your product's premium packaging with luxurious materials and textures"
+        }
+      };
       
-      return combinedOptions;
+      console.log(`Created exactly 5 hair care specific options: ${Object.keys(hairCareOptions).join(", ")}`);
+      
+      return hairCareOptions;
     }
     
     // Check if we have options for this industry
     if (industryOptions[normalizedIndustry]) {
       console.log(`Found industry options for: ${normalizedIndustry}`);
-      return { ...baseOptions, ...industryOptions[normalizedIndustry] };
+      
+      // Extract exactly 5 options from the combined set
+      const specificOptions = industryOptions[normalizedIndustry];
+      
+      // If we have at least 5 specific options, return them
+      if (Object.keys(specificOptions).length >= 5) {
+        // Take the first 5 options
+        const fiveOptions: Record<string, {name: string, description: string}> = {};
+        const keys = Object.keys(specificOptions);
+        for (let i = 0; i < 5 && i < keys.length; i++) {
+          const key = keys[i];
+          fiveOptions[key] = specificOptions[key];
+        }
+        console.log(`Returning exactly 5 industry-specific options: ${Object.keys(fiveOptions).join(", ")}`);
+        return fiveOptions;
+      }
+      
+      // If we don't have 5 specific options, fill in with base options
+      const combinedOptions = { ...baseOptions, ...specificOptions };
+      const fiveOptions: Record<string, {name: string, description: string}> = {};
+      const keys = Object.keys(combinedOptions);
+      for (let i = 0; i < 5 && i < keys.length; i++) {
+        const key = keys[i];
+        // Use type assertion to avoid TypeScript error
+        fiveOptions[key] = combinedOptions[key as keyof typeof combinedOptions];
+      }
+      console.log(`Returning exactly 5 combined options: ${Object.keys(fiveOptions).join(", ")}`);
+      return fiveOptions;
     } else {
       console.log(`No industry options found for: ${normalizedIndustry}`);
       
@@ -200,14 +251,32 @@ export function generateMockEnhancementOptions(industry?: string) {
       for (const key of Object.keys(industryOptions)) {
         if (normalizedIndustry.includes(key) || key.includes(normalizedIndustry)) {
           console.log(`Found partial industry match: "${key}" for "${normalizedIndustry}"`);
-          return { ...baseOptions, ...industryOptions[key] };
+          const specificOptions = industryOptions[key];
+          
+          // Take the first 5 options
+          const fiveOptions: Record<string, {name: string, description: string}> = {};
+          const keys = Object.keys(specificOptions);
+          for (let i = 0; i < 5 && i < keys.length; i++) {
+            const key = keys[i];
+            fiveOptions[key] = specificOptions[key];
+          }
+          console.log(`Returning exactly 5 partially matched options: ${Object.keys(fiveOptions).join(", ")}`);
+          return fiveOptions;
         }
       }
     }
   }
   
-  // Return base options if no industry match
-  return baseOptions;
+  // Return exactly 5 base options if no industry match
+  const fiveOptions: Record<string, {name: string, description: string}> = {};
+  const keys = Object.keys(baseOptions);
+  for (let i = 0; i < 5 && i < keys.length; i++) {
+    const key = keys[i];
+    // Type assertion to avoid TypeScript error
+    fiveOptions[key] = baseOptions[key as keyof typeof baseOptions];
+  }
+  console.log(`Returning exactly 5 default options: ${Object.keys(fiveOptions).join(", ")}`);
+  return fiveOptions;
 }
 
 /**
