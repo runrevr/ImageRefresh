@@ -865,14 +865,40 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
 };
 
 // Processing section (while waiting for enhancement results)
-const ProcessingSection = () => {
+const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) => {
   // Status steps for the multi-step progress indicator
   const steps = [
     "Analyzing Image....",
-    "Applying Prompt......",
-    "Texting Magic Artists.....",
-    "Making Magic....."
+    "Connecting to Enhancement Service......",
+    "Processing Enhancement Options.....",
+    "Waiting for Results....."
   ];
+  
+  // If there's an error, show error state instead
+  if (errorMessage) {
+    return (
+      <section className="container mx-auto text-center py-12">
+        <div className="mx-auto max-w-lg bg-white border rounded-lg shadow-md p-8">
+          <div className="text-red-500 mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold mb-4 text-red-600">Enhancement Error</h2>
+          <p className="mb-6 text-gray-700">{errorMessage}</p>
+          <p className="text-gray-600 mb-6">
+            The webhook service encountered an issue. Please try again with different images or check back later.
+          </p>
+          <button 
+            className="bg-primary-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-700 transition" 
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </button>
+        </div>
+      </section>
+    );
+  }
   
   // Using useState to keep track of which step is active
   const [currentStep, setCurrentStep] = useState(0);
