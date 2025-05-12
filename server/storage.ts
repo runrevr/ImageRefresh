@@ -497,13 +497,24 @@ export class DatabaseStorage implements IStorage {
     return enhancement;
   }
 
-  async getProductEnhancementByWebhookId(webhookId: string): Promise<ProductEnhancement | undefined> {
-    const [enhancement] = await db
-      .select()
-      .from(productEnhancements)
-      .where(eq(productEnhancements.webhookId, webhookId));
-
-    return enhancement;
+  // Get product enhancement by webhook request ID
+  // Uses the webhook_request_id column as defined in schema.ts
+  async getProductEnhancementByWebhookId(webhookRequestId: string): Promise<ProductEnhancement | undefined> {
+    try {
+      const results = await db
+        .select()
+        .from(productEnhancements)
+        .where(eq(productEnhancements.webhookId, webhookRequestId))
+        .limit(1);
+        
+      if (results && results.length > 0) {
+        return results[0];
+      }
+      return undefined;
+    } catch (error) {
+      console.error("Error getting enhancement by webhook ID:", error);
+      return undefined;
+    }
   }
 
   async updateProductEnhancementStatus(
