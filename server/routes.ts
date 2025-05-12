@@ -100,6 +100,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get the enhancement images
       const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
       
+      console.log(`\n\n====================== PRODUCT ENHANCEMENT DATA ======================`);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      console.log(`Enhancement ID: ${enhancementId}`);
+      console.log(`Industry: "${enhancement.industry}"`);
+      console.log(`Status: ${enhancement.status}`);
+      console.log(`Found ${enhancementImages.length} images for this enhancement`);
+      
       // Prepare the response
       const response = {
         id: enhancement.id,

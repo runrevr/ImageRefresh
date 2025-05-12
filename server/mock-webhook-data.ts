@@ -177,9 +177,16 @@ export function generateMockEnhancementOptions(industry?: string) {
     
     // Special handling for "hair care" variations
     const hairCareVariations = ["hair care", "haircare", "hair", "hair products", "shampoo"];
-    if (hairCareVariations.some(v => normalizedIndustry.includes(v))) {
-      console.log(`Matched industry as hair care product: "${normalizedIndustry}"`);
-      return { ...baseOptions, ...industryOptions["hair care"] };
+    
+    // Check if the normalized industry contains any hair care related keywords
+    if (hairCareVariations.some(v => normalizedIndustry.includes(v) || v.includes(normalizedIndustry))) {
+      console.log(`Matched industry as hair care product: "${normalizedIndustry}" using pattern matching`);
+      
+      // Log the options being returned
+      const combinedOptions = { ...baseOptions, ...industryOptions["hair care"] };
+      console.log(`Returning ${Object.keys(combinedOptions).length} combined options: ${Object.keys(combinedOptions).join(", ")}`);
+      
+      return combinedOptions;
     }
     
     // Check if we have options for this industry
