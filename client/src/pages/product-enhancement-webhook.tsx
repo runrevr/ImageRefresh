@@ -1073,10 +1073,25 @@ export default function ProductEnhancementWebhook() {
     queryKey: ['/api/product-enhancement', enhancementId],
     queryFn: async () => {
       if (!enhancementId) return null;
-      const response = await apiRequest("GET", `/api/product-enhancement/${enhancementId}`);
-      return await response.json();
+      console.log(`Fetching data for enhancement ID ${enhancementId}`);
+      
+      // Try to get options specifically first
+      try {
+        console.log(`Trying options endpoint first...`);
+        const optionsResponse = await apiRequest("GET", `/api/product-enhancement/${enhancementId}/options`);
+        const optionsData = await optionsResponse.json();
+        console.log("Options data:", optionsData);
+        return optionsData;
+      } catch (optionsError) {
+        console.error("Error fetching options:", optionsError);
+        
+        // Fall back to the regular endpoint
+        console.log("Falling back to regular endpoint");
+        const response = await apiRequest("GET", `/api/product-enhancement/${enhancementId}`);
+        return await response.json();
+      }
     },
-    enabled: !!enhancementId && step === 'selectStyles',
+    enabled: !!enhancementId && (step === 'selectStyles' || step === 'processing'),
     // Poll every 3 seconds if not completed
     refetchInterval: 3000,
   });
@@ -1095,7 +1110,7 @@ export default function ProductEnhancementWebhook() {
     
     if (enhancementData && 'images' in enhancementData && Array.isArray(enhancementData.images)) {
       // Check if any image has options ready
-      const hasOptions = enhancementData.images.some(img => img.options && Object.keys(img.options).length > 0);
+      const hasOptions = enhancementData.images.some((img: any) => img.options && Object.keys(img.options).length > 0);
       console.log("Has options:", hasOptions);
       
       if (hasOptions) {
@@ -1118,8 +1133,14 @@ export default function ProductEnhancementWebhook() {
         // If we don't have options yet, go to processing step
         setStep('processing');
       }
+    } else if (enhancementData && enhancementId) {
+      // If we have data but no images array, try to fetch options directly
+      console.log("No images array found in response, trying options endpoint directly");
+      
+      // This will trigger the query to refresh with the options endpoint
+      queryClient.invalidateQueries({ queryKey: ['/api/product-enhancement', enhancementId] });
     }
-  }, [enhancementData, step]);
+  }, [enhancementData, step, enhancementId]);
   
   // Handle file selection
   const handleImagesSelected = (files: File[]) => {
