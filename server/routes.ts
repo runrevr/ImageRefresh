@@ -391,32 +391,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get the webhook request ID from the database or generate a new one
       const webhookRequestId = enhancement.webhookId || `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       
-      // Debug print industry options
+      // Debug print industry info
       if (enhancement && enhancement.industry) {
         console.log(`Industry from enhancement: "${enhancement.industry}"`);
-        const options = generateMockEnhancementOptions(enhancement.industry);
-        console.log(`Generated options for "${enhancement.industry}":`, 
-          JSON.stringify(options, null, 2));
         
-        // Update enhancement status to options_ready if it's still pending
+        // We won't generate mock options here - we'll only use what comes from the webhook
         if (enhancement.status === 'pending') {
-          console.log(`Updating enhancement ${enhancementId} status to options_ready`);
-          await storage.updateProductEnhancementStatus(enhancementId, "options_ready", webhookRequestId);
+          console.log(`Enhancement ${enhancementId} is still pending. Waiting for webhook data.`);
           
-          // Get all images for this enhancement
-          const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
-          console.log(`Found ${enhancementImages.length} images for enhancement ${enhancementId}`);
-          
-          // Update options for each image
-          for (const image of enhancementImages) {
-            // Since updateImageOptions doesn't exist, let's find another way
-            // We'll use a different approach to save the options
-            const mockOptions = generateMockEnhancementOptions(enhancement.industry);
-            console.log(`Generated ${Object.keys(mockOptions).length} options for image ${image.id}`);
-            
-            // For now, let's just log that we'd save these
-            console.log(`Would save options for image ${image.id}:`, JSON.stringify(mockOptions));
-          }
+          // Don't automatically mark as ready or generate mock options
+          // Only the webhook should provide options
         }
       }
       
@@ -426,30 +410,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Fetching options for enhancement ID ${enhancementId} (industry: ${industry})`);
       
       if (USE_MOCK_WEBHOOK) {
-        // Using mock data
-        await simulateProcessingDelay(1000, 2000); // Simulate webhook processing time
-        
-        // Get the actual images for this enhancement
-        const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
-        console.log(`Found ${enhancementImages.length} images for enhancement ${enhancementId}`);
-        
-        // Generate mock responses for each actual image
-        const mockResponse = {
+        console.log("MOCK WEBHOOK DISABLED - Using real webhook only");
+        // Return empty response since we're not using mock webhook anymore
+        res.status(200).json({
           id: enhancementId,
-          status: "options_ready",
-          images: enhancementImages.map((image, index) => ({
-            id: image.id,
-            originalUrl: image.originalImagePath,
-            options: (() => {
-              console.log(`Generating options for image ${image.id}, industry: "${industry}"`);
-              const options = generateMockEnhancementOptions(industry);
-              console.log(`Generated ${Object.keys(options).length} options:`, JSON.stringify(options, null, 2));
-              return options;
-            })()
-          }))
-        };
-        
-        res.status(200).json(mockResponse);
+          status: "pending",
+          message: "Please use real webhook for enhancement options"
+        });
       } else {
         try {
           // For real webhook integration

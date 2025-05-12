@@ -1135,27 +1135,53 @@ export default function ProductEnhancementWebhook() {
     
     if (enhancementData && 'images' in enhancementData && Array.isArray(enhancementData.images)) {
       // Check if any image has options ready
-      const hasOptions = enhancementData.images.some((img: any) => img.options && Object.keys(img.options).length > 0);
+      const hasOptions = enhancementData.images.some((img: any) => {
+        console.log("Image data:", img);
+        return img.options && Object.keys(img.options).length > 0;
+      });
+      
       console.log("Has options:", hasOptions);
       
       if (hasOptions) {
-        const imagesWithOptions = enhancementData.images.map((img: any) => ({
-          id: img.id,
-          // Handle both property naming conventions
-          originalPath: img.originalImagePath || img.originalUrl,
-          options: img.options || {},
-          selectedOptions: new Set<string>()
-        }));
+        // Create proper image objects with options
+        const imagesWithOptions = enhancementData.images.map((img: any) => {
+          // Process the options to extract key and proper structure
+          const processedOptions: Record<string, EnhancementOption> = {};
+          
+          // Check if options exist and are an object
+          if (img.options && typeof img.options === 'object') {
+            Object.entries(img.options).forEach(([key, value]) => {
+              const option = value as any;
+              processedOptions[key] = {
+                key,
+                name: option.name || key,
+                description: option.description || ""
+              };
+            });
+          }
+          
+          console.log(`Processed options for image ${img.id}:`, processedOptions);
+          
+          return {
+            id: img.id,
+            // Handle both property naming conventions
+            originalPath: img.originalImagePath || img.originalUrl,
+            options: processedOptions,
+            selectedOptions: new Set<string>()
+          };
+        });
         
         console.log("Setting enhancement images:", imagesWithOptions);
         setEnhancementImages(imagesWithOptions);
         
         // If we're in processing step, move to select styles step once options are ready
         if (step === 'processing' && enhancementData.status === 'options_ready') {
+          console.log("Moving to selectStyles step");
           setStep('selectStyles');
         }
       } else if (step === 'selectStyles' && enhancementData.status === 'pending') {
         // If we don't have options yet, go to processing step
+        console.log("No options yet, moving to processing step");
         setStep('processing');
       }
     } else if (enhancementData && enhancementId) {
