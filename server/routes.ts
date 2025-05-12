@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEnhancementResults } from "./mock-webhook-data";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create uploads directory if it doesn't exist
@@ -65,6 +66,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error in product enhancement start:", error);
       res.status(500).json({ 
         message: "Error starting product enhancement", 
+        error: error.message 
+      });
+    }
+  });
+
+  // Get enhancement options after upload
+  app.get("/api/product-enhancement/:id/options", async (req, res) => {
+    try {
+      const enhancementId = parseInt(req.params.id);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+
+      // For now, we just mock the response with test data
+      await simulateProcessingDelay(1000, 2000); // Simulate webhook processing time
+      
+      // Let's use the industry from the job - but in our case just mock it
+      const industry = "decor"; // This would come from the database in a full implementation
+      
+      // Generate 5 mock images with options
+      const mockResponse = {
+        id: enhancementId,
+        status: "options_ready",
+        images: Array(1).fill(0).map((_, index) => ({
+          id: index + 1,
+          originalUrl: `/uploads/sample-image-${index + 1}.jpg`,
+          options: generateMockEnhancementOptions(industry)
+        }))
+      };
+      
+      res.status(200).json(mockResponse);
+    } catch (error: any) {
+      console.error("Error getting enhancement options:", error);
+      res.status(500).json({ 
+        message: "Error retrieving enhancement options", 
+        error: error.message 
+      });
+    }
+  });
+  
+  // Submit selected enhancement options
+  app.post("/api/product-enhancement/:id/select", async (req, res) => {
+    try {
+      const enhancementId = parseInt(req.params.id);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+      
+      const { selections } = req.body;
+      if (!selections || !Array.isArray(selections) || selections.length === 0) {
+        return res.status(400).json({ message: "No enhancement options selected" });
+      }
+      
+      // For demo purposes, just accept the selections and return a success response
+      const mockResponse = {
+        id: enhancementId,
+        status: "processing_selections",
+        message: "Enhancement selections are being processed",
+        selectionCount: selections.length
+      };
+      
+      res.status(200).json(mockResponse);
+    } catch (error: any) {
+      console.error("Error processing selections:", error);
+      res.status(500).json({ 
+        message: "Error processing enhancement selections", 
+        error: error.message 
+      });
+    }
+  });
+  
+  // Get enhancement results
+  app.get("/api/product-enhancement/:id/results", async (req, res) => {
+    try {
+      const enhancementId = parseInt(req.params.id);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+      
+      // Simulate processing delay
+      await simulateProcessingDelay(1500, 3000);
+      
+      // Mock results
+      const mockResults = {
+        id: enhancementId,
+        status: "completed",
+        message: "Enhancement processing completed",
+        selections: Array(2).fill(0).map((_, index) => ({
+          id: index + 1,
+          imageId: 1,
+          option: Object.keys(generateMockEnhancementOptions())[index],
+          resultImage1Url: `/uploads/result-${index + 1}-1.jpg`,
+          resultImage2Url: `/uploads/result-${index + 1}-2.jpg`
+        }))
+      };
+      
+      res.status(200).json(mockResults);
+    } catch (error: any) {
+      console.error("Error getting enhancement results:", error);
+      res.status(500).json({ 
+        message: "Error retrieving enhancement results", 
         error: error.message 
       });
     }
