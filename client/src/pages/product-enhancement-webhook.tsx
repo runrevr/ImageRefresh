@@ -302,11 +302,33 @@ const DemoSection = ({
             <h3 className="text-xl font-bold mb-3 text-gray-700">Get Amazing Results</h3>
             <p className="mb-6 text-gray-600">Choose from AI-suggested enhancements tailored to your products.</p>
             <button 
-              onClick={onStartEnhancement}
+              onClick={() => {
+                console.log("Start Enhancement button clicked");
+                if (uploadedFiles.length === 0) {
+                  console.log("No files selected");
+                }
+                if (isUploading) {
+                  console.log("Upload already in progress");
+                }
+                onStartEnhancement && onStartEnhancement();
+              }}
               disabled={uploadedFiles.length === 0 || isUploading}
-              className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
             >
-              Start Enhancement
+              <span className="relative z-10 flex items-center justify-center">
+                {isUploading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  <>Start Enhancement</>
+                )}
+              </span>
+              <span className="absolute inset-0 bg-white/20 transform translate-y-full hover:translate-y-0 transition-transform duration-300"></span>
             </button>
           </div>
         </div>
@@ -911,16 +933,29 @@ export default function ProductEnhancementWebhook() {
   // Mutations for uploading images and submitting selections
   const uploadMutation = useMutation({
     mutationFn: async ({ files, industry }: { files: File[], industry: string }) => {
+      console.log("Starting upload mutation", { fileCount: files.length, industry });
+      
       const formData = new FormData();
       files.forEach((file) => {
+        console.log(`Adding file: ${file.name} (${file.size} bytes)`);
         formData.append("images", file);
       });
       formData.append("industry", industry);
       
-      const response = await apiRequest("POST", "/api/product-enhancement", formData, true);
-      return await response.json();
+      try {
+        console.log("Making API request to /api/product-enhancement/start");
+        const response = await apiRequest("POST", "/api/product-enhancement/start", formData, true);
+        console.log("API response received", response.status);
+        const data = await response.json();
+        console.log("Response data:", data);
+        return data;
+      } catch (error) {
+        console.error("Error in uploadMutation:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
+      console.log("Upload mutation success", data);
       if (data.id) {
         setEnhancementId(data.id);
         toast({
@@ -928,9 +963,17 @@ export default function ProductEnhancementWebhook() {
           description: "Your images have been uploaded successfully. Waiting for enhancement options...",
         });
         setStep('selectStyles');
+      } else {
+        console.error("Missing ID in response data:", data);
+        toast({
+          title: "Upload error",
+          description: "Received unexpected response. Please try again.",
+          variant: "destructive",
+        });
       }
     },
     onError: (error) => {
+      console.error("Upload mutation error:", error);
       toast({
         title: "Upload failed",
         description: error instanceof Error ? error.message : "Failed to upload images. Please try again.",
@@ -1017,6 +1060,8 @@ export default function ProductEnhancementWebhook() {
   
   // Handle form submission
   const handleUpload = () => {
+    console.log("handleUpload called", { selectedFiles, industry });
+    
     if (selectedFiles.length === 0) {
       toast({
         title: "No files selected",
@@ -1035,7 +1080,17 @@ export default function ProductEnhancementWebhook() {
       return;
     }
     
-    uploadMutation.mutate({ files: selectedFiles, industry });
+    try {
+      console.log("Starting upload mutation");
+      uploadMutation.mutate({ files: selectedFiles, industry });
+    } catch (error) {
+      console.error("Error in upload mutation:", error);
+      toast({
+        title: "Upload Error",
+        description: "An error occurred during upload. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   // Handle option selection
