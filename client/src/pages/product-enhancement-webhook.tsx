@@ -1202,13 +1202,13 @@ export default function ProductEnhancementWebhook() {
       <AnnouncementBanner />
       <Navbar freeCredits={user?.freeCreditsUsed ? 0 : 1} paidCredits={user?.paidCredits || 0} />
       <div className="mt-20"></div> {/* Add spacing for fixed navbar */}
-      <HeroSection />
-      <FeaturesSection />
-      <ShowcaseSection />
       
-      {/* Dynamic content based on step */}
+      {/* Only show marketing sections on upload step */}
       {step === 'upload' && (
         <>
+          <HeroSection />
+          <FeaturesSection />
+          <ShowcaseSection />
           <DemoSection 
             onImagesSelected={handleImagesSelected} 
             isUploading={uploadMutation.isPending}
@@ -1230,24 +1230,54 @@ export default function ProductEnhancementWebhook() {
               </button>
             </div>
           </div>
+          <TestimonialsSection />
+          <FAQSection />
         </>
       )}
       
+      {/* Style selection section takes full page */}
       {step === 'selectStyles' && (
-        <StyleSelectionSection
-          images={enhancementImages}
-          onSelectOption={handleSelectOption}
-          onSubmitSelections={handleSubmitSelections}
-          isLoading={selectionsMutation.isPending || isLoadingEnhancement}
-        />
+        <div className="container mx-auto py-12 px-4">
+          <h2 className="text-3xl font-bold text-center mb-8">Select Enhancement Options</h2>
+          <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+            Choose up to 5 enhancement options per image. Each selection costs 1 credit.
+          </p>
+          <StyleSelectionSection
+            images={enhancementImages}
+            onSelectOption={handleSelectOption}
+            onSubmitSelections={handleSubmitSelections}
+            isLoading={selectionsMutation.isPending || isLoadingEnhancement}
+          />
+        </div>
       )}
       
-      {step === 'processing' && <ProcessingSection />}
+      {/* Processing section takes full page */}
+      {step === 'processing' && (
+        <div className="container mx-auto py-16 px-4">
+          <ProcessingSection />
+        </div>
+      )}
       
-      {step === 'results' && <ResultsSection results={results} />}
+      {/* Results section takes full page */}
+      {step === 'results' && (
+        <div className="container mx-auto py-12 px-4">
+          <h2 className="text-3xl font-bold text-center mb-6">Your Enhanced Images</h2>
+          <p className="text-center text-gray-600 mb-8">
+            Select the images you want to download and click "Download Selected".
+          </p>
+          <ResultsSection results={results} />
+          <div className="flex justify-center mt-8">
+            <button 
+              onClick={() => setStep('upload')}
+              className="bg-primary-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-700 transition"
+            >
+              Start New Project
+            </button>
+          </div>
+        </div>
+      )}
       
-      <TestimonialsSection />
-      <FAQSection />
+      {/* Always show footer */}
       <FinalCTASection />
       <GlobalFooter />
     </div>
