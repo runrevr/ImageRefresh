@@ -646,6 +646,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Using mock data
         await simulateProcessingDelay(1500, 3000);
         
+        // Test mock options generation
+        const hairCareOptions = generateMockEnhancementOptions('hair care');
+        console.log('MOCK OPTIONS FOR HAIR CARE:', JSON.stringify(hairCareOptions, null, 2));
+        
         // Mock results
         const mockResults = {
           id: enhancementId,
@@ -730,6 +734,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Headers:`, req.headers);
       console.log(`Body:`, JSON.stringify(req.body, null, 2));
       console.log(`=================================================================\n\n`);
+      
+      // DEBUG: Test options generation for different industries
+      console.log('MOCK OPTIONS DEBUG:');
+      console.log('- HAIR CARE:', JSON.stringify(generateMockEnhancementOptions('hair care'), null, 2));
+      console.log('- fashion:', JSON.stringify(generateMockEnhancementOptions('fashion'), null, 2));
+      console.log('- default:', JSON.stringify(generateMockEnhancementOptions(), null, 2));
       
       // Extract the requestId from the webhook callback
       const { requestId, options } = req.body;

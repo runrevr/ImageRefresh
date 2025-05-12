@@ -90,14 +90,63 @@ export function generateMockEnhancementOptions(industry?: string) {
         name: "Moisturizing Effect",
         description: "Visualize the moisturizing and nourishing effects with water elements"
       }
+    },
+    "haircare": {
+      "natural_ingredients": {
+        name: "Natural Ingredients Showcase",
+        description: "Highlight the natural ingredients with botanical elements around your product"
+      },
+      "bathroom_context": {
+        name: "Bathroom Context",
+        description: "Show your hair care products in a modern, elegant bathroom setting"
+      },
+      "results_visualization": {
+        name: "Results Visualization",
+        description: "Display the expected hair results from using your product"
+      },
+      "moisturizing_effect": {
+        name: "Moisturizing Effect",
+        description: "Visualize the moisturizing and nourishing effects with water elements"
+      }
+    },
+    "hair": {
+      "natural_ingredients": {
+        name: "Natural Ingredients Showcase",
+        description: "Highlight the natural ingredients with botanical elements around your product"
+      },
+      "bathroom_context": {
+        name: "Bathroom Context",
+        description: "Show your hair care products in a modern, elegant bathroom setting"
+      },
+      "results_visualization": {
+        name: "Results Visualization",
+        description: "Display the expected hair results from using your product"
+      },
+      "moisturizing_effect": {
+        name: "Moisturizing Effect",
+        description: "Visualize the moisturizing and nourishing effects with water elements"
+      }
     }
   };
   
-  // Combine base options with industry-specific ones if available
-  if (industry && industryOptions[industry.toLowerCase()]) {
-    return { ...baseOptions, ...industryOptions[industry.toLowerCase()] };
+  // Debug print industry and available keys
+  console.log(`Mock data request - Industry: "${industry}", Available keys:`, Object.keys(industryOptions));
+  
+  // Check if we have an industry and normalize it
+  if (industry) {
+    const normalizedIndustry = industry.toLowerCase().trim();
+    console.log(`Normalized industry: "${normalizedIndustry}"`);
+    
+    // Check if we have options for this industry
+    if (industryOptions[normalizedIndustry]) {
+      console.log(`Found industry options for: ${normalizedIndustry}`);
+      return { ...baseOptions, ...industryOptions[normalizedIndustry] };
+    } else {
+      console.log(`No industry options found for: ${normalizedIndustry}`);
+    }
   }
   
+  // Return base options if no industry match
   return baseOptions;
 }
 
