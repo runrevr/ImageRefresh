@@ -157,7 +157,11 @@ const ShowcaseSection = () => {
 };
 
 // Demo 3-step section - This is where the actual upload functionality lives
-const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (files: File[]) => void, isUploading: boolean }) => {
+const DemoSection = ({ onImagesSelected, isUploading, onStartEnhancement }: { 
+  onImagesSelected: (files: File[]) => void, 
+  isUploading: boolean,
+  onStartEnhancement?: () => void 
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -289,7 +293,10 @@ const DemoSection = ({ onImagesSelected, isUploading }: { onImagesSelected: (fil
             <div className="w-16 h-16 flex items-center justify-center bg-gray-300 text-gray-600 text-xl font-semibold rounded-full mx-auto mb-6">3</div>
             <h3 className="text-xl font-bold mb-3 text-gray-700">Get Amazing Results</h3>
             <p className="mb-6 text-gray-600">Choose from AI-suggested enhancements tailored to your products.</p>
-            <button className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm">
+            <button 
+              onClick={onStartEnhancement}
+              className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm"
+            >
               Start Enhancement
             </button>
           </div>
