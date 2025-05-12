@@ -450,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const webhookResponse = {
             status: 200,
             data: {
-              images: enhancementImages.map(image => ({
+              images: enhancementImages.map((image: any) => ({
                 id: image.id,
                 originalUrl: image.originalImagePath,
                 options: options
