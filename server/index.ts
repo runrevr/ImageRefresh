@@ -41,10 +41,11 @@ global.debugLog = function(...args: any[]) {
 // Load environment variables from .env file
 dotenv.config();
 
-// Log ActiveCampaign configuration
-console.log('ActiveCampaign Configuration:');
+// Add environment variable debug logs
+console.log('Environment Configuration:');
 console.log(`API Key: ${process.env.ACTIVECAMPAIGN_API_KEY ? 'Set' : 'Not set'}`);
 console.log(`Base URL: ${process.env.ACTIVECAMPAIGN_BASE_URL || 'Not set'}`);
+console.log(`USE_MOCK_WEBHOOK: ${process.env.USE_MOCK_WEBHOOK || 'Not set'}`);
 
 // Set ActiveCampaign API credentials
 process.env.ACTIVECAMPAIGN_API_KEY = process.env.ACTIVECAMPAIGN_API_KEY || '1579e89bd0548efef9178b71b72c6a85d641f3ebc7806d86d6154c41a9a67af6c360fdc6';

@@ -216,6 +216,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             action: "processImages"  // Add action parameter to help N8N route the request
           };
           
+          console.log("DEBUG: Process environment variable USE_MOCK_WEBHOOK =", process.env.USE_MOCK_WEBHOOK);
+          console.log("DEBUG: Variable USE_MOCK_WEBHOOK =", USE_MOCK_WEBHOOK);
+          
+          // Create a clean version of the request data for logging (without large base64)
+          const debugRequestData = {
+            ...webhookDataWithAction,
+            images: webhookDataWithAction.images.map(img => ({
+              id: img.id,
+              dataLength: img.data.length
+            }))
+          };
+          console.log("DEBUG: Webhook request data:", JSON.stringify(debugRequestData, null, 2));
+          
           const webhookResponse = await axios.post(WEBHOOK_URL, webhookDataWithAction, {
             headers: {
               'Content-Type': 'application/json',
@@ -223,6 +236,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Accept': 'application/json'
             }
           });
+          
+          console.log("DEBUG: Webhook response status:", webhookResponse.status);
+          console.log("DEBUG: Webhook response data:", JSON.stringify(webhookResponse.data, null, 2));
           
           console.log(`\n\n====================== WEBHOOK RESPONSE ======================`);
           console.log(`Status Code: ${webhookResponse.status}`);
