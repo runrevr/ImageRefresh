@@ -429,95 +429,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Processing ${selections.length} selections for enhancement ID: ${enhancementId}`);
       
       if (USE_MOCK_WEBHOOK) {
-        // Using mock data
-        console.log("Using mock webhook for selections", selections);
-        
-        // Save the selections to the database
-        for (const selection of selections) {
-          try {
-            await storage.createProductEnhancementSelection({
-              enhancementId,
-              imageId: selection.imageId,
-              optionId: selection.optionId,
-              optionKey: selection.optionId, // Use optionId as the key for now
-              optionName: selection.optionName
-            });
-          } catch (err) {
-            console.error(`Error saving selection (${selection.optionName})`, err);
-          }
-        }
-        
-        // Update the enhancement status
-        await storage.updateProductEnhancementStatus(
-          enhancementId,
-          "processing_selections",
-          enhancement.webhookId || webhookRequestId || `mock-${Date.now()}`
-        );
-        
-        const mockResponse = {
-          id: enhancementId,
-          status: "processing_selections",
-          message: "Enhancement selections are being processed",
-          selectionCount: selections.length
-        };
-        
-        // Tell the client the response will be ready soon
-        res.status(200).json(mockResponse);
-        
-        // After a brief delay, process the selections and update the enhancement with results
-        setTimeout(async () => {
-          try {
-            // Generate mock results
-            const results = [];
-            
-            // Group selections by image ID
-            const selectionsByImage: Record<string, any[]> = {};
-            for (const selection of selections) {
-              const imageIdKey = String(selection.imageId);
-              if (!selectionsByImage[imageIdKey]) {
-                selectionsByImage[imageIdKey] = [];
-              }
-              selectionsByImage[imageIdKey].push(selection);
-            }
-            
-            // For each image with selections, generate results
-            for (const [imageIdStr, imageSelections] of Object.entries(selectionsByImage)) {
-              const imageId = parseInt(imageIdStr);
-              // Get the original image
-              const enhancementImage = await storage.getProductEnhancementImage(imageId);
-              if (!enhancementImage) continue;
+        try {
+          console.log("Using mock webhook for selections", selections);
+          
+          // Save the selections to the database
+          const savedSelections = [];
+          for (const selection of selections) {
+            try {
+              const savedSelection = await storage.createProductEnhancementSelection({
+                enhancementId,
+                imageId: selection.imageId,
+                optionId: selection.optionId,
+                optionKey: selection.optionId, // Use optionId as the key for now
+                optionName: selection.optionName
+              });
               
-              // For each selection, generate two result images
-              for (const selection of imageSelections) {
-                // Generate mock result images
-                const resultImages = generateMockEnhancementResults(
-                  enhancementImage.originalImagePath,
-                  selection.optionName
-                );
-                
-                // Add to results array
-                results.push({
-                  imageId: imageId,
-                  optionId: selection.optionId,
-                  resultImages: resultImages
-                });
+              if (savedSelection) {
+                savedSelections.push(savedSelection);
+                console.log(`Saved selection ID ${savedSelection.id} for enhancementId ${enhancementId}`);
               }
+            } catch (err) {
+              console.error(`Error saving selection (${selection.optionName})`, err);
             }
-            
-            // Store the results in the database
-            // In a real implementation, this would happen in the webhook callback
-            await storage.updateProductEnhancementResults(enhancementId, results);
-            await storage.updateProductEnhancementStatus(
-              enhancementId, 
-              "completed", 
-              enhancement.webhookId || webhookRequestId || `mock-${Date.now()}`
-            );
-            
-            console.log(`Mock processing complete for enhancement ${enhancementId}, updated with ${results.length} results`);
-          } catch (err) {
-            console.error("Error in mock processing:", err);
           }
-        }, 3000); // 3 second delay
+          
+          // Update the enhancement status
+          const mockWebhookId = enhancement.webhookId || webhookRequestId || `mock-${Date.now()}`;
+          await storage.updateProductEnhancementStatus(
+            enhancementId,
+            "processing_selections",
+            mockWebhookId
+          );
+          
+          const mockResponse = {
+            id: enhancementId,
+            status: "processing_selections",
+            message: "Enhancement selections are being processed",
+            selectionCount: selections.length,
+            savedSelectionCount: savedSelections.length
+          };
+          
+          // Tell the client the response will be ready soon
+          res.status(200).json(mockResponse);
+          
+          // After a brief delay, process the selections and update the enhancement with results
+          setTimeout(async () => {
+            try {
+              console.log(`Starting mock processing for enhancement ${enhancementId} with ${savedSelections.length} selections`);
+              
+              // Generate mock results
+              const results = [];
+              
+              // Group selections by image ID
+              const selectionsByImage: Record<string, any[]> = {};
+              for (const selection of savedSelections) {
+                const imageIdKey = String(selection.imageId);
+                if (!selectionsByImage[imageIdKey]) {
+                  selectionsByImage[imageIdKey] = [];
+                }
+                selectionsByImage[imageIdKey].push(selection);
+              }
+              
+              // For each image with selections, generate results
+              for (const [imageIdStr, imageSelections] of Object.entries(selectionsByImage)) {
+                const imageId = parseInt(imageIdStr);
+                console.log(`Processing imageId: ${imageId} with ${imageSelections.length} selections`);
+                
+                // Get the original image
+                const enhancementImage = await storage.getProductEnhancementImage(imageId);
+                if (!enhancementImage) {
+                  console.warn(`No image found for imageId: ${imageId}`);
+                  continue;
+                }
+                
+                console.log(`Found image at path: ${enhancementImage.originalImagePath}`);
+                
+                // For each selection, generate two result images
+                for (const selection of imageSelections) {
+                  console.log(`Generating results for selection ID ${selection.id}, option: ${selection.optionName}`);
+                  
+                  try {
+                    // Generate mock result images
+                    const resultImages = generateMockEnhancementResults(
+                      enhancementImage.originalImagePath,
+                      selection.optionName
+                    );
+                    
+                    // Add to results array
+                    results.push({
+                      selectionId: selection.id,
+                      imageId: imageId,
+                      optionId: selection.optionId,
+                      resultImage1Path: resultImages.resultImage1Path,
+                      resultImage2Path: resultImages.resultImage2Path
+                    });
+                    
+                    console.log(`Generated result images for selection ${selection.id}:`, resultImages);
+                  } catch (error) {
+                    console.error(`Error generating mock results for selection ${selection.id}:`, error);
+                  }
+                }
+              }
+              
+              console.log(`Generated ${results.length} mock results for enhancement ${enhancementId}`);
+              
+              // Store the results in the database
+              // In a real implementation, this would happen in the webhook callback
+              if (results.length > 0) {
+                await storage.updateProductEnhancementResults(enhancementId, results);
+                console.log(`Updated enhancement ${enhancementId} with ${results.length} results`);
+              }
+              
+              await storage.updateProductEnhancementStatus(
+                enhancementId, 
+                "completed", 
+                mockWebhookId
+              );
+              
+              console.log(`Mock processing complete for enhancement ${enhancementId}, updated with ${results.length} results`);
+            } catch (err) {
+              console.error("Error in mock processing:", err);
+              await storage.updateProductEnhancementStatus(
+                enhancementId, 
+                "error", 
+                mockWebhookId
+              );
+            }
+          }, 3000); // 3 second delay
+        } catch (mockError) {
+          console.error("Error in mock webhook processing:", mockError);
+          res.status(500).json({ 
+            message: "Error processing enhancement selections", 
+            error: mockError.message 
+          });
+        }
       } else {
         try {
           // For real webhook integration

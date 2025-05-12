@@ -124,28 +124,44 @@ export function getIndustryOptions() {
  */
 export function generateMockEnhancementResults(originalImagePath: string, selectedOption: string) {
   // In a real implementation, these would be paths to transformed images
-  
-  // Generate two new file paths based on the original path but with unique names
-  // Extract the file extension (e.g., .jpg, .png)
-  const extIndex = originalImagePath.lastIndexOf('.');
-  const extension = extIndex > 0 ? originalImagePath.substring(extIndex) : '.jpg';
-  const basePath = originalImagePath.substring(0, extIndex > 0 ? extIndex : originalImagePath.length);
-  
-  // Create unique result paths with a timestamp and option identifier
-  const timestamp = Date.now();
-  const safeOptionName = selectedOption.toLowerCase().replace(/\s+/g, '-');
-  
-  const resultImage1Path = `${basePath}-result1-${safeOptionName}-${timestamp}${extension}`;
-  const resultImage2Path = `${basePath}-result2-${safeOptionName}-${timestamp}${extension}`;
-  
-  // Copy the original file to the result paths to simulate transformed images
   const fs = require('fs');
+  const path = require('path');
+  
+  // Verify original image exists
+  if (!fs.existsSync(originalImagePath)) {
+    console.error(`Original image not found at path: ${originalImagePath}`);
+    // Return the original path as fallback
+    return {
+      resultImage1Path: originalImagePath,
+      resultImage2Path: originalImagePath
+    };
+  }
+  
+  // Get the uploads directory path
+  const uploadsDir = path.dirname(originalImagePath);
+  
+  // Generate unique filenames for result images
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 10000);
+  const extension = path.extname(originalImagePath);
+  const baseFilename = path.basename(originalImagePath, extension);
+  const safeOptionName = (selectedOption || 'option').toLowerCase().replace(/[^a-z0-9]/g, '-');
+  
+  const resultImage1Path = path.join(uploadsDir, `${baseFilename}-result1-${safeOptionName}-${timestamp}-${random}${extension}`);
+  const resultImage2Path = path.join(uploadsDir, `${baseFilename}-result2-${safeOptionName}-${timestamp}-${random}${extension}`);
+  
   try {
+    // Copy the original file to the result paths to simulate transformed images
     fs.copyFileSync(originalImagePath, resultImage1Path);
     fs.copyFileSync(originalImagePath, resultImage2Path);
     console.log(`Created mock result images at ${resultImage1Path} and ${resultImage2Path}`);
   } catch (err) {
     console.error(`Error creating mock result images: ${err}`);
+    // Return the original path as fallback
+    return {
+      resultImage1Path: originalImagePath,
+      resultImage2Path: originalImagePath
+    };
   }
   
   return {
