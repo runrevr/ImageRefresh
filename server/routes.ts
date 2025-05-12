@@ -10,6 +10,10 @@ import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEn
 
 // Environment variable to control mock mode - will use mock data if true, real webhook if false
 const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
+// N8N webhook URL - for this URL format to work with N8N:
+// 1. Make sure the webhook is active in N8N
+// 2. Try using the exact URL from the N8N interface, including any query parameters
+// 3. Some N8N webhooks don't expect additional path segments like "/options"
 const WEBHOOK_URL = "https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9";
 
 // Helper function to convert an image file to base64
@@ -204,9 +208,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           };
           console.log("Webhook request data:", JSON.stringify(logWebhookData, null, 2));
           
-          // Make the webhook request
+          // Make the webhook request - add action field and headers for N8N compatibility
           console.log(`Sending POST request to ${WEBHOOK_URL}...`);
-          const webhookResponse = await axios.post(WEBHOOK_URL, webhookData);
+          const webhookDataWithAction = {
+            ...webhookData,
+            action: "processImages"  // Add action parameter to help N8N route the request
+          };
+          
+          const webhookResponse = await axios.post(WEBHOOK_URL, webhookDataWithAction, {
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Webhook-Source': 'ImageRefresh-App',
+              'Accept': 'application/json'
+            }
+          });
           
           console.log(`\n\n====================== WEBHOOK RESPONSE ======================`);
           console.log(`Status Code: ${webhookResponse.status}`);
@@ -383,9 +398,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // For real webhook integration
           console.log(`Requesting options from webhook for request ID: ${webhookRequestId}`);
           
-          // Make a GET request to the webhook to get options
-          const webhookResponse = await axios.get(`${WEBHOOK_URL}/options`, {
-            params: { requestId: webhookRequestId }
+          // N8N might expect different request formats for webhooks
+          // Try using the base URL without additional path segments
+          // Some N8N webhooks expect POST instead of GET for obtaining options
+          console.log(`Trying webhook request without /options path segment`);
+          const webhookResponse = await axios.post(WEBHOOK_URL, {
+            action: "getOptions",
+            requestId: webhookRequestId,
+            industry: industry
           });
           
           // Process the webhook response
