@@ -193,8 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const imagePath = file.path;
         const enhancementImage = await storage.createProductEnhancementImage({
           enhancementId: productEnhancement.id,
-          originalPath: imagePath,
-          originalImageUrl: `/uploads/${path.basename(imagePath)}`
+          originalImagePath: imagePath
         });
         enhancementImages.push(enhancementImage);
       }
