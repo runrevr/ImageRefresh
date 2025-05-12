@@ -675,6 +675,64 @@ export class DatabaseStorage implements IStorage {
       .where(eq(productEnhancementSelections.enhancementId, enhancementId))
       .orderBy(desc(productEnhancementSelections.id));
   }
+  
+  /**
+   * Updates a product enhancement with results from the webhook
+   * 
+   * @param enhancementId The ID of the product enhancement
+   * @param results An array of results with imageId, optionId, and resultImages
+   * @returns true if successful
+   */
+  async updateProductEnhancementResults(
+    enhancementId: number, 
+    results: Array<{
+      imageId: number,
+      optionId: string | number,
+      resultImages: string[]
+    }>
+  ): Promise<boolean> {
+    try {
+      // For each result, update the corresponding selection
+      for (const result of results) {
+        // Find the selection that matches this image and option
+        const selections = await db
+          .select()
+          .from(productEnhancementSelections)
+          .where(
+            and(
+              eq(productEnhancementSelections.enhancementId, enhancementId),
+              eq(productEnhancementSelections.imageId, result.imageId),
+              eq(productEnhancementSelections.optionId, String(result.optionId))
+            )
+          );
+        
+        if (selections.length > 0) {
+          const selection = selections[0];
+          
+          // Make sure we have at least two result images
+          if (result.resultImages.length >= 2) {
+            await this.updateProductEnhancementSelectionResults(
+              selection.id,
+              result.resultImages[0],
+              result.resultImages[1]
+            );
+          } else if (result.resultImages.length === 1) {
+            // If only one result image is available
+            await this.updateProductEnhancementSelectionResults(
+              selection.id,
+              result.resultImages[0],
+              result.resultImages[0] // Use the same image for both slots
+            );
+          }
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error updating product enhancement results:", error);
+      return false;
+    }
+  }
 }
 
 // Initialize database with a default user if needed

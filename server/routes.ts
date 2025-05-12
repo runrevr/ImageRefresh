@@ -294,23 +294,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
 
-      // Get the webhook request ID - in a real implementation this would come from the database
-      const webhookRequestId = req.query.webhookRequestId as string || `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      // Look up the enhancement in the database
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
+      }
+
+      // Get the webhook request ID from the database or generate a new one
+      const webhookRequestId = enhancement.webhookId || `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       
-      // In a real scenario we would look up the enhancement details from the database
-      const industry = req.query.industry as string || "decor";
+      // Get the industry from the database
+      const industry = enhancement.industry || "decor";
+      
+      console.log(`Fetching options for enhancement ID ${enhancementId} (industry: ${industry})`);
       
       if (USE_MOCK_WEBHOOK) {
         // Using mock data
         await simulateProcessingDelay(1000, 2000); // Simulate webhook processing time
         
-        // Generate 1 mock image with options
+        // Get the actual images for this enhancement
+        const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
+        console.log(`Found ${enhancementImages.length} images for enhancement ${enhancementId}`);
+        
+        // Generate mock responses for each actual image
         const mockResponse = {
           id: enhancementId,
           status: "options_ready",
-          images: Array(1).fill(0).map((_, index) => ({
-            id: index + 1,
-            originalUrl: `/uploads/sample-image-${index + 1}.jpg`,
+          images: enhancementImages.map((image, index) => ({
+            id: image.id,
+            originalUrl: image.originalImagePath,
             options: generateMockEnhancementOptions(industry)
           }))
         };
@@ -380,16 +392,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
       
-      const { selections, webhookRequestId } = req.body;
+      // Get the enhancement from the database
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
+      }
+      
+      const { selections } = req.body;
       if (!selections || !Array.isArray(selections) || selections.length === 0) {
         return res.status(400).json({ message: "No enhancement options selected" });
       }
+      
+      // Get the webhook request ID from the database
+      const webhookRequestId = enhancement.webhookId || req.body.webhookRequestId;
       
       // In a real app, we'd validate that the user has enough credits
       console.log(`Processing ${selections.length} selections for enhancement ID: ${enhancementId}`);
       
       if (USE_MOCK_WEBHOOK) {
         // Using mock data
+        console.log("Using mock webhook for selections", selections);
+        
+        // Save the selections to the database
+        for (const selection of selections) {
+          try {
+            await storage.createProductEnhancementSelection({
+              enhancementId,
+              imageId: selection.imageId,
+              optionId: selection.optionId,
+              optionName: selection.optionName
+            });
+          } catch (err) {
+            console.error(`Error saving selection (${selection.optionName})`, err);
+          }
+        }
+        
+        // Update the enhancement status
+        await storage.updateProductEnhancementStatus(
+          enhancementId,
+          "processing_selections",
+          enhancement.webhookId
+        );
+        
         const mockResponse = {
           id: enhancementId,
           status: "processing_selections",
@@ -397,7 +441,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
           selectionCount: selections.length
         };
         
+        // Tell the client the response will be ready soon
         res.status(200).json(mockResponse);
+        
+        // After a brief delay, process the selections and update the enhancement with results
+        setTimeout(async () => {
+          try {
+            // Generate mock results
+            const results = [];
+            
+            // Group selections by image ID
+            const selectionsByImage = {};
+            for (const selection of selections) {
+              if (!selectionsByImage[selection.imageId]) {
+                selectionsByImage[selection.imageId] = [];
+              }
+              selectionsByImage[selection.imageId].push(selection);
+            }
+            
+            // For each image with selections, generate results
+            for (const [imageId, imageSelections] of Object.entries(selectionsByImage)) {
+              // Get the original image
+              const enhancementImage = await storage.getProductEnhancementImage(parseInt(imageId));
+              if (!enhancementImage) continue;
+              
+              // For each selection, generate two result images
+              for (const selection of imageSelections) {
+                // Generate mock result images
+                const resultImages = generateMockEnhancementResults(
+                  enhancementImage.originalImagePath,
+                  selection.optionName
+                );
+                
+                // Add to results array
+                results.push({
+                  imageId: parseInt(imageId),
+                  optionId: selection.optionId,
+                  resultImages: resultImages
+                });
+              }
+            }
+            
+            // Store the results in the database
+            // In a real implementation, this would happen in the webhook callback
+            await storage.updateProductEnhancementResults(enhancementId, results);
+            await storage.updateProductEnhancementStatus(enhancementId, "completed", enhancement.webhookId);
+            
+            console.log(`Mock processing complete for enhancement ${enhancementId}, updated with ${results.length} results`);
+          } catch (err) {
+            console.error("Error in mock processing:", err);
+          }
+        }, 3000); // 3 second delay
       } else {
         try {
           // For real webhook integration
