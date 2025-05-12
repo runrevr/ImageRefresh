@@ -448,10 +448,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Waiting for webhook to provide options");
           
           if (webhookResponse.data && webhookResponse.data.images) {
+            // Check if any image has options
+            const hasRealOptions = webhookResponse.data.images.some((img: any) => 
+              img.options && Object.keys(img.options).length > 0
+            );
+            
             // Transform the webhook response to match our API format
             const transformedResponse = {
               id: enhancementId,
-              status: "options_ready",
+              status: hasRealOptions ? "options_ready" : "error",
+              message: hasRealOptions ? undefined : "The webhook service did not return any enhancement options. Please try again with a different image or industry.",
               images: webhookResponse.data.images.map((img: any) => ({
                 id: img.id,
                 originalUrl: img.originalUrl || `/uploads/sample-image-${img.id}.jpg`,

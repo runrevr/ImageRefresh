@@ -1163,11 +1163,14 @@ export default function ProductEnhancementWebhook() {
     refetchInterval: 3000,
   });
   
-  // Custom polling logic to stop when completed
+  // Custom polling logic to stop when completed or errored
   useEffect(() => {
-    if (enhancementData && 'status' in enhancementData && enhancementData.status === 'completed') {
-      // Stop polling once completed
-      queryClient.cancelQueries({ queryKey: ['/api/product-enhancement', enhancementId] });
+    if (enhancementData && 'status' in enhancementData) {
+      // Stop polling once completed or if there's an error
+      if (enhancementData.status === 'completed' || enhancementData.status === 'error') {
+        console.log(`Stopping polling due to status: ${enhancementData.status}`);
+        queryClient.cancelQueries({ queryKey: ['/api/product-enhancement', enhancementId] });
+      }
     }
   }, [enhancementData, enhancementId]);
   
@@ -1179,8 +1182,15 @@ export default function ProductEnhancementWebhook() {
       // Check if any image has options ready
       const hasOptions = enhancementData.images.some((img: any) => {
         console.log("Image data:", img);
-        return img.options && Object.keys(img.options).length > 0;
+        return img.options && Object.keys(img.options || {}).length > 0;
       });
+      
+      // If server says options are ready, but we don't have any options, treat it as an error
+      if (!hasOptions && enhancementData.status === 'options_ready') {
+        console.error("Server reported options ready but no options were provided");
+        setErrorMessage("The webhook service did not return any enhancement options. Please try again with a different image or industry.");
+        return;
+      }
       
       console.log("Has options:", hasOptions);
       
