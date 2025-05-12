@@ -1091,17 +1091,35 @@ export default function ProductEnhancementWebhook() {
   
   // Update enhancement images when data changes
   useEffect(() => {
+    console.log("Enhancement data updated:", enhancementData);
+    
     if (enhancementData && 'images' in enhancementData && Array.isArray(enhancementData.images)) {
-      const imagesWithOptions = enhancementData.images.map((img: any) => ({
-        id: img.id,
-        originalPath: img.originalImagePath,
-        options: img.options || {},
-        selectedOptions: new Set<string>()
-      }));
+      // Check if any image has options ready
+      const hasOptions = enhancementData.images.some(img => img.options && Object.keys(img.options).length > 0);
+      console.log("Has options:", hasOptions);
       
-      setEnhancementImages(imagesWithOptions);
+      if (hasOptions) {
+        const imagesWithOptions = enhancementData.images.map((img: any) => ({
+          id: img.id,
+          // Handle both property naming conventions
+          originalPath: img.originalImagePath || img.originalUrl,
+          options: img.options || {},
+          selectedOptions: new Set<string>()
+        }));
+        
+        console.log("Setting enhancement images:", imagesWithOptions);
+        setEnhancementImages(imagesWithOptions);
+        
+        // If we're in processing step, move to select styles step once options are ready
+        if (step === 'processing' && enhancementData.status === 'options_ready') {
+          setStep('selectStyles');
+        }
+      } else if (step === 'selectStyles' && enhancementData.status === 'pending') {
+        // If we don't have options yet, go to processing step
+        setStep('processing');
+      }
     }
-  }, [enhancementData]);
+  }, [enhancementData, step]);
   
   // Handle file selection
   const handleImagesSelected = (files: File[]) => {
