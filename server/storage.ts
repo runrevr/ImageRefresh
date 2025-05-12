@@ -686,58 +686,88 @@ export class DatabaseStorage implements IStorage {
   async updateProductEnhancementResults(
     enhancementId: number, 
     results: Array<{
+      selectionId?: number,
       imageId: string | number,
       optionId: string | number,
-      resultImages: string[] | { resultImage1Path: string, resultImage2Path: string }
+      resultImage1Path?: string,
+      resultImage2Path?: string,
+      resultImages?: string[] | { resultImage1Path: string, resultImage2Path: string }
     }>
   ): Promise<boolean> {
     try {
       // For each result, update the corresponding selection
       for (const result of results) {
-        // Find the selection that matches this image and option
-        const imageIdNumber = typeof result.imageId === 'string' ? parseInt(result.imageId) : result.imageId;
+        let selectionId: number;
         
-        const selections = await db
-          .select()
-          .from(productEnhancementSelections)
-          .where(
-            and(
-              eq(productEnhancementSelections.enhancementId, enhancementId),
-              eq(productEnhancementSelections.imageId, imageIdNumber),
-              eq(productEnhancementSelections.optionKey, String(result.optionId))
-            )
-          );
-        
-        if (selections.length > 0) {
-          const selection = selections[0];
+        // If selectionId is directly provided, use it
+        if (result.selectionId) {
+          selectionId = result.selectionId;
+          console.log(`Using provided selection ID: ${selectionId}`);
+        } else {
+          // Otherwise, find the selection by enhancementId, imageId, and optionId
+          const imageIdNumber = typeof result.imageId === 'string' ? parseInt(result.imageId) : result.imageId;
           
-          // Handle different result image formats
+          const selections = await db
+            .select()
+            .from(productEnhancementSelections)
+            .where(
+              and(
+                eq(productEnhancementSelections.enhancementId, enhancementId),
+                eq(productEnhancementSelections.imageId, imageIdNumber),
+                eq(productEnhancementSelections.optionKey, String(result.optionId))
+              )
+            );
+          
+          if (selections.length === 0) {
+            console.error(`No selection found for enhancementId: ${enhancementId}, imageId: ${imageIdNumber}, optionId: ${result.optionId}`);
+            continue;
+          }
+          
+          selectionId = selections[0].id;
+          console.log(`Found selection ID: ${selectionId} for imageId: ${imageIdNumber}, optionId: ${result.optionId}`);
+        }
+        
+        // Handle the different ways image paths can be provided
+        if (result.resultImage1Path && result.resultImage2Path) {
+          // Direct paths provided
+          await this.updateProductEnhancementSelectionResults(
+            selectionId,
+            result.resultImage1Path,
+            result.resultImage2Path
+          );
+          console.log(`Updated selection ${selectionId} with direct paths`);
+        } else if (result.resultImages) {
+          // Handle the resultImages property
           if (Array.isArray(result.resultImages)) {
             // Array format [image1, image2, ...] 
             const images = result.resultImages as string[];
             if (images.length >= 2) {
               await this.updateProductEnhancementSelectionResults(
-                selection.id,
+                selectionId,
                 images[0],
                 images[1]
               );
             } else if (images.length === 1) {
               // If only one result image is available
               await this.updateProductEnhancementSelectionResults(
-                selection.id,
+                selectionId,
                 images[0],
                 images[0] // Use the same image for both slots
               );
             }
+            console.log(`Updated selection ${selectionId} with array paths`);
           } else if (typeof result.resultImages === 'object') {
             // Object format { resultImage1Path, resultImage2Path }
             const resultObj = result.resultImages as { resultImage1Path: string, resultImage2Path: string };
             await this.updateProductEnhancementSelectionResults(
-              selection.id,
+              selectionId,
               resultObj.resultImage1Path,
               resultObj.resultImage2Path
             );
+            console.log(`Updated selection ${selectionId} with object paths`);
           }
+        } else {
+          console.error(`No result images provided for selection ${selectionId}`);
         }
       }
       

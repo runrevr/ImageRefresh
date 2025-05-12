@@ -433,7 +433,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Using mock webhook for selections", selections);
           
           // Save the selections to the database
-          const savedSelections = [];
+          const savedSelections: Array<{
+            id: number;
+            enhancementId: number;
+            imageId: number;
+            optionId: string;
+            optionKey: string;
+            optionName: string | null;
+            resultImage1Path: string | null;
+            resultImage2Path: string | null;
+            createdAt: Date;
+            status: string;
+          }> = [];
+          
           for (const selection of selections) {
             try {
               const savedSelection = await storage.createProductEnhancementSelection({
@@ -445,7 +457,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               });
               
               if (savedSelection) {
-                savedSelections.push(savedSelection);
+                // Cast the saved selection to our expected type
+                savedSelections.push(savedSelection as any);
                 console.log(`Saved selection ID ${savedSelection.id} for enhancementId ${enhancementId}`);
               }
             } catch (err) {
@@ -536,7 +549,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // Store the results in the database
               // In a real implementation, this would happen in the webhook callback
               if (results.length > 0) {
-                await storage.updateProductEnhancementResults(enhancementId, results);
+                // Convert the results to the expected format
+                const formattedResults = results.map(result => ({
+                  selectionId: result.selectionId,
+                  imageId: result.imageId,
+                  optionId: result.optionId,
+                  resultImage1Path: result.resultImage1Path,
+                  resultImage2Path: result.resultImage2Path
+                }));
+                
+                await storage.updateProductEnhancementResults(enhancementId, formattedResults);
                 console.log(`Updated enhancement ${enhancementId} with ${results.length} results`);
               }
               
@@ -556,11 +578,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
               );
             }
           }, 3000); // 3 second delay
-        } catch (mockError) {
+        } catch (mockError: any) {
           console.error("Error in mock webhook processing:", mockError);
           res.status(500).json({ 
             message: "Error processing enhancement selections", 
-            error: mockError.message 
+            error: mockError.message || String(mockError)
           });
         }
       } else {
