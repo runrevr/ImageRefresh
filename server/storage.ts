@@ -695,13 +695,15 @@ export class DatabaseStorage implements IStorage {
       // For each result, update the corresponding selection
       for (const result of results) {
         // Find the selection that matches this image and option
+        const imageIdNumber = typeof result.imageId === 'string' ? parseInt(result.imageId) : result.imageId;
+        
         const selections = await db
           .select()
           .from(productEnhancementSelections)
           .where(
             and(
               eq(productEnhancementSelections.enhancementId, enhancementId),
-              eq(productEnhancementSelections.imageId, result.imageId),
+              eq(productEnhancementSelections.imageId, imageIdNumber),
               eq(productEnhancementSelections.optionKey, String(result.optionId))
             )
           );

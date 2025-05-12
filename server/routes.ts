@@ -154,6 +154,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const baseUrl = `${protocol}://${host}`;
           
           // Send to webhook
+          // Create the webhook request data
+          const callbackOptions = `${baseUrl}/api/webhook-callbacks/options`;
+          const callbackResults = `${baseUrl}/api/webhook-callbacks/results`;
+          
           const webhookData = {
             requestId: webhookRequestId,
             industry: req.body.industry,
@@ -162,10 +166,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
               data: base64
             })),
             callbackUrls: {
-              options: `${baseUrl}/api/webhook-callbacks/options`,
-              results: `${baseUrl}/api/webhook-callbacks/results`
+              options: callbackOptions,
+              results: callbackResults
             }
           };
+          
+          console.log(`\n\n====================== WEBHOOK REQUEST ======================`);
+          console.log(`Webhook URL: ${WEBHOOK_URL}`);
+          console.log(`Request ID: ${webhookRequestId}`);
+          console.log(`Industry: ${req.body.industry}`);
+          console.log(`Images: ${imageBase64Array.length}`);
+          console.log(`Callbacks:`);
+          console.log(`- Options: ${callbackOptions}`);
+          console.log(`- Results: ${callbackResults}`);
+          console.log(`============================================================\n\n`);
           
           console.log(`Sending ${imageBase64Array.length} images to webhook with callbacks:`);
           console.log(`- Options callback: ${webhookData.callbackUrls.options}`);
@@ -181,10 +195,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           };
           console.log("Webhook request data:", JSON.stringify(logWebhookData, null, 2));
           
+          // Make the webhook request
+          console.log(`Sending POST request to ${WEBHOOK_URL}...`);
           const webhookResponse = await axios.post(WEBHOOK_URL, webhookData);
-          console.log("Webhook response status:", webhookResponse.status);
-          console.log("Webhook response headers:", JSON.stringify(webhookResponse.headers, null, 2));
-          console.log("Webhook response data:", JSON.stringify(webhookResponse.data, null, 2));
+          
+          console.log(`\n\n====================== WEBHOOK RESPONSE ======================`);
+          console.log(`Status Code: ${webhookResponse.status}`);
+          console.log(`Headers: ${JSON.stringify(webhookResponse.headers, null, 2)}`);
+          console.log(`Data: ${JSON.stringify(webhookResponse.data, null, 2)}`);
+          console.log(`=============================================================\n\n`);
           
           // Create the product enhancement record in the database
           try {
@@ -639,8 +658,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook callback endpoints - for the webhook to send data back to us
   app.post("/api/webhook-callbacks/options", async (req, res) => {
     try {
-      console.log(`${new Date().toISOString()} - WEBHOOK CALLBACK: Received options callback`);
-      console.log("Received webhook callback for options:", req.body);
+      console.log(`\n\n====================== WEBHOOK CALLBACK: OPTIONS ======================`);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      console.log(`Headers:`, req.headers);
+      console.log(`Body:`, JSON.stringify(req.body, null, 2));
+      console.log(`=================================================================\n\n`);
       
       // Extract the requestId from the webhook callback
       const { requestId, options } = req.body;
@@ -702,8 +724,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/webhook-callbacks/results", async (req, res) => {
     try {
-      console.log(`${new Date().toISOString()} - WEBHOOK CALLBACK: Received results callback`);
-      console.log("Received webhook callback for results:", req.body);
+      console.log(`\n\n====================== WEBHOOK CALLBACK: RESULTS ======================`);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      console.log(`Headers:`, req.headers);
+      console.log(`Body:`, JSON.stringify(req.body, null, 2));
+      console.log(`=================================================================\n\n`);
       
       // Extract the requestId from the webhook callback
       const { requestId, results } = req.body;
