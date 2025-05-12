@@ -946,11 +946,38 @@ export default function ProductEnhancementWebhook() {
         console.log("Making API request to /api/product-enhancement/start");
         const response = await apiRequest("POST", "/api/product-enhancement/start", formData, true);
         console.log("API response received", response.status);
+        
+        // Check if the response is OK (status in the range 200-299)
+        if (!response.ok) {
+          let errorText = "Unknown server error";
+          try {
+            const errorData = await response.json();
+            errorText = errorData.message || `Server error: ${response.status}`;
+            console.error("Server returned error:", errorData);
+          } catch (jsonError) {
+            console.error("Could not parse error response:", jsonError);
+            errorText = `Server error: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorText);
+        }
+        
         const data = await response.json();
         console.log("Response data:", data);
         return data;
       } catch (error) {
         console.error("Error in uploadMutation:", error);
+        
+        // Add more context to the error
+        if (error instanceof Error) {
+          console.error("Original error:", {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+          });
+        } else {
+          console.error("Non-Error object thrown:", error);
+        }
+        
         throw error;
       }
     },
@@ -972,12 +999,40 @@ export default function ProductEnhancementWebhook() {
         });
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Upload mutation error:", error);
+      
+      let errorMessage = "Failed to upload images. Please try again.";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      // Try to extract more detailed error from response
+      if (error.response) {
+        try {
+          const responseData = error.response.data;
+          if (responseData && responseData.message) {
+            errorMessage = responseData.message;
+          }
+        } catch (e) {
+          console.error("Error parsing error response:", e);
+        }
+      }
+      
       toast({
         title: "Upload failed",
-        description: error instanceof Error ? error.message : "Failed to upload images. Please try again.",
+        description: errorMessage,
         variant: "destructive",
+      });
+      
+      // Log additional debug info
+      console.error("Error details:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        response: error.response,
+        status: error.status,
       });
     }
   });
