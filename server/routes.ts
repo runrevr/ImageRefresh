@@ -186,7 +186,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Webhook response headers:", JSON.stringify(webhookResponse.headers, null, 2));
           console.log("Webhook response data:", JSON.stringify(webhookResponse.data, null, 2));
           
-          // Here we would normally store the webhook response details in the database
+          // Create the product enhancement record in the database
+          try {
+            const enhancement = await storage.createProductEnhancement({
+              userId: 1, // Default user ID for testing
+              industry: req.body.industry
+            });
+            
+            if (enhancement && enhancement.id) {
+              // Update the record with the webhook request ID
+              await storage.updateProductEnhancementStatus(
+                enhancement.id,
+                "pending",
+                webhookRequestId
+              );
+              
+              // Create an entry for each uploaded image
+              for (const image of uploadedImages) {
+                await storage.createProductEnhancementImage({
+                  enhancementId: enhancement.id,
+                  originalImagePath: image.path
+                });
+              }
+              
+              console.log(`Created product enhancement with ID ${enhancement.id} and ${uploadedImages.length} images`);
+            } else {
+              console.error("Failed to create enhancement record (null/invalid result)");
+            }
+          } catch (dbError: any) {
+            console.error("Error creating enhancement record in webhook handler:", dbError);
+            // Continue even if this fails
+          }
         } catch (webhookError: any) {
           console.error("Error calling webhook:", webhookError.message);
           // If webhook fails, we'll continue with mock data
@@ -194,14 +224,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Send back a response to the client
-      // In a real application with proper DB, we would use the actual enhancement ID
+      // Find or create the enhancement record in the database
+      let enhancementId;
+      let enhancementStatus = "pending";
+      
+      try {
+        // For real webhook mode, we should have created a record in the webhook section
+        // Need to use different logic since enhancement is out of scope here
+        if (!USE_MOCK_WEBHOOK) {
+          // Look for the record by webhook request ID
+          const existingEnhancement = await storage.getProductEnhancementByWebhookId(webhookRequestId);
+          if (existingEnhancement) {
+            enhancementId = existingEnhancement.id;
+          }
+        } else {
+          // Create a new record for mock mode or as fallback
+          const newEnhancement = await storage.createProductEnhancement({
+            userId: 1, // Default user ID for demo
+            industry: req.body.industry
+          });
+          
+          enhancementId = newEnhancement.id;
+          
+          // Update with webhook ID
+          await storage.updateProductEnhancementStatus(
+            enhancementId,
+            "pending",
+            webhookRequestId
+          );
+          
+          // Create image records
+          for (const image of uploadedImages) {
+            await storage.createProductEnhancementImage({
+              enhancementId: enhancementId,
+              originalImagePath: image.path
+            });
+          }
+          
+          console.log(`Created product enhancement with ID ${enhancementId} and ${uploadedImages.length} images`);
+        }
+      } catch (dbError: any) {
+        console.error("Error creating enhancement records:", dbError);
+        // Continue with response even if DB operation failed
+      }
+      
+      // Send back a response to the client with the real enhancement ID
       res.status(200).json({ 
         message: "Product enhancement started successfully", 
-        id: 1,  // Changed from enhancementId to id to match client expectations
+        id: enhancementId || 1, // Use real ID if available, fallback to 1
         imageCount: uploadedImages.length,
         industry: req.body.industry,
-        status: "pending",
+        status: enhancementStatus,
         webhookRequestId: webhookRequestId
       });
     } catch (error: any) {
