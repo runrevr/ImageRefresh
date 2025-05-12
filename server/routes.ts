@@ -149,9 +149,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const imageBase64Array = await Promise.all(imageBase64Promises);
           
           // Get the base URL for callbacks
-          const protocol = req.protocol;
-          const host = req.get('host');
-          const baseUrl = `${protocol}://${host}`;
+          // Use the Replit URL which is accessible from the outside
+          const replitId = process.env.REPL_ID || "nthzsmrhmcszymjy"; // Fallback to a known value
+          const baseUrl = `https://${replitId}.id.replit.dev`;
           
           // Send to webhook
           // Create the webhook request data
