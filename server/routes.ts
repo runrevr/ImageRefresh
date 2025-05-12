@@ -121,7 +121,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post("/api/product-enhancement/start", productUpload.array("images", 5), async (req, res) => {
     try {
-      console.log("Product enhancement start request received");
+      console.log("\n\n====================== PRODUCT ENHANCEMENT START ======================");
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      console.log(`Received ${(req.files || []).length} files and industry: "${req.body.industry}"`);
       console.log("Using webhook:", USE_MOCK_WEBHOOK ? "MOCK" : "REAL");
       
       // Validate request body
