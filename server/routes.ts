@@ -570,7 +570,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add detailed console logs for debugging
+  app.use((req, res, next) => {
+    const start = Date.now();
+    
+    // Log when the request completes
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl} - ${res.statusCode} (${duration}ms)`);
+    });
+    
+    // Log the request body for POST/PUT requests (exclude large base64 data)
+    if (req.method === 'POST' || req.method === 'PUT') {
+      if (req.body && typeof req.body === 'object') {
+        const logBody = { ...req.body };
+        
+        // Exclude large base64 data from logs
+        Object.keys(logBody).forEach(key => {
+          if (typeof logBody[key] === 'string' && logBody[key].length > 1000 && 
+              (logBody[key].startsWith('data:image') || logBody[key].includes('base64'))) {
+            logBody[key] = `[base64 data - ${logBody[key].length} chars]`;
+          }
+        });
+        
+        console.log(`${new Date().toISOString()} - Request Body: ${JSON.stringify(logBody, null, 2)}`);
+      }
+    }
+    
+    next();
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
+  console.log("Server created and routes registered successfully");
   return httpServer;
 }
