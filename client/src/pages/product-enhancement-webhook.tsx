@@ -578,8 +578,16 @@ const StyleSelectionSection = ({
     });
   };
   
+  console.log("StyleSelectionSection rendered with images:", images);
+  
   if (images.length === 0) {
-    return null;
+    console.log("No images available to display options");
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin w-12 h-12 border-4 border-primary-300 border-t-primary-600 rounded-full mx-auto mb-6"></div>
+        <p className="text-gray-600">Loading enhancement options...</p>
+      </div>
+    );
   }
   
   return (
@@ -985,11 +993,27 @@ export default function ProductEnhancementWebhook() {
       console.log("Upload mutation success", data);
       if (data.id) {
         setEnhancementId(data.id);
+        
+        // Extract status from response
+        const status = data.status || 'pending';
+        console.log(`Enhancement status from response: ${status}`);
+        
         toast({
           title: "Upload successful",
-          description: "Your images have been uploaded successfully. Waiting for enhancement options...",
+          description: "Your images have been uploaded successfully. Generating enhancement options...",
         });
-        setStep('selectStyles');
+        
+        // Stay in processing state until we actually get options
+        if (status === 'options_ready') {
+          console.log("Options are ready immediately, moving to select styles");
+          setStep('selectStyles');
+          
+          // Force refetch to get the options
+          queryClient.invalidateQueries({ queryKey: ['/api/product-enhancement', data.id] });
+        } else {
+          console.log("Options not ready yet, staying in processing state");
+          // We're already in processing state
+        }
       } else {
         console.error("Missing ID in response data:", data);
         toast({
@@ -997,6 +1021,7 @@ export default function ProductEnhancementWebhook() {
           description: "Received unexpected response. Please try again.",
           variant: "destructive",
         });
+        setStep('upload'); // Go back to upload on error
       }
     },
     onError: (error: any) => {
@@ -1176,6 +1201,10 @@ export default function ProductEnhancementWebhook() {
     
     try {
       console.log("Starting upload mutation");
+      
+      // Immediately go to processing state
+      setStep('processing');
+      
       uploadMutation.mutate({ files: selectedFiles, industry });
     } catch (error) {
       console.error("Error in upload mutation:", error);
@@ -1184,6 +1213,9 @@ export default function ProductEnhancementWebhook() {
         description: "An error occurred during upload. Please try again.",
         variant: "destructive",
       });
+      
+      // Go back to upload state on error
+      setStep('upload');
     }
   };
   
