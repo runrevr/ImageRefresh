@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import Navbar from "@/components/Navbar";
+import SiteFooter from "@/components/Footer"; // Import with a different name to avoid conflicts
 import shampooOriginal from "@assets/shampoo 3.png"; // Keep original import for fallback
 import shampooEnhanced from "@assets/shampoo 4.png";
 import sweatshirtOriginal from "@assets/sweatshirt.png";
@@ -881,6 +884,7 @@ const ProcessingSection = () => {
 // Main component
 export default function ProductEnhancementWebhook() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [step, setStep] = useState<'upload' | 'selectStyles' | 'processing' | 'results'>('upload');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [industry, setIndustry] = useState<string>("");
