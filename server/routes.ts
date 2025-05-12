@@ -420,6 +420,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               enhancementId,
               imageId: selection.imageId,
               optionId: selection.optionId,
+              optionKey: selection.optionId, // Use optionId as the key for now
               optionName: selection.optionName
             });
           } catch (err) {
@@ -431,7 +432,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateProductEnhancementStatus(
           enhancementId,
           "processing_selections",
-          enhancement.webhookId
+          enhancement.webhookId || webhookRequestId || `mock-${Date.now()}`
         );
         
         const mockResponse = {
@@ -485,7 +486,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Store the results in the database
             // In a real implementation, this would happen in the webhook callback
             await storage.updateProductEnhancementResults(enhancementId, results);
-            await storage.updateProductEnhancementStatus(enhancementId, "completed", enhancement.webhookId);
+            await storage.updateProductEnhancementStatus(
+              enhancementId, 
+              "completed", 
+              enhancement.webhookId || webhookRequestId || `mock-${Date.now()}`
+            );
             
             console.log(`Mock processing complete for enhancement ${enhancementId}, updated with ${results.length} results`);
           } catch (err) {

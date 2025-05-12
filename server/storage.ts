@@ -688,7 +688,7 @@ export class DatabaseStorage implements IStorage {
     results: Array<{
       imageId: number,
       optionId: string | number,
-      resultImages: string[]
+      resultImages: string[] | { resultImage1Path: string, resultImage2Path: string }
     }>
   ): Promise<boolean> {
     try {
@@ -702,26 +702,36 @@ export class DatabaseStorage implements IStorage {
             and(
               eq(productEnhancementSelections.enhancementId, enhancementId),
               eq(productEnhancementSelections.imageId, result.imageId),
-              eq(productEnhancementSelections.optionId, String(result.optionId))
+              eq(productEnhancementSelections.optionKey, String(result.optionId))
             )
           );
         
         if (selections.length > 0) {
           const selection = selections[0];
           
-          // Make sure we have at least two result images
-          if (result.resultImages.length >= 2) {
+          // Handle different result image formats
+          if (Array.isArray(result.resultImages)) {
+            // Array format [image1, image2, ...]
+            if (result.resultImages.length >= 2) {
+              await this.updateProductEnhancementSelectionResults(
+                selection.id,
+                result.resultImages[0],
+                result.resultImages[1]
+              );
+            } else if (result.resultImages.length === 1) {
+              // If only one result image is available
+              await this.updateProductEnhancementSelectionResults(
+                selection.id,
+                result.resultImages[0],
+                result.resultImages[0] // Use the same image for both slots
+              );
+            }
+          } else if (typeof result.resultImages === 'object') {
+            // Object format { resultImage1Path, resultImage2Path }
             await this.updateProductEnhancementSelectionResults(
               selection.id,
-              result.resultImages[0],
-              result.resultImages[1]
-            );
-          } else if (result.resultImages.length === 1) {
-            // If only one result image is available
-            await this.updateProductEnhancementSelectionResults(
-              selection.id,
-              result.resultImages[0],
-              result.resultImages[0] // Use the same image for both slots
+              result.resultImages.resultImage1Path,
+              result.resultImages.resultImage2Path
             );
           }
         }

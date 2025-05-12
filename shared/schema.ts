@@ -173,7 +173,9 @@ export const productEnhancementSelections = pgTable("product_enhancement_selecti
   id: serial("id").primaryKey(),
   enhancementId: integer("enhancement_id").references(() => productEnhancements.id).notNull(),
   imageId: integer("image_id").references(() => productEnhancementImages.id).notNull(),
+  optionId: text("option_id").notNull(), // ID of the selected option
   optionKey: text("option_key").notNull(), // Key of the selected option
+  optionName: text("option_name"), // Display name of the selected option
   resultImage1Path: text("result_image1_path"), // First result image
   resultImage2Path: text("result_image2_path"), // Second result image
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -193,7 +195,9 @@ export const insertProductEnhancementImageSchema = createInsertSchema(productEnh
 export const insertProductEnhancementSelectionSchema = createInsertSchema(productEnhancementSelections).pick({
   enhancementId: true,
   imageId: true,
+  optionId: true,
   optionKey: true,
+  optionName: true,
 });
 
 export type InsertProductEnhancement = z.infer<typeof insertProductEnhancementSchema>;
