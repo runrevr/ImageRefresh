@@ -157,10 +157,16 @@ const ShowcaseSection = () => {
 };
 
 // Demo 3-step section - This is where the actual upload functionality lives
-const DemoSection = ({ onImagesSelected, isUploading, onStartEnhancement }: { 
+const DemoSection = ({ 
+  onImagesSelected, 
+  isUploading, 
+  onStartEnhancement, 
+  onIndustryChange 
+}: { 
   onImagesSelected: (files: File[]) => void, 
   isUploading: boolean,
-  onStartEnhancement?: () => void 
+  onStartEnhancement?: () => void,
+  onIndustryChange?: (industry: string) => void
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -284,6 +290,8 @@ const DemoSection = ({ onImagesSelected, isUploading, onStartEnhancement }: {
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm"
                 placeholder="e.g., Fashion, Food, Electronics..."
+                onChange={(e) => onIndustryChange && onIndustryChange(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && onStartEnhancement && onStartEnhancement()}
               />
             </div>
           </div>
@@ -295,7 +303,8 @@ const DemoSection = ({ onImagesSelected, isUploading, onStartEnhancement }: {
             <p className="mb-6 text-gray-600">Choose from AI-suggested enhancements tailored to your products.</p>
             <button 
               onClick={onStartEnhancement}
-              className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm"
+              disabled={uploadedFiles.length === 0 || isUploading}
+              className="bg-secondary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary-600 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Start Enhancement
             </button>
@@ -1093,6 +1102,8 @@ export default function ProductEnhancementWebhook() {
           <DemoSection 
             onImagesSelected={handleImagesSelected} 
             isUploading={uploadMutation.isPending}
+            onStartEnhancement={handleUpload}
+            onIndustryChange={handleIndustryChange}
           />
           <div className="container mx-auto p-4 mb-8">
             <IndustrySelector 
