@@ -193,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const imagePath = file.path;
         const enhancementImage = await storage.createProductEnhancementImage({
           enhancementId: productEnhancement.id,
-          originalImagePath: imagePath,
+          originalPath: imagePath,
           originalImageUrl: `/uploads/${path.basename(imagePath)}`
         });
         enhancementImages.push(enhancementImage);
@@ -264,21 +264,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           try {
-            console.log("Attempting webhook call to: https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9");
-            const requestPayload = {
+            const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9", {
               industry: req.body.industry,
               images,
               callbackUrl: webhookCallbackUrl
-            };
-            console.log("Request payload structure:", {
-              industry: req.body.industry,
-              imageCount: images.length,
-              firstImageByteLength: images[0]?.length || 0,
-              callbackUrl: webhookCallbackUrl
-            });
-            
-            const webhookResponse = await axios.post("https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9", requestPayload, {
-              timeout: 60000, // Increased to 60 second timeout
+            }, {
+              timeout: 30000, // 30 second timeout
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -317,21 +308,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               throw new Error("Invalid webhook response");
             }
           } catch (webhookError: any) {
-            console.error("Error calling product enhancement webhook:", webhookError.message);
-            
-            // Log detailed error information
-            if (webhookError.response) {
-              console.error("Webhook response status:", webhookError.response.status);
-              console.error("Webhook response data:", JSON.stringify(webhookError.response.data, null, 2));
-              console.error("Webhook response headers:", JSON.stringify(webhookError.response.headers, null, 2));
-            } else if (webhookError.request) {
-              console.error("Webhook request was made but no response received");
-              console.error("Request details:", webhookError.request);
-            } else {
-              console.error("Error setting up webhook request:", webhookError.message);
-              console.error("Error stack:", webhookError.stack);
-            }
-            
+            console.error("Error calling product enhancement webhook:", webhookError);
+            console.error("Webhook error details:", webhookError.response?.data || "No response data");
+            console.error("Webhook error status:", webhookError.response?.status || "No status");
             console.error("Webhook error code:", webhookError.code || "No error code");
             
             // Handle different error types
@@ -339,8 +318,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             if (webhookError.code === 'ECONNREFUSED' || webhookError.code === 'ECONNABORTED') {
               errorMessage = "Unable to connect to enhancement service - connection refused or timed out";
-            } else if (webhookError.code === 'ETIMEDOUT') {
-              errorMessage = "Connection to enhancement service timed out - please try again";
             } else if (webhookError.response) {
               errorMessage = `Enhancement service error (${webhookError.response.status}): ${webhookError.response.data?.message || webhookError.message}`;
             }
