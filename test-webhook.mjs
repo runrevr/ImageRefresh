@@ -3,19 +3,43 @@ import axios from 'axios';
 async function testWebhook() {
   try {
     console.log('Testing webhook connection...');
-    const response = await axios.post('https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9', {
-      action: 'test',
-      requestId: `test-${Date.now()}`
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Source': 'Test Script'
+    
+    // Creating a more complete test payload that matches our real implementation
+    const testPayload = {
+      action: 'processImages',
+      requestId: `test-${Date.now()}`,
+      industry: 'hair care',
+      images: [
+        {
+          id: 1,
+          data: 'test-image-data-placeholder' // Not sending real image data in test
+        }
+      ],
+      callbackUrls: {
+        options: 'https://test-callback.example.com/options',
+        results: 'https://test-callback.example.com/results'
       }
-    });
+    };
+    
+    console.log('Sending test payload to webhook:', JSON.stringify({
+      ...testPayload,
+      images: [{id: 1, dataSize: 'placeholder'}] // Log-friendly version
+    }, null, 2));
+    
+    const response = await axios.post('https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9', 
+      testPayload, 
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Webhook-Source': 'ImageRefresh-App',
+          'Accept': 'application/json'
+        }
+      }
+    );
 
     console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
-    console.log('Response body:', response.data);
+    console.log('Response headers:', JSON.stringify(response.headers, null, 2));
+    console.log('Response body:', JSON.stringify(response.data, null, 2));
   } catch (error) {
     console.error('Error connecting to webhook:', error.message);
     if (error.response) {
