@@ -1003,13 +1003,21 @@ export default function ProductEnhancementWebhook() {
           description: "Your images have been uploaded successfully. Generating enhancement options...",
         });
         
-        // Stay in processing state until we actually get options
+        // Handle different status values from the server
         if (status === 'options_ready') {
           console.log("Options are ready immediately, moving to select styles");
           setStep('selectStyles');
           
           // Force refetch to get the options
           queryClient.invalidateQueries({ queryKey: ['/api/product-enhancement', data.id] });
+        } else if (status === 'error') {
+          console.error("Server reported error:", data.message);
+          toast({
+            title: "Enhancement Error",
+            description: data.message || "The enhancement service reported an error. Please try again later.",
+            variant: "destructive",
+          });
+          setStep('upload'); // Go back to upload on error
         } else {
           console.log("Options not ready yet, staying in processing state");
           // We're already in processing state
@@ -1179,6 +1187,15 @@ export default function ProductEnhancementWebhook() {
           console.log("Moving to selectStyles step");
           setStep('selectStyles');
         }
+      } else if (enhancementData.status === 'error') {
+        // Handle server error state
+        console.error("Server reported webhook error:", enhancementData.message);
+        toast({
+          title: "Enhancement Error",
+          description: enhancementData.message || "The webhook service reported an error. Please try again.",
+          variant: "destructive",
+        });
+        setStep('upload'); // Go back to upload on error
       } else if (step === 'selectStyles' && enhancementData.status === 'pending') {
         // If we don't have options yet, go to processing step
         console.log("No options yet, moving to processing step");
