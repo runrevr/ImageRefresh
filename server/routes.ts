@@ -262,6 +262,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (webhookError: any) {
           console.error("Error calling webhook:", webhookError.message);
+          
+          // Provide detailed error information for debugging
+          if (webhookError.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error("Webhook error response:", {
+              status: webhookError.response.status,
+              statusText: webhookError.response.statusText,
+              headers: webhookError.response.headers,
+              data: webhookError.response.data
+            });
+          } else if (webhookError.request) {
+            // The request was made but no response was received
+            console.error("Webhook error (no response):", {
+              request: webhookError.request._currentUrl || webhookError.request.path,
+              method: webhookError.request.method
+            });
+          }
+          
           // If webhook fails, we'll continue with mock data
           console.log("Falling back to mock data due to webhook error");
         }
