@@ -73,6 +73,7 @@ export function generateMockEnhancementOptions(industry?: string) {
         description: "Highlight the quality and texture of materials used in your home goods"
       }
     },
+    // Hair care options - with variations to catch different user inputs
     "hair care": {
       "natural_ingredients": {
         name: "Natural Ingredients Showcase",
@@ -126,6 +127,43 @@ export function generateMockEnhancementOptions(industry?: string) {
         name: "Moisturizing Effect",
         description: "Visualize the moisturizing and nourishing effects with water elements"
       }
+    },
+    // Additional hair care variations
+    "hair products": {
+      "natural_ingredients": {
+        name: "Natural Ingredients Showcase",
+        description: "Highlight the natural ingredients with botanical elements around your product"
+      },
+      "bathroom_context": {
+        name: "Bathroom Context",
+        description: "Show your hair care products in a modern, elegant bathroom setting"
+      },
+      "results_visualization": {
+        name: "Results Visualization",
+        description: "Display the expected hair results from using your product"
+      },
+      "moisturizing_effect": {
+        name: "Moisturizing Effect",
+        description: "Visualize the moisturizing and nourishing effects with water elements"
+      }
+    },
+    "shampoo": {
+      "natural_ingredients": {
+        name: "Natural Ingredients Showcase",
+        description: "Highlight the natural ingredients with botanical elements around your product"
+      },
+      "bathroom_context": {
+        name: "Bathroom Context",
+        description: "Show your hair care products in a modern, elegant bathroom setting"
+      },
+      "results_visualization": {
+        name: "Results Visualization",
+        description: "Display the expected hair results from using your product"
+      },
+      "moisturizing_effect": {
+        name: "Moisturizing Effect",
+        description: "Visualize the moisturizing and nourishing effects with water elements"
+      }
     }
   };
   
@@ -137,12 +175,27 @@ export function generateMockEnhancementOptions(industry?: string) {
     const normalizedIndustry = industry.toLowerCase().trim();
     console.log(`Normalized industry: "${normalizedIndustry}"`);
     
+    // Special handling for "hair care" variations
+    const hairCareVariations = ["hair care", "haircare", "hair", "hair products", "shampoo"];
+    if (hairCareVariations.some(v => normalizedIndustry.includes(v))) {
+      console.log(`Matched industry as hair care product: "${normalizedIndustry}"`);
+      return { ...baseOptions, ...industryOptions["hair care"] };
+    }
+    
     // Check if we have options for this industry
     if (industryOptions[normalizedIndustry]) {
       console.log(`Found industry options for: ${normalizedIndustry}`);
       return { ...baseOptions, ...industryOptions[normalizedIndustry] };
     } else {
       console.log(`No industry options found for: ${normalizedIndustry}`);
+      
+      // Try to find partial matches
+      for (const key of Object.keys(industryOptions)) {
+        if (normalizedIndustry.includes(key) || key.includes(normalizedIndustry)) {
+          console.log(`Found partial industry match: "${key}" for "${normalizedIndustry}"`);
+          return { ...baseOptions, ...industryOptions[key] };
+        }
+      }
     }
   }
   
