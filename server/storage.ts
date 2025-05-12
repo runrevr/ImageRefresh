@@ -515,7 +515,7 @@ export class DatabaseStorage implements IStorage {
     const updateData: any = { status };
 
     if (webhookId !== undefined) {
-      updateData.webhookId = webhookId;
+      updateData.webhookId = webhookId; // This maps to webhook_request_id in the database
     }
 
     if (error !== undefined) {
@@ -568,7 +568,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<ProductEnhancementImage> {
     const [updatedImage] = await db
       .update(productEnhancementImages)
-      .set({ options })
+      .set({ options }) // This maps to options_json in the database
       .where(eq(productEnhancementImages.id, id))
       .returning();
 

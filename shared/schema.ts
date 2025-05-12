@@ -153,17 +153,20 @@ export const productEnhancements = pgTable("product_enhancements", {
   userId: integer("user_id").references(() => users.id),
   industry: text("industry").notNull(),
   status: text("status").notNull().default("pending"), // pending, processing, completed, failed
-  webhookId: text("webhook_id"), // ID returned from webhook
+  webhookId: text("webhook_request_id"), // ID returned from webhook (matches database column name)
   createdAt: timestamp("created_at").defaultNow().notNull(),
   error: text("error"),
+  creditsUsed: integer("credits_used").default(0),
 });
 
 export const productEnhancementImages = pgTable("product_enhancement_images", {
   id: serial("id").primaryKey(),
   enhancementId: integer("enhancement_id").references(() => productEnhancements.id).notNull(),
   originalImagePath: text("original_image_path").notNull(),
-  options: jsonb("options"), // Stores the enhancement options returned from the webhook
+  options: jsonb("options_json"), // Stores the enhancement options returned from webhook (matches database column name)
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  selectedOptions: text("selected_options").array(), // Array of selected option keys
+  resultImagePaths: text("result_image_paths").array(), // Array of result image paths
 });
 
 export const productEnhancementSelections = pgTable("product_enhancement_selections", {
