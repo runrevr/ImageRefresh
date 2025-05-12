@@ -161,6 +161,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/product-enhancement/start", productUpload.array("images", 5), async (req, res) => {
     try {
       console.log("Product enhancement start request received");
+      console.log("DEBUG: Storage object type:", typeof storage);
+      console.log("DEBUG: Storage has createProductEnhancement:", typeof storage.createProductEnhancement === 'function');
+      console.log("DEBUG: Available storage methods:", Object.keys(storage));
       
       // Validate request body
       if (!req.body.industry) {
