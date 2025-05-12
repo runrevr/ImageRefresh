@@ -104,6 +104,11 @@ export interface IStorage {
     resultImage1Path?: string,
     resultImage2Path?: string
   ): Promise<ProductEnhancementSelection>;
+  updateProductEnhancementSelectionResults(
+    id: number,
+    resultImage1Path: string,
+    resultImage2Path: string
+  ): Promise<ProductEnhancementSelection>;
   getProductEnhancementSelections(enhancementId: number): Promise<ProductEnhancementSelection[]>;
 }
 
@@ -620,6 +625,28 @@ export class DatabaseStorage implements IStorage {
     const [updatedSelection] = await db
       .update(productEnhancementSelections)
       .set(updateData)
+      .where(eq(productEnhancementSelections.id, id))
+      .returning();
+
+    if (!updatedSelection) {
+      throw new Error("Product enhancement selection not found");
+    }
+
+    return updatedSelection;
+  }
+  
+  async updateProductEnhancementSelectionResults(
+    id: number,
+    resultImage1Path: string,
+    resultImage2Path: string
+  ): Promise<ProductEnhancementSelection> {
+    const [updatedSelection] = await db
+      .update(productEnhancementSelections)
+      .set({
+        resultImage1Path,
+        resultImage2Path,
+        status: "completed"
+      })
       .where(eq(productEnhancementSelections.id, id))
       .returning();
 
