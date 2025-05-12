@@ -288,7 +288,7 @@ const DemoSection = ({
             <div className="space-y-2">
               <input
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm text-[#333333]"
                 placeholder="e.g., Fashion, Food, Electronics..."
                 onChange={(e) => onIndustryChange && onIndustryChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && onStartEnhancement && onStartEnhancement()}
@@ -516,7 +516,7 @@ const IndustrySelector = ({ onIndustryChange, disabled }: { onIndustryChange: (i
     <div className="max-w-md mx-auto">
       <input
         type="text"
-        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm bg-white"
+        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 shadow-sm bg-white text-[#333333]"
         placeholder="e.g., Fashion, Electronics, Food & Beverage..."
         value={inputValue}
         onChange={handleInputChange}
