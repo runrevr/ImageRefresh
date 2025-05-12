@@ -51,6 +51,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Product Enhancement Routes
+  // Get enhancement data (with images and options)
+  app.get("/api/product-enhancement/:id", async (req, res) => {
+    try {
+      const enhancementId = parseInt(req.params.id);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+      
+      // Get the enhancement
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
+      }
+      
+      // Get the enhancement images
+      const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
+      
+      // Prepare the response
+      const response = {
+        id: enhancement.id,
+        status: enhancement.status,
+        industry: enhancement.industry,
+        images: enhancementImages.map(img => ({
+          id: img.id,
+          originalImagePath: img.originalImagePath,
+          options: img.options
+        }))
+      };
+      
+      res.json(response);
+    } catch (error: any) {
+      console.error("Error getting enhancement data:", error);
+      res.status(500).json({ message: "Error getting enhancement data", error: error.message });
+    }
+  });
+  
   app.post("/api/product-enhancement/start", productUpload.array("images", 5), async (req, res) => {
     try {
       console.log("Product enhancement start request received");
