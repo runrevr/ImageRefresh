@@ -180,9 +180,45 @@ export function generateMockEnhancementOptions(industry?: string) {
     // Special handling for "hair care" variations
     const hairCareVariations = ["hair care", "haircare", "hair", "hair products", "shampoo"];
     
-    // Check if the normalized industry contains any hair care related keywords
-    if (hairCareVariations.some(v => normalizedIndustry.includes(v) || v.includes(normalizedIndustry))) {
-      console.log(`Matched industry as hair care product: "${normalizedIndustry}" using pattern matching`);
+    // Helper function for Levenshtein distance (fuzzy matching)
+    function levenshteinDistance(a: string, b: string): number {
+      const matrix: number[][] = Array(b.length + 1).fill(0).map(() => Array(a.length + 1).fill(0));
+      
+      for (let i = 0; i <= a.length; i++) {
+        matrix[0][i] = i;
+      }
+      
+      for (let j = 0; j <= b.length; j++) {
+        matrix[j][0] = j;
+      }
+      
+      for (let j = 1; j <= b.length; j++) {
+        for (let i = 1; i <= a.length; i++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          matrix[j][i] = Math.min(
+            matrix[j][i - 1] + 1,
+            matrix[j - 1][i] + 1,
+            matrix[j - 1][i - 1] + cost
+          );
+        }
+      }
+      
+      return matrix[b.length][a.length];
+    }
+    
+    // First try exact or substring match
+    const exactMatch = hairCareVariations.some(v => normalizedIndustry.includes(v) || v.includes(normalizedIndustry));
+    
+    // If no exact match, try fuzzy matching with Levenshtein distance
+    const MAX_DISTANCE = 2; // Allow up to 2 character differences (typos)
+    const fuzzyMatch = !exactMatch && hairCareVariations.some(v => {
+      const distance = levenshteinDistance(normalizedIndustry, v);
+      return distance <= MAX_DISTANCE;
+    });
+    
+    if (exactMatch || fuzzyMatch) {
+      console.log(`Matched industry as hair care product: "${normalizedIndustry}" using ${exactMatch ? 'pattern matching' : 'fuzzy matching'}`);
+      console.log(`Exact match: ${exactMatch}, Fuzzy match: ${fuzzyMatch}`);
       
       // For hair care, create exactly 5 specialized options
       const hairCareOptions = {
