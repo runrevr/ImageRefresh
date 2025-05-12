@@ -72,6 +72,24 @@ export function generateMockEnhancementOptions(industry?: string) {
         name: "Material Quality",
         description: "Highlight the quality and texture of materials used in your home goods"
       }
+    },
+    "hair care": {
+      "natural_ingredients": {
+        name: "Natural Ingredients Showcase",
+        description: "Highlight the natural ingredients with botanical elements around your product"
+      },
+      "bathroom_context": {
+        name: "Bathroom Context",
+        description: "Show your hair care products in a modern, elegant bathroom setting"
+      },
+      "results_visualization": {
+        name: "Results Visualization",
+        description: "Display the expected hair results from using your product"
+      },
+      "moisturizing_effect": {
+        name: "Moisturizing Effect",
+        description: "Visualize the moisturizing and nourishing effects with water elements"
+      }
     }
   };
   
@@ -106,11 +124,33 @@ export function getIndustryOptions() {
  */
 export function generateMockEnhancementResults(originalImagePath: string, selectedOption: string) {
   // In a real implementation, these would be paths to transformed images
-  // For testing, we'll just use the original image path
+  
+  // Generate two new file paths based on the original path but with unique names
+  // Extract the file extension (e.g., .jpg, .png)
+  const extIndex = originalImagePath.lastIndexOf('.');
+  const extension = extIndex > 0 ? originalImagePath.substring(extIndex) : '.jpg';
+  const basePath = originalImagePath.substring(0, extIndex > 0 ? extIndex : originalImagePath.length);
+  
+  // Create unique result paths with a timestamp and option identifier
+  const timestamp = Date.now();
+  const safeOptionName = selectedOption.toLowerCase().replace(/\s+/g, '-');
+  
+  const resultImage1Path = `${basePath}-result1-${safeOptionName}-${timestamp}${extension}`;
+  const resultImage2Path = `${basePath}-result2-${safeOptionName}-${timestamp}${extension}`;
+  
+  // Copy the original file to the result paths to simulate transformed images
+  const fs = require('fs');
+  try {
+    fs.copyFileSync(originalImagePath, resultImage1Path);
+    fs.copyFileSync(originalImagePath, resultImage2Path);
+    console.log(`Created mock result images at ${resultImage1Path} and ${resultImage2Path}`);
+  } catch (err) {
+    console.error(`Error creating mock result images: ${err}`);
+  }
   
   return {
-    resultImage1Path: originalImagePath, // For testing, use original image
-    resultImage2Path: originalImagePath, // For testing, use original image
+    resultImage1Path,
+    resultImage2Path
   };
 }
 
