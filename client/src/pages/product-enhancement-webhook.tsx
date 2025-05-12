@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
-import SiteFooter from "@/components/Footer"; // Import with a different name to avoid conflicts
+import GlobalFooter from "@/components/Footer"; // Import with a different name to avoid conflicts
 import shampooOriginal from "@assets/shampoo 3.png"; // Keep original import for fallback
 import shampooEnhanced from "@assets/shampoo 4.png";
 import sweatshirtOriginal from "@assets/sweatshirt.png";
@@ -1074,7 +1074,8 @@ export default function ProductEnhancementWebhook() {
   return (
     <div className="min-h-screen bg-[#f8fafa]">
       <AnnouncementBanner />
-      <Header />
+      <Navbar freeCredits={user?.freeCreditsUsed ? 0 : 1} paidCredits={user?.paidCredits || 0} />
+      <div className="mt-20"></div> {/* Add spacing for fixed navbar */}
       <HeroSection />
       <FeaturesSection />
       <ShowcaseSection />
@@ -1120,7 +1121,7 @@ export default function ProductEnhancementWebhook() {
       <TestimonialsSection />
       <FAQSection />
       <FinalCTASection />
-      <Footer />
+      <GlobalFooter />
     </div>
   );
 }
