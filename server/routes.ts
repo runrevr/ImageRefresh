@@ -452,18 +452,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const results = [];
             
             // Group selections by image ID
-            const selectionsByImage = {};
+            const selectionsByImage: Record<string, any[]> = {};
             for (const selection of selections) {
-              if (!selectionsByImage[selection.imageId]) {
-                selectionsByImage[selection.imageId] = [];
+              const imageIdKey = String(selection.imageId);
+              if (!selectionsByImage[imageIdKey]) {
+                selectionsByImage[imageIdKey] = [];
               }
-              selectionsByImage[selection.imageId].push(selection);
+              selectionsByImage[imageIdKey].push(selection);
             }
             
             // For each image with selections, generate results
-            for (const [imageId, imageSelections] of Object.entries(selectionsByImage)) {
+            for (const [imageIdStr, imageSelections] of Object.entries(selectionsByImage)) {
+              const imageId = parseInt(imageIdStr);
               // Get the original image
-              const enhancementImage = await storage.getProductEnhancementImage(parseInt(imageId));
+              const enhancementImage = await storage.getProductEnhancementImage(imageId);
               if (!enhancementImage) continue;
               
               // For each selection, generate two result images
@@ -476,7 +478,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 
                 // Add to results array
                 results.push({
-                  imageId: parseInt(imageId),
+                  imageId: imageId,
                   optionId: selection.optionId,
                   resultImages: resultImages
                 });

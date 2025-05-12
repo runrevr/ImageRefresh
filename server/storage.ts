@@ -686,7 +686,7 @@ export class DatabaseStorage implements IStorage {
   async updateProductEnhancementResults(
     enhancementId: number, 
     results: Array<{
-      imageId: number,
+      imageId: string | number,
       optionId: string | number,
       resultImages: string[] | { resultImage1Path: string, resultImage2Path: string }
     }>
@@ -711,27 +711,29 @@ export class DatabaseStorage implements IStorage {
           
           // Handle different result image formats
           if (Array.isArray(result.resultImages)) {
-            // Array format [image1, image2, ...]
-            if (result.resultImages.length >= 2) {
+            // Array format [image1, image2, ...] 
+            const images = result.resultImages as string[];
+            if (images.length >= 2) {
               await this.updateProductEnhancementSelectionResults(
                 selection.id,
-                result.resultImages[0],
-                result.resultImages[1]
+                images[0],
+                images[1]
               );
-            } else if (result.resultImages.length === 1) {
+            } else if (images.length === 1) {
               // If only one result image is available
               await this.updateProductEnhancementSelectionResults(
                 selection.id,
-                result.resultImages[0],
-                result.resultImages[0] // Use the same image for both slots
+                images[0],
+                images[0] // Use the same image for both slots
               );
             }
           } else if (typeof result.resultImages === 'object') {
             // Object format { resultImage1Path, resultImage2Path }
+            const resultObj = result.resultImages as { resultImage1Path: string, resultImage2Path: string };
             await this.updateProductEnhancementSelectionResults(
               selection.id,
-              result.resultImages.resultImage1Path,
-              result.resultImages.resultImage2Path
+              resultObj.resultImage1Path,
+              resultObj.resultImage2Path
             );
           }
         }
