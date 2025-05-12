@@ -79,6 +79,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const imageBase64Promises = uploadedImages.map(image => imageToBase64(image.path));
           const imageBase64Array = await Promise.all(imageBase64Promises);
           
+          // Get the base URL for callbacks
+          const protocol = req.protocol;
+          const host = req.get('host');
+          const baseUrl = `${protocol}://${host}`;
+          
           // Send to webhook
           const webhookData = {
             requestId: webhookRequestId,
@@ -86,12 +91,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
             images: imageBase64Array.map((base64, index) => ({
               id: index + 1,
               data: base64
-            }))
+            })),
+            callbackUrls: {
+              options: `${baseUrl}/api/webhook-callbacks/options`,
+              results: `${baseUrl}/api/webhook-callbacks/results`
+            }
           };
           
-          console.log(`Sending ${imageBase64Array.length} images to webhook`);
+          console.log(`Sending ${imageBase64Array.length} images to webhook with callbacks:`);
+          console.log(`- Options callback: ${webhookData.callbackUrls.options}`);
+          console.log(`- Results callback: ${webhookData.callbackUrls.results}`);
+          
+          // Log the full webhook request for debugging (omit large base64 data)
+          const logWebhookData = { 
+            ...webhookData, 
+            images: webhookData.images.map(img => ({ 
+              id: img.id, 
+              dataSize: img.data.length 
+            }))
+          };
+          console.log("Webhook request data:", JSON.stringify(logWebhookData, null, 2));
+          
           const webhookResponse = await axios.post(WEBHOOK_URL, webhookData);
-          console.log("Webhook response:", webhookResponse.status);
+          console.log("Webhook response status:", webhookResponse.status);
+          console.log("Webhook response headers:", JSON.stringify(webhookResponse.headers, null, 2));
+          console.log("Webhook response data:", JSON.stringify(webhookResponse.data, null, 2));
           
           // Here we would normally store the webhook response details in the database
         } catch (webhookError: any) {
@@ -364,6 +388,146 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error getting enhancement results:", error);
       res.status(500).json({ 
         message: "Error retrieving enhancement results", 
+        error: error.message 
+      });
+    }
+  });
+
+  // Webhook callback endpoints - for the webhook to send data back to us
+  app.post("/api/webhook-callbacks/options", async (req, res) => {
+    try {
+      console.log("Received webhook callback for options:", req.body);
+      
+      // Extract the requestId from the webhook callback
+      const { requestId, options } = req.body;
+      
+      if (!requestId) {
+        return res.status(400).json({ message: "Missing requestId in webhook callback" });
+      }
+      
+      // Find the product enhancement by webhook ID
+      const enhancement = await storage.getProductEnhancementByWebhookId(requestId);
+      
+      if (!enhancement) {
+        console.error(`No product enhancement found for webhookId: ${requestId}`);
+        return res.status(404).json({ message: "No matching enhancement request found" });
+      }
+      
+      console.log(`Found enhancement with ID ${enhancement.id} for webhookId ${requestId}`);
+      
+      // Update the enhancement status
+      await storage.updateProductEnhancementStatus(
+        enhancement.id,
+        "options_received"
+      );
+      
+      // For each image in the options, update the corresponding enhancement image
+      if (options && Array.isArray(options)) {
+        // Get all enhancement images
+        const enhancementImages = await storage.getProductEnhancementImages(enhancement.id);
+        console.log(`Found ${enhancementImages.length} enhancement images for enhancement ID ${enhancement.id}`);
+        
+        // We'll process each image option
+        for (let i = 0; i < options.length && i < enhancementImages.length; i++) {
+          const imageOption = options[i];
+          const enhancementImage = enhancementImages[i];
+          
+          // Save the options for this image (assuming they're in order)
+          if (enhancementImage) {
+            await storage.updateProductEnhancementImageOptions(
+              enhancementImage.id,
+              imageOption.enhancementOptions
+            );
+            console.log(`Updated options for image ${enhancementImage.id} (index: ${i+1})`);
+          } else {
+            console.warn(`No matching image found for index: ${i+1}`);
+          }
+        }
+      }
+      
+      // Acknowledge receipt
+      res.status(200).json({ message: "Options received successfully" });
+    } catch (error: any) {
+      console.error("Error processing webhook options callback:", error);
+      res.status(500).json({ 
+        message: "Error processing webhook options callback", 
+        error: error.message 
+      });
+    }
+  });
+
+  app.post("/api/webhook-callbacks/results", async (req, res) => {
+    try {
+      console.log("Received webhook callback for results:", req.body);
+      
+      // Extract the requestId from the webhook callback
+      const { requestId, results } = req.body;
+      
+      if (!requestId) {
+        return res.status(400).json({ message: "Missing requestId in webhook callback" });
+      }
+      
+      // Find the product enhancement by webhook ID
+      const enhancement = await storage.getProductEnhancementByWebhookId(requestId);
+      
+      if (!enhancement) {
+        console.error(`No product enhancement found for webhookId: ${requestId}`);
+        return res.status(404).json({ message: "No matching enhancement request found" });
+      }
+      
+      console.log(`Found enhancement with ID ${enhancement.id} for webhookId ${requestId}`);
+      
+      // Update the enhancement status
+      await storage.updateProductEnhancementStatus(
+        enhancement.id,
+        "results_received"
+      );
+      
+      // Process the results - save the transformed images
+      if (results && Array.isArray(results)) {
+        for (const result of results) {
+          const { selectionId, resultImages } = result;
+          
+          if (!resultImages || !Array.isArray(resultImages) || resultImages.length < 2) {
+            console.warn(`Invalid result images for selectionId: ${selectionId}`);
+            continue;
+          }
+          
+          // Save the result images to disk
+          const resultImage1Path = path.join(uploadsDir, `${uuid()}-result1.png`);
+          const resultImage2Path = path.join(uploadsDir, `${uuid()}-result2.png`);
+          
+          // Convert base64 to files
+          try {
+            await fs.promises.writeFile(
+              resultImage1Path, 
+              Buffer.from(resultImages[0], 'base64')
+            );
+            await fs.promises.writeFile(
+              resultImage2Path, 
+              Buffer.from(resultImages[1], 'base64')
+            );
+            
+            // Update the selection with the result images
+            await storage.updateProductEnhancementSelectionResults(
+              selectionId,
+              resultImage1Path,
+              resultImage2Path
+            );
+            
+            console.log(`Updated results for selection ${selectionId}`);
+          } catch (fileError: any) {
+            console.error(`Error saving result images for selection ${selectionId}:`, fileError.message);
+          }
+        }
+      }
+      
+      // Acknowledge receipt
+      res.status(200).json({ message: "Results received successfully" });
+    } catch (error: any) {
+      console.error("Error processing webhook results callback:", error);
+      res.status(500).json({ 
+        message: "Error processing webhook results callback", 
         error: error.message 
       });
     }
