@@ -308,15 +308,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get enhancement options after upload
   app.get("/api/product-enhancement/:id/options", async (req, res) => {
     try {
+      console.log(`\n\n====================== GET ENHANCEMENT OPTIONS ======================`);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      
       const enhancementId = parseInt(req.params.id);
+      console.log(`Enhancement ID: ${enhancementId}`);
+      
       if (isNaN(enhancementId)) {
+        console.log(`Invalid enhancement ID: ${req.params.id}`);
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
 
       // Look up the enhancement in the database
       const enhancement = await storage.getProductEnhancement(enhancementId);
+      console.log(`Enhancement data:`, JSON.stringify(enhancement, null, 2));
+      
       if (!enhancement) {
+        console.log(`Enhancement not found for ID: ${enhancementId}`);
         return res.status(404).json({ message: "Enhancement not found" });
+      }
+      
+      // Debug print industry options
+      if (enhancement && enhancement.industry) {
+        console.log(`Industry from enhancement: "${enhancement.industry}"`);
+        const options = generateMockEnhancementOptions(enhancement.industry);
+        console.log(`Generated options for "${enhancement.industry}":`, 
+          JSON.stringify(options, null, 2));
       }
 
       // Get the webhook request ID from the database or generate a new one
@@ -342,7 +359,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           images: enhancementImages.map((image, index) => ({
             id: image.id,
             originalUrl: image.originalImagePath,
-            options: generateMockEnhancementOptions(industry)
+            options: (() => {
+              console.log(`Generating options for image ${image.id}, industry: "${industry}"`);
+              const options = generateMockEnhancementOptions(industry);
+              console.log(`Generated ${Object.keys(options).length} options:`, JSON.stringify(options, null, 2));
+              return options;
+            })()
           }))
         };
         
