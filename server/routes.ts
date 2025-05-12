@@ -425,29 +425,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Based on curl test, we know the webhook receives but doesn't respond
           console.log("Using direct fetch for now while webhook callbacks are being set up");
           
-          // Since the N8N webhook doesn't seem to be returning data directly,
-          // let's use our mock data for the real industry while the webhook system
-          // is being configured correctly
+          // We're now only using the real N8N webhook - not generating any mock options
+          console.log("Awaiting real webhook data from N8N - no mock options will be generated");
+          
+          // Get the real images for this enhancement
           const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
           
-          // Generate options based on the real industry, but using our local generator
-          console.log(`Using local generator for industry: "${industry}" while waiting for webhook setup`);
-          const options = generateMockEnhancementOptions(industry);
-          
-          // Create a simulated webhook response
+          // Create a pending response - we'll wait for the real webhook to provide options
           const webhookResponse = {
             status: 200,
             data: {
               images: enhancementImages.map((image: any) => ({
                 id: image.id,
                 originalUrl: image.originalImagePath,
-                options: options
+                // No options - we'll wait for the webhook to provide them
+                options: null
               }))
             }
           };
           
-          console.log(`Created ${enhancementImages.length} images with options for industry: "${industry}"`);
-          console.log("Options:", JSON.stringify(options, null, 2));
+          console.log(`Created ${enhancementImages.length} images awaiting options for industry: "${industry}"`);
+          console.log("Waiting for webhook to provide options");
           
           if (webhookResponse.data && webhookResponse.data.images) {
             // Transform the webhook response to match our API format
@@ -457,7 +455,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               images: webhookResponse.data.images.map((img: any) => ({
                 id: img.id,
                 originalUrl: img.originalUrl || `/uploads/sample-image-${img.id}.jpg`,
-                options: img.options || generateMockEnhancementOptions(industry)
+                options: img.options || null
               }))
             };
             
@@ -468,16 +466,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (webhookError: any) {
           console.error("Error getting options from webhook:", webhookError.message);
           
-          // Fall back to mock data
-          console.log("Falling back to mock data due to webhook error");
+          // No longer falling back to mock data
+          console.log("Webhook error, but not using mock data as fallback");
           const mockResponse = {
             id: enhancementId,
-            status: "options_ready",
-            images: Array(1).fill(0).map((_, index) => ({
-              id: index + 1,
-              originalUrl: `/uploads/sample-image-${index + 1}.jpg`,
-              options: generateMockEnhancementOptions(industry)
-            }))
+            status: "error",
+            message: "Error connecting to webhook service. Please try again.",
+            images: []
           };
           
           res.status(200).json(mockResponse);
