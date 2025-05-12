@@ -14,7 +14,8 @@ const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
 // 1. Make sure the webhook is active in N8N
 // 2. Try using the exact URL from the N8N interface, including any query parameters
 // 3. Some N8N webhooks don't expect additional path segments like "/options"
-const WEBHOOK_URL = "https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9";
+// Updated to use the /webhook/ path instead of /webhook-test/ based on testing
+const WEBHOOK_URL = "https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9";
 
 // Helper function to convert an image file to base64
 async function imageToBase64(imagePath: string): Promise<string> {

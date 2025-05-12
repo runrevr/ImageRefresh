@@ -26,7 +26,11 @@ async function testWebhook() {
       images: [{id: 1, dataSize: 'placeholder'}] // Log-friendly version
     }, null, 2));
     
-    const response = await axios.post('https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9', 
+    // Try with the alternative URL structure N8N might be using
+    const webhookUrl = 'https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9';
+    console.log(`Trying webhook URL: ${webhookUrl}`);
+    
+    const response = await axios.post(webhookUrl, 
       testPayload, 
       {
         headers: {
