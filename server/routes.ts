@@ -107,8 +107,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       stripeEnabled: true
     });
   });
+
+  // Get current user endpoint (used for authentication)
+  app.get("/api/user", (req, res) => {
+    // If authenticated, return user info
+    if (req.isAuthenticated() && req.user) {
+      // Don't send the password hash
+      const { password, ...userWithoutPassword } = req.user;
+      return res.json(userWithoutPassword);
+    }
+    // Not authenticated
+    res.status(401).json({ message: "Not authenticated" });
+  });
   
-  // User credits endpoint
+  // User credits endpoint (original endpoint using userId parameter)
   app.get("/api/users/:userId/credits", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
@@ -132,6 +144,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         freeCreditsUsed: user.freeCreditsUsed
       });
       
+    } catch (error: any) {
+      console.error("Error fetching user credits:", error);
+      res.status(500).json({ message: "Error fetching user credits", error: error.message });
+    }
+  });
+  
+  // Simplified user credits endpoint for current user
+  app.get("/api/user/credits", async (req, res) => {
+    try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return the total credits (paid + free)
+      const totalCredits = user.paidCredits + (user.freeCreditsUsed ? 0 : 1);
+      
+      res.json({
+        credits: totalCredits,
+        paidCredits: user.paidCredits,
+        freeCreditsUsed: user.freeCreditsUsed
+      });
     } catch (error: any) {
       console.error("Error fetching user credits:", error);
       res.status(500).json({ message: "Error fetching user credits", error: error.message });
