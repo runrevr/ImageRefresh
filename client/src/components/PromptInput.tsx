@@ -556,6 +556,8 @@ export default function PromptInput({
   useEffect(() => {
     if (savedStyle && savedStyle.prompt) {
       console.log("Setting prompt from saved style:", savedStyle.prompt);
+      // Make sure we're using the EXACT prompt from the saved style 
+      // without any modifications or truncation
       setPromptText(savedStyle.prompt);
 
       // Handle style category
@@ -575,6 +577,11 @@ export default function PromptInput({
         );
         setPrimaryCategory("other");
         setOtherSubcategory("mullets");
+        
+        // Ensure we're using the full mullet prompt
+        const mulletPrompt = OTHER_STYLES.mullets.suggestedPrompt;
+        console.log("Setting full mullet prompt:", mulletPrompt);
+        setPromptText(mulletPrompt);
       }
     }
   }, [savedStyle]);
@@ -591,8 +598,21 @@ export default function PromptInput({
       return;
     }
 
+    // Log the exact prompt being submitted for debugging
+    console.log("Submitting prompt from PromptInput:", promptText);
+    console.log("Prompt length:", promptText.length);
+    
+    // Special handling for category-specific prompts
+    let finalPrompt = promptText;
+    
+    // If we're using a mullet transformation, make sure we're sending the full prompt
+    if (primaryCategory === "other" && otherSubcategory === "mullets") {
+      finalPrompt = OTHER_STYLES.mullets.suggestedPrompt;
+      console.log("Using full mullet prompt:", finalPrompt);
+    }
+    
     setIsLoading(true);
-    onSubmit(promptText, imageSize);
+    onSubmit(finalPrompt, imageSize);
   };
 
   // Handle primary category selection

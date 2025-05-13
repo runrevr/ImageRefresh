@@ -60,14 +60,16 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     // Use the prompt directly without any modifications
     // Our prompts in data.json are carefully crafted and should never be modified
     console.log("[OpenAI] Using prompt directly from ideas page (length: " + prompt.length + ")");
-    console.log("[OpenAI] Prompt preview:", prompt.substring(0, 100) + "...");
+    console.log("[OpenAI] Full prompt:", prompt);
     
+    // Before we make the API call, ensure we haven't truncated or modified the prompt in any way
+    // For DALL-E 3, longer, more detailed prompts tend to give better results
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt: prompt, // Use original prompt without any modifications
       n: 1,
       size: "1024x1024",
-      quality: "standard", 
+      quality: "hd", // Upgraded to HD for better quality
     });
     
     console.log("[OpenAI] API call completed successfully");
