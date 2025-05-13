@@ -20,9 +20,10 @@ import {
   type InsertProductEnhancementImage,
   type ProductEnhancementSelection,
   type InsertProductEnhancementSelection,
+  type ProductEnhancementResult,
 } from "../shared/schema.js";
 import { db } from "./db.js";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, not, isNull } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -776,6 +777,65 @@ export class DatabaseStorage implements IStorage {
       console.error("Error updating product enhancement results:", error);
       return false;
     }
+  }
+
+  // Create a product enhancement result from a selection
+  async createProductEnhancementResult(resultData: {
+    enhancementId: number;
+    selectionId: number;
+    imageId: number;
+    optionKey: string;
+    optionName: string;
+    resultImage1Path: string;
+    resultImage2Path: string;
+    description?: string;
+  }): Promise<ProductEnhancementResult> {
+    // Update the selection with result image paths
+    const selection = await this.updateProductEnhancementSelectionResults(
+      resultData.selectionId,
+      resultData.resultImage1Path,
+      resultData.resultImage2Path
+    );
+
+    // Return a result object that maps to the expected ProductEnhancementResult type
+    return {
+      id: selection.id, // Using selection ID as the result ID
+      enhancementId: resultData.enhancementId,
+      selectionId: resultData.selectionId,
+      imageId: resultData.imageId,
+      optionKey: resultData.optionKey,
+      optionName: resultData.optionName || selection.optionName || '',
+      resultImage1Path: resultData.resultImage1Path,
+      resultImage2Path: resultData.resultImage2Path,
+      description: resultData.description
+    };
+  }
+
+  // Get all product enhancement results for an enhancement
+  async getProductEnhancementResults(enhancementId: number): Promise<ProductEnhancementResult[]> {
+    // Fetch all selections for this enhancement that have result images
+    const selections = await db
+      .select()
+      .from(productEnhancementSelections)
+      .where(
+        and(
+          eq(productEnhancementSelections.enhancementId, enhancementId),
+          not(isNull(productEnhancementSelections.resultImage1Path))
+        )
+      );
+
+    // Convert selections to result objects
+    return selections.map(selection => ({
+      id: selection.id,
+      enhancementId: selection.enhancementId,
+      selectionId: selection.id,
+      imageId: selection.imageId,
+      optionKey: selection.optionKey,
+      optionName: selection.optionName || '',
+      resultImage1Path: selection.resultImage1Path || '',
+      resultImage2Path: selection.resultImage2Path || '',
+      description: undefined // No description stored in selections table
+    }));
   }
 }
 
