@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { runCleanupTasks } from "./cleanup";
 import { demoAccessMiddleware } from "./demo-access-control";
+import { setupAuth } from "./auth";
 import cookieParser from "cookie-parser";
 import * as dotenv from 'dotenv';
 import fs from 'fs';
