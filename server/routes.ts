@@ -346,6 +346,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // Further processing happens asynchronously
+      
+      // Process the transformation asynchronously
+      setTimeout(async () => {
+        try {
+          console.log(`Processing transformation ${transformation.id} asynchronously`);
+          
+          // Update the transformation status to "completed"
+          await storage.updateTransformation(transformation.id, {
+            status: "completed",
+            transformedImagePath: imagePath, // For now, just use the original image
+            transformedImageUrl: `/${imagePath}` // Use the same URL pattern as upload
+          });
+          
+          console.log(`Transformation ${transformation.id} completed`);
+        } catch (asyncError) {
+          console.error(`Error in async transformation processing: ${asyncError}`);
+          await storage.updateTransformation(transformation.id, {
+            status: "failed",
+            errorMessage: asyncError.message
+          });
+        }
+      }, 2000); // Simulate 2-second processing time
 
     } catch (error: any) {
       console.error("Error transforming image:", error);
@@ -363,6 +385,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get transformation status by ID
+  app.get("/api/transformation/:id", async (req, res) => {
+    try {
+      const transformationId = parseInt(req.params.id);
+      
+      if (isNaN(transformationId)) {
+        return res.status(400).json({ message: "Invalid transformation ID" });
+      }
+      
+      const transformation = await storage.getTransformation(transformationId);
+      
+      if (!transformation) {
+        return res.status(404).json({ message: "Transformation not found" });
+      }
+      
+      res.json(transformation);
+    } catch (error: any) {
+      console.error("Error retrieving transformation:", error);
+      res.status(500).json({ message: "Error retrieving transformation", error: error.message });
+    }
+  });
+  
   // Product Enhancement Routes
   
   // Start product enhancement - upload images and initiate webhook process
