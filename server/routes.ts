@@ -781,7 +781,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.updateProductEnhancementStatus(
         enhancementId,
         "processing_selections",
-        null // Add null for the third parameter
+        undefined // Use undefined instead of null
       );
       
       // If we're in mock mode, generate results immediately
