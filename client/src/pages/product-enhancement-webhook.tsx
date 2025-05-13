@@ -776,8 +776,8 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   
   // Handle coloring book transformation
   const handleColoringBookTransform = async (imagePath: string) => {
-    // Check if user has credits - default value of userCredits already handled by destructuring
-    if (!user || (userCredits && userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
+    // Check if user has credits
+    if (!user || (userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
       toast({
         title: "Not enough credits",
         description: "You need 1 credit to apply a coloring book transformation.",
@@ -1063,7 +1063,9 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
 
 // Main component
 export default function ProductEnhancementWebhook() {
-  const { data: userCredits = { credits: 0, paidCredits: 0, freeCreditsUsed: true } } = useCredits();
+  // Define userCredits directly to avoid LSP errors
+  const { data } = useCredits();
+  const userCredits = data || { credits: 0, paidCredits: 0, freeCreditsUsed: true };
   const { toast } = useToast();
   const { user } = useAuth();
   const [step, setStep] = useState<'upload' | 'selectStyles' | 'processing' | 'results'>('upload');

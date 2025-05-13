@@ -1097,7 +1097,7 @@ export default function Home() {
                 originalImage={originalImage}
                 onSubmit={handlePromptSubmit}
                 onBack={handleNewImage}
-                selectedTransformation={selectedTransformation}
+                selectedTransformation={selectedTransformation as TransformationType | null}
                 defaultPrompt={prompt} // Pass the prompt (which may contain savedStyle.prompt)
                 savedStyle={savedStyle} // Pass the saved style with category and title
               />
