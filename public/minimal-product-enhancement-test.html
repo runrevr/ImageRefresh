@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minimal Product Enhancement Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Basic styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #2563eb;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .header {
+      background-color: #2563eb;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .footer {
+      background-color: #1f2937;
+      color: #f9fafb;
+      padding: 2rem 0;
+      text-align: center;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 class="text-2xl font-bold">ImageRefresh</h1>
+    <p>Product Enhancement Tool</p>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="text-xl font-bold mb-4">Upload Product Images</h2>
+      <p class="mb-4">Upload 1-5 product images and we'll enhance them for you.</p>
+      
+      <div class="mb-4">
+        <label for="industry" class="block mb-2 font-medium">Industry</label>
+        <input type="text" id="industry" class="w-full p-2 border rounded" placeholder="e.g. Fashion, Electronics, Food">
+      </div>
+      
+      <div class="mb-4">
+        <label class="block mb-2 font-medium">Images</label>
+        <div class="border-2 border-dashed border-gray-300 p-4 text-center">
+          <p>Drag and drop images here or click to browse</p>
+          <input type="file" id="fileInput" multiple class="hidden">
+          <button id="browseButton" class="btn mt-2">Browse Files</button>
+        </div>
+      </div>
+      
+      <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4"></div>
+      
+      <div class="mt-4">
+        <button id="uploadButton" class="btn w-full">Start Enhancement</button>
+      </div>
+    </div>
+    
+    <div id="processingCard" class="card hidden">
+      <h2 class="text-xl font-bold mb-4">Processing Your Images</h2>
+      <div class="flex justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+      <p class="text-center mt-4">This may take a minute or two...</p>
+    </div>
+    
+    <div id="resultsCard" class="card hidden">
+      <h2 class="text-xl font-bold mb-4">Enhancement Options</h2>
+      <div id="enhancementOptions"></div>
+      <button id="processEnhancements" class="btn w-full mt-4">Process Selected Enhancements</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2025 ImageRefresh. All rights reserved.</p>
+  </div>
+
+  <script>
+    // Simple UI interaction
+    document.getElementById('browseButton').addEventListener('click', () => {
+      document.getElementById('fileInput').click();
+    });
+    
+    // Show file previews
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const files = e.target.files;
+      const previewContainer = document.getElementById('imagePreview');
+      previewContainer.innerHTML = '';
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'w-full h-48 object-cover rounded';
+            previewContainer.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    });
+    
+    // Real API integration
+    document.getElementById('uploadButton').addEventListener('click', async () => {
+      const industry = document.getElementById('industry').value;
+      const files = document.getElementById('fileInput').files;
+      
+      if (!industry) {
+        alert('Please enter your industry');
+        return;
+      }
+      
+      if (!files.length) {
+        alert('Please select at least one image');
+        return;
+      }
+      
+      // Hide upload card, show processing
+      document.querySelector('.card').classList.add('hidden');
+      document.getElementById('processingCard').classList.remove('hidden');
+      
+      // Create form data to send to the server
+      const formData = new FormData();
+      formData.append('industry', industry);
+      
+      // Add each file to the form data
+      for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+      }
+      
+      try {
+        // Make the API call to start the enhancement process
+        const startResponse = await fetch('/api/product-enhancement/start', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!startResponse.ok) {
+          throw new Error(`Server error: ${startResponse.status}`);
+        }
+        
+        const startData = await startResponse.json();
+        console.log('Start response:', startData);
+        
+        // Get the enhancement ID from the response
+        const enhancementId = startData.enhancementId;
+        
+        // Poll for enhancement options
+        let enhancementImages = [];
+        let attempts = 0;
+        const maxAttempts = 20; // Try for about 1 minute (3s * 20)
+        
+        const pollForOptions = async () => {
+          if (attempts >= maxAttempts) {
+            throw new Error('Timed out waiting for enhancement options');
+          }
+          
+          attempts++;
+          
+          try {
+            // Check if the options are ready
+            const optionsResponse = await fetch(`/api/product-enhancement/${enhancementId}/options`);
+            
+            if (!optionsResponse.ok) {
+              throw new Error(`Server error: ${optionsResponse.status}`);
+            }
+            
+            const optionsData = await optionsResponse.json();
+            console.log('Options response:', optionsData);
+            
+            if (optionsData.status === 'processing') {
+              // Still processing, try again after delay
+              setTimeout(pollForOptions, 3000);
+              return;
+            }
+            
+            if (optionsData.status === 'failed') {
+              throw new Error(optionsData.error || 'Enhancement failed');
+            }
+            
+            // Options are ready
+            enhancementImages = optionsData.images || [];
+            
+            // Hide processing, show results
+            document.getElementById('processingCard').classList.add('hidden');
+            document.getElementById('resultsCard').classList.remove('hidden');
+            
+            // Display the enhancement options
+            const enhancementOptions = document.getElementById('enhancementOptions');
+            
+            if (enhancementImages.length === 0) {
+              enhancementOptions.innerHTML = `<p class="text-red-500">No enhancement options were returned.</p>`;
+              return;
+            }
+            
+            // Build the HTML for each image's options
+            let optionsHtml = '';
+            
+            enhancementImages.forEach(image => {
+              optionsHtml += `<div class="mb-8">
+                <h3 class="font-bold text-lg mb-2">Image #${image.id}</h3>
+                <img src="/uploads/${image.originalImagePath.split('/').pop()}" class="w-48 h-48 object-cover mb-4" />
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+              
+              // Add each enhancement option
+              if (image.options && Object.keys(image.options).length > 0) {
+                Object.entries(image.options).forEach(([key, option]) => {
+                  optionsHtml += `
+                    <div class="border p-4 rounded">
+                      <h4 class="font-bold">${option.name}</h4>
+                      <p>${option.description}</p>
+                      <label class="flex items-center mt-2">
+                        <input type="checkbox" class="mr-2" data-image-id="${image.id}" data-option-key="${key}"> 
+                        Select (1 credit)
+                      </label>
+                    </div>`;
+                });
+              } else {
+                optionsHtml += `<p class="text-red-500">No options available for this image.</p>`;
+              }
+              
+              optionsHtml += `</div></div>`;
+            });
+            
+            enhancementOptions.innerHTML = optionsHtml;
+            
+            // Set up the "Process Selected Enhancements" button
+            document.getElementById('processEnhancements').addEventListener('click', async () => {
+              const selectedOptions = [];
+              
+              // Find all checked checkboxes
+              document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedOptions.push({
+                  imageId: parseInt(checkbox.getAttribute('data-image-id')),
+                  optionKey: checkbox.getAttribute('data-option-key')
+                });
+              });
+              
+              if (selectedOptions.length === 0) {
+                alert('Please select at least one enhancement option');
+                return;
+              }
+              
+              // Submit the selected options to the API
+              try {
+                const selectResponse = await fetch(`/api/product-enhancement/${enhancementId}/select`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ selections: selectedOptions })
+                });
+                
+                if (!selectResponse.ok) {
+                  throw new Error(`Server error: ${selectResponse.status}`);
+                }
+                
+                const selectData = await selectResponse.json();
+                console.log('Selection response:', selectData);
+                
+                alert('Your selected enhancements are being processed. Results will be available soon!');
+                
+              } catch (error) {
+                console.error('Error submitting selections:', error);
+                alert(`Error: ${error.message}`);
+              }
+            });
+            
+          } catch (error) {
+            console.error('Error polling for options:', error);
+            document.getElementById('processingCard').classList.add('hidden');
+            alert(`Error: ${error.message}`);
+          }
+        };
+        
+        // Start polling
+        setTimeout(pollForOptions, 3000);
+        
+      } catch (error) {
+        console.error('Error starting enhancement:', error);
+        document.getElementById('processingCard').classList.add('hidden');
+        document.querySelector('.card').classList.remove('hidden');
+        alert(`Error: ${error.message}`);
+      }
+    });
+  </script>
+</body>
+</html>
