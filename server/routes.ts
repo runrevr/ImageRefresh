@@ -349,7 +349,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error: any) {
       console.error("Error transforming image:", error);
-      res.status(500).json({ message: "Error transforming image", error: error.message });
+      console.error("Error stack:", error.stack);
+      console.error("Request body:", req.body);
+      // Check if req.body is empty
+      if (!req.body || Object.keys(req.body).length === 0) {
+        console.error("Empty request body detected. Check content-type header.");
+      }
+      res.status(500).json({ 
+        message: "Error transforming image", 
+        error: error.message,
+        details: JSON.stringify(req.body)
+      });
     }
   });
 
