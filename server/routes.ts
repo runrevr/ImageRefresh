@@ -8,8 +8,8 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEnhancementResults } from "./mock-webhook-data";
 import { type InsertTransformation } from "../shared/schema";
-import { createColoringBookImage } from "./coloring-book";
 import { transformImageWithOpenAI } from "./openai-image";
+import { createColoringBookImage } from "./coloring-book";
 
 // Environment variable to control mock mode - will use mock data if true, real webhook if false
 const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
@@ -406,8 +406,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 transformedImagePath = result.transformedPath;
                 secondTransformedImagePath = result.secondTransformedPath;
                 console.log(`Two-stage transform successful for ${transformation.id}`);
-              } catch (gptimageerror) {
-                console.error(`Error using gpt-image-1: ${gptimageerror.message}`);
+              } catch (error: any) {
+                console.error(`Error using gpt-image-1: ${error.message}`);
                 console.log(`Falling back to DALL-E 3 for ${transformation.id}`);
                 
                 // Fall back to DALL-E 3 if gpt-image-1 fails
