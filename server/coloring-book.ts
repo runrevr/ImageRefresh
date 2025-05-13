@@ -37,17 +37,13 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 }
 
 /**
- * Creates a coloring book style version of an image
+ * Creates a coloring book style version of an image using the N8N webhook
  * @param imagePath Path to the image to transform
  * @returns Path to the transformed image
  */
 export async function createColoringBookImage(imagePath: string): Promise<{ outputPath: string }> {
   try {
     console.log(`Creating coloring book version of image: ${imagePath}`);
-    
-    if (!isOpenAIConfigured()) {
-      throw new Error("OpenAI API key is not configured");
-    }
     
     // Read the image file
     const imageBuffer = fs.readFileSync(imagePath);
@@ -63,81 +59,68 @@ export async function createColoringBookImage(imagePath: string): Promise<{ outp
       fs.mkdirSync(outputDir, { recursive: true });
     }
     
-    // Coloring book prompt
+    // Coloring book transformation prompt
     const coloringBookPrompt = "Turn this into a black and white coloring book page. Use only thick black outlines on a white background. Remove all colors and details. Create simple line art with bold borders between sections. No shading, no gradients, no gray areas. Make it look like a children's coloring book with clear, easy-to-color sections.";
     
-    // Use GPT-4o Vision to create coloring book version
-    console.log("Generating coloring book image with GPT-4o Vision");
+    // Send the request to the webhook
+    console.log("Sending coloring book transformation request to N8N webhook");
     
-    // First, analyze the image with Vision API
-    const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
+    // Send a single image with the coloring book transformation request
+    const response = await axios.post(WEBHOOK_URL, {
+      images: [
         {
-          role: "user",
-          content: [
+          image: base64Image,
+          transformations: [
             {
-              type: "text",
-              text: coloringBookPrompt
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
-              }
+              name: "Coloring Book Style",
+              prompt: coloringBookPrompt
             }
-          ],
-        },
+          ]
+        }
       ],
-      max_tokens: 500,
+      industry: "Coloring Book Creation"
     });
     
-    // Then use DALL-E to generate the coloring book image based on the analysis
-    console.log("Generating coloring book image with DALL-E");
-    const imageResponse = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: `${coloringBookPrompt} ${visionResponse.choices[0].message.content}`,
-      n: 1,
-      size: "1024x1024",
-      response_format: "url",
-    });
-    
-    if (!imageResponse?.data?.[0]?.url) {
-      throw new Error("Failed to generate coloring book image");
+    // Validate the response
+    if (!response.data || !response.data.results || !response.data.results[0] || !response.data.results[0].imageUrl) {
+      console.error("Invalid response from webhook:", response.data);
+      throw new Error("Webhook did not return a valid transformed image");
     }
     
-    // Save the image
-    const imageUrl = imageResponse.data[0].url;
+    // Save the transformed image
+    const imageUrl = response.data.results[0].imageUrl;
     await saveImageFromUrl(imageUrl, outputPath);
     
     console.log(`Coloring book image saved to: ${outputPath}`);
     
     return { outputPath };
-  } catch (error) {
-    console.error("Error in createColoringBookImage:", error);
+  } catch (error: unknown) {
+    const err = error as Error & { 
+      response?: { status?: number; data?: any; }; 
+      code?: string;
+      path?: string;
+    };
     
-    // Check for specific OpenAI error types
-    if (error.response?.status === 401) {
-      console.error("OpenAI authentication error - check API key");
-      throw new Error("OpenAI authentication failed. Check your API key.");
-    }
+    console.error("Error in createColoringBookImage:", err);
     
-    if (error.response?.status === 429) {
-      console.error("OpenAI rate limit exceeded");
-      throw new Error("OpenAI rate limit exceeded. Please try again later.");
-    }
-    
-    if (error.response?.data?.error) {
-      console.error("OpenAI error response:", error.response.data.error);
-      throw new Error(`OpenAI error: ${error.response.data.error.message || 'Unknown error'}`);
+    // Check for axios response errors
+    if (err.response) {
+      console.error(`Webhook returned status: ${err.response.status}`);
+      console.error("Webhook response data:", err.response.data);
+      
+      if (err.response.status === 429) {
+        throw new Error("Webhook rate limit exceeded. Please try again later.");
+      }
+      
+      throw new Error(`Webhook error: ${err.response.status} - ${JSON.stringify(err.response.data)}`);
     }
     
     // For image reading or file system errors
-    if (error.code === 'ENOENT') {
-      console.error("File not found:", error.path);
-      throw new Error(`File not found: ${error.path}`);
+    if (err.code === 'ENOENT') {
+      console.error("File not found:", err.path);
+      throw new Error(`File not found: ${err.path}`);
     }
     
-    throw error;
+    throw new Error(`Error creating coloring book image: ${err.message}`);
   }
 }
