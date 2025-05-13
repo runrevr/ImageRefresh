@@ -1138,8 +1138,8 @@ export default function ProductEnhancementWebhook() {
   // Query to fetch enhancement data (images and options)
   const { data: enhancementData, isLoading: isLoadingEnhancement } = useQuery({
     queryKey: ['/api/product-enhancement', enhancementId],
-    enabled: enhancementId !== null && step === 'processing',
-    refetchInterval: 2000, // Poll every 2 seconds
+    enabled: enhancementId !== null && (step === 'processing' || step === 'selectStyles'),
+    refetchInterval: step === 'processing' ? 2000 : false, // Poll every 2 seconds only when processing
     queryFn: async () => {
       if (!enhancementId) return null;
       console.log(`Fetching data for enhancement ID ${enhancementId}`);
