@@ -576,7 +576,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Check if user has enough credits (1 credit per selection)
           const totalCreditsNeeded = selections.length;
-          const availableCredits = user.freeCredits + user.paidCredits;
+          const availableCredits = (user.freeCreditsUsed ? 0 : 1) + user.paidCredits;
           
           if (availableCredits < totalCreditsNeeded) {
             return res.status(403).json({ 
@@ -1165,7 +1165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 // Update user credits
                 await storage.updateUserCredits(
                   enhancement.userId,
-                  hasMonthlyFreeCredit ? user.freeCredits - 1 : 0,
+                  true, // Set freeCreditsUsed to true if we used the free credit
                   hasMonthlyFreeCredit ? user.paidCredits : user.paidCredits - 1
                 );
                 

@@ -93,11 +93,13 @@ const baseInsertTransformationSchema = createInsertSchema(transformations).pick(
   userId: true,
   originalImagePath: true,
   prompt: true,
+  status: true,
 });
 
 // Export the schema with modified validation for the prompt field
 export const insertTransformationSchema = baseInsertTransformationSchema.extend({
   prompt: z.string().max(10000), // Increased length limit for prompts
+  status: z.string().default("pending"),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -206,6 +208,19 @@ export type InsertProductEnhancementImage = z.infer<typeof insertProductEnhancem
 export type ProductEnhancementImage = typeof productEnhancementImages.$inferSelect;
 export type InsertProductEnhancementSelection = z.infer<typeof insertProductEnhancementSelectionSchema>;
 export type ProductEnhancementSelection = typeof productEnhancementSelections.$inferSelect;
+
+// Product Enhancement Results (virtual type for UI consumption)
+export type ProductEnhancementResult = {
+  id: number;
+  imageId: number;
+  enhancementId: number;
+  selectionId: number;
+  optionKey: string;
+  optionName: string;
+  resultImage1Path: string;
+  resultImage2Path: string;
+  description?: string;
+};
 
 // Type definitions for webhook requests and responses
 export type ProductEnhancementWebhookRequest = {
