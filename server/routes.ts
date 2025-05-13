@@ -780,7 +780,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update enhancement status
       await storage.updateProductEnhancementStatus(
         enhancementId,
-        "processing_selections"
+        "processing_selections",
+        null // Add null for the third parameter
       );
       
       // If we're in mock mode, generate results immediately
@@ -803,8 +804,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 // Generate mock results
                 const mockResults = generateMockEnhancementResults(
                   image.originalImagePath,
-                  selection.optionKey,
-                  enhancement.industry
+                  selection.optionKey
+                  // Industry parameter is not needed based on the function definition
                 );
                 
                 // Store the results
