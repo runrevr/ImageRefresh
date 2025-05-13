@@ -1142,12 +1142,33 @@ export default function ProductEnhancementWebhook() {
       if (!enhancementId) return null;
       console.log(`Fetching data for enhancement ID ${enhancementId}`);
       
+      // If we already encountered an error, don't keep fetching
+      if (errorMessage) {
+        console.log("Skipping fetch due to existing error");
+        throw new Error("Manually stopping polling due to existing error");
+      }
+      
       // Try to get options specifically first
       try {
         console.log(`Trying options endpoint first...`);
         const optionsResponse = await apiRequest("GET", `/api/product-enhancement/${enhancementId}/options`);
         const optionsData = await optionsResponse.json();
         console.log("Options data:", optionsData);
+        
+        // Check for empty options with "options_ready" status here too
+        if (optionsData.status === 'options_ready' && 
+            optionsData.images && 
+            optionsData.images.length > 0 &&
+            (!optionsData.images[0].options || Object.keys(optionsData.images[0].options || {}).length === 0)) {
+          console.error("Server returned options_ready but with empty options");
+          // Transform to error response
+          return {
+            ...optionsData,
+            status: 'error',
+            message: "The webhook service did not return any enhancement options. Please try again with a different image or industry."
+          };
+        }
+        
         return optionsData;
       } catch (optionsError) {
         console.error("Error fetching options:", optionsError);
@@ -1158,7 +1179,7 @@ export default function ProductEnhancementWebhook() {
         return await response.json();
       }
     },
-    enabled: !!enhancementId && (step === 'selectStyles' || step === 'processing'),
+    enabled: !!enhancementId && (step === 'selectStyles' || step === 'processing') && !errorMessage,
     // Poll every 3 seconds if not completed
     refetchInterval: 3000,
   });
@@ -1170,9 +1191,14 @@ export default function ProductEnhancementWebhook() {
       if (enhancementData.status === 'completed' || enhancementData.status === 'error') {
         console.log(`Stopping polling due to status: ${enhancementData.status}`);
         queryClient.cancelQueries({ queryKey: ['/api/product-enhancement', enhancementId] });
+        
+        // If we have an error status but no explicit message set yet, set it
+        if (enhancementData.status === 'error' && !errorMessage) {
+          setErrorMessage(enhancementData.message || "The webhook service encountered an error. Please try again with a different image or industry.");
+        }
       }
     }
-  }, [enhancementData, enhancementId]);
+  }, [enhancementData, enhancementId, errorMessage]);
   
   // Update enhancement images when data changes
   useEffect(() => {
@@ -1189,6 +1215,9 @@ export default function ProductEnhancementWebhook() {
       if (!hasOptions && enhancementData.status === 'options_ready') {
         console.error("Server reported options ready but no options were provided");
         setErrorMessage("The webhook service did not return any enhancement options. Please try again with a different image or industry.");
+        
+        // Force stop polling to prevent infinite requests
+        queryClient.cancelQueries({ queryKey: ['/api/product-enhancement', enhancementId] });
         return;
       }
       
