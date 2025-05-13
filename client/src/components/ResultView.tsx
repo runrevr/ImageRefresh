@@ -118,7 +118,7 @@ export default function ResultView({
       setIsColoringBookLoading(true);
       
       // Make API request to transform the image
-      const response = await apiRequest("POST", "/api/coloring-book", {
+      const response = await apiRequest("POST", "/api/product-enhancement/coloring-book", {
         imagePath: selectedImage,
         userId: effectiveUserId
       });
@@ -141,8 +141,8 @@ export default function ResultView({
       }
       
       const data = await response.json();
-      setColoringBookImage(data.coloringBookImageUrl);
-      setSelectedImage(data.coloringBookImageUrl);
+      setColoringBookImage(data.transformedImageUrl);
+      setSelectedImage(data.transformedImageUrl);
       
       toast({
         title: "Coloring Book Style Created!",

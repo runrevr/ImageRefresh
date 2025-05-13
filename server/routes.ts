@@ -8,6 +8,7 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEnhancementResults } from "./mock-webhook-data";
 import { type InsertTransformation } from "../shared/schema";
+import { createColoringBookImage } from "./coloring-book";
 
 // Environment variable to control mock mode - will use mock data if true, real webhook if false
 const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
@@ -1425,6 +1426,121 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         message: "Error retrieving enhancement results", 
         error: error.message 
+      });
+    }
+  });
+
+  // Apply coloring book style transformation to an image
+  app.post("/api/product-enhancement/coloring-book", async (req, res) => {
+    try {
+      console.log("=== COLORING BOOK TRANSFORMATION ===");
+      const { imagePath, userId } = req.body;
+      
+      if (!imagePath) {
+        return res.status(400).json({ message: "Image path is required" });
+      }
+      
+      console.log(`Applying coloring book style to image: ${imagePath}`);
+      
+      // Check if user has credits if userId is provided
+      if (userId) {
+        try {
+          const user = await storage.getUser(userId);
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          
+          // Check if the user has free credits
+          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+          
+          // Check if user has enough credits (coloring book costs 1 credit)
+          if (!hasMonthlyFreeCredit && user.paidCredits < 1) {
+            return res.status(403).json({ 
+              message: "Not enough credits for coloring book transformation",
+              error: "credit_required"
+            });
+          }
+          
+          console.log(`User ${userId} has credits - proceeding with coloring book transformation`);
+        } catch (userError) {
+          console.error("Error checking user credits:", userError);
+          // Continue with the transformation anyway
+        }
+      }
+      
+      // Process the coloring book transformation
+      try {
+        // Determine full path to image
+        const fullImagePath = path.isAbsolute(imagePath) 
+          ? imagePath 
+          : path.join(process.cwd(), imagePath);
+        
+        // Check if image exists
+        if (!fs.existsSync(fullImagePath)) {
+          return res.status(404).json({ message: "Image file not found" });
+        }
+        
+        // Create the coloring book version
+        const result = await createColoringBookImage(fullImagePath);
+        
+        // Create a server-relative path for the transformed image
+        const baseUrl = req.protocol + "://" + req.get("host");
+        const transformedImagePath = result.outputPath.replace(process.cwd(), '').replace(/^\//, "");
+        const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
+        
+        // Deduct credits if user is authenticated
+        if (userId) {
+          try {
+            const user = await storage.getUser(userId);
+            if (user) {
+              const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+              
+              // Update user credits
+              const updatedUser = await storage.updateUserCredits(
+                userId,
+                hasMonthlyFreeCredit, // Use free credit if available
+                hasMonthlyFreeCredit ? user.paidCredits : user.paidCredits - 1 // Deduct paid credit if no free credit
+              );
+              
+              console.log(`Updated user ${userId} credits - Remaining paid credits: ${updatedUser.paidCredits}`);
+            }
+          } catch (creditError) {
+            console.error("Error updating user credits:", creditError);
+          }
+        }
+        
+        // Return the transformed image URL
+        return res.status(200).json({
+          message: "Coloring book transformation successful",
+          transformedImageUrl
+        });
+      } catch (error: any) {
+        console.error("Error in coloring book transformation:", error);
+        
+        // Check for specific OpenAI error types
+        if (error.message && (
+          error.message.includes("organization verification") ||
+          error.message.includes("invalid_api_key") ||
+          error.message.includes("rate limit") ||
+          error.message.includes("billing")
+        )) {
+          return res.status(400).json({ 
+            message: error.message, 
+            error: "openai_api_error" 
+          });
+        }
+        
+        // Generic error
+        return res.status(500).json({ 
+          message: "Error processing coloring book transformation", 
+          error: error.message 
+        });
+      }
+    } catch (error: any) {
+      console.error("Error processing coloring book request:", error);
+      res.status(500).json({ 
+        message: "Failed to process coloring book transformation",
+        error: error.message
       });
     }
   });
