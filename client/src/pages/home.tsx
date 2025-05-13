@@ -368,7 +368,7 @@ export default function Home() {
     setTransformedImage(null);
     setSecondTransformedImage(null); // Clear second transformed image
     setPrompt("");
-    setSelectedTransformation("");
+    setSelectedTransformation(null);
     setCurrentTransformation(null); // Clear current transformation data
     setHasTriedAnotherPrompt(false); // Reset the "tried another prompt" flag
     setCurrentStep(Step.Upload);
