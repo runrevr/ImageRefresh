@@ -776,8 +776,13 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   
   // Handle coloring book transformation
   const handleColoringBookTransform = async (imagePath: string) => {
-    // Check if user has credits (using the userCredits state from parent component)
-    if (!user || !userCredits || (userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
+    // Simple credit check based on the received credits
+    const paidCredits = userCredits?.paidCredits || 0;
+    const freeCreditsUsed = userCredits?.freeCreditsUsed || true;
+    const hasCredits = paidCredits > 0 || !freeCreditsUsed;
+    
+    // Check if user has credits
+    if (!user || !hasCredits) {
       toast({
         title: "Not enough credits",
         description: "You need 1 credit to apply a coloring book transformation.",
@@ -1063,8 +1068,34 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
 
 // Main component
 export default function ProductEnhancementWebhook() {
-  // Get user credits data
-  const { data: userCredits = { credits: 0, paidCredits: 0, freeCreditsUsed: true } } = useCredits();
+  // Get auth user
+  const { user: authUser } = useAuth();
+  
+  // Initialize local user credits state
+  const [userCredits, setUserCredits] = useState<{
+    credits: number;
+    paidCredits: number;
+    freeCreditsUsed: boolean;
+  } | null>(null);
+  
+  // Fetch user credits when auth user changes
+  useEffect(() => {
+    if (authUser) {
+      const fetchCredits = async () => {
+        try {
+          const response = await apiRequest("GET", "/api/user/credits");
+          const data = await response.json();
+          setUserCredits(data);
+        } catch (error) {
+          console.warn("Error fetching user credits, using defaults:", error);
+          setUserCredits({ credits: 0, paidCredits: 0, freeCreditsUsed: true });
+        }
+      };
+      fetchCredits();
+    } else {
+      setUserCredits({ credits: 0, paidCredits: 0, freeCreditsUsed: true });
+    }
+  }, [authUser]);
   const { toast } = useToast();
   const { user } = useAuth();
   const [step, setStep] = useState<'upload' | 'selectStyles' | 'processing' | 'results'>('upload');
