@@ -1269,6 +1269,7 @@ export default function Home() {
               <ProcessingState
                 originalImage={originalImage}
                 onCancel={handleCancel}
+                transformationId={currentTransformation?.id}
               />
             )}
 
