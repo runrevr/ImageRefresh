@@ -57,17 +57,14 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     // Create a response using OpenAI DALL-E models for generation
     console.log("[OpenAI] Calling OpenAI API with the provided prompt...");
     
-    // Use the prompt directly - the prompts in our Ideas page are already well-crafted
-    // Just add a professional quality instruction if the prompt is too short (meaning it's not one of our crafted ones)
-    const enhancedPrompt = prompt.length < 100 
-      ? `${prompt}. Create a professional quality, highly detailed result.` 
-      : prompt;
-      
-    console.log("[OpenAI] Using prompt:", enhancedPrompt.substring(0, 100) + "...");
+    // Use the prompt directly without any modifications
+    // Our prompts in data.json are carefully crafted and should never be modified
+    console.log("[OpenAI] Using prompt directly from ideas page (length: " + prompt.length + ")");
+    console.log("[OpenAI] Prompt preview:", prompt.substring(0, 100) + "...");
     
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: enhancedPrompt,
+      prompt: prompt, // Use original prompt without any modifications
       n: 1,
       size: "1024x1024",
       quality: "standard", 
