@@ -9,6 +9,7 @@ import { v4 as uuid } from "uuid";
 import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEnhancementResults } from "./mock-webhook-data";
 import { type InsertTransformation } from "../shared/schema";
 import { createColoringBookImage } from "./coloring-book";
+import { transformImageWithOpenAI } from "./openai-image";
 
 // Environment variable to control mock mode - will use mock data if true, real webhook if false
 const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
@@ -347,33 +348,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Further processing happens asynchronously
       
-      // Process the transformation asynchronously
-      setTimeout(async () => {
+      // Process the transformation asynchronously (no timeout to allow proper processing)
+      (async () => {
         try {
           console.log(`Processing transformation ${transformation.id} asynchronously`);
           
-          // Update the transformation status to "completed"
-          await storage.updateTransformationStatus(
-            transformation.id,
-            "completed",
-            imagePath, // For now, just use the original image as the transformed image
-            undefined, // No error
-            undefined, // No second transformed image
-            undefined  // No selected image
-          );
-          
-          console.log(`Transformation ${transformation.id} completed`);
+          try {
+            // Determine the full path to the original image
+            const fullImagePath = path.join(process.cwd(), imagePath);
+            if (!fs.existsSync(fullImagePath)) {
+              throw new Error(`Original image not found at path: ${fullImagePath}`);
+            }
+            
+            // Use OpenAI to transform the image
+            const transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+            
+            console.log(`OpenAI transformation completed for ${transformation.id}, new image at: ${transformedImagePath}`);
+            
+            // Update the transformation status to "completed"
+            await storage.updateTransformationStatus(
+              transformation.id,
+              "completed",
+              transformedImagePath, // Use the transformed image path
+              undefined, // No error
+              undefined, // No second transformed image
+              undefined  // No selected image
+            );
+            
+            console.log(`Transformation record ${transformation.id} updated with status completed`);
+            
+            // If userId is provided, update their credit balance
+            if (userId) {
+              try {
+                // Get the user
+                const user = await storage.getUser(userId);
+                
+                // Determine which credits to deduct (free or paid)
+                if (!user.freeCreditsUsed) {
+                  // Use the free credit first
+                  await storage.updateUserFreeCredits(userId, true);
+                  console.log(`Used free credit for user ${userId}`);
+                } else if (user.paidCredits > 0) {
+                  // Then use paid credits
+                  await storage.updateUserPaidCredits(userId, user.paidCredits - 1);
+                  console.log(`Used paid credit for user ${userId}, ${user.paidCredits - 1} paid credits remaining`);
+                }
+              } catch (creditError) {
+                console.error(`Error updating user credits for user ${userId}:`, creditError);
+                // Continue anyway, don't fail the transformation
+              }
+            }
+          } catch (transformError: any) {
+            console.error(`Error in transformation processing: ${transformError.message}`);
+            
+            // Update the transformation status to "failed"
+            await storage.updateTransformationStatus(
+              transformation.id,
+              "failed",
+              undefined,
+              transformError.message
+            );
+            
+            console.log(`Transformation ${transformation.id} marked as failed due to error`);
+          }
         } catch (asyncError: unknown) {
           const error = asyncError as Error;
           console.error(`Error in async transformation processing: ${error.message}`);
-          await storage.updateTransformationStatus(
-            transformation.id,
-            "failed",
-            undefined,
-            error.message
-          );
+          try {
+            await storage.updateTransformationStatus(
+              transformation.id,
+              "failed",
+              undefined,
+              error.message
+            );
+          } catch (updateError) {
+            console.error("Failed to update transformation status:", updateError);
+          }
         }
-      }, 2000); // Simulate 2-second processing time
+      })();
 
     } catch (error: any) {
       console.error("Error transforming image:", error);
