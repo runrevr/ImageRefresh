@@ -353,19 +353,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`Processing transformation ${transformation.id} asynchronously`);
           
           // Update the transformation status to "completed"
-          await storage.updateTransformation(transformation.id, {
-            status: "completed",
-            transformedImagePath: imagePath, // For now, just use the original image
-            transformedImageUrl: `/${imagePath}` // Use the same URL pattern as upload
-          });
+          await storage.updateTransformationStatus(
+            transformation.id,
+            "completed",
+            imagePath, // For now, just use the original image as the transformed image
+            undefined, // No error
+            undefined, // No second transformed image
+            undefined  // No selected image
+          );
           
           console.log(`Transformation ${transformation.id} completed`);
-        } catch (asyncError) {
-          console.error(`Error in async transformation processing: ${asyncError}`);
-          await storage.updateTransformation(transformation.id, {
-            status: "failed",
-            errorMessage: asyncError.message
-          });
+        } catch (asyncError: unknown) {
+          const error = asyncError as Error;
+          console.error(`Error in async transformation processing: ${error.message}`);
+          await storage.updateTransformationStatus(
+            transformation.id,
+            "failed",
+            undefined,
+            error.message
+          );
         }
       }, 2000); // Simulate 2-second processing time
 
