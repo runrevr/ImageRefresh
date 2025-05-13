@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direct Product Enhancement Access</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #333;
+    }
+    
+    h1 {
+      color: #2563eb;
+      margin-bottom: 20px;
+    }
+    
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px 0;
+      background-color: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 500;
+      text-align: center;
+    }
+    
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    
+    .btn-green {
+      background-color: #10b981;
+    }
+    
+    .btn-green:hover {
+      background-color: #059669;
+    }
+    
+    .btn-purple {
+      background-color: #8b5cf6;
+    }
+    
+    .btn-purple:hover {
+      background-color: #7c3aed;
+    }
+    
+    .btn-amber {
+      background-color: #f59e0b;
+    }
+    
+    .btn-amber:hover {
+      background-color: #d97706;
+    }
+    
+    .btn-red {
+      background-color: #ef4444;
+    }
+    
+    .btn-red:hover {
+      background-color: #dc2626;
+    }
+    
+    .flex {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Direct Product Enhancement Access</h1>
+  
+  <div class="card">
+    <h2>Regular Routes</h2>
+    <p>These links use React router (wouter)</p>
+    
+    <div class="flex">
+      <a href="/" class="btn">Home Page</a>
+      <a href="/product-enhancement-webhook" class="btn btn-green">Product Enhancement Page</a>
+      <a href="/product-enhancement-webhook-simple" class="btn btn-amber">Simple Enhancement Page</a>
+      <a href="/router-debug" class="btn btn-purple">Router Debug Page</a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>Static HTML Pages</h2>
+    <p>These links go to static HTML pages (no React)</p>
+    
+    <div class="flex">
+      <a href="/test-product-enhancement.html" class="btn btn-amber">Test Page</a>
+      <a href="/minimal-product-enhancement-test.html" class="btn btn-red">Minimal HTML Version</a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h2>Direct API Testing</h2>
+    <p>Test API endpoints directly</p>
+    
+    <div class="flex">
+      <a href="/api/health" class="btn">Health Check API</a>
+      <a href="/api/config" class="btn btn-purple">Config API</a>
+    </div>
+  </div>
+  
+  <script>
+    // Log any errors
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.log('Error: ' + message);
+      alert('Error detected: ' + message);
+    };
+    
+    // Log page load
+    window.addEventListener('load', function() {
+      console.log('Page loaded successfully');
+    });
+  </script>
+</body>
+</html>
