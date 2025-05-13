@@ -133,13 +133,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Basic health check endpoint
   app.get("/api/health", (req, res) => {
     // Check OpenAI API key status
-    const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
-    const validOpenAIKey = hasOpenAIKey && process.env.OPENAI_API_KEY.startsWith('sk-');
+    const apiKey = process.env.OPENAI_API_KEY || '';
+    const hasOpenAIKey = !!apiKey;
+    const validOpenAIKey = hasOpenAIKey && apiKey.startsWith('sk-');
     console.log(`OpenAI API Key check: Has key: ${hasOpenAIKey}, Valid format: ${validOpenAIKey}`);
     
     if (hasOpenAIKey) {
-      const keyFirstChars = process.env.OPENAI_API_KEY.substring(0, 5);
-      const keyLastChars = process.env.OPENAI_API_KEY.slice(-4);
+      const keyFirstChars = apiKey.substring(0, 5);
+      const keyLastChars = apiKey.slice(-4);
       console.log(`OpenAI API Key preview: ${keyFirstChars}...${keyLastChars}`);
     }
     
@@ -156,12 +157,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Config endpoint
   app.get("/api/config", (req, res) => {
     // Check if OpenAI API key is properly configured
-    const isOpenAIConfigured = !!process.env.OPENAI_API_KEY && 
-                              process.env.OPENAI_API_KEY.startsWith('sk-');
+    const apiKey = process.env.OPENAI_API_KEY || '';
+    const isOpenAIConfigured = !!apiKey && apiKey.startsWith('sk-');
                               
     console.log(`OpenAI API key configuration status: ${isOpenAIConfigured ? 'Configured' : 'Not Configured'}`);
-    if (process.env.OPENAI_API_KEY) {
-      console.log(`Key preview: ${process.env.OPENAI_API_KEY.substring(0, 5)}...${process.env.OPENAI_API_KEY.slice(-4)}`);
+    if (apiKey) {
+      console.log(`Key preview: ${apiKey.substring(0, 5)}...${apiKey.slice(-4)}`);
     }
     
     res.send({
