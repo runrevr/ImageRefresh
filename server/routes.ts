@@ -96,6 +96,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       timestamp: new Date().toISOString(),
     });
   });
+  
+  // Config endpoint
+  app.get("/api/config", (req, res) => {
+    res.send({
+      maxFileSize: 10 * 1024 * 1024, // 10MB
+      maxFiles: 5,
+      supportedImageTypes: ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"],
+      productEnhancementEnabled: true,
+      stripeEnabled: true
+    });
+  });
+  
+  // User credits endpoint
+  app.get("/api/users/:userId/credits", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return the total credits (paid + free)
+      const totalCredits = user.paidCredits + (user.freeCreditsUsed ? 0 : 1);
+      
+      res.json({
+        credits: totalCredits,
+        paidCredits: user.paidCredits,
+        freeCreditsUsed: user.freeCreditsUsed
+      });
+      
+    } catch (error: any) {
+      console.error("Error fetching user credits:", error);
+      res.status(500).json({ message: "Error fetching user credits", error: error.message });
+    }
+  });
 
   // File upload endpoint
   app.post("/api/upload", upload.single("image"), (req, res) => {
