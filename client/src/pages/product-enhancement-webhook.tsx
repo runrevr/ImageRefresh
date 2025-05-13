@@ -777,7 +777,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   // Handle coloring book transformation
   const handleColoringBookTransform = async (imagePath: string) => {
     // Check if user has credits
-    if (!user || !userCredits || (userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
+    if (!user || !userCredits || (userCredits && userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
       toast({
         title: "Not enough credits",
         description: "You need 1 credit to apply a coloring book transformation.",
@@ -1592,8 +1592,8 @@ export default function ProductEnhancementWebhook() {
     <div className="min-h-screen bg-[#f8fafa]">
       <AnnouncementBanner />
       <Navbar 
-        freeCredits={userCredits?.freeCreditsUsed ? 0 : 1} 
-        paidCredits={userCredits?.paidCredits || 0} 
+        freeCredits={(userCredits && userCredits.freeCreditsUsed) ? 0 : 1} 
+        paidCredits={(userCredits && userCredits.paidCredits) || 0} 
       />
       <div className="mt-20"></div> {/* Add spacing for fixed navbar */}
       <div className="min-h-[calc(100vh-140px)] flex flex-col"> {/* Force content area to take up at least full viewport height minus navbar */}

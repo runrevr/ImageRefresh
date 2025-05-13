@@ -155,27 +155,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Check if user is authenticated
       if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ message: "Not authenticated" });
+        return res.status(200).json({ 
+          message: "Not authenticated", 
+          credits: 0, 
+          paidCredits: 0, 
+          freeCreditsUsed: true 
+        });
       }
       
+      // Get user ID from authenticated session
       const userId = req.user.id;
-      const user = await storage.getUser(userId);
       
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      // Try to get user from database with error handling
+      let user;
+      try {
+        user = await storage.getUser(userId);
+      } catch (dbError) {
+        console.error("Database error fetching user:", dbError);
+        return res.status(200).json({ 
+          message: "Error fetching user data", 
+          credits: 0, 
+          paidCredits: 0,
+          freeCreditsUsed: true
+        });
       }
       
-      // Return the total credits (paid + free)
+      // If user not found, still return valid JSON
+      if (!user) {
+        return res.status(200).json({ 
+          message: "User not found", 
+          credits: 0, 
+          paidCredits: 0,
+          freeCreditsUsed: true
+        });
+      }
+      
+      // Calculate total credits and return as JSON
       const totalCredits = user.paidCredits + (user.freeCreditsUsed ? 0 : 1);
       
-      res.json({
+      return res.status(200).json({
         credits: totalCredits,
         paidCredits: user.paidCredits,
         freeCreditsUsed: user.freeCreditsUsed
       });
     } catch (error: any) {
-      console.error("Error fetching user credits:", error);
-      res.status(500).json({ message: "Error fetching user credits", error: error.message });
+      // Always return valid JSON even on error
+      console.error("Error getting user credits:", error);
+      return res.status(200).json({ 
+        message: "Error fetching credits", 
+        error: error.message || "Unknown error",
+        credits: 0, 
+        paidCredits: 0,
+        freeCreditsUsed: true 
+      });
     }
   });
 
