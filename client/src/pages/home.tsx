@@ -183,6 +183,18 @@ export default function Home() {
   const handleUpload = (imagePath: string, imageUrl: string) => {
     console.log("Image uploaded, path:", imagePath);
     console.log("Image URL:", imageUrl);
+    
+    // Validate inputs
+    if (!imagePath || !imageUrl) {
+      console.error("Invalid image path or URL received in handleUpload");
+      toast({
+        title: "Upload Error",
+        description: "Could not process the uploaded image. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
 

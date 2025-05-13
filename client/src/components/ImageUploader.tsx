@@ -72,6 +72,14 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
       }
 
       const data = await response.json();
+      console.log("Upload response data:", data);
+      
+      if (!data.imagePath || !data.imageUrl) {
+        console.error("Missing image path or URL in response:", data);
+        throw new Error("Server returned incomplete image data");
+      }
+      
+      console.log("Calling onImageUploaded with:", data.imagePath, data.imageUrl);
       onImageUploaded(data.imagePath, data.imageUrl);
     } catch (error) {
       console.error('Error uploading file:', error);
