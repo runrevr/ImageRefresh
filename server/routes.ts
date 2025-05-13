@@ -347,6 +347,169 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Product Enhancement Routes
+  
+  // Start product enhancement - upload images and initiate webhook process
+  app.post("/api/product-enhancement/start", productUpload.array("images", 5), async (req, res) => {
+    try {
+      console.log("=== PRODUCT ENHANCEMENT START REQUEST ===");
+      
+      // Get uploaded files
+      const uploadedImages = req.files as Express.Multer.File[];
+      if (!uploadedImages || uploadedImages.length === 0) {
+        return res.status(400).json({ message: "No images uploaded" });
+      }
+      
+      // Get industry from request body
+      const { industry } = req.body;
+      if (!industry) {
+        return res.status(400).json({ message: "Industry is required" });
+      }
+      
+      console.log(`Received ${uploadedImages.length} images for industry: ${industry}`);
+      
+      // Get user ID if authenticated
+      const userId = req.user?.id;
+      console.log(`User ID: ${userId || 'Guest'}`);
+      
+      // Create a product enhancement record
+      const enhancement = await storage.createProductEnhancement({
+        userId: userId || null,
+        status: "processing",
+        industry,
+        createdAt: new Date()
+      });
+      
+      console.log(`Created product enhancement with ID: ${enhancement.id}`);
+      
+      // Process each uploaded image
+      const imagePromises = uploadedImages.map(async (file, index) => {
+        // Create an enhancement image record
+        const enhancementImage = await storage.createProductEnhancementImage({
+          enhancementId: enhancement.id,
+          originalPath: file.path,
+          status: "processing",
+          displayOrder: index
+        });
+        
+        console.log(`Created enhancement image record ${enhancementImage.id} for file ${file.originalname}`);
+        
+        return {
+          id: enhancementImage.id,
+          path: file.path
+        };
+      });
+      
+      const enhancementImages = await Promise.all(imagePromises);
+      
+      // Generate webhook ID for this request
+      const webhookId = uuid();
+      
+      // Update the enhancement record with the webhook ID
+      await storage.updateProductEnhancementStatus(
+        enhancement.id,
+        "processing",
+        webhookId
+      );
+      
+      // Submit to the N8N webhook for processing
+      // We'll do this in the background to not block the response
+      setTimeout(async () => {
+        try {
+          console.log(`Submitting to webhook ${WEBHOOK_URL} with request ID ${webhookId}`);
+          
+          // For each image, convert to base64 and add to the payload
+          const imageBase64Promises = enhancementImages.map(async (image) => {
+            try {
+              const base64 = await imageToBase64(image.path);
+              return {
+                id: image.id,
+                base64
+              };
+            } catch (error) {
+              console.error(`Error converting image ${image.id} to base64:`, error);
+              return null;
+            }
+          });
+          
+          const base64Images = (await Promise.all(imageBase64Promises)).filter(img => img !== null);
+          
+          if (base64Images.length === 0) {
+            console.error("No images were successfully converted to base64");
+            await storage.updateProductEnhancementStatus(
+              enhancement.id,
+              "failed",
+              webhookId,
+              "Failed to convert images to base64"
+            );
+            return;
+          }
+          
+          // Prepare payload with all images in base64 format
+          const payload = {
+            requestId: webhookId,
+            industry,
+            images: base64Images
+          };
+          
+          // Make the API call to N8N webhook
+          console.log("Making webhook request...");
+          const response = await axios.post(WEBHOOK_URL, payload, {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            timeout: 30000 // 30 second timeout
+          });
+          
+          console.log(`Webhook response status: ${response.status}`);
+          
+          // Everything went well
+          if (response.status >= 200 && response.status < 300) {
+            console.log("Webhook call successful");
+          } else {
+            // Unexpected status code
+            console.error(`Webhook call returned unexpected status: ${response.status}`);
+            await storage.updateProductEnhancementStatus(
+              enhancement.id,
+              "failed",
+              webhookId,
+              `Webhook call returned unexpected status: ${response.status}`
+            );
+          }
+        } catch (error) {
+          // Log detailed error information  
+          console.error("Error submitting to webhook:", error);
+          
+          if (error.response) {
+            console.error("Webhook response error data:", error.response.data);
+            console.error("Webhook response error status:", error.response.status);
+            console.error("Webhook response error headers:", error.response.headers);
+          }
+          
+          // Update enhancement status to failed
+          await storage.updateProductEnhancementStatus(
+            enhancement.id,
+            "failed",
+            webhookId,
+            error.message || "Failed to submit to webhook"
+          );
+        }
+      }, 100); // Very short timeout just to not block the response
+      
+      // Return the enhancement ID to the client
+      return res.status(200).json({ 
+        message: "Enhancement started",
+        id: enhancement.id,
+        status: "processing"
+      });
+    } catch (error) {
+      console.error("Error processing product enhancement start:", error);
+      res.status(500).json({ 
+        message: "Failed to start product enhancement",
+        error: error.message
+      });
+    }
+  });
+  
   // Get enhancement data (with images and options)
   app.get("/api/product-enhancement/:id", async (req, res) => {
     try {
@@ -752,6 +915,197 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Submit enhancement selections for processing
+  app.post("/api/product-enhancement/:id/process", async (req, res) => {
+    try {
+      console.log("=== PROCESSING ENHANCEMENT SELECTIONS ===");
+      
+      const enhancementId = parseInt(req.params.id);
+      if (isNaN(enhancementId)) {
+        return res.status(400).json({ message: "Invalid enhancement ID" });
+      }
+      
+      const { selections } = req.body;
+      if (!selections || !Array.isArray(selections) || selections.length === 0) {
+        return res.status(400).json({ message: "No selections provided" });
+      }
+      
+      console.log(`Processing ${selections.length} selections for enhancement ${enhancementId}`);
+      
+      // Get the enhancement record
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
+      }
+      
+      // Get user ID if authenticated
+      const userId = req.user?.id;
+      
+      // Check if user has credits if userId is provided
+      if (userId) {
+        // Count total selections to check if user has enough credits
+        const totalSelections = selections.length;
+        console.log(`Total selections: ${totalSelections} credits needed`);
+        
+        try {
+          const user = await storage.getUser(userId);
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          
+          // Check if the user has free credits
+          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+          const creditsNeeded = totalSelections;
+          
+          // If user has monthly free credit, they need one less paid credit
+          const paidCreditsNeeded = hasMonthlyFreeCredit ? creditsNeeded - 1 : creditsNeeded;
+          
+          // Check if user has enough credits
+          if (user.paidCredits < paidCreditsNeeded) {
+            return res.status(403).json({ 
+              message: `Not enough credits. You need ${creditsNeeded} credits, but have only ${hasMonthlyFreeCredit ? "1 free credit and " : ""}${user.paidCredits} paid credits.`,
+              creditsNeeded,
+              creditsAvailable: hasMonthlyFreeCredit ? user.paidCredits + 1 : user.paidCredits,
+              error: "insufficient_credits"
+            });
+          }
+          
+          console.log(`User ${userId} has enough credits - proceeding with processing`);
+          
+          // Deduct credits after validating the webhook response
+          // This will happen after the webhook call is successful
+        } catch (userError) {
+          console.error("Error checking user credits:", userError);
+          // Continue with the processing anyway
+        }
+      }
+      
+      // Create selection records and prepare data for webhook
+      const selectionPromises = selections.map(async (selection: any) => {
+        try {
+          // Validate selection data
+          if (!selection.imageId || !selection.optionKey || !selection.optionName) {
+            console.error("Invalid selection data:", selection);
+            return null;
+          }
+          
+          // Create enhancement selection record
+          const enhancementSelection = await storage.createProductEnhancementSelection({
+            enhancementId,
+            imageId: selection.imageId,
+            optionKey: selection.optionKey,
+            optionName: selection.optionName,
+            status: "processing"
+          });
+          
+          console.log(`Created enhancement selection record ${enhancementSelection.id}`);
+          
+          return {
+            selectionId: enhancementSelection.id,
+            imageId: selection.imageId,
+            optionKey: selection.optionKey
+          };
+        } catch (error) {
+          console.error("Error creating selection record:", error);
+          return null;
+        }
+      });
+      
+      const validSelections = (await Promise.all(selectionPromises)).filter(Boolean);
+      
+      if (validSelections.length === 0) {
+        return res.status(400).json({ message: "No valid selections could be processed" });
+      }
+      
+      // Submit to the N8N webhook for processing
+      // We'll do this in the background to not block the response
+      setTimeout(async () => {
+        try {
+          // Get the webhookId from the enhancement record
+          const webhookId = enhancement.webhookId;
+          
+          if (!webhookId) {
+            console.error("No webhook ID found for enhancement", enhancementId);
+            return;
+          }
+          
+          console.log(`Submitting selections to webhook ${WEBHOOK_URL} with request ID ${webhookId}`);
+          
+          // Prepare payload with selections
+          const payload = {
+            requestId: webhookId,
+            action: "processSelections",
+            selections: validSelections
+          };
+          
+          // Make the API call to N8N webhook
+          console.log("Making webhook request for selections...");
+          const response = await axios.post(WEBHOOK_URL, payload, {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            timeout: 30000 // 30 second timeout
+          });
+          
+          console.log(`Webhook response status: ${response.status}`);
+          
+          // Process the webhook response
+          if (response.status >= 200 && response.status < 300) {
+            console.log("Webhook call for selections successful");
+            
+            // Deduct credits if user is authenticated
+            if (userId) {
+              try {
+                const user = await storage.getUser(userId);
+                if (user) {
+                  const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+                  const creditsNeeded = validSelections.length;
+                  const paidCreditsNeeded = hasMonthlyFreeCredit ? creditsNeeded - 1 : creditsNeeded;
+                  
+                  // Update user credits
+                  const updatedUser = await storage.updateUserCredits(
+                    userId,
+                    hasMonthlyFreeCredit, // Use free credit if available
+                    user.paidCredits - paidCreditsNeeded // Deduct paid credits
+                  );
+                  
+                  console.log(`Updated user ${userId} credits - Remaining paid credits: ${updatedUser.paidCredits}`);
+                }
+              } catch (creditError) {
+                console.error("Error updating user credits:", creditError);
+              }
+            }
+          } else {
+            // Unexpected status code
+            console.error(`Webhook call returned unexpected status: ${response.status}`);
+          }
+        } catch (error) {
+          // Log detailed error information  
+          console.error("Error submitting selections to webhook:", error);
+          
+          if (error.response) {
+            console.error("Webhook response error data:", error.response.data);
+            console.error("Webhook response error status:", error.response.status);
+            console.error("Webhook response error headers:", error.response.headers);
+          }
+        }
+      }, 100); // Very short timeout just to not block the response
+      
+      // Return success to the client
+      return res.status(200).json({ 
+        message: "Enhancement selections processed",
+        selectionCount: validSelections.length,
+        status: "processing"
+      });
+    } catch (error) {
+      console.error("Error processing enhancement selections:", error);
+      res.status(500).json({ 
+        message: "Failed to process enhancement selections",
+        error: error.message
+      });
+    }
+  });
+
   // Submit selected enhancement options
   app.post("/api/product-enhancement/:id/select", async (req, res) => {
     try {
