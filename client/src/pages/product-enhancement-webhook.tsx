@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
@@ -755,7 +755,7 @@ const StyleSelectionSection = ({
 const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const qClient = useQueryClient();
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const [processingImage, setProcessingImage] = useState<string | null>(null);
 
@@ -789,10 +789,10 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
       setProcessingImage(imagePath);
       
       // Call the coloring book transformation API
-      const formData = new FormData();
-      formData.append('imagePath', imagePath);
-      
-      const response = await apiRequest("POST", "/api/coloring-book-transform", formData, true);
+      const response = await apiRequest("POST", "/api/product-enhancement/coloring-book", {
+        imagePath: imagePath,
+        userId: user?.id
+      });
       
       if (!response.ok) {
         throw new Error(`Failed to transform image: ${response.statusText}`);
@@ -815,7 +815,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
         });
         
         // Refresh user credits
-        queryClient.invalidateQueries({ queryKey: ['/api/user/credits'] });
+        qClient.invalidateQueries({ queryKey: ['/api/user/credits'] });
       } else {
         throw new Error("No transformed image path returned");
       }
