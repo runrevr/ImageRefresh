@@ -753,7 +753,11 @@ const StyleSelectionSection = ({
 
 // Results component
 const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [processingImage, setProcessingImage] = useState<string | null>(null);
 
   if (results.length === 0) {
     return null;
@@ -767,6 +771,64 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
       newSelected.add(imagePath);
     }
     setSelectedImages(newSelected);
+  };
+  
+  // Handle coloring book transformation
+  const handleColoringBookTransform = async (imagePath: string) => {
+    // Check if user has credits
+    if (!user || (user.paidCredits <= 0 && user.freeCreditsUsed)) {
+      toast({
+        title: "Not enough credits",
+        description: "You need 1 credit to apply a coloring book transformation.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      setProcessingImage(imagePath);
+      
+      // Call the coloring book transformation API
+      const formData = new FormData();
+      formData.append('imagePath', imagePath);
+      
+      const response = await apiRequest("POST", "/api/coloring-book-transform", formData, true);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to transform image: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.transformedImagePath) {
+        // Add the new image to selected images
+        setSelectedImages(prev => {
+          const newSelection = new Set(prev);
+          newSelection.add(data.transformedImagePath);
+          return newSelection;
+        });
+        
+        // Show success notification
+        toast({
+          title: "Transformation Complete",
+          description: "Coloring book transformation applied successfully!",
+        });
+        
+        // Refresh user credits
+        queryClient.invalidateQueries({ queryKey: ['/api/user/credits'] });
+      } else {
+        throw new Error("No transformed image path returned");
+      }
+    } catch (error) {
+      console.error("Coloring book transformation error:", error);
+      toast({
+        title: "Transformation Failed",
+        description: error instanceof Error ? error.message : "Failed to apply coloring book transformation.",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingImage(null);
+    }
   };
 
   const selectAllImages = () => {
@@ -827,6 +889,25 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
                   {result.description}
                 </p>
               )}
+              <button
+                className="mt-3 text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => handleColoringBookTransform(result.resultImage1Path)}
+                disabled={processingImage === result.resultImage1Path}
+              >
+                {processingImage === result.resultImage1Path ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    Coloring Book Style (1 credit)
+                  </>
+                )}
+              </button>
             </div>
           </div>,
           // Second image
@@ -849,6 +930,25 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
                   {result.description}
                 </p>
               )}
+              <button
+                className="mt-3 text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => handleColoringBookTransform(result.resultImage2Path)}
+                disabled={processingImage === result.resultImage2Path}
+              >
+                {processingImage === result.resultImage2Path ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    Coloring Book Style (1 credit)
+                  </>
+                )}
+              </button>
             </div>
           </div>
         ])}
