@@ -55,10 +55,19 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     console.log("[OpenAI] Using image generation with prompt");
     
     // Create a response using OpenAI DALL-E models for generation
-    console.log("[OpenAI] Calling OpenAI API...");
+    console.log("[OpenAI] Calling OpenAI API with the provided prompt...");
+    
+    // Use the prompt directly - the prompts in our Ideas page are already well-crafted
+    // Just add a professional quality instruction if the prompt is too short (meaning it's not one of our crafted ones)
+    const enhancedPrompt = prompt.length < 100 
+      ? `${prompt}. Create a professional quality, highly detailed result.` 
+      : prompt;
+      
+    console.log("[OpenAI] Using prompt:", enhancedPrompt.substring(0, 100) + "...");
+    
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: `Transform this image conceptually (don't try to use the actual image): ${prompt}. Create a professional quality, highly detailed result.`,
+      prompt: enhancedPrompt,
       n: 1,
       size: "1024x1024",
       quality: "standard", 
@@ -97,9 +106,17 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
       console.log(`[OpenAI] Successfully saved transformed image to: ${relativePath}`);
       
       return relativePath;
-    } catch (downloadError) {
-      console.error("[OpenAI] Error downloading or saving the image:", downloadError);
-      throw new Error(`Failed to download or save the transformed image: ${downloadError.message}`);
+    } catch (error) {
+      console.error("[OpenAI] Error downloading or saving the image:", error);
+      let errorMessage = "Unknown error";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object') {
+        errorMessage = JSON.stringify(error);
+      }
+      throw new Error(`Failed to download or save the transformed image: ${errorMessage}`);
     }
   } catch (error: any) {
     console.error("[OpenAI] Error in image transformation:", error);
