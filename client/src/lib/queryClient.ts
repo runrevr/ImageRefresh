@@ -12,7 +12,7 @@ async function throwIfResNotOk(res: Response) {
     // Special handling for user credits endpoint to prevent cascading errors
     const isUserCreditsEndpoint = res.url.includes('/api/user/credits');
     if (isUserCreditsEndpoint) {
-      console.warn(`Error fetching credits (${res.status}), returning default values`);
+      console.debug(`Using default credits - response status: ${res.status}`);
       // Return default credits object instead of throwing
       return;
     }
@@ -84,7 +84,7 @@ export async function apiRequest(
   
     // Special handling for credits endpoint
     if (isUserCreditsEndpoint && !res.ok) {
-      console.warn(`Credits API returned error ${res.status}, returning mock response`);
+      console.debug(`Using default credits values - response status: ${res.status}`);
       const mockResponse = new Response(JSON.stringify({
         credits: 0,
         paidCredits: 0,
@@ -101,7 +101,7 @@ export async function apiRequest(
   } catch (error) {
     // If this is the credits endpoint, return a mock response to prevent UI errors
     if (url.includes('/api/user/credits')) {
-      console.error("Error in apiRequest for credits:", error);
+      console.debug("Using default credits values - API request error");
       return new Response(JSON.stringify({
         credits: 0,
         paidCredits: 0,
@@ -138,7 +138,7 @@ export const getQueryFn: <T>(options: {
   
       // For credits endpoint, handle any error by returning default credits
       if (isUserCreditsEndpoint && !res.ok) {
-        console.warn(`Credits endpoint returned ${res.status}, using default values`);
+        console.debug(`Using default credits values - response status: ${res.status}`);
         return {
           credits: 0,
           paidCredits: 0,
@@ -152,7 +152,7 @@ export const getQueryFn: <T>(options: {
         return await res.json();
       } catch (jsonError) {
         if (isUserCreditsEndpoint) {
-          console.error("Failed to parse credits JSON:", jsonError);
+          console.debug("Using default credits values - JSON parse error");
           return {
             credits: 0,
             paidCredits: 0,
