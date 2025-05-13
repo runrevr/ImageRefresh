@@ -977,7 +977,7 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
   // If there's an error, show error state instead
   if (errorMessage) {
     return (
-      <section className="container mx-auto text-center py-12">
+      <section className="container mx-auto text-center py-12 min-h-[600px] flex flex-col items-center justify-center">
         <div className="mx-auto max-w-lg bg-white border rounded-lg shadow-md p-8">
           <div className="text-red-500 mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1543,7 +1543,7 @@ export default function ProductEnhancementWebhook() {
       
       {/* Style selection section takes full page */}
       {step === 'selectStyles' && (
-        <div className="container mx-auto py-12 px-4">
+        <div className="container mx-auto py-12 px-4 min-h-[600px]">
           <h2 className="text-3xl font-bold text-center mb-8">Select Enhancement Options</h2>
           <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
             Choose up to 5 enhancement options per image. Each selection costs 1 credit.
@@ -1559,14 +1559,14 @@ export default function ProductEnhancementWebhook() {
       
       {/* Processing section takes full page */}
       {step === 'processing' && (
-        <div className="container mx-auto py-16 px-4">
+        <div className="container mx-auto py-16 px-4 min-h-[600px]">
           <ProcessingSection errorMessage={errorMessage} />
         </div>
       )}
       
       {/* Results section takes full page */}
       {step === 'results' && (
-        <div className="container mx-auto py-12 px-4">
+        <div className="container mx-auto py-12 px-4 min-h-[600px]">
           <h2 className="text-3xl font-bold text-center mb-6">Your Enhanced Images</h2>
           <p className="text-center text-gray-600 mb-8">
             Select the images you want to download and click "Download Selected".
