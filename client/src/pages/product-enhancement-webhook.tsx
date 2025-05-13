@@ -794,9 +794,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
         userId: user?.id
       });
       
-      if (!response.ok) {
-        throw new Error(`Failed to transform image: ${response.statusText}`);
-      }
+      // The apiRequest function will handle error responses
       
       const data = await response.json();
       
@@ -1092,18 +1090,8 @@ export default function ProductEnhancementWebhook() {
         console.log("API response received", response.status);
         
         // Check if the response is OK (status in the range 200-299)
-        if (!response.ok) {
-          let errorText = "Unknown server error";
-          try {
-            const errorData = await response.json();
-            errorText = errorData.message || `Server error: ${response.status}`;
-            console.error("Server returned error:", errorData);
-          } catch (jsonError) {
-            console.error("Could not parse error response:", jsonError);
-            errorText = `Server error: ${response.status} ${response.statusText}`;
-          }
-          throw new Error(errorText);
-        }
+        // The apiRequest function will handle error responses,
+        // this is redundant since apiRequest throws on non-ok responses
         
         const data = await response.json();
         console.log("Response data:", data);
@@ -1182,6 +1170,15 @@ export default function ProductEnhancementWebhook() {
       
       if (error instanceof Error) {
         errorMessage = error.message;
+        
+        // Handle HTML responses or unexpected token errors (common when receiving HTML instead of JSON)
+        if (
+          error.message.includes("<") && error.message.includes(">") ||
+          error.message.includes("<!DOCTYPE") ||
+          error.message.includes("Unexpected token")
+        ) {
+          errorMessage = "The server encountered an error. Please try again later or try a different browser.";
+        }
       }
       
       // Try to extract more detailed error from response

@@ -3,8 +3,26 @@ import { getDeviceFingerprint, addFingerprintToUrl } from "./fingerprint";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    // Clone response before reading it
+    const resClone = res.clone();
+    
+    // First check the content type to handle HTML errors appropriately
+    const contentType = res.headers.get('content-type');
+    
+    if (contentType && contentType.includes('text/html')) {
+      // For HTML responses, return a more user-friendly error
+      throw new Error(`${res.status}: Server error occurred. Please try again later.`);
+    }
+    
+    try {
+      // Try to parse as JSON first
+      const errorData = await resClone.json();
+      throw new Error(errorData.message || `${res.status}: ${errorData.error || 'Unknown error'}`);
+    } catch (e) {
+      // If JSON parsing fails, fall back to text
+      const text = (await res.text()) || res.statusText;
+      throw new Error(`${res.status}: ${text}`);
+    }
   }
 }
 
