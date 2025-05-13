@@ -86,6 +86,249 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "ok" });
   });
+  
+  // Single image upload endpoint
+  const upload = multer({
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, uploadsDir);
+      },
+      filename: (req, file, cb) => {
+        cb(null, `image-${Date.now()}-${Math.floor(Math.random() * 1000000000)}.jpg`);
+      }
+    }),
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10 MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      // Accept images only
+      if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        return cb(null, false);
+      }
+      cb(null, true);
+    }
+  });
+  
+  // Basic file upload endpoint
+  app.post("/api/upload", upload.single("image"), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image uploaded" });
+      }
+      
+      console.log(`File uploaded: ${req.file.path}`);
+      
+      // Return the path to the uploaded file
+      res.json({ 
+        message: "File uploaded successfully", 
+        imagePath: req.file.path,
+        filename: req.file.filename
+      });
+    } catch (error: any) {
+      console.error("Error uploading file:", error);
+      res.status(500).json({ message: error.message || "Error uploading file" });
+    }
+  });
+  
+  // Image transformation endpoint 
+  app.post("/api/transform", async (req, res) => {
+    try {
+      console.log("\n\n====================== IMAGE TRANSFORMATION ======================");
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      
+      // Validate request body
+      const { originalImagePath, prompt, userId, imageSize, isEdit, previousTransformation } = req.body;
+      
+      if (!originalImagePath) {
+        return res.status(400).json({ message: "Original image path is required" });
+      }
+      
+      if (!prompt) {
+        return res.status(400).json({ message: "Prompt is required" });
+      }
+      
+      console.log(`Processing transformation with prompt: ${prompt}`);
+      console.log(`Original image: ${originalImagePath}`);
+      console.log(`Is edit: ${isEdit ? "Yes" : "No"}`);
+      console.log(`User ID: ${userId || "Guest"}`);
+      
+      // Determine full path to image
+      const fullImagePath = path.isAbsolute(originalImagePath) 
+        ? originalImagePath 
+        : path.join(process.cwd(), originalImagePath);
+      
+      // Check if image exists
+      if (!fs.existsSync(fullImagePath)) {
+        return res.status(404).json({ message: "Image file not found" });
+      }
+      
+      // If previous transformation ID is provided, validate it
+      let prevTransform = null;
+      if (previousTransformation) {
+        try {
+          prevTransform = await storage.getTransformation(previousTransformation);
+          if (!prevTransform) {
+            console.warn(`Previous transformation ${previousTransformation} not found`);
+          } else {
+            console.log(`Found previous transformation: ID ${previousTransformation}, edits used: ${prevTransform.editsUsed || 0}`);
+          }
+        } catch (error) {
+          console.error("Error retrieving previous transformation:", error);
+        }
+      }
+      
+      // Check if user has credits if userId is provided
+      let userCredits = { freeCreditsUsed: false, paidCredits: 0 };
+      
+      if (userId) {
+        try {
+          const user = await storage.getUser(userId);
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          
+          // Check if the user has free credits
+          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+          userCredits = {
+            freeCreditsUsed: !hasMonthlyFreeCredit,
+            paidCredits: user.paidCredits
+          };
+          
+          // For edits beyond the first one, we need to check paid credits
+          if (isEdit && prevTransform && (prevTransform.editsUsed || 0) > 0) {
+            // This is beyond the first edit, check if user has paid credits
+            if (user.paidCredits < 1) {
+              return res.status(403).json({ 
+                message: "Not enough credits for additional edits", 
+                error: "credit_required"
+              });
+            }
+          }
+          // For new transformations, check if user has any credits
+          else if (!isEdit && userCredits.freeCreditsUsed && user.paidCredits < 1) {
+            return res.status(403).json({ 
+              message: "Not enough credits", 
+              error: "credit_required" 
+            });
+          }
+          
+          console.log(`User ${userId} has credits - proceeding with transformation`);
+        } catch (userError) {
+          console.error("Error checking user credits:", userError);
+          // Continue with the transformation anyway
+        }
+      }
+      
+      // Import the transformImage function
+      const { transformImage } = await import("./openai");
+      
+      // Perform the image transformation
+      const result = await transformImage(
+        fullImagePath,
+        prompt,
+        imageSize,
+        isEdit // Pass isEdit flag to the transformation function
+      );
+      
+      // Create a server-relative path for the transformed image
+      const baseUrl = req.protocol + "://" + req.get("host");
+      
+      const transformedImagePath = result.transformedPath.replace(process.cwd(), '').replace(/^\//, "");
+      const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
+      
+      let secondTransformedImageUrl = null;
+      if (result.secondTransformedPath) {
+        const secondTransformedImagePath = result.secondTransformedPath.replace(process.cwd(), '').replace(/^\//, "");
+        secondTransformedImageUrl = `${baseUrl}/${secondTransformedImagePath}`;
+      }
+      
+      // If this is an edit and we have a previous transformation, increment the edits count
+      let transformation = null;
+      if (userId) {
+        try {
+          // If it's an edit of a previous transformation, update that record
+          if (isEdit && prevTransform) {
+            // Update the previous transformation with new info
+            transformation = await storage.incrementEditsUsed(previousTransformation);
+            
+            console.log(`Updated transformation ${previousTransformation}, new edits used: ${transformation.editsUsed}`);
+          } 
+          // Otherwise create a new transformation record
+          else {
+            transformation = await storage.createTransformation({
+              userId,
+              originalImagePath: fullImagePath,
+              transformedImagePath: result.transformedPath,
+              secondTransformedImagePath: result.secondTransformedPath || null,
+              prompt,
+              status: "completed",
+              editsUsed: 0 // Start with 0 edits - this is the initial creation
+            });
+            
+            console.log(`Created new transformation record with ID ${transformation.id}`);
+          }
+          
+          // Update user credits if needed
+          // For edits beyond the first one, or for new transformations
+          if ((isEdit && prevTransform && (prevTransform.editsUsed || 0) > 0) || (!isEdit)) {
+            const useFreeCredit = !userCredits.freeCreditsUsed;
+            const paidCreditsRemaining = useFreeCredit 
+              ? userCredits.paidCredits
+              : userCredits.paidCredits - 1;
+              
+            await storage.updateUserCredits(
+              userId,
+              useFreeCredit,
+              paidCreditsRemaining
+            );
+            
+            console.log(`Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`);
+          }
+        } catch (dbError) {
+          console.error("Error saving transformation to database:", dbError);
+          // Continue with the response even if DB operation failed
+        }
+      }
+      
+      // Return the transformed image URL
+      res.status(200).json({
+        transformedImageUrl,
+        secondTransformedImageUrl,
+        prompt,
+        id: transformation ? transformation.id : null,
+        editsUsed: transformation ? transformation.editsUsed : 0
+      });
+    } catch (error: any) {
+      console.error("Error in image transformation:", error);
+      
+      // Check for specific OpenAI error types
+      if (error.message && (
+        error.message.includes("organization verification") ||
+        error.message.includes("invalid_api_key") ||
+        error.message.includes("rate limit") ||
+        error.message.includes("billing")
+      )) {
+        return res.status(400).json({ 
+          message: error.message, 
+          error: "openai_api_error" 
+        });
+      }
+      
+      // Check for content moderation errors
+      if (error.message && error.message.toLowerCase().includes("content policy")) {
+        return res.status(400).json({
+          message: "Your request was rejected by our content safety system. Please try a different prompt.",
+          error: "content_safety"
+        });
+      }
+      
+      // Generic error
+      res.status(500).json({ 
+        message: "Error processing image transformation", 
+        error: error.message 
+      });
+    }
+  });
 
   // Product Enhancement Routes
   // Get enhancement data (with images and options)
