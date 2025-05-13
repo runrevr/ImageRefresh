@@ -13,6 +13,7 @@ import KidsDrawingPage from "@/pages/kids-drawing";
 import AboutPage from "@/pages/about";
 import ProductEnhancementPage from "@/pages/product-enhancement";
 import ProductEnhancementWebhookPage from "@/pages/product-enhancement-webhook";
+import ProductEnhancementDebugPage from "@/pages/product-enhancement-debug";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/about" component={AboutPage} />
       <Route path="/product-enhancement" component={ProductEnhancementPage} />
       <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
+      <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login">
         {() => <Redirect to="/auth?tab=login" />}
