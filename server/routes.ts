@@ -389,8 +389,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
               throw new Error(`Original image not found at path: ${fullImagePath}`);
             }
             
-            // Use OpenAI to transform the image
-            const transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+            // Determine which OpenAI transform method to use
+            // For ideas page transformations, we want to use the more sophisticated approach
+            let transformedImagePath;
+            let secondTransformedImagePath;
+            
+            if (prompt.length > 300) {
+              console.log(`Using detailed prompt approach for ${transformation.id} (prompt length: ${prompt.length})`);
+              // Import the more sophisticated transform function from openai.ts
+              const { transformImage } = await import('./openai');
+              
+              try {
+                // Try the transformImage function with gpt-image-1 two-stage approach
+                console.log(`Attempting to use two-stage transform with gpt-image-1 for ${transformation.id}`);
+                const result = await transformImage(imagePath, prompt, "1024x1024");
+                transformedImagePath = result.transformedPath;
+                secondTransformedImagePath = result.secondTransformedPath;
+                console.log(`Two-stage transform successful for ${transformation.id}`);
+              } catch (gptimageerror) {
+                console.error(`Error using gpt-image-1: ${gptimageerror.message}`);
+                console.log(`Falling back to DALL-E 3 for ${transformation.id}`);
+                
+                // Fall back to DALL-E 3 if gpt-image-1 fails
+                transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+              }
+            } else {
+              // Use the direct DALL-E 3 approach for simpler prompts
+              console.log(`Using simple DALL-E 3 approach for ${transformation.id} (prompt length: ${prompt.length})`);
+              transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+            }
             
             console.log(`OpenAI transformation completed for ${transformation.id}, new image at: ${transformedImagePath}`);
             
@@ -400,7 +427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               "completed",
               transformedImagePath, // Use the transformed image path
               undefined, // No error
-              undefined, // No second transformed image
+              secondTransformedImagePath, // Second transformed image if available
               undefined  // No selected image
             );
             
