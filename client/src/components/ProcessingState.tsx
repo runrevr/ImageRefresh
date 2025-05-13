@@ -1,12 +1,40 @@
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface ProcessingStateProps {
   originalImage: string;
   onCancel: () => void;
+  transformationId?: number;
 }
 
-export default function ProcessingState({ originalImage, onCancel }: ProcessingStateProps) {
+export default function ProcessingState({ originalImage, onCancel, transformationId }: ProcessingStateProps) {
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [statusMessage, setStatusMessage] = useState("Starting transformation...");
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setElapsedSeconds(prev => {
+        const newValue = prev + 1;
+        
+        // Update status message based on elapsed time
+        if (newValue === 10) {
+          setStatusMessage("AI generating transformations...");
+        } else if (newValue === 30) {
+          setStatusMessage("Almost there, processing final details...");
+        } else if (newValue === 45) {
+          setStatusMessage("This is taking longer than usual...");
+        } else if (newValue === 60) {
+          setStatusMessage("Still working, please be patient...");
+        }
+        
+        return newValue;
+      });
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
+  
   return (
     <div className="p-8">
       <div className="w-full max-w-3xl mx-auto">
@@ -36,7 +64,17 @@ export default function ProcessingState({ originalImage, onCancel }: ProcessingS
                 <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse delay-150"></div>
                 <div className="w-2 h-2 bg-primary-600 rounded-full animate-pulse delay-300"></div>
               </div>
-              <p className="text-sm text-gray-500 mt-4">Drawing your imagination may take up to 60 seconds</p>
+              <p className="text-sm text-gray-500 mt-4">
+                {statusMessage}
+              </p>
+              <p className="text-xs text-gray-400 mt-2">
+                Elapsed time: {Math.floor(elapsedSeconds / 60)}:{(elapsedSeconds % 60).toString().padStart(2, '0')}
+              </p>
+              {transformationId && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Transformation ID: {transformationId}
+                </p>
+              )}
             </div>
           </div>
         </div>
