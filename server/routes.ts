@@ -7,6 +7,7 @@ import fs from "fs";
 import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { generateMockEnhancementOptions, simulateProcessingDelay, generateMockEnhancementResults } from "./mock-webhook-data";
+import { type InsertTransformation } from "../shared/schema";
 
 // Environment variable to control mock mode - will use mock data if true, real webhook if false
 const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
@@ -118,10 +119,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`File uploaded: ${req.file.path}`);
       
-      // Return the path to the uploaded file
+      // Return the path to the uploaded file and a URL
+      const baseUrl = req.protocol + "://" + req.get("host");
+      const imagePath = req.file.path;
+      const relativeImagePath = imagePath.replace(process.cwd(), '').replace(/^\//, "");
+      const imageUrl = `${baseUrl}/${relativeImagePath}`;
+      
       res.json({ 
         message: "File uploaded successfully", 
-        imagePath: req.file.path,
+        imagePath: imagePath,
+        imageUrl: imageUrl,
         filename: req.file.filename
       });
     } catch (error: any) {
@@ -255,15 +262,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } 
           // Otherwise create a new transformation record
           else {
-            transformation = await storage.createTransformation({
+            // Create base transformation object with required fields from schema
+            const transformationData = {
               userId,
               originalImagePath: fullImagePath,
-              transformedImagePath: result.transformedPath,
-              secondTransformedImagePath: result.secondTransformedPath || null,
-              prompt,
-              status: "completed",
-              editsUsed: 0 // Start with 0 edits - this is the initial creation
-            });
+              prompt
+            };
+            
+            // Create the transformation record
+            transformation = await storage.createTransformation(transformationData);
+            
+            // Then update the transformation with additional fields
+            transformation = await storage.updateTransformationStatus(
+              transformation.id,
+              "completed",
+              result.transformedPath,
+              undefined, // No error
+              result.secondTransformedPath || undefined
+            );
             
             console.log(`Created new transformation record with ID ${transformation.id}`);
           }
