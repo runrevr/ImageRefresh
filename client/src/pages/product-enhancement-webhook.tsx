@@ -977,24 +977,26 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
   // If there's an error, show error state instead
   if (errorMessage) {
     return (
-      <section className="container mx-auto text-center py-12 min-h-[600px] flex flex-col items-center justify-center">
-        <div className="mx-auto max-w-lg bg-white border rounded-lg shadow-md p-8">
-          <div className="text-red-500 mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+      <section className="fixed inset-0 bg-white bg-opacity-95 z-50 flex flex-col items-center justify-center">
+        <div className="container mx-auto text-center p-8 max-w-2xl">
+          <div className="mx-auto max-w-lg bg-white border rounded-lg shadow-md p-8">
+            <div className="text-red-500 mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-4 text-red-600">Enhancement Error</h2>
+            <p className="mb-6 text-gray-700">{errorMessage}</p>
+            <p className="text-gray-600 mb-6">
+              The webhook service encountered an issue. Please try again with different images or check back later.
+            </p>
+            <button 
+              className="bg-primary-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-700 transition" 
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
           </div>
-          <h2 className="text-2xl font-bold mb-4 text-red-600">Enhancement Error</h2>
-          <p className="mb-6 text-gray-700">{errorMessage}</p>
-          <p className="text-gray-600 mb-6">
-            The webhook service encountered an issue. Please try again with different images or check back later.
-          </p>
-          <button 
-            className="bg-primary-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-primary-700 transition" 
-            onClick={() => window.location.reload()}
-          >
-            Try Again
-          </button>
         </div>
       </section>
     );
@@ -1018,41 +1020,43 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
   }, [currentStep, steps.length]);
   
   return (
-    <section className="container mx-auto text-center py-12 min-h-[600px] flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-8 text-primary-600">Processing Your Images</h2>
-      
-      <div className="mx-auto w-72 md:w-96 h-auto bg-white border rounded-lg shadow-md p-6">
-        <ul className="list-none w-full">
-          {steps.map((step, index) => (
-            <li 
-              key={index}
-              className={`flex items-center p-2 my-1 rounded transition-colors duration-300 
-                ${index === currentStep 
-                  ? 'text-gray-900' 
-                  : index < currentStep 
-                    ? 'text-gray-500' 
-                    : 'text-gray-300'}`}
-            >
-              <span className="mr-2 w-6 h-6 flex items-center justify-center">
-                {index < currentStep && (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </span>
-              <span style={{ fontFamily: "'Bungee', cursive" }}>{step}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      
-      <p className="text-gray-600 mt-6">
-        We're applying the selected enhancements to your images. This may take a few moments...
-      </p>
-      
-      {/* Add a loading spinner */}
-      <div className="mt-8">
-        <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto"></div>
+    <section className="fixed inset-0 bg-white bg-opacity-95 z-50 flex flex-col items-center justify-center">
+      <div className="container mx-auto text-center p-8 max-w-2xl">
+        <h2 className="text-2xl font-bold mb-8 text-primary-600">Processing Your Images</h2>
+        
+        <div className="mx-auto w-72 md:w-96 h-auto bg-white border rounded-lg shadow-md p-6">
+          <ul className="list-none w-full">
+            {steps.map((step, index) => (
+              <li 
+                key={index}
+                className={`flex items-center p-2 my-1 rounded transition-colors duration-300 
+                  ${index === currentStep 
+                    ? 'text-gray-900' 
+                    : index < currentStep 
+                      ? 'text-gray-500' 
+                      : 'text-gray-300'}`}
+              >
+                <span className="mr-2 w-6 h-6 flex items-center justify-center">
+                  {index < currentStep && (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </span>
+                <span style={{ fontFamily: "'Bungee', cursive" }}>{step}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <p className="text-gray-600 mt-6">
+          We're applying the selected enhancements to your images. This may take a few moments...
+        </p>
+        
+        {/* Add a loading spinner */}
+        <div className="mt-8">
+          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto"></div>
+        </div>
       </div>
     </section>
   );
@@ -1560,7 +1564,7 @@ export default function ProductEnhancementWebhook() {
       
       {/* Processing section takes full page */}
       {step === 'processing' && (
-        <div className="container mx-auto py-16 px-4 min-h-[600px]">
+        <div className="container mx-auto py-16 px-4" style={{ minHeight: "80vh" }}>
           <ProcessingSection errorMessage={errorMessage} />
         </div>
       )}
