@@ -92,6 +92,129 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
  * 1. First analyze the image with GPT-4o to get a detailed description
  * 2. Then create new images with gpt-image-1 based on both the prompt and the description
  */
+/**
+ * Transform an image into coloring book style
+ * This uses OpenAI to convert an image into a black and white coloring book page
+ */
+export async function transformToColoringBook(
+  imagePath: string
+): Promise<{ url: string; transformedPath: string }> {
+  if (!isOpenAIConfigured()) {
+    throw new Error("OpenAI API key is not configured");
+  }
+
+  try {
+    console.log(`Processing coloring book transformation for image: ${imagePath}`);
+
+    // Verify the image exists
+    if (!fs.existsSync(imagePath)) {
+      throw new Error(`Image file does not exist at path: ${imagePath}`);
+    }
+
+    // Read the image file
+    const imageBuffer = fs.readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
+
+    // Determine the correct MIME type for the image
+    const fileExtension = path.extname(imagePath).toLowerCase();
+    const mimeType = fileExtension === '.png' ? 'image/png' : 
+                    (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
+
+    // First use GPT-4o Vision to analyze the image and get a detailed description
+    console.log("Analyzing image with GPT-4o vision for coloring book transformation...");
+
+    // Use the GPT-4o model with vision capabilities to analyze the image
+    const visionResponse = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert in creating coloring book pages. Analyze this image and provide a detailed description that could be used to create a black and white coloring book page with clear, bold outlines."
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Describe this image in a way that would help create a simple coloring book page with bold outlines."
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:${mimeType};base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 500
+    });
+
+    // Extract the detailed description
+    const content = visionResponse.choices[0].message.content;
+    const detailedDescription = content ? content : "An image suitable for a coloring book page";
+    console.log("Image analysis complete. Description length:", detailedDescription.length);
+
+    // Create the prompt for a coloring book style conversion
+    const coloringBookPrompt = "Turn this into a black and white coloring book page. Use only thick black outlines on a white background. Remove all colors and details. Create simple line art with bold borders between sections. No shading, no gradients, no gray areas. Make it look like a children's coloring book with clear, easy-to-color sections.";
+
+    // Generate unique name for the coloring book image
+    const originalFileName = path.basename(imagePath);
+    const coloringBookFileName = `coloring-book-${Date.now()}-${originalFileName}`;
+    const transformedPath = path.join(process.cwd(), "uploads", coloringBookFileName);
+
+    try {
+      console.log("Generating coloring book image with gpt-image-1...");
+      
+      // Combine the description with the coloring book prompt
+      const enhancedPrompt = `${coloringBookPrompt} Based on this image: ${detailedDescription}`;
+      
+      // Call OpenAI to generate the coloring book image
+      const imageResponse = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: enhancedPrompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "high",
+        moderation: "low",
+      });
+      
+      console.log("Successfully generated coloring book image");
+      
+      // Process and save the image
+      if (imageResponse.data && imageResponse.data.length > 0) {
+        let imageUrl;
+        if (imageResponse.data[0].url) {
+          // URL format - use saveImageFromUrl
+          imageUrl = imageResponse.data[0].url;
+          await saveImageFromUrl(imageUrl, transformedPath);
+        } else if ('b64_json' in imageResponse.data[0]) {
+          // Base64 format - save directly
+          const b64Content = (imageResponse.data[0] as any).b64_json;
+          const imageBuffer = Buffer.from(b64Content, "base64");
+          fs.writeFileSync(transformedPath, imageBuffer);
+          imageUrl = `data:image/png;base64,${b64Content}`;
+        } else {
+          throw new Error("Unexpected response format from OpenAI.");
+        }
+        
+        return {
+          url: imageUrl,
+          transformedPath
+        };
+      } else {
+        throw new Error("No image data returned from OpenAI.");
+      }
+    } catch (genError: any) {
+      console.error("Error generating coloring book image:", genError);
+      throw new Error(`Failed to generate coloring book image: ${genError.message}`);
+    }
+  } catch (error: any) {
+    console.error("Error transforming image to coloring book style:", error);
+    throw new Error(`Error transforming to coloring book style: ${error.message}`);
+  }
+}
+
 export async function transformImage(
   imagePath: string, 
   prompt: string,
