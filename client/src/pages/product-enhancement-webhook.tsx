@@ -1063,7 +1063,7 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
 
 // Main component
 export default function ProductEnhancementWebhook() {
-  const { data: userCredits } = useCredits();
+  const { data: userCredits = { credits: 0, paidCredits: 0, freeCreditsUsed: true } } = useCredits();
   const { toast } = useToast();
   const { user } = useAuth();
   const [step, setStep] = useState<'upload' | 'selectStyles' | 'processing' | 'results'>('upload');

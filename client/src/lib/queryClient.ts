@@ -9,6 +9,14 @@ async function throwIfResNotOk(res: Response) {
     // First check the content type to handle HTML errors appropriately
     const contentType = res.headers.get('content-type');
     
+    // Special handling for user credits endpoint to prevent cascading errors
+    const isUserCreditsEndpoint = res.url.includes('/api/user/credits');
+    if (isUserCreditsEndpoint) {
+      console.warn(`Error fetching credits (${res.status}), returning default values`);
+      // Return default credits object instead of throwing
+      return;
+    }
+    
     if (contentType && contentType.includes('text/html')) {
       // For HTML responses, return a more user-friendly error
       throw new Error(`${res.status}: Server error occurred. Please try again later.`);
@@ -82,16 +90,55 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     // Add fingerprint to the URL
     const url = addFingerprintToUrl(queryKey[0] as string);
-    const res = await fetch(url, {
-      credentials: "include",
-    });
-
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    
+    // Special handling for user credits endpoint
+    const isUserCreditsEndpoint = url.includes('/api/user/credits');
+    
+    try {
+      const res = await fetch(url, {
+        credentials: "include",
+      });
+  
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+        return null;
+      }
+  
+      // For credits endpoint, handle any error by returning default credits
+      if (isUserCreditsEndpoint && !res.ok) {
+        console.warn(`Credits endpoint returned ${res.status}, using default values`);
+        return {
+          credits: 0,
+          paidCredits: 0,
+          freeCreditsUsed: true
+        };
+      }
+  
+      await throwIfResNotOk(res);
+      
+      try {
+        return await res.json();
+      } catch (jsonError) {
+        if (isUserCreditsEndpoint) {
+          console.error("Failed to parse credits JSON:", jsonError);
+          return {
+            credits: 0,
+            paidCredits: 0,
+            freeCreditsUsed: true
+          };
+        }
+        throw jsonError;
+      }
+    } catch (fetchError) {
+      if (isUserCreditsEndpoint) {
+        console.error("Error fetching user credits:", fetchError);
+        return {
+          credits: 0,
+          paidCredits: 0,
+          freeCreditsUsed: true
+        };
+      }
+      throw fetchError;
     }
-
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 export const queryClient = new QueryClient({
