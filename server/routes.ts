@@ -269,14 +269,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Transform image endpoint
   app.post("/api/transform", async (req, res) => {
     try {
-      const { imagePath, prompt, userId } = req.body;
+      const { originalImagePath, prompt, userId, preset } = req.body;
+      
+      // Support both originalImagePath (from client) and imagePath (for backward compatibility)
+      const imagePath = originalImagePath || req.body.imagePath;
 
+      // Log the received request for debugging
+      console.log("Transform request received:", {
+        originalImagePath,
+        imagePath,
+        promptLength: prompt?.length || 0,
+        promptPreview: prompt ? prompt.substring(0, 50) + "..." : "",
+        preset,
+        userId
+      });
+      
       if (!imagePath) {
+        console.error("Image path missing in transform request:", req.body);
         return res.status(400).json({ message: "Image path is required" });
       }
 
-      if (!prompt) {
-        return res.status(400).json({ message: "Prompt is required" });
+      if (!prompt && !preset) {
+        console.error("Neither prompt nor preset provided in transform request");
+        return res.status(400).json({ message: "Either prompt or preset is required" });
       }
 
       // Validate user ID and check for credits if provided

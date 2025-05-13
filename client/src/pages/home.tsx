@@ -238,6 +238,22 @@ export default function Home() {
     console.log("Original image path:", originalImagePath);
     console.log("User credits:", userCredits);
     
+    // Validate image path exists before proceeding
+    if (!originalImagePath) {
+      toast({
+        title: "Image Upload Error",
+        description: "No image path found. Please try uploading your image again.",
+        variant: "destructive",
+      });
+      setCurrentStep(Step.Upload);
+      return;
+    }
+    
+    // Log the full prompt for debugging
+    const promptLength = promptText?.length || 0;
+    const promptPreview = promptText ? promptText.substring(0, 50) + "..." : "empty";
+    console.log("Full prompt being sent:", promptText);
+    
     setPrompt(promptText);
     setCurrentStep(Step.Processing);
 
@@ -539,12 +555,22 @@ export default function Home() {
 
     try {
       console.log(`Applying ${presetType} preset transformation`);
-      const response = await apiRequest("POST", "/api/transform", {
+      console.log("Original image path:", originalImagePath);
+      
+      // Validate image path is not empty
+      if (!originalImagePath) {
+        throw new Error("Image path is missing. Please try uploading the image again.");
+      }
+      
+      const requestData = {
         originalImagePath,
         userId: userCredits?.id,
         preset: presetType,
         imageSize,
-      });
+      };
+      
+      console.log("Sending transformation request with data:", requestData);
+      const response = await apiRequest("POST", "/api/transform", requestData);
 
       const data = await response.json();
 
