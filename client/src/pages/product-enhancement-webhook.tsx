@@ -1265,7 +1265,7 @@ export default function ProductEnhancementWebhook() {
   });
   
   // Query to fetch enhancement data (images and options)
-  const optionsQuery = useQuery({
+  const { data: enhancementData, isLoading: isLoadingEnhancement, refetch } = useQuery({
     queryKey: ['/api/product-enhancement', enhancementId],
     enabled: !!enhancementId && (step === 'processing' || step === 'selectStyles') && !errorMessage,
     refetchInterval: step === 'processing' ? 3000 : false, // Poll every 3 seconds only when processing
@@ -1507,7 +1507,7 @@ export default function ProductEnhancementWebhook() {
           setEnhancementId(data.id);
           
           // Manually start polling for options
-          optionsQuery.refetch();
+          refetch();
           
           toast({
             title: "Upload successful",

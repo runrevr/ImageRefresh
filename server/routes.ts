@@ -610,7 +610,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Verify the option exists for this image
           const options = image.options || {};
-          const option = options[selection.optionKey];
+          const option = options[selection.optionKey as keyof typeof options];
           if (!option) {
             console.error(`Option ${selection.optionKey} not found for image ${selection.imageId}`);
             return null;
