@@ -33,13 +33,47 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  // Fetch user data - try authenticated endpoint first, fall back to fingerprint
   const {
     data: user,
     error,
     isLoading,
   } = useQuery<User | null, Error>({
     queryKey: ["/api/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: async ({ queryKey }) => {
+      try {
+        // First try the authenticated endpoint
+        const res = await fetch(queryKey[0] as string, {
+          credentials: "include",
+        });
+        
+        if (res.status === 401) {
+          console.log("Not authenticated, trying fingerprint-based lookup");
+          // Fall back to fingerprint-based lookup
+          const fingerprint = localStorage.getItem('device_fingerprint');
+          if (fingerprint) {
+            const fingerprintRes = await fetch(`/api/user-by-fingerprint?fingerprint=${encodeURIComponent(fingerprint)}`, {
+              credentials: "include",
+            });
+            
+            if (fingerprintRes.ok) {
+              return fingerprintRes.json();
+            }
+          }
+          // If fingerprint lookup fails, return null
+          return null;
+        }
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch user: ${res.status}`);
+        }
+        
+        return res.json();
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        return null;
+      }
+    },
   });
 
   const loginMutation = useMutation({

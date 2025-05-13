@@ -149,8 +149,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Get current user endpoint (used for authentication)
-  app.get("/api/user", async (req, res) => {
+  // Get current user by fingerprint endpoint (for unauthenticated sessions)
+  app.get("/api/user-by-fingerprint", async (req, res) => {
     try {
       // Get user by fingerprint instead of traditional authentication
       const fingerprint = req.query.fingerprint as string;

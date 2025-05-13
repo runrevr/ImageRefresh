@@ -67,6 +67,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Setup authentication (passport, sessions, etc.)
+setupAuth(app);
+
 // Create a special middleware just for debugging request bodies
 app.use((req, res, next) => {
   // Only log POST requests to specific endpoints
