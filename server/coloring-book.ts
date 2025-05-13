@@ -1,4 +1,3 @@
-import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import { createWriteStream } from "fs";
@@ -6,20 +5,12 @@ import fetch from "node-fetch";
 import { Readable } from "stream";
 import { promisify } from "util";
 import stream from "stream";
+import axios from "axios";
 
 const pipeline = promisify(stream.pipeline);
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY
-});
-
-/**
- * Checks if OpenAI API key is configured
- */
-function isOpenAIConfigured(): boolean {
-  return !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.startsWith('sk-');
-}
+// N8N webhook URL
+const WEBHOOK_URL = "https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9";
 
 /**
  * Saves an image from a URL to the local filesystem
@@ -75,11 +66,37 @@ export async function createColoringBookImage(imagePath: string): Promise<{ outp
     // Coloring book prompt
     const coloringBookPrompt = "Turn this into a black and white coloring book page. Use only thick black outlines on a white background. Remove all colors and details. Create simple line art with bold borders between sections. No shading, no gradients, no gray areas. Make it look like a children's coloring book with clear, easy-to-color sections.";
     
-    // Use DALL-E to create coloring book version
+    // Use GPT-4o Vision to create coloring book version
+    console.log("Generating coloring book image with GPT-4o Vision");
+    
+    // First, analyze the image with Vision API
+    const visionResponse = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: coloringBookPrompt
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`
+              }
+            }
+          ],
+        },
+      ],
+      max_tokens: 500,
+    });
+    
+    // Then use DALL-E to generate the coloring book image based on the analysis
     console.log("Generating coloring book image with DALL-E");
     const imageResponse = await openai.images.generate({
       model: "dall-e-3",
-      prompt: `${coloringBookPrompt} The image shows: ${base64Image.substring(0, 100)}...`,
+      prompt: `${coloringBookPrompt} ${visionResponse.choices[0].message.content}`,
       n: 1,
       size: "1024x1024",
       response_format: "url",
@@ -98,6 +115,29 @@ export async function createColoringBookImage(imagePath: string): Promise<{ outp
     return { outputPath };
   } catch (error) {
     console.error("Error in createColoringBookImage:", error);
+    
+    // Check for specific OpenAI error types
+    if (error.response?.status === 401) {
+      console.error("OpenAI authentication error - check API key");
+      throw new Error("OpenAI authentication failed. Check your API key.");
+    }
+    
+    if (error.response?.status === 429) {
+      console.error("OpenAI rate limit exceeded");
+      throw new Error("OpenAI rate limit exceeded. Please try again later.");
+    }
+    
+    if (error.response?.data?.error) {
+      console.error("OpenAI error response:", error.response.data.error);
+      throw new Error(`OpenAI error: ${error.response.data.error.message || 'Unknown error'}`);
+    }
+    
+    // For image reading or file system errors
+    if (error.code === 'ENOENT') {
+      console.error("File not found:", error.path);
+      throw new Error(`File not found: ${error.path}`);
+    }
+    
     throw error;
   }
 }
