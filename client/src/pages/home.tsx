@@ -91,7 +91,7 @@ export default function Home() {
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
   
   const [selectedTransformation, setSelectedTransformation] =
-    useState<string>("");
+    useState<TransformationType | null>(null);
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
   const [showAccountNeededDialog, setShowAccountNeededDialog] =
     useState<boolean>(false);
