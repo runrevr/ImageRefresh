@@ -8,7 +8,7 @@ interface EmailCollectionDialogProps {
   open: boolean;
   onClose: () => void;
   onEmailSubmitted: () => void;
-  userId: number;
+  userId: number | undefined;
 }
 
 const EmailCollectionDialog = ({

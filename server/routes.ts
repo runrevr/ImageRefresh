@@ -970,6 +970,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add a new endpoint for coloring book transformations
+  app.post("/api/coloring-book", async (req, res) => {
+    try {
+      console.log("\n\n====================== COLORING BOOK TRANSFORMATION ======================");
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      
+      // Validate request
+      const { imagePath, userId } = req.body;
+      
+      if (!imagePath) {
+        return res.status(400).json({ message: "Image path is required" });
+      }
+      
+      // Determine full path to image
+      const fullImagePath = path.isAbsolute(imagePath) 
+        ? imagePath 
+        : path.join(process.cwd(), imagePath);
+      
+      console.log(`Processing coloring book transformation for image: ${fullImagePath}`);
+      console.log(`User ID: ${userId || 'Guest'}`);
+      
+      // Check if the image exists
+      if (!fs.existsSync(fullImagePath)) {
+        return res.status(404).json({ message: "Image file not found" });
+      }
+      
+      // Check if user has credits (if userId is provided)
+      let userCredits = { freeCreditsUsed: false, paidCredits: 0 };
+      
+      if (userId) {
+        try {
+          const user = await storage.getUser(userId);
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          
+          // Check if the user has free credits or paid credits
+          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+          userCredits = {
+            freeCreditsUsed: !hasMonthlyFreeCredit,
+            paidCredits: user.paidCredits
+          };
+          
+          // If user has no credits, return an error
+          if (userCredits.freeCreditsUsed && user.paidCredits < 1) {
+            return res.status(403).json({ 
+              message: "Not enough credits", 
+              error: "credit_required",
+              freeCreditsUsed: userCredits.freeCreditsUsed,
+              paidCredits: user.paidCredits
+            });
+          }
+        } catch (userError) {
+          console.error("Error retrieving user credits:", userError);
+          // Continue with the transformation even if we couldn't verify credits
+          // The client should handle this case
+        }
+      }
+      
+      // Import the OpenAI transformation function
+      const { transformToColoringBook } = await import("./openai");
+      
+      // Transform the image to coloring book style
+      console.log("Calling OpenAI for coloring book transformation...");
+      const result = await transformToColoringBook(fullImagePath);
+      console.log("Coloring book transformation completed successfully");
+      
+      // Get the server URL to construct full URLs for the images
+      const baseUrl = req.protocol + "://" + req.get("host");
+      
+      // Create the transformed image URL - removing leading slash and prepending the server URL
+      const transformedImagePath = result.transformedPath.replace(process.cwd(), '').replace(/^\//, "");
+      const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
+      
+      // If userId is provided, deduct a credit
+      if (userId) {
+        try {
+          console.log(`Deducting credit for user ${userId}`);
+          
+          // Check if we should use a free credit or paid credit
+          const useFreeCredit = !userCredits.freeCreditsUsed;
+          const paidCreditsRemaining = useFreeCredit 
+            ? userCredits.paidCredits 
+            : userCredits.paidCredits - 1;
+          
+          // Update user credits
+          await storage.updateUserCredits(
+            userId,
+            useFreeCredit, // Set freeCreditsUsed to true if using free credit
+            paidCreditsRemaining
+          );
+          
+          console.log(`Credits updated for user ${userId}: Free credit used: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`);
+        } catch (creditError) {
+          console.error("Error updating user credits:", creditError);
+          // Continue with the response even if credit update failed
+        }
+      }
+      
+      // Return the transformed image URL
+      res.status(200).json({
+        message: "Coloring book transformation completed successfully",
+        coloringBookImageUrl: transformedImageUrl,
+        originalImagePath: imagePath
+      });
+    } catch (error: any) {
+      console.error("Error in coloring book transformation:", error);
+      res.status(500).json({ 
+        message: "Error processing coloring book transformation", 
+        error: error.message 
+      });
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
   console.log("Server created and routes registered successfully");

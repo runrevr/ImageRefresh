@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, Check } from 'lucide-react';
+import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, Check, BookOpen, Loader2 } from 'lucide-react';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
 import EmailCollectionDialog from './EmailCollectionDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 interface ResultViewProps {
   originalImage: string;
@@ -21,6 +22,7 @@ interface ResultViewProps {
   canEdit?: boolean;
   transformationId?: string;
   editsUsed?: number;
+  userId?: number;
 }
 
 export default function ResultView({ 
@@ -35,13 +37,19 @@ export default function ResultView({
   prompt = "Transformation of the original image",
   canEdit = true,
   transformationId = '',
-  editsUsed = 0
+  editsUsed = 0,
+  userId
 }: ResultViewProps) {
   // Get authentication state
   const { user } = useAuth();
   
   // Track which image is selected for download/edit
   const [selectedImage, setSelectedImage] = useState<string>(transformedImage);
+  
+  // State for coloring book transformation
+  const [isColoringBookLoading, setIsColoringBookLoading] = useState(false);
+  const [coloringBookImage, setColoringBookImage] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Set initial selected image when component loads or when images change
   useEffect(() => {
@@ -55,9 +63,9 @@ export default function ResultView({
   // Show email dialog for guests who try to download or edit images
   const isGuest = !user; // If there's no user, we're in guest mode
   const [showEmailDialog, setShowEmailDialog] = useState(false);
-  const [actionRequiringEmail, setActionRequiringEmail] = useState<'download' | 'edit' | null>(null);
+  const [actionRequiringEmail, setActionRequiringEmail] = useState<'download' | 'edit' | 'coloring' | null>(null);
   const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected || !!user);
-  const userId = user?.id || 1; // Use logged in user ID if available
+  const effectiveUserId = user?.id || userId || 1; // Use provided userId or logged in user ID or fallback to 1
   
   const handleEmailSubmitted = () => {
     localStorage.setItem('emailCollected', 'true');
@@ -80,6 +88,67 @@ export default function ResultView({
     
     // Otherwise proceed with download of the selected image
     downloadImage(selectedImage, getFilenameFromPath(selectedImage));
+  };
+  
+  // Function to handle coloring book transformation
+  const handleColoringBookTransform = async () => {
+    // If user is not logged in and email hasn't been collected, show email dialog
+    if (isGuest && !emailAlreadyCollected) {
+      setActionRequiringEmail('coloring');
+      setShowEmailDialog(true);
+      return;
+    }
+    
+    // Check if we already have a coloring book image
+    if (coloringBookImage) {
+      setSelectedImage(coloringBookImage);
+      return;
+    }
+    
+    try {
+      setIsColoringBookLoading(true);
+      
+      // Make API request to transform the image
+      const response = await apiRequest("POST", "/api/coloring-book", {
+        imagePath: selectedImage,
+        userId: effectiveUserId
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        
+        // Handle credit errors specifically
+        if (errorData.error === "credit_required") {
+          toast({
+            title: "Credits Required",
+            description: "You need 1 credit to transform this image into coloring book style.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        // Handle other errors
+        throw new Error(errorData.message || "Failed to create coloring book style");
+      }
+      
+      const data = await response.json();
+      setColoringBookImage(data.coloringBookImageUrl);
+      setSelectedImage(data.coloringBookImageUrl);
+      
+      toast({
+        title: "Coloring Book Style Created!",
+        description: "Your image has been transformed into coloring book style.",
+      });
+    } catch (error: any) {
+      console.error("Error creating coloring book style:", error);
+      toast({
+        title: "Transformation Failed",
+        description: error.message || "Failed to create coloring book style. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsColoringBookLoading(false);
+    }
   };
   
   // Function to save the user's image selection to the database
@@ -113,7 +182,7 @@ export default function ResultView({
         open={showEmailDialog}
         onClose={handleSkipEmail}
         onEmailSubmitted={handleEmailSubmitted}
-        userId={userId}
+        userId={effectiveUserId}
       />
       
       <div className="w-full max-w-3xl mx-auto">
