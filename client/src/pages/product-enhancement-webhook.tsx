@@ -1508,6 +1508,7 @@ export default function ProductEnhancementWebhook() {
       <AnnouncementBanner />
       <Navbar freeCredits={user?.freeCreditsUsed ? 0 : 1} paidCredits={user?.paidCredits || 0} />
       <div className="mt-20"></div> {/* Add spacing for fixed navbar */}
+      <div className="min-h-[calc(100vh-140px)] flex flex-col"> {/* Force content area to take up at least full viewport height minus navbar */}
       
       {/* Only show marketing sections on upload step */}
       {step === 'upload' && (
@@ -1582,6 +1583,7 @@ export default function ProductEnhancementWebhook() {
           </div>
         </div>
       )}
+      </div> {/* End of min-height content area */}
       
       {/* Always show footer */}
       <FinalCTASection />
