@@ -140,12 +140,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Config endpoint
   app.get("/api/config", (req, res) => {
+    // Check if OpenAI API key is properly configured
+    const isOpenAIConfigured = !!process.env.OPENAI_API_KEY && 
+                              process.env.OPENAI_API_KEY.startsWith('sk-');
+                              
+    console.log(`OpenAI API key configuration status: ${isOpenAIConfigured ? 'Configured' : 'Not Configured'}`);
+    if (process.env.OPENAI_API_KEY) {
+      console.log(`Key preview: ${process.env.OPENAI_API_KEY.substring(0, 5)}...${process.env.OPENAI_API_KEY.slice(-4)}`);
+    }
+    
     res.send({
       maxFileSize: 10 * 1024 * 1024, // 10MB
       maxFiles: 5,
       supportedImageTypes: ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"],
       productEnhancementEnabled: true,
-      stripeEnabled: true
+      stripeEnabled: true,
+      openaiConfigured: isOpenAIConfigured
     });
   });
 
