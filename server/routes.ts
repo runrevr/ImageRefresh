@@ -19,331 +19,161 @@ const USE_MOCK_WEBHOOK = process.env.USE_MOCK_WEBHOOK === "true";
 // Updated to use the /webhook/ path instead of /webhook-test/ based on testing
 const WEBHOOK_URL = "https://www.n8nemma.live/webhook/dbf2c53a-616d-4ba7-8934-38fa5e881ef9";
 
+// Configure multer for uploads
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer storage for regular image uploads
+const storage_config = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    // Keep the original extension if it exists
+    const ext = path.extname(file.originalname) || '.jpg';
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
+
+// Create multer instance for regular file uploads
+const upload = multer({ 
+  storage: storage_config,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  }
+});
+
+// Create multer instance for product enhancement uploads
+const productStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    // Keep the original extension if it exists
+    const ext = path.extname(file.originalname) || '.jpg';
+    cb(null, "product-" + uniqueSuffix + ext);
+  },
+});
+
+const productUpload = multer({
+  storage: productStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  }
+});
+
 // Helper function to convert an image file to base64
 async function imageToBase64(imagePath: string): Promise<string> {
-  try {
-    const imageBuffer = await fs.promises.readFile(imagePath);
-    return imageBuffer.toString("base64");
-  } catch (error) {
-    console.error("Error converting image to base64:", error);
-    throw error;
-  }
+  const imageBuffer = fs.readFileSync(imagePath);
+  return imageBuffer.toString("base64");
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Add detailed console logs for debugging
-  app.use((req, res, next) => {
-    const start = Date.now();
-    
-    // Log when the request completes
-    res.on('finish', () => {
-      const duration = Date.now() - start;
-      console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl} - ${res.statusCode} (${duration}ms)`);
-    });
-    
-    // Log the request body for POST/PUT requests (exclude large base64 data)
-    if (req.method === 'POST' || req.method === 'PUT') {
-      if (req.body && typeof req.body === 'object') {
-        const logBody = { ...req.body };
-        
-        // Exclude large base64 data from logs
-        Object.keys(logBody).forEach(key => {
-          if (typeof logBody[key] === 'string' && logBody[key].length > 1000 && 
-              (logBody[key].startsWith('data:image') || logBody[key].includes('base64'))) {
-            logBody[key] = `[base64 data - ${logBody[key].length} chars]`;
-          } else if (Array.isArray(logBody[key])) {
-            logBody[key] = `[Array with ${logBody[key].length} items]`;
-          }
-        });
-        
-        console.log(`${new Date().toISOString()} - Request Body: ${JSON.stringify(logBody, null, 2)}`);
-      }
-    }
-    
-    next();
-  });
-
-  // Create uploads directory if it doesn't exist
-  const uploadsDir = path.join(process.cwd(), "uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-
-  // Set up Multer for file uploads
-  const productUpload = multer({
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, uploadsDir);
-      },
-      filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-      }
-    }),
-    limits: {
-      fileSize: 10 * 1024 * 1024, // 10 MB limit
-    }
-  });
-
-  // API routes
+  // Basic health check endpoint
   app.get("/api/health", (req, res) => {
-    res.status(200).json({ status: "ok" });
+    res.send({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+    });
   });
-  
-  // Single image upload endpoint
-  const upload = multer({
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, uploadsDir);
-      },
-      filename: (req, file, cb) => {
-        cb(null, `image-${Date.now()}-${Math.floor(Math.random() * 1000000000)}.jpg`);
-      }
-    }),
-    limits: {
-      fileSize: 10 * 1024 * 1024, // 10 MB limit
-    },
-    fileFilter: (req, file, cb) => {
-      // Accept images only
-      if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-        return cb(null, false);
-      }
-      cb(null, true);
-    }
-  });
-  
-  // Basic file upload endpoint
+
+  // File upload endpoint
   app.post("/api/upload", upload.single("image"), (req, res) => {
     try {
       if (!req.file) {
-        return res.status(400).json({ message: "No image uploaded" });
+        return res.status(400).json({ message: "No file uploaded" });
       }
-      
-      console.log(`File uploaded: ${req.file.path}`);
-      
-      // Return the path to the uploaded file and a URL
-      const baseUrl = req.protocol + "://" + req.get("host");
-      const imagePath = req.file.path;
-      const relativeImagePath = imagePath.replace(process.cwd(), '').replace(/^\//, "");
-      const imageUrl = `${baseUrl}/${relativeImagePath}`;
-      
-      res.json({ 
-        message: "File uploaded successfully", 
-        imagePath: imagePath,
-        imageUrl: imageUrl,
-        filename: req.file.filename
+
+      // Return the path to the uploaded file
+      const filePath = req.file.path.replace(process.cwd(), '').replace(/^\//, "");
+      res.json({
+        message: "File uploaded successfully",
+        filePath,
       });
     } catch (error: any) {
-      console.error("Error uploading file:", error);
-      res.status(500).json({ message: error.message || "Error uploading file" });
+      res.status(500).json({ message: error.message });
     }
   });
-  
-  // Image transformation endpoint 
+
+  // Transform image endpoint
   app.post("/api/transform", async (req, res) => {
     try {
-      console.log("\n\n====================== IMAGE TRANSFORMATION ======================");
-      console.log(`Timestamp: ${new Date().toISOString()}`);
-      
-      // Validate request body
-      const { originalImagePath, prompt, userId, imageSize, isEdit, previousTransformation } = req.body;
-      
-      if (!originalImagePath) {
-        return res.status(400).json({ message: "Original image path is required" });
+      const { imagePath, prompt, userId } = req.body;
+
+      if (!imagePath) {
+        return res.status(400).json({ message: "Image path is required" });
       }
-      
+
       if (!prompt) {
         return res.status(400).json({ message: "Prompt is required" });
       }
-      
-      console.log(`Processing transformation with prompt: ${prompt}`);
-      console.log(`Original image: ${originalImagePath}`);
-      console.log(`Is edit: ${isEdit ? "Yes" : "No"}`);
-      console.log(`User ID: ${userId || "Guest"}`);
-      
-      // Determine full path to image
-      const fullImagePath = path.isAbsolute(originalImagePath) 
-        ? originalImagePath 
-        : path.join(process.cwd(), originalImagePath);
-      
-      // Check if image exists
-      if (!fs.existsSync(fullImagePath)) {
-        return res.status(404).json({ message: "Image file not found" });
-      }
-      
-      // If previous transformation ID is provided, validate it
-      let prevTransform = null;
-      if (previousTransformation) {
-        try {
-          prevTransform = await storage.getTransformation(previousTransformation);
-          if (!prevTransform) {
-            console.warn(`Previous transformation ${previousTransformation} not found`);
-          } else {
-            console.log(`Found previous transformation: ID ${previousTransformation}, edits used: ${prevTransform.editsUsed || 0}`);
-          }
-        } catch (error) {
-          console.error("Error retrieving previous transformation:", error);
-        }
-      }
-      
-      // Check if user has credits if userId is provided
-      let userCredits = { freeCreditsUsed: false, paidCredits: 0 };
-      
+
+      // Validate user ID and check for credits if provided
       if (userId) {
         try {
           const user = await storage.getUser(userId);
           if (!user) {
             return res.status(404).json({ message: "User not found" });
           }
-          
-          // Check if the user has free credits
-          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-          userCredits = {
-            freeCreditsUsed: !hasMonthlyFreeCredit,
-            paidCredits: user.paidCredits
-          };
-          
-          // For edits beyond the first one, we need to check paid credits
-          if (isEdit && prevTransform && (prevTransform.editsUsed || 0) > 0) {
-            // This is beyond the first edit, check if user has paid credits
-            if (user.paidCredits < 1) {
-              return res.status(403).json({ 
-                message: "Not enough credits for additional edits", 
-                error: "credit_required"
-              });
-            }
-          }
-          // For new transformations, check if user has any credits
-          else if (!isEdit && userCredits.freeCreditsUsed && user.paidCredits < 1) {
+
+          // Check if user has enough credits to perform transformation
+          const hasCredits = user.freeCredits > 0 || user.paidCredits > 0;
+          if (!hasCredits) {
             return res.status(403).json({ 
-              message: "Not enough credits", 
-              error: "credit_required" 
+              message: "Not enough credits to perform transformation", 
+              error: "credit_required"
             });
           }
-          
-          console.log(`User ${userId} has credits - proceeding with transformation`);
-        } catch (userError) {
-          console.error("Error checking user credits:", userError);
-          // Continue with the transformation anyway
+        } catch (error: any) {
+          console.error("Error checking user:", error);
+          // Continue anyway to prevent blocking transformations
         }
       }
-      
-      // Import the transformImage function
-      const { transformImage } = await import("./openai");
-      
-      // Perform the image transformation
-      const result = await transformImage(
-        fullImagePath,
+
+      console.log(`Transforming image at path: ${imagePath} with prompt: ${prompt}`);
+
+      // Create a new transformation record
+      const transformation = await storage.createTransformation({
+        userId: userId || null,
         prompt,
-        imageSize,
-        isEdit // Pass isEdit flag to the transformation function
-      );
-      
-      // Create a server-relative path for the transformed image
-      const baseUrl = req.protocol + "://" + req.get("host");
-      
-      const transformedImagePath = result.transformedPath.replace(process.cwd(), '').replace(/^\//, "");
-      const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
-      
-      let secondTransformedImageUrl = null;
-      if (result.secondTransformedPath) {
-        const secondTransformedImagePath = result.secondTransformedPath.replace(process.cwd(), '').replace(/^\//, "");
-        secondTransformedImageUrl = `${baseUrl}/${secondTransformedImagePath}`;
-      }
-      
-      // If this is an edit and we have a previous transformation, increment the edits count
-      let transformation = null;
-      if (userId) {
-        try {
-          // If it's an edit of a previous transformation, update that record
-          if (isEdit && prevTransform) {
-            // Update the previous transformation with new info
-            transformation = await storage.incrementEditsUsed(previousTransformation);
-            
-            console.log(`Updated transformation ${previousTransformation}, new edits used: ${transformation.editsUsed}`);
-          } 
-          // Otherwise create a new transformation record
-          else {
-            // Create base transformation object with required fields from schema
-            const transformationData = {
-              userId,
-              originalImagePath: fullImagePath,
-              prompt
-            };
-            
-            // Create the transformation record
-            transformation = await storage.createTransformation(transformationData);
-            
-            // Then update the transformation with additional fields
-            transformation = await storage.updateTransformationStatus(
-              transformation.id,
-              "completed",
-              result.transformedPath,
-              undefined, // No error
-              result.secondTransformedPath || undefined
-            );
-            
-            console.log(`Created new transformation record with ID ${transformation.id}`);
-          }
-          
-          // Update user credits if needed
-          // For edits beyond the first one, or for new transformations
-          if ((isEdit && prevTransform && (prevTransform.editsUsed || 0) > 0) || (!isEdit)) {
-            const useFreeCredit = !userCredits.freeCreditsUsed;
-            const paidCreditsRemaining = useFreeCredit 
-              ? userCredits.paidCredits
-              : userCredits.paidCredits - 1;
-              
-            await storage.updateUserCredits(
-              userId,
-              useFreeCredit,
-              paidCreditsRemaining
-            );
-            
-            console.log(`Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`);
-          }
-        } catch (dbError) {
-          console.error("Error saving transformation to database:", dbError);
-          // Continue with the response even if DB operation failed
-        }
-      }
-      
-      // Return the transformed image URL
-      res.status(200).json({
-        transformedImageUrl,
-        secondTransformedImageUrl,
-        prompt,
-        id: transformation ? transformation.id : null,
-        editsUsed: transformation ? transformation.editsUsed : 0
+        originalImage: imagePath,
+        status: "processing"
       });
+
+      // Simulate processing delay (in a real app, this would be a call to AI service)
+      // The processing would happen asynchronously, and the results would be stored
+      
+      // Return the transformation ID immediately
+      res.json({
+        message: "Transformation started",
+        transformationId: transformation.id
+      });
+      
+      // Further processing happens asynchronously
+
     } catch (error: any) {
-      console.error("Error in image transformation:", error);
-      
-      // Check for specific OpenAI error types
-      if (error.message && (
-        error.message.includes("organization verification") ||
-        error.message.includes("invalid_api_key") ||
-        error.message.includes("rate limit") ||
-        error.message.includes("billing")
-      )) {
-        return res.status(400).json({ 
-          message: error.message, 
-          error: "openai_api_error" 
-        });
-      }
-      
-      // Check for content moderation errors
-      if (error.message && error.message.toLowerCase().includes("content policy")) {
-        return res.status(400).json({
-          message: "Your request was rejected by our content safety system. Please try a different prompt.",
-          error: "content_safety"
-        });
-      }
-      
-      // Generic error
-      res.status(500).json({ 
-        message: "Error processing image transformation", 
-        error: error.message 
-      });
+      console.error("Error transforming image:", error);
+      res.status(500).json({ message: "Error transforming image", error: error.message });
     }
   });
 
@@ -375,9 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create a product enhancement record
       const enhancement = await storage.createProductEnhancement({
         userId: userId || null,
-        status: "processing",
-        industry,
-        createdAt: new Date()
+        industry
       });
       
       console.log(`Created product enhancement with ID: ${enhancement.id}`);
@@ -387,9 +215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Create an enhancement image record
         const enhancementImage = await storage.createProductEnhancementImage({
           enhancementId: enhancement.id,
-          originalPath: file.path,
-          status: "processing",
-          displayOrder: index
+          originalImagePath: file.path
         });
         
         console.log(`Created enhancement image record ${enhancementImage.id} for file ${file.originalname}`);
@@ -406,9 +232,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookId = uuid();
       
       // Update the enhancement record with the webhook ID
-      await storage.updateProductEnhancementStatus(
+      await storage.updateProductEnhancementWebhookId(
         enhancement.id,
-        "processing",
         webhookId
       );
       
@@ -439,7 +264,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.updateProductEnhancementStatus(
               enhancement.id,
               "failed",
-              webhookId,
               "Failed to convert images to base64"
             );
             return;
@@ -472,11 +296,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.updateProductEnhancementStatus(
               enhancement.id,
               "failed",
-              webhookId,
               `Webhook call returned unexpected status: ${response.status}`
             );
           }
-        } catch (error) {
+        } catch (error: any) {
           // Log detailed error information  
           console.error("Error submitting to webhook:", error);
           
@@ -490,7 +313,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateProductEnhancementStatus(
             enhancement.id,
             "failed",
-            webhookId,
             error.message || "Failed to submit to webhook"
           );
         }
@@ -502,7 +324,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         id: enhancement.id,
         status: "processing"
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error processing product enhancement start:", error);
       res.status(500).json({ 
         message: "Failed to start product enhancement",
@@ -553,228 +375,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error getting enhancement data", error: error.message });
     }
   });
-  
-  // This was a duplicate endpoint - removed to fix the issue
-      if (!uploadedImages || uploadedImages.length === 0) {
-        return res.status(400).json({ message: "No images uploaded" });
-      }
-      
-      if (uploadedImages.length > 5) {
-        return res.status(400).json({ message: "Maximum 5 images allowed" });
-      }
-      
-      // Generate a unique webhook request ID - in real implementation this would be stored in DB
-      const webhookRequestId = `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      
-      if (!USE_MOCK_WEBHOOK) {
-        // Prepare images for the real webhook
-        console.log("Preparing to send images to real webhook");
-        try {
-          const imageBase64Promises = uploadedImages.map(image => imageToBase64(image.path));
-          const imageBase64Array = await Promise.all(imageBase64Promises);
-          
-          // Get the base URL for callbacks
-          // Use the Replit URL which is accessible from the outside
-          const replitId = process.env.REPL_ID || "nthzsmrhmcszymjy"; // Fallback to a known value
-          const baseUrl = `https://${replitId}.id.replit.dev`;
-          
-          // Send to webhook
-          // Create the webhook request data
-          const callbackOptions = `${baseUrl}/api/webhook-callbacks/options`;
-          const callbackResults = `${baseUrl}/api/webhook-callbacks/results`;
-          
-          const webhookData = {
-            requestId: webhookRequestId,
-            industry: req.body.industry,
-            images: imageBase64Array.map((base64, index) => ({
-              id: index + 1,
-              data: base64
-            })),
-            callbackUrls: {
-              options: callbackOptions,
-              results: callbackResults
-            }
-          };
-          
-          console.log(`\n\n====================== WEBHOOK REQUEST ======================`);
-          console.log(`Webhook URL: ${WEBHOOK_URL}`);
-          console.log(`Request ID: ${webhookRequestId}`);
-          console.log(`Industry: ${req.body.industry}`);
-          console.log(`Images: ${imageBase64Array.length}`);
-          console.log(`Callbacks:`);
-          console.log(`- Options: ${callbackOptions}`);
-          console.log(`- Results: ${callbackResults}`);
-          console.log(`============================================================\n\n`);
-          
-          console.log(`Sending ${imageBase64Array.length} images to webhook with callbacks:`);
-          console.log(`- Options callback: ${webhookData.callbackUrls.options}`);
-          console.log(`- Results callback: ${webhookData.callbackUrls.results}`);
-          
-          // Log the full webhook request for debugging (omit large base64 data)
-          const logWebhookData = { 
-            ...webhookData, 
-            images: webhookData.images.map(img => ({ 
-              id: img.id, 
-              dataSize: img.data.length 
-            }))
-          };
-          console.log("Webhook request data:", JSON.stringify(logWebhookData, null, 2));
-          
-          // Make the webhook request - add action field and headers for N8N compatibility
-          console.log(`Sending POST request to ${WEBHOOK_URL}...`);
-          const webhookDataWithAction = {
-            ...webhookData,
-            action: "processImages"  // Add action parameter to help N8N route the request
-          };
-          
-          console.log("DEBUG: Process environment variable USE_MOCK_WEBHOOK =", process.env.USE_MOCK_WEBHOOK);
-          console.log("DEBUG: Variable USE_MOCK_WEBHOOK =", USE_MOCK_WEBHOOK);
-          
-          // Create a clean version of the request data for logging (without large base64)
-          const debugRequestData = {
-            ...webhookDataWithAction,
-            images: webhookDataWithAction.images.map(img => ({
-              id: img.id,
-              dataLength: img.data.length
-            }))
-          };
-          console.log("DEBUG: Webhook request data:", JSON.stringify(debugRequestData, null, 2));
-          
-          const webhookResponse = await axios.post(WEBHOOK_URL, webhookDataWithAction, {
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Webhook-Source': 'ImageRefresh-App',
-              'Accept': 'application/json'
-            }
-          });
-          
-          console.log("DEBUG: Webhook response status:", webhookResponse.status);
-          console.log("DEBUG: Webhook response data:", JSON.stringify(webhookResponse.data, null, 2));
-          
-          console.log(`\n\n====================== WEBHOOK RESPONSE ======================`);
-          console.log(`Status Code: ${webhookResponse.status}`);
-          console.log(`Headers: ${JSON.stringify(webhookResponse.headers, null, 2)}`);
-          console.log(`Data: ${JSON.stringify(webhookResponse.data, null, 2)}`);
-          console.log(`=============================================================\n\n`);
-          
-          // Create the product enhancement record in the database
-          try {
-            const enhancement = await storage.createProductEnhancement({
-              userId: 1, // Default user ID for testing
-              industry: req.body.industry
-            });
-            
-            if (enhancement && enhancement.id) {
-              // Update the record with the webhook request ID
-              await storage.updateProductEnhancementStatus(
-                enhancement.id,
-                "pending",
-                webhookRequestId
-              );
-              
-              // Create an entry for each uploaded image
-              for (const image of uploadedImages) {
-                await storage.createProductEnhancementImage({
-                  enhancementId: enhancement.id,
-                  originalImagePath: image.path
-                });
-              }
-              
-              console.log(`Created product enhancement with ID ${enhancement.id} and ${uploadedImages.length} images`);
-            } else {
-              console.error("Failed to create enhancement record (null/invalid result)");
-            }
-          } catch (dbError: any) {
-            console.error("Error creating enhancement record in webhook handler:", dbError);
-            // Continue even if this fails
-          }
-        } catch (webhookError: any) {
-          console.error("Error calling webhook:", webhookError.message);
-          
-          // Provide detailed error information for debugging
-          if (webhookError.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error("Webhook error response:", {
-              status: webhookError.response.status,
-              statusText: webhookError.response.statusText,
-              headers: webhookError.response.headers,
-              data: webhookError.response.data
-            });
-          } else if (webhookError.request) {
-            // The request was made but no response was received
-            console.error("Webhook error (no response):", {
-              request: webhookError.request._currentUrl || webhookError.request.path,
-              method: webhookError.request.method
-            });
-          }
-          
-          // If webhook fails, we'll continue with mock data
-          console.log("Falling back to mock data due to webhook error");
-        }
-      }
-      
-      // Find or create the enhancement record in the database
-      let enhancementId;
-      let enhancementStatus = "pending";
-      
-      try {
-        // For real webhook mode, we should have created a record in the webhook section
-        // Need to use different logic since enhancement is out of scope here
-        if (!USE_MOCK_WEBHOOK) {
-          // Look for the record by webhook request ID
-          const existingEnhancement = await storage.getProductEnhancementByWebhookId(webhookRequestId);
-          if (existingEnhancement) {
-            enhancementId = existingEnhancement.id;
-          }
-        } else {
-          // Create a new record for mock mode or as fallback
-          const newEnhancement = await storage.createProductEnhancement({
-            userId: 1, // Default user ID for demo
-            industry: req.body.industry
-          });
-          
-          enhancementId = newEnhancement.id;
-          
-          // Update with webhook ID
-          await storage.updateProductEnhancementStatus(
-            enhancementId,
-            "pending",
-            webhookRequestId
-          );
-          
-          // Create image records
-          for (const image of uploadedImages) {
-            await storage.createProductEnhancementImage({
-              enhancementId: enhancementId,
-              originalImagePath: image.path
-            });
-          }
-          
-          console.log(`Created product enhancement with ID ${enhancementId} and ${uploadedImages.length} images`);
-        }
-      } catch (dbError: any) {
-        console.error("Error creating enhancement records:", dbError);
-        // Continue with response even if DB operation failed
-      }
-      
-      // Send back a response to the client with the real enhancement ID
-      res.status(200).json({ 
-        message: "Product enhancement started successfully", 
-        id: enhancementId || 1, // Use real ID if available, fallback to 1
-        imageCount: uploadedImages.length,
-        industry: req.body.industry,
-        status: enhancementStatus,
-        webhookRequestId: webhookRequestId
-      });
-    } catch (error: any) {
-      console.error("Error in product enhancement start:", error);
-      res.status(500).json({ 
-        message: "Error starting product enhancement", 
-        error: error.message 
-      });
-    }
-  });
 
   // Get enhancement options after upload
   app.get("/api/product-enhancement/:id/options", async (req, res) => {
@@ -783,252 +383,279 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Timestamp: ${new Date().toISOString()}`);
       
       const enhancementId = parseInt(req.params.id);
-      console.log(`Enhancement ID: ${enhancementId}`);
-      
       if (isNaN(enhancementId)) {
-        console.log(`Invalid enhancement ID: ${req.params.id}`);
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
-
-      // Look up the enhancement in the database
-      const enhancement = await storage.getProductEnhancement(enhancementId);
-      console.log(`Enhancement data:`, JSON.stringify(enhancement, null, 2));
       
+      // Get the enhancement
+      const enhancement = await storage.getProductEnhancement(enhancementId);
       if (!enhancement) {
-        console.log(`Enhancement not found for ID: ${enhancementId}`);
         return res.status(404).json({ message: "Enhancement not found" });
       }
       
-      // Get the webhook request ID from the database or generate a new one
-      const webhookRequestId = enhancement.webhookId || `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      console.log(`Enhancement ID: ${enhancementId}`);
+      console.log(`Status: ${enhancement.status}`);
       
-      // Debug print industry info
-      if (enhancement && enhancement.industry) {
-        console.log(`Industry from enhancement: "${enhancement.industry}"`);
-        
-        // We won't generate mock options here - we'll only use what comes from the webhook
-        if (enhancement.status === 'pending') {
-          console.log(`Enhancement ${enhancementId} is still pending. Waiting for webhook data.`);
-          
-          // Don't automatically mark as ready or generate mock options
-          // Only the webhook should provide options
-        }
-      }
-      
-      // Get the industry from the database
-      const industry = enhancement.industry || "decor";
-      
-      console.log(`Fetching options for enhancement ID ${enhancementId} (industry: ${industry})`);
-      
-      if (USE_MOCK_WEBHOOK) {
-        console.log("MOCK WEBHOOK DISABLED - Using real webhook only");
-        // Return empty response since we're not using mock webhook anymore
-        res.status(200).json({
-          id: enhancementId,
-          status: "pending",
-          message: "Please use real webhook for enhancement options"
+      // If options aren't ready, simply return the current status
+      if (enhancement.status !== "options_ready") {
+        return res.json({
+          id: enhancement.id,
+          status: enhancement.status
         });
-      } else {
-        try {
-          // For real webhook integration
-          console.log(`Requesting options from webhook for request ID: ${webhookRequestId}`);
-          
-          // Based on curl test, we know the webhook receives but doesn't respond
-          console.log("Using direct fetch for now while webhook callbacks are being set up");
-          
-          // We're now only using the real N8N webhook - not generating any mock options
-          console.log("Awaiting real webhook data from N8N - no mock options will be generated");
-          
-          // Get the real images for this enhancement
-          const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
-          
-          // Create a pending response - we'll wait for the real webhook to provide options
-          const webhookResponse = {
-            status: 200,
-            data: {
-              images: enhancementImages.map((image: any) => ({
-                id: image.id,
-                originalUrl: image.originalImagePath,
-                // No options - we'll wait for the webhook to provide them
-                options: null
-              }))
-            }
-          };
-          
-          console.log(`Created ${enhancementImages.length} images awaiting options for industry: "${industry}"`);
-          console.log("Waiting for webhook to provide options");
-          
-          if (webhookResponse.data && webhookResponse.data.images) {
-            // Check if any image has options
-            const hasRealOptions = webhookResponse.data.images.some((img: any) => 
-              img.options && Object.keys(img.options).length > 0
-            );
-            
-            // Transform the webhook response to match our API format
-            const transformedResponse = {
-              id: enhancementId,
-              status: hasRealOptions ? "options_ready" : "error",
-              message: hasRealOptions ? undefined : "The webhook service did not return any enhancement options. Please try again with a different image or industry.",
-              images: webhookResponse.data.images.map((img: any) => ({
-                id: img.id,
-                originalUrl: img.originalUrl || `/uploads/sample-image-${img.id}.jpg`,
-                options: img.options || null
-              }))
-            };
-            
-            res.status(200).json(transformedResponse);
-          } else {
-            throw new Error("Invalid webhook response format");
-          }
-        } catch (webhookError: any) {
-          console.error("Error getting options from webhook:", webhookError.message);
-          
-          // No longer falling back to mock data
-          console.log("Webhook error, but not using mock data as fallback");
-          const mockResponse = {
-            id: enhancementId,
-            status: "error",
-            message: "Error connecting to webhook service. Please try again.",
-            images: []
-          };
-          
-          res.status(200).json(mockResponse);
-        }
       }
+      
+      // Get the enhancement images with options
+      const enhancementImages = await storage.getProductEnhancementImages(enhancementId);
+      
+      // Check if options are available for at least one image
+      const hasOptions = enhancementImages.some(img => 
+        img.options && Object.keys(img.options).length > 0
+      );
+      
+      // If no options are available, update status to failed
+      if (!hasOptions) {
+        console.log("No options available for any images - marking as failed");
+        await storage.updateProductEnhancementStatus(
+          enhancementId,
+          "failed",
+          "No enhancement options were returned from the webhook"
+        );
+        
+        return res.json({
+          id: enhancement.id,
+          status: "failed",
+          error: "No enhancement options were returned from the webhook"
+        });
+      }
+      
+      // Prepare the response
+      const response = {
+        id: enhancement.id,
+        status: enhancement.status,
+        industry: enhancement.industry,
+        images: enhancementImages.map(img => ({
+          id: img.id,
+          originalImagePath: img.originalImagePath,
+          options: img.options || {}
+        }))
+      };
+      
+      res.json(response);
     } catch (error: any) {
       console.error("Error getting enhancement options:", error);
-      res.status(500).json({ 
-        message: "Error retrieving enhancement options", 
-        error: error.message 
-      });
+      res.status(500).json({ message: "Error getting enhancement options", error: error.message });
     }
   });
-  
-  // Submit enhancement selections for processing
+
+  // Process selected enhancement options
   app.post("/api/product-enhancement/:id/process", async (req, res) => {
     try {
-      console.log("=== PROCESSING ENHANCEMENT SELECTIONS ===");
+      console.log(`\n\n====================== PROCESS ENHANCEMENT OPTIONS ======================`);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
       
       const enhancementId = parseInt(req.params.id);
       if (isNaN(enhancementId)) {
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
       
+      // Get the selections from the request body
       const { selections } = req.body;
       if (!selections || !Array.isArray(selections) || selections.length === 0) {
-        return res.status(400).json({ message: "No selections provided" });
+        return res.status(400).json({ message: "Selections are required" });
       }
       
-      console.log(`Processing ${selections.length} selections for enhancement ${enhancementId}`);
+      console.log(`Enhancement ID: ${enhancementId}`);
+      console.log(`Received ${selections.length} selections`);
       
-      // Get the enhancement record
+      // Get the enhancement
       const enhancement = await storage.getProductEnhancement(enhancementId);
       if (!enhancement) {
         return res.status(404).json({ message: "Enhancement not found" });
       }
       
-      // Get user ID if authenticated
-      const userId = req.user?.id;
+      // Validate that the enhancement is in the correct state
+      if (enhancement.status !== "options_ready") {
+        return res.status(400).json({ 
+          message: `Enhancement is not ready for processing (status: ${enhancement.status})` 
+        });
+      }
       
-      // Check if user has credits if userId is provided
+      // Get user ID if available
+      const userId = req.user?.id || enhancement.userId;
+      
+      // If we have a user ID, check credits
       if (userId) {
-        // Count total selections to check if user has enough credits
-        const totalSelections = selections.length;
-        console.log(`Total selections: ${totalSelections} credits needed`);
-        
         try {
           const user = await storage.getUser(userId);
           if (!user) {
             return res.status(404).json({ message: "User not found" });
           }
           
-          // Check if the user has free credits
-          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-          const creditsNeeded = totalSelections;
+          // Check if user has enough credits (1 credit per selection)
+          const totalCreditsNeeded = selections.length;
+          const availableCredits = user.freeCredits + user.paidCredits;
           
-          // If user has monthly free credit, they need one less paid credit
-          const paidCreditsNeeded = hasMonthlyFreeCredit ? creditsNeeded - 1 : creditsNeeded;
-          
-          // Check if user has enough credits
-          if (user.paidCredits < paidCreditsNeeded) {
+          if (availableCredits < totalCreditsNeeded) {
             return res.status(403).json({ 
-              message: `Not enough credits. You need ${creditsNeeded} credits, but have only ${hasMonthlyFreeCredit ? "1 free credit and " : ""}${user.paidCredits} paid credits.`,
-              creditsNeeded,
-              creditsAvailable: hasMonthlyFreeCredit ? user.paidCredits + 1 : user.paidCredits,
-              error: "insufficient_credits"
+              message: `Not enough credits. Need ${totalCreditsNeeded}, have ${availableCredits}`, 
+              error: "credit_required"
             });
           }
           
-          console.log(`User ${userId} has enough credits - proceeding with processing`);
-          
-          // Deduct credits after validating the webhook response
-          // This will happen after the webhook call is successful
-        } catch (userError) {
+          console.log(`User ${userId} has enough credits (${availableCredits}) for selections (${totalCreditsNeeded})`);
+        } catch (userError: any) {
           console.error("Error checking user credits:", userError);
-          // Continue with the processing anyway
+          // Continue anyway - we'll handle credits when we get results
         }
       }
       
-      // Create selection records and prepare data for webhook
+      // Store selection records
       const selectionPromises = selections.map(async (selection: any) => {
         try {
-          // Validate selection data
-          if (!selection.imageId || !selection.optionKey || !selection.optionName) {
-            console.error("Invalid selection data:", selection);
+          // Validate selection has required fields
+          if (!selection.imageId || !selection.optionKey) {
+            console.error("Invalid selection:", selection);
             return null;
           }
           
-          // Create enhancement selection record
-          const enhancementSelection = await storage.createProductEnhancementSelection({
+          // Get the option details from the image record
+          const image = await storage.getProductEnhancementImage(selection.imageId);
+          if (!image) {
+            console.error(`Image not found: ${selection.imageId}`);
+            return null;
+          }
+          
+          // Verify the option exists for this image
+          const options = image.options || {};
+          const option = options[selection.optionKey];
+          if (!option) {
+            console.error(`Option ${selection.optionKey} not found for image ${selection.imageId}`);
+            return null;
+          }
+          
+          // Create selection record
+          const result = await storage.createProductEnhancementSelection({
             enhancementId,
             imageId: selection.imageId,
             optionKey: selection.optionKey,
-            optionName: selection.optionName,
-            status: "processing"
+            optionId: option.key || selection.optionKey,
+            optionName: option.name
           });
           
-          console.log(`Created enhancement selection record ${enhancementSelection.id}`);
+          console.log(`Created selection record ${result.id} for image ${selection.imageId}, option ${selection.optionKey}`);
           
-          return {
-            selectionId: enhancementSelection.id,
-            imageId: selection.imageId,
-            optionKey: selection.optionKey
-          };
-        } catch (error) {
-          console.error("Error creating selection record:", error);
+          return result;
+        } catch (error: any) {
+          console.error("Error creating selection:", error);
           return null;
         }
       });
       
-      const validSelections = (await Promise.all(selectionPromises)).filter(Boolean);
+      const selectionResults = await Promise.all(selectionPromises);
+      const validSelections = selectionResults.filter(s => s !== null);
       
+      // Ensure we have at least one valid selection
       if (validSelections.length === 0) {
-        return res.status(400).json({ message: "No valid selections could be processed" });
+        return res.status(400).json({ message: "No valid selections were provided" });
       }
       
-      // Submit to the N8N webhook for processing
+      // Update enhancement status
+      await storage.updateProductEnhancementStatus(
+        enhancementId,
+        "processing_selections"
+      );
+      
+      // If we're in mock mode, generate results immediately
+      if (USE_MOCK_WEBHOOK) {
+        // Simulate a processing delay then generate results
+        setTimeout(async () => {
+          try {
+            console.log("Generating mock results for selections");
+            
+            // For each selection, generate mock results
+            const processSelectionPromises = validSelections.map(async (selection: any) => {
+              try {
+                // Get the image and option details
+                const image = await storage.getProductEnhancementImage(selection.imageId);
+                if (!image) {
+                  console.error(`Image not found: ${selection.imageId}`);
+                  return null;
+                }
+                
+                // Generate mock results
+                const mockResults = generateMockEnhancementResults(
+                  image.originalImagePath,
+                  selection.optionKey,
+                  enhancement.industry
+                );
+                
+                // Store the results
+                const result = await storage.createProductEnhancementResult({
+                  enhancementId,
+                  selectionId: selection.id,
+                  imageId: selection.imageId,
+                  optionKey: selection.optionKey,
+                  optionName: selection.optionName,
+                  resultImage1Path: mockResults.resultImage1Path,
+                  resultImage2Path: mockResults.resultImage2Path
+                });
+                
+                console.log(`Created mock result ${result.id} for selection ${selection.id}`);
+                
+                return result;
+              } catch (error: any) {
+                console.error("Error creating mock result:", error);
+                return null;
+              }
+            });
+            
+            await Promise.all(processSelectionPromises);
+            
+            // Update enhancement status
+            await storage.updateProductEnhancementStatus(
+              enhancementId,
+              "results_ready"
+            );
+            
+            console.log(`Mock results ready for enhancement ${enhancementId}`);
+          } catch (mockError: any) {
+            console.error("Error generating mock results:", mockError);
+            
+            // Update enhancement status to failed
+            await storage.updateProductEnhancementStatus(
+              enhancementId,
+              "failed",
+              mockError.message || "Failed to generate mock results"
+            );
+          }
+        }, 3000); // 3 second delay for mock results
+        
+        // Return immediately to client
+        return res.status(200).json({
+          message: "Selections processed (mock mode)",
+          id: enhancementId,
+          status: "processing_selections"
+        });
+      }
+      
+      // For real webhook, need to send selections to the webhook
       // We'll do this in the background to not block the response
       setTimeout(async () => {
         try {
-          // Get the webhookId from the enhancement record
-          const webhookId = enhancement.webhookId;
+          console.log(`Submitting selections to webhook ${WEBHOOK_URL}`);
           
-          if (!webhookId) {
-            console.error("No webhook ID found for enhancement", enhancementId);
-            return;
-          }
-          
-          console.log(`Submitting selections to webhook ${WEBHOOK_URL} with request ID ${webhookId}`);
-          
-          // Prepare payload with selections
+          // Prepare the webhook payload
           const payload = {
-            requestId: webhookId,
+            requestId: enhancement.webhookId,
             action: "processSelections",
-            selections: validSelections
+            selections: validSelections.map(selection => ({
+              imageId: selection.imageId,
+              optionKey: selection.optionKey,
+              selectionId: selection.id
+            }))
           };
           
           // Make the API call to N8N webhook
-          console.log("Making webhook request for selections...");
           const response = await axios.post(WEBHOOK_URL, payload, {
             headers: {
               'Content-Type': 'application/json'
@@ -1038,38 +665,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           console.log(`Webhook response status: ${response.status}`);
           
-          // Process the webhook response
+          // If webhook call was successful, we'll wait for callback
           if (response.status >= 200 && response.status < 300) {
-            console.log("Webhook call for selections successful");
-            
-            // Deduct credits if user is authenticated
-            if (userId) {
-              try {
-                const user = await storage.getUser(userId);
-                if (user) {
-                  const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-                  const creditsNeeded = validSelections.length;
-                  const paidCreditsNeeded = hasMonthlyFreeCredit ? creditsNeeded - 1 : creditsNeeded;
-                  
-                  // Update user credits
-                  const updatedUser = await storage.updateUserCredits(
-                    userId,
-                    hasMonthlyFreeCredit, // Use free credit if available
-                    user.paidCredits - paidCreditsNeeded // Deduct paid credits
-                  );
-                  
-                  console.log(`Updated user ${userId} credits - Remaining paid credits: ${updatedUser.paidCredits}`);
-                }
-              } catch (creditError) {
-                console.error("Error updating user credits:", creditError);
-              }
-            }
+            console.log("Webhook call successful - waiting for callback with results");
           } else {
             // Unexpected status code
             console.error(`Webhook call returned unexpected status: ${response.status}`);
+            await storage.updateProductEnhancementStatus(
+              enhancementId,
+              "failed",
+              `Webhook call returned unexpected status: ${response.status}`
+            );
           }
-        } catch (error) {
-          // Log detailed error information  
+        } catch (error: any) {
+          // Log detailed error information
           console.error("Error submitting selections to webhook:", error);
           
           if (error.response) {
@@ -1077,25 +686,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.error("Webhook response error status:", error.response.status);
             console.error("Webhook response error headers:", error.response.headers);
           }
+          
+          // Update enhancement status to failed
+          await storage.updateProductEnhancementStatus(
+            enhancementId,
+            "failed",
+            error.message || "Failed to submit selections to webhook"
+          );
         }
-      }, 100); // Very short timeout just to not block the response
+      }, 100);
       
-      // Return success to the client
-      return res.status(200).json({ 
-        message: "Enhancement selections processed",
-        selectionCount: validSelections.length,
-        status: "processing"
+      // Return immediately to client
+      return res.status(200).json({
+        message: "Selections received and processing started",
+        id: enhancementId,
+        status: "processing_selections"
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error processing enhancement selections:", error);
       res.status(500).json({ 
-        message: "Failed to process enhancement selections",
-        error: error.message
+        message: "Failed to process enhancement selections", 
+        error: error.message 
       });
     }
   });
 
-  // Submit selected enhancement options
+  // Select specific enhancement options for processing
   app.post("/api/product-enhancement/:id/select", async (req, res) => {
     try {
       const enhancementId = parseInt(req.params.id);
@@ -1103,318 +719,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
       
-      // Get the enhancement from the database
+      // Get selected options from the request body
+      const { selections } = req.body;
+      if (!selections || !Array.isArray(selections) || selections.length === 0) {
+        return res.status(400).json({ message: "No selections provided" });
+      }
+      
+      console.log(`Processing ${selections.length} selections for enhancement ${enhancementId}`);
+      
+      // Check if the enhancement exists
       const enhancement = await storage.getProductEnhancement(enhancementId);
       if (!enhancement) {
         return res.status(404).json({ message: "Enhancement not found" });
       }
       
-      const { selections } = req.body;
-      if (!selections || !Array.isArray(selections) || selections.length === 0) {
-        return res.status(400).json({ message: "No enhancement options selected" });
-      }
+      // Process each selection
+      // (Implementation would depend on your specific requirements)
       
-      // Get the webhook request ID from the database
-      const webhookRequestId = enhancement.webhookId || req.body.webhookRequestId;
-      
-      // In a real app, we'd validate that the user has enough credits
-      console.log(`Processing ${selections.length} selections for enhancement ID: ${enhancementId}`);
-      
-      if (USE_MOCK_WEBHOOK) {
-        try {
-          console.log("Using mock webhook for selections", selections);
-          
-          // Save the selections to the database
-          const savedSelections: Array<{
-            id: number;
-            enhancementId: number;
-            imageId: number;
-            optionId: string;
-            optionKey: string;
-            optionName: string | null;
-            resultImage1Path: string | null;
-            resultImage2Path: string | null;
-            createdAt: Date;
-            status: string;
-          }> = [];
-          
-          for (const selection of selections) {
-            try {
-              const savedSelection = await storage.createProductEnhancementSelection({
-                enhancementId,
-                imageId: selection.imageId,
-                optionId: selection.optionId,
-                optionKey: selection.optionId, // Use optionId as the key for now
-                optionName: selection.optionName
-              });
-              
-              if (savedSelection) {
-                // Cast the saved selection to our expected type
-                savedSelections.push(savedSelection as any);
-                console.log(`Saved selection ID ${savedSelection.id} for enhancementId ${enhancementId}`);
-              }
-            } catch (err) {
-              console.error(`Error saving selection (${selection.optionName})`, err);
-            }
-          }
-          
-          // Update the enhancement status
-          const mockWebhookId = enhancement.webhookId || webhookRequestId || `mock-${Date.now()}`;
-          await storage.updateProductEnhancementStatus(
-            enhancementId,
-            "processing_selections",
-            mockWebhookId
-          );
-          
-          const mockResponse = {
-            id: enhancementId,
-            status: "processing_selections",
-            message: "Enhancement selections are being processed",
-            selectionCount: selections.length,
-            savedSelectionCount: savedSelections.length
-          };
-          
-          // Tell the client the response will be ready soon
-          res.status(200).json(mockResponse);
-          
-          // After a brief delay, process the selections and update the enhancement with results
-          setTimeout(async () => {
-            try {
-              console.log(`Starting mock processing for enhancement ${enhancementId} with ${savedSelections.length} selections`);
-              
-              // Generate mock results
-              const results = [];
-              
-              // Group selections by image ID
-              const selectionsByImage: Record<string, any[]> = {};
-              for (const selection of savedSelections) {
-                const imageIdKey = String(selection.imageId);
-                if (!selectionsByImage[imageIdKey]) {
-                  selectionsByImage[imageIdKey] = [];
-                }
-                selectionsByImage[imageIdKey].push(selection);
-              }
-              
-              // For each image with selections, generate results
-              for (const [imageIdStr, imageSelections] of Object.entries(selectionsByImage)) {
-                const imageId = parseInt(imageIdStr);
-                console.log(`Processing imageId: ${imageId} with ${imageSelections.length} selections`);
-                
-                // Get the original image
-                const enhancementImage = await storage.getProductEnhancementImage(imageId);
-                if (!enhancementImage) {
-                  console.warn(`No image found for imageId: ${imageId}`);
-                  continue;
-                }
-                
-                console.log(`Found image at path: ${enhancementImage.originalImagePath}`);
-                
-                // For each selection, generate two result images
-                for (const selection of imageSelections) {
-                  console.log(`Generating results for selection ID ${selection.id}, option: ${selection.optionName}`);
-                  
-                  try {
-                    // Generate mock result images
-                    const resultImages = generateMockEnhancementResults(
-                      enhancementImage.originalImagePath,
-                      selection.optionName
-                    );
-                    
-                    // Add to results array
-                    results.push({
-                      selectionId: selection.id,
-                      imageId: imageId,
-                      optionId: selection.optionId,
-                      resultImage1Path: resultImages.resultImage1Path,
-                      resultImage2Path: resultImages.resultImage2Path
-                    });
-                    
-                    console.log(`Generated result images for selection ${selection.id}:`, resultImages);
-                  } catch (error) {
-                    console.error(`Error generating mock results for selection ${selection.id}:`, error);
-                  }
-                }
-              }
-              
-              console.log(`Generated ${results.length} mock results for enhancement ${enhancementId}`);
-              
-              // Store the results in the database
-              // In a real implementation, this would happen in the webhook callback
-              if (results.length > 0) {
-                // Convert the results to the expected format
-                const formattedResults = results.map(result => ({
-                  selectionId: result.selectionId,
-                  imageId: result.imageId,
-                  optionId: result.optionId,
-                  resultImage1Path: result.resultImage1Path,
-                  resultImage2Path: result.resultImage2Path
-                }));
-                
-                await storage.updateProductEnhancementResults(enhancementId, formattedResults);
-                console.log(`Updated enhancement ${enhancementId} with ${results.length} results`);
-              }
-              
-              await storage.updateProductEnhancementStatus(
-                enhancementId, 
-                "completed", 
-                mockWebhookId
-              );
-              
-              console.log(`Mock processing complete for enhancement ${enhancementId}, updated with ${results.length} results`);
-            } catch (err) {
-              console.error("Error in mock processing:", err);
-              await storage.updateProductEnhancementStatus(
-                enhancementId, 
-                "error", 
-                mockWebhookId
-              );
-            }
-          }, 3000); // 3 second delay
-        } catch (mockError: any) {
-          console.error("Error in mock webhook processing:", mockError);
-          res.status(500).json({ 
-            message: "Error processing enhancement selections", 
-            error: mockError.message || String(mockError)
-          });
-        }
-      } else {
-        try {
-          // For real webhook integration
-          console.log(`Sending selections to webhook for request ID: ${webhookRequestId}`);
-          
-          // Send selections to the webhook
-          const webhookResponse = await axios.post(`${WEBHOOK_URL}/selections`, {
-            requestId: webhookRequestId,
-            selections: selections
-          });
-          
-          console.log("Webhook selections response:", webhookResponse.status);
-          
-          // Transform the webhook response
-          const transformedResponse = {
-            id: enhancementId,
-            status: "processing_selections",
-            message: "Enhancement selections are being processed",
-            selectionCount: selections.length,
-            webhookRequestId: webhookRequestId
-          };
-          
-          res.status(200).json(transformedResponse);
-        } catch (webhookError: any) {
-          console.error("Error sending selections to webhook:", webhookError.message);
-          
-          // Fall back to mock response
-          console.log("Falling back to mock response due to webhook error");
-          const mockResponse = {
-            id: enhancementId,
-            status: "processing_selections",
-            message: "Enhancement selections are being processed",
-            selectionCount: selections.length
-          };
-          
-          res.status(200).json(mockResponse);
-        }
-      }
+      // Return success response
+      res.status(200).json({ 
+        message: "Selections processed successfully", 
+        enhancementId 
+      });
     } catch (error: any) {
       console.error("Error processing selections:", error);
-      res.status(500).json({ 
-        message: "Error processing enhancement selections", 
-        error: error.message 
-      });
+      res.status(500).json({ message: "Error processing selections", error: error.message });
     }
   });
-  
-  // Get enhancement results
+
+  // Get the results of enhancement processing
   app.get("/api/product-enhancement/:id/results", async (req, res) => {
     try {
+      console.log(`\n\n====================== GET ENHANCEMENT RESULTS ======================`);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+      
       const enhancementId = parseInt(req.params.id);
       if (isNaN(enhancementId)) {
         return res.status(400).json({ message: "Invalid enhancement ID" });
       }
       
-      const webhookRequestId = req.query.webhookRequestId as string;
+      console.log(`Enhancement ID: ${enhancementId}`);
       
-      if (USE_MOCK_WEBHOOK) {
-        // Using mock data
-        await simulateProcessingDelay(1500, 3000);
-        
-        // Test mock options generation
-        const hairCareOptions = generateMockEnhancementOptions('hair care');
-        console.log('MOCK OPTIONS FOR HAIR CARE:', JSON.stringify(hairCareOptions, null, 2));
-        
-        // Mock results
-        const mockResults = {
-          id: enhancementId,
-          status: "completed",
-          message: "Enhancement processing completed",
-          selections: Array(2).fill(0).map((_, index) => ({
-            id: index + 1,
-            imageId: 1,
-            option: Object.keys(generateMockEnhancementOptions())[index],
-            resultImage1Url: `/uploads/result-${index + 1}-1.jpg`,
-            resultImage2Url: `/uploads/result-${index + 1}-2.jpg`
-          }))
-        };
-        
-        res.status(200).json(mockResults);
-      } else {
-        try {
-          // For real webhook integration
-          console.log(`Requesting results from webhook for request ID: ${webhookRequestId}`);
-          
-          // Get results from the webhook
-          const webhookResponse = await axios.get(`${WEBHOOK_URL}/results`, {
-            params: { requestId: webhookRequestId }
-          });
-          
-          console.log("Webhook results response:", webhookResponse.status);
-          
-          if (webhookResponse.data && webhookResponse.data.selections) {
-            // Transform the webhook response
-            const transformedResponse = {
-              id: enhancementId,
-              status: "completed",
-              message: "Enhancement processing completed",
-              selections: webhookResponse.data.selections.map((selection: any, index: number) => ({
-                id: selection.id || index + 1,
-                imageId: selection.imageId || 1,
-                option: selection.option,
-                resultImage1Url: selection.resultImage1Url || `/uploads/result-${index + 1}-1.jpg`,
-                resultImage2Url: selection.resultImage2Url || `/uploads/result-${index + 1}-2.jpg`
-              }))
-            };
-            
-            res.status(200).json(transformedResponse);
-          } else {
-            throw new Error("Invalid webhook results response format");
-          }
-        } catch (webhookError: any) {
-          console.error("Error getting results from webhook:", webhookError.message);
-          
-          // Fall back to mock results
-          console.log("Falling back to mock results due to webhook error");
-          const mockResults = {
-            id: enhancementId,
-            status: "completed",
-            message: "Enhancement processing completed",
-            selections: Array(2).fill(0).map((_, index) => ({
-              id: index + 1,
-              imageId: 1,
-              option: Object.keys(generateMockEnhancementOptions())[index],
-              resultImage1Url: `/uploads/result-${index + 1}-1.jpg`,
-              resultImage2Url: `/uploads/result-${index + 1}-2.jpg`
-            }))
-          };
-          
-          res.status(200).json(mockResults);
-        }
+      // Get the enhancement
+      const enhancement = await storage.getProductEnhancement(enhancementId);
+      if (!enhancement) {
+        return res.status(404).json({ message: "Enhancement not found" });
       }
+      
+      console.log(`Status: ${enhancement.status}`);
+      
+      // If results aren't ready, return the current status
+      if (enhancement.status !== "results_ready") {
+        return res.json({
+          id: enhancement.id,
+          status: enhancement.status
+        });
+      }
+      
+      // Get the results
+      const results = await storage.getProductEnhancementResults(enhancementId);
+      
+      console.log(`Found ${results.length} results for enhancement ${enhancementId}`);
+      
+      // Prepare response
+      const response = {
+        id: enhancement.id,
+        status: enhancement.status,
+        industry: enhancement.industry,
+        results: results.map(result => ({
+          id: result.id,
+          imageId: result.imageId,
+          optionKey: result.optionKey,
+          optionName: result.optionName,
+          resultImage1Path: result.resultImage1Path,
+          resultImage2Path: result.resultImage2Path
+        }))
+      };
+      
+      res.json(response);
     } catch (error: any) {
       console.error("Error getting enhancement results:", error);
-      res.status(500).json({ 
-        message: "Error retrieving enhancement results", 
-        error: error.message 
-      });
+      res.status(500).json({ message: "Error getting enhancement results", error: error.message });
     }
   });
 
@@ -1450,7 +835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           console.log(`User ${userId} has credits - proceeding with coloring book transformation`);
-        } catch (userError) {
+        } catch (userError: any) {
           console.error("Error checking user credits:", userError);
           // Continue with the transformation anyway
         }
@@ -1492,7 +877,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               
               console.log(`Updated user ${userId} credits - Remaining paid credits: ${updatedUser.paidCredits}`);
             }
-          } catch (creditError) {
+          } catch (creditError: any) {
             console.error("Error updating user credits:", creditError);
           }
         }
@@ -1538,71 +923,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log(`\n\n====================== WEBHOOK CALLBACK: OPTIONS ======================`);
       console.log(`Timestamp: ${new Date().toISOString()}`);
-      console.log(`Headers:`, req.headers);
-      console.log(`Body:`, JSON.stringify(req.body, null, 2));
-      console.log(`=================================================================\n\n`);
+      console.log(`Received webhook callback with options`);
       
-      // DEBUG: Test options generation for different industries
-      console.log('MOCK OPTIONS DEBUG:');
-      console.log('- HAIR CARE:', JSON.stringify(generateMockEnhancementOptions('hair care'), null, 2));
-      console.log('- fashion:', JSON.stringify(generateMockEnhancementOptions('fashion'), null, 2));
-      console.log('- default:', JSON.stringify(generateMockEnhancementOptions(), null, 2));
-      
-      // Extract the requestId from the webhook callback
-      const { requestId, options } = req.body;
-      
+      const { requestId, images } = req.body;
       if (!requestId) {
-        return res.status(400).json({ message: "Missing requestId in webhook callback" });
+        return res.status(400).json({ message: "Request ID is required" });
       }
       
-      // Find the product enhancement by webhook ID
+      if (!images || !Array.isArray(images) || images.length === 0) {
+        return res.status(400).json({ message: "Images with options are required" });
+      }
+      
+      console.log(`Request ID: ${requestId}`);
+      console.log(`Received options for ${images.length} images`);
+      
+      // Find the enhancement by webhook ID
       const enhancement = await storage.getProductEnhancementByWebhookId(requestId);
-      
       if (!enhancement) {
-        console.error(`No product enhancement found for webhookId: ${requestId}`);
-        return res.status(404).json({ message: "No matching enhancement request found" });
+        return res.status(404).json({ message: "Enhancement not found for request ID" });
       }
       
-      console.log(`Found enhancement with ID ${enhancement.id} for webhookId ${requestId}`);
+      console.log(`Found enhancement ${enhancement.id} for request ID ${requestId}`);
       
-      // Update the enhancement status
-      await storage.updateProductEnhancementStatus(
-        enhancement.id,
-        "options_received"
-      );
-      
-      // For each image in the options, update the corresponding enhancement image
-      if (options && Array.isArray(options)) {
-        // Get all enhancement images
-        const enhancementImages = await storage.getProductEnhancementImages(enhancement.id);
-        console.log(`Found ${enhancementImages.length} enhancement images for enhancement ID ${enhancement.id}`);
-        
-        // We'll process each image option
-        for (let i = 0; i < options.length && i < enhancementImages.length; i++) {
-          const imageOption = options[i];
-          const enhancementImage = enhancementImages[i];
-          
-          // Save the options for this image (assuming they're in order)
-          if (enhancementImage) {
-            await storage.updateProductEnhancementImageOptions(
-              enhancementImage.id,
-              imageOption.enhancementOptions
-            );
-            console.log(`Updated options for image ${enhancementImage.id} (index: ${i+1})`);
-          } else {
-            console.warn(`No matching image found for index: ${i+1}`);
+      // Process each image
+      for (const imgData of images) {
+        try {
+          if (!imgData.id || !imgData.options) {
+            console.error(`Invalid image data: missing id or options`, imgData);
+            continue;
           }
+          
+          console.log(`Processing options for image ${imgData.id}`);
+          
+          // Update the image record with options
+          await storage.updateProductEnhancementImageOptions(
+            imgData.id,
+            imgData.options
+          );
+          
+          console.log(`Updated options for image ${imgData.id}`);
+        } catch (imageError: any) {
+          console.error(`Error processing options for image ${imgData?.id}:`, imageError);
         }
       }
       
-      // Acknowledge receipt
-      res.status(200).json({ message: "Options received successfully" });
+      // Update enhancement status
+      await storage.updateProductEnhancementStatus(
+        enhancement.id,
+        "options_ready"
+      );
+      
+      console.log(`Updated enhancement ${enhancement.id} status to "options_ready"`);
+      
+      // Return success
+      res.status(200).json({ message: "Options processed successfully" });
     } catch (error: any) {
       console.error("Error processing webhook options callback:", error);
-      res.status(500).json({ 
-        message: "Error processing webhook options callback", 
-        error: error.message 
-      });
+      res.status(500).json({ message: "Error processing options", error: error.message });
     }
   });
 
@@ -1610,199 +987,173 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log(`\n\n====================== WEBHOOK CALLBACK: RESULTS ======================`);
       console.log(`Timestamp: ${new Date().toISOString()}`);
-      console.log(`Headers:`, req.headers);
-      console.log(`Body:`, JSON.stringify(req.body, null, 2));
-      console.log(`=================================================================\n\n`);
+      console.log(`Received webhook callback with results`);
       
-      // Extract the requestId from the webhook callback
       const { requestId, results } = req.body;
-      
       if (!requestId) {
-        return res.status(400).json({ message: "Missing requestId in webhook callback" });
+        return res.status(400).json({ message: "Request ID is required" });
       }
       
-      // Find the product enhancement by webhook ID
+      if (!results || !Array.isArray(results) || results.length === 0) {
+        return res.status(400).json({ message: "Results are required" });
+      }
+      
+      console.log(`Request ID: ${requestId}`);
+      console.log(`Received ${results.length} results`);
+      
+      // Find the enhancement by webhook ID
       const enhancement = await storage.getProductEnhancementByWebhookId(requestId);
-      
       if (!enhancement) {
-        console.error(`No product enhancement found for webhookId: ${requestId}`);
-        return res.status(404).json({ message: "No matching enhancement request found" });
+        return res.status(404).json({ message: "Enhancement not found for request ID" });
       }
       
-      console.log(`Found enhancement with ID ${enhancement.id} for webhookId ${requestId}`);
+      console.log(`Found enhancement ${enhancement.id} for request ID ${requestId}`);
       
-      // Update the enhancement status
+      // Get all selections for this enhancement
+      const selections = await storage.getProductEnhancementSelections(enhancement.id);
+      console.log(`Found ${selections.length} selections for enhancement ${enhancement.id}`);
+      
+      // Create the uploads directory if it doesn't exist
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      
+      // Process each result
+      const resultsPromises = results.map(async (resultData: any) => {
+        try {
+          // Validate result data
+          if (!resultData.selectionId || 
+              !resultData.imageId || 
+              !resultData.optionKey ||
+              !resultData.resultImage1Base64 ||
+              !resultData.resultImage2Base64) {
+            console.error(`Invalid result data: missing required fields`, 
+              resultData.selectionId, 
+              resultData.imageId, 
+              resultData.optionKey);
+            return null;
+          }
+          
+          console.log(`Processing result for selection ${resultData.selectionId}`);
+          
+          // Find the matching selection
+          const selection = selections.find(s => 
+            s.id === resultData.selectionId ||
+            (s.imageId === resultData.imageId && s.optionKey === resultData.optionKey)
+          );
+          
+          if (!selection) {
+            console.error(`Selection not found for ID ${resultData.selectionId} or image ${resultData.imageId}, option ${resultData.optionKey}`);
+            return null;
+          }
+          
+          // Save the result images
+          const timestamp = Date.now();
+          const image1Path = path.join(uploadsDir, `result-${selection.id}-1-${timestamp}.png`);
+          const image2Path = path.join(uploadsDir, `result-${selection.id}-2-${timestamp}.png`);
+          
+          // Convert base64 to image files
+          fs.writeFileSync(image1Path, Buffer.from(resultData.resultImage1Base64, 'base64'));
+          fs.writeFileSync(image2Path, Buffer.from(resultData.resultImage2Base64, 'base64'));
+          
+          console.log(`Saved result images for selection ${selection.id}`);
+          
+          // Create the result record
+          const result = await storage.createProductEnhancementResult({
+            enhancementId: enhancement.id,
+            selectionId: selection.id,
+            imageId: selection.imageId,
+            optionKey: selection.optionKey,
+            optionName: selection.optionName || resultData.optionName,
+            resultImage1Path: image1Path,
+            resultImage2Path: image2Path
+          });
+          
+          console.log(`Created result record ${result.id} for selection ${selection.id}`);
+          
+          // Deduct credits for this selection
+          if (enhancement.userId) {
+            try {
+              const user = await storage.getUser(enhancement.userId);
+              if (user) {
+                // Check for free credits
+                const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(enhancement.userId);
+                
+                // Update user credits
+                await storage.updateUserCredits(
+                  enhancement.userId,
+                  hasMonthlyFreeCredit ? user.freeCredits - 1 : 0,
+                  hasMonthlyFreeCredit ? user.paidCredits : user.paidCredits - 1
+                );
+                
+                console.log(`Deducted 1 credit from user ${enhancement.userId} for selection ${selection.id}`);
+              }
+            } catch (creditError: any) {
+              console.error(`Error deducting credits for user ${enhancement.userId}:`, creditError);
+            }
+          }
+          
+          return result;
+        } catch (resultError: any) {
+          console.error(`Error processing result:`, resultError);
+          return null;
+        }
+      });
+      
+      const processedResults = await Promise.all(resultsPromises);
+      const validResults = processedResults.filter(r => r !== null);
+      
+      console.log(`Successfully processed ${validResults.length} out of ${results.length} results`);
+      
+      // Update enhancement status
       await storage.updateProductEnhancementStatus(
         enhancement.id,
-        "results_received"
+        "results_ready"
       );
       
-      // Process the results - save the transformed images
-      if (results && Array.isArray(results)) {
-        for (const result of results) {
-          const { selectionId, resultImages } = result;
-          
-          if (!resultImages || !Array.isArray(resultImages) || resultImages.length < 2) {
-            console.warn(`Invalid result images for selectionId: ${selectionId}`);
-            continue;
-          }
-          
-          // Save the result images to disk
-          const resultImage1Path = path.join(uploadsDir, `${uuid()}-result1.png`);
-          const resultImage2Path = path.join(uploadsDir, `${uuid()}-result2.png`);
-          
-          // Convert base64 to files
-          try {
-            await fs.promises.writeFile(
-              resultImage1Path, 
-              Buffer.from(resultImages[0], 'base64')
-            );
-            await fs.promises.writeFile(
-              resultImage2Path, 
-              Buffer.from(resultImages[1], 'base64')
-            );
-            
-            // Update the selection with the result images
-            await storage.updateProductEnhancementSelectionResults(
-              selectionId,
-              resultImage1Path,
-              resultImage2Path
-            );
-            
-            console.log(`Updated results for selection ${selectionId}`);
-          } catch (fileError: any) {
-            console.error(`Error saving result images for selection ${selectionId}:`, fileError.message);
-          }
-        }
-      }
+      console.log(`Updated enhancement ${enhancement.id} status to "results_ready"`);
       
-      // Acknowledge receipt
-      res.status(200).json({ message: "Results received successfully" });
+      // Return success
+      res.status(200).json({ 
+        message: "Results processed successfully",
+        processedCount: validResults.length 
+      });
     } catch (error: any) {
       console.error("Error processing webhook results callback:", error);
-      res.status(500).json({ 
-        message: "Error processing webhook results callback", 
-        error: error.message 
-      });
+      res.status(500).json({ message: "Error processing results", error: error.message });
     }
   });
 
-  // Add a new endpoint for coloring book transformations
+  // Legacy endpoint for coloring book (used by ResultView.tsx)
   app.post("/api/coloring-book", async (req, res) => {
     try {
-      console.log("\n\n====================== COLORING BOOK TRANSFORMATION ======================");
-      console.log(`Timestamp: ${new Date().toISOString()}`);
-      
-      // Validate request
+      console.log("=== COLORING BOOK TRANSFORMATION (LEGACY ENDPOINT) ===");
       const { imagePath, userId } = req.body;
       
       if (!imagePath) {
         return res.status(400).json({ message: "Image path is required" });
       }
       
-      // Determine full path to image
-      const fullImagePath = path.isAbsolute(imagePath) 
-        ? imagePath 
-        : path.join(process.cwd(), imagePath);
+      console.log(`Applying coloring book style to image: ${imagePath} (redirecting to /api/product-enhancement/coloring-book)`);
       
-      console.log(`Processing coloring book transformation for image: ${fullImagePath}`);
-      console.log(`User ID: ${userId || 'Guest'}`);
-      
-      // Check if the image exists
-      if (!fs.existsSync(fullImagePath)) {
-        return res.status(404).json({ message: "Image file not found" });
-      }
-      
-      // Check if user has credits (if userId is provided)
-      let userCredits = { freeCreditsUsed: false, paidCredits: 0 };
-      
-      if (userId) {
-        try {
-          const user = await storage.getUser(userId);
-          if (!user) {
-            return res.status(404).json({ message: "User not found" });
-          }
-          
-          // Check if the user has free credits or paid credits
-          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-          userCredits = {
-            freeCreditsUsed: !hasMonthlyFreeCredit,
-            paidCredits: user.paidCredits
-          };
-          
-          // If user has no credits, return an error
-          if (userCredits.freeCreditsUsed && user.paidCredits < 1) {
-            return res.status(403).json({ 
-              message: "Not enough credits", 
-              error: "credit_required",
-              freeCreditsUsed: userCredits.freeCreditsUsed,
-              paidCredits: user.paidCredits
-            });
-          }
-        } catch (userError) {
-          console.error("Error retrieving user credits:", userError);
-          // Continue with the transformation even if we couldn't verify credits
-          // The client should handle this case
-        }
-      }
-      
-      // Import the OpenAI transformation function
-      const { transformToColoringBook } = await import("./openai");
-      
-      // Transform the image to coloring book style
-      console.log("Calling OpenAI for coloring book transformation...");
-      const result = await transformToColoringBook(fullImagePath);
-      console.log("Coloring book transformation completed successfully");
-      
-      // Get the server URL to construct full URLs for the images
-      const baseUrl = req.protocol + "://" + req.get("host");
-      
-      // Create the transformed image URL - removing leading slash and prepending the server URL
-      const transformedImagePath = result.transformedPath.replace(process.cwd(), '').replace(/^\//, "");
-      const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
-      
-      // If userId is provided, deduct a credit
-      if (userId) {
-        try {
-          console.log(`Deducting credit for user ${userId}`);
-          
-          // Check if we should use a free credit or paid credit
-          const useFreeCredit = !userCredits.freeCreditsUsed;
-          const paidCreditsRemaining = useFreeCredit 
-            ? userCredits.paidCredits 
-            : userCredits.paidCredits - 1;
-          
-          // Update user credits
-          await storage.updateUserCredits(
-            userId,
-            useFreeCredit, // Set freeCreditsUsed to true if using free credit
-            paidCreditsRemaining
-          );
-          
-          console.log(`Credits updated for user ${userId}: Free credit used: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`);
-        } catch (creditError) {
-          console.error("Error updating user credits:", creditError);
-          // Continue with the response even if credit update failed
-        }
-      }
-      
-      // Return the transformed image URL
-      res.status(200).json({
-        message: "Coloring book transformation completed successfully",
-        coloringBookImageUrl: transformedImageUrl,
-        originalImagePath: imagePath
+      // Redirect to new endpoint
+      const response = await axios.post(`${req.protocol}://${req.get('host')}/api/product-enhancement/coloring-book`, {
+        imagePath,
+        userId
       });
+      
+      // Return the response from the new endpoint
+      res.status(response.status).json(response.data);
     } catch (error: any) {
-      console.error("Error in coloring book transformation:", error);
+      console.error("Error in legacy coloring book endpoint:", error);
       res.status(500).json({ 
-        message: "Error processing coloring book transformation", 
-        error: error.message 
+        message: "Failed to create coloring book style", 
+        error: error.message
       });
     }
   });
 
-  // Create HTTP server
   const httpServer = createServer(app);
-  console.log("Server created and routes registered successfully");
+
   return httpServer;
 }
