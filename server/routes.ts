@@ -132,9 +132,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   // Basic health check endpoint
   app.get("/api/health", (req, res) => {
+    // Check OpenAI API key status
+    const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
+    const validOpenAIKey = hasOpenAIKey && process.env.OPENAI_API_KEY.startsWith('sk-');
+    console.log(`OpenAI API Key check: Has key: ${hasOpenAIKey}, Valid format: ${validOpenAIKey}`);
+    
+    if (hasOpenAIKey) {
+      const keyFirstChars = process.env.OPENAI_API_KEY.substring(0, 5);
+      const keyLastChars = process.env.OPENAI_API_KEY.slice(-4);
+      console.log(`OpenAI API Key preview: ${keyFirstChars}...${keyLastChars}`);
+    }
+    
     res.send({
       status: "ok",
       timestamp: new Date().toISOString(),
+      openai_status: {
+        has_key: hasOpenAIKey,
+        valid_format: validOpenAIKey
+      }
     });
   });
   
