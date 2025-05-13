@@ -332,7 +332,12 @@ export default function Home() {
           setCurrentTransformation({ id: data.transformationId });
           
           // Set up polling for transformation status
+          // Separate variable to track attempts within the checkStatus function
+          let statusCheckAttempts = 0;
+          
           const checkStatus = async () => {
+            statusCheckAttempts++; // Track the number of status checks
+            
             try {
               console.log("Checking transformation status...", data.transformationId);
               const statusResponse = await apiRequest(
@@ -348,20 +353,57 @@ export default function Home() {
               const statusData = await statusResponse.json();
               console.log("Transformation status:", statusData);
               
-              if (statusData.status === "completed" && statusData.transformedImageUrl) {
+              // Check for completion or available image paths
+              const hasCompletedStatus = statusData.status === "completed";
+              const hasTransformedImagePath = !!statusData.transformedImagePath;
+              const hasTransformedImageUrl = !!statusData.transformedImageUrl;
+              
+              if ((hasCompletedStatus || hasTransformedImagePath) && 
+                  (hasTransformedImageUrl || hasTransformedImagePath)) {
                 console.log("Transformation completed:", statusData);
-                setTransformedImage(statusData.transformedImageUrl);
                 
-                // Set the second transformed image if it exists
-                if (statusData.secondTransformedImageUrl) {
-                  setSecondTransformedImage(statusData.secondTransformedImageUrl);
-                } else {
-                  setSecondTransformedImage(null);
+                // Handle different API response formats
+                const transformedUrl = statusData.transformedImageUrl || 
+                  (statusData.transformedImagePath ? `/${statusData.transformedImagePath}` : null);
+                
+                if (transformedUrl) {
+                  setTransformedImage(transformedUrl);
+                  
+                  // Set the second transformed image if it exists
+                  const secondUrl = statusData.secondTransformedImageUrl || 
+                    (statusData.secondTransformedImagePath ? `/${statusData.secondTransformedImagePath}` : null);
+                  
+                  if (secondUrl) {
+                    console.log("Found second transformed image:", secondUrl);
+                    setSecondTransformedImage(secondUrl);
+                  } else {
+                    setSecondTransformedImage(null);
+                  }
+                  
+                  // Store transformation data
+                  setCurrentTransformation(statusData);
+                  setCurrentStep(Step.Result);
+                  
+                  return true; // polling complete
                 }
                 
-                // Store transformation data
-                setCurrentTransformation(statusData);
-                setCurrentStep(Step.Result);
+                // If we have a completed status but no URL, continue polling a few more times
+                if (hasCompletedStatus && !transformedUrl && statusCheckAttempts < maxAttempts - 5) {
+                  console.log("Status is completed but no image URL yet, continuing to poll");
+                  return false;
+                }
+                
+                // If we're near the max attempts and still no URL, treat as failure
+                if (!transformedUrl && statusCheckAttempts >= maxAttempts - 5) {
+                  console.error("Transformation status is completed but no image URL available");
+                  toast({
+                    title: "Transformation error",
+                    description: "Unable to retrieve the transformed image. Please try again.",
+                    variant: "destructive",
+                  });
+                  setCurrentStep(Step.Prompt);
+                  return true; // stop polling
+                }
                 
                 // Refresh user credits
                 const creditsResponse = await apiRequest(
@@ -402,7 +444,7 @@ export default function Home() {
           
           // Start polling (every 3 seconds)
           const pollInterval = 3000;
-          const maxAttempts = 30; // 90 seconds max
+          const maxAttempts = 60; // 180 seconds max (3 minutes)
           let attempts = 0;
           
           const pollTimer = setInterval(async () => {
@@ -414,9 +456,26 @@ export default function Home() {
                 
                 if (attempts >= maxAttempts && !isDone) {
                   console.error("Transformation polling timed out");
+                  
+                  // Store transformation ID to allow checking later
+                  if (data.transformationId) {
+                    // Save to localStorage for retrieval later
+                    try {
+                      const pendingTransformations = JSON.parse(localStorage.getItem('pendingTransformations') || '[]');
+                      pendingTransformations.push({
+                        id: data.transformationId,
+                        timestamp: new Date().toISOString(),
+                        prompt: promptText?.substring(0, 100) + '...'
+                      });
+                      localStorage.setItem('pendingTransformations', JSON.stringify(pendingTransformations));
+                    } catch (e) {
+                      console.error("Error storing pending transformation", e);
+                    }
+                  }
+                  
                   toast({
-                    title: "Transformation taking too long",
-                    description: "The transformation is taking longer than expected. Please check your transformations page later.",
+                    title: "Transformation in progress",
+                    description: "Your transformation is still processing. You can check your account page later to see the results.",
                   });
                   setCurrentStep(Step.Prompt);
                 }
