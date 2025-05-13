@@ -1450,32 +1450,91 @@ export default function ProductEnhancementWebhook() {
       return;
     }
     
-    try {
-      console.log("Starting upload mutation");
-      
-      // Clear any previous error message
-      setErrorMessage(null);
-      
-      // Reset enhancement images
-      setEnhancementImages([]);
-      
-      // Immediately go to processing state
-      console.log("Setting step to 'processing'");
-      setStep('processing');
-      
-      // Start upload mutation
-      uploadMutation.mutate({ files: selectedFiles, industry });
-    } catch (error) {
-      console.error("Error in upload mutation:", error);
-      toast({
-        title: "Upload Error",
-        description: "An error occurred during upload. Please try again.",
-        variant: "destructive",
-      });
-      
-      // Go back to upload state on error
-      setStep('upload');
-    }
+    // Clear any previous error message
+    setErrorMessage(null);
+    
+    // Reset enhancement images
+    setEnhancementImages([]);
+    
+    // Immediately go to processing state
+    console.log("Setting step to 'processing'");
+    setStep('processing');
+    
+    // Direct upload implementation to avoid issues with incognito mode
+    const uploadDirectly = async () => {
+      try {
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+          console.log(`Adding file: ${file.name} (${file.size} bytes)`);
+          formData.append("images", file);
+        });
+        formData.append("industry", industry);
+        
+        // Use the browser's native fetch API for the most compatible upload
+        console.log("Making direct fetch request to /api/product-enhancement/start");
+        const response = await fetch("/api/product-enhancement/start", {
+          method: "POST",
+          body: formData,
+          credentials: "include"
+        });
+        
+        console.log("Fetch response status:", response.status);
+        console.log("Content-Type:", response.headers.get("content-type"));
+        
+        if (!response.ok) {
+          // Check for HTML response
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("text/html")) {
+            throw new Error("Browser security settings may be blocking the upload. Please try in a regular browser window.");
+          }
+          
+          const errorText = await response.text();
+          throw new Error(errorText || `Server error: ${response.status}`);
+        }
+        
+        // Try to parse JSON response
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          console.error("JSON parse error:", e);
+          throw new Error("Invalid JSON response from server");
+        }
+        
+        // Handle successful upload
+        console.log("Upload successful:", data);
+        if (data.id) {
+          setEnhancementId(data.id);
+          
+          // Manually start polling for options
+          optionsQuery.refetch();
+          
+          toast({
+            title: "Upload successful",
+            description: "Your images have been uploaded successfully. Generating enhancement options...",
+          });
+        } else {
+          throw new Error("Invalid response format");
+        }
+      } catch (error) {
+        console.error("Direct upload error:", error);
+        
+        // Reset to upload step
+        setStep('upload');
+        
+        // Show error toast
+        toast({
+          title: "Upload Error",
+          description: error instanceof Error 
+            ? error.message 
+            : "An error occurred during upload. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    // Execute the upload
+    uploadDirectly();
   };
   
   // Handle option selection
