@@ -84,8 +84,38 @@ const productUpload = multer({
 
 // Helper function to convert an image file to base64
 async function imageToBase64(imagePath: string): Promise<string> {
-  const imageBuffer = fs.readFileSync(imagePath);
-  return imageBuffer.toString("base64");
+  try {
+    // Check if the file exists
+    if (!fs.existsSync(imagePath)) {
+      console.error(`File does not exist: ${imagePath}`);
+      throw new Error(`File not found: ${imagePath}`);
+    }
+    
+    // Log some details about the file
+    const stats = fs.statSync(imagePath);
+    console.log(`Converting file to base64: ${imagePath} (${stats.size} bytes)`);
+    
+    if (stats.size === 0) {
+      console.error(`File exists but is empty: ${imagePath}`);
+      throw new Error(`File is empty: ${imagePath}`);
+    }
+    
+    // Read the file and convert to base64
+    const imageBuffer = fs.readFileSync(imagePath);
+    const base64 = imageBuffer.toString("base64");
+    
+    // Validate that we got actual base64 data
+    if (!base64 || base64.length === 0) {
+      console.error(`Failed to convert file to base64: ${imagePath}`);
+      throw new Error(`Base64 conversion failed: ${imagePath}`);
+    }
+    
+    console.log(`Successfully converted ${imagePath} to base64 (${base64.length} characters)`);
+    return base64;
+  } catch (error) {
+    console.error(`Error in imageToBase64 for ${imagePath}:`, error);
+    throw error;
+  }
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -326,6 +356,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Process each uploaded image
       const imagePromises = uploadedImages.map(async (file, index) => {
+        // Log more details about the uploaded file to debug
+        console.log(`Processing uploaded file[${index}]:`, {
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          size: file.size,
+          path: file.path,
+          destination: file.destination,
+          filename: file.filename
+        });
+        
+        // Ensure the file path is valid and exists
+        if (!file.path || !fs.existsSync(file.path)) {
+          console.error(`File path is invalid or doesn't exist: ${file.path}`);
+          throw new Error(`Invalid file path for uploaded image ${index}`);
+        }
+        
         // Create an enhancement image record
         const enhancementImage = await storage.createProductEnhancementImage({
           enhancementId: enhancement.id,
@@ -392,27 +438,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
           };
           
           // Make the API call to N8N webhook
-          console.log("Making webhook request...");
-          const response = await axios.post(WEBHOOK_URL, payload, {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            timeout: 30000 // 30 second timeout
-          });
+          console.log("Making webhook request to " + WEBHOOK_URL);
           
-          console.log(`Webhook response status: ${response.status}`);
+          // Implement a retry mechanism for robustness
+          let retryCount = 0;
+          const maxRetries = 2;
+          let success = false;
+          let lastError = null;
           
-          // Everything went well
-          if (response.status >= 200 && response.status < 300) {
-            console.log("Webhook call successful");
-          } else {
-            // Unexpected status code
-            console.error(`Webhook call returned unexpected status: ${response.status}`);
-            await storage.updateProductEnhancementStatus(
-              enhancement.id,
-              "failed",
-              `Webhook call returned unexpected status: ${response.status}`
-            );
+          while (retryCount <= maxRetries && !success) {
+            try {
+              // If this is a retry, add a small delay
+              if (retryCount > 0) {
+                console.log(`Retry attempt ${retryCount}/${maxRetries} for webhook request`);
+                await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+              }
+              
+              // Make the HTTP request
+              const response = await axios.post(WEBHOOK_URL, payload, {
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                timeout: 30000 // 30 second timeout
+              });
+              
+              console.log(`Webhook response status: ${response.status}`);
+              
+              // Everything went well
+              if (response.status >= 200 && response.status < 300) {
+                console.log("Webhook call successful");
+                success = true;
+                
+                // If we got data back, log it
+                if (response.data) {
+                  console.log("Webhook response data:", JSON.stringify(response.data).substring(0, 500) + "...");
+                }
+              } else {
+                // Unexpected status code
+                const errorMsg = `Webhook call returned unexpected status: ${response.status}`;
+                console.error(errorMsg);
+                lastError = new Error(errorMsg);
+                
+                // Only update status on the final retry
+                if (retryCount === maxRetries) {
+                  await storage.updateProductEnhancementStatus(
+                    enhancement.id,
+                    "failed",
+                    errorMsg
+                  );
+                }
+              }
+            } catch (e) {
+              const error = e as any; // Type assertion for error object
+              lastError = error;
+              console.error(`Error on webhook call (attempt ${retryCount+1}/${maxRetries+1}):`, error);
+              
+              // Log more detailed error info
+              if (error.response) {
+                console.error("Error response data:", error.response.data);
+                console.error("Error response status:", error.response.status);
+              }
+              
+              // Only update status on the final retry
+              if (retryCount === maxRetries) {
+                const errorMessage = error.message || "Unknown error calling webhook";
+                await storage.updateProductEnhancementStatus(
+                  enhancement.id,
+                  "failed",
+                  errorMessage
+                );
+              }
+            }
+            
+            retryCount++;
+          }
+          
+          if (!success && lastError) {
+            console.error("All webhook call attempts failed");
           }
         } catch (error: any) {
           // Log detailed error information  
@@ -649,12 +751,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           // Create selection record
+          const optionKey = option as any;
           const result = await storage.createProductEnhancementSelection({
             enhancementId,
             imageId: selection.imageId,
             optionKey: selection.optionKey,
-            optionId: option.key || selection.optionKey,
-            optionName: option.name
+            optionId: optionKey.key || selection.optionKey,
+            optionName: optionKey.name || 'Unknown Option'
           });
           
           console.log(`Created selection record ${result.id} for image ${selection.imageId}, option ${selection.optionKey}`);
