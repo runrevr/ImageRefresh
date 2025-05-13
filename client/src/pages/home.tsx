@@ -1126,6 +1126,7 @@ export default function Home() {
                   canEdit={true}
                   transformationId={currentTransformation?.id?.toString()}
                   editsUsed={currentTransformation?.editsUsed || 0}
+                  userId={userCredits?.id}
                 />
               )}
 

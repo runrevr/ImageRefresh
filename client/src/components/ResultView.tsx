@@ -71,6 +71,15 @@ export default function ResultView({
     localStorage.setItem('emailCollected', 'true');
     setEmailSubmitted(true);
     setShowEmailDialog(false);
+    
+    // Execute the action that was pending email collection
+    if (actionRequiringEmail === 'download') {
+      handleDownload();
+    } else if (actionRequiringEmail === 'edit' && onEditImage) {
+      onEditImage(selectedImage);
+    } else if (actionRequiringEmail === 'coloring') {
+      handleColoringBookTransform();
+    }
   };
   
   const handleSkipEmail = () => {
@@ -320,7 +329,7 @@ export default function ResultView({
             </Button>
           </div>
           
-          {/* Second row: Try Another Prompt and Upload New Image */}
+          {/* Second row: Coloring Book Style, Try Another Prompt and Upload New Image */}
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <Button 
               variant="outline" 
@@ -337,6 +346,32 @@ export default function ResultView({
             >
               <Upload className="h-4 w-4 mr-2" />
               Upload New Image
+            </Button>
+          </div>
+          
+          {/* Third row: Coloring Book button */}
+          <div className="mt-4">
+            <Button
+              className="w-full bg-purple-500 hover:bg-purple-600 text-white"
+              onClick={handleColoringBookTransform}
+              disabled={isColoringBookLoading}
+            >
+              {isColoringBookLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Creating Coloring Book...
+                </>
+              ) : (
+                <>
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  {coloringBookImage ? 'View Coloring Book Style' : 'Convert to Coloring Book Style'}
+                  {!coloringBookImage && (
+                    <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
+                      1 Credit
+                    </span>
+                  )}
+                </>
+              )}
             </Button>
           </div>
         </div>
