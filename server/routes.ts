@@ -1163,16 +1163,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (error: any) {
         console.error("Error in coloring book transformation:", error);
         
-        // Check for specific OpenAI error types
+        // Check for specific webhook or network error types
         if (error.message && (
-          error.message.includes("organization verification") ||
-          error.message.includes("invalid_api_key") ||
-          error.message.includes("rate limit") ||
-          error.message.includes("billing")
+          error.message.includes("timeout") ||
+          error.message.includes("network") ||
+          error.message.includes("webhook") ||
+          error.message.includes("ECONNREFUSED") ||
+          error.message.includes("status: 429")
         )) {
           return res.status(400).json({ 
             message: error.message, 
-            error: "openai_api_error" 
+            error: "webhook_api_error" 
           });
         }
         

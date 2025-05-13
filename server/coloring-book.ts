@@ -79,7 +79,22 @@ export async function createColoringBookImage(imagePath: string): Promise<{ outp
         }
       ],
       industry: "Coloring Book Creation"
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      timeout: 30000, // 30 second timeout
+      validateStatus: function (status) {
+        return status >= 200 && status < 600; // Accept all status codes to handle errors ourselves
+      }
     });
+    
+    // Check for webhook error response
+    if (response.status >= 400) {
+      console.error(`N8N webhook error: ${response.status} ${response.statusText}`);
+      console.error("Webhook error response:", response.data);
+      throw new Error(`Webhook returned error status: ${response.status}`);
+    }
     
     // Validate the response
     if (!response.data || !response.data.results || !response.data.results[0] || !response.data.results[0].imageUrl) {
