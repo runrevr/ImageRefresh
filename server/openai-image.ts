@@ -28,17 +28,18 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     if (!fs.existsSync(fullImagePath)) {
       throw new Error(`Original image not found at path: ${fullImagePath}`);
     }
+
+    // For generation mode instead of variation mode (if we keep having issues)
+    console.log("Using OpenAI image generation with prompt instead of variation...");
     
-    // Read the image file as base64
-    const imageBuffer = fs.readFileSync(fullImagePath);
-    
-    // Create a response using OpenAI DALL-E models
-    console.log("Calling OpenAI API for image transformation...");
-    const response = await openai.images.edit({
-      image: fs.createReadStream(fullImagePath),
-      prompt: prompt,
+    // Create a response using OpenAI DALL-E models for generation (not variation)
+    console.log("Calling OpenAI API for image generation with prompt...");
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `Transform this image: ${prompt}. Make it professional quality, highly detailed.`,
       n: 1,
       size: "1024x1024",
+      quality: "standard",
     });
     
     // Check response

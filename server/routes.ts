@@ -382,16 +382,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
               try {
                 // Get the user
                 const user = await storage.getUser(userId);
-                
-                // Determine which credits to deduct (free or paid)
-                if (!user.freeCreditsUsed) {
-                  // Use the free credit first
-                  await storage.updateUserFreeCredits(userId, true);
-                  console.log(`Used free credit for user ${userId}`);
-                } else if (user.paidCredits > 0) {
-                  // Then use paid credits
-                  await storage.updateUserPaidCredits(userId, user.paidCredits - 1);
-                  console.log(`Used paid credit for user ${userId}, ${user.paidCredits - 1} paid credits remaining`);
+                if (user) {
+                  // Deduct from paid credits if available
+                  if (user.paidCredits > 0) {
+                    await storage.updateUserPaidCredits(userId, user.paidCredits - 1);
+                    console.log(`Used paid credit for user ${userId}, ${user.paidCredits - 1} paid credits remaining`);
+                  } else {
+                    // Mark free credit as used if it hasn't been used yet
+                    if (!user.freeCreditsUsed) {
+                      await storage.updateUserFreeCreditsUsed(userId, true);
+                      console.log(`Used free credit for user ${userId}`);
+                    }
+                    // If both paid and free credits are depleted, we're just proceeding anyway
+                  }
                 }
               } catch (creditError) {
                 console.error(`Error updating user credits for user ${userId}:`, creditError);
