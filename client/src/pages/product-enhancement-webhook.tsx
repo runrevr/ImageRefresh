@@ -776,8 +776,8 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   
   // Handle coloring book transformation
   const handleColoringBookTransform = async (imagePath: string) => {
-    // Check if user has credits
-    if (!user || !userCredits || (userCredits && userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
+    // Check if user has credits - default value of userCredits already handled by destructuring
+    if (!user || (userCredits && userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
       toast({
         title: "Not enough credits",
         description: "You need 1 credit to apply a coloring book transformation.",
