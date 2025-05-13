@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
+import { useCredits } from "@/hooks/useCredits";
 import Navbar from "@/components/Navbar";
 import GlobalFooter from "@/components/Footer"; // Import with a different name to avoid conflicts
 import shampooOriginal from "@assets/shampoo 3.png"; // Keep original import for fallback
@@ -776,7 +777,7 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
   // Handle coloring book transformation
   const handleColoringBookTransform = async (imagePath: string) => {
     // Check if user has credits
-    if (!user || (user.paidCredits <= 0 && user.freeCreditsUsed)) {
+    if (!user || !userCredits || (userCredits.paidCredits <= 0 && userCredits.freeCreditsUsed)) {
       toast({
         title: "Not enough credits",
         description: "You need 1 credit to apply a coloring book transformation.",
@@ -1062,6 +1063,7 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
 
 // Main component
 export default function ProductEnhancementWebhook() {
+  const { data: userCredits } = useCredits();
   const { toast } = useToast();
   const { user } = useAuth();
   const [step, setStep] = useState<'upload' | 'selectStyles' | 'processing' | 'results'>('upload');
@@ -1589,7 +1591,10 @@ export default function ProductEnhancementWebhook() {
   return (
     <div className="min-h-screen bg-[#f8fafa]">
       <AnnouncementBanner />
-      <Navbar freeCredits={user?.freeCreditsUsed ? 0 : 1} paidCredits={user?.paidCredits || 0} />
+      <Navbar 
+        freeCredits={userCredits?.freeCreditsUsed ? 0 : 1} 
+        paidCredits={userCredits?.paidCredits || 0} 
+      />
       <div className="mt-20"></div> {/* Add spacing for fixed navbar */}
       <div className="min-h-[calc(100vh-140px)] flex flex-col"> {/* Force content area to take up at least full viewport height minus navbar */}
       

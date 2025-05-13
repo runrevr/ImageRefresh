@@ -8,18 +8,15 @@ export type UserCredits = {
   freeCreditsUsed: boolean;
 };
 
-export function useCredits(): UseQueryResult<UserCredits> {
+export function useCredits(): UseQueryResult<UserCredits, Error> {
   const { user } = useAuth();
   
-  return useQuery<UserCredits, Error>({
+  return useQuery<UserCredits, Error, UserCredits>({
     queryKey: ['/api/user/credits'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
     enabled: !!user, // Only fetch if user is logged in
-    // Return default values on error to prevent UI breaks
-    onError: (error) => {
-      console.error('Error fetching user credits:', error);
-    },
-    // Default empty credits object on error
+    retry: false, // Don't retry on errors
+    // Default values when data is not available
     placeholderData: {
       credits: 0,
       paidCredits: 0,
