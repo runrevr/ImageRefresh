@@ -249,10 +249,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Return the path to the uploaded file
-      const filePath = req.file.path.replace(process.cwd(), '').replace(/^\//, "");
+      const imagePath = req.file.path.replace(process.cwd(), '').replace(/^\//, "");
+      
+      // Create the imageUrl for browser access
+      const imageUrl = `/${imagePath}`;
+      
+      console.log("File uploaded successfully. Path:", imagePath, "URL:", imageUrl);
+      
       res.json({
         message: "File uploaded successfully",
-        filePath,
+        imagePath,
+        imageUrl,
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
