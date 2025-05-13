@@ -163,7 +163,9 @@ export const getQueryFn: <T>(options: {
       }
     } catch (fetchError) {
       if (isUserCreditsEndpoint) {
-        console.error("Error fetching user credits:", fetchError);
+        // If not logged in, this is expected - just use default values
+        // Don't log as error as it fills the console with misleading messages
+        console.debug("Using default credits values - not logged in or API error");
         return {
           credits: 0,
           paidCredits: 0,
