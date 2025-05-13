@@ -499,6 +499,8 @@ export default function Home() {
 
   // Handle preset transformations (cartoon, product photography, etc.)
   const handlePresetTransformation = async (presetType: string) => {
+    // Convert string type to TransformationType
+    const transformationType = presetType as TransformationType;
     if (!originalImagePath) {
       toast({
         title: "No image selected",
@@ -510,7 +512,7 @@ export default function Home() {
     }
 
     // Set the selected transformation
-    setSelectedTransformation(presetType);
+    setSelectedTransformation(transformationType);
 
     // Set a default image size for presets (square format)
     const imageSize = "1024x1024";
