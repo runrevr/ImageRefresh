@@ -119,6 +119,16 @@ async function imageToBase64(imagePath: string): Promise<string> {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from uploads directory
+  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+  
+  // Log all requests to help with debugging
+  app.use((req, res, next) => {
+    if (req.url.startsWith('/uploads')) {
+      console.log(`Static file request: ${req.method} ${req.url}`);
+    }
+    next();
+  });
   // Basic health check endpoint
   app.get("/api/health", (req, res) => {
     res.send({

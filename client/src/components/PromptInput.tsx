@@ -814,15 +814,25 @@ export default function PromptInput({
       </div>
 
       {/* Show the uploaded image */}
-      {originalImage && (
+      {originalImage ? (
         <div className="w-full flex justify-center">
-          <div className="w-full max-w-md rounded-lg overflow-hidden shadow-md">
+          <div className="w-full max-w-md rounded-lg overflow-hidden shadow-md bg-white">
+            {/* Debug log for image URL */}
             <img
               src={originalImage}
               alt="Uploaded image"
-              className="w-full h-auto object-contain"
+              className="w-full h-auto object-contain max-h-[400px]"
+              onError={(e) => {
+                console.error("Image failed to load:", originalImage);
+                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'%3E%3C/circle%3E%3Cpolyline points='21 15 16 10 5 21'%3E%3C/polyline%3E%3C/svg%3E";
+                e.currentTarget.alt = "Image failed to load";
+              }}
             />
           </div>
+        </div>
+      ) : (
+        <div className="w-full flex justify-center text-gray-400 my-4">
+          No image available
         </div>
       )}
 
