@@ -292,7 +292,7 @@ export default function Home() {
       });
 
       const data = await response.json();
-
+      
       if (response.ok) {
         console.log("Transformation successful, result:", data);
         setTransformedImage(data.transformedImageUrl);

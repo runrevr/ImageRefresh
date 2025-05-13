@@ -18,7 +18,12 @@ async function throwIfResNotOk(res: Response) {
     }
     
     if (contentType && contentType.includes('text/html')) {
-      // For HTML responses, return a more user-friendly error
+      // For HTML responses, give a more detailed error for debugging
+      console.error(`Received HTML response instead of JSON. Status: ${res.status}, URL: ${res.url}`);
+      // Get a sample of the HTML to help debug
+      const htmlSample = await resClone.text().then(text => text.substring(0, 150) + '...');
+      console.error(`HTML response sample: ${htmlSample}`);
+      // Return user-friendly error
       throw new Error(`${res.status}: Server error occurred. Please try again later.`);
     }
     
@@ -29,7 +34,9 @@ async function throwIfResNotOk(res: Response) {
     } catch (e) {
       // If JSON parsing fails, fall back to text
       const text = (await res.text()) || res.statusText;
-      throw new Error(`${res.status}: ${text}`);
+      console.error(`Failed to parse response as JSON. Status: ${res.status}, URL: ${res.url}`);
+      console.error(`Response text: ${text.substring(0, 150)}...`);
+      throw new Error(`${res.status}: ${text.substring(0, 100)}...`);
     }
   }
 }
@@ -46,6 +53,8 @@ export async function apiRequest(
     
     // Special handling for credits endpoint
     const isUserCreditsEndpoint = url.includes('/api/user/credits');
+    // Check if this is a transform endpoint (special handling for 502 errors)
+    const isTransformEndpoint = url.includes('/api/transform');
     
     // Add fingerprint to the URL for GET requests
     if (method.toUpperCase() === 'GET' || !data) {
@@ -75,29 +84,48 @@ export async function apiRequest(
       }
     }
   
-    const res = await fetch(url, {
-      method,
-      headers,
-      body: requestBody,
-      credentials: "include",
-    });
-  
-    // Special handling for credits endpoint
-    if (isUserCreditsEndpoint && !res.ok) {
-      console.debug(`Using default credits values - response status: ${res.status}`);
-      const mockResponse = new Response(JSON.stringify({
-        credits: 0,
-        paidCredits: 0,
-        freeCreditsUsed: true
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
+    try {
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: requestBody,
+        credentials: "include",
       });
-      return mockResponse;
+      
+      // Special handling for credits endpoint
+      if (isUserCreditsEndpoint && !res.ok) {
+        console.debug(`Using default credits values - response status: ${res.status}`);
+        const mockResponse = new Response(JSON.stringify({
+          credits: 0,
+          paidCredits: 0,
+          freeCreditsUsed: true
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+        return mockResponse;
+      }
+    
+      await throwIfResNotOk(res);
+      return res;
+    } catch (fetchError: any) {
+      console.error(`Fetch error for ${url}:`, fetchError);
+      
+      // Handle common connectivity errors
+      if (fetchError.message && (
+          fetchError.message.includes("Failed to fetch") || 
+          fetchError.message.includes("Network Error") || 
+          fetchError.message.includes("502 Bad Gateway"))) {
+        console.error("Network connectivity issue detected");
+        
+        // For transformation endpoint (critical feature), throw a more specific error
+        if (isTransformEndpoint) {
+          throw new Error("Server connection error. The server may be temporarily unavailable. Please try again in a few minutes.");
+        }
+      }
+      
+      throw fetchError;
     }
-  
-    await throwIfResNotOk(res);
-    return res;
   } catch (error) {
     // If this is the credits endpoint, return a mock response to prevent UI errors
     if (url.includes('/api/user/credits')) {
@@ -126,6 +154,7 @@ export const getQueryFn: <T>(options: {
     
     // Special handling for user credits endpoint
     const isUserCreditsEndpoint = url.includes('/api/user/credits');
+    const isTransformationEndpoint = url.includes('/api/transformation/');
     
     try {
       const res = await fetch(url, {
@@ -145,6 +174,17 @@ export const getQueryFn: <T>(options: {
           freeCreditsUsed: true
         };
       }
+      
+      // Handle 502 errors gracefully for transformation status checks
+      if (isTransformationEndpoint && res.status === 502) {
+        console.error("Server unavailable (502) when checking transformation status");
+        // Return a special error object that the UI can handle
+        return {
+          error: "server_unavailable",
+          message: "Server is temporarily unavailable. Please try again in a few minutes.",
+          status: 502
+        };
+      }
   
       await throwIfResNotOk(res);
       
@@ -161,7 +201,7 @@ export const getQueryFn: <T>(options: {
         }
         throw jsonError;
       }
-    } catch (fetchError) {
+    } catch (fetchError: any) {
       if (isUserCreditsEndpoint) {
         // If not logged in, this is expected - just use default values
         // Don't log as error as it fills the console with misleading messages
@@ -172,6 +212,22 @@ export const getQueryFn: <T>(options: {
           freeCreditsUsed: true
         };
       }
+      
+      // Look for network connectivity errors
+      if (fetchError.message && (
+          fetchError.message.includes("Failed to fetch") || 
+          fetchError.message.includes("Network Error") || 
+          fetchError.message.includes("502"))) {
+        console.error(`Network connectivity error for ${url}:`, fetchError.message);
+        
+        // Return a special object for connection errors that UI can handle
+        return {
+          error: "server_unavailable",
+          message: "Server is temporarily unavailable. Please try again in a few minutes.",
+          status: 502
+        };
+      }
+      
       throw fetchError;
     }
   };
