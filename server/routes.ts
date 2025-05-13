@@ -476,12 +476,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
               }
               
-              // Make the HTTP request
+              // Make the HTTP request with enhanced error handling
+              console.log(`Sending payload to webhook with ${base64Images.length} images for industry: ${industry}`);
+              
               const response = await axios.post(WEBHOOK_URL, payload, {
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                timeout: 30000 // 30 second timeout
+                timeout: 30000, // 30 second timeout
+                validateStatus: function (status) {
+                  // Consider any status code in 2xx range as success
+                  return status >= 200 && status < 300;
+                }
               });
               
               console.log(`Webhook response status: ${response.status}`);
@@ -896,12 +902,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }))
           };
           
-          // Make the API call to N8N webhook
+          // Make the API call to N8N webhook with enhanced error handling
+          console.log(`Sending ${payload.selections.length} selections to webhook for processing`);
+          
           const response = await axios.post(WEBHOOK_URL, payload, {
             headers: {
               'Content-Type': 'application/json'
             },
-            timeout: 30000 // 30 second timeout
+            timeout: 30000, // 30 second timeout
+            validateStatus: function (status) {
+              // Consider any status code in 2xx range as success
+              return status >= 200 && status < 300;
+            }
           });
           
           console.log(`Webhook response status: ${response.status}`);
