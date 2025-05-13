@@ -1086,12 +1086,34 @@ export default function ProductEnhancementWebhook() {
       
       try {
         console.log("Making API request to /api/product-enhancement/start");
-        const response = await apiRequest("POST", "/api/product-enhancement/start", formData, true);
+        
+        // Use raw fetch instead of apiRequest for more direct control
+        // This helps avoid issues with unexpected HTML responses in some browsers
+        const response = await fetch("/api/product-enhancement/start", {
+          method: "POST",
+          body: formData,
+          credentials: "include"
+        });
+        
         console.log("API response received", response.status);
         
         // Check if the response is OK (status in the range 200-299)
-        // The apiRequest function will handle error responses,
-        // this is redundant since apiRequest throws on non-ok responses
+        if (!response.ok) {
+          const contentType = response.headers.get("content-type");
+          
+          // Special handling for HTML responses (common in error cases)
+          if (contentType && contentType.includes("text/html")) {
+            throw new Error("The server returned an HTML response. This may happen in incognito mode or with certain browser settings.");
+          }
+          
+          // Try to get a meaningful error message
+          try {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Server error: ${response.status}`);
+          } catch (jsonError) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+          }
+        }
         
         const data = await response.json();
         console.log("Response data:", data);
@@ -1175,9 +1197,10 @@ export default function ProductEnhancementWebhook() {
         if (
           error.message.includes("<") && error.message.includes(">") ||
           error.message.includes("<!DOCTYPE") ||
-          error.message.includes("Unexpected token")
+          error.message.includes("Unexpected token") ||
+          error.message.includes("HTML response")
         ) {
-          errorMessage = "The server encountered an error. Please try again later or try a different browser.";
+          errorMessage = "The server encountered an error. This can happen in incognito mode or when browser security settings block uploads. Please try using a regular browser window.";
         }
       }
       
