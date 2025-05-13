@@ -119,7 +119,13 @@ async function imageToBase64(imagePath: string): Promise<string> {
   }
 }
 
+// Import our OpenAI test routes
+import { setupTestOpenAIRoutes } from './test-openai-status';
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register our OpenAI test routes
+  app.use(setupTestOpenAIRoutes());
+  
   // Serve static files from uploads directory
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
   
