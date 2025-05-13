@@ -774,12 +774,15 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
     setSelectedImages(newSelected);
   };
   
+  // Get user credits
+  const userCreditsQuery = useCredits();
+  const userCredits = userCreditsQuery.data;
+  
   // Handle coloring book transformation
   const handleColoringBookTransform = async (imagePath: string) => {
     // Simple credit check based on the received credits
-    const { credits } = useCredits();
-    const paidCredits = credits?.paidCredits || 0;
-    const freeCreditsUsed = credits?.freeCreditsUsed || true;
+    const paidCredits = userCredits?.paidCredits || 0;
+    const freeCreditsUsed = userCredits?.freeCreditsUsed || true;
     const hasCredits = paidCredits > 0 || !freeCreditsUsed;
     
     // Check if user has credits
