@@ -1018,7 +1018,7 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
   }, [currentStep, steps.length]);
   
   return (
-    <section className="container mx-auto text-center py-12">
+    <section className="container mx-auto text-center py-12 min-h-[600px] flex flex-col items-center">
       <h2 className="text-2xl font-bold mb-8 text-primary-600">Processing Your Images</h2>
       
       <div className="mx-auto w-72 md:w-96 h-auto bg-white border rounded-lg shadow-md p-6">
@@ -1049,6 +1049,11 @@ const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) =
       <p className="text-gray-600 mt-6">
         We're applying the selected enhancements to your images. This may take a few moments...
       </p>
+      
+      {/* Add a loading spinner */}
+      <div className="mt-8">
+        <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto"></div>
+      </div>
     </section>
   );
 };
