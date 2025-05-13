@@ -868,10 +868,10 @@ const ResultsSection = ({ results }: { results: EnhancementResult[] }) => {
 const ProcessingSection = ({ errorMessage }: { errorMessage?: string | null }) => {
   // Status steps for the multi-step progress indicator
   const steps = [
-    "Analyzing Image....",
-    "Connecting to Enhancement Service......",
-    "Processing Enhancement Options.....",
-    "Waiting for Results....."
+    "Analyzing your uploaded images...",
+    "Connecting to enhancement service...",
+    "Processing enhancement options...",
+    "Generating AI-powered suggestions..."
   ];
   
   // If there's an error, show error state instead
@@ -1324,9 +1324,17 @@ export default function ProductEnhancementWebhook() {
     try {
       console.log("Starting upload mutation");
       
+      // Clear any previous error message
+      setErrorMessage(null);
+      
+      // Reset enhancement images
+      setEnhancementImages([]);
+      
       // Immediately go to processing state
+      console.log("Setting step to 'processing'");
       setStep('processing');
       
+      // Start upload mutation
       uploadMutation.mutate({ files: selectedFiles, industry });
     } catch (error) {
       console.error("Error in upload mutation:", error);
