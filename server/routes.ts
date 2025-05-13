@@ -554,19 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.post("/api/product-enhancement/start", productUpload.array("images", 5), async (req, res) => {
-    try {
-      console.log("\n\n====================== PRODUCT ENHANCEMENT START ======================");
-      console.log(`Timestamp: ${new Date().toISOString()}`);
-      console.log(`Received ${(req.files || []).length} files and industry: "${req.body.industry}"`);
-      console.log("Using webhook:", USE_MOCK_WEBHOOK ? "MOCK" : "REAL");
-      
-      // Validate request body
-      if (!req.body.industry) {
-        return res.status(400).json({ message: "Industry type is required" });
-      }
-      
-      const uploadedImages = req.files as Express.Multer.File[];
+  // This was a duplicate endpoint - removed to fix the issue
       if (!uploadedImages || uploadedImages.length === 0) {
         return res.status(400).json({ message: "No images uploaded" });
       }
