@@ -178,7 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
 
           // Check if user has enough credits to perform transformation
-          const hasCredits = user.freeCredits > 0 || user.paidCredits > 0;
+          const hasCredits = (!user.freeCreditsUsed) || user.paidCredits > 0;
           if (!hasCredits) {
             return res.status(403).json({ 
               message: "Not enough credits to perform transformation", 
@@ -197,7 +197,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const transformation = await storage.createTransformation({
         userId: userId || null,
         prompt,
-        originalImage: imagePath,
+        originalImagePath: imagePath,
         status: "processing"
       });
 
@@ -273,9 +273,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookId = uuid();
       
       // Update the enhancement record with the webhook ID
-      await storage.updateProductEnhancementWebhookId(
+      await storage.updateProductEnhancementStatus(
         enhancement.id,
-        webhookId
+        "processing", // Set status to processing
+        webhookId // Pass webhookId as the third parameter
       );
       
       // Submit to the N8N webhook for processing
