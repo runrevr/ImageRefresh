@@ -94,12 +94,14 @@ const baseInsertTransformationSchema = createInsertSchema(transformations).pick(
   originalImagePath: true,
   prompt: true,
   status: true,
+  editsUsed: true
 });
 
 // Export the schema with modified validation for the prompt field
 export const insertTransformationSchema = baseInsertTransformationSchema.extend({
   prompt: z.string().max(10000), // Increased length limit for prompts
   status: z.string().default("pending"),
+  editsUsed: z.number().default(0)
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -149,111 +151,4 @@ export type FAQ = {
   answer: string;
 };
 
-// New types for product enhancement webhook feature
-export const productEnhancements = pgTable("product_enhancements", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
-  industry: text("industry").notNull(),
-  status: text("status").notNull().default("pending"), // pending, processing, completed, failed
-  webhookId: text("webhook_request_id"), // ID returned from webhook (matches database column name)
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  error: text("error"),
-  creditsUsed: integer("credits_used").default(0),
-});
-
-export const productEnhancementImages = pgTable("product_enhancement_images", {
-  id: serial("id").primaryKey(),
-  enhancementId: integer("enhancement_id").references(() => productEnhancements.id).notNull(),
-  originalImagePath: text("original_image_path").notNull(),
-  options: jsonb("options_json"), // Stores the enhancement options returned from webhook (matches database column name)
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  selectedOptions: text("selected_options").array(), // Array of selected option keys
-  resultImagePaths: text("result_image_paths").array(), // Array of result image paths
-});
-
-export const productEnhancementSelections = pgTable("product_enhancement_selections", {
-  id: serial("id").primaryKey(),
-  enhancementId: integer("enhancement_id").references(() => productEnhancements.id).notNull(),
-  imageId: integer("image_id").references(() => productEnhancementImages.id).notNull(),
-  optionId: text("option_id").notNull(), // ID of the selected option
-  optionKey: text("option_key").notNull(), // Key of the selected option
-  optionName: text("option_name"), // Display name of the selected option
-  resultImage1Path: text("result_image1_path"), // First result image
-  resultImage2Path: text("result_image2_path"), // Second result image
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  status: text("status").notNull().default("pending"), // pending, completed, failed
-});
-
-export const insertProductEnhancementSchema = createInsertSchema(productEnhancements).pick({
-  userId: true,
-  industry: true,
-});
-
-export const insertProductEnhancementImageSchema = createInsertSchema(productEnhancementImages).pick({
-  enhancementId: true,
-  originalImagePath: true,
-});
-
-export const insertProductEnhancementSelectionSchema = createInsertSchema(productEnhancementSelections).pick({
-  enhancementId: true,
-  imageId: true,
-  optionId: true,
-  optionKey: true,
-  optionName: true,
-});
-
-export type InsertProductEnhancement = z.infer<typeof insertProductEnhancementSchema>;
-export type ProductEnhancement = typeof productEnhancements.$inferSelect;
-export type InsertProductEnhancementImage = z.infer<typeof insertProductEnhancementImageSchema>;
-export type ProductEnhancementImage = typeof productEnhancementImages.$inferSelect;
-export type InsertProductEnhancementSelection = z.infer<typeof insertProductEnhancementSelectionSchema>;
-export type ProductEnhancementSelection = typeof productEnhancementSelections.$inferSelect;
-
-// Product Enhancement Results (virtual type for UI consumption)
-export type ProductEnhancementResult = {
-  id: number;
-  imageId: number;
-  enhancementId: number;
-  selectionId: number;
-  optionKey: string;
-  optionName: string;
-  resultImage1Path: string;
-  resultImage2Path: string;
-  description?: string;
-};
-
-// Type definitions for webhook requests and responses
-export type ProductEnhancementWebhookRequest = {
-  industry: string;
-  images: string[]; // Base64 encoded images
-};
-
-export type ProductEnhancementWebhookResponse = {
-  id: string;
-  images: {
-    originalIndex: number;
-    options: {
-      [key: string]: {
-        name: string;
-        description: string;
-      }
-    }
-  }[];
-};
-
-export type ProductEnhancementSelectionRequest = {
-  id: string; // Webhook ID
-  selections: {
-    imageIndex: number;
-    options: string[]; // Array of option keys selected
-  }[];
-};
-
-export type ProductEnhancementSelectionResponse = {
-  id: string;
-  results: {
-    imageIndex: number;
-    option: string;
-    resultImages: string[]; // Base64 encoded result images
-  }[];
-};
+// Product enhancement types have been removed to revert to working version
