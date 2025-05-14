@@ -64,7 +64,7 @@ async function imageToBase64(imagePath: string): Promise<string> {
   }
 }
 
-export function setupRoutes(app: Express): Server {
+export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from the uploads directory
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
   
@@ -267,7 +267,8 @@ export function setupRoutes(app: Express): Server {
         userId: userId || null,
         originalImagePath,
         prompt,
-        status: "pending"
+        status: "pending",
+        editsUsed: 0
       });
       
       // Return the transformation ID immediately
