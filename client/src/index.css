@@ -85,8 +85,6 @@
     min-height: 100vh;
     height: 100%;
   }
-er
-  }
 
   h4, .h4 {
     @apply font-rubik font-semibold text-base leading-snug;
