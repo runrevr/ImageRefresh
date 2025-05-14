@@ -27,10 +27,9 @@ export default function HeroCarousel({ onCreateClick }: HeroCarouselProps) {
         <div className="container mx-auto px-6 md:px-8">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-6 text-black leading-[1.15] tracking-normal px-4 sm:px-6 md:px-10 max-w-screen-lg mx-auto">
-              Turn Ordinary Photos Into Scroll-Stopping Visuals in Seconds — No Design Skills Needed
-            </h1>
+              Transform Any Photo in Seconds—No Design Skills Needed!            </h1>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-medium mb-6 sm:mb-8 text-black/80 px-4 sm:px-6 md:px-10 max-w-screen-lg mx-auto">
-              Upload any image. Choose a vibe. Get a custom-enhanced version that's funny, artistic, or brand-ready. First one's on us.
+              Upload any image. Choose a vibe—anything from playful to polished. Get a custom-enhanced version that’s perfect for social media or your online store.
             </h2>
 
             <div className="flex flex-col items-center justify-center px-2 sm:px-0">

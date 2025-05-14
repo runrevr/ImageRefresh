@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bungee:wght@400;700&family=Rubik:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Rubik:wght@300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -85,18 +85,7 @@
     min-height: 100vh;
     height: 100%;
   }
-
-  /* Typography styles */
-  h1, .h1 {
-    @apply font-bungee font-bold text-[2.5rem] uppercase leading-tight;
-  }
-
-  h2, .h2 {
-    @apply font-bungee font-bold text-[1.75rem] leading-tight md:text-[2rem];
-  }
-
-  h3, .h3 {
-    @apply font-rubik font-semibold text-[1.25rem] leading-snug md:text-[1.5rem];
+er
   }
 
   h4, .h4 {
@@ -134,3 +123,6 @@ textarea.bg-black::placeholder {
   animation-delay: 300ms;
 }
 
+.font-Montserrat {
+    font-family: 'Montserrat', sans-serif;
+}

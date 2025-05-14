@@ -6,8 +6,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        bungee: ['Bungee', 'cursive'],
-        rubik: ['Rubik', 'sans-serif'],
+        bungee: ["Bungee", "cursive"],
+,
+        rubik: ["Rubik", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
