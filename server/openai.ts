@@ -10,7 +10,6 @@ import FormData from "form-data";
 
 const pipeline = promisify(stream.pipeline);
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY
 });
@@ -24,57 +23,41 @@ export const imageVariationFormats = [
   "image/webp",
 ];
 
-// Define the interface for OpenAI API image generation response
 interface OpenAIImageResponse {
   data?: Array<{
     url: string;
   }>;
 }
 
-/**
- * Checks if OpenAI API key is configured
- */
 export function isOpenAIConfigured(): boolean {
   return !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.startsWith('sk-');
 }
 
-/**
- * Saves an image from a URL or data URL to the local filesystem
- */
 async function saveImageFromUrl(imageUrl: string, destinationPath: string): Promise<void> {
-  // Ensure the uploads directory exists
   const uploadDir = path.join(process.cwd(), "uploads");
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
 
-  // Check if this is a data URL (base64)
   if (imageUrl.startsWith('data:')) {
     console.log("Saving image from data URL");
-    // Extract the base64 data from the data URL
     const matches = imageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
     if (!matches || matches.length !== 3) {
       throw new Error("Invalid data URL format");
     }
-
-    // Convert base64 to buffer and save directly to filesystem
     const imageBuffer = Buffer.from(matches[2], "base64");
     fs.writeFileSync(destinationPath, imageBuffer);
     return;
   }
 
-  // Otherwise treat as a regular URL
   console.log("Saving image from HTTP URL");
-  // Download the image
   const imageResponse = await fetch(imageUrl);
   if (!imageResponse.ok) {
     throw new Error(`Failed to download image: ${imageResponse.statusText}`);
   }
 
-  // Save the image
   const fileStream = createWriteStream(destinationPath);
 
-  // Make sure we have a readable stream that's not null
   if (imageResponse.body) {
     const bodyAsReadable = Readable.from(imageResponse.body as any);
     await new Promise<void>((resolve, reject) => {
@@ -87,398 +70,41 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
   }
 }
 
-/**
- * Two-stage process for image transformation:
- * 1. First analyze the image with GPT-4o to get a detailed description
- * 2. Then create new images with gpt-image-1 based on both the prompt and the description
- */
-/**
- * Transform an image into coloring book style
- * This uses OpenAI to convert an image into a black and white coloring book page
- */
-export async function transformToColoringBook(
-  imagePath: string
+export async function transformImage(
+  imagePath: string, 
+  prompt: string
 ): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");
   }
 
   try {
-    console.log(`Processing coloring book transformation for image: ${imagePath}`);
+    console.log(`Processing image transformation with prompt: ${prompt}`);
 
-    // Verify the image exists
-    if (!fs.existsSync(imagePath)) {
-      throw new Error(`Image file does not exist at path: ${imagePath}`);
-    }
+    const transformedFileName = `transformed-${Date.now()}-${path.basename(imagePath)}`;
+    const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
 
-    // Read the image file
-    const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
-
-    // Determine the correct MIME type for the image
-    const fileExtension = path.extname(imagePath).toLowerCase();
-    const mimeType = fileExtension === '.png' ? 'image/png' : 
-                    (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
-
-    // First use GPT-4o Vision to analyze the image and get a detailed description
-    console.log("Analyzing image with GPT-4o vision for coloring book transformation...");
-
-    // Use the GPT-4o model with vision capabilities to analyze the image
-    const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert in creating coloring book pages. Analyze this image and provide a detailed description that could be used to create a black and white coloring book page with clear, bold outlines."
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: "Describe this image in a way that would help create a simple coloring book page with bold outlines."
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:${mimeType};base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 500
+    const response = await openai.images.edit({
+      image: fs.createReadStream(imagePath),
+      prompt: prompt,
+      n: 1,
+      size: "1024x1024"
     });
 
-    // Extract the detailed description
-    const content = visionResponse.choices[0].message.content;
-    const detailedDescription = content ? content : "An image suitable for a coloring book page";
-    console.log("Image analysis complete. Description length:", detailedDescription.length);
+    if (response.data && response.data.length > 0 && response.data[0].url) {
+      const imageUrl = response.data[0].url;
+      await saveImageFromUrl(imageUrl, transformedPath);
 
-    // Create the prompt for a coloring book style conversion
-    const coloringBookPrompt = "Turn this into a black and white coloring book page. Use only thick black outlines on a white background. Remove all colors and details. Create simple line art with bold borders between sections. No shading, no gradients, no gray areas. Make it look like a children's coloring book with clear, easy-to-color sections.";
-
-    // Generate unique name for the coloring book image
-    const originalFileName = path.basename(imagePath);
-    const coloringBookFileName = `coloring-book-${Date.now()}-${originalFileName}`;
-    const transformedPath = path.join(process.cwd(), "uploads", coloringBookFileName);
-
-    try {
-      console.log("Generating coloring book image with gpt-image-1...");
-      
-      // Combine the description with the coloring book prompt
-      const enhancedPrompt = `${coloringBookPrompt} Based on this image: ${detailedDescription}`;
-      
-      // Call OpenAI to generate the coloring book image
-      const imageResponse = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: enhancedPrompt,
-        n: 1,
-        size: "1024x1024",
-        quality: "high",
-        moderation: "low",
-      });
-      
-      console.log("Successfully generated coloring book image");
-      
-      // Process and save the image
-      if (imageResponse.data && imageResponse.data.length > 0) {
-        let imageUrl;
-        if (imageResponse.data[0].url) {
-          // URL format - use saveImageFromUrl
-          imageUrl = imageResponse.data[0].url;
-          await saveImageFromUrl(imageUrl, transformedPath);
-        } else if ('b64_json' in imageResponse.data[0]) {
-          // Base64 format - save directly
-          const b64Content = (imageResponse.data[0] as any).b64_json;
-          const imageBuffer = Buffer.from(b64Content, "base64");
-          fs.writeFileSync(transformedPath, imageBuffer);
-          imageUrl = `data:image/png;base64,${b64Content}`;
-        } else {
-          throw new Error("Unexpected response format from OpenAI.");
-        }
-        
-        return {
-          url: imageUrl,
-          transformedPath
-        };
-      } else {
-        throw new Error("No image data returned from OpenAI.");
-      }
-    } catch (genError: any) {
-      console.error("Error generating coloring book image:", genError);
-      throw new Error(`Failed to generate coloring book image: ${genError.message}`);
-    }
-  } catch (error: any) {
-    console.error("Error transforming image to coloring book style:", error);
-    throw new Error(`Error transforming to coloring book style: ${error.message}`);
-  }
-}
-
-export async function transformImage(
-  imagePath: string, 
-  prompt: string,
-  imageSize?: string | undefined,
-  isEdit: boolean = false
-): Promise<{ url: string; transformedPath: string; secondUrl?: string; secondTransformedPath?: string }> {
-  if (!isOpenAIConfigured()) {
-    throw new Error("OpenAI API key is not configured");
-  }
-
-  try {
-    console.log(`Processing image transformation with prompt: ${prompt}`);
-    console.log(`Is this an edit request: ${isEdit}`);
-
-    try {
-      // Verify the image exists
-      if (!fs.existsSync(imagePath)) {
-        throw new Error(`Image file does not exist at path: ${imagePath}`);
-      }
-
-      // Read the image file
-      const imageBuffer = fs.readFileSync(imagePath);
-      const base64Image = imageBuffer.toString('base64');
-
-      // Determine the correct MIME type for the image
-      const fileExtension = path.extname(imagePath).toLowerCase();
-      const mimeType = fileExtension === '.png' ? 'image/png' : 
-                      (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
-
-      // First use GPT-4o Vision to analyze the image and get a detailed description
-      console.log("Stage 1: Analyzing image with GPT-4o vision capabilities...");
-
-      // Use the GPT-4o model with vision capabilities to analyze the image
-      const visionResponse = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert image analyzer. Provide a detailed description of the image that includes all visible elements, colors, shapes, textures, and other distinctive features. Your description should be comprehensive enough that it could be used to recreate the image."
-          },
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: "Describe this image in extreme detail, focusing on all visual elements that make it unique."
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:${mimeType};base64,${base64Image}`
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 1000
-      });
-
-      // Extract the detailed description from GPT-4o, with a fallback if it's null/undefined
-      const content = visionResponse.choices[0].message.content;
-      const detailedDescription = content ? content : "A detailed product image";
-      console.log("Image analysis complete. Description length:", detailedDescription.length);
-
-      // Now use gpt-image-1 to generate a new image based on the prompt and the detailed description
-      console.log("Stage 2: Generating transformed image with gpt-image-1...");
-
-      // Create a comprehensive prompt that incorporates both the user's request and the image details
-      // The key is to emphasize preserving the original image's subject while applying the transformation
-      // Also add safety guardrails to avoid content policy violations
-      const safetyGuards = "Create a family-friendly, G-rated image appropriate for all ages. Avoid any content that could be interpreted as violent, sexual, political, or offensive in any way. Ensure the output maintains a positive and appropriate tone.";
-
-      let enhancedPrompt;
-      if (isEdit) {
-        // For edits, focus more on applying the specific changes requested while keeping it extra safe
-        // Add more explicit safe guidance for color change requests
-        const editSafetyGuards = "Maintain the existing composition and elements. Do not add any new characters, faces, or human-like figures. Keep all subjects fully clothed and appropriate for all audiences. Simply change colors or basic visual elements as requested while preserving the identity of the original image.";
-        enhancedPrompt = `Apply the following edit to this image: "${prompt}". Preserve all key features and elements from the original image. ${safetyGuards} ${editSafetyGuards}`;
-      } else {
-        // For initial transformations, keep the subject but transform the context/background
-        enhancedPrompt = `This is a photo editing task. Create an exact recreation of this product: "${detailedDescription}". The product must remain the primary focus and should look identical to the original. ${prompt}. Do not alter the product's appearance, only change its environment or background. ${safetyGuards}`;
-      }
-
-      console.log("Using enhanced prompt that emphasizes preserving the original subject");
-
-      // Use the provided image size or default to 1024x1024
-      console.log(`Using image size: ${imageSize || "1024x1024"}`);
-
-      // Determine the size parameter based on input
-      const sizeParam = imageSize === "1024x1536" ? "1024x1536" :
-                        imageSize === "1536x1024" ? "1536x1024" :
-                        "1024x1024";
-
-      // Generate unique name for the transformed image
-      const originalFileName = path.basename(imagePath);
-      const transformedFileName = `transformed-${Date.now()}-${originalFileName}`;
-      const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-
-      let imageUrl;
-
-      // Instead of using the edits endpoint, let's switch to using generate
-      // Use the images/generations endpoint with the enhanced prompt
-      console.log("Switching to use images/generations instead of images/edits for more reliable results");
-
-      // Create a DALL-E like modified prompt that incorporates the image analysis
-      const generationPrompt = `Based on this detailed description: "${detailedDescription}". ${prompt}. Create a photorealistic image that maintains the integrity and identity of the original subject.`;
-
-      console.log("Using generation prompt:", generationPrompt);
-
-      try {
-        console.log(`Using enhanced generation prompt: ${generationPrompt.substring(0, 100)}...`);
-        console.log(`Using GPT-4o for vision analysis and gpt-image-1 for image generation`);
-
-        // Use gpt-image-1 for image generation
-        console.log(`About to call OpenAI images.generate API with payload:`, {
-          model: "gpt-image-1",
-          prompt: generationPrompt.substring(0, 50) + "...",
-          n: 1,
-          size: sizeParam === "1024x1536" || sizeParam === "1536x1024" 
-            ? sizeParam 
-            : "1024x1024",
-          quality: "high",    // Changed from "auto" to "high" for better facial detail
-          style: "natural",   // Add this parameter for more photorealistic results
-          moderation: "low",
-        });
-
-        // Define imageResponse in outer scope to access it later
-        let imageResponse;
-
-        // Write verbose error handling
-        try {
-          console.log("Attempting to use gpt-image-1 model with high quality and natural style...");
-          
-          // Instead of using images.edit, we'll use images.generate since we don't need to edit an existing image
-          // This avoids the need for the 'image' parameter that's causing the error
-          // Use a simple size parameter without type assertions
-          let size: "1024x1024" | "1024x1536" | "1536x1024" = "1024x1024";
-          if (sizeParam === "1024x1536") {
-            size = "1024x1536";
-          } else if (sizeParam === "1536x1024") {
-            size = "1536x1024";
-          }
-            
-          // Modified to remove unsupported 'style' parameter for gpt-image-1 model
-          // Instead we'll incorporate style instructions in the prompt
-          const enhancedPrompt = `${generationPrompt} Create a natural, photorealistic result with fine details.`;
-          
-          imageResponse = await openai.images.generate({
-            model: "gpt-image-1",
-            prompt: enhancedPrompt,
-            n: 2, // Generate 2 variations instead of 1
-            size: size,
-            quality: "high", // Changed from "auto" to "high" for better facial detail
-            moderation: "low",
-          });
-          console.log("OpenAI API call completed successfully");
-        } catch (apiError: any) {
-          console.error("DETAILED API ERROR:", apiError);
-          console.error("Error type:", typeof apiError);
-          console.error("Error code:", apiError.code);
-          console.error("Error message:", apiError.message);
-          console.error("Error status:", apiError.status);
-
-          if (apiError.response) {
-            console.error("API Response error:", apiError.response.data);
-          }
-
-          throw apiError; // Re-throw to be caught by outer handler
-        }
-
-        console.log("Response from image generation:", JSON.stringify(imageResponse, null, 2));
-        console.log("Successfully generated image with gpt-image-1 model");
-
-        // Check what format we received and handle both images
-        if (imageResponse.data && imageResponse.data.length > 0) {
-          // Handle first image
-          let imageUrl;
-          if (imageResponse.data[0].url) {
-            // URL format - use saveImageFromUrl
-            imageUrl = imageResponse.data[0].url;
-            console.log("Using URL format from response for first image");
-            await saveImageFromUrl(imageUrl, transformedPath);
-          } else if ('b64_json' in imageResponse.data[0]) {
-            // Base64 format - save directly (TypeScript doesn't recognize b64_json property)
-            const b64Content = (imageResponse.data[0] as any).b64_json;
-            console.log("Using b64_json format from response for first image");
-            const imageBuffer = Buffer.from(b64Content, "base64");
-            fs.writeFileSync(transformedPath, imageBuffer);
-            imageUrl = `data:image/png;base64,${b64Content}`;
-          } else {
-            console.log("Unknown response format for first image:", JSON.stringify(imageResponse.data[0]));
-            throw new Error("Unexpected response format from gpt-image-1. Could not find url or b64_json in the response.");
-          }
-          
-          // Handle second image if it exists
-          let secondUrl;
-          let secondTransformedPath;
-          if (imageResponse.data.length > 1) {
-            // Generate unique name for the second transformed image
-            const secondFileName = `transformed-2-${Date.now()}-${path.basename(imagePath)}`;
-            secondTransformedPath = path.join(process.cwd(), "uploads", secondFileName);
-            
-            if (imageResponse.data[1].url) {
-              // URL format for second image
-              secondUrl = imageResponse.data[1].url;
-              console.log("Using URL format from response for second image");
-              await saveImageFromUrl(secondUrl, secondTransformedPath);
-            } else if ('b64_json' in imageResponse.data[1]) {
-              // Base64 format for second image
-              const b64Content = (imageResponse.data[1] as any).b64_json;
-              console.log("Using b64_json format from response for second image");
-              const imageBuffer = Buffer.from(b64Content, "base64");
-              fs.writeFileSync(secondTransformedPath, imageBuffer);
-              secondUrl = `data:image/png;base64,${b64Content}`;
-            }
-          }
-          
-          return {
-            url: imageUrl,
-            transformedPath,
-            secondUrl,
-            secondTransformedPath
-          };
-        } else {
-          throw new Error("No image data returned. The gpt-image-1 generation failed.");
-        }
-      } catch (genError: any) {
-        console.error("Error generating image with gpt-image-1:", genError);
-        throw new Error(`Failed to generate image: ${genError.message}`);
-      }
-    } catch (err: any) {
-      console.error("Error with gpt-image-1 model:", err);
-      
-      // Add more detailed error logging
-      console.error("OpenAI Error Details:");
-      console.error("Error type:", typeof err);
-      console.error("Error code:", err.code);
-      console.error("Error message:", err.message);
-      console.error("Error status:", err.status);
-      console.error("Error stack:", err.stack);
-      
-      if (err.response) {
-        console.error("API Response error data:", JSON.stringify(err.response.data || {}, null, 2));
-        console.error("API Response error status:", err.response.status);
-        console.error("API Response error headers:", JSON.stringify(err.response.headers || {}, null, 2));
-      }
-
-      // Check for specific error types
-      if (err.message && err.message.includes("organization verification")) {
-        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
-      } else if (err.code === "invalid_api_key") {
-        throw new Error("Invalid OpenAI API key. Please check your configuration.");
-      } else if (err.message && err.message.toLowerCase().includes("rate limit")) {
-        throw new Error("OpenAI rate limit exceeded. Please try again in a few minutes.");
-      } else if (err.message && err.message.toLowerCase().includes("billing")) {
-        throw new Error("OpenAI billing issue: " + err.message);
-      } else {
-        throw new Error("Failed to generate image with gpt-image-1: " + err.message);
-      }
+      return {
+        url: imageUrl,
+        transformedPath
+      };
+    } else {
+      throw new Error("No image data returned from OpenAI");
     }
   } catch (error: any) {
     console.error("Error transforming image:", error);
-    const errorMessage = error.message || 'Unknown error occurred';
-    throw new Error(`Error transforming image: ${errorMessage}`);
+    throw new Error(`Error transforming image: ${error.message}`);
   }
 }
 
