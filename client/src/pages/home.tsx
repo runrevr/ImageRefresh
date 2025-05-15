@@ -305,11 +305,17 @@ export default function Home() {
           let img2 = "";
 
           try {
+            // Show the transformed image after transformation completes:
             if (typeof data === "string") {
               img1 = data;
             } else if (data && typeof data.transformedImageUrl === "string") {
               img1 = data.transformedImageUrl;
               img2 = data.secondTransformedImageUrl;
+            } else if (data && typeof data.transformedImagePath === "string") {
+              img1 = data.transformedImagePath.startsWith("/") ? data.transformedImagePath : "/" + data.transformedImagePath;
+              if (data.secondTransformedImagePath) {
+                img2 = data.secondTransformedImagePath.startsWith("/") ? data.secondTransformedImagePath : "/" + data.secondTransformedImagePath;
+              }
             } else if (data && Array.isArray(data.images)) {
               img1 = data.images[0]?.url || "";
               img2 = data.images[1]?.url || "";
