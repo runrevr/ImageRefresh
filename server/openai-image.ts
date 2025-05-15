@@ -37,9 +37,19 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
       console.log(`[OpenAI] Using API key: ${keyPrefix}...${keySuffix}`);
     }
     
-    // Check if image exists
-    const fullImagePath = path.join(process.cwd(), imagePath);
-    console.log(`[OpenAI] Checking image at full path: ${fullImagePath}`);
+    // Normalize input to ensure no leading slashes and only basename used
+    let normalizedImagePath = imagePath.replace(/^\/home\/runner\/workspace\//, '');
+    normalizedImagePath = normalizedImagePath.replace(/^\/+/, ''); // Remove leading slashes
+    normalizedImagePath = path.basename(normalizedImagePath); // Only allow file name
+    
+    // Construct full path using uploads directory
+    const fullImagePath = path.join(uploadsDir, normalizedImagePath);
+    
+    // Add detailed logging
+    console.log('[OpenAI] Image path construction:');
+    console.log(`- Original path: ${imagePath}`);
+    console.log(`- Normalized path: ${normalizedImagePath}`);
+    console.log(`- Full path: ${fullImagePath}`);
     
     if (!fs.existsSync(fullImagePath)) {
       console.error(`[OpenAI] Image not found: ${fullImagePath}`);
