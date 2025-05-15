@@ -264,10 +264,11 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     try {
+      // Log the full request details
       console.log("Sending transformation request with data:", {
         originalImagePath,
+        prompt: promptText,
         promptLength: promptText?.length || 0,
-        promptPreview: promptText?.substring(0, 50) + "...",
         userId: userCredits?.id,
         imageSize: imageSize,
       });
@@ -936,8 +937,7 @@ export default function Home() {
                       // If user is logged in, skip email check
                       if (userCredits?.id) {
                         setShowUploadForm(true);
-                        scrollToUploader();
-                        // Set transformation to mullet
+                        scrollToUploader();                        // Set transformation to mullet
                         setSelectedTransformation("other");
                         // Set prompt for mullets
                         setPrompt("Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.");
