@@ -1874,6 +1874,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Configuration endpoint
+  app.get("/api/config", (req, res) => {
+    // Return JSON with application configuration
+    res.json({
+      openaiConfigured: !!process.env.OPENAI_API_KEY,
+      stripeConfigured: !!process.env.STRIPE_SECRET_KEY,
+      maxUploadSize: 10 * 1024 * 1024, // 10MB
+      featureFlags: {
+        newUI: true
+      }
+    });
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
   console.log("Server created and routes registered successfully");
