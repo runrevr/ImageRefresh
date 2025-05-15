@@ -1841,6 +1841,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Fix for "user credits" 404. Add a new route for /api/user-credits/:id
+  app.get("/api/user-credits/:id", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ 
+          paidCredits: 0,
+          freeCreditsUsed: false,
+          message: "User not found"
+        });
+      }
+      
+      return res.json({
+        id: user.id,
+        freeCreditsUsed: user.freeCreditsUsed,
+        paidCredits: user.paidCredits
+      });
+    } catch (error: any) {
+      console.error("Error getting user credits by ID:", error);
+      return res.status(500).json({ 
+        message: "Error fetching user credits", 
+        error: error.message 
+      });
+    }
+  });
 
   // Create HTTP server
   const httpServer = createServer(app);
