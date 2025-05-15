@@ -6,6 +6,8 @@ import { demoAccessMiddleware } from "./demo-access-control";
 import { setupAuth } from "./auth";
 import cookieParser from "cookie-parser";
 import * as dotenv from 'dotenv';
+import { setupTestRoutes } from "./routes/test-route";
+import { setupOpenAITestRoutes } from "./openai-test-route";
 import fs from 'fs';
 import path from 'path';
 
@@ -66,6 +68,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Serve uploaded files as static content
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Setup authentication (passport, sessions, etc.)
 setupAuth(app);
@@ -139,7 +144,14 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Register main routes
   const server = await registerRoutes(app);
+  
+  // Register test routes
+  app.use(setupTestRoutes());
+  
+  // Register OpenAI test routes
+  app.use(setupOpenAITestRoutes());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

@@ -221,13 +221,20 @@ export default function ResultView({
             }}
           >
             <div className="aspect-w-1 aspect-h-1 relative">
-              {transformedImage && !transformedImage.includes('/api/transform') ? (
+              {transformedImage ? (
                 <img 
-                  src={typeof transformedImage === 'string' ? transformedImage : (transformedImage instanceof Blob ? URL.createObjectURL(transformedImage) : '')} 
+                  src={transformedImage} 
                   alt="Transformed image option 1" 
                   className="object-cover w-full h-full"
                   onError={(e) => {
                     console.error('Error loading transformed image:', transformedImage);
+                    // Log detailed error information to help debug path issues
+                    console.error('Image path format:', {
+                      path: transformedImage,
+                      containsApiTransform: transformedImage.includes('/api/transform'),
+                      startsWithUploads: transformedImage.startsWith('/uploads/'),
+                      startsWithSlash: transformedImage.startsWith('/')
+                    });
                     e.currentTarget.src = originalImage; // Fallback to original image
                   }}
                 />

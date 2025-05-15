@@ -74,10 +74,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paths: results,
         originalPath: imagePath
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       res.status(500).json({ 
         exists: false, 
-        error: error.message 
+        error: errorMessage 
       });
     }
   });
@@ -181,10 +182,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // Return the result
+        // Return the result with normalized paths for client
+        const normalizedPath = transformedImagePath.replace(/\\/g, '/');
+        
+        // Ensure the path starts with the correct prefix
+        const relativePath = normalizedPath.startsWith('uploads/') 
+          ? normalizedPath 
+          : `uploads/${normalizedPath.replace(/^.*[\/\\]uploads[\/\\]/, '')}`;
+          
+        // Log the path transformation for debugging
+        console.log('Original transformed path:', transformedImagePath);
+        console.log('Normalized path for response:', relativePath);
+        
         res.json({
-          transformedImagePath,
-          transformedImageUrl: `/${transformedImagePath}`
+          transformedImagePath: relativePath,
+          transformedImageUrl: `/${relativePath}`,
+          originalPath: imagePath
         });
       } catch (transformError) {
         console.error("Error in OpenAI transformation:", transformError);
