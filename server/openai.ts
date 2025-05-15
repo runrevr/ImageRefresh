@@ -128,11 +128,12 @@ export async function transformImage(
     console.log(`Image size parameter: ${sizeParam}`);
     
     // OpenAI API call with proper MIME type
+    // According to OpenAI docs, images.edit only supports "1024x1024", not other sizes
     const response = await openai.images.edit({
       image: imageStream,
       prompt: prompt,
       n: 1,
-      size: sizeParam
+      size: "1024x1024" as "1024x1024" // Type assertion to avoid TypeScript errors
     });
 
     if (response.data && response.data.length > 0 && response.data[0].url) {
