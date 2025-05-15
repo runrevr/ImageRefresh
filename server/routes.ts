@@ -554,7 +554,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // This was a duplicate endpoint - removed to fix the issue
+  // Start product enhancement webhook process
+  app.post("/api/product-enhancements/start", productUpload.array("images", 5), async (req, res) => {
+    try {
+      console.log("=== PRODUCT ENHANCEMENT START REQUEST ===");
+      
+      // Get uploaded files
+      const uploadedImages = req.files as Express.Multer.File[];
       if (!uploadedImages || uploadedImages.length === 0) {
         return res.status(400).json({ message: "No images uploaded" });
       }
@@ -767,7 +773,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: enhancementStatus,
         webhookRequestId: webhookRequestId
       });
-    } catch (error: any) {
+    
+    } catch (error) {
       console.error("Error in product enhancement start:", error);
       res.status(500).json({ 
         message: "Error starting product enhancement", 
@@ -1796,6 +1803,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error in coloring book transformation:", error);
       res.status(500).json({ 
         message: "Error processing coloring book transformation", 
+        error: error.message 
+      });
+    }
+  });
+
+  // Get user credits by ID endpoint (for client compatibility)
+  app.get("/api/credits/:id", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const user = await storage.getUser(userId);
+
+      if (!user) {
+        return res.status(404).json({ 
+          paidCredits: 0,
+          freeCreditsUsed: false,
+          message: "User not found"
+        });
+      }
+      
+      // Return user credits in the format expected by the client
+      return res.json({
+        id: user.id,
+        freeCreditsUsed: user.freeCreditsUsed,
+        paidCredits: user.paidCredits
+      });
+    } catch (error: any) {
+      console.error("Error getting user credits by ID:", error);
+      return res.status(500).json({ 
+        message: "Error fetching user credits", 
         error: error.message 
       });
     }
