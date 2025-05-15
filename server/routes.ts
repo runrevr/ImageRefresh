@@ -106,7 +106,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { originalImagePath, prompt, userId, imageSize, isEdit, previousTransformation } = req.body;
 
       if (!originalImagePath || !prompt) {
-        return res.status(400).json({ message: "Original image path and prompt are required" });
+        return res.status(400).json({ 
+          error: "Validation error",
+          message: "Original image path and prompt are required" 
+        });
       }
 
       console.log("Transformation request:", {
@@ -143,8 +146,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!fs.existsSync(imagePath)) {
         console.error(`Original image not found at any of the attempted paths. Last tried: ${imagePath}`);
         return res.status(404).json({ 
+          error: "Not found",
           message: "Original image not found", 
-          error: `Image not found at path: ${originalImagePath}` 
+          details: `Image not found at path: ${originalImagePath}` 
         });
       }
 
@@ -181,7 +185,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error("Error transforming image:", error);
-      res.status(500).json({ message: "Error transforming image", error: error.message });
+      res.status(500).json({
+        error: "Transformation error",
+        message: error.message || "Unknown error occurred during image transformation",
+        details: error.stack || undefined
+      });
     }
   });
 
