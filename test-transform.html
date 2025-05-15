@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Response Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .image-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        #imagePaths {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Response Test</h1>
+    <div class="container">
+        <div>
+            <h2>Sample API Response</h2>
+            <textarea id="apiResponse">{
+    "transformedImagePath": "uploads/transformed-1747335126656-224b9222-6da6-467f-9d4d-13aa79917441.png",
+    "transformedImageUrl": "/uploads/transformed-1747335126656-224b9222-6da6-467f-9d4d-13aa79917441.png",
+    "originalPath": "uploads/image-1747335096205-723766163.png"
+}</textarea>
+            <button class="btn" onclick="parseResponse()">Test Parsing</button>
+        </div>
+        
+        <div>
+            <h2>Extracted Image Paths</h2>
+            <div id="imagePaths">No paths extracted yet</div>
+        </div>
+        
+        <div>
+            <h2>Test Defensive Extraction</h2>
+            <div class="image-container">
+                <p>Response Format 1 (Current Format):</p>
+                <pre>{
+    "transformedImagePath": "...",
+    "transformedImageUrl": "/uploads/transformed-123.png",
+    "originalPath": "..."
+}</pre>
+                <button class="btn" onclick="testFormat1()">Test Format 1</button>
+            </div>
+            
+            <div class="image-container">
+                <p>Response Format 2 (String URL):</p>
+                <pre>"/uploads/transformed-123.png"</pre>
+                <button class="btn" onclick="testFormat2()">Test Format 2</button>
+            </div>
+            
+            <div class="image-container">
+                <p>Response Format 3 (Images Array):</p>
+                <pre>{
+    "images": [
+        { "url": "/uploads/image1.png" },
+        { "url": "/uploads/image2.png" }
+    ]
+}</pre>
+                <button class="btn" onclick="testFormat3()">Test Format 3</button>
+            </div>
+            
+            <div class="image-container">
+                <p>Response Format 4 (Result Array):</p>
+                <pre>{
+    "result": [
+        "/uploads/image1.png",
+        "/uploads/image2.png"
+    ]
+}</pre>
+                <button class="btn" onclick="testFormat4()">Test Format 4</button>
+            </div>
+            
+            <div class="image-container">
+                <p>Invalid Format:</p>
+                <pre>{ "someOtherData": true }</pre>
+                <button class="btn" onclick="testInvalidFormat()">Test Invalid Format</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // The defensive extraction logic we implemented
+        function extractImageURLs(data) {
+            let img1 = "";
+            let img2 = "";
+            
+            try {
+                if (typeof data === "string") {
+                    img1 = data;
+                } else if (data && typeof data.transformedImageUrl === "string") {
+                    img1 = data.transformedImageUrl;
+                    img2 = data.secondTransformedImageUrl;
+                } else if (data && Array.isArray(data.images)) {
+                    img1 = data.images[0]?.url || "";
+                    img2 = data.images[1]?.url || "";
+                } else if (data && Array.isArray(data.result)) {
+                    img1 = data.result[0] || "";
+                    img2 = data.result[1] || "";
+                } else {
+                    console.error("API response format not recognized:", data);
+                    alert("API response format not recognized:\n" + JSON.stringify(data, null, 2));
+                    return { img1: "", img2: "" };
+                }
+            } catch (e) {
+                console.error("Error extracting image URLs:", e, data);
+                alert("Error extracting image URLs:\n" + e.message);
+                return { img1: "", img2: "" };
+            }
+            
+            return { img1, img2 };
+        }
+        
+        function parseResponse() {
+            const responseText = document.getElementById('apiResponse').value;
+            let data;
+            
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                data = responseText; // Treat as string if not JSON
+            }
+            
+            const { img1, img2 } = extractImageURLs(data);
+            
+            document.getElementById('imagePaths').innerHTML = `
+                <p><strong>Primary Image:</strong> ${img1 || "None"}</p>
+                <p><strong>Secondary Image:</strong> ${img2 || "None"}</p>
+            `;
+        }
+        
+        function testFormat1() {
+            const data = {
+                transformedImagePath: "uploads/transformed-123.png",
+                transformedImageUrl: "/uploads/transformed-123.png",
+                originalPath: "uploads/original-123.png"
+            };
+            
+            const { img1, img2 } = extractImageURLs(data);
+            
+            document.getElementById('imagePaths').innerHTML = `
+                <p><strong>Format 1 (Current Format)</strong></p>
+                <p><strong>Primary Image:</strong> ${img1 || "None"}</p>
+                <p><strong>Secondary Image:</strong> ${img2 || "None"}</p>
+            `;
+        }
+        
+        function testFormat2() {
+            const data = "/uploads/transformed-123.png";
+            
+            const { img1, img2 } = extractImageURLs(data);
+            
+            document.getElementById('imagePaths').innerHTML = `
+                <p><strong>Format 2 (String URL)</strong></p>
+                <p><strong>Primary Image:</strong> ${img1 || "None"}</p>
+                <p><strong>Secondary Image:</strong> ${img2 || "None"}</p>
+            `;
+        }
+        
+        function testFormat3() {
+            const data = {
+                images: [
+                    { url: "/uploads/image1.png" },
+                    { url: "/uploads/image2.png" }
+                ]
+            };
+            
+            const { img1, img2 } = extractImageURLs(data);
+            
+            document.getElementById('imagePaths').innerHTML = `
+                <p><strong>Format 3 (Images Array)</strong></p>
+                <p><strong>Primary Image:</strong> ${img1 || "None"}</p>
+                <p><strong>Secondary Image:</strong> ${img2 || "None"}</p>
+            `;
+        }
+        
+        function testFormat4() {
+            const data = {
+                result: [
+                    "/uploads/image1.png",
+                    "/uploads/image2.png"
+                ]
+            };
+            
+            const { img1, img2 } = extractImageURLs(data);
+            
+            document.getElementById('imagePaths').innerHTML = `
+                <p><strong>Format 4 (Result Array)</strong></p>
+                <p><strong>Primary Image:</strong> ${img1 || "None"}</p>
+                <p><strong>Secondary Image:</strong> ${img2 || "None"}</p>
+            `;
+        }
+        
+        function testInvalidFormat() {
+            const data = { someOtherData: true };
+            
+            try {
+                const { img1, img2 } = extractImageURLs(data);
+                
+                document.getElementById('imagePaths').innerHTML = `
+                    <p><strong>Invalid Format</strong></p>
+                    <p><strong>Primary Image:</strong> ${img1 || "None"}</p>
+                    <p><strong>Secondary Image:</strong> ${img2 || "None"}</p>
+                `;
+            } catch (e) {
+                document.getElementById('imagePaths').innerHTML = `
+                    <p><strong>Invalid Format</strong></p>
+                    <p><strong>Error:</strong> ${e.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
