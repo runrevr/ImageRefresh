@@ -28,13 +28,13 @@ global.debugLog = function(...args: any[]) {
   const message = args.map(arg => 
     typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
   ).join(' ');
-  
+
   const timestamp = new Date().toISOString();
   const logMessage = `[${timestamp}] ${message}\n`;
-  
+
   // Write to stdout
   process.stdout.write(logMessage);
-  
+
   // Append to log file
   fs.appendFileSync(DEBUG_LOG_PATH, logMessage);
 };
@@ -79,7 +79,7 @@ app.use((req, res, next) => {
     console.log('Body:', JSON.stringify(req.body, null, 2));
     console.log('Query:', JSON.stringify(req.query, null, 2));
     console.log('================================\n\n');
-    
+
     // Write to debug log file as well
     fs.appendFileSync(DEBUG_LOG_PATH, `\n\n==== TRANSFORM REQUEST [${new Date().toISOString()}] ====\n`);
     fs.appendFileSync(DEBUG_LOG_PATH, `URL: ${req.url}\n`);
@@ -99,7 +99,7 @@ app.use((req, res, next) => {
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
-    
+
     // Special logging for errors on transform endpoint
     if (path === '/api/transform' && bodyJson && bodyJson.message) {
       console.log('\n\n==== TRANSFORM RESPONSE ERROR ====');
@@ -107,7 +107,7 @@ app.use((req, res, next) => {
       console.log('Error:', bodyJson.message);
       console.log('Full response:', JSON.stringify(bodyJson, null, 2));
       console.log('================================\n\n');
-      
+
       // Write to debug log file
       fs.appendFileSync(DEBUG_LOG_PATH, `\n\n==== TRANSFORM RESPONSE ERROR [${new Date().toISOString()}] ====\n`);
       fs.appendFileSync(DEBUG_LOG_PATH, `Status: ${res.statusCode}\n`);
@@ -115,7 +115,7 @@ app.use((req, res, next) => {
       fs.appendFileSync(DEBUG_LOG_PATH, `Full response: ${JSON.stringify(bodyJson, null, 2)}\n`);
       fs.appendFileSync(DEBUG_LOG_PATH, `================================\n\n`);
     }
-    
+
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
@@ -158,12 +158,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Try to serve the app on port 5000 first
-  // this serves both the API and the client.
-  // Port 5000 is the default port that is not firewalled.
-  const defaultPort = 5000;
-  const altPorts = [3000, 3001, 8080, 8000]; // Alternative ports to try
-  
+  const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+  const altPorts = [3001, 8080, 8000]; // Alternative ports to try if main port is busy
+
   // Function to attempt starting server on different ports
   const startServer = (portToUse: number, remainingPorts: number[] = []): void => {
     server.listen({
@@ -174,12 +171,12 @@ app.use((req, res, next) => {
     .on('listening', () => {
       // Server started successfully
       log(`Server started successfully on port ${portToUse}`);
-      
+
       // Run cleanup once at startup
       runCleanupTasks()
         .then(() => log('Initial cleanup tasks completed'))
         .catch(err => console.error('Error during initial cleanup:', err));
-      
+
       // Schedule daily cleanup (86400000 ms = 24 hours)
       const CLEANUP_INTERVAL = 86400000;
       setInterval(() => {
@@ -192,7 +189,7 @@ app.use((req, res, next) => {
     .on('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
         log(`Port ${portToUse} is already in use.`);
-        
+
         // Try the next port if there are any remaining ports
         if (remainingPorts.length > 0) {
           const nextPort = remainingPorts[0];
@@ -209,7 +206,7 @@ app.use((req, res, next) => {
       }
     });
   };
-  
+
   // Start with the default port and fallback to alternatives
-  startServer(defaultPort, altPorts);
+  startServer(port, altPorts);
 })();
