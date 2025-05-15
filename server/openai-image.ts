@@ -119,22 +119,22 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
         responseType: 'arraybuffer',
         timeout: 30000 // 30 second timeout
       });
-      
+
       console.log(`[OpenAI] [${transformationId}] Download successful, received ${imageResponse.data.length} bytes`);
-      
+
       // Save the image to the uploads directory
       const imageExt = '.png'; // OpenAI returns PNG images
       const uniqueId = `${Date.now()}-${uuid()}`;
       const transformedFileName = `transformed-${uniqueId}${imageExt}`;
       const transformedImagePath = path.join(uploadsDir, transformedFileName);
-      
+
       console.log(`[OpenAI] [${transformationId}] Saving image to: ${transformedImagePath}`);
       fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
-      
+
       // Return the path as uploads/filename for consistency
       const relativePath = `uploads/${transformedFileName}`;
       console.log(`[OpenAI] [${transformationId}] Successfully saved transformed image to: ${relativePath}`);
-      
+
       return relativePath;
     } catch (downloadError) {
       console.error(`[OpenAI] [${transformationId}] Error downloading or saving the image:`, downloadError);

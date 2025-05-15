@@ -349,7 +349,7 @@ export default function Home() {
             freeCreditsUsed: creditsData.freeCreditsUsed,
             paidCredits: creditsData.paidCredits,
           } : null);
-          
+
           if (data.transformationId) {
             // Asynchronous response - we need to poll for the result
             console.log("Transformation started, polling for status...", data.transformationId);
@@ -360,7 +360,7 @@ export default function Home() {
             // Set up polling for transformation status
             // Separate variable to track attempts within the checkStatus function
             let statusCheckAttempts = 0;
-            
+
             // Define maxAttempts here so it's available in checkStatus
             const pollInterval = 3000;
             const maxAttempts = 60; // 180 seconds max (3 minutes)
@@ -947,8 +947,7 @@ export default function Home() {
                 {/* Left side image (30%) */}
                 <div className="w-full md:w-[30%] mb-8 md:mb-0">
                   <div className="relative rounded-xl overflow-hidden shadow-lg">
-                    <img 
-                      src={trumpMulletImage} 
+                    <img                      src={trumpMulletImage} 
                       alt="Mullet Transformation Example" 
                       className="w-full h-auto"
                     />
