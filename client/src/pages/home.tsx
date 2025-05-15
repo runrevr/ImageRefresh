@@ -770,11 +770,16 @@ export default function Home() {
       const data = await response.json();
 
       if (response.ok) {
-        setTransformedImage(data.transformedImageUrl);
+        // Handle the primary transformed image
+        if (data.transformedImageUrl) {
+          setTransformedImage(data.transformedImageUrl);
+        } else {
+          console.error("No primary transformed image URL in response");
+          throw new Error("Failed to get transformed image");
+        }
 
-        // Set the second transformed image if it exists
+        // Handle the second transformed image if it exists
         if (data.secondTransformedImageUrl) {
-          console.log("Found second transformed image:", data.secondTransformedImageUrl);
           setSecondTransformedImage(data.secondTransformedImageUrl);
         } else {
           setSecondTransformedImage(null);
