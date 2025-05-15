@@ -1,0 +1,78 @@
+We have a mismatch between our /api/transform endpoint and our frontend requests. The backend endpoint currently returns an image/binary, while our frontend uses apiRequest("POST", "/api/transform", {...}) and tries to parse JSON (res.json()).
+
+Goal:
+
+Fix this so we either:
+
+Return JSON (with a URL or base64-encoded image) from /api/transform and parse JSON in the frontend, OR
+
+Fetch the image as a Blob in the frontend and skip JSON parsing.
+
+Steps (please implement approach #1 or #2 below):
+
+Approach #1: Return JSON With an Image URL
+Backend (/api/transform):
+
+Currently returns raw image/binary data.
+
+Instead, save or store the transformed image somewhere (e.g., local folder, S3, or a temp path).
+
+Respond with JSON: { "imageUrl": "path/to/transformed.png" }.
+
+js
+Copy
+// Example in Express
+app.post("/api/transform", async (req, res) => {
+  // ... your transform code ...
+  const transformedImagePath = "path/to/transformed.png";
+  res.json({ imageUrl: transformedImagePath });
+});
+Frontend (where we do apiRequest("POST", "/api/transform", ...)):
+
+Expect JSON:
+
+js
+Copy
+const { imageUrl } = await apiRequest("POST", "/api/transform", {
+  originalImagePath,
+  prompt: promptText,
+  userId: userCredits?.id,
+  imageSize
+});
+// Then set <img> element source
+document.getElementById("transformedImage").src = imageUrl;
+This avoids “Failed to parse response as JSON,” because we’re now actually returning JSON.
+
+Approach #2: Receive the Image as a Blob
+Backend (/api/transform):
+
+Keep returning the image/binary (e.g. res.set('Content-Type','image/png').send(imageBuffer)).
+
+Frontend:
+
+Don’t use apiRequest(...) if it automatically calls res.json(). Instead, use a direct fetch(...) and parse as Blob:
+
+js
+Copy
+const response = await fetch("/api/transform", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    originalImagePath,
+    prompt: promptText,
+    userId: userCredits?.id,
+    imageSize
+  }),
+});
+const blob = await response.blob();
+const imageUrl = URL.createObjectURL(blob);
+document.getElementById("transformedImage").src = imageUrl;
+This way, we never call response.json().
+
+Please update the code so that either:
+
+(Approach #1) /api/transform returns JSON, and the frontend uses apiRequest(...).json() correctly, OR
+
+(Approach #2) We fetch as a Blob in the frontend without JSON parsing.
+
+Ensure the final code no longer throws “Failed to parse response as JSON.” Thank you!
