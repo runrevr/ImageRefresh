@@ -13,17 +13,22 @@ const openai = new OpenAI({
 // Directory for uploads
 const uploadsDir = path.join(process.cwd(), "uploads");
 
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 /**
- * Transforms an image using OpenAI's image editing capabilities
+ * Transforms an image using OpenAI's image generation capabilities
  * @param imagePath Path to the original image
  * @param prompt The prompt describing the transformation
  * @returns Path to the transformed image
  */
 export async function transformImageWithOpenAI(imagePath: string, prompt: string): Promise<string> {
-  try {
-    // Generate a unique ID for this transformation
-    const transformationId = uuid();
+  // Generate a unique ID for this transformation
+  const transformationId = uuid().substring(0, 8);
 
+  try {
     // Detailed logging with transformation ID
     console.log(`[OpenAI] [${transformationId}] Starting image transformation at ${new Date().toISOString()}`);
     console.log(`[OpenAI] [${transformationId}] Prompt: "${prompt}"`);
@@ -61,9 +66,9 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
 
     // Add detailed logging
     console.log(`[OpenAI] [${transformationId}] Image path construction:`);
-    console.log(`- Original path: ${imagePath}`);
-    console.log(`- Normalized path: ${normalizedImagePath}`);
-    console.log(`- Full path: ${fullImagePath}`);
+    console.log(`[OpenAI] [${transformationId}] - Original path: ${imagePath}`);
+    console.log(`[OpenAI] [${transformationId}] - Normalized path: ${normalizedImagePath}`);
+    console.log(`[OpenAI] [${transformationId}] - Full path: ${fullImagePath}`);
 
     if (!fs.existsSync(fullImagePath)) {
       console.error(`[OpenAI] [${transformationId}] Image not found: ${fullImagePath}`);
@@ -82,87 +87,64 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     console.log(`[OpenAI] [${transformationId}] Calling OpenAI API with the provided prompt...`);
 
     // Use the prompt directly without any modifications
-    // Our prompts in data.json are carefully crafted and should never be modified
-    console.log(`[OpenAI] [${transformationId}] Using prompt directly from ideas page (length: ${prompt.length})`);
-    console.log(`[OpenAI] [${transformationId}] Full prompt:`, prompt);
+    // Our prompts are carefully crafted and should never be modified
+    console.log(`[OpenAI] [${transformationId}] Using prompt directly (length: ${prompt.length})`);
+    console.log(`[OpenAI] [${transformationId}] Prompt preview: ${prompt.substring(0, 100)}...`);
 
     // Before we make the API call, ensure we haven't truncated or modified the prompt in any way
     // For DALL-E 3, longer, more detailed prompts tend to give better results
-    console.log(`[OpenAI] [${transformationId}] Calling OpenAI API with configuration:`);
-    console.log(`  - Model: dall-e-3`);
-    console.log(`  - Size: 1024x1024`);
-    console.log(`  - Quality: hd`);
-
-    const response = await openai.images.edit({
-      model: "gpt-image-1",
-      image: fs.createReadStream(imagePath),
+    const response = await openai.images.generate({
+      model: "dall-e-3",
       prompt: prompt,
-      n: 2,
+      n: 1,
       size: "1024x1024",
-      moderation_check: "low"
+      quality: "hd",
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);
-    console.log(`[OpenAI] [${transformationId}] Response:`, response.data);
 
     // Check response
-    if (!response.data || response.data.length === 0) {
-      throw new Error("No images returned from OpenAI");
+    if (!response.data || response.data.length === 0 || !response.data[0].url) {
+      throw new Error("No image URL returned from OpenAI");
     }
 
-    const transformedImages = [];
+    // Get the URL of the generated image
+    const generatedImageUrl = response.data[0].url;
+    console.log(`[OpenAI] [${transformationId}] Received image URL from OpenAI`);
 
-    // Process both generated images
-    for (let i = 0; i < response.data.length; i++) {
-      const imageData = response.data[i];
-      if (!imageData.url) {
-        console.warn(`[OpenAI] [${transformationId}] No URL for image ${i + 1}`);
-        continue;
-      }
-
-      console.log(`[OpenAI] [${transformationId}] Processing image ${i + 1}`);
+    // Download the image
+    console.log(`[OpenAI] [${transformationId}] Downloading generated image...`);
+    try {
+      const imageResponse = await axios.get(generatedImageUrl, { 
+        responseType: 'arraybuffer',
+        timeout: 30000 // 30 second timeout
+      });
       
-      try {
-        const imageResponse = await axios.get(imageData.url, {
-          responseType: 'arraybuffer',
-          timeout: 30000
-        });
-
-        console.log(`[OpenAI] [${transformationId}] Downloaded image ${i + 1}, size: ${imageResponse.data.length} bytes`);
-
-        const imageExt = '.png';
-        const uniqueId = `${Date.now()}-${i}-${uuid()}`;
-        const transformedFileName = `transformed-${uniqueId}${imageExt}`;
-        const transformedImagePath = path.join(uploadsDir, transformedFileName);
-
-        console.log(`[OpenAI] [${transformationId}] Saving image ${i + 1} to: ${transformedImagePath}`);
-        fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
-
-        const relativePath = `uploads/${transformedFileName}`;
-        transformedImages.push(relativePath);
-        console.log(`[OpenAI] [${transformationId}] Saved image ${i + 1} to: ${relativePath}`);
-      } catch (error) {
-        console.error(`[OpenAI] [${transformationId}] Error processing image ${i + 1}:`, error);
-      }
-    }
-
-    if (transformedImages.length === 0) {
-      throw new Error("Failed to save any transformed images");
-    }
-
-    return {
-      primaryImage: transformedImages[0],
-      secondaryImage: transformedImages[1]
-    };
-    } catch (error) {
-      console.error(`[OpenAI] [${transformationId}] Error downloading or saving the image:`, error);
+      console.log(`[OpenAI] [${transformationId}] Download successful, received ${imageResponse.data.length} bytes`);
+      
+      // Save the image to the uploads directory
+      const imageExt = '.png'; // OpenAI returns PNG images
+      const uniqueId = `${Date.now()}-${uuid()}`;
+      const transformedFileName = `transformed-${uniqueId}${imageExt}`;
+      const transformedImagePath = path.join(uploadsDir, transformedFileName);
+      
+      console.log(`[OpenAI] [${transformationId}] Saving image to: ${transformedImagePath}`);
+      fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
+      
+      // Return the path as uploads/filename for consistency
+      const relativePath = `uploads/${transformedFileName}`;
+      console.log(`[OpenAI] [${transformationId}] Successfully saved transformed image to: ${relativePath}`);
+      
+      return relativePath;
+    } catch (downloadError) {
+      console.error(`[OpenAI] [${transformationId}] Error downloading or saving the image:`, downloadError);
       let errorMessage = "Unknown error";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      } else if (error && typeof error === 'object') {
-        errorMessage = JSON.stringify(error);
+      if (downloadError instanceof Error) {
+        errorMessage = downloadError.message;
+      } else if (typeof downloadError === 'string') {
+        errorMessage = downloadError;
+      } else if (downloadError && typeof downloadError === 'object') {
+        errorMessage = JSON.stringify(downloadError);
       }
       throw new Error(`Failed to download or save the transformed image: ${errorMessage}`);
     }
@@ -182,11 +164,11 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
       console.error(`[OpenAI] [${transformationId}] Network connection error - unable to reach OpenAI API`);
     }
 
-    if (error.message.includes('401')) {
+    if (error.message && error.message.includes('401')) {
       console.error(`[OpenAI] [${transformationId}] Authentication error - invalid or expired API key`);
     }
 
-    if (error.message.includes('429')) {
+    if (error.message && error.message.includes('429')) {
       console.error(`[OpenAI] [${transformationId}] Rate limit exceeded - too many requests or quota exceeded`);
     }
 

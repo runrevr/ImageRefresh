@@ -153,36 +153,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Proceed with the transformation
-      const transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+      try {
+        const transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+        console.log(`Transformation successful. Path: ${transformedImagePath}`);
 
-      // Store transformation in database if userId is provided
-      if (userId) {
-        try {
-          const transformation = await storage.createTransformation({
-            userId,
-            originalImagePath,
-            prompt,
-            status: "completed",
-            editsUsed: isEdit ? 1 : 0
-          });
-          
-          await storage.updateTransformationStatus(
-            transformation.id,
-            "completed",
-            transformedImagePath
-          );
-          
-          console.log(`Transformation stored in database with ID: ${transformation.id}`);
-        } catch (dbError) {
-          console.error("Failed to store transformation in database:", dbError);
-          // Continue anyway since we have the transformed image
+        // Store transformation in database if userId is provided
+        if (userId) {
+          try {
+            const transformation = await storage.createTransformation({
+              userId,
+              originalImagePath,
+              prompt,
+              status: "completed",
+              editsUsed: isEdit ? 1 : 0
+            });
+            
+            await storage.updateTransformationStatus(
+              transformation.id,
+              "completed",
+              transformedImagePath
+            );
+            
+            console.log(`Transformation stored in database with ID: ${transformation.id}`);
+          } catch (dbError) {
+            console.error("Failed to store transformation in database:", dbError);
+            // Continue anyway since we have the transformed image
+          }
         }
-      }
 
-      res.json({
-        transformedImagePath,
-        transformedImageUrl: `/${transformedImagePath}`
-      });
+        // Return the result
+        res.json({
+          transformedImagePath,
+          transformedImageUrl: `/${transformedImagePath}`
+        });
+      } catch (transformError) {
+        console.error("Error in OpenAI transformation:", transformError);
+        
+        if (transformError instanceof Error) {
+          const errorMessage = transformError.message;
+          
+          // Handle specific error messages
+          if (errorMessage.includes("not found")) {
+            return res.status(404).json({
+              error: "Not found",
+              message: "Original image could not be processed",
+              details: errorMessage
+            });
+          } 
+          
+          if (errorMessage.includes("API key")) {
+            return res.status(500).json({
+              error: "API error",
+              message: "Issue with OpenAI credentials",
+              details: "The API key for image transformation service is invalid or missing"
+            });
+          }
+          
+          return res.status(500).json({
+            error: "Transformation error",
+            message: "Failed to transform image",
+            details: errorMessage
+          });
+        }
+        
+        // Generic error response
+        return res.status(500).json({
+          error: "Unknown error",
+          message: "An unknown error occurred during image transformation",
+          details: String(transformError)
+        });
+      }
     } catch (error: any) {
       console.error("Error transforming image:", error);
       res.status(500).json({
