@@ -113,32 +113,85 @@ export async function transformImage(
     // OpenAI edit API only supports 1024x1024 size
     const sizeParam = "1024x1024";
     
-    // Create FormData for the request
-    const formData = new FormData();
-    
-    // Read the file and get its buffer
+    // Read the file as a buffer
     const imageBuffer = fs.readFileSync(imagePath);
     
-    // Create a proper readable stream based on the correct MIME type
-    const imageStream = fs.createReadStream(imagePath);
+    // Create temporary file with proper extension to ensure correct MIME type
+    const fileExt = mimeType === 'image/png' ? '.png' : 
+                   mimeType === 'image/jpeg' ? '.jpg' : 
+                   mimeType === 'image/webp' ? '.webp' : '.png';
+                   
+    const tempFilePath = path.join(
+      process.cwd(), 
+      "uploads", 
+      `temp-${Date.now()}${fileExt}`
+    );
     
-    // Log the image details before sending to OpenAI
-    console.log(`Sending image to OpenAI: ${imagePath}`);
-    console.log(`Image MIME type: ${mimeType}`);
-    console.log(`Image size parameter: ${sizeParam}`);
+    // Log details for debugging
+    console.log(`Creating temporary file with correct extension: ${tempFilePath}`);
+    console.log(`Original image path: ${imagePath}`);
+    console.log(`Detected MIME type: ${mimeType}`);
     
-    // OpenAI API call with proper MIME type
-    // According to OpenAI docs, images.edit only supports "1024x1024", not other sizes
-    const response = await openai.images.edit({
-      image: imageStream,
-      prompt: prompt,
-      n: 1,
-      size: "1024x1024" as "1024x1024" // Type assertion to avoid TypeScript errors
-    });
-
-    if (response.data && response.data.length > 0 && response.data[0].url) {
-      const imageUrl = response.data[0].url;
-      await saveImageFromUrl(imageUrl, transformedPath);
+    // Write the image buffer to a temporary file with the proper extension
+    fs.writeFileSync(tempFilePath, imageBuffer);
+    
+    try {
+      // Log the image details before sending to OpenAI
+      console.log(`Sending image to OpenAI with explicit MIME type: ${mimeType}`);
+      console.log(`Image size parameter: ${sizeParam}`);
+      
+      // Create a readable stream from the temporary file with known extension
+      const properImageStream = fs.createReadStream(tempFilePath);
+      
+      // Manual FormData approach with axios
+      const axios = require('axios');
+      const FormData = require('form-data');
+      
+      const formData = new FormData();
+      formData.append('image', properImageStream, {
+        filename: path.basename(tempFilePath),
+        contentType: mimeType
+      });
+      formData.append('prompt', prompt);
+      formData.append('n', '1');
+      formData.append('size', sizeParam);
+      formData.append('model', 'dall-e-2');
+      
+      console.log('Sending request to OpenAI with FormData and explicit content type');
+      
+      const openaiResponse = await axios.post(
+        'https://api.openai.com/v1/images/edits',
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            ...formData.getHeaders()
+          }
+        }
+      );
+      
+      console.log('Response received from OpenAI API');
+      
+      // Format the response to match what our application expects
+      const response = {
+        data: openaiResponse.data.data
+      };
+      
+      // Clean up the temporary file
+      fs.unlinkSync(tempFilePath);
+      
+      if (response.data && response.data.length > 0 && response.data[0].url) {
+        const imageUrl = response.data[0].url;
+        await saveImageFromUrl(imageUrl, transformedPath);
+      } else {
+        throw new Error("No valid URL found in OpenAI response");
+      }
+    } catch (error) {
+      console.error("Error during OpenAI image transformation:", error);
+      throw error;
+    }
+    
+    if (response && response.data && response.data.length > 0 && response.data[0].url) {
 
       return {
         url: imageUrl,
