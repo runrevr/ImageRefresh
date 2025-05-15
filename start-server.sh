@@ -1,3 +1,4 @@
+
 #!/bin/bash
 npm install sharp
-NODE_ENV=development tsx server/index.ts
+NODE_ENV=development PORT=5000 tsx server/index.ts
