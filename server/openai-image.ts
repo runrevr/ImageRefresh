@@ -93,50 +93,67 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     console.log(`  - Size: 1024x1024`);
     console.log(`  - Quality: hd`);
 
-    const response = await openai.images.generate({
-      model: "dall-e-3",
+    const response = await openai.images.edit({
+      model: "gpt-image-1",
+      image: fs.createReadStream(imagePath),
       prompt: prompt,
-      n: 1,
+      n: 2,
       size: "1024x1024",
-      quality: "hd",
+      moderation_check: "low"
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);
     console.log(`[OpenAI] [${transformationId}] Response:`, response.data);
 
     // Check response
-    if (!response.data || response.data.length === 0 || !response.data[0].url) {
-      throw new Error("No image URL returned from OpenAI");
+    if (!response.data || response.data.length === 0) {
+      throw new Error("No images returned from OpenAI");
     }
 
-    // Get the URL of the generated image
-    const generatedImageUrl = response.data[0].url;
-    console.log(`[OpenAI] [${transformationId}] Received image URL from OpenAI`);
+    const transformedImages = [];
 
-    // Download the image
-    console.log(`[OpenAI] [${transformationId}] Downloading generated image...`);
-    try {
-      const imageResponse = await axios.get(generatedImageUrl, { 
-        responseType: 'arraybuffer',
-        timeout: 30000 // 30 second timeout
-      });
+    // Process both generated images
+    for (let i = 0; i < response.data.length; i++) {
+      const imageData = response.data[i];
+      if (!imageData.url) {
+        console.warn(`[OpenAI] [${transformationId}] No URL for image ${i + 1}`);
+        continue;
+      }
 
-      console.log(`[OpenAI] [${transformationId}] Download successful, received ${imageResponse.data.length} bytes`);
+      console.log(`[OpenAI] [${transformationId}] Processing image ${i + 1}`);
+      
+      try {
+        const imageResponse = await axios.get(imageData.url, {
+          responseType: 'arraybuffer',
+          timeout: 30000
+        });
 
-      // Save the image to the uploads directory
-      const imageExt = '.png'; // OpenAI returns PNG images
-      const uniqueId = `${Date.now()}-${uuid()}`;
-      const transformedFileName = `transformed-${uniqueId}${imageExt}`;
-      const transformedImagePath = path.join(uploadsDir, transformedFileName);
+        console.log(`[OpenAI] [${transformationId}] Downloaded image ${i + 1}, size: ${imageResponse.data.length} bytes`);
 
-      console.log(`[OpenAI] [${transformationId}] Saving image to: ${transformedImagePath}`);
-      fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
+        const imageExt = '.png';
+        const uniqueId = `${Date.now()}-${i}-${uuid()}`;
+        const transformedFileName = `transformed-${uniqueId}${imageExt}`;
+        const transformedImagePath = path.join(uploadsDir, transformedFileName);
 
-      // Return the path as uploads/filename for consistency
-      const relativePath = `uploads/${transformedFileName}`;
-      console.log(`[OpenAI] [${transformationId}] Successfully saved transformed image to: ${relativePath}`);
+        console.log(`[OpenAI] [${transformationId}] Saving image ${i + 1} to: ${transformedImagePath}`);
+        fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
 
-      return relativePath;
+        const relativePath = `uploads/${transformedFileName}`;
+        transformedImages.push(relativePath);
+        console.log(`[OpenAI] [${transformationId}] Saved image ${i + 1} to: ${relativePath}`);
+      } catch (error) {
+        console.error(`[OpenAI] [${transformationId}] Error processing image ${i + 1}:`, error);
+      }
+    }
+
+    if (transformedImages.length === 0) {
+      throw new Error("Failed to save any transformed images");
+    }
+
+    return {
+      primaryImage: transformedImages[0],
+      secondaryImage: transformedImages[1]
+    };
     } catch (error) {
       console.error(`[OpenAI] [${transformationId}] Error downloading or saving the image:`, error);
       let errorMessage = "Unknown error";
