@@ -1,11 +1,12 @@
-// Test script for image transformation API
-import dotenv from 'dotenv';
-import OpenAI from 'openai';
-import fs from 'fs';
-import path from 'path';
+// Test script for image transformation API (CommonJS version)
+const dotenv = require('dotenv');
+const { OpenAI } = require('openai');
+const fs = require('fs');
+const path = require('path');
 
 dotenv.config();
 
+// Initialize OpenAI with API key from environment variable
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -97,7 +98,7 @@ async function testTransformation() {
       max_tokens: 500,
     });
     
-    const analysis = visionResponse.choices[0].message.content;
+    const analysis = visionResponse.choices[0].message.content || "";
     console.log("Image analysis:", analysis.substring(0, 150) + "...");
     
     // Second step: generate transformed image
@@ -113,7 +114,7 @@ async function testTransformation() {
       quality: "standard",
     });
     
-    const imageUrl = generationResponse.data[0].url;
+    const imageUrl = generationResponse.data?.[0]?.url || "";
     console.log("Transformed image URL:", imageUrl);
     
     return true;

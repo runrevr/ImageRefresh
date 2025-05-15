@@ -561,6 +561,7 @@ export default function Home() {
           setCurrentStep(Step.Prompt);
         }
       }
+    }
     } catch (error: any) {
       console.error("Error transforming image:", error);
 
