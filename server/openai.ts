@@ -210,7 +210,7 @@ export async function transformImage(
         fs.unlinkSync(tempFilePath);
         console.log(`Cleaned up temporary file after error: ${tempFilePath}`);
       }
-    } catch (cleanupError) {
+    } catch (cleanupError: any) {
       console.error(`Error cleaning up after failure: ${cleanupError.message}`);
     }
     
