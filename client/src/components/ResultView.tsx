@@ -42,36 +42,36 @@ export default function ResultView({
 }: ResultViewProps) {
   // Get authentication state
   const { user } = useAuth();
-  
+
   // Track which image is selected for download/edit
   const [selectedImage, setSelectedImage] = useState<string>(transformedImage);
-  
+
   // State for coloring book transformation
   const [isColoringBookLoading, setIsColoringBookLoading] = useState(false);
   const [coloringBookImage, setColoringBookImage] = useState<string | null>(null);
   const { toast } = useToast();
-  
+
   // Set initial selected image when component loads or when images change
   useEffect(() => {
     setSelectedImage(transformedImage);
   }, [transformedImage]);
-  
+
   // Check if this is an edit (editsUsed > 0) or if email has already been collected
   const isEdit = editsUsed > 0;
   const emailAlreadyCollected = localStorage.getItem('emailCollected') === 'true';
-  
+
   // Show email dialog for guests who try to download or edit images
   const isGuest = !user; // If there's no user, we're in guest mode
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [actionRequiringEmail, setActionRequiringEmail] = useState<'download' | 'edit' | 'coloring' | null>(null);
   const [emailSubmitted, setEmailSubmitted] = useState(emailAlreadyCollected || !!user);
   const effectiveUserId = user?.id || userId || 1; // Use provided userId or logged in user ID or fallback to 1
-  
+
   const handleEmailSubmitted = () => {
     localStorage.setItem('emailCollected', 'true');
     setEmailSubmitted(true);
     setShowEmailDialog(false);
-    
+
     // Execute the action that was pending email collection
     if (actionRequiringEmail === 'download') {
       handleDownload();
@@ -81,11 +81,11 @@ export default function ResultView({
       handleColoringBookTransform();
     }
   };
-  
+
   const handleSkipEmail = () => {
     setShowEmailDialog(false);
   };
-  
+
   // Function to handle downloading the selected image
   const handleDownload = () => {
     // If user is not logged in and email hasn't been collected, show email dialog
@@ -94,11 +94,11 @@ export default function ResultView({
       setShowEmailDialog(true);
       return;
     }
-    
+
     // Otherwise proceed with download of the selected image
     downloadImage(selectedImage, getFilenameFromPath(selectedImage));
   };
-  
+
   // Function to handle coloring book transformation
   const handleColoringBookTransform = async () => {
     // If user is not logged in and email hasn't been collected, show email dialog
@@ -107,25 +107,25 @@ export default function ResultView({
       setShowEmailDialog(true);
       return;
     }
-    
+
     // Check if we already have a coloring book image
     if (coloringBookImage) {
       setSelectedImage(coloringBookImage);
       return;
     }
-    
+
     try {
       setIsColoringBookLoading(true);
-      
+
       // Make API request to transform the image
       const response = await apiRequest("POST", "/api/product-enhancement/coloring-book", {
         imagePath: selectedImage,
         userId: effectiveUserId
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         // Handle credit errors specifically
         if (errorData.error === "credit_required") {
           toast({
@@ -135,15 +135,15 @@ export default function ResultView({
           });
           return;
         }
-        
+
         // Handle other errors
         throw new Error(errorData.message || "Failed to create coloring book style");
       }
-      
+
       const data = await response.json();
       setColoringBookImage(data.transformedImageUrl);
       setSelectedImage(data.transformedImageUrl);
-      
+
       toast({
         title: "Coloring Book Style Created!",
         description: "Your image has been transformed into coloring book style.",
@@ -159,7 +159,7 @@ export default function ResultView({
       setIsColoringBookLoading(false);
     }
   };
-  
+
   // Function to save the user's image selection to the database
   const saveImageSelection = async (imagePath: string) => {
     if (transformationId) {
@@ -171,7 +171,7 @@ export default function ResultView({
           },
           body: JSON.stringify({ selectedImagePath: imagePath }),
         });
-        
+
         if (response.ok) {
           console.log('Image selection saved successfully');
         } else {
@@ -193,7 +193,7 @@ export default function ResultView({
         onEmailSubmitted={handleEmailSubmitted}
         userId={effectiveUserId}
       />
-      
+
       <div className="w-full max-w-3xl mx-auto">
         {/* Transformation Complete Message */}
         <div className="text-center mb-6">
@@ -209,7 +209,7 @@ export default function ResultView({
             </div>
           )}
         </div>
-        
+
         {/* Side-by-side image display */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* First transformed image */}
@@ -222,9 +222,13 @@ export default function ResultView({
           >
             <div className="aspect-w-1 aspect-h-1 relative">
               <img 
-                src={transformedImage} 
+                src={typeof transformedImage === 'string' ? transformedImage : (transformedImage instanceof Blob ? URL.createObjectURL(transformedImage) : '')} 
                 alt="Transformed image option 1" 
-                className="object-cover w-full h-full" 
+                className="object-cover w-full h-full"
+                onError={(e) => {
+                  console.error('Error loading transformed image:', transformedImage);
+                  e.currentTarget.src = originalImage; // Fallback to original image
+                }}
               />
               {selectedImage === transformedImage && (
                 <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
@@ -273,7 +277,7 @@ export default function ResultView({
             Click on an image to select it for download or editing
           </span>
         </p>
-        
+
         {/* Transformation completed message - replaced the original prompt display */}
         <div className="p-4 rounded-lg mb-8 border border-gray-200">
           <div className="flex items-start">
@@ -290,7 +294,7 @@ export default function ResultView({
             </div>
           </div>
         </div>
-        
+
         {/* First row: Edit and Download */}
         <div className="flex flex-col space-y-4">
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -304,7 +308,7 @@ export default function ResultView({
                     setShowEmailDialog(true);
                     return;
                   }
-                  
+
                   // Otherwise, proceed with edit passing the selected image
                   if (onEditImage) {
                     onEditImage(selectedImage);
@@ -328,7 +332,7 @@ export default function ResultView({
               <Download className="h-4 w-4 mr-2" /> Download Image
             </Button>
           </div>
-          
+
           {/* Second row: Coloring Book Style, Try Another Prompt and Upload New Image */}
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <Button 
@@ -348,7 +352,7 @@ export default function ResultView({
               Upload New Image
             </Button>
           </div>
-          
+
           {/* Third row: Coloring Book button */}
           <div className="mt-4">
             <Button
@@ -375,7 +379,7 @@ export default function ResultView({
             </Button>
           </div>
         </div>
-        
+
         <div className="mt-8 p-4 bg-blue-50 rounded-lg text-center">
           <p className="text-blue-700">
             <span className="mr-1">⭐</span> 

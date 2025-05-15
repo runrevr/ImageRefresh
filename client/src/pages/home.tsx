@@ -70,7 +70,7 @@ export default function Home() {
   const { user: authUser } = useAuth();
   // Initialize local user state with data from auth
   const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
-  
+
   // Update local user state when auth user changes
   useEffect(() => {
     if (authUser) {
@@ -89,7 +89,7 @@ export default function Home() {
     }
   }, [authUser]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  
+
   const [selectedTransformation, setSelectedTransformation] =
     useState<TransformationType | null>(null);
   const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
@@ -105,7 +105,7 @@ export default function Home() {
   useEffect(() => {
     const fetchUserCredits = async () => {
       if (!userCredits) return;
-      
+
       try {
         const response = await apiRequest("GET", `/api/credits/${userCredits.id}`);
         const data = await response.json();
@@ -183,7 +183,7 @@ export default function Home() {
   const handleUpload = (imagePath: string, imageUrl: string) => {
     console.log("Image uploaded, path:", imagePath);
     console.log("Image URL:", imageUrl);
-    
+
     // Validate inputs
     if (!imagePath || !imageUrl) {
       console.error("Invalid image path or URL received in handleUpload");
@@ -194,7 +194,7 @@ export default function Home() {
       });
       return;
     }
-    
+
     setOriginalImage(imageUrl);
     setOriginalImagePath(imagePath);
 
@@ -237,7 +237,7 @@ export default function Home() {
     console.log("Image size:", imageSize);
     console.log("Original image path:", originalImagePath);
     console.log("User credits:", userCredits);
-    
+
     // Validate image path exists before proceeding
     if (!originalImagePath) {
       toast({
@@ -248,12 +248,12 @@ export default function Home() {
       setCurrentStep(Step.Upload);
       return;
     }
-    
+
     // Log the full prompt for debugging
     const promptLength = promptText?.length || 0;
     const promptPreview = promptText ? promptText.substring(0, 50) + "..." : "empty";
     console.log("Full prompt being sent:", promptText);
-    
+
     setPrompt(promptText);
     setCurrentStep(Step.Processing);
 
@@ -271,19 +271,19 @@ export default function Home() {
         userId: userCredits?.id,
         imageSize: imageSize,
       });
-      
+
       if (!originalImagePath) {
         console.error("Missing originalImagePath. Upload may not have completed properly.");
         throw new Error("Missing image path. Please upload an image again.");
       }
-      
+
       if (!promptText || promptText.trim().length === 0) {
         console.error("Empty prompt text");
         throw new Error("Missing prompt text. Please provide a description for the transformation.");
       }
-      
+
       console.log("Full prompt being sent:", promptText);
-      
+
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
         prompt: promptText,
@@ -291,217 +291,224 @@ export default function Home() {
         imageSize: imageSize,
       });
 
-      const data = await response.json();
-      
       if (response.ok) {
-        console.log("Transformation successful, result:", data);
-        
-        // Check if this is a synchronous or asynchronous response
-        if (data.transformedImageUrl) {
-          // Immediate response with transformed image
-          setTransformedImage(data.transformedImageUrl);
-          
-          // Set the second transformed image if it exists
-          if (data.secondTransformedImageUrl) {
-            console.log("Found second transformed image:", data.secondTransformedImageUrl);
-            setSecondTransformedImage(data.secondTransformedImageUrl);
-          } else {
-            setSecondTransformedImage(null);
-          }
-          
-          // Store transformation data including the database ID
-          setCurrentTransformation(data);
-          setCurrentStep(Step.Result);
-  
-          // Refresh user credits
-          const creditsResponse = await apiRequest(
-            "GET",
-            `/api/credits/${userCredits?.id}`,
-          );
-          const creditsData = await creditsResponse.json();
-          setUserCredits((prevUser) => prevUser ? {
-            ...prevUser,
-            freeCreditsUsed: creditsData.freeCreditsUsed,
-            paidCredits: creditsData.paidCredits,
-          } : null);
-        } else if (data.transformationId) {
-          // Asynchronous response - we need to poll for the result
-          console.log("Transformation started, polling for status...", data.transformationId);
-          
-          // Store the transformation ID for polling
-          setCurrentTransformation({ id: data.transformationId });
-          
-          // Set up polling for transformation status
-          // Separate variable to track attempts within the checkStatus function
-          let statusCheckAttempts = 0;
-          
-          const checkStatus = async () => {
-            statusCheckAttempts++; // Track the number of status checks
-            
-            try {
-              console.log("Checking transformation status...", data.transformationId);
-              const statusResponse = await apiRequest(
-                "GET", 
-                `/api/transformation/${data.transformationId}`
-              );
-              
-              if (!statusResponse.ok) {
-                console.error("Error checking transformation status:", statusResponse.status);
-                throw new Error("Failed to check transformation status");
+          // First try to parse as JSON in case it's a status response
+          try {
+            const data = await response.clone().json();
+            console.log("Transformation successful, result:", data);
+
+            if (data.transformedImageUrl) {
+              // Immediate response with transformed image URL
+              setTransformedImage(data.transformedImageUrl);
+
+              // Set the second transformed image if it exists
+              if (data.secondTransformedImageUrl) {
+                console.log("Found second transformed image:", data.secondTransformedImageUrl);
+                setSecondTransformedImage(data.secondTransformedImageUrl);
+              } else {
+                setSecondTransformedImage(null);
               }
-              
-              const statusData = await statusResponse.json();
-              console.log("Transformation status:", statusData);
-              
-              // Check for completion or available image paths
-              const hasCompletedStatus = statusData.status === "completed";
-              const hasTransformedImagePath = !!statusData.transformedImagePath;
-              const hasTransformedImageUrl = !!statusData.transformedImageUrl;
-              
-              if ((hasCompletedStatus || hasTransformedImagePath) && 
-                  (hasTransformedImageUrl || hasTransformedImagePath)) {
-                console.log("Transformation completed:", statusData);
-                
-                // Handle different API response formats
-                const transformedUrl = statusData.transformedImageUrl || 
-                  (statusData.transformedImagePath ? `/${statusData.transformedImagePath}` : null);
-                
-                if (transformedUrl) {
-                  setTransformedImage(transformedUrl);
-                  
-                  // Set the second transformed image if it exists
-                  const secondUrl = statusData.secondTransformedImageUrl || 
-                    (statusData.secondTransformedImagePath ? `/${statusData.secondTransformedImagePath}` : null);
-                  
-                  if (secondUrl) {
-                    console.log("Found second transformed image:", secondUrl);
-                    setSecondTransformedImage(secondUrl);
-                  } else {
-                    setSecondTransformedImage(null);
+
+              // Store transformation data including the database ID
+              setCurrentTransformation(data);
+              setCurrentStep(Step.Result);
+
+              // Refresh user credits
+              const creditsResponse = await apiRequest(
+                "GET",
+                `/api/credits/${userCredits?.id}`,
+              );
+              const creditsData = await creditsResponse.json();
+              setUserCredits((prevUser) => prevUser ? {
+                ...prevUser,
+                freeCreditsUsed: creditsData.freeCreditsUsed,
+                paidCredits: creditsData.paidCredits,
+              } : null);
+            } else if (data.transformationId) {
+              // Asynchronous response - we need to poll for the result
+              console.log("Transformation started, polling for status...", data.transformationId);
+
+              // Store the transformation ID for polling
+              setCurrentTransformation({ id: data.transformationId });
+
+              // Set up polling for transformation status
+              // Separate variable to track attempts within the checkStatus function
+              let statusCheckAttempts = 0;
+
+              const checkStatus = async () => {
+                statusCheckAttempts++; // Track the number of status checks
+
+                try {
+                  console.log("Checking transformation status...", data.transformationId);
+                  const statusResponse = await apiRequest(
+                    "GET", 
+                    `/api/transformation/${data.transformationId}`
+                  );
+
+                  if (!statusResponse.ok) {
+                    console.error("Error checking transformation status:", statusResponse.status);
+                    throw new Error("Failed to check transformation status");
                   }
-                  
-                  // Store transformation data
-                  setCurrentTransformation(statusData);
-                  setCurrentStep(Step.Result);
-                  
-                  return true; // polling complete
-                }
-                
-                // If we have a completed status but no URL, continue polling a few more times
-                if (hasCompletedStatus && !transformedUrl && statusCheckAttempts < maxAttempts - 5) {
-                  console.log("Status is completed but no image URL yet, continuing to poll");
-                  return false;
-                }
-                
-                // If we're near the max attempts and still no URL, treat as failure
-                if (!transformedUrl && statusCheckAttempts >= maxAttempts - 5) {
-                  console.error("Transformation status is completed but no image URL available");
+
+                  const statusData = await statusResponse.json();
+                  console.log("Transformation status:", statusData);
+
+                  // Check for completion or available image paths
+                  const hasCompletedStatus = statusData.status === "completed";
+                  const hasTransformedImagePath = !!statusData.transformedImagePath;
+                  const hasTransformedImageUrl = !!statusData.transformedImageUrl;
+
+                  if ((hasCompletedStatus || hasTransformedImagePath) && 
+                      (hasTransformedImageUrl || hasTransformedImagePath)) {
+                    console.log("Transformation completed:", statusData);
+
+                    // Handle different API response formats
+                    const transformedUrl = statusData.transformedImageUrl || 
+                      (statusData.transformedImagePath ? `/${statusData.transformedImagePath}` : null);
+
+                    if (transformedUrl) {
+                      setTransformedImage(transformedUrl);
+
+                      // Set the second transformed image if it exists
+                      const secondUrl = statusData.secondTransformedImageUrl || 
+                        (statusData.secondTransformedImagePath ? `/${statusData.secondTransformedImagePath}` : null);
+
+                      if (secondUrl) {
+                        console.log("Found second transformed image:", secondUrl);
+                        setSecondTransformedImage(secondUrl);
+                      } else {
+                        setSecondTransformedImage(null);
+                      }
+
+                      // Store transformation data
+                      setCurrentTransformation(statusData);
+                      setCurrentStep(Step.Result);
+
+                      return true; // polling complete
+                    }
+
+                    // If we have a completed status but no URL, continue polling a few more times
+                    if (hasCompletedStatus && !transformedUrl && statusCheckAttempts < maxAttempts - 5) {
+                      console.log("Status is completed but no image URL yet, continuing to poll");
+                      return false;
+                    }
+
+                    // If we're near the max attempts and still no URL, treat as failure
+                    if (!transformedUrl && statusCheckAttempts >= maxAttempts - 5) {
+                      console.error("Transformation status is completed but no image URL available");
+                      toast({
+                        title: "Transformation error",
+                        description: "Unable to retrieve the transformed image. Please try again.",
+                        variant: "destructive",
+                      });
+                      setCurrentStep(Step.Prompt);
+                      return true; // stop polling
+                    }
+
+                    // Refresh user credits
+                    const creditsResponse = await apiRequest(
+                      "GET",
+                      `/api/credits/${userCredits?.id}`,
+                    );
+                    const creditsData = await creditsResponse.json();
+                    setUserCredits((prevUser) => prevUser ? {
+                      ...prevUser,
+                      freeCreditsUsed: creditsData.freeCreditsUsed,
+                      paidCredits: creditsData.paidCredits,
+                    } : null);
+
+                    return true; // polling complete
+                  } else if (statusData.status === "failed") {
+                    console.error("Transformation failed:", statusData);
+                    toast({
+                      title: "Transformation failed",
+                      description: statusData.message || "The image transformation failed. Please try again.",
+                      variant: "destructive",
+                    });
+                    setCurrentStep(Step.Prompt);
+                    return true; // polling complete
+                  }
+
+                  return false; // continue polling
+                } catch (error) {
+                  console.error("Error polling transformation status:", error);
                   toast({
-                    title: "Transformation error",
-                    description: "Unable to retrieve the transformed image. Please try again.",
+                    title: "Error checking status",
+                    description: "There was a problem checking your transformation status. Please try again.",
                     variant: "destructive",
                   });
                   setCurrentStep(Step.Prompt);
-                  return true; // stop polling
+                  return true; // stop polling on error
                 }
-                
-                // Refresh user credits
-                const creditsResponse = await apiRequest(
-                  "GET",
-                  `/api/credits/${userCredits?.id}`,
-                );
-                const creditsData = await creditsResponse.json();
-                setUserCredits((prevUser) => prevUser ? {
-                  ...prevUser,
-                  freeCreditsUsed: creditsData.freeCreditsUsed,
-                  paidCredits: creditsData.paidCredits,
-                } : null);
-                
-                return true; // polling complete
-              } else if (statusData.status === "failed") {
-                console.error("Transformation failed:", statusData);
-                toast({
-                  title: "Transformation failed",
-                  description: statusData.message || "The image transformation failed. Please try again.",
-                  variant: "destructive",
-                });
-                setCurrentStep(Step.Prompt);
-                return true; // polling complete
-              }
-              
-              return false; // continue polling
-            } catch (error) {
-              console.error("Error polling transformation status:", error);
+              };
+
+              // Start polling (every 3 seconds)
+              const pollInterval = 3000;
+              const maxAttempts = 60; // 180 seconds max (3 minutes)
+              let attempts = 0;
+
+              const pollTimer = setInterval(async () => {
+                attempts++;
+                try {
+                  const isDone = await checkStatus();
+                  if (isDone || attempts >= maxAttempts) {
+                    clearInterval(pollTimer);
+
+                    if (attempts >= maxAttempts && !isDone) {
+                      console.error("Transformation polling timed out");
+
+                      // Store transformation ID to allow checking later
+                      if (data.transformationId) {
+                        // Save to localStorage for retrieval later
+                        try {
+                          const pendingTransformations = JSON.parse(localStorage.getItem('pendingTransformations') || '[]');
+                          pendingTransformations.push({
+                            id: data.transformationId,
+                            timestamp: new Date().toISOString(),
+                            prompt: promptText?.substring(0, 100) + '...'
+                          });
+                          localStorage.setItem('pendingTransformations', JSON.stringify(pendingTransformations));
+                        } catch (e) {
+                          console.error("Error storing pending transformation", e);
+                        }
+                      }
+
+                      toast({
+                        title: "Transformation in progress",
+                        description: "Your transformation is still processing. You can check your account page later to see the results.",
+                      });
+                      setCurrentStep(Step.Prompt);
+                    }
+                  }
+                } catch (error) {
+                  console.error("Error in polling interval:", error);
+                  clearInterval(pollTimer);
+                  setCurrentStep(Step.Prompt);
+                }
+              }, pollInterval);
+
+              // Initial check (don't wait for first interval)
+              checkStatus().catch(error => {
+                console.error("Error in initial status check:", error);
+              });
+            } else {
+              // No transformation ID or image URL - something went wrong
+              console.error("Unexpected response format:", data);
               toast({
-                title: "Error checking status",
-                description: "There was a problem checking your transformation status. Please try again.",
+                title: "Unexpected response",
+                description: "Received an unexpected response from the server. Please try again.",
                 variant: "destructive",
               });
               setCurrentStep(Step.Prompt);
-              return true; // stop polling on error
             }
-          };
-          
-          // Start polling (every 3 seconds)
-          const pollInterval = 3000;
-          const maxAttempts = 60; // 180 seconds max (3 minutes)
-          let attempts = 0;
-          
-          const pollTimer = setInterval(async () => {
-            attempts++;
-            try {
-              const isDone = await checkStatus();
-              if (isDone || attempts >= maxAttempts) {
-                clearInterval(pollTimer);
-                
-                if (attempts >= maxAttempts && !isDone) {
-                  console.error("Transformation polling timed out");
-                  
-                  // Store transformation ID to allow checking later
-                  if (data.transformationId) {
-                    // Save to localStorage for retrieval later
-                    try {
-                      const pendingTransformations = JSON.parse(localStorage.getItem('pendingTransformations') || '[]');
-                      pendingTransformations.push({
-                        id: data.transformationId,
-                        timestamp: new Date().toISOString(),
-                        prompt: promptText?.substring(0, 100) + '...'
-                      });
-                      localStorage.setItem('pendingTransformations', JSON.stringify(pendingTransformations));
-                    } catch (e) {
-                      console.error("Error storing pending transformation", e);
-                    }
-                  }
-                  
-                  toast({
-                    title: "Transformation in progress",
-                    description: "Your transformation is still processing. You can check your account page later to see the results.",
-                  });
-                  setCurrentStep(Step.Prompt);
-                }
-              }
-            } catch (error) {
-              console.error("Error in polling interval:", error);
-              clearInterval(pollTimer);
-              setCurrentStep(Step.Prompt);
-            }
-          }, pollInterval);
-          
-          // Initial check (don't wait for first interval)
-          checkStatus().catch(error => {
-            console.error("Error in initial status check:", error);
-          });
+          } catch (jsonError) {
+            // If JSON parsing fails, it might be an image
+            console.warn("Failed to parse response as JSON, attempting to use as image URL");
+            // Assuming the response is the image URL
+            setTransformedImage(response.url); // Use the URL directly
+            setCurrentStep(Step.Result);
+          }
         } else {
-          // No transformation ID or image URL - something went wrong
-          console.error("Unexpected response format:", data);
-          toast({
-            title: "Unexpected response",
-            description: "Received an unexpected response from the server. Please try again.",
-            variant: "destructive",
-          });
-          setCurrentStep(Step.Prompt);
-        }
-      } else {
         // Check for specific error types
         console.error("Server returned error response:", data);
         if (data.error === "content_safety") {
@@ -737,19 +744,19 @@ export default function Home() {
     try {
       console.log(`Applying ${presetType} preset transformation`);
       console.log("Original image path:", originalImagePath);
-      
+
       // Validate image path is not empty
       if (!originalImagePath) {
         throw new Error("Image path is missing. Please try uploading the image again.");
       }
-      
+
       const requestData = {
         originalImagePath,
         userId: userCredits?.id,
         preset: presetType,
         imageSize,
       };
-      
+
       console.log("Sending transformation request with data:", requestData);
       const response = await apiRequest("POST", "/api/transform", requestData);
 
@@ -757,7 +764,7 @@ export default function Home() {
 
       if (response.ok) {
         setTransformedImage(data.transformedImageUrl);
-        
+
         // Set the second transformed image if it exists
         if (data.secondTransformedImageUrl) {
           console.log("Found second transformed image:", data.secondTransformedImageUrl);
@@ -765,7 +772,7 @@ export default function Home() {
         } else {
           setSecondTransformedImage(null);
         }
-        
+
         // Store transformation data including the database ID
         setCurrentTransformation(data);
         setCurrentStep(Step.Result);
@@ -905,7 +912,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Right side content (70%) */}
                 <div className="w-full md:w-[70%] md:pl-12">
                   <h2 className="text-3xl md:text-4xl font-bold text-[#333333] mb-3">
@@ -986,7 +993,7 @@ export default function Home() {
                     FLASHBACK TO THE 80'S
                   </Button>
                 </div>
-                
+
                 {/* Right side image (30%) */}
                 <div className="w-full md:w-[30%] mb-8 md:mb-0 order-1 md:order-2">
                   <div className="relative rounded-xl overflow-hidden shadow-lg">
@@ -1002,7 +1009,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             {/* Kids Drawing Transformation Section */}
             <div className="w-full bg-white py-16 mb-0">
               <div className="max-w-6xl mx-auto px-4">
@@ -1019,7 +1026,7 @@ export default function Home() {
                     Our AI brings imagination to life - from beloved pets to magical creatures.
                   </p>
                 </div>
-                
+
                 {/* 4-Column Grid of Before/After Images */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
                   {/* Column 1: Bear */}
@@ -1039,7 +1046,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  
+
                   {/* Column 2: Giraffe */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
@@ -1057,7 +1064,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  
+
                   {/* Column 3: Dog and Cat */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
@@ -1075,7 +1082,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  
+
                   {/* Column 4: Alicorn */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
@@ -1094,7 +1101,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* CTA Button */}
                 <div className="text-center">
                   <Button
@@ -1111,7 +1118,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             {/* Feature Highlights */}
             <div className="w-full bg-[#333333] py-12 mt-0 pt-12">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">

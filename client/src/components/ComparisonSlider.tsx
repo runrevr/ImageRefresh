@@ -14,10 +14,10 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
 
   const handleMove = (clientX: number, elementRef: React.RefObject<HTMLDivElement>) => {
     if (!isDragging || !elementRef.current) return;
-    
+
     const rect = elementRef.current.getBoundingClientRect();
     let newPosition = ((clientX - rect.left) / rect.width) * 100;
-    
+
     // Clamp position between 0 and 100
     newPosition = Math.min(100, Math.max(0, newPosition));
     setPosition(newPosition);
@@ -36,7 +36,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
     e.stopPropagation();
     setIsFullscreen(!isFullscreen);
   };
-  
+
   // Handle image click to open fullscreen
   const handleImageClick = (e: React.MouseEvent) => {
     // Only open fullscreen on click if not dragging
@@ -112,7 +112,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
           <p className={`font-medium ${isFullscreenView ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>Transformed Image</p>
         </div>
       </div>
-      
+
       {/* Before Image (Original) with clip path */}
       <div 
         className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden"
@@ -127,7 +127,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
           <p className={`font-medium ${isFullscreenView ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>Original Image</p>
         </div>
       </div>
-      
+
       {/* Slider Control */}
       <div 
         className="absolute top-0 bottom-0 w-1 bg-white"
@@ -186,7 +186,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
                 <path d="M18 6L6 18M6 6L18 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            
+
             {/* Side-by-side view instead of slider in fullscreen */}
             <div className="grid grid-cols-2 h-full gap-4 bg-black bg-opacity-50 rounded-lg p-4">
               <div className="flex flex-col h-full">
@@ -201,7 +201,7 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
                   <p className="font-medium text-base md:text-lg">Original Image</p>
                 </div>
               </div>
-              
+
               <div className="flex flex-col h-full">
                 <div className="flex-grow flex items-center justify-center bg-gray-900 rounded-lg overflow-hidden">
                   <img 
