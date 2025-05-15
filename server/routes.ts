@@ -43,6 +43,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "ok" });
   });
+  
+  // Add an endpoint to check if an image exists (for debugging)
+  app.get("/api/check-image", (req, res) => {
+    try {
+      const { path: imagePath } = req.query;
+      
+      if (!imagePath) {
+        return res.status(400).json({ exists: false, error: "No path provided" });
+      }
+      
+      const paths = [
+        // Path as provided
+        imagePath as string,
+        // Path with process.cwd()
+        path.join(process.cwd(), imagePath as string),
+        // Path with uploads directory
+        path.join(process.cwd(), 'uploads', path.basename(imagePath as string))
+      ];
+      
+      const results = paths.map(p => ({
+        path: p,
+        exists: fs.existsSync(p)
+      }));
+      
+      const anyExists = results.some(r => r.exists);
+      
+      res.json({
+        exists: anyExists,
+        paths: results,
+        originalPath: imagePath
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        exists: false, 
+        error: error.message 
+      });
+    }
+  });
 
   app.post("/api/upload", upload.single("image"), (req, res) => {
     try {
@@ -65,14 +103,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/transform", async (req, res) => {
     try {
-      const { originalImagePath, prompt } = req.body;
+      const { originalImagePath, prompt, userId, imageSize, isEdit, previousTransformation } = req.body;
 
       if (!originalImagePath || !prompt) {
         return res.status(400).json({ message: "Original image path and prompt are required" });
       }
 
-      const imagePath = path.join(process.cwd(), originalImagePath);
+      console.log("Transformation request:", {
+        originalImagePath,
+        promptLength: prompt.length,
+        userId,
+        imageSize,
+        isEdit,
+        previousTransformation
+      });
+
+      // Normalize path handling - check if the path exists as provided first
+      let imagePath = originalImagePath;
+      
+      // If the path doesn't exist and isn't absolute, try to resolve it relative to process.cwd()
+      if (!fs.existsSync(imagePath) && !path.isAbsolute(imagePath)) {
+        imagePath = path.join(process.cwd(), originalImagePath);
+        console.log(`Trying resolved path: ${imagePath}`);
+      }
+      
+      // If still not found, try normalizing the path by removing the 'uploads/' prefix if it exists
+      if (!fs.existsSync(imagePath) && originalImagePath.startsWith('uploads/')) {
+        imagePath = path.join(process.cwd(), originalImagePath);
+        console.log(`Trying with uploads prefix: ${imagePath}`);
+      }
+      
+      // One more attempt - try using just the filename from uploads directory
+      if (!fs.existsSync(imagePath)) {
+        const filename = path.basename(originalImagePath);
+        imagePath = path.join(process.cwd(), 'uploads', filename);
+        console.log(`Last attempt with filename only: ${imagePath}`);
+      }
+      
+      if (!fs.existsSync(imagePath)) {
+        console.error(`Original image not found at any of the attempted paths. Last tried: ${imagePath}`);
+        return res.status(404).json({ 
+          message: "Original image not found", 
+          error: `Image not found at path: ${originalImagePath}` 
+        });
+      }
+
+      // Proceed with the transformation
       const transformedImagePath = await transformImageWithOpenAI(imagePath, prompt);
+
+      // Store transformation in database if userId is provided
+      if (userId) {
+        try {
+          const transformation = await storage.createTransformation({
+            userId,
+            originalImagePath,
+            prompt,
+            status: "completed",
+            editsUsed: isEdit ? 1 : 0
+          });
+          
+          await storage.updateTransformationStatus(
+            transformation.id,
+            "completed",
+            transformedImagePath
+          );
+          
+          console.log(`Transformation stored in database with ID: ${transformation.id}`);
+        } catch (dbError) {
+          console.error("Failed to store transformation in database:", dbError);
+          // Continue anyway since we have the transformed image
+        }
+      }
 
       res.json({
         transformedImagePath,

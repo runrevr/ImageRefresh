@@ -37,13 +37,24 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
       console.log(`[OpenAI] Using API key: ${keyPrefix}...${keySuffix}`);
     }
     
-    // Normalize input to ensure no leading slashes and only basename used
-    let normalizedImagePath = imagePath.replace(/^\/home\/runner\/workspace\//, '');
-    normalizedImagePath = normalizedImagePath.replace(/^\/+/, ''); // Remove leading slashes
-    normalizedImagePath = path.basename(normalizedImagePath); // Only allow file name
+    // Normalize input to ensure proper path resolution
+    let normalizedImagePath = imagePath;
     
-    // Construct full path using uploads directory
-    const fullImagePath = path.join(uploadsDir, normalizedImagePath);
+    // If the path is already relative to the project root, make it absolute
+    if (!path.isAbsolute(normalizedImagePath)) {
+      normalizedImagePath = path.join(process.cwd(), normalizedImagePath);
+    }
+    
+    // Handle case where the path might have the full workspace path already
+    normalizedImagePath = normalizedImagePath.replace(/^\/home\/runner\/workspace\//, '');
+    
+    // If the path is now relative or has been modified, make it absolute again
+    if (!path.isAbsolute(normalizedImagePath)) {
+      normalizedImagePath = path.join(process.cwd(), normalizedImagePath);
+    }
+    
+    // Set the full path for access
+    const fullImagePath = normalizedImagePath;
     
     // Add detailed logging
     console.log('[OpenAI] Image path construction:');
@@ -105,13 +116,15 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
       
       // Save the image to the uploads directory
       const imageExt = '.png'; // OpenAI returns PNG images
-      const transformedImagePath = path.join(uploadsDir, `transformed-${Date.now()}-${uuid()}${imageExt}`);
+      const uniqueId = `${Date.now()}-${uuid()}`;
+      const transformedFileName = `transformed-${uniqueId}${imageExt}`;
+      const transformedImagePath = path.join(uploadsDir, transformedFileName);
       
       console.log(`[OpenAI] Saving image to: ${transformedImagePath}`);
       fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
       
-      // Return the relative path from the project root
-      const relativePath = path.relative(process.cwd(), transformedImagePath).replace(/\\/g, '/');
+      // Return the path as uploads/filename for consistency
+      const relativePath = `uploads/${transformedFileName}`;
       console.log(`[OpenAI] Successfully saved transformed image to: ${relativePath}`);
       
       return relativePath;
