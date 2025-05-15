@@ -269,7 +269,8 @@ export default function ResultView({
                     src={secondTransformedImage} 
                     alt="Transformed image option 2" 
                     className="object-cover w-full h-full" 
-                />
+                  />
+                )}
                 {selectedImage === secondTransformedImage && (
                   <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
                     <Check className="h-4 w-4" />

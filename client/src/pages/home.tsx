@@ -296,29 +296,37 @@ export default function Home() {
           // First try to parse as JSON in case it's a status response
           try {
             const data = await response.clone().json();
+            console.log("API transform raw response:", data);
+            alert(JSON.stringify(data, null, 2)); // Popup so we always see the format
             console.log("Transformation successful, result:", data);
-            console.log("API Response shape:", {
-              transformedImageUrl: typeof data.transformedImageUrl,
-              secondTransformedImageUrl: typeof data.secondTransformedImageUrl,
-              fullData: data
-            });
 
-            if (response.ok) {
-              // Validate and handle the primary transformed image
-              if (typeof data.transformedImageUrl === 'string') {
-                setTransformedImage(data.transformedImageUrl);
-              } else if (data.transformedImageUrl) {
-                console.error("Invalid transformedImageUrl format:", data.transformedImageUrl);
-                throw new Error("Invalid transformed image URL format");
-              }
+            // Implement the defensive extraction logic
+            let img1 = "";
+            let img2 = "";
 
-              // Validate and handle the second transformed image
-              if (typeof data.secondTransformedImageUrl === 'string') {
-                console.log("Found second transformed image:", data.secondTransformedImageUrl);
-                setSecondTransformedImage(data.secondTransformedImageUrl);
+            try {
+              if (typeof data === "string") {
+                img1 = data;
+              } else if (data && typeof data.transformedImageUrl === "string") {
+                img1 = data.transformedImageUrl;
+                img2 = data.secondTransformedImageUrl;
+              } else if (data && Array.isArray(data.images)) {
+                img1 = data.images[0]?.url || "";
+                img2 = data.images[1]?.url || "";
+              } else if (data && Array.isArray(data.result)) {
+                img1 = data.result[0] || "";
+                img2 = data.result[1] || "";
               } else {
-                setSecondTransformedImage(null);
+                console.error("API response format not recognized:", data);
+                alert("API response format not recognized:\n" + JSON.stringify(data, null, 2));
               }
+            } catch (e: any) {
+              console.error("Error extracting image URLs:", e, data);
+              alert("Error extracting image URLs:\n" + e.message);
+            }
+
+            setTransformedImage(img1);
+            setSecondTransformedImage(img2);
 
               // Store transformation data including the database ID
               setCurrentTransformation(data);
