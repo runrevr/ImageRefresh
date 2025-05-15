@@ -1,8 +1,8 @@
-// Simple script to run the application
+// Server startup script
 const { spawn } = require('child_process');
 const path = require('path');
 
-console.log('Starting ImageRefresh application...');
+console.log('Starting ImageRefresh server...');
 
 // Run the server
 const server = spawn('node', ['-r', 'tsx/register', 'server/index.ts'], {

@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from 'dotenv';
 import { setupTestRoutes } from "./routes/test-route";
 import { setupOpenAITestRoutes } from "./openai-test-route";
+import { setupSimpleRouter } from "./simple-router";
 import fs from 'fs';
 import path from 'path';
 
@@ -152,19 +153,9 @@ app.use((req, res, next) => {
   
   // Register OpenAI test routes
   app.use(setupOpenAITestRoutes());
-
-  // Configuration endpoint
-  app.get("/api/config", (req, res) => {
-    res.json({
-      someKey: "someValue",
-      featureFlags: {
-        newUI: true
-      },
-      openaiConfigured: !!process.env.OPENAI_API_KEY,
-      stripeConfigured: !!process.env.STRIPE_SECRET_KEY,
-      maxUploadSize: 10 * 1024 * 1024 // 10MB
-    });
-  });
+  
+  // Register simple compatibility routes
+  app.use(setupSimpleRouter());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
