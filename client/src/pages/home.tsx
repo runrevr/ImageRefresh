@@ -297,19 +297,23 @@ export default function Home() {
           try {
             const data = await response.clone().json();
             console.log("Transformation successful, result:", data);
+            console.log("API Response shape:", {
+              transformedImageUrl: typeof data.transformedImageUrl,
+              secondTransformedImageUrl: typeof data.secondTransformedImageUrl,
+              fullData: data
+            });
 
-            if (data.transformedImageUrl) {
-              // Validate transformed image URL
-              if (data.transformedImageUrl && !data.transformedImageUrl.includes('/api/transform')) {
-                console.log("Setting transformed image URL:", data.transformedImageUrl);
+            if (response.ok) {
+              // Validate and handle the primary transformed image
+              if (typeof data.transformedImageUrl === 'string') {
                 setTransformedImage(data.transformedImageUrl);
-              } else {
-                console.error("Invalid transformed image URL received:", data.transformedImageUrl);
-                setTransformedImage(null);
+              } else if (data.transformedImageUrl) {
+                console.error("Invalid transformedImageUrl format:", data.transformedImageUrl);
+                throw new Error("Invalid transformed image URL format");
               }
 
-              // Set the second transformed image if it exists and is valid
-              if (data.secondTransformedImageUrl && !data.secondTransformedImageUrl.includes('/api/transform')) {
+              // Validate and handle the second transformed image
+              if (typeof data.secondTransformedImageUrl === 'string') {
                 console.log("Found second transformed image:", data.secondTransformedImageUrl);
                 setSecondTransformedImage(data.secondTransformedImageUrl);
               } else {
@@ -937,7 +941,7 @@ export default function Home() {
                     Wonder how you or your friends would rock the iconic mullet? Upload any photo to instantly see magnificent "business in front, party in back" transformations! Our free new feature preserves natural hair color while adding perfect rock-and-roll attitude. Try it now and discover the mullet you were born to wear!
                   </p>
                   <Button
-                    className="bg-[#2A7B9B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
+                    className="bg-[#2A7B99B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
                     onClick={() => {
                       // If user is logged in, skip email check
                       if (userCredits?.id) {

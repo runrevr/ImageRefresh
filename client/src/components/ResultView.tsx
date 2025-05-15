@@ -221,7 +221,7 @@ export default function ResultView({
             }}
           >
             <div className="aspect-w-1 aspect-h-1 relative">
-              {transformedImage ? (
+              {transformedImage && typeof transformedImage === 'string' ? (
                 <img 
                   src={transformedImage} 
                   alt="Transformed image option 1" 
@@ -264,10 +264,11 @@ export default function ResultView({
               }}
             >
               <div className="aspect-w-1 aspect-h-1 relative">
-                <img 
-                  src={secondTransformedImage} 
-                  alt="Transformed image option 2" 
-                  className="object-cover w-full h-full" 
+                {typeof secondTransformedImage === 'string' && (
+                  <img 
+                    src={secondTransformedImage} 
+                    alt="Transformed image option 2" 
+                    className="object-cover w-full h-full" 
                 />
                 {selectedImage === secondTransformedImage && (
                   <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
