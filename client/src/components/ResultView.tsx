@@ -221,15 +221,21 @@ export default function ResultView({
             }}
           >
             <div className="aspect-w-1 aspect-h-1 relative">
-              <img 
-                src={typeof transformedImage === 'string' ? transformedImage : (transformedImage instanceof Blob ? URL.createObjectURL(transformedImage) : '')} 
-                alt="Transformed image option 1" 
-                className="object-cover w-full h-full"
-                onError={(e) => {
-                  console.error('Error loading transformed image:', transformedImage);
-                  e.currentTarget.src = originalImage; // Fallback to original image
-                }}
-              />
+              {transformedImage && !transformedImage.includes('/api/transform') ? (
+                <img 
+                  src={typeof transformedImage === 'string' ? transformedImage : (transformedImage instanceof Blob ? URL.createObjectURL(transformedImage) : '')} 
+                  alt="Transformed image option 1" 
+                  className="object-cover w-full h-full"
+                  onError={(e) => {
+                    console.error('Error loading transformed image:', transformedImage);
+                    e.currentTarget.src = originalImage; // Fallback to original image
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <p className="text-gray-500">Loading transformed image...</p>
+                </div>
+              )}
               {selectedImage === transformedImage && (
                 <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
                   <Check className="h-4 w-4" />

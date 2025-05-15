@@ -298,11 +298,17 @@ export default function Home() {
             console.log("Transformation successful, result:", data);
 
             if (data.transformedImageUrl) {
-              // Immediate response with transformed image URL
-              setTransformedImage(data.transformedImageUrl);
+              // Validate transformed image URL
+              if (data.transformedImageUrl && !data.transformedImageUrl.includes('/api/transform')) {
+                console.log("Setting transformed image URL:", data.transformedImageUrl);
+                setTransformedImage(data.transformedImageUrl);
+              } else {
+                console.error("Invalid transformed image URL received:", data.transformedImageUrl);
+                setTransformedImage(null);
+              }
 
-              // Set the second transformed image if it exists
-              if (data.secondTransformedImageUrl) {
+              // Set the second transformed image if it exists and is valid
+              if (data.secondTransformedImageUrl && !data.secondTransformedImageUrl.includes('/api/transform')) {
                 console.log("Found second transformed image:", data.secondTransformedImageUrl);
                 setSecondTransformedImage(data.secondTransformedImageUrl);
               } else {

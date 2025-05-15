@@ -103,11 +103,20 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
     >
       {/* After Image (Transformed) */}
       <div className={`absolute inset-0 ${isFullscreenView ? 'bg-gray-900' : 'bg-gray-100'} flex flex-col items-center justify-center`}>
-        <img 
-          src={afterImage} 
-          className="max-w-full max-h-full object-contain" 
-          alt="Transformed image" 
-        />
+        {afterImage && !afterImage.includes('/api/transform') ? (
+            <img 
+              src={afterImage} 
+              className="max-w-full max-h-full object-contain" 
+              alt="Transformed image" 
+              onError={(e) => {
+                console.error('Error loading transformed image in slider:', afterImage);
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="text-gray-500">Loading transformed image...</p>
+            </div>
+          )}
         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white text-center">
           <p className={`font-medium ${isFullscreenView ? 'text-base md:text-lg' : 'text-sm md:text-base'}`}>Transformed Image</p>
         </div>
@@ -204,11 +213,20 @@ export default function ComparisonSlider({ beforeImage, afterImage }: Comparison
 
               <div className="flex flex-col h-full">
                 <div className="flex-grow flex items-center justify-center bg-gray-900 rounded-lg overflow-hidden">
-                  <img 
-                    src={afterImage} 
-                    className="max-w-full max-h-full object-contain" 
-                    alt="Transformed image" 
-                  />
+                  {afterImage && !afterImage.includes('/api/transform') ? (
+                    <img 
+                      src={afterImage} 
+                      className="max-w-full max-h-full object-contain" 
+                      alt="Transformed image" 
+                      onError={(e) => {
+                        console.error('Error loading transformed image in fullscreen:', afterImage);
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <p className="text-gray-500">Loading transformed image...</p>
+                    </div>
+                  )}
                 </div>
                 <div className="bg-black bg-opacity-80 p-3 text-white text-center rounded-b-lg">
                   <p className="font-medium text-base md:text-lg">Transformed Image</p>
