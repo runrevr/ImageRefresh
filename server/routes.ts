@@ -96,17 +96,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cb(null, uploadsDir);
       },
       filename: (req, file, cb) => {
-        cb(null, `image-${Date.now()}-${Math.floor(Math.random() * 1000000000)}.jpg`);
+        // Get the file extension from original filename or use a default
+        const fileExt = path.extname(file.originalname).toLowerCase() || '.jpg';
+        // Ensure we only use extensions that OpenAI accepts
+        const safeExt = ['.jpg', '.jpeg', '.png', '.webp'].includes(fileExt) ? fileExt : '.png';
+        cb(null, `image-${Date.now()}-${Math.floor(Math.random() * 1000000000)}${safeExt}`);
       }
     }),
     limits: {
       fileSize: 10 * 1024 * 1024, // 10 MB limit
     },
     fileFilter: (req, file, cb) => {
-      // Accept images only
-      if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      // Check MIME type (from multer) - only accept valid image types
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        console.log(`Rejected file upload with mimetype: ${file.mimetype}`);
+        // Note: multer expects cb(null, false) to silently reject the file
         return cb(null, false);
       }
+      
+      // Additional check for file extension
+      const ext = path.extname(file.originalname).toLowerCase();
+      if (!ext.match(/\.(jpg|jpeg|png|webp)$/i)) {
+        console.log(`Rejected file upload with extension: ${ext}`);
+        // Note: multer expects cb(null, false) to silently reject the file
+        return cb(null, false);
+      }
+      
+      console.log(`Accepted file upload: ${file.originalname}, MIME type: ${file.mimetype}`);
       cb(null, true);
     }
   });

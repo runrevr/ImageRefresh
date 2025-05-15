@@ -72,7 +72,9 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 
 export async function transformImage(
   imagePath: string, 
-  prompt: string
+  prompt: string,
+  imageSize = "square", // default to square
+  isEdit = false        // flag to indicate if this is an edit
 ): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");
@@ -80,15 +82,57 @@ export async function transformImage(
 
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
+    console.log(`Image size: ${imageSize}, Is Edit: ${isEdit}`);
 
+    // Import mime-types package
+    const mime = require('mime-types');
+    
+    // Get the file extension and determine the correct MIME type
+    const fileExtension = path.extname(imagePath).toLowerCase();
+    // Use mime-types package to get correct MIME type
+    let mimeType = mime.lookup(imagePath);
+    
+    // Fallback if mime-types doesn't identify the file
+    if (!mimeType || mimeType === 'application/octet-stream') {
+      // Manual assignment based on extension
+      mimeType = fileExtension === '.png' ? 'image/png' : 
+                (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 
+                fileExtension === '.webp' ? 'image/webp' : 'image/png'; // Default to PNG
+    }
+    
+    // Validate mime type is supported by OpenAI
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(mimeType)) {
+      throw new Error(`Unsupported image format: ${mimeType}. Only JPEG, PNG, and WebP are supported.`);
+    }
+    
+    console.log(`Image MIME type: ${mimeType}`);
+    
     const transformedFileName = `transformed-${Date.now()}-${path.basename(imagePath)}`;
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
 
+    // OpenAI edit API only supports 1024x1024 size
+    const sizeParam = "1024x1024";
+    
+    // Create FormData for the request
+    const formData = new FormData();
+    
+    // Read the file and get its buffer
+    const imageBuffer = fs.readFileSync(imagePath);
+    
+    // Create a proper readable stream based on the correct MIME type
+    const imageStream = fs.createReadStream(imagePath);
+    
+    // Log the image details before sending to OpenAI
+    console.log(`Sending image to OpenAI: ${imagePath}`);
+    console.log(`Image MIME type: ${mimeType}`);
+    console.log(`Image size parameter: ${sizeParam}`);
+    
+    // OpenAI API call with proper MIME type
     const response = await openai.images.edit({
-      image: fs.createReadStream(imagePath),
+      image: imageStream,
       prompt: prompt,
       n: 1,
-      size: "1024x1024"
+      size: sizeParam
     });
 
     if (response.data && response.data.length > 0 && response.data[0].url) {
