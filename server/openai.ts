@@ -80,151 +80,41 @@ export async function transformImage(
     throw new Error("OpenAI API key is not configured");
   }
 
-  // For tracking files that need cleanup
-  let tempFilePath = '';
-  
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
     console.log(`Image size: ${imageSize}, Is Edit: ${isEdit}`);
 
-    // Import mime-types package
-    const mime = require('mime-types');
+    // Import our specialized image upload helper
+    const { sendImageToOpenAI, downloadImage } = require('./openai-image-upload');
     
-    // Get the file extension and determine the correct MIME type
-    const fileExtension = path.extname(imagePath).toLowerCase();
-    
-    // Use mime-types package to get correct MIME type
-    let mimeType = mime.lookup(imagePath);
-    
-    // Fallback if mime-types doesn't identify the file
-    if (!mimeType || mimeType === 'application/octet-stream') {
-      // Manual assignment based on extension
-      mimeType = fileExtension === '.png' ? 'image/png' : 
-                (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 
-                fileExtension === '.webp' ? 'image/webp' : 'image/png'; // Default to PNG
-    }
-    
-    // Validate mime type is supported by OpenAI
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(mimeType)) {
-      throw new Error(`Unsupported image format: ${mimeType}. Only JPEG, PNG, and WebP are supported.`);
-    }
-    
-    console.log(`Original image path: ${imagePath}`);
-    console.log(`Detected MIME type: ${mimeType}`);
-    
-    // Define the proper file extension to ensure MIME type is recognized correctly
-    const fileExt = mimeType === 'image/png' ? '.png' : 
-                    mimeType === 'image/jpeg' ? '.jpg' : 
-                    mimeType === 'image/webp' ? '.webp' : '.png';
-    
-    // Create files with correct extensions
-    const tempFileName = `temp-${Date.now()}${fileExt}`;
-    tempFilePath = path.join(process.cwd(), "uploads", tempFileName);
-    
-    const transformedFileName = `transformed-${Date.now()}${fileExt}`;
+    // Create the destination filename for the transformed image
+    const fileExtension = path.extname(imagePath);
+    const transformedFileName = `transformed-${Date.now()}${fileExtension}`;
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
     
-    console.log(`Creating temporary file with correct extension: ${tempFilePath}`);
+    console.log(`Original image path: ${imagePath}`);
+    console.log(`Will save transformed image to: ${transformedPath}`);
     
-    // Read the original image and write it to a temporary file with the correct extension
-    // This ensures the file has the right MIME type when read again
-    const imageBuffer = fs.readFileSync(imagePath);
-    fs.writeFileSync(tempFilePath, imageBuffer);
+    // Send the image to OpenAI using our specialized helper
+    console.log('Using specialized image upload helper to ensure correct MIME type');
+    const imageUrl = await sendImageToOpenAI(
+      imagePath, 
+      prompt, 
+      process.env.OPENAI_API_KEY || ''
+    );
     
-    console.log(`Temporary file created: ${tempFilePath} (${imageBuffer.length} bytes)`);
+    console.log(`Received image URL from OpenAI: ${imageUrl}`);
     
-    // Use form-data for reliable content-type setting
-    const FormData = require('form-data');
-    const axios = require('axios');
+    // Download the resulting image
+    await downloadImage(imageUrl, transformedPath);
+    console.log(`Successfully downloaded transformed image to: ${transformedPath}`);
     
-    // Create new form with properly typed file
-    const form = new FormData();
-    
-    // Add the image with explicitly set content type
-    form.append('image', fs.createReadStream(tempFilePath), {
-      filename: tempFileName,
-      contentType: mimeType,
-      knownLength: imageBuffer.length
-    });
-    
-    // Add other parameters
-    form.append('prompt', prompt);
-    form.append('n', '1');
-    form.append('size', '1024x1024'); // OpenAI edit API only supports 1024x1024
-    
-    console.log(`Sending request to OpenAI at ${new Date().toISOString()}`);
-    console.log(`Using MIME type: ${mimeType}`);
-    
-    // Make the API call with form-data and proper headers
-    const response = await axios({
-      method: 'post',
-      url: 'https://api.openai.com/v1/images/edits',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        ...form.getHeaders()
-      },
-      data: form,
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity
-    });
-    
-    console.log(`Received response from OpenAI API: ${response.status}`);
-    
-    // Clean up the temporary file
-    try {
-      if (fs.existsSync(tempFilePath)) {
-        fs.unlinkSync(tempFilePath);
-        tempFilePath = ''; // Mark as cleaned up
-        console.log(`Temporary file deleted: ${tempFilePath}`);
-      }
-    } catch (cleanupError: any) {
-      console.error(`Error cleaning up temporary file: ${cleanupError.message}`);
-    }
-    
-    // Process the response and extract the image URL
-    if (response && 
-        response.data && 
-        response.data.data && 
-        response.data.data.length > 0 && 
-        response.data.data[0].url) {
-      
-      const imageUrl = response.data.data[0].url;
-      console.log(`Image URL received from OpenAI: ${imageUrl}`);
-      
-      // Download the resulting image and save it
-      await saveImageFromUrl(imageUrl, transformedPath);
-      console.log(`Transformed image saved to: ${transformedPath}`);
-      
-      return {
-        url: imageUrl,
-        transformedPath
-      };
-    } else {
-      console.error('Invalid response structure from OpenAI:', response.data);
-      throw new Error('No valid image URL in the OpenAI response');
-    }
+    return {
+      url: imageUrl,
+      transformedPath
+    };
   } catch (error: any) {
-    // Clean up temp file if it still exists
-    try {
-      if (tempFilePath && fs.existsSync(tempFilePath)) {
-        fs.unlinkSync(tempFilePath);
-        console.log(`Cleaned up temporary file after error: ${tempFilePath}`);
-      }
-    } catch (cleanupError: any) {
-      console.error(`Error cleaning up after failure: ${cleanupError.message}`);
-    }
-    
     console.error("Error in transformImage:", error);
-    
-    // Log detailed API error if available
-    if (error.response) {
-      console.error("OpenAI API error details:", {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: JSON.stringify(error.response.data)
-      });
-    }
-    
     throw new Error(`Error transforming image: ${error.message}`);
   }
 }
