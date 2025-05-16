@@ -1,6 +1,7 @@
 /**
- * Final OpenAI image transformation implementation
- * Uses GPT-Image-01 model with the /edits endpoint and multipart/form-data
+ * Final OpenAI GPT-Image-01 transformation implementation
+ * Uses GPT-Image-01 model with the /v1/images/edits endpoint and multipart/form-data
+ * This is the primary implementation used by the application for all image transformations
  */
 import fs from 'fs';
 import path from 'path';
