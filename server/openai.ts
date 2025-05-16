@@ -85,7 +85,7 @@ export async function transformImage(
     console.log(`Image size: ${imageSize}, Is Edit: ${isEdit}`);
 
     // Import our specialized image upload helper
-    const { sendImageToOpenAI, downloadImage } = require('./openai-image-upload');
+    const { sendImageToOpenAI, downloadImage } = await import('./openai-image-upload');
     
     // Create the destination filename for the transformed image
     const fileExtension = path.extname(imagePath);
