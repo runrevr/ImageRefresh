@@ -83,27 +83,16 @@ export async function transformImage(
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
     
-    // Import our implementation that follows the exact pattern specified
-    const { transformWithGptImage } = await import('./openai-base64-direct.js');
+    // Import only the GPT-Image-01 implementation that uses base64 encoding
+    const { transformWithGptImage, allowedSizes } = await import('./openai-base64-direct.js');
     
-    // Use the implementation that exactly follows the specified pattern:
-    // const fs = require('fs');
-    // const allowedSizes = ["256x256", "512x512", "1024x1024"];
-    // const imagePath = /* path to uploaded file */;
-    // const prompt = /* prompt string */;
-    // const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
-    // const selectedSize = req.body.size || "1024x1024";
-    // const finalSize = allowedSizes.includes(selectedSize) ? selectedSize : "1024x1024";
-    // const response = await openai.images.edit({
-    //   model: "gpt-image-1",
-    //   image: base64Image,
-    //   prompt: prompt,
-    //   n: 2,
-    //   moderation: "low",
-    //   size: finalSize,
-    // });
-    console.log(`Using image path: ${imagePath}`);
-    const result = await transformWithGptImage(imagePath, prompt, imageSize);
+    // Validate size parameter according to our three allowed sizes
+    const validSizes = ["1024x1024", "1536x1024", "1024x1536"];
+    const userSize = imageSize || "1024x1024";
+    const finalSize = validSizes.includes(userSize) ? userSize : "1024x1024";
+    
+    console.log(`Using image path: ${imagePath} with size: ${finalSize}`);
+    const result = await transformWithGptImage(imagePath, prompt, finalSize);
     
     console.log(`Successfully transformed image to: ${result.transformedPath}`);
     
@@ -120,9 +109,8 @@ export async function transformImage(
 }
 
 /**
- * Creates an image variation using the same two-stage process as transformImage
- * 1. Analyze the image with GPT-4o Vision
- * 2. Create a variation with gpt-image-1 based on the analysis
+ * Creates an image variation using the gpt-image-1 model with the /edit endpoint
+ * This function ensures we only use the edit endpoint as requested
  */
 export async function createImageVariation(imagePath: string): Promise<{ url: string; transformedPath: string }> {
   if (!isOpenAIConfigured()) {
@@ -130,150 +118,95 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
   }
 
   try {
-    // Create a prompt for the image variation
-    const variationPrompt = "Create a creative variation of this image with a different style and colors";
+    // Create a basic variation prompt
+    const variationPrompt = "Create a creative variation of this image with a different style and colors while keeping the main subject recognizable";
 
     try {
-      console.log("Starting two-stage variation process...");
+      console.log("Starting image variation process...");
 
-      // Read the image file
-      const variationImageBuffer = fs.readFileSync(imagePath);
-      const base64Image = variationImageBuffer.toString('base64');
+      // Read the image file as base64 using the exact pattern requested
+      const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+      console.log(`Image encoded as base64 (${base64Image.length} chars)`);
 
-      // Stage 1: Analyze the image with GPT-4o Vision
-      console.log("Stage 1: Analyzing image with GPT-4o vision capabilities for variation...");
-
-      // Determine the correct MIME type for the image
-      const fileExtension = path.extname(imagePath).toLowerCase();
-      const mimeType = fileExtension === '.png' ? 'image/png' : 
-                       (fileExtension === '.jpg' || fileExtension === '.jpeg') ? 'image/jpeg' : 'application/octet-stream';
-
-      // Use the GPT-4o model with vision capabilities to analyze the image
-      const visionResponse = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert image analyzer. Provide a detailed description of the image focusing on key elements, colors, shapes, composition and style."
-          },
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: "Describe this image in detail, focusing on elements that a creative reinterpretation should maintain."
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:${mimeType};base64,${base64Image}`
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 800
-      });
-
-      // Extract the detailed description, with a fallback if it's null/undefined
-      const content = visionResponse.choices[0].message.content;
-      const detailedDescription = content ? content : "A detailed product image";
-      console.log("Image analysis complete for variation. Description length:", detailedDescription.length);
-
-      // Stage 2: Generate a variation with gpt-image-1
-      console.log("Stage 2: Generating image variation with gpt-image-1...");
-
-      // Create an enhanced prompt with special emphasis on preserving the object's identity
-      // Add safety guardrails to avoid content policy violations
-      const safetyGuards = "Create a family-friendly, G-rated image appropriate for all ages. Avoid any content that could be interpreted as violent, sexual, political, or offensive in any way. Ensure the output maintains a positive and appropriate tone.";
-
-      const enhancedVariationPrompt = `Create an artistic variation of this exact product: "${detailedDescription}". 
-The product must be the main focus and clearly recognizable as the same item. 
-${variationPrompt}. 
-Keep the product's shape and key details intact but you may alter the style, artistic treatment, lighting, and background.
-${safetyGuards}`;
-
-      console.log("Using enhanced prompt that emphasizes maintaining the original subject's identity");
-
-      // Use gpt-image-1 for image variation
-      console.log("Using gpt-image-1 for image variation generation");
-
-      // Modified to remove unsupported 'style' parameter for gpt-image-1 model
-      // Instead we'll incorporate style instructions in the prompt
-      const finalVariationPrompt = `${enhancedVariationPrompt} Render in a natural, photorealistic style with fine details.`;
+      // Validate size parameter - use only the three sizes specified
+      const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
+      const finalSize = "1024x1024"; // Default to square format for variations
       
-      const imageResult = await openai.images.generate({
-        model: "gpt-image-1", // Use gpt-image-1 as requested
-        prompt: finalVariationPrompt,
+      console.log(`Using GPT-Image-01 with /edit endpoint for variation`);
+      
+      // Use the edit endpoint as requested - no generate endpoint
+      // Convert base64 string to buffer for proper API compatibility
+      const imageBuffer = Buffer.from(base64Image, 'base64');
+      
+      const imageResult = await openai.images.edit({
+        model: "gpt-image-1",
+        image: imageBuffer,
+        prompt: variationPrompt,
         n: 1,
-        size: "1024x1024",
-        quality: "high", // Changed to high
-        moderation: "low" // Added moderation parameter
+        size: finalSize,
+        moderation: "low"
       });
 
       console.log("Successfully generated variation with gpt-image-1 model");
-      console.log("Variation response format:", JSON.stringify(imageResult, null, 2));
-
-      // Generate unique name for the transformed image
+      
+      // Process the response
+      if (!imageResult.data || imageResult.data.length === 0) {
+        throw new Error("No image data in OpenAI response");
+      }
+      
+      // Create a filename for the transformed image
       const originalFileName = path.basename(imagePath);
       const transformedFileName = `variation-${Date.now()}-${originalFileName}`;
       const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
-
-      let imageUrl;
-
-      // Check what format we received - it could be URL or b64_json
-      if (imageResult.data && imageResult.data.length > 0) {
-        if (imageResult.data[0].url) {
-          // URL format - use saveImageFromUrl
-          imageUrl = imageResult.data[0].url;
-          console.log("Using URL format from variation response");
-          await saveImageFromUrl(imageUrl, transformedPath);
-        } else if (imageResult.data[0].b64_json) {
-          // Base64 format - save directly
-          console.log("Using b64_json format from variation response");
-          const imageBuffer = Buffer.from(imageResult.data[0].b64_json, "base64");
-          fs.writeFileSync(transformedPath, imageBuffer);
-          imageUrl = `data:image/png;base64,${imageResult.data[0].b64_json}`;
-        } else {
-          console.log("Unknown variation response format:", JSON.stringify(imageResult.data[0]));
-          throw new Error("Unexpected response format from gpt-image-1 for variation. Could not find url or b64_json in the response.");
-        }
-      } else {
-        throw new Error("No image data returned for variation. The gpt-image-1 model is not available for your account.");
+      
+      // Get the URL from the response
+      const imageUrl = imageResult.data[0].url;
+      if (!imageUrl) {
+        throw new Error("No image URL in the OpenAI response");
       }
-
+      
+      console.log(`Variation image URL: ${imageUrl}`);
+      
+      // Download and save the image
+      const imageResponse = await fetch(imageUrl);
+      if (!imageResponse.ok) {
+        throw new Error(`Failed to download image: ${imageResponse.status} ${imageResponse.statusText}`);
+      }
+      
+      const imageData = await imageResponse.arrayBuffer();
+      fs.writeFileSync(transformedPath, Buffer.from(imageData));
+      console.log(`Variation image saved to: ${transformedPath}`);
+      
       return {
         url: imageUrl,
         transformedPath,
       };
     } catch (err: any) {
-      console.error("Error with gpt-image-1 model for variation:", err);
+      console.error("Error with GPT-Image-01 model for variation:", err);
       
-      // Add more detailed error logging
-      console.error("OpenAI Variation Error Details:");
-      console.error("Error type:", typeof err);
-      console.error("Error code:", err.code);
-      console.error("Error message:", err.message);
-      console.error("Error status:", err.status);
-      console.error("Error stack:", err.stack);
+      // Add detailed error information
+      console.error("Error details:", {
+        message: err.message,
+        code: err.code,
+        status: err.status
+      });
       
       if (err.response) {
-        console.error("API Response error data:", JSON.stringify(err.response.data || {}, null, 2));
-        console.error("API Response error status:", err.response.status);
-        console.error("API Response error headers:", JSON.stringify(err.response.headers || {}, null, 2));
+        console.error("API Response error details:", {
+          status: err.response.status,
+          data: err.response.data
+        });
       }
 
-      // Check for specific errors related to gpt-image-1 access
+      // Check for specific errors related to the API
       if (err.message && err.message.includes("organization verification")) {
-        throw new Error("Your OpenAI account needs organization verification to use gpt-image-1. Error: " + err.message);
-      } else if (err.code === "unknown_parameter" && err.param === "response_format") {
-        throw new Error("The gpt-image-1 model does not support the response_format parameter for variations as initially expected. Please try with a different parameter configuration.");
+        throw new Error("Your OpenAI account needs verification to use this feature. Error: " + err.message);
       } else if (err.message && err.message.toLowerCase().includes("rate limit")) {
-        throw new Error("OpenAI rate limit exceeded. Please try again in a few minutes.");
+        throw new Error("Rate limit exceeded. Please try again in a few minutes.");
       } else if (err.message && err.message.toLowerCase().includes("billing")) {
-        throw new Error("OpenAI billing issue: " + err.message);
+        throw new Error("Billing issue: " + err.message);
       } else {
-        throw new Error("Failed to generate image variation with gpt-image-1: " + err.message);
+        throw new Error("Failed to generate image variation: " + err.message);
       }
     }
   } catch (error: any) {
