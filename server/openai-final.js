@@ -81,6 +81,7 @@ async function optimizeImage(imagePath) {
 export async function transformImage(imagePath, prompt, size = "1024x1024") {
   let tempImagePath = null;
   let absoluteImagePath = null;
+  let optimizedImagePath = null;
   
   try {
     console.log(`[OpenAI] Starting transformation with prompt: "${prompt}"`);
@@ -108,8 +109,12 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     // Use the latest GPT-4o Vision model for image analysis
     console.log('[OpenAI] Using GPT-4o with vision capabilities for image analysis');
     
-    // First, we'll convert the image to base64 for the vision model
-    const imageBuffer = fs.readFileSync(absoluteImagePath);
+    // Optimize and resize the image before analysis to improve performance
+    const optimizedImagePath = await optimizeImage(absoluteImagePath);
+    console.log(`[OpenAI] Optimized image for analysis: ${optimizedImagePath}`);
+    
+    // Load the optimized image and convert to base64
+    const imageBuffer = fs.readFileSync(optimizedImagePath);
     const base64Image = imageBuffer.toString('base64');
     
     // Import OpenAI
@@ -236,13 +241,17 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     
     throw error;
   } finally {
-    // Clean up temporary file if it was created
-    if (tempImagePath && absoluteImagePath && tempImagePath !== absoluteImagePath && fs.existsSync(tempImagePath)) {
+    // Clean up temporary files if they were created
+    const tempFiles = [tempImagePath, optimizedImagePath].filter(
+      path => path && absoluteImagePath && path !== absoluteImagePath && fs.existsSync(path)
+    );
+    
+    for (const tempFile of tempFiles) {
       try {
-        fs.unlinkSync(tempImagePath);
-        console.log(`[OpenAI] Removed temporary file: ${tempImagePath}`);
+        fs.unlinkSync(tempFile);
+        console.log(`[OpenAI] Removed temporary file: ${tempFile}`);
       } catch (cleanupError) {
-        console.error(`[OpenAI] Error removing temporary file: ${cleanupError.message}`);
+        console.error(`[OpenAI] Error removing temporary file ${tempFile}: ${cleanupError.message}`);
       }
     }
   }
