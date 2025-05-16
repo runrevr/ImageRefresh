@@ -1,5 +1,6 @@
 /**
  * Helper module for handling OpenAI image uploads with proper MIME type handling
+ * Uses Sharp for reliable image conversion to PNG format
  */
 import fs from 'fs';
 import path from 'path';
@@ -8,11 +9,13 @@ import FormData from 'form-data';
 import stream from 'stream';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
+import sharp from 'sharp';
 
 const streamPipeline = promisify(pipeline);
 
 /**
  * Sends an image to OpenAI's image edit API with explicit MIME type control
+ * Converts any image to PNG format using Sharp before sending to OpenAI
  * 
  * @param imagePath Path to the image file to send
  * @param prompt The prompt for OpenAI to use for image editing
@@ -24,9 +27,6 @@ export async function sendImageToOpenAI(
   prompt: string,
   apiKey: string
 ): Promise<string> {
-  // Explicitly supported MIME types by OpenAI
-  const supportedMimeTypes = ['image/png', 'image/jpeg', 'image/webp'];
-  
   // Ensure uploads directory exists
   const uploadsDir = path.join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadsDir)) {
@@ -38,98 +38,37 @@ export async function sendImageToOpenAI(
   const tempDir = path.join(uploadsDir, `temp-${opId}`);
   fs.mkdirSync(tempDir, { recursive: true });
   
-  // Read the image file
-  const imageBuffer = fs.readFileSync(imagePath);
-  
-  // Determine MIME type based on file signature/magic numbers
-  let mimeType = 'image/png'; // Default
-  
-  // Check PNG signature (first 8 bytes)
-  if (imageBuffer.length >= 8 && 
-      imageBuffer[0] === 0x89 && 
-      imageBuffer[1] === 0x50 && 
-      imageBuffer[2] === 0x4E && 
-      imageBuffer[3] === 0x47 && 
-      imageBuffer[4] === 0x0D && 
-      imageBuffer[5] === 0x0A && 
-      imageBuffer[6] === 0x1A && 
-      imageBuffer[7] === 0x0A) {
-    mimeType = 'image/png';
-  }
-  // Check JPEG signature (first 3 bytes)
-  else if (imageBuffer.length >= 3 && 
-           imageBuffer[0] === 0xFF && 
-           imageBuffer[1] === 0xD8 && 
-           imageBuffer[2] === 0xFF) {
-    mimeType = 'image/jpeg';
-  }
-  // Check WEBP signature (bytes 8-11)
-  else if (imageBuffer.length >= 12 && 
-           imageBuffer[8] === 0x57 && 
-           imageBuffer[9] === 0x45 && 
-           imageBuffer[10] === 0x42 && 
-           imageBuffer[11] === 0x50) {
-    mimeType = 'image/webp';
-  }
-  
-  console.log(`Detected MIME type from file signature: ${mimeType}`);
-  
-  // Ensure the MIME type is supported
-  if (!supportedMimeTypes.includes(mimeType)) {
-    throw new Error(`Unsupported image format: ${mimeType}. Only PNG, JPEG, and WebP are supported.`);
-  }
-  
-  // Define appropriate file extension
-  const fileExt = mimeType === 'image/png' ? '.png' : 
-                 mimeType === 'image/jpeg' ? '.jpg' : 
-                 mimeType === 'image/webp' ? '.webp' : '.png';
-  
-  // Create a new file with the correct extension in the temp directory
-  const tempFilePath = path.join(tempDir, `image${fileExt}`);
-  fs.writeFileSync(tempFilePath, imageBuffer);
-  
-  console.log(`Created temporary file with correct extension: ${tempFilePath}`);
-  console.log(`File size: ${imageBuffer.length} bytes`);
+  // Define path for the converted PNG file
+  const convertedPngPath = path.join(tempDir, `converted-${opId}.png`);
   
   try {
-    // Create a form data object with explicit content types
+    console.log(`Converting image to PNG format using Sharp: ${imagePath}`);
+    
+    // Use Sharp to convert the input image to PNG format
+    await sharp(imagePath)
+      .png() // Explicitly convert to PNG format
+      .toFile(convertedPngPath);
+    
+    console.log(`Successfully converted image to PNG: ${convertedPngPath}`);
+    
+    // Read the converted PNG file to verify it
+    const pngBuffer = fs.readFileSync(convertedPngPath);
+    console.log(`Converted PNG file size: ${pngBuffer.length} bytes`);
+    
+    // Log file headers for debugging
+    let headerBytes = '';
+    for (let i = 0; i < Math.min(16, pngBuffer.length); i++) {
+      headerBytes += pngBuffer[i].toString(16).padStart(2, '0') + ' ';
+    }
+    console.log(`PNG file header bytes: ${headerBytes}`);
+    
+    // Create a form data object for the API request
     const form = new FormData();
     
-    // DIAGNOSTIC CODE for debugging MIME type issues
-    const path = require('path');
-    const mime = require('mime-types');
-
-    // Check the mime type (should be image/png, image/jpeg, or image/webp)
-    const detectedMime = mime.lookup(tempFilePath);
-    console.log("[TEST] About to send file:", tempFilePath);
-    console.log("[TEST] Detected mime-type:", detectedMime);
-
-    // If this is not a valid image mime-type, log an error!
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(detectedMime)) {
-      console.error("[TEST] ERROR: Invalid mime-type detected! File may not be sent correctly.");
-    } else {
-      console.log("[TEST] File mime-type is correct.");
-    }
-    
-    // Read file into a buffer to check binary signature
-    const fileBuffer = fs.readFileSync(tempFilePath);
-    console.log("[TEST] File size:", fileBuffer.length, "bytes");
-    
-    // Extract first few bytes to help identify the format
-    let firstBytes = '';
-    for (let i = 0; i < Math.min(16, fileBuffer.length); i++) {
-      firstBytes += fileBuffer[i].toString(16).padStart(2, '0') + ' ';
-    }
-    console.log("[TEST] First bytes (hex):", firstBytes);
-    
-    // Force correct MIME type regardless of what's detected
-    const forcedMimeType = 'image/png';
-    console.log("[TEST] Using forced MIME type:", forcedMimeType);
-    
-    // Add the image with explicit content type - using both detected and forced for debugging
-    form.append('image', fs.createReadStream(tempFilePath), {
-      filename: `image${fileExt}`,
-      contentType: forcedMimeType // Use forced MIME type instead of detected
+    // Add the PNG image with explicit content type
+    form.append('image', fs.createReadStream(convertedPngPath), {
+      filename: 'image.png', // Always use .png extension
+      contentType: 'image/png'  // Always use image/png MIME type
     });
     
     // Add other required parameters
@@ -137,8 +76,7 @@ export async function sendImageToOpenAI(
     form.append('n', '1');
     form.append('size', '1024x1024'); // OpenAI edit API only supports 1024x1024
     
-    console.log('Sending API request to OpenAI images/edits endpoint');
-    console.log(`Using MIME type: ${mimeType}`);
+    console.log('Sending image to OpenAI with image/png MIME type');
     
     // Send the request to OpenAI
     const response = await axios({
@@ -153,21 +91,21 @@ export async function sendImageToOpenAI(
       maxContentLength: Infinity
     });
     
-    console.log(`Response received from OpenAI (${response.status})`);
+    console.log(`Response received from OpenAI: Status ${response.status}`);
     
-    // Check if we got a valid response
-    if (response.data && 
-        response.data.data && 
-        response.data.data.length > 0 && 
-        response.data.data[0].url) {
+    // Extract the image URL from the response
+    if (response.data?.data?.[0]?.url) {
       const imageUrl = response.data.data[0].url;
+      console.log(`Received image URL from OpenAI: ${imageUrl}`);
       return imageUrl;
     } else {
-      console.error('Invalid response structure from OpenAI:', response.data);
+      console.error('Invalid OpenAI response structure:', response.data);
       throw new Error('No valid image URL in the OpenAI response');
     }
   } catch (error: any) {
     console.error('Error in OpenAI image upload:', error.message);
+    
+    // Log detailed API error information
     if (error.response) {
       console.error('OpenAI API error details:', {
         status: error.response.status,
@@ -175,6 +113,7 @@ export async function sendImageToOpenAI(
         data: JSON.stringify(error.response.data)
       });
     }
+    
     throw new Error(`Error uploading image to OpenAI: ${error.message}`);
   } finally {
     // Clean up temp directory and files
