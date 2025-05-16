@@ -283,7 +283,7 @@ export default function Home() {
         throw new Error("Missing prompt text. Please provide a description for the transformation.");
       }
 
-      console.log("Full prompt being sent:", promptText);
+      console.log("Processing image transformation...");
 
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
@@ -558,12 +558,31 @@ export default function Home() {
             checkStatus().catch(error => {
               console.error("Error in initial status check:", error);
             });
+          } else if (data.transformedImageUrl) {
+            // Handle direct transformation response (new format)
+            console.log("Image transformation completed successfully");
+            setTransformedImage(data.transformedImageUrl);
+            
+            if (data.secondTransformedImageUrl) {
+              setSecondTransformedImage(data.secondTransformedImageUrl);
+            }
+            
+            // Store transformation data
+            setCurrentTransformation({
+              id: data.id,
+              editsUsed: data.editsUsed || 0,
+              transformedImageUrl: data.transformedImageUrl,
+              secondTransformedImageUrl: data.secondTransformedImageUrl,
+              prompt: data.prompt
+            });
+            
+            setCurrentStep(Step.Result);
           } else {
             // No transformation ID or image URL - something went wrong
-            console.error("Unexpected response format:", data);
+            console.error("Missing required data in server response");
             toast({
-              title: "Unexpected response",
-              description: "Received an unexpected response from the server. Please try again.",
+              title: "Missing Data",
+              description: "The server response is missing required information. Please try again.",
               variant: "destructive",
             });
             setCurrentStep(Step.Prompt);
@@ -821,8 +840,7 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     try {
-      console.log(`Applying ${presetType} preset transformation`);
-      console.log("Original image path:", originalImagePath);
+      console.log(`Applying ${presetType} transformation preset to image...`);
 
       // Validate image path is not empty
       if (!originalImagePath) {
@@ -836,7 +854,7 @@ export default function Home() {
         imageSize,
       };
 
-      console.log("Sending transformation request with data:", requestData);
+      // Send the transformation request
       const response = await apiRequest("POST", "/api/transform", requestData);
 
       const data = await response.json();
@@ -846,8 +864,8 @@ export default function Home() {
         if (data.transformedImageUrl) {
           setTransformedImage(data.transformedImageUrl);
         } else {
-          console.error("No primary transformed image URL in response");
-          throw new Error("Failed to get transformed image");
+          console.error("Missing transformedImageUrl in server response");
+          throw new Error("Failed to get transformed image URL from server response");
         }
 
         // Handle the second transformed image if it exists
