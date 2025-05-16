@@ -83,22 +83,22 @@ export async function transformImageWithOpenAI(imagePath: string, prompt: string
     // For generation mode instead of variation mode
     console.log(`[OpenAI] [${transformationId}] Using image generation with prompt`);
 
-    // Create a response using OpenAI DALL-E models for generation
-    console.log(`[OpenAI] [${transformationId}] Calling OpenAI API with the provided prompt...`);
+    // Convert image to base64
+    console.log(`[OpenAI] [${transformationId}] Converting image to base64...`);
+    const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
 
-    // Use the prompt directly without any modifications
-    // Our prompts are carefully crafted and should never be modified
+    // Create a response using OpenAI GPT Image model for editing
+    console.log(`[OpenAI] [${transformationId}] Calling OpenAI API with the provided prompt...`);
     console.log(`[OpenAI] [${transformationId}] Using prompt directly (length: ${prompt.length})`);
     console.log(`[OpenAI] [${transformationId}] Prompt preview: ${prompt.substring(0, 100)}...`);
 
-    // Before we make the API call, ensure we haven't truncated or modified the prompt in any way
-    // For DALL-E 3, longer, more detailed prompts tend to give better results
-    const response = await openai.images.generate({
-      model: "dall-e-3",
+    const response = await openai.images.edit({
+      model: "gpt-image-1",
+      image: base64Image,
       prompt: prompt,
-      n: 1,
+      n: 2,
+      moderation: "low",
       size: "1024x1024",
-      quality: "hd",
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);
