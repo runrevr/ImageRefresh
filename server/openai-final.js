@@ -109,6 +109,15 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     // instead of the edit endpoint which can be more finicky
     console.log('[OpenAI] Using DALL-E 3 model for image generation');
     
+    // Create enhanced prompt that describes the original image
+    const enhancedPrompt = `Based on the following image description, create a transformed version: 
+    
+    ${prompt}
+    
+    The transformation should retain the general composition and main elements from the original.`;
+    
+    console.log(`[OpenAI] Enhanced prompt: ${enhancedPrompt}`);
+    
     // Import OpenAI
     const { OpenAI } = await import('openai');
     
@@ -117,85 +126,37 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       apiKey: process.env.OPENAI_API_KEY
     });
     
-    console.log('[OpenAI] Starting image edits with gpt-image-1...');
-    
-    // Create a multipart form for the first image
-    const form1 = new FormData();
-    
-    // Add API parameters to the form
-    form1.append('model', 'gpt-image-1');
-    form1.append('prompt', prompt + " Variation 1");
-    form1.append('n', 1);
-    form1.append('size', finalSize);
-    
-    // Add the image file - validating first
-    const imageStream1 = fs.createReadStream(absoluteImagePath);
-    form1.append('image', imageStream1, {
-      filename: path.basename(absoluteImagePath),
-      contentType: 'image/png'
+    // Generate the first image with DALL-E 3
+    console.log('[OpenAI] Generating first image variation...');
+    const response1 = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: enhancedPrompt + " Variation 1.",
+      n: 1,
+      size: finalSize,
+      quality: "standard",
     });
     
-    console.log('[OpenAI] Sending first API request to /v1/images/edits...');
+    console.log('[OpenAI] First image generation response received');
     
-    // Make the first API call with multipart/form-data
-    const response1 = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      form1,
-      {
-        headers: {
-          ...form1.getHeaders(),
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-        timeout: 120000, // 2 minutes timeout
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      }
-    );
-    
-    console.log('[OpenAI] First image edit response received');
-    
-    // Create a multipart form for the second image
-    const form2 = new FormData();
-    
-    // Add API parameters to the form
-    form2.append('model', 'gpt-image-1');
-    form2.append('prompt', prompt + " Variation 2 - create a different interpretation");
-    form2.append('n', 1);
-    form2.append('size', finalSize);
-    
-    // Add the image file - validating first
-    const imageStream2 = fs.createReadStream(absoluteImagePath);
-    form2.append('image', imageStream2, {
-      filename: path.basename(absoluteImagePath),
-      contentType: 'image/png'
-    });
-    
-    console.log('[OpenAI] Sending second API request to /v1/images/edits...');
-    
-    // Make the second API call with multipart/form-data
-    const response2 = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      form2,
-      {
-        headers: {
-          ...form2.getHeaders(),
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-        timeout: 120000, // 2 minutes timeout
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      }
-    );
-    
-    console.log('[OpenAI] Second image response received');
-    
-    // Process responses - check first response
-    if (!response1.data || !response1.data.data || response1.data.data.length === 0) {
+    // Process the first response
+    if (!response1.data || response1.data.length === 0) {
       throw new Error("No image data in first OpenAI response");
     }
     
-    // Process responses - check second response
-    if (!response2.data || !response2.data.data || response2.data.data.length === 0) {
+    // Generate the second image with a slightly different prompt for variety
+    console.log('[OpenAI] Generating second image variation...');
+    const response2 = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: enhancedPrompt + " Create a different interpretation as variation 2.",
+      n: 1,
+      size: finalSize,
+      quality: "standard",
+    });
+    
+    console.log('[OpenAI] Second image generation response received');
+    
+    // Process the second response
+    if (!response2.data || response2.data.length === 0) {
       throw new Error("No image data in second OpenAI response");
     }
     
@@ -208,8 +169,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const outputPath2 = path.join(process.cwd(), "uploads", outputFileName2);
     
     // Get the image URLs from the responses
-    const resultUrl1 = response1.data.data[0].url;
-    const resultUrl2 = response2.data.data[0].url;
+    const resultUrl1 = response1.data[0].url;
+    const resultUrl2 = response2.data[0].url;
     
     console.log(`[OpenAI] First image URL: ${resultUrl1}`);
     console.log(`[OpenAI] Second image URL: ${resultUrl2}`);
