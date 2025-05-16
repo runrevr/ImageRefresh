@@ -84,23 +84,22 @@ export async function transformImage(
     console.log(`Processing image transformation with prompt: ${prompt}`);
     console.log(`Image size: ${imageSize}, Is Edit: ${isEdit}`);
 
-    // Import our specialized image upload helper
-    const { sendImageToOpenAI, downloadImage } = await import('./openai-image-upload');
+    // Import our SDK helper for reliable OpenAI image processing
+    const { transformImageWithSDK, downloadImage } = await import('./openai-sdk-helper');
     
     // Create the destination filename for the transformed image
-    const fileExtension = path.extname(imagePath);
+    const fileExtension = '.png'; // Always use PNG for consistent results
     const transformedFileName = `transformed-${Date.now()}${fileExtension}`;
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
     
     console.log(`Original image path: ${imagePath}`);
     console.log(`Will save transformed image to: ${transformedPath}`);
     
-    // Send the image to OpenAI using our specialized helper
-    console.log('Using specialized image upload helper to ensure correct MIME type');
-    const imageUrl = await sendImageToOpenAI(
+    // Transform the image using the OpenAI SDK helper
+    console.log('Using OpenAI SDK for reliable image transformation');
+    const imageUrl = await transformImageWithSDK(
       imagePath, 
-      prompt, 
-      process.env.OPENAI_API_KEY || ''
+      prompt
     );
     
     console.log(`Received image URL from OpenAI: ${imageUrl}`);
