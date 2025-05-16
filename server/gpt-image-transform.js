@@ -1,6 +1,6 @@
 /**
- * Direct OpenAI image transformation implementation
- * Using the gpt-image-1 model with careful error handling and logging
+ * OpenAI image transformation using gpt-image-1 model
+ * ESM implementation compatible with the project
  */
 import fs from 'fs';
 import path from 'path';
@@ -18,7 +18,7 @@ const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
  * @param {string} size - Image size specification
  * @returns {Promise<Object>} - Transformation result
  */
-async function transformImage(imagePath, prompt, size = "1024x1024") {
+export async function transformImage(imagePath, prompt, size = "1024x1024") {
   try {
     console.log(`[OpenAI] Starting transformation with prompt: "${prompt}"`);
     
@@ -162,4 +162,10 @@ async function transformImage(imagePath, prompt, size = "1024x1024") {
   }
 }
 
-module.exports = { transformImage, allowedSizes };
+// Export for image variations
+export async function createImageVariation(imagePath) {
+  const variationPrompt = "Create a creative variation of this image with a different style and colors while keeping the main subject recognizable";
+  return transformImage(imagePath, variationPrompt, "1024x1024");
+}
+
+export { allowedSizes };
