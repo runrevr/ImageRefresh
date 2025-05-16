@@ -1,62 +1,73 @@
-// Test the image transformation implementation
-import fetch from 'node-fetch';
+/**
+ * Test script for image transformation with MIME type handling
+ */
 import fs from 'fs';
 import path from 'path';
-import FormData from 'form-data';
+import { fileURLToPath } from 'url';
+import { transformWithMimeCheck } from './server/openai-edit.js';
 
+// Setup paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Test configuration
+const TEST_PROMPT = "Transform this image into a vibrant watercolor painting";
+
+// Function to find a test image
+async function findTestImage() {
+  console.log("Looking for a test image...");
+  
+  // Check uploads directory
+  const uploadsDir = path.join(__dirname, 'uploads');
+  if (fs.existsSync(uploadsDir)) {
+    const files = fs.readdirSync(uploadsDir);
+    for (const file of files) {
+      if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')) {
+        return path.join(uploadsDir, file);
+      }
+    }
+  }
+  
+  // Check attached_assets directory
+  const assetsDir = path.join(__dirname, 'attached_assets');
+  if (fs.existsSync(assetsDir)) {
+    const files = fs.readdirSync(assetsDir);
+    for (const file of files) {
+      if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')) {
+        return path.join(assetsDir, file);
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Main test function
 async function testTransformation() {
   try {
-    // 1. First, upload a test image
-    const testImagePath = path.join(process.cwd(), 'attached_assets/51CItn4oOGL._SL1500_.jpg');
+    console.log("Starting image transformation test");
     
-    if (!fs.existsSync(testImagePath)) {
-      console.error('Test image not found:', testImagePath);
+    // Find a test image
+    const imagePath = await findTestImage();
+    if (!imagePath) {
+      console.error("No test image found");
       return;
     }
     
-    const formData = new FormData();
-    formData.append('image', fs.createReadStream(testImagePath));
+    console.log(`Found test image: ${imagePath}`);
+    console.log(`Applying transformation with prompt: "${TEST_PROMPT}"`);
     
-    const uploadResponse = await fetch('http://localhost:5000/api/upload', {
-      method: 'POST',
-      body: formData
-    });
+    // Transform the image
+    const result = await transformWithMimeCheck(imagePath, TEST_PROMPT);
     
-    if (!uploadResponse.ok) {
-      throw new Error(`Failed to upload image: ${uploadResponse.statusText}`);
-    }
-    
-    const uploadData = await uploadResponse.json();
-    console.log('Uploaded image successfully:', uploadData);
-    
-    // 2. Now test the image transformation
-    const testPrompt = "Place this shampoo bottle on a wooden table with some flowers around it";
-    
-    const transformResponse = await fetch('http://localhost:5000/api/transform', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        originalImagePath: uploadData.imagePath,
-        prompt: testPrompt,
-        userId: 1
-      })
-    });
-    
-    if (!transformResponse.ok) {
-      const errorText = await transformResponse.text();
-      throw new Error(`Transformation failed: ${errorText}`);
-    }
-    
-    const transformData = await transformResponse.json();
-    console.log('Transformation successful!');
-    console.log('Result:', transformData);
-    console.log('Transformed image URL:', transformData.transformedImageUrl);
-    
+    console.log("Transformation successful!");
+    console.log(`Original image: ${imagePath}`);
+    console.log(`Transformed image: ${result.transformedPath}`);
+    console.log(`Image URL: ${result.url}`);
   } catch (error) {
-    console.error('Error testing transformation:', error);
+    console.error("Test failed:", error.message);
   }
 }
 
+// Run the test
 testTransformation();

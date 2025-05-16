@@ -73,44 +73,35 @@ async function saveImageFromUrl(imageUrl: string, destinationPath: string): Prom
 export async function transformImage(
   imagePath: string, 
   prompt: string,
-  imageSize = "square", // default to square
+  imageSize = "1024x1024", // default to 1024x1024
   isEdit = false        // flag to indicate if this is an edit
-): Promise<{ url: string; transformedPath: string }> {
+): Promise<{ url: string; transformedPath: string; secondTransformedPath?: string }> {
   if (!isOpenAIConfigured()) {
     throw new Error("OpenAI API key is not configured");
   }
 
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
-    console.log(`Image size: ${imageSize}, Is Edit: ${isEdit}`);
-
-    // Import our direct OpenAI implementation
-    const { generateImageFromPrompt, downloadImage } = await import('./openai-direct');
     
-    // Create the destination filename for the transformed image
-    const fileExtension = '.png'; // Always use PNG for consistent results
-    const transformedFileName = `transformed-${Date.now()}${fileExtension}`;
-    const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
+    // Import our implementation with proper MIME type checking
+    const { transformWithMimeCheck } = await import('./openai-edit.js');
     
-    console.log(`Original image path: ${imagePath}`);
-    console.log(`Will save transformed image to: ${transformedPath}`);
+    // Call our implementation with proper MIME type handling
+    // This implementation:
+    // 1. Detects the correct MIME type of the image using mime-types package
+    // 2. Verifies it's a supported type (image/jpeg, image/png, or image/webp)
+    // 3. Properly sends the request to OpenAI with the correct content type
+    // 4. Handles downloading and saving the transformed image
+    console.log(`Using image path: ${imagePath}`);
+    const result = await transformWithMimeCheck(imagePath, prompt, imageSize);
     
-    // Transform the image using our direct OpenAI implementation
-    console.log('Using direct OpenAI implementation for image transformation');
-    const imageUrl = await generateImageFromPrompt(
-      imagePath, 
-      prompt
-    );
+    console.log(`Successfully transformed image to: ${result.transformedPath}`);
     
-    console.log(`Received image URL from OpenAI: ${imageUrl}`);
-    
-    // Download the resulting image
-    await downloadImage(imageUrl, transformedPath);
-    console.log(`Successfully downloaded transformed image to: ${transformedPath}`);
-    
+    // Prepare the response format expected by the client
     return {
-      url: imageUrl,
-      transformedPath
+      url: result.url,
+      transformedPath: result.transformedPath,
+      secondTransformedPath: undefined // Only one image is generated with dall-e-3
     };
   } catch (error: any) {
     console.error("Error in transformImage:", error);

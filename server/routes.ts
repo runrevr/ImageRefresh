@@ -247,7 +247,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Import the transformImage function
       const { transformImage } = await import("./openai");
       
-      // Perform the image transformation
+      // Perform the image transformation with proper MIME type handling
+      console.log(`Starting transformation with MIME type checking for ${fullImagePath}`);
       const result = await transformImage(
         fullImagePath,
         prompt,
