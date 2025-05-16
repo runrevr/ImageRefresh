@@ -1,0 +1,32 @@
+Original image path: /home/runner/workspace/uploads/image-1747400208412-895721365.png
+User credits: 
+Object {id: 8, freeCreditsUsed: true, paidCredits: 19}
+Full prompt being sent: Transform this portrait into a whimsical fantasy character by adding ethereal elements like glowing eyes and a crown of floating, luminescent orbs. Surround the figure with a mystical forest backdrop, with twinkling fireflies and shimmering light trails to create an enchanting aura.
+Sending transformation request with data: 
+Object {originalImagePath: "/home/runner/workspace/uploads/image-1747400208412-895721365.png", prompt: "Transform this portrait into a whimsical fantasy character by adding ethereal elements like glowing…", promptLength: 283, userId: 8, imageSize: "square"}
+Processing image transformation...
+Failed to parse response as JSON. Status: 500, URL: https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/api/transform
+at t.value (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Response text: {"message":"Error processing image transformation","error":"Error transforming image: Invalid URL"}...
+at t.value (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Fetch error for /api/transform: 
+Error {}
+message: "500: {"message":"Error processing image transformation","error":"Error transforming image: Invalid URL"}..."
+stack: "Error: 500: {"message":"Error processing image transformation","error":"Error transforming image: Invalid URL"}...↵ at throwIfResNotOk (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/src/lib/queryClient.ts:25:13)↵ at async apiRequest (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/src/lib/queryClient.ts:74:7)↵ at async handlePromptSubmit (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/src/pages/home.tsx:222:24)"
+get stack: ƒ ()
+set stack: ƒ ()
+[[Prototype]]: Object
+
+Error transforming image: 
+Error {}
+message: "500: {"message":"Error processing image transformation","error":"Error transforming image: Invalid URL"}..."
+stack: "Error: 500: {"message":"Error processing image transformation","error":"Error transforming image: Invalid URL"}...↵ at throwIfResNotOk (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/src/lib/queryClient.ts:25:13)↵ at async apiRequest (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/src/lib/queryClient.ts:74:7)↵ at async handlePromptSubmit (https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/src/pages/home.tsx:222:24)"
+get stack: ƒ ()
+set stack: ƒ ()
+[[Prototype]]: Object

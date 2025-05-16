@@ -94,9 +94,22 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     console.log(`[OpenAI] Using size: ${finalSize}`);
     
     // Optimize the image for API submission
-    tempImagePath = await optimizeImage(imagePath);
+    // Ensure imagePath is absolute
+    const absoluteImagePath = path.isAbsolute(imagePath) 
+      ? imagePath 
+      : path.join(process.cwd(), imagePath);
+      
+    console.log(`[OpenAI] Absolute image path: ${absoluteImagePath}`);
     
-    // Verify the image file exists before proceeding
+    // Check if the original image exists
+    if (!fs.existsSync(absoluteImagePath)) {
+      throw new Error(`Original image file not found at path: ${absoluteImagePath}`);
+    }
+    
+    // Now optimize the image
+    tempImagePath = await optimizeImage(absoluteImagePath);
+    
+    // Verify the optimized image file exists before proceeding
     if (!fs.existsSync(tempImagePath)) {
       throw new Error(`Optimized image file not found at path: ${tempImagePath}`);
     }
