@@ -128,9 +128,34 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     form.append('n', 2);
     form.append('size', finalSize);
     
-    // Add the image file as a stream - this is critical for OpenAI API
-    const imageStream = fs.createReadStream(tempImagePath);
-    form.append('image', imageStream);
+    // Extra validation for the image file before sending to OpenAI
+    try {
+      // Verify file stats
+      const imageStats = fs.statSync(tempImagePath);
+      console.log(`[OpenAI] Image file size: ${imageStats.size} bytes`);
+      
+      if (imageStats.size === 0) {
+        throw new Error('Image file is empty (zero bytes)');
+      }
+      
+      if (!imageStats.isFile()) {
+        throw new Error('Path does not point to a file');
+      }
+      
+      // Read file into buffer to ensure it's valid before streaming
+      const testBuffer = fs.readFileSync(tempImagePath);
+      console.log(`[OpenAI] Successfully loaded image file into buffer (${testBuffer.length} bytes)`);
+      
+      // Now create the stream from the validated file
+      const imageStream = fs.createReadStream(tempImagePath);
+      form.append('image', imageStream, {
+        filename: path.basename(tempImagePath),
+        contentType: 'image/png'
+      });
+    } catch (fileError) {
+      console.error(`[OpenAI] File validation error: ${fileError.message}`);
+      throw new Error(`Image file validation failed: ${fileError.message}`);
+    }
     
     console.log('[OpenAI] Sending API request to /v1/images/edits...');
     console.log(`[OpenAI] Complete endpoint URL: https://api.openai.com/v1/images/edits`);
