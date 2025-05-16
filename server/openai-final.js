@@ -80,6 +80,7 @@ async function optimizeImage(imagePath) {
  */
 export async function transformImage(imagePath, prompt, size = "1024x1024") {
   let tempImagePath = null;
+  let absoluteImagePath = null;
   
   try {
     console.log(`[OpenAI] Starting transformation with prompt: "${prompt}"`);
@@ -89,7 +90,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     console.log(`[OpenAI] Using size: ${finalSize}`);
     
     // Make sure we have an absolute path to the image
-    const absoluteImagePath = path.isAbsolute(imagePath) 
+    absoluteImagePath = path.isAbsolute(imagePath) 
       ? imagePath 
       : path.join(process.cwd(), imagePath);
     
@@ -170,18 +171,9 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     }
     
     throw error;
-  } catch (error) {
-    console.error(`[OpenAI] Error in transformation: ${error.message}`);
-    
-    if (error.response) {
-      console.error(`[OpenAI] Response status: ${error.response.status}`);
-      console.error(`[OpenAI] Response details:`, error.response.data);
-    }
-    
-    throw error;
   } finally {
     // Clean up temporary file if it was created
-    if (tempImagePath && tempImagePath !== absoluteImagePath && fs.existsSync(tempImagePath)) {
+    if (tempImagePath && absoluteImagePath && tempImagePath !== absoluteImagePath && fs.existsSync(tempImagePath)) {
       try {
         fs.unlinkSync(tempImagePath);
         console.log(`[OpenAI] Removed temporary file: ${tempImagePath}`);
