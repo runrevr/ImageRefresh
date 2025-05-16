@@ -1,11 +1,11 @@
 /**
- * Test script for the SDK-based image transformation
+ * Test script for the effective multipart implementation
  * Using OpenAI's gpt-image-1 model with the images/edit endpoint
  */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { transformImage } from './server/openai-transform.js';
+import { transformImage } from './server/openai-effective.js';
 
 // Setup paths
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +46,7 @@ async function findTestImage() {
 // Main test function
 async function testImageEdit() {
   try {
-    console.log("Starting SDK-based image transformation test with gpt-image-1 model");
+    console.log("Starting effective multipart image edit test with gpt-image-1 model");
     
     // Find a test image
     const imagePath = await findTestImage();
@@ -58,7 +58,7 @@ async function testImageEdit() {
     console.log(`Found test image: ${imagePath}`);
     console.log(`Applying transformation with prompt: "${TEST_PROMPT}"`);
     
-    // Transform the image using gpt-image-1 model with SDK
+    // Transform the image using gpt-image-1 model with effective multipart approach
     const result = await transformImage(imagePath, TEST_PROMPT);
     
     console.log("Transformation successful!");

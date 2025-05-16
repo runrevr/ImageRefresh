@@ -1,134 +1,63 @@
 /**
- * OpenAI image transformation using gpt-image-1 model
- * Implements EXACTLY the pattern requested for using base64 encoding
+ * Direct implementation for OpenAI image editing with GPT-Image-01 model
+ * Uses base64-encoded image data in a JSON body with the edit endpoint
  */
 import fs from 'fs';
 import path from 'path';
-import OpenAI from 'openai';
-import FormData from 'form-data';
-import https from 'https';
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+import axios from 'axios';
 
 // Allowed sizes for the OpenAI API - only supporting these three sizes
 const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
 
 /**
  * Transform an image using OpenAI's gpt-image-1 model
- * Uses the /edit endpoint with base64 encoding as requested
+ * This implementation uses a direct axios call with a JSON body and base64 image
  * 
  * @param {string} imagePath - Path to the image file
  * @param {string} prompt - Transformation prompt
- * @param {string} size - Image size (from request body)
+ * @param {string} size - Image size specification
  * @returns {Promise<Object>} - Transformation result
  */
-export async function transformWithGptImage(imagePath, prompt, size) {
+export async function transformImage(imagePath, prompt, size = "1024x1024") {
   try {
     console.log(`[OpenAI] Starting transformation with prompt: "${prompt}"`);
     
-    // Read the image as base64 using the exact pattern requested
-    const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+    // Validate size parameter - use only the three sizes specified
+    const finalSize = allowedSizes.includes(size) ? size : "1024x1024";
+    console.log(`[OpenAI] Using size: ${finalSize}`);
+    
+    // Read the image file as base64
+    const imageBuffer = fs.readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
     console.log(`[OpenAI] Image encoded as base64 (${base64Image.length} chars)`);
     
-    // Validate size parameter - use only the three sizes specified
-    const userSize = size || "1024x1024";
-    const finalSize = allowedSizes.includes(userSize) ? userSize : "1024x1024";
-    console.log(`[OpenAI] Using size: ${finalSize}`);
-
-    // Call OpenAI API using the exact pattern from the request
-    console.log(`[OpenAI] Calling OpenAI with gpt-image-1 model`);
+    // Create the request body with base64-encoded image
+    const requestBody = {
+      model: "gpt-image-1",
+      image: base64Image,
+      prompt: prompt,
+      n: 2,
+      size: finalSize
+    };
     
-    // Make the API call with EXACTLY the pattern requested
-    // For the OpenAI SDK, we need to use a proper File object with correct MIME type
-    const tempDir = path.join(process.cwd(), 'uploads', 'temp');
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
+    console.log('[OpenAI] Sending direct API request with JSON body...');
     
-    // Ensure we're getting a valid image type
-    let mime = 'image/png';
-    if (imagePath.toLowerCase().endsWith('.jpg') || imagePath.toLowerCase().endsWith('.jpeg')) {
-      mime = 'image/jpeg';
-    } else if (imagePath.toLowerCase().endsWith('.webp')) {
-      mime = 'image/webp';
-    }
-    
-    // Create a temp file with proper extension
-    const fileExt = mime.split('/')[1];
-    const tempFilePath = path.join(tempDir, `temp-${Date.now()}.${fileExt}`);
-    fs.writeFileSync(tempFilePath, Buffer.from(base64Image, 'base64'));
-    
-    // Create a FormData instance for proper multipart/form-data handling
-    const form = new FormData();
-    form.append('model', 'gpt-image-1');
-    form.append('prompt', prompt);
-    form.append('n', '2');
-    form.append('size', finalSize);
-    
-    // Append the file with the proper mime type
-    form.append('image', fs.readFileSync(tempFilePath), {
-      filename: path.basename(tempFilePath),
-      contentType: mime
-    });
-    
-    console.log(`[OpenAI] Using file with MIME type: ${mime}`);
-    
-    // Make a direct API call using the form-data package
-    return new Promise((resolve, reject) => {
-      const request = https.request({
-        hostname: 'api.openai.com',
-        path: '/v1/images/edits',
-        method: 'POST',
+    // Make a direct API call to OpenAI
+    const response = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      requestBody,
+      {
         headers: {
-          ...form.getHeaders(),
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
         }
-      }, (response) => {
-        let data = '';
-        
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-        
-        response.on('end', () => {
-          // Parse the response data
-          try {
-            if (response.statusCode !== 200) {
-              console.error(`[OpenAI] API error: ${response.statusCode} ${data}`);
-              reject(new Error(`OpenAI API error: ${response.statusCode} ${data}`));
-              return;
-            }
-            
-            const parsedData = JSON.parse(data);
-            console.log(`[OpenAI] Received successful response from API`);
-            resolve(parsedData);
-          } catch (error) {
-            reject(error);
-          }
-        });
-      });
-      
-      request.on('error', (error) => {
-        reject(error);
-      });
-      
-      // Send the form data
-      form.pipe(request);
-    })
-    .then(response => {
-      console.log(`[OpenAI] Processing response`);
-      
-      // Process the response
-      if (!response.data || response.data.length === 0) {
-        throw new Error("No image data in OpenAI response");
       }
-      
-      return response;
-    });
-    if (!response.data || response.data.length === 0) {
+    );
+    
+    console.log('[OpenAI] Received response from API');
+    
+    // Process the response
+    if (!response.data || !response.data.data || response.data.data.length === 0) {
       throw new Error("No image data in OpenAI response");
     }
     
@@ -137,43 +66,25 @@ export async function transformWithGptImage(imagePath, prompt, size) {
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
     
     // Download and save the primary transformed image
-    const imageUrl = response.data[0].url;
+    const imageUrl = response.data.data[0].url;
     console.log(`[OpenAI] First image URL: ${imageUrl}`);
     
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to download image: ${imageResponse.status}`);
-    }
-    
-    const imageData = await imageResponse.arrayBuffer();
-    fs.writeFileSync(transformedPath, Buffer.from(imageData));
+    const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    fs.writeFileSync(transformedPath, Buffer.from(imageResponse.data));
     console.log(`[OpenAI] First image saved to: ${transformedPath}`);
     
     // Process second image if available
     let secondTransformedPath = null;
-    if (response.data.length > 1 && response.data[1].url) {
-      const secondImageUrl = response.data[1].url;
+    if (response.data.data.length > 1 && response.data.data[1].url) {
+      const secondImageUrl = response.data.data[1].url;
       console.log(`[OpenAI] Second image URL: ${secondImageUrl}`);
       
       const secondFileName = `transformed-${Date.now()}-2.png`;
       secondTransformedPath = path.join(process.cwd(), "uploads", secondFileName);
       
-      const secondResponse = await fetch(secondImageUrl);
-      if (secondResponse.ok) {
-        const secondData = await secondResponse.arrayBuffer();
-        fs.writeFileSync(secondTransformedPath, Buffer.from(secondData));
-        console.log(`[OpenAI] Second image saved to: ${secondTransformedPath}`);
-      }
-    }
-    
-    // Clean up the temporary file
-    try {
-      if (fs.existsSync(tempFilePath)) {
-        fs.unlinkSync(tempFilePath);
-        console.log(`[OpenAI] Cleaned up temporary file: ${tempFilePath}`);
-      }
-    } catch (cleanupError) {
-      console.error(`[OpenAI] Error cleaning up temporary file: ${cleanupError.message}`);
+      const secondResponse = await axios.get(secondImageUrl, { responseType: 'arraybuffer' });
+      fs.writeFileSync(secondTransformedPath, Buffer.from(secondResponse.data));
+      console.log(`[OpenAI] Second image saved to: ${secondTransformedPath}`);
     }
     
     return {
@@ -183,6 +94,10 @@ export async function transformWithGptImage(imagePath, prompt, size) {
     };
   } catch (error) {
     console.error(`[OpenAI] Error: ${error.message}`);
+    if (error.response) {
+      console.error(`[OpenAI] Response status:`, error.response.status);
+      console.error(`[OpenAI] Response data:`, error.response.data);
+    }
     throw error;
   }
 }
