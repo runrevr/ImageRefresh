@@ -141,7 +141,11 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
         fs.mkdirSync(tempDir, { recursive: true });
       }
       
-      const tempFilePath = path.join(tempDir, `temp-variation-${Date.now()}.png`);
+      // Determine proper file extension from original image
+      const fileExtension = path.extname(imagePath).toLowerCase() || '.png';
+      
+      // Create temp file with correct extension for proper MIME type detection
+      const tempFilePath = path.join(tempDir, `temp-variation-${Date.now()}${fileExtension}`);
       fs.writeFileSync(tempFilePath, Buffer.from(base64Image, 'base64'));
       
       // Use a file stream for the API

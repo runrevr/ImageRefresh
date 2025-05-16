@@ -5,6 +5,8 @@
 import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
+import FormData from 'form-data';
+import https from 'https';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -40,35 +42,92 @@ export async function transformWithGptImage(imagePath, prompt, size) {
     console.log(`[OpenAI] Calling OpenAI with gpt-image-1 model`);
     
     // Make the API call with EXACTLY the pattern requested
-    // For the Node.js SDK, we need to use files for the API
-    // Create a temporary file from the base64 string with proper file extension
+    // For the OpenAI SDK, we need to use a proper File object with correct MIME type
     const tempDir = path.join(process.cwd(), 'uploads', 'temp');
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
     
-    // Determine proper file extension from original image
-    const fileExtension = path.extname(imagePath).toLowerCase() || '.png';
+    // Ensure we're getting a valid image type
+    let mime = 'image/png';
+    if (imagePath.toLowerCase().endsWith('.jpg') || imagePath.toLowerCase().endsWith('.jpeg')) {
+      mime = 'image/jpeg';
+    } else if (imagePath.toLowerCase().endsWith('.webp')) {
+      mime = 'image/webp';
+    }
     
-    // Create temp file with correct extension for proper MIME type detection
-    const tempFilePath = path.join(tempDir, `temp-${Date.now()}${fileExtension}`);
+    // Create a temp file with proper extension
+    const fileExt = mime.split('/')[1];
+    const tempFilePath = path.join(tempDir, `temp-${Date.now()}.${fileExt}`);
     fs.writeFileSync(tempFilePath, Buffer.from(base64Image, 'base64'));
     
-    // Use a file stream for the API as required by the OpenAI SDK
-    const imageStream = fs.createReadStream(tempFilePath);
+    // Create a FormData instance for proper multipart/form-data handling
+    const form = new FormData();
+    form.append('model', 'gpt-image-1');
+    form.append('prompt', prompt);
+    form.append('n', '2');
+    form.append('size', finalSize);
     
-    // The OpenAI API doesn't actually support the moderation parameter for the edit endpoint
-    const response = await openai.images.edit({
-      model: "gpt-image-1",
-      image: imageStream,
-      prompt: prompt,
-      n: 2,
-      size: finalSize
+    // Append the file with the proper mime type
+    form.append('image', fs.readFileSync(tempFilePath), {
+      filename: path.basename(tempFilePath),
+      contentType: mime
     });
     
-    console.log(`[OpenAI] Received response from API`);
+    console.log(`[OpenAI] Using file with MIME type: ${mime}`);
     
-    // Process the response
+    // Make a direct API call using the form-data package
+    return new Promise((resolve, reject) => {
+      const request = https.request({
+        hostname: 'api.openai.com',
+        path: '/v1/images/edits',
+        method: 'POST',
+        headers: {
+          ...form.getHeaders(),
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        }
+      }, (response) => {
+        let data = '';
+        
+        response.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        response.on('end', () => {
+          // Parse the response data
+          try {
+            if (response.statusCode !== 200) {
+              console.error(`[OpenAI] API error: ${response.statusCode} ${data}`);
+              reject(new Error(`OpenAI API error: ${response.statusCode} ${data}`));
+              return;
+            }
+            
+            const parsedData = JSON.parse(data);
+            console.log(`[OpenAI] Received successful response from API`);
+            resolve(parsedData);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
+      
+      request.on('error', (error) => {
+        reject(error);
+      });
+      
+      // Send the form data
+      form.pipe(request);
+    })
+    .then(response => {
+      console.log(`[OpenAI] Processing response`);
+      
+      // Process the response
+      if (!response.data || response.data.length === 0) {
+        throw new Error("No image data in OpenAI response");
+      }
+      
+      return response;
+    });
     if (!response.data || response.data.length === 0) {
       throw new Error("No image data in OpenAI response");
     }
