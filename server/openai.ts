@@ -85,8 +85,8 @@ export async function transformImage(
     
     // Import the direct GPT-Image-01 implementation with multipart/form-data
     // This implementation uses only the /v1/images/edits endpoint as required
-    const gptImageModule = require('./gpt-image-transform.js');
-    const gptImageTransform = gptImageModule.transformImage;
+    // Using ESM dynamic import for compatibility
+    const { transformImage: gptImageTransform } = await import('./gpt-image-transform.js');
     
     // Validate size parameter according to our three allowed sizes
     const validSizes = ["1024x1024", "1536x1024", "1024x1536"];
@@ -127,8 +127,8 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
 
     // Import the direct GPT-Image-01 implementation with multipart/form-data
     // This implementation uses only the /v1/images/edits endpoint as required
-    const gptImageModule = require('./gpt-image-transform.js');
-    const gptImageTransform = gptImageModule.transformImage;
+    // Using ESM dynamic import for compatibility
+    const { transformImage: gptImageTransform } = await import('./gpt-image-transform.js');
     
     // Use the square format for variations
     const finalSize = "1024x1024";

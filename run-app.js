@@ -1,26 +1,34 @@
-// Simple script to run the application
-const { spawn } = require('child_process');
-const path = require('path');
+/**
+ * Simple application starter for image transformation app
+ */
+import { exec } from 'child_process';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-console.log('Starting ImageRefresh application...');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Run the server
-const server = spawn('node', ['-r', 'tsx/register', 'server/index.ts'], {
-  stdio: 'inherit',
-  env: { 
-    ...process.env, 
-    NODE_ENV: 'development',
-    PORT: '5000'
-  }
+console.log('Starting Image Transformation Application...');
+
+// Environment setup
+process.env.NODE_ENV = 'development';
+
+// Start the server
+const server = exec('tsx server/index.ts', {
+  cwd: __dirname,
+  env: { ...process.env }
 });
 
-// Handle server events
-server.on('error', (err) => {
-  console.error('Failed to start server:', err);
+// Log server output
+server.stdout.on('data', (data) => {
+  console.log(data.toString().trim());
 });
 
-process.on('SIGINT', () => {
-  console.log('Shutting down server...');
-  server.kill('SIGINT');
-  process.exit(0);
+server.stderr.on('data', (data) => {
+  console.error(data.toString().trim());
+});
+
+server.on('exit', (code) => {
+  console.log(`Server process exited with code ${code}`);
 });
