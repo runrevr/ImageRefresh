@@ -83,25 +83,35 @@ export async function transformImage(
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
     
-    // Import our implementation with proper MIME type checking
-    const { transformWithMimeCheck } = await import('./openai-edit.js');
+    // Import our implementation that follows the exact pattern specified
+    const { transformWithGptImage } = await import('./openai-base64-direct.js');
     
-    // Call our implementation with proper MIME type handling
-    // This implementation:
-    // 1. Detects the correct MIME type of the image using mime-types package
-    // 2. Verifies it's a supported type (image/jpeg, image/png, or image/webp)
-    // 3. Properly sends the request to OpenAI with the correct content type
-    // 4. Handles downloading and saving the transformed image
+    // Use the implementation that exactly follows the specified pattern:
+    // const fs = require('fs');
+    // const allowedSizes = ["256x256", "512x512", "1024x1024"];
+    // const imagePath = /* path to uploaded file */;
+    // const prompt = /* prompt string */;
+    // const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+    // const selectedSize = req.body.size || "1024x1024";
+    // const finalSize = allowedSizes.includes(selectedSize) ? selectedSize : "1024x1024";
+    // const response = await openai.images.edit({
+    //   model: "gpt-image-1",
+    //   image: base64Image,
+    //   prompt: prompt,
+    //   n: 2,
+    //   moderation: "low",
+    //   size: finalSize,
+    // });
     console.log(`Using image path: ${imagePath}`);
-    const result = await transformWithMimeCheck(imagePath, prompt, imageSize);
+    const result = await transformWithGptImage(imagePath, prompt, imageSize);
     
     console.log(`Successfully transformed image to: ${result.transformedPath}`);
     
-    // Prepare the response format expected by the client
+    // Return both the primary and secondary transformed images
     return {
       url: result.url,
       transformedPath: result.transformedPath,
-      secondTransformedPath: undefined // Only one image is generated with dall-e-3
+      secondTransformedPath: result.secondTransformedPath // gpt-image-1 generates two images
     };
   } catch (error: any) {
     console.error("Error in transformImage:", error);
