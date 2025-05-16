@@ -296,8 +296,7 @@ export default function Home() {
         // First try to parse as JSON in case it's a status response
         try {
           const data = await response.clone().json();
-          console.log("API transform raw response:", data);
-          console.log("Transformation successful, result:", data);
+          console.log("Image transformation completed successfully");
 
           // Implement the defensive extraction logic
           let img1 = "";
@@ -339,11 +338,26 @@ export default function Home() {
             } else if (data && Array.isArray(data.result)) {
               img1 = data.result[0] || "";
               img2 = data.result[1] || "";
+            } else if (data && typeof data.transformedImageUrl === "string") {
+              // This is the expected format from server
+              img1 = data.transformedImageUrl;
+              if (data.secondTransformedImageUrl) {
+                img2 = data.secondTransformedImageUrl;
+              }
+              
+              // Store transformation details
+              setCurrentTransformation({
+                id: data.id,
+                editsUsed: data.editsUsed || 0,
+                transformedImageUrl: data.transformedImageUrl,
+                secondTransformedImageUrl: data.secondTransformedImageUrl,
+                prompt: data.prompt || promptText
+              });
             } else {
-              console.error("API response format not recognized:", data);
+              console.error("Unable to extract image URLs from response");
               toast({
-                title: "Unexpected Response",
-                description: "The server returned data in a format we don't recognize. Please try again.",
+                title: "Processing Issue",
+                description: "Unable to display the transformed image. Please try again.",
                 variant: "destructive",
               });
             }
