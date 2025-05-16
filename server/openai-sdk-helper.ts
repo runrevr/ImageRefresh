@@ -73,7 +73,7 @@ export async function transformImageWithSDK(
     console.log(`[SDK] Received response from OpenAI`);
     
     if (response.data && response.data.length > 0 && response.data[0].url) {
-      const imageUrl = response.data[0].url;
+      const imageUrl = response.data[0].url as string;
       console.log(`[SDK] Image URL: ${imageUrl}`);
       return imageUrl;
     } else {
