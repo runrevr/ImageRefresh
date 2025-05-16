@@ -1,6 +1,5 @@
 /**
  * Helper module for handling OpenAI image uploads with proper MIME type handling
- * Uses Sharp for reliable image conversion to PNG format
  */
 import fs from 'fs';
 import path from 'path';
@@ -10,12 +9,12 @@ import stream from 'stream';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
 import sharp from 'sharp';
+import mime from 'mime-types';
 
 const streamPipeline = promisify(pipeline);
 
 /**
  * Sends an image to OpenAI's image edit API with explicit MIME type control
- * Converts any image to PNG format using Sharp before sending to OpenAI
  * 
  * @param imagePath Path to the image file to send
  * @param prompt The prompt for OpenAI to use for image editing
@@ -27,6 +26,9 @@ export async function sendImageToOpenAI(
   prompt: string,
   apiKey: string
 ): Promise<string> {
+  // List of MIME types supported by OpenAI
+  const supportedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  
   // Ensure uploads directory exists
   const uploadsDir = path.join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadsDir)) {
@@ -38,69 +40,121 @@ export async function sendImageToOpenAI(
   const tempDir = path.join(uploadsDir, `temp-${opId}`);
   fs.mkdirSync(tempDir, { recursive: true });
   
-  // Define path for the converted PNG file
-  const convertedPngPath = path.join(tempDir, `converted-${opId}.png`);
-  
   try {
-    console.log(`Converting image to PNG format using Sharp: ${imagePath}`);
-    
-    // Use Sharp to convert the input image to PNG format
-    await sharp(imagePath)
-      .png() // Explicitly convert to PNG format
-      .toFile(convertedPngPath);
-    
-    console.log(`Successfully converted image to PNG: ${convertedPngPath}`);
-    
-    // Read the converted PNG file to verify it
-    const pngBuffer = fs.readFileSync(convertedPngPath);
-    console.log(`Converted PNG file size: ${pngBuffer.length} bytes`);
-    
-    // Log file headers for debugging
-    let headerBytes = '';
-    for (let i = 0; i < Math.min(16, pngBuffer.length); i++) {
-      headerBytes += pngBuffer[i].toString(16).padStart(2, '0') + ' ';
+    // Check if the file exists
+    if (!fs.existsSync(imagePath)) {
+      throw new Error(`Image file not found: ${imagePath}`);
     }
-    console.log(`PNG file header bytes: ${headerBytes}`);
     
-    // Create a form data object for the API request
-    const form = new FormData();
+    // Detect the MIME type based on file extension
+    const detectedMime = mime.lookup(imagePath);
+    console.log("[TEST] About to send file:", imagePath);
+    console.log("[TEST] Detected mime-type:", detectedMime);
     
-    // Add the PNG image with explicit content type
-    form.append('image', fs.createReadStream(convertedPngPath), {
-      filename: 'image.png', // Always use .png extension
-      contentType: 'image/png'  // Always use image/png MIME type
-    });
-    
-    // Add other required parameters
-    form.append('prompt', prompt);
-    form.append('n', '1');
-    form.append('size', '1024x1024'); // OpenAI edit API only supports 1024x1024
-    
-    console.log('Sending image to OpenAI with image/png MIME type');
-    
-    // Send the request to OpenAI
-    const response = await axios({
-      method: 'post',
-      url: 'https://api.openai.com/v1/images/edits',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        ...form.getHeaders()
-      },
-      data: form,
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity
-    });
-    
-    console.log(`Response received from OpenAI: Status ${response.status}`);
-    
-    // Extract the image URL from the response
-    if (response.data?.data?.[0]?.url) {
-      const imageUrl = response.data.data[0].url;
-      console.log(`Received image URL from OpenAI: ${imageUrl}`);
-      return imageUrl;
+    // Validate the MIME type is supported
+    if (!detectedMime || !supportedMimeTypes.includes(detectedMime)) {
+      console.log("[TEST] Unsupported MIME type detected. Converting to PNG...");
+      
+      // Convert to PNG since the MIME type isn't supported
+      const convertedPath = path.join(tempDir, `converted-${opId}.png`);
+      
+      await sharp(imagePath)
+        .png()
+        .toFile(convertedPath);
+      
+      console.log(`[TEST] Successfully converted image to PNG: ${convertedPath}`);
+      
+      // Update the path and MIME type
+      imagePath = convertedPath;
+      const newMimeType = 'image/png';
+      console.log(`[TEST] Using converted image with MIME type: ${newMimeType}`);
+      
+      // Create form data object
+      const form = new FormData();
+      
+      // Add the image with explicit content type
+      form.append('image', fs.createReadStream(imagePath), {
+        filename: path.basename(imagePath),
+        contentType: newMimeType // Explicitly set to image/png
+      });
+      
+      // Add other required parameters
+      form.append('prompt', prompt);
+      form.append('n', '1');
+      form.append('size', '1024x1024'); // OpenAI edit API only supports 1024x1024
+      
+      console.log(`[TEST] Sending image to OpenAI with MIME type: ${newMimeType}`);
+      
+      // Send request to OpenAI
+      const response = await axios.post(
+        'https://api.openai.com/v1/images/edits',
+        form,
+        {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            ...form.getHeaders(),
+          },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity
+        }
+      );
+      
+      // Process response
+      console.log(`Response received from OpenAI: Status ${response.status}`);
+      
+      if (response.data?.data?.[0]?.url) {
+        const imageUrl = response.data.data[0].url;
+        console.log(`Received image URL from OpenAI: ${imageUrl}`);
+        return imageUrl;
+      } else {
+        console.error('Invalid OpenAI response structure:', response.data);
+        throw new Error('No valid image URL in the OpenAI response');
+      }
     } else {
-      console.error('Invalid OpenAI response structure:', response.data);
-      throw new Error('No valid image URL in the OpenAI response');
+      // MIME type is supported, use the file as is
+      console.log(`[TEST] File has supported MIME type: ${detectedMime}`);
+      
+      // Create form data object
+      const form = new FormData();
+      
+      // Add the image with explicit content type
+      form.append('image', fs.createReadStream(imagePath), {
+        filename: path.basename(imagePath),
+        contentType: detectedMime // Use the detected MIME type
+      });
+      
+      // Add other required parameters
+      form.append('prompt', prompt);
+      form.append('n', '1');
+      form.append('size', '1024x1024'); // OpenAI edit API only supports 1024x1024
+      
+      console.log(`[TEST] Sending image to OpenAI with MIME type: ${detectedMime}`);
+      
+      // Send request to OpenAI
+      const response = await axios.post(
+        'https://api.openai.com/v1/images/edits',
+        form,
+        {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            ...form.getHeaders(),
+          },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity
+        }
+      );
+      
+      // Process response
+      console.log(`Response received from OpenAI: Status ${response.status}`);
+      
+      if (response.data?.data?.[0]?.url) {
+        const imageUrl = response.data.data[0].url;
+        console.log(`Received image URL from OpenAI: ${imageUrl}`);
+        return imageUrl;
+      } else {
+        console.error('Invalid OpenAI response structure:', response.data);
+        throw new Error('No valid image URL in the OpenAI response');
+      }
     }
   } catch (error: any) {
     console.error('Error in OpenAI image upload:', error.message);

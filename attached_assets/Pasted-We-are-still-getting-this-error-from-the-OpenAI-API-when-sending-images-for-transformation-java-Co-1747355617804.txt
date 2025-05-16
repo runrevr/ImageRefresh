@@ -1,0 +1,39 @@
+We are still getting this error from the OpenAI API when sending images for transformation:
+
+java
+Copy
+Edit
+400 Invalid file 'image': unsupported mimetype ('application/octet-stream'). Supported file formats are 'image/jpeg', 'image/png', and 'image/webp'.
+We need to ENSURE that when we upload images (especially PNG), the server does NOT send them to OpenAI with the MIME type 'application/octet-stream', but instead with their correct type ('image/png', 'image/jpeg', or 'image/webp').
+
+Please do the following:
+
+Check the upload handling code. Make sure that when files are received from the client, their extension is preserved, and the file is not being renamed or altered in a way that loses the extension or content-type.
+
+Check the code that sends the image to OpenAI (where FormData is built):
+
+Use the mime-types npm package to detect the file's MIME type based on its extension.
+
+When calling formData.append('image', fs.createReadStream(imagePath), { filename: ..., contentType: ... }), make sure that contentType is set to the real MIME type (not left blank, not defaulted to application/octet-stream).
+
+Add a log right before sending to OpenAI that prints out the file path and the MIME type being used.
+
+Example code to use for verifying the MIME type:
+
+js
+Copy
+Edit
+const mime = require('mime-types');
+const filePath = imagePath; // path to the image file
+const detectedMime = mime.lookup(filePath);
+console.log("[TEST] About to send file:", filePath);
+console.log("[TEST] Detected mime-type:", detectedMime);
+formData.append('image', fs.createReadStream(filePath), {
+  filename: path.basename(filePath),
+  contentType: detectedMime,
+});
+Test it by uploading a PNG. The log should show [TEST] Detected mime-type: image/png and the error should be gone. If not, check every step where the image is handled to see where the type gets lost.
+
+Do not send the image if detectedMime is not one of the supported types. Log a clear error if this is the case.
+
+Please reply back with the log output and confirm that the correct MIME type is being sent to OpenAI!
