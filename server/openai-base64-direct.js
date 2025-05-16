@@ -40,18 +40,30 @@ export async function transformWithGptImage(imagePath, prompt, size) {
     console.log(`[OpenAI] Calling OpenAI with gpt-image-1 model`);
     
     // Make the API call with EXACTLY the pattern requested
-    // For the Node.js SDK, we need to handle the base64 image properly for the API
-    // Create a Buffer from the base64 string first
-    const imageBuffer = Buffer.from(base64Image, 'base64');
+    // For the Node.js SDK, we need to use files for the API
+    // Create a temporary file from the base64 string with proper file extension
+    const tempDir = path.join(process.cwd(), 'uploads', 'temp');
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
     
-    // The OpenAI SDK needs a proper File-like object, so we'll create one
+    // Determine proper file extension from original image
+    const fileExtension = path.extname(imagePath).toLowerCase() || '.png';
+    
+    // Create temp file with correct extension for proper MIME type detection
+    const tempFilePath = path.join(tempDir, `temp-${Date.now()}${fileExtension}`);
+    fs.writeFileSync(tempFilePath, Buffer.from(base64Image, 'base64'));
+    
+    // Use a file stream for the API as required by the OpenAI SDK
+    const imageStream = fs.createReadStream(tempFilePath);
+    
+    // The OpenAI API doesn't actually support the moderation parameter for the edit endpoint
     const response = await openai.images.edit({
       model: "gpt-image-1",
-      image: imageBuffer,
+      image: imageStream,
       prompt: prompt,
       n: 2,
-      moderation: "low",
-      size: finalSize,
+      size: finalSize
     });
     
     console.log(`[OpenAI] Received response from API`);
@@ -95,7 +107,15 @@ export async function transformWithGptImage(imagePath, prompt, size) {
       }
     }
     
-    // No temporary files to clean up since we're using base64 directly
+    // Clean up the temporary file
+    try {
+      if (fs.existsSync(tempFilePath)) {
+        fs.unlinkSync(tempFilePath);
+        console.log(`[OpenAI] Cleaned up temporary file: ${tempFilePath}`);
+      }
+    } catch (cleanupError) {
+      console.error(`[OpenAI] Error cleaning up temporary file: ${cleanupError.message}`);
+    }
     
     return {
       url: imageUrl,

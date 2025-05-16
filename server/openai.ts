@@ -135,16 +135,26 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       console.log(`Using GPT-Image-01 with /edit endpoint for variation`);
       
       // Use the edit endpoint as requested - no generate endpoint
-      // Convert base64 string to buffer for proper API compatibility
-      const imageBuffer = Buffer.from(base64Image, 'base64');
+      // Need to create a temporary file for the OpenAI SDK
+      const tempDir = path.join(process.cwd(), 'uploads', 'temp');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
       
+      const tempFilePath = path.join(tempDir, `temp-variation-${Date.now()}.png`);
+      fs.writeFileSync(tempFilePath, Buffer.from(base64Image, 'base64'));
+      
+      // Use a file stream for the API
+      const imageStream = fs.createReadStream(tempFilePath);
+      
+      // The OpenAI API doesn't actually support the moderation parameter for the edit endpoint
+      // Let's remove it to avoid the error 
       const imageResult = await openai.images.edit({
         model: "gpt-image-1",
-        image: imageBuffer,
+        image: imageStream,
         prompt: variationPrompt,
         n: 1,
-        size: finalSize,
-        moderation: "low"
+        size: finalSize
       });
 
       console.log("Successfully generated variation with gpt-image-1 model");
@@ -176,6 +186,16 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
       const imageData = await imageResponse.arrayBuffer();
       fs.writeFileSync(transformedPath, Buffer.from(imageData));
       console.log(`Variation image saved to: ${transformedPath}`);
+      
+      // Clean up the temporary file
+      try {
+        if (fs.existsSync(tempFilePath)) {
+          fs.unlinkSync(tempFilePath);
+          console.log(`Cleaned up temporary file: ${tempFilePath}`);
+        }
+      } catch (cleanupError) {
+        console.error(`Error cleaning up temporary file: ${cleanupError.message}`);
+      }
       
       return {
         url: imageUrl,
