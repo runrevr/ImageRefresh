@@ -1,23 +1,18 @@
 /**
- * OpenAI image transformation implementation using the OpenAI SDK directly
- * This uses the exact pattern specified by OpenAI for the images/edit endpoint
+ * Implementation for OpenAI image editing using gpt-image-1 model
+ * Using proper multipart/form-data as required by the OpenAI API
  */
 import fs from 'fs';
 import path from 'path';
-import OpenAI from 'openai';
+import FormData from 'form-data';
 import axios from 'axios';
-
-// Initialize the OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 // Allowed sizes for the OpenAI API - only supporting these three sizes
 const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
 
 /**
  * Transform an image using OpenAI's gpt-image-1 model
- * This function uses the OpenAI SDK which handles all the formatting correctly
+ * Uses the /edit endpoint with proper multipart/form-data
  * 
  * @param {string} imagePath - Path to the image file
  * @param {string} prompt - Transformation prompt
@@ -32,24 +27,37 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const finalSize = allowedSizes.includes(size) ? size : "1024x1024";
     console.log(`[OpenAI] Using size: ${finalSize}`);
     
-    // Create a readable stream for the image file - this is what the OpenAI SDK expects
-    const imageFile = fs.createReadStream(imagePath);
+    // Create proper form data for multipart request
+    const formData = new FormData();
+    formData.append('model', 'gpt-image-1');
+    formData.append('prompt', prompt);
+    formData.append('n', 2);
+    formData.append('size', finalSize);
     
-    console.log('[OpenAI] Sending API request with OpenAI SDK...');
+    // Add the image file as a readable stream
+    formData.append('image', fs.createReadStream(imagePath));
     
-    // Use the OpenAI SDK to make the API call
-    const response = await openai.images.edit({
-      model: "gpt-image-1",
-      image: imageFile,
-      prompt: prompt,
-      n: 2,
-      size: finalSize
-    });
+    console.log('[OpenAI] Sending API request with multipart/form-data...');
+    console.log(`[OpenAI] Using image: ${imagePath}`);
+    
+    // Make the API call with proper multipart/form-data
+    const response = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          ...formData.getHeaders(),
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
     
     console.log('[OpenAI] Received response from API');
     
     // Process the response
-    if (!response.data || response.data.length === 0) {
+    if (!response.data || !response.data.data || response.data.data.length === 0) {
       throw new Error("No image data in OpenAI response");
     }
     
@@ -58,7 +66,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
     
     // Download and save the primary transformed image
-    const imageUrl = response.data[0].url;
+    const imageUrl = response.data.data[0].url;
     console.log(`[OpenAI] First image URL: ${imageUrl}`);
     
     const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
@@ -67,8 +75,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     
     // Process second image if available
     let secondTransformedPath = null;
-    if (response.data.length > 1 && response.data[1].url) {
-      const secondImageUrl = response.data[1].url;
+    if (response.data.data.length > 1 && response.data.data[1].url) {
+      const secondImageUrl = response.data.data[1].url;
       console.log(`[OpenAI] Second image URL: ${secondImageUrl}`);
       
       const secondFileName = `transformed-${Date.now()}-2.png`;
