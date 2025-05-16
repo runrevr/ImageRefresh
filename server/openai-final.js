@@ -96,6 +96,16 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     // Optimize the image for API submission
     tempImagePath = await optimizeImage(imagePath);
     
+    // Verify the image file exists before proceeding
+    if (!fs.existsSync(tempImagePath)) {
+      throw new Error(`Optimized image file not found at path: ${tempImagePath}`);
+    }
+    
+    // Double-check that we have a valid image file, not a URL
+    console.log(`[DEBUG] Preparing image for OpenAI. Path: ${tempImagePath}`);
+    console.log(`[DEBUG] File exists: ${fs.existsSync(tempImagePath)}`);
+    console.log(`[DEBUG] File size: ${fs.statSync(tempImagePath).size} bytes`);
+    
     // Create a multipart form
     const form = new FormData();
     
@@ -105,8 +115,9 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     form.append('n', 2);
     form.append('size', finalSize);
     
-    // Add the image file as a stream
-    form.append('image', fs.createReadStream(tempImagePath));
+    // Add the image file as a stream - this is critical for OpenAI API
+    const imageStream = fs.createReadStream(tempImagePath);
+    form.append('image', imageStream);
     
     console.log('[OpenAI] Sending API request to /v1/images/edits...');
     console.log(`[OpenAI] Complete endpoint URL: https://api.openai.com/v1/images/edits`);
