@@ -84,8 +84,8 @@ export async function transformImage(
     console.log(`Processing image transformation with prompt: ${prompt}`);
     console.log(`Image size: ${imageSize}, Is Edit: ${isEdit}`);
 
-    // Import our SDK helper for reliable OpenAI image processing
-    const { transformImageWithSDK, downloadImage } = await import('./openai-sdk-helper');
+    // Import our direct OpenAI implementation
+    const { generateImageFromPrompt, downloadImage } = await import('./openai-direct');
     
     // Create the destination filename for the transformed image
     const fileExtension = '.png'; // Always use PNG for consistent results
@@ -95,9 +95,9 @@ export async function transformImage(
     console.log(`Original image path: ${imagePath}`);
     console.log(`Will save transformed image to: ${transformedPath}`);
     
-    // Transform the image using the OpenAI SDK helper
-    console.log('Using OpenAI SDK for reliable image transformation');
-    const imageUrl = await transformImageWithSDK(
+    // Transform the image using our direct OpenAI implementation
+    console.log('Using direct OpenAI implementation for image transformation');
+    const imageUrl = await generateImageFromPrompt(
       imagePath, 
       prompt
     );
