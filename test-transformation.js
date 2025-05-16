@@ -1,93 +1,73 @@
 /**
- * Direct test script for the gpt-image-1 transformation
- * This bypasses the complex server code to directly test our implementation
+ * Test script for image transformation with MIME type handling
  */
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { transformWithMimeCheck } from './server/openai-edit.js';
 
-// CommonJS modules
-const transformModule = require('./server/transform-image.cjs');
-
-// Get directory name in ESM
+// Setup paths
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-// Main test function
-async function runTransformTest() {
-  console.log("Starting direct test of image transformation with gpt-image-1...");
+// Test configuration
+const TEST_PROMPT = "Transform this image into a vibrant watercolor painting";
+
+// Function to find a test image
+async function findTestImage() {
+  console.log("Looking for a test image...");
   
-  // Find a test image
-  const testImagePath = await findTestImage();
-  
-  if (!testImagePath) {
-    console.error("No test image found in uploads directory");
-    return;
-  }
-  
-  console.log(`Found test image: ${testImagePath}`);
-  
-  // Test prompt
-  const testPrompt = "Transform this image into a vibrant watercolor painting with bright, flowing colors and artistic style";
-  
-  try {
-    console.log(`Applying transformation with prompt: "${testPrompt}"`);
-    
-    // Use our direct implementation
-    const result = await transformModule.transformImage(testImagePath, testPrompt);
-    
-    console.log("Transformation successful!");
-    console.log(`First transformed image: ${result.transformedPath}`);
-    console.log(`Second transformed image: ${result.secondTransformedPath || "None"}`);
-    
-    return result;
-  } catch (error) {
-    console.error("Error in transformation test:", error.message);
-    if (error.response) {
-      console.error("API Error Response:", error.response.status);
-      console.error("Error data:", error.response.data);
+  // Check uploads directory
+  const uploadsDir = path.join(__dirname, 'uploads');
+  if (fs.existsSync(uploadsDir)) {
+    const files = fs.readdirSync(uploadsDir);
+    for (const file of files) {
+      if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')) {
+        return path.join(uploadsDir, file);
+      }
     }
   }
+  
+  // Check attached_assets directory
+  const assetsDir = path.join(__dirname, 'attached_assets');
+  if (fs.existsSync(assetsDir)) {
+    const files = fs.readdirSync(assetsDir);
+    for (const file of files) {
+      if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')) {
+        return path.join(assetsDir, file);
+      }
+    }
+  }
+  
+  return null;
 }
 
-// Find a test image in the uploads directory
-async function findTestImage() {
-  const uploadsDir = path.join(__dirname, 'uploads');
-  
-  // Check if uploads directory exists
-  if (!fs.existsSync(uploadsDir)) {
-    console.error(`Uploads directory not found at ${uploadsDir}`);
-    return null;
+// Main test function
+async function testTransformation() {
+  try {
+    console.log("Starting image transformation test");
+    
+    // Find a test image
+    const imagePath = await findTestImage();
+    if (!imagePath) {
+      console.error("No test image found");
+      return;
+    }
+    
+    console.log(`Found test image: ${imagePath}`);
+    console.log(`Applying transformation with prompt: "${TEST_PROMPT}"`);
+    
+    // Transform the image
+    const result = await transformWithMimeCheck(imagePath, TEST_PROMPT);
+    
+    console.log("Transformation successful!");
+    console.log(`Original image: ${imagePath}`);
+    console.log(`Transformed image: ${result.transformedPath}`);
+    console.log(`Image URL: ${result.url}`);
+  } catch (error) {
+    console.error("Test failed:", error.message);
   }
-  
-  // Get all files in the uploads directory
-  const files = fs.readdirSync(uploadsDir);
-  
-  // Find image files
-  const imageFiles = files.filter(file => {
-    const ext = path.extname(file).toLowerCase();
-    return ['.png', '.jpg', '.jpeg', '.webp'].includes(ext);
-  });
-  
-  if (imageFiles.length === 0) {
-    console.error("No image files found in uploads directory");
-    return null;
-  }
-  
-  // Pick the first image
-  return path.join(uploadsDir, imageFiles[0]);
 }
 
 // Run the test
-runTransformTest()
-  .then(result => {
-    if (result) {
-      console.log("Test completed successfully!");
-    } else {
-      console.log("Test failed, see errors above.");
-    }
-  })
-  .catch(err => {
-    console.error("Unhandled error in test:", err);
-  });
+testTransformation();

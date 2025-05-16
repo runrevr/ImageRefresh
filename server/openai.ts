@@ -83,10 +83,9 @@ export async function transformImage(
   try {
     console.log(`Processing image transformation with prompt: ${prompt}`);
     
-    // Import the direct GPT-Image-01 implementation with multipart/form-data
+    // Import the final GPT-Image-01 implementation with multipart/form-data
     // This implementation uses only the /v1/images/edits endpoint as required
-    // Using ESM dynamic import for compatibility
-    const { transformImage: gptImageTransform } = await import('./gpt-image-transform.js');
+    const { transformImage: gptImageTransform } = await import('./openai-final.js');
     
     // Validate size parameter according to our three allowed sizes
     const validSizes = ["1024x1024", "1536x1024", "1024x1536"];
@@ -125,10 +124,9 @@ export async function createImageVariation(imagePath: string): Promise<{ url: st
 
     console.log("Starting image variation process using GPT-Image-01 model...");
 
-    // Import the direct GPT-Image-01 implementation with multipart/form-data
+    // Import the final GPT-Image-01 implementation with multipart/form-data
     // This implementation uses only the /v1/images/edits endpoint as required
-    // Using ESM dynamic import for compatibility
-    const { transformImage: gptImageTransform } = await import('./gpt-image-transform.js');
+    const { transformImage: gptImageTransform } = await import('./openai-final.js');
     
     // Use the square format for variations
     const finalSize = "1024x1024";
