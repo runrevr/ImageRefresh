@@ -1,11 +1,11 @@
 /**
- * Test script for the corrected image transformation implementation
+ * Test script for the simple image transformation implementation
  * Using OpenAI's gpt-image-1 model with the images/edit endpoint
  */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { transformImage } from './server/openai-image-edit.js';
+import { transformImage } from './server/openai-simple-edit.js';
 
 // Setup paths
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +46,7 @@ async function findTestImage() {
 // Main test function
 async function testImageEdit() {
   try {
-    console.log("Starting image edit test with gpt-image-1 model");
+    console.log("Starting simple image edit test with gpt-image-1 model");
     
     // Find a test image
     const imagePath = await findTestImage();
