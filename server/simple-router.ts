@@ -140,7 +140,7 @@ export function setupSimpleRouter(): Router {
       console.log(`Suggested prompt: ${suggestedPrompt}`);
       
       res.json({
-        suggestedPrompt,
+        prompt: suggestedPrompt,
         categories: ["artistic", "creative", "transformation"]
       });
     } catch (error: any) {
