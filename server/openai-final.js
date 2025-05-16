@@ -126,41 +126,70 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       apiKey: process.env.OPENAI_API_KEY
     });
     
-    // Use DALL-E 3 for generation
-    const response = await openai.images.generate({
+    // Generate the first image with DALL-E 3
+    console.log('[OpenAI] Generating first image variation...');
+    const response1 = await openai.images.generate({
       model: "dall-e-3",
-      prompt: enhancedPrompt,
+      prompt: enhancedPrompt + " Variation 1.",
       n: 1,
       size: finalSize,
       quality: "standard",
     });
     
-    console.log('[OpenAI] Response received from API');
+    console.log('[OpenAI] First image generation response received');
     
-    // Process the response - DALL-E 3 response structure is different from image edit
-    if (!response.data || response.data.length === 0) {
-      throw new Error("No image data in OpenAI response");
+    // Process the first response
+    if (!response1.data || response1.data.length === 0) {
+      throw new Error("No image data in first OpenAI response");
     }
     
-    // Create filename for transformed image
-    const outputFileName = `transformed-${Date.now()}.png`;
-    const outputPath = path.join(process.cwd(), "uploads", outputFileName);
+    // Generate the second image with a slightly different prompt for variety
+    console.log('[OpenAI] Generating second image variation...');
+    const response2 = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: enhancedPrompt + " Create a different interpretation as variation 2.",
+      n: 1,
+      size: finalSize,
+      quality: "standard",
+    });
     
-    // Get the image URL from the response
-    const resultUrl = response.data[0].url;
-    console.log(`[OpenAI] Image URL: ${resultUrl}`);
+    console.log('[OpenAI] Second image generation response received');
     
-    // Download and save the transformed image
-    const resultResponse = await axios.get(resultUrl, { responseType: 'arraybuffer' });
-    fs.writeFileSync(outputPath, Buffer.from(resultResponse.data));
-    console.log(`[OpenAI] Image saved to: ${outputPath}`);
+    // Process the second response
+    if (!response2.data || response2.data.length === 0) {
+      throw new Error("No image data in second OpenAI response");
+    }
     
-    // Return the result with a single transformed image
+    // Create filenames for transformed images
+    const timeStamp = Date.now();
+    const outputFileName1 = `transformed-${timeStamp}-1.png`;
+    const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
+    
+    const outputFileName2 = `transformed-${timeStamp}-2.png`;
+    const outputPath2 = path.join(process.cwd(), "uploads", outputFileName2);
+    
+    // Get the image URLs from the responses
+    const resultUrl1 = response1.data[0].url;
+    const resultUrl2 = response2.data[0].url;
+    
+    console.log(`[OpenAI] First image URL: ${resultUrl1}`);
+    console.log(`[OpenAI] Second image URL: ${resultUrl2}`);
+    
+    // Download and save the first transformed image
+    const resultResponse1 = await axios.get(resultUrl1, { responseType: 'arraybuffer' });
+    fs.writeFileSync(outputPath1, Buffer.from(resultResponse1.data));
+    console.log(`[OpenAI] First image saved to: ${outputPath1}`);
+    
+    // Download and save the second transformed image
+    const resultResponse2 = await axios.get(resultUrl2, { responseType: 'arraybuffer' });
+    fs.writeFileSync(outputPath2, Buffer.from(resultResponse2.data));
+    console.log(`[OpenAI] Second image saved to: ${outputPath2}`);
+    
+    // Return the result with both transformed images
     return {
-      url: resultUrl,
-      transformedPath: outputPath,
-      // No second image with DALL-E 3
-      secondTransformedPath: null
+      url: resultUrl1,
+      transformedPath: outputPath1,
+      secondTransformedPath: outputPath2
     };
   } catch (error) {
     console.error(`[OpenAI] Error in transformation: ${error.message}`);
