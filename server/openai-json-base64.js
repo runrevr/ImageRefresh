@@ -5,12 +5,16 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
+import sharp from 'sharp';
 
 // Allowed sizes for the OpenAI API - only supporting these three sizes
 const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
 
 // Allowed image types
 const allowedImageTypes = ['.png', '.jpg', '.jpeg', '.webp'];
+
+// Maximum reasonable image dimensions to avoid 413 errors
+const MAX_IMAGE_DIMENSION = 1024;
 
 /**
  * Validate if a file is an allowed image type based on extension
@@ -20,6 +24,47 @@ const allowedImageTypes = ['.png', '.jpg', '.jpeg', '.webp'];
 function isValidImageType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   return allowedImageTypes.includes(ext);
+}
+
+/**
+ * Compress and resize an image to make it suitable for API submission
+ * @param {string} imagePath - Path to original image
+ * @returns {Promise<Buffer>} - Compressed image buffer
+ */
+async function prepareImageForAPI(imagePath) {
+  console.log(`[OpenAI] Preparing image for API submission: ${imagePath}`);
+  
+  try {
+    // Use sharp to resize and optimize the image
+    const image = sharp(imagePath);
+    
+    // Get image metadata
+    const metadata = await image.metadata();
+    
+    // Determine if resizing is needed
+    let resizeConfig = {};
+    if (metadata.width > MAX_IMAGE_DIMENSION || metadata.height > MAX_IMAGE_DIMENSION) {
+      // Calculate dimensions while preserving aspect ratio
+      if (metadata.width > metadata.height) {
+        resizeConfig.width = MAX_IMAGE_DIMENSION;
+      } else {
+        resizeConfig.height = MAX_IMAGE_DIMENSION;
+      }
+      console.log(`[OpenAI] Resizing image from ${metadata.width}x${metadata.height} to fit within ${MAX_IMAGE_DIMENSION}px`);
+    }
+    
+    // Process the image - optimize, resize if needed, and convert to PNG
+    const processedImageBuffer = await image
+      .resize(resizeConfig)
+      .png({ quality: 80, compressionLevel: 9 })
+      .toBuffer();
+    
+    console.log(`[OpenAI] Image prepared: ${processedImageBuffer.length} bytes`);
+    return processedImageBuffer;
+  } catch (error) {
+    console.error(`[OpenAI] Error preparing image: ${error.message}`);
+    throw error;
+  }
 }
 
 /**
@@ -44,8 +89,11 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const finalSize = allowedSizes.includes(size) ? size : "1024x1024";
     console.log(`[OpenAI] Using size: ${finalSize}`);
     
-    // Read the image file as base64
-    const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+    // Prepare the image (resize/compress) for API submission
+    const processedImageBuffer = await prepareImageForAPI(imagePath);
+    
+    // Convert processed image to base64
+    const base64Image = processedImageBuffer.toString('base64');
     console.log(`[OpenAI] Image encoded as base64 (${base64Image.length} chars)`);
     
     // Create JSON request body with base64-encoded image
@@ -63,14 +111,16 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     // Make API call with JSON body containing base64-encoded image
     try {
       const response = await axios.post(
-        'https://api.openai.com/v1/images/edit',
+        'https://api.openai.com/v1/images/edits',
         requestBody,
         {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
           },
-          timeout: 120000 // 2 minutes timeout
+          timeout: 120000, // 2 minutes timeout
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity
         }
       );
       
