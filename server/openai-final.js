@@ -106,16 +106,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const fileInfo = fs.statSync(absoluteImagePath);
     console.log(`[OpenAI] Image size: ${fileInfo.size} bytes`);
     
-    // Use the latest GPT-4o Vision model for image analysis
-    console.log('[OpenAI] Using GPT-4o with vision capabilities for image analysis');
-    
-    // Optimize and resize the image before analysis to improve performance
-    const optimizedImagePath = await optimizeImage(absoluteImagePath);
-    console.log(`[OpenAI] Optimized image for analysis: ${optimizedImagePath}`);
-    
-    // Load the optimized image and convert to base64
-    const imageBuffer = fs.readFileSync(optimizedImagePath);
-    const base64Image = imageBuffer.toString('base64');
+    // We'll use DALL-E 3 model directly for image generation
+    console.log('[OpenAI] Using DALL-E 3 model for direct image generation');
     
     // Import OpenAI
     const { OpenAI } = await import('openai');
@@ -125,52 +117,22 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       apiKey: process.env.OPENAI_API_KEY
     });
     
-    // First, analyze the image using GPT-4o
-    console.log('[OpenAI] Analyzing image with GPT-4o vision...');
+    // Create our transformation prompt based on the user's input
+    const transformationPrompt = `Transform this image according to the following instructions: 
     
-    const visionAnalysis = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `Analyze this image in detail. Describe its key elements, colors, composition, and subject matter. 
-              This will be used to create a transformed version according to this prompt: "${prompt}"`
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 500
-    });
+    ${prompt}
     
-    // Extract the image analysis
-    const imageAnalysis = visionAnalysis.choices[0].message.content;
-    console.log('[OpenAI] Image analysis completed');
+    The transformation should maintain the overall composition and structure of the original image, 
+    but apply the requested style or modifications. Preserve the main subject matter while 
+    transforming the visual elements as specified in the prompt.`;
     
-    // Create enhanced prompt that incorporates the image analysis
-    const enhancedPrompt = `Based on this image description: 
-    
-    ${imageAnalysis}
-    
-    Create a transformed version according to this prompt: ${prompt}
-    
-    The transformation should retain the general composition and main elements from the original.`;
-    
-    console.log(`[OpenAI] Enhanced prompt created with image analysis`);
+    console.log(`[OpenAI] Using transformation prompt: "${transformationPrompt.substring(0, 50)}..."`);
     
     // Generate the first image with DALL-E 3
     console.log('[OpenAI] Generating first image variation...');
     const response1 = await openai.images.generate({
       model: "dall-e-3",
-      prompt: enhancedPrompt + " Variation 1.",
+      prompt: transformationPrompt + " Variation 1.",
       n: 1,
       size: finalSize,
       quality: "standard",
@@ -184,10 +146,11 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     }
     
     // Generate the second image with a slightly different prompt for variety
+    // but still keeping it similar to the first one
     console.log('[OpenAI] Generating second image variation...');
     const response2 = await openai.images.generate({
       model: "dall-e-3",
-      prompt: enhancedPrompt + " Create a different interpretation as variation 2.",
+      prompt: transformationPrompt + " Create a similar but slightly different interpretation as variation 2.",
       n: 1,
       size: finalSize,
       quality: "standard",
