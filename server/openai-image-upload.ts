@@ -95,10 +95,41 @@ export async function sendImageToOpenAI(
     // Create a form data object with explicit content types
     const form = new FormData();
     
-    // Add the image with explicit content type
+    // DIAGNOSTIC CODE for debugging MIME type issues
+    const path = require('path');
+    const mime = require('mime-types');
+
+    // Check the mime type (should be image/png, image/jpeg, or image/webp)
+    const detectedMime = mime.lookup(tempFilePath);
+    console.log("[TEST] About to send file:", tempFilePath);
+    console.log("[TEST] Detected mime-type:", detectedMime);
+
+    // If this is not a valid image mime-type, log an error!
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(detectedMime)) {
+      console.error("[TEST] ERROR: Invalid mime-type detected! File may not be sent correctly.");
+    } else {
+      console.log("[TEST] File mime-type is correct.");
+    }
+    
+    // Read file into a buffer to check binary signature
+    const fileBuffer = fs.readFileSync(tempFilePath);
+    console.log("[TEST] File size:", fileBuffer.length, "bytes");
+    
+    // Extract first few bytes to help identify the format
+    let firstBytes = '';
+    for (let i = 0; i < Math.min(16, fileBuffer.length); i++) {
+      firstBytes += fileBuffer[i].toString(16).padStart(2, '0') + ' ';
+    }
+    console.log("[TEST] First bytes (hex):", firstBytes);
+    
+    // Force correct MIME type regardless of what's detected
+    const forcedMimeType = 'image/png';
+    console.log("[TEST] Using forced MIME type:", forcedMimeType);
+    
+    // Add the image with explicit content type - using both detected and forced for debugging
     form.append('image', fs.createReadStream(tempFilePath), {
       filename: `image${fileExt}`,
-      contentType: mimeType
+      contentType: forcedMimeType // Use forced MIME type instead of detected
     });
     
     // Add other required parameters
