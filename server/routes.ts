@@ -1892,6 +1892,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhance prompt endpoint
+  app.post("/api/enhance-prompt", async (req, res) => {
+    try {
+      const { prompt } = req.body;
+      
+      if (!prompt) {
+        return res.status(400).json({ message: "Prompt is required" });
+      }
+      
+      // Import the enhancePrompt function from prompt-service
+      const { enhancePrompt } = await import("./prompt-service");
+      
+      const enhancedPrompt = await enhancePrompt(prompt);
+      
+      res.json({
+        originalPrompt: prompt,
+        enhancedPrompt
+      });
+    } catch (error: any) {
+      console.error("Error enhancing prompt:", error);
+      res.status(500).json({ message: "Error enhancing prompt", error: error.message });
+    }
+  });
+
   // Configuration endpoint
   app.get("/api/config", (req, res) => {
     // Return JSON with application configuration
