@@ -297,7 +297,6 @@ export default function Home() {
         try {
           const data = await response.clone().json();
           console.log("API transform raw response:", data);
-          alert(JSON.stringify(data, null, 2)); // Popup so we always see the format
           console.log("Transformation successful, result:", data);
 
           // Implement the defensive extraction logic
@@ -305,12 +304,30 @@ export default function Home() {
           let img2 = "";
 
           try {
-            // Show the transformed image after transformation completes:
-            if (typeof data === "string") {
-              img1 = data;
-            } else if (data && typeof data.transformedImageUrl === "string") {
+            // Handle the new server response format
+            if (data && typeof data.transformedImageUrl === "string") {
+              // This is the primary response format we expect now
               img1 = data.transformedImageUrl;
-              img2 = data.secondTransformedImageUrl;
+              
+              if (data.secondTransformedImageUrl) {
+                img2 = data.secondTransformedImageUrl;
+              }
+              
+              // Store transformation data
+              setCurrentTransformation({
+                id: data.id,
+                editsUsed: data.editsUsed || 0,
+                transformedImageUrl: data.transformedImageUrl,
+                secondTransformedImageUrl: data.secondTransformedImageUrl,
+                prompt: data.prompt
+              });
+              
+              setPrompt(data.prompt || promptText);
+              
+            } 
+            // Handle legacy response formats for backward compatibility
+            else if (typeof data === "string") {
+              img1 = data;
             } else if (data && typeof data.transformedImagePath === "string") {
               img1 = data.transformedImagePath.startsWith("/") ? data.transformedImagePath : "/" + data.transformedImagePath;
               if (data.secondTransformedImagePath) {
@@ -324,11 +341,19 @@ export default function Home() {
               img2 = data.result[1] || "";
             } else {
               console.error("API response format not recognized:", data);
-              alert("API response format not recognized:\n" + JSON.stringify(data, null, 2));
+              toast({
+                title: "Unexpected Response",
+                description: "The server returned data in a format we don't recognize. Please try again.",
+                variant: "destructive",
+              });
             }
           } catch (e: any) {
             console.error("Error extracting image URLs:", e, data);
-            alert("Error extracting image URLs:\n" + e.message);
+            toast({
+              title: "Processing Error",
+              description: "There was an error processing the transformation result. Please try again.",
+              variant: "destructive",
+            });
           }
 
           setTransformedImage(img1);
