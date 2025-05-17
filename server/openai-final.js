@@ -106,61 +106,38 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const fileInfo = fs.statSync(absoluteImagePath);
     console.log(`[OpenAI] Image size: ${fileInfo.size} bytes`);
     
-    // We'll use gpt-image-1 model for image transformation
-    console.log('[OpenAI] Using gpt-image-1 model for image transformation');
+    // We'll use gpt-image-1 model with the images/edit endpoint
+    console.log('[OpenAI] Using gpt-image-1 model with the images/edit endpoint');
+    
+    // Import the OpenAI SDK
+    const { OpenAI } = await import('openai');
+    
+    // Create the OpenAI client
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
     
     // Optimize the image for the API
     optimizedImagePath = await optimizeImage(absoluteImagePath);
     console.log(`[OpenAI] Optimized image for API: ${optimizedImagePath}`);
     
-    // Read the optimized image
-    const imageBuffer = fs.readFileSync(optimizedImagePath);
+    // Create a readable stream from the optimized image
+    const imageStream = fs.createReadStream(optimizedImagePath);
     
-    // Create a FormData object for the request
-    const form = new FormData();
-    form.append('model', 'gpt-image-1');
-    form.append('prompt', prompt);
-    form.append('n', '2'); // Generate 2 images
-    form.append('size', finalSize);
-    
-    // Get the MIME type
-    let mimeType = 'image/png';
-    try {
-      const { fileTypeFromBuffer } = await import('file-type');
-      const fileTypeResult = await fileTypeFromBuffer(imageBuffer);
-      if (fileTypeResult && fileTypeResult.mime) {
-        mimeType = fileTypeResult.mime;
-      }
-    } catch (err) {
-      console.log('[OpenAI] Could not detect MIME type, using default image/png');
-    }
-    
-    // Add the image to the form
-    form.append('image', imageBuffer, {
-      filename: path.basename(optimizedImagePath),
-      contentType: mimeType
+    // Send the request using the OpenAI SDK - this handles the multipart form data correctly
+    console.log(`[OpenAI] Sending edit request with prompt: ${prompt.substring(0, 50)}...`);
+    const response = await openai.images.edit({
+      image: imageStream,
+      prompt: prompt,
+      n: 2,
+      size: finalSize,
+      model: "gpt-image-1"
     });
     
-    console.log('[OpenAI] Sending request to OpenAI /v1/images/edits endpoint...');
+    console.log('[OpenAI] Response received from image edit API');
     
-    // Make direct API call with axios
-    const response = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      form,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          ...form.getHeaders()
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      }
-    );
-    
-    console.log('[OpenAI] Response received from API');
-    
-    // Process the response
-    if (!response.data || !response.data.data || response.data.data.length === 0) {
+    // Process the response - with the OpenAI SDK the structure is a bit different
+    if (!response || !response.data || response.data.length === 0) {
       throw new Error("No image data in OpenAI response");
     }
     
@@ -170,7 +147,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
     
     // Download and save the first transformed image
-    const imageUrl1 = response.data.data[0].url;
+    const imageUrl1 = response.data[0].url;
     console.log(`[OpenAI] First image URL: ${imageUrl1}`);
     
     const imageResponse1 = await axios.get(imageUrl1, { responseType: 'arraybuffer' });
@@ -179,8 +156,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     
     // Process second image if available
     let outputPath2 = null;
-    if (response.data.data.length > 1 && response.data.data[1].url) {
-      const imageUrl2 = response.data.data[1].url;
+    if (response.data.length > 1 && response.data[1].url) {
+      const imageUrl2 = response.data[1].url;
       console.log(`[OpenAI] Second image URL: ${imageUrl2}`);
       
       const outputFileName2 = `transformed-${timeStamp}-2.png`;
