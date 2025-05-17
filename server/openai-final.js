@@ -106,8 +106,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const fileInfo = fs.statSync(absoluteImagePath);
     console.log(`[OpenAI] Image size: ${fileInfo.size} bytes`);
     
-    // We'll use DALL-E 3 model directly for image generation
-    console.log('[OpenAI] Using DALL-E 3 model for direct image generation');
+    // We'll use gpt-image-1 model for image transformation
+    console.log('[OpenAI] Using gpt-image-1 model for image transformation');
     
     // Import OpenAI
     const { OpenAI } = await import('openai');
@@ -117,50 +117,86 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       apiKey: process.env.OPENAI_API_KEY
     });
     
-    // Create our transformation prompt based on the user's input
-    const transformationPrompt = `Transform this image according to the following instructions: 
+    // Optimize the image for the API
+    const optimizedImagePath = await optimizeImage(absoluteImagePath);
+    console.log(`[OpenAI] Optimized image for API: ${optimizedImagePath}`);
     
-    ${prompt}
+    // Read the optimized image
+    const imageBuffer = fs.readFileSync(optimizedImagePath);
     
-    The transformation should maintain the overall composition and structure of the original image, 
-    but apply the requested style or modifications. Preserve the main subject matter while 
-    transforming the visual elements as specified in the prompt.`;
+    // Create a FormData object for each request
+    const form = new FormData();
+    form.append('model', 'gpt-image-1');
+    form.append('prompt', prompt);
+    form.append('n', '2'); // Generate 2 images
+    form.append('size', finalSize);
     
-    console.log(`[OpenAI] Using transformation prompt: "${transformationPrompt.substring(0, 50)}..."`);
-    
-    // Generate the first image with DALL-E 3
-    console.log('[OpenAI] Generating first image variation...');
-    const response1 = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: transformationPrompt + " Variation 1.",
-      n: 1,
-      size: finalSize,
-      quality: "standard",
-    });
-    
-    console.log('[OpenAI] First image generation response received');
-    
-    // Process the first response
-    if (!response1.data || response1.data.length === 0) {
-      throw new Error("No image data in first OpenAI response");
+    // Get the MIME type
+    let mimeType = 'image/png';
+    try {
+      const { fileTypeFromBuffer } = await import('file-type');
+      const fileTypeResult = await fileTypeFromBuffer(imageBuffer);
+      if (fileTypeResult && fileTypeResult.mime) {
+        mimeType = fileTypeResult.mime;
+      }
+    } catch (err) {
+      console.log('[OpenAI] Could not detect MIME type, using default image/png');
     }
     
-    // Generate the second image with a slightly different prompt for variety
-    // but still keeping it similar to the first one
-    console.log('[OpenAI] Generating second image variation...');
-    const response2 = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: transformationPrompt + " Create a similar but slightly different interpretation as variation 2.",
-      n: 1,
-      size: finalSize,
-      quality: "standard",
+    // Add the image to the form
+    form.append('image', imageBuffer, {
+      filename: path.basename(optimizedImagePath),
+      contentType: mimeType
     });
     
-    console.log('[OpenAI] Second image generation response received');
+    console.log('[OpenAI] Sending request to OpenAI /v1/images/edits endpoint...');
     
-    // Process the second response
-    if (!response2.data || response2.data.length === 0) {
-      throw new Error("No image data in second OpenAI response");
+    // Make direct API call with axios
+    const response = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      form,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          ...form.getHeaders()
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
+    
+    console.log('[OpenAI] Response received from API');
+    
+    // Process the response
+    if (!response.data || !response.data.data || response.data.data.length === 0) {
+      throw new Error("No image data in OpenAI response");
+    }
+    
+    // Create filenames for transformed images
+    const timeStamp = Date.now();
+    const outputFileName1 = `transformed-${timeStamp}-1.png`;
+    const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
+    
+    // Download and save the first transformed image
+    const imageUrl1 = response.data.data[0].url;
+    console.log(`[OpenAI] First image URL: ${imageUrl1}`);
+    
+    const imageResponse1 = await axios.get(imageUrl1, { responseType: 'arraybuffer' });
+    fs.writeFileSync(outputPath1, Buffer.from(imageResponse1.data));
+    console.log(`[OpenAI] First image saved to: ${outputPath1}`);
+    
+    // Process second image if available
+    let outputPath2 = null;
+    if (response.data.data.length > 1 && response.data.data[1].url) {
+      const imageUrl2 = response.data.data[1].url;
+      console.log(`[OpenAI] Second image URL: ${imageUrl2}`);
+      
+      const outputFileName2 = `transformed-${timeStamp}-2.png`;
+      outputPath2 = path.join(process.cwd(), "uploads", outputFileName2);
+      
+      const imageResponse2 = await axios.get(imageUrl2, { responseType: 'arraybuffer' });
+      fs.writeFileSync(outputPath2, Buffer.from(imageResponse2.data));
+      console.log(`[OpenAI] Second image saved to: ${outputPath2}`);
     }
     
     // Create filenames for transformed images
