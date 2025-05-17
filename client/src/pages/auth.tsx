@@ -27,6 +27,7 @@ export default function AuthPage() {
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
+  const [registerName, setRegisterName] = useState("");
   
   // Redirect if logged in
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function AuthPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!registerUsername || !registerPassword || !registerConfirmPassword) {
+    if (!registerName || !registerUsername || !registerPassword || !registerConfirmPassword) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -75,6 +76,7 @@ export default function AuthPage() {
     }
     
     registerMutation.mutate({
+      name: registerName,
       username: registerUsername,
       password: registerPassword,
       email: registerEmail || undefined,
@@ -149,6 +151,17 @@ export default function AuthPage() {
                 </CardHeader>
                 <form onSubmit={handleRegister}>
                   <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-name">Full Name</Label>
+                      <Input
+                        id="register-name"
+                        type="text"
+                        placeholder="Enter your name"
+                        value={registerName}
+                        onChange={(e) => setRegisterName(e.target.value)}
+                        className="bg-gray-700 border-gray-600"
+                      />
+                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="register-username">Username</Label>
                       <Input
