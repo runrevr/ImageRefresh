@@ -71,7 +71,7 @@ async function optimizeImage(imagePath) {
 }
 
 /**
- * Transform an image using OpenAI's API with DALL-E 3 model
+ * Transform an image using OpenAI's GPT-Image-1 model
  * 
  * @param {string} imagePath - Path to the image file
  * @param {string} prompt - Transformation prompt
@@ -109,22 +109,14 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     // We'll use gpt-image-1 model for image transformation
     console.log('[OpenAI] Using gpt-image-1 model for image transformation');
     
-    // Import OpenAI
-    const { OpenAI } = await import('openai');
-    
-    // Create OpenAI client
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
-    
     // Optimize the image for the API
-    const optimizedImagePath = await optimizeImage(absoluteImagePath);
+    optimizedImagePath = await optimizeImage(absoluteImagePath);
     console.log(`[OpenAI] Optimized image for API: ${optimizedImagePath}`);
     
     // Read the optimized image
     const imageBuffer = fs.readFileSync(optimizedImagePath);
     
-    // Create a FormData object for each request
+    // Create a FormData object for the request
     const form = new FormData();
     form.append('model', 'gpt-image-1');
     form.append('prompt', prompt);
@@ -172,7 +164,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       throw new Error("No image data in OpenAI response");
     }
     
-    // Create filenames for transformed images
+    // Create filename for first transformed image
     const timeStamp = Date.now();
     const outputFileName1 = `transformed-${timeStamp}-1.png`;
     const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
@@ -199,34 +191,9 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       console.log(`[OpenAI] Second image saved to: ${outputPath2}`);
     }
     
-    // Create filenames for transformed images
-    const timeStamp = Date.now();
-    const outputFileName1 = `transformed-${timeStamp}-1.png`;
-    const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
-    
-    const outputFileName2 = `transformed-${timeStamp}-2.png`;
-    const outputPath2 = path.join(process.cwd(), "uploads", outputFileName2);
-    
-    // Get the image URLs from the responses
-    const resultUrl1 = response1.data[0].url;
-    const resultUrl2 = response2.data[0].url;
-    
-    console.log(`[OpenAI] First image URL: ${resultUrl1}`);
-    console.log(`[OpenAI] Second image URL: ${resultUrl2}`);
-    
-    // Download and save the first transformed image
-    const resultResponse1 = await axios.get(resultUrl1, { responseType: 'arraybuffer' });
-    fs.writeFileSync(outputPath1, Buffer.from(resultResponse1.data));
-    console.log(`[OpenAI] First image saved to: ${outputPath1}`);
-    
-    // Download and save the second transformed image
-    const resultResponse2 = await axios.get(resultUrl2, { responseType: 'arraybuffer' });
-    fs.writeFileSync(outputPath2, Buffer.from(resultResponse2.data));
-    console.log(`[OpenAI] Second image saved to: ${outputPath2}`);
-    
     // Return the result with both transformed images
     return {
-      url: resultUrl1,
+      url: imageUrl1,
       transformedPath: outputPath1,
       secondTransformedPath: outputPath2
     };
