@@ -121,18 +121,39 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     optimizedImagePath = await optimizeImage(absoluteImagePath);
     console.log(`[OpenAI] Optimized image for API: ${optimizedImagePath}`);
     
-    // Create a readable stream from the optimized image
-    const imageStream = fs.createReadStream(optimizedImagePath);
+    // Create a FormData instance manually (helps with mime type issues)
+    const formData = new FormData();
+    formData.append('prompt', prompt);
+    formData.append('n', '2');
+    formData.append('size', finalSize);
+    formData.append('model', 'gpt-image-1');
     
-    // Send the request using the OpenAI SDK - this handles the multipart form data correctly
-    console.log(`[OpenAI] Sending edit request with prompt: ${prompt.substring(0, 50)}...`);
-    const response = await openai.images.edit({
-      image: imageStream,
-      prompt: prompt,
-      n: 2,
-      size: finalSize,
-      model: "gpt-image-1"
+    // Read image file as buffer and append with explicit mime type
+    const imageBuffer = fs.readFileSync(optimizedImagePath);
+    formData.append('image', imageBuffer, {
+      filename: path.basename(optimizedImagePath),
+      contentType: 'image/png'
     });
+    
+    // Make direct API call to avoid SDK mime type issues
+    console.log(`[OpenAI] Sending edit request with prompt: ${prompt.substring(0, 50)}...`);
+    const apiResponse = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        },
+        maxContentLength: 100 * 1024 * 1024,
+        maxBodyLength: 100 * 1024 * 1024
+      }
+    );
+    
+    // Convert API response to expected format
+    const response = {
+      data: apiResponse.data.data
+    };
     
     console.log('[OpenAI] Response received from image edit API');
     
