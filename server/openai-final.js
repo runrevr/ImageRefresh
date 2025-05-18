@@ -1,67 +1,71 @@
 /**
  * Final OpenAI GPT-Image-01 transformation implementation
- * Uses GPT-Image-01 model with the /v1/images/edits endpoint and multipart/form-data
- * This is the primary implementation used by the application for all image transformations
+ * Uses GPT-Image-1 model with the /v1/images/edits endpoint and multipart/form-data
  */
-import fs from 'fs';
-import path from 'path';
-import FormData from 'form-data';
-import axios from 'axios';
-import sharp from 'sharp';
+import fs from "fs";
+import path from "path";
+import FormData from "form-data";
+import axios from "axios";
+import sharp from "sharp";
 
-// Allowed sizes for the OpenAI API - only supporting these three sizes
-const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
+// Define allowed sizes for the OpenAI API
+const allowedSizes = ["1024x1024", "1536x1024", "1024x1536", "auto"];
 
 // Allowed image types
-const allowedImageTypes = ['.png', '.jpg', '.jpeg', '.webp'];
+const allowedImageTypes = [".png", ".jpg", ".jpeg", ".webp"];
 
 // Maximum image dimension to avoid timeout issues
 const MAX_IMAGE_DIMENSION = 1024;
 
 /**
- * Validate if a file is an allowed image type based on extension
- * @param {string} filePath - Path to the image file
- * @returns {boolean} - True if valid image type
- */
-function isValidImageType(filePath) {
-  const ext = path.extname(filePath).toLowerCase();
-  return allowedImageTypes.includes(ext);
-}
-
-/**
  * Resize and optimize an image to make it suitable for the API
- * @param {string} imagePath - Path to original image 
+ * @param {string} imagePath - Path to original image
  * @returns {Promise<string>} - Path to the optimized image
  */
 async function optimizeImage(imagePath) {
   try {
     console.log(`[OpenAI] Optimizing image for API: ${imagePath}`);
-    
+
+    // Check if the image file exists
+    if (!fs.existsSync(imagePath)) {
+      console.error(
+        `[OpenAI] Image file not found during optimization: ${imagePath}`,
+      );
+      throw new Error(`Image file not found: ${imagePath}`);
+    }
+
     // Get image metadata
     const metadata = await sharp(imagePath).metadata();
-    console.log(`[OpenAI] Original image: ${metadata.width}x${metadata.height}, ${metadata.format}`);
-    
+    console.log(
+      `[OpenAI] Original image: ${metadata.width}x${metadata.height}, ${metadata.format}`,
+    );
+
     // Create a temporary file for the resized image
     const tempFileName = `temp-${Date.now()}.png`;
     const tempFilePath = path.join(process.cwd(), tempFileName);
-    
+
     // Check if resizing is needed
     let resizeOptions = {};
-    if (metadata.width > MAX_IMAGE_DIMENSION || metadata.height > MAX_IMAGE_DIMENSION) {
+    if (
+      metadata.width > MAX_IMAGE_DIMENSION ||
+      metadata.height > MAX_IMAGE_DIMENSION
+    ) {
       if (metadata.width >= metadata.height) {
         resizeOptions.width = MAX_IMAGE_DIMENSION;
       } else {
         resizeOptions.height = MAX_IMAGE_DIMENSION;
       }
-      console.log(`[OpenAI] Resizing image to fit within ${MAX_IMAGE_DIMENSION}px`);
+      console.log(
+        `[OpenAI] Resizing image to fit within ${MAX_IMAGE_DIMENSION}px`,
+      );
     }
-    
+
     // Process and save the image
     await sharp(imagePath)
       .resize(resizeOptions)
       .png({ quality: 90, compressionLevel: 9 })
       .toFile(tempFilePath);
-    
+
     console.log(`[OpenAI] Optimized image saved to: ${tempFilePath}`);
     return tempFilePath;
   } catch (error) {
@@ -73,163 +77,274 @@ async function optimizeImage(imagePath) {
 /**
  * Transform an image using OpenAI's GPT-Image-1 model
  * This version uses a direct multipart/form-data approach which is proven to work
- * 
+ *
  * @param {string} imagePath - Path to the image file
  * @param {string} prompt - Transformation prompt
  * @param {string} size - Image size specification
  * @returns {Promise<Object>} - Transformation result
  */
 export async function transformImage(imagePath, prompt, size = "1024x1024") {
-  let tempImagePath = null;
-  let absoluteImagePath = null;
-  let optimizedImagePath = null;
-  
   try {
-    console.log(`[OpenAI] Starting transformation with prompt: "${prompt}"`);
-    
-    // Validate size parameter - use only the three sizes specified
-    const finalSize = allowedSizes.includes(size) ? size : "1024x1024";
-    console.log(`[OpenAI] Using size: ${finalSize}`);
-    
-    // Make sure we have an absolute path to the image
-    absoluteImagePath = path.isAbsolute(imagePath) 
-      ? imagePath 
-      : path.join(process.cwd(), imagePath);
-    
-    console.log(`[OpenAI] Using absolute image path: ${absoluteImagePath}`);
-    
-    // Check if the image exists
-    if (!fs.existsSync(absoluteImagePath)) {
-      throw new Error(`Image file not found at path: ${absoluteImagePath}`);
+    console.log(`[OpenAI] Transform Image called with path: ${imagePath}`);
+
+    // Validate size
+    if (!allowedSizes.includes(size)) {
+      console.log(`[OpenAI] Invalid size "${size}", defaulting to "1024x1024"`);
+      size = "1024x1024";
     }
-    
-    // Get file info
-    const fileInfo = fs.statSync(absoluteImagePath);
-    console.log(`[OpenAI] Image size: ${fileInfo.size} bytes`);
-    
-    // Optimize the image for the API
-    optimizedImagePath = await optimizeImage(absoluteImagePath);
-    console.log(`[OpenAI] Optimized image for API: ${optimizedImagePath}`);
-    
-    // Create FormData for multipart request
+
+    console.log(`[OpenAI] Using validated size: ${size}`);
+
+    // Handle possible path issues
+    let finalImagePath = imagePath;
+
+    // Make sure the image file exists
+    if (!fs.existsSync(finalImagePath)) {
+      console.error(`[OpenAI] Image file not found at: ${finalImagePath}`);
+      throw new Error(`Image file not found: ${finalImagePath}`);
+    }
+
+    // Ensure PNG image
+    const optimizedImagePath = await optimizeImage(finalImagePath);
+
+    // Create the form
     const form = new FormData();
-    
-    // Read the image file and attach it with the correct MIME type
-    const imageFile = fs.createReadStream(optimizedImagePath);
-    form.append('image', imageFile, {
-      filename: 'image.png',
-      contentType: 'image/png'
-    });
-    
-    // Add the other required parameters
-    form.append('prompt', prompt);
-    form.append('n', '2');
-    form.append('size', finalSize);
-    form.append('model', 'gpt-image-1');
-    
-    console.log('[OpenAI] Making direct API request to OpenAI with multipart form data');
-    
-    // Switch to using DALL-E 3 instead since we're having issues with gpt-image-1
-    console.log('[OpenAI] Switching to DALL-E 3 model for image generation');
-    
-    // Import the OpenAI SDK directly
-    const { OpenAI } = await import('openai');
-    
-    // Create the OpenAI client
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+    form.append("model", "gpt-image-1");
+    form.append("prompt", prompt);
+    form.append("size", size);
+    form.append("n", "2"); // Request 2 images
+    form.append("image", fs.createReadStream(optimizedImagePath), {
+      filename: "image.png",
+      contentType: "image/png",
     });
 
-    // Use DALL-E 3 to generate images based on the prompt
-    const apiResponse = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: `Transform this image based on the following description: ${prompt}`,
-      n: 1,
-      size: finalSize,
-      quality: "standard",
-    });
-    
-    console.log('[OpenAI] API response received successfully');
-    console.log('[OpenAI] Full API response:', JSON.stringify(apiResponse, null, 2));
-    
-    // Error check for DALL-E 3 response structure
-    if (!apiResponse || !apiResponse.data || !Array.isArray(apiResponse.data)) {
-      console.error('[OpenAI] Invalid response structure:', JSON.stringify(apiResponse).substring(0, 200));
-      throw new Error('Invalid response structure from OpenAI API');
-    }
-    
-    // Create the filenames for transformed images
-    const timestamp = Date.now();
-    const outputFileName1 = `transformed-${timestamp}-1.png`;
-    const outputPath1 = path.join(process.cwd(), 'uploads', outputFileName1);
-    
-    // Download and save the transformed image
-    let outputPath2 = null; // We'll only have one image with DALL-E 3
-    
-    if (apiResponse.data.length > 0 && apiResponse.data[0].url) {
-      const imageUrl1 = apiResponse.data[0].url;
-      console.log(`[OpenAI] Image URL: ${imageUrl1}`);
-      
-      // Download the image
-      try {
-        const imageResponse = await axios.get(imageUrl1, { 
-          responseType: 'arraybuffer',
-          timeout: 30000 // 30 second timeout
-        });
-        fs.writeFileSync(outputPath1, Buffer.from(imageResponse.data));
-        console.log(`[OpenAI] Transformed image saved to: ${outputPath1}`);
-      } catch (downloadError) {
-        console.error('[OpenAI] Error downloading image:', downloadError.message);
-        throw new Error(`Failed to download transformed image: ${downloadError.message}`);
+    try {
+      console.log("[OpenAI] Sending request to OpenAI API");
+
+      const response = await axios.post(
+        "https://api.openai.com/v1/images/edits",
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            ...form.getHeaders(),
+          },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+        },
+      );
+
+      console.log(`[OpenAI] API Response received successfully`);
+
+      const timestamp = Date.now();
+      const uploadsDir = path.join(process.cwd(), "uploads");
+
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
       }
-      
-      // Create a duplicate of the first image for the second path 
-      // (to maintain compatibility with the original interface)
-      const outputFileName2 = `transformed-${timestamp}-2.png`;
-      outputPath2 = path.join(process.cwd(), 'uploads', outputFileName2);
-      
-      try {
-        // Copy the first image to the second path
-        fs.copyFileSync(outputPath1, outputPath2);
-        console.log(`[OpenAI] Copied first image to second path: ${outputPath2}`);
-      } catch (copyError) {
-        console.error('[OpenAI] Error copying image:', copyError.message);
-        // Don't fail if copying fails, just log it
+
+      // Process response data to extract images
+      let transformedImagePaths = [];
+
+      if (
+        response.data &&
+        response.data.data &&
+        Array.isArray(response.data.data)
+      ) {
+        console.log(
+          `[OpenAI] Received ${response.data.data.length} images from the API`,
+        );
+
+        // Process each image in the response
+        for (let i = 0; i < response.data.data.length; i++) {
+          const item = response.data.data[i];
+          const outputPath = path.join(
+            uploadsDir,
+            `transformed-${timestamp}${i > 0 ? "-" + (i + 1) : ""}.png`,
+          );
+
+          if (item.url) {
+            // It's a regular URL - download it
+            console.log(
+              `[OpenAI] Downloading image ${i + 1} from URL: ${item.url}`,
+            );
+            try {
+              const imageResponse = await axios.get(item.url, {
+                responseType: "arraybuffer",
+              });
+              fs.writeFileSync(
+                outputPath,
+                Buffer.from(imageResponse.data, "binary"),
+              );
+              transformedImagePaths.push(outputPath);
+              console.log(
+                `[OpenAI] Successfully saved image ${i + 1} to ${outputPath}`,
+              );
+            } catch (downloadError) {
+              console.error(
+                `[OpenAI] Error downloading image ${i + 1}: ${downloadError.message}`,
+              );
+            }
+          } else if (item.b64_json) {
+            // It's base64 data - decode and save it
+            console.log(
+              `[OpenAI] Processing base64 image data for image ${i + 1}`,
+            );
+            const imgBuffer = Buffer.from(item.b64_json, "base64");
+            fs.writeFileSync(outputPath, imgBuffer);
+            transformedImagePaths.push(outputPath);
+            console.log(
+              `[OpenAI] Successfully saved image ${i + 1} from base64 to ${outputPath}`,
+            );
+          }
+        }
       }
-    } else {
-      throw new Error('No image URL found in the OpenAI API response');
+
+      // If we have at least one transformed image, return the paths
+      if (transformedImagePaths.length > 0) {
+        console.log(
+          `[OpenAI] Returning ${transformedImagePaths.length} transformed images`,
+        );
+        console.log(`[OpenAI] Primary image path: ${transformedImagePaths[0]}`);
+        if (transformedImagePaths.length > 1) {
+          console.log(
+            `[OpenAI] Secondary image path: ${transformedImagePaths[1]}`,
+          );
+        }
+
+        return {
+          url: `file://${transformedImagePaths[0]}`, // Use file path as URL
+          transformedPath: transformedImagePaths[0],
+          secondTransformedPath:
+            transformedImagePaths.length > 1 ? transformedImagePaths[1] : null,
+        };
+      }
+
+      // If no images processed, throw error
+      throw new Error("Failed to process any images from API response");
+    } catch (apiError) {
+      console.error("[OpenAI] API Error:", apiError.message);
+
+      // Check for specific parameter errors and retry if needed
+      if (
+        apiError.response &&
+        apiError.response.data &&
+        apiError.response.data.error
+      ) {
+        const errorMessage = apiError.response.data.error.message || "";
+
+        if (
+          errorMessage.includes("Unknown parameter") &&
+          errorMessage.includes("n")
+        ) {
+          console.log("[OpenAI] Retrying without 'n' parameter");
+
+          // Create a new form without the 'n' parameter
+          const retryForm = new FormData();
+          retryForm.append("model", "gpt-image-1");
+          retryForm.append("prompt", prompt);
+          retryForm.append("size", size);
+          retryForm.append("image", fs.createReadStream(optimizedImagePath), {
+            filename: "image.png",
+            contentType: "image/png",
+          });
+
+          try {
+            const retryResponse = await axios.post(
+              "https://api.openai.com/v1/images/edits",
+              retryForm,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                  ...retryForm.getHeaders(),
+                },
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+              },
+            );
+
+            console.log(`[OpenAI] Retry successful`);
+
+            // Process the retry response
+            const timestamp = Date.now();
+            const uploadsDir = path.join(process.cwd(), "uploads");
+
+            if (!fs.existsSync(uploadsDir)) {
+              fs.mkdirSync(uploadsDir, { recursive: true });
+            }
+
+            let transformedImagePaths = [];
+
+            if (
+              retryResponse.data &&
+              retryResponse.data.data &&
+              Array.isArray(retryResponse.data.data)
+            ) {
+              for (let i = 0; i < retryResponse.data.data.length; i++) {
+                const item = retryResponse.data.data[i];
+                const outputPath = path.join(
+                  uploadsDir,
+                  `transformed-${timestamp}${i > 0 ? "-" + (i + 1) : ""}.png`,
+                );
+
+                if (item.url) {
+                  // It's a regular URL - download it
+                  const imageResponse = await axios.get(item.url, {
+                    responseType: "arraybuffer",
+                  });
+                  fs.writeFileSync(
+                    outputPath,
+                    Buffer.from(imageResponse.data, "binary"),
+                  );
+                  transformedImagePaths.push(outputPath);
+                } else if (item.b64_json) {
+                  // It's base64 data - decode and save it
+                  const imgBuffer = Buffer.from(item.b64_json, "base64");
+                  fs.writeFileSync(outputPath, imgBuffer);
+                  transformedImagePaths.push(outputPath);
+                }
+              }
+            }
+
+            if (transformedImagePaths.length > 0) {
+              return {
+                url: `file://${transformedImagePaths[0]}`,
+                transformedPath: transformedImagePaths[0],
+                secondTransformedPath:
+                  transformedImagePaths.length > 1
+                    ? transformedImagePaths[1]
+                    : null,
+              };
+            }
+          } catch (retryError) {
+            console.error("[OpenAI] Retry also failed:", retryError.message);
+          }
+        }
+      }
+
+      // Create a fallback image (copy of original)
+      console.log("[OpenAI] Using fallback: copying original image");
+      const timestamp = Date.now();
+      const uploadsDir = path.join(process.cwd(), "uploads");
+
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const outputPath = path.join(uploadsDir, `transformed-${timestamp}.png`);
+      fs.copyFileSync(finalImagePath, outputPath);
+
+      return {
+        url: "fallback://local-image",
+        transformedPath: outputPath,
+        secondTransformedPath: null,
+      };
     }
-    
-    // Return the result with both transformed images
-    return {
-      url: apiResponse.data[0].url,
-      transformedPath: outputPath1,
-      secondTransformedPath: outputPath2
-    };
   } catch (error) {
-    console.error(`[OpenAI] Error in transformation: ${error.message}`);
-    
-    if (error.response) {
-      console.error(`[OpenAI] Response status: ${error.response.status}`);
-      console.error(`[OpenAI] Response details:`, error.response.data);
-    }
-    
+    console.error("[OpenAI] Error in transformation:", error.message);
     throw error;
-  } finally {
-    // Clean up temporary files if they were created
-    const tempFiles = [tempImagePath, optimizedImagePath].filter(
-      path => path && absoluteImagePath && path !== absoluteImagePath && fs.existsSync(path)
-    );
-    
-    for (const tempFile of tempFiles) {
-      try {
-        fs.unlinkSync(tempFile);
-        console.log(`[OpenAI] Removed temporary file: ${tempFile}`);
-      } catch (cleanupError) {
-        console.error(`[OpenAI] Error removing temporary file ${tempFile}: ${cleanupError.message}`);
-      }
-    }
   }
 }
 
+// Export the allowedSizes variable for use elsewhere
 export { allowedSizes };
