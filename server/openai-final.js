@@ -72,6 +72,7 @@ async function optimizeImage(imagePath) {
 
 /**
  * Transform an image using OpenAI's GPT-Image-1 model
+ * This version uses a direct multipart/form-data approach which is proven to work
  * 
  * @param {string} imagePath - Path to the image file
  * @param {string} prompt - Transformation prompt
@@ -106,109 +107,95 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const fileInfo = fs.statSync(absoluteImagePath);
     console.log(`[OpenAI] Image size: ${fileInfo.size} bytes`);
     
-    // We'll use gpt-image-1 model with the images/edit endpoint
-    console.log('[OpenAI] Using gpt-image-1 model with the images/edit endpoint');
-    
-    // Import the OpenAI SDK
-    const { OpenAI } = await import('openai');
-    
-    // Create the OpenAI client
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
-    
     // Optimize the image for the API
     optimizedImagePath = await optimizeImage(absoluteImagePath);
     console.log(`[OpenAI] Optimized image for API: ${optimizedImagePath}`);
     
-    // Create a FormData instance manually (helps with mime type issues)
-    const formData = new FormData();
-    formData.append('prompt', prompt);
-    formData.append('n', '2');
-    formData.append('size', finalSize);
-    formData.append('model', 'gpt-image-1');
+    // Create FormData for multipart request
+    const form = new FormData();
     
-    // Read image file as buffer and append with explicit mime type
-    const imageBuffer = fs.readFileSync(optimizedImagePath);
-    formData.append('image', imageBuffer, {
-      filename: path.basename(optimizedImagePath),
+    // Read the image file and attach it with the correct MIME type
+    const imageFile = fs.createReadStream(optimizedImagePath);
+    form.append('image', imageFile, {
+      filename: 'image.png',
       contentType: 'image/png'
     });
     
-    // Make direct API call to avoid SDK mime type issues
-    console.log(`[OpenAI] Sending edit request with prompt: ${prompt.substring(0, 50)}...`);
-    const apiResponse = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      formData,
-      {
-        headers: {
-          ...formData.getHeaders(),
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-        maxContentLength: 100 * 1024 * 1024,
-        maxBodyLength: 100 * 1024 * 1024
-      }
-    );
+    // Add the other required parameters
+    form.append('prompt', prompt);
+    form.append('n', '2');
+    form.append('size', finalSize);
+    form.append('model', 'gpt-image-1');
     
-    // Log the raw response
-    console.log('[OpenAI] Raw API response:', JSON.stringify(apiResponse.data).substring(0, 200) + '...');
+    console.log('[OpenAI] Making direct API request to OpenAI with multipart form data');
     
-    // Convert API response to expected format
-    const response = {
-      data: apiResponse.data.data || []
-    };
+    // Make the direct API request with proper content type header
+    const apiResponse = await axios({
+      method: 'post',
+      url: 'https://api.openai.com/v1/images/edits',
+      data: form,
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        ...form.getHeaders(),
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
     
-    console.log('[OpenAI] Response received from image edit API');
+    console.log('[OpenAI] API response received successfully');
     
-    // Process the response - with the OpenAI SDK the structure is a bit different
-    if (!response || !response.data || response.data.length === 0) {
-      throw new Error("No image data in OpenAI response");
+    // Error check
+    if (!apiResponse.data || !apiResponse.data.data || !Array.isArray(apiResponse.data.data)) {
+      console.error('[OpenAI] Invalid response structure:', JSON.stringify(apiResponse.data).substring(0, 200));
+      throw new Error('Invalid response structure from OpenAI API');
     }
     
-    // Create filename for first transformed image
-    const timeStamp = Date.now();
-    const outputFileName1 = `transformed-${timeStamp}-1.png`;
-    const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
+    // Create the filenames for transformed images
+    const timestamp = Date.now();
+    const outputFileName1 = `transformed-${timestamp}-1.png`;
+    const outputPath1 = path.join(process.cwd(), 'uploads', outputFileName1);
     
-    // Check if we have a valid response with image URLs
-    if (!response.data || !response.data[0] || !response.data[0].url) {
-      throw new Error("Missing image URL in OpenAI response");
-    }
-    
-    // Download and save the first transformed image
-    const imageUrl1 = response.data[0].url;
-    console.log(`[OpenAI] First image URL: ${imageUrl1}`);
-    
-    try {
-      const imageResponse1 = await axios.get(imageUrl1, { 
-        responseType: 'arraybuffer',
-        timeout: 30000, // 30 seconds timeout
-        maxContentLength: 50 * 1024 * 1024 // 50MB max
-      });
-      fs.writeFileSync(outputPath1, Buffer.from(imageResponse1.data));
-      console.log(`[OpenAI] First image saved to: ${outputPath1}`);
-    } catch (downloadError) {
-      console.error(`[OpenAI] Error downloading image: ${downloadError.message}`);
-      throw new Error(`Failed to download transformed image: ${downloadError.message}`);
-    }
-    
-    // Process second image if available
+    // Download and save first transformed image
     let outputPath2 = null;
-    if (response.data.length > 1 && response.data[1].url) {
-      const imageUrl2 = response.data[1].url;
-      console.log(`[OpenAI] Second image URL: ${imageUrl2}`);
+    
+    if (apiResponse.data.data.length > 0 && apiResponse.data.data[0].url) {
+      const imageUrl1 = apiResponse.data.data[0].url;
+      console.log(`[OpenAI] First image URL: ${imageUrl1}`);
       
-      const outputFileName2 = `transformed-${timeStamp}-2.png`;
-      outputPath2 = path.join(process.cwd(), "uploads", outputFileName2);
+      // Download the image
+      try {
+        const imageResponse = await axios.get(imageUrl1, { responseType: 'arraybuffer' });
+        fs.writeFileSync(outputPath1, Buffer.from(imageResponse.data));
+        console.log(`[OpenAI] First transformed image saved to: ${outputPath1}`);
+      } catch (downloadError) {
+        console.error('[OpenAI] Error downloading first image:', downloadError.message);
+        throw new Error(`Failed to download transformed image: ${downloadError.message}`);
+      }
       
-      const imageResponse2 = await axios.get(imageUrl2, { responseType: 'arraybuffer' });
-      fs.writeFileSync(outputPath2, Buffer.from(imageResponse2.data));
-      console.log(`[OpenAI] Second image saved to: ${outputPath2}`);
+      // Process second image if available
+      if (apiResponse.data.data.length > 1 && apiResponse.data.data[1].url) {
+        const imageUrl2 = apiResponse.data.data[1].url;
+        console.log(`[OpenAI] Second image URL: ${imageUrl2}`);
+        
+        const outputFileName2 = `transformed-${timestamp}-2.png`;
+        outputPath2 = path.join(process.cwd(), 'uploads', outputFileName2);
+        
+        try {
+          const imageResponse2 = await axios.get(imageUrl2, { responseType: 'arraybuffer' });
+          fs.writeFileSync(outputPath2, Buffer.from(imageResponse2.data));
+          console.log(`[OpenAI] Second transformed image saved to: ${outputPath2}`);
+        } catch (downloadError) {
+          console.error('[OpenAI] Error downloading second image:', downloadError.message);
+          // Don't fail if second image fails, just log it
+        }
+      }
+    } else {
+      throw new Error('No image URLs found in the API response');
     }
     
     // Return the result with both transformed images
     return {
-      url: imageUrl1,
+      url: apiResponse.data.data[0].url,
       transformedPath: outputPath1,
       secondTransformedPath: outputPath2
     };
