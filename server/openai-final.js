@@ -150,9 +150,12 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       }
     );
     
+    // Log the raw response
+    console.log('[OpenAI] Raw API response:', JSON.stringify(apiResponse.data).substring(0, 200) + '...');
+    
     // Convert API response to expected format
     const response = {
-      data: apiResponse.data.data
+      data: apiResponse.data.data || []
     };
     
     console.log('[OpenAI] Response received from image edit API');
@@ -167,13 +170,27 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     const outputFileName1 = `transformed-${timeStamp}-1.png`;
     const outputPath1 = path.join(process.cwd(), "uploads", outputFileName1);
     
+    // Check if we have a valid response with image URLs
+    if (!response.data || !response.data[0] || !response.data[0].url) {
+      throw new Error("Missing image URL in OpenAI response");
+    }
+    
     // Download and save the first transformed image
     const imageUrl1 = response.data[0].url;
     console.log(`[OpenAI] First image URL: ${imageUrl1}`);
     
-    const imageResponse1 = await axios.get(imageUrl1, { responseType: 'arraybuffer' });
-    fs.writeFileSync(outputPath1, Buffer.from(imageResponse1.data));
-    console.log(`[OpenAI] First image saved to: ${outputPath1}`);
+    try {
+      const imageResponse1 = await axios.get(imageUrl1, { 
+        responseType: 'arraybuffer',
+        timeout: 30000, // 30 seconds timeout
+        maxContentLength: 50 * 1024 * 1024 // 50MB max
+      });
+      fs.writeFileSync(outputPath1, Buffer.from(imageResponse1.data));
+      console.log(`[OpenAI] First image saved to: ${outputPath1}`);
+    } catch (downloadError) {
+      console.error(`[OpenAI] Error downloading image: ${downloadError.message}`);
+      throw new Error(`Failed to download transformed image: ${downloadError.message}`);
+    }
     
     // Process second image if available
     let outputPath2 = null;
