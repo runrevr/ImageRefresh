@@ -33,6 +33,7 @@ export default function AuthPage() {
   const [loginPassword, setLoginPassword] = useState("");
   
   // Register form state
+  const [registerName, setRegisterName] = useState("");
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
