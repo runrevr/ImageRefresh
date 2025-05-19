@@ -1,26 +1,29 @@
-// Simple script to run the application
+/**
+ * Application starter script
+ * This script starts the development server
+ */
+
 const { spawn } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 
-console.log('Starting ImageRefresh application...');
+// Start the server
+console.log('Starting development server...');
 
-// Run the server
-const server = spawn('node', ['-r', 'tsx/register', 'server/index.ts'], {
+// Use npx tsx to run the TypeScript server directly
+const serverProcess = spawn('npx', ['tsx', 'server/index.ts'], {
   stdio: 'inherit',
-  env: { 
-    ...process.env, 
-    NODE_ENV: 'development',
-    PORT: '5000'
-  }
+  env: { ...process.env, NODE_ENV: 'development' }
 });
 
-// Handle server events
-server.on('error', (err) => {
-  console.error('Failed to start server:', err);
-});
+// Log the process ID for later reference
+fs.writeFileSync(path.join(__dirname, 'server.pid'), String(serverProcess.pid));
 
+console.log(`Server started with PID: ${serverProcess.pid}`);
+
+// Handle process termination
 process.on('SIGINT', () => {
   console.log('Shutting down server...');
-  server.kill('SIGINT');
-  process.exit(0);
+  serverProcess.kill();
+  process.exit();
 });
