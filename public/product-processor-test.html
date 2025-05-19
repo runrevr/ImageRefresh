@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Image Lab - Test Page</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        
+        /* Container styles */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Tab styles */
+        .tabs-container {
+            margin-bottom: 30px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 5px;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Form styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .text-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        .text-input:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        select, input[type="file"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input[type="file"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        /* Image previews */
+        .image-previews {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .preview-image:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Ideas section */
+        .ideas-container {
+            margin: 30px 0;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .image-ideas-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .image-ideas-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .idea-thumbnail {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        /* Options container */
+        .options-container {
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+        
+        .options-container h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        /* Results section */
+        .results-container {
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .image-comparison {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .before-image, .after-image {
+            width: calc(50% - 10px);
+            min-width: 250px;
+            border-radius: 8px;
+            object-fit: contain;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .before-image, .after-image {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+        
+        .idea-text {
+            margin: 15px 0;
+            font-style: italic;
+            color: #555;
+        }
+        
+        .download-button {
+            display: inline-block;
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .download-button:hover {
+            background-color: #0b7dda;
+        }
+        
+        /* Credit information */
+        .credit-info {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+            font-size: 14px;
+        }
+        
+        .credit-warning {
+            color: #f44336;
+            font-weight: bold;
+        }
+        
+        /* Test controls */
+        .test-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .credits-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .credits-control input {
+            width: 60px;
+            padding: 5px;
+        }
+        
+        /* Status display */
+        .status-display {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Image Lab - Test Page</h1>
+    
+    <div class="test-controls">
+        <h3>Test Controls</h3>
+        <div class="credits-control">
+            <label for="test-credits">Set Available Credits:</label>
+            <input type="number" id="test-credits" min="0" value="10">
+            <button id="update-credits-btn">Update</button>
+        </div>
+        <p>Use these controls to simulate different credit scenarios for testing purposes.</p>
+        <button id="reset-test-btn">Reset All</button>
+    </div>
+    
+    <div id="product-image-lab" class="container">
+        <h2>Product Image Lab</h2>
+        
+        <div class="credit-info">
+            <p>You have <span id="available-credits">10</span> credits remaining.</p>
+            <p>Each enhancement selection uses 1 credit.</p>
+        </div>
+        
+        <!-- Image source selection tabs -->
+        <div class="tabs-container">
+            <div class="tab-buttons">
+                <button id="upload-tab-btn" class="tab-btn active">Upload Your Images</button>
+                <button id="generate-tab-btn" class="tab-btn">Generate Images</button>
+            </div>
+            
+            <div id="upload-tab" class="tab-content active">
+                <form id="product-upload-form">
+                    <div class="form-group">
+                        <label for="industry-input">Your Industry or Business Type</label>
+                        <input type="text" id="industry-input" required placeholder="e.g., Organic Food Delivery, Luxury Watches, Pet Photography" class="text-input">
+                        <p class="help-text">Be specific about your business type for better results</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additional-info">Additional Information (optional)</label>
+                        <textarea id="additional-info" rows="2" placeholder="e.g., target market, branding style, specific product requirements"></textarea>
+                        <p class="help-text">Any details that would help generate better options</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-images">Upload Product Images (max 5)</label>
+                        <input type="file" id="product-images" accept="image/*" multiple required max="5">
+                        <p class="help-text">Please upload high-quality images for best results</p>
+                    </div>
+                    
+                    <button type="submit" id="upload-button">Process Images</button>
+                </form>
+            </div>
+            
+            <div id="generate-tab" class="tab-content">
+                <form id="generate-form">
+                    <div class="form-group">
+                        <label for="generate-industry-input">Your Industry or Business Type</label>
+                        <input type="text" id="generate-industry-input" required placeholder="e.g., Organic Food Delivery, Luxury Watches, Pet Photography" class="text-input">
+                        <p class="help-text">Be specific about your business type for better results</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="generate-additional-info">Additional Business Context (optional)</label>
+                        <textarea id="generate-additional-info" rows="2" placeholder="e.g., target market, branding style, color scheme preferences"></textarea>
+                        <p class="help-text">Any details that would help generate better images</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description">Describe Your Product or Need</label>
+                        <textarea id="product-description" rows="4" required placeholder="e.g., A white coffee mug on a wooden table in a cafe setting"></textarea>
+                        <p class="help-text">Be specific about products, colors, settings, and style</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="num-images">Number of Images to Generate</label>
+                        <select id="num-images" required>
+                            <option value="1">1 Image</option>
+                            <option value="2">2 Images</option>
+                            <option value="3" selected>3 Images</option>
+                            <option value="4">4 Images</option>
+                            <option value="5">5 Images</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" id="generate-button">Generate Images</button>
+                </form>
+            </div>
+        </div>
+        
+        <div id="preview-container" class="image-previews"></div>
+        
+        <!-- Ideas display section (initially hidden) -->
+        <div id="ideas-section" class="ideas-container" style="display: none;">
+            <h3>Select Enhancement Options for Your Products</h3>
+            <div id="ideas-container"></div>
+            <div class="credit-info">
+                <p>Credits required: <span id="credits-required">0</span></p>
+                <p id="credit-warning" class="credit-warning" style="display: none;">You don't have enough credits. Please reduce your selections or purchase more credits.</p>
+            </div>
+            <button id="submit-selections">Create Transformations</button>
+        </div>
+        
+        <!-- Results section (initially hidden) -->
+        <div id="results-section" class="results-container" style="display: none;">
+            <h3>Your Transformed Products</h3>
+            <div id="results-container"></div>
+        </div>
+    </div>
+    
+    <div class="status-display" id="status-log">Status: Ready for testing</div>
+    
+    <script>
+        // Simulated backend for testing
+        const simulatedBackend = {
+            // Simulated data storage
+            storage: {
+                availableCredits: 10,
+                uploadedImages: {},
+                generatedImages: {},
+                currentOptions: {},
+                selections: {},
+                results: {}
+            },
+            
+            // Reset all data
+            resetData() {
+                this.storage.uploadedImages = {};
+                this.storage.generatedImages = {};
+                this.storage.currentOptions = {};
+                this.storage.selections = {};
+                this.storage.results = {};
+                logStatus('Data reset');
+            },
+            
+            // Handle uploaded images
+            processUploadedImages(industry, additionalInfo, images) {
+                logStatus('Processing uploaded images...');
+                
+                // Store images
+                this.storage.uploadedImages = {};
+                
+                // Create options for each image
+                const imageIds = [];
+                Array.from(images).forEach((file, index) => {
+                    const imageId = `uploaded-${Date.now()}-${index}`;
+                    imageIds.push(imageId);
+                    
+                    this.storage.uploadedImages[imageId] = {
+                        id: imageId,
+                        file: file,
+                        name: file.name,
+                        industry: industry,
+                        additionalInfo: additionalInfo,
+                        url: URL.createObjectURL(file)
+                    };
+                });
+                
+                // Generate enhancement options based on industry and images
+                this.generateOptions(imageIds, industry, additionalInfo);
+                
+                return {
+                    success: true,
+                    imageIds: imageIds
+                };
+            },
+            
+            // Handle generated images
+            generateImages(industry, additionalInfo, description, count) {
+                logStatus('Generating images...');
+                
+                // Simulate image generation based on descriptions
+                const imageIds = [];
+                
+                // Create placeholder images
+                for (let i = 0; i < count; i++) {
+                    const imageId = `generated-${Date.now()}-${i}`;
+                    imageIds.push(imageId);
+                    
+                    // Simulated image URLs (using placeholders for test)
+                    // In a real application, this would call the OpenAI or image generation API
+                    const colorHue = Math.floor(Math.random() * 360);
+                    const placeholderUrl = `https://via.placeholder.com/400x400/${Math.floor(Math.random() * 16777215).toString(16)}/FFFFFF?text=Generated+Product+${i+1}`;
+                    
+                    this.storage.generatedImages[imageId] = {
+                        id: imageId,
+                        name: `Generated Product ${i+1}`,
+                        industry: industry,
+                        additionalInfo: additionalInfo, 
+                        description: description,
+                        url: placeholderUrl
+                    };
+                }
+                
+                // Generate enhancement options
+                this.generateOptions(imageIds, industry, additionalInfo);
+                
+                return {
+                    success: true,
+                    imageIds: imageIds
+                };
+            },
+            
+            // Generate options for images
+            generateOptions(imageIds, industry, additionalInfo) {
+                logStatus('Generating enhancement options...');
+                
+                // Available enhancement options
+                const availableOptions = [
+                    {
+                        id: 'remove-background',
+                        name: 'Remove Background',
+                        description: 'Isolate product with clean white background and subtle shadow',
+                        industry: 'all',
+                        preview: 'https://via.placeholder.com/120x120/ffffff/333333?text=Clean+BG'
+                    },
+                    {
+                        id: 'enhance-lighting',
+                        name: 'Enhance Lighting',
+                        description: 'Improve product visibility with professional studio lighting',
+                        industry: 'all',
+                        preview: 'https://via.placeholder.com/120x120/f8f8f8/333333?text=Better+Light'
+                    },
+                    {
+                        id: 'lifestyle-context',
+                        name: 'Lifestyle Context',
+                        description: 'Place product in realistic lifestyle setting',
+                        industry: 'all',
+                        preview: 'https://via.placeholder.com/120x120/e0f0e0/333333?text=Lifestyle'
+                    },
+                    {
+                        id: 'social-media-ready',
+                        name: 'Social Media Ready',
+                        description: 'Optimize for social media with trendy elements and space for text',
+                        industry: 'all',
+                        preview: 'https://via.placeholder.com/120x120/e0e0f0/333333?text=Social'
+                    },
+                    {
+                        id: 'e-commerce-pack',
+                        name: 'E-commerce Pack',
+                        description: 'Create multiple angles/views optimized for online stores',
+                        industry: 'retail,fashion,home goods',
+                        preview: 'https://via.placeholder.com/120x120/f0e0e0/333333?text=E-commerce'
+                    },
+                    {
+                        id: 'seasonal-theme',
+                        name: 'Seasonal Theme',
+                        description: 'Add seasonal elements (holiday, summer, etc.) to product images',
+                        industry: 'retail,food,gift',
+                        preview: 'https://via.placeholder.com/120x120/fff0e0/333333?text=Seasonal'
+                    }
+                ];
+                
+                // Store options for each image
+                this.storage.currentOptions = {};
+                
+                imageIds.forEach(imageId => {
+                    // Select suitable options based on industry
+                    const options = availableOptions.filter(option => 
+                        option.industry === 'all' || 
+                        (option.industry.split(',').some(ind => industry.toLowerCase().includes(ind)))
+                    );
+                    
+                    // Randomly select 3-4 options for variety
+                    const shuffled = [...options].sort(() => 0.5 - Math.random());
+                    const selectedOptions = shuffled.slice(0, 3 + Math.floor(Math.random() * 2));
+                    
+                    this.storage.currentOptions[imageId] = selectedOptions;
+                });
+                
+                return {
+                    success: true
+                };
+            },
+            
+            // Process selections to generate transformations
+            processSelections(selections) {
+                logStatus('Processing your selections...');
+                
+                // Count total credits required
+                let totalCreditsRequired = 0;
+                Object.keys(selections).forEach(imageId => {
+                    totalCreditsRequired += selections[imageId].length;
+                });
+                
+                // Check if user has enough credits
+                if (totalCreditsRequired > this.storage.availableCredits) {
+                    logStatus('Error: Not enough credits');
+                    return {
+                        success: false,
+                        error: 'Not enough credits',
+                        creditsRequired: totalCreditsRequired,
+                        creditsAvailable: this.storage.availableCredits
+                    };
+                }
+                
+                // Process each selection
+                this.storage.results = {};
+                
+                Object.keys(selections).forEach(imageId => {
+                    const options = selections[imageId];
+                    
+                    // Get image data
+                    const imageData = this.storage.uploadedImages[imageId] || this.storage.generatedImages[imageId];
+                    
+                    if (!imageData) {
+                        logStatus(`Warning: Image data not found for ${imageId}`);
+                        return;
+                    }
+                    
+                    // Generate transformations for each selected option
+                    options.forEach(optionId => {
+                        const option = this.storage.currentOptions[imageId].find(opt => opt.id === optionId);
+                        
+                        if (!option) {
+                            logStatus(`Warning: Option ${optionId} not found for image ${imageId}`);
+                            return;
+                        }
+                        
+                        const resultId = `${imageId}-${optionId}`;
+                        
+                        // Simulate transformed image URL
+                        // In a real app, this would call OpenAI or other image transformation API
+                        let transformedUrl;
+                        switch(optionId) {
+                            case 'remove-background':
+                                transformedUrl = 'https://via.placeholder.com/600x600/ffffff/333333?text=Clean+Background';
+                                break;
+                            case 'enhance-lighting':
+                                transformedUrl = 'https://via.placeholder.com/600x600/f8f8f8/333333?text=Enhanced+Lighting';
+                                break;
+                            case 'lifestyle-context':
+                                transformedUrl = 'https://via.placeholder.com/600x600/e0f0e0/333333?text=Lifestyle+Context';
+                                break;
+                            case 'social-media-ready':
+                                transformedUrl = 'https://via.placeholder.com/600x600/e0e0f0/333333?text=Social+Media+Ready';
+                                break;
+                            case 'e-commerce-pack':
+                                transformedUrl = 'https://via.placeholder.com/600x600/f0e0e0/333333?text=E-commerce+Pack';
+                                break;
+                            case 'seasonal-theme':
+                                transformedUrl = 'https://via.placeholder.com/600x600/fff0e0/333333?text=Seasonal+Theme';
+                                break;
+                            default:
+                                transformedUrl = 'https://via.placeholder.com/600x600/f0f0f0/333333?text=Transformed+Image';
+                        }
+                        
+                        // Store result
+                        this.storage.results[resultId] = {
+                            id: resultId,
+                            imageId: imageId,
+                            optionId: optionId,
+                            optionName: option.name,
+                            originalImage: imageData,
+                            transformedUrl: transformedUrl
+                        };
+                    });
+                });
+                
+                // Deduct credits
+                this.storage.availableCredits -= totalCreditsRequired;
+                document.getElementById('available-credits').textContent = this.storage.availableCredits;
+                
+                logStatus('Transformations complete!');
+                
+                return {
+                    success: true,
+                    results: this.storage.results
+                };
+            }
+        };
+        
+        // UI Functions
+        
+        // Logging function
+        function logStatus(message) {
+            const statusLog = document.getElementById('status-log');
+            const timestamp = new Date().toLocaleTimeString();
+            statusLog.textContent = `${timestamp} - ${message}`;
+            console.log(message);
+        }
+        
+        // Tab switching
+        function setupTabs() {
+            const uploadTabBtn = document.getElementById('upload-tab-btn');
+            const generateTabBtn = document.getElementById('generate-tab-btn');
+            const uploadTab = document.getElementById('upload-tab');
+            const generateTab = document.getElementById('generate-tab');
+            
+            uploadTabBtn.addEventListener('click', () => {
+                uploadTabBtn.classList.add('active');
+                generateTabBtn.classList.remove('active');
+                uploadTab.classList.add('active');
+                generateTab.classList.remove('active');
+            });
+            
+            generateTabBtn.addEventListener('click', () => {
+                generateTabBtn.classList.add('active');
+                uploadTabBtn.classList.remove('active');
+                generateTab.classList.add('active');
+                uploadTab.classList.remove('active');
+            });
+        }
+        
+        // Display preview images
+        function displayPreviews(imageDataMap) {
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = '';
+            
+            Object.values(imageDataMap).forEach(imageData => {
+                const previewImg = document.createElement('img');
+                previewImg.src = imageData.url;
+                previewImg.alt = imageData.name || 'Preview image';
+                previewImg.className = 'preview-image';
+                previewImg.dataset.imageId = imageData.id;
+                
+                previewContainer.appendChild(previewImg);
+            });
+        }
+        
+        // Display enhancement options
+        function displayEnhancementOptions(imageIds) {
+            const ideasSection = document.getElementById('ideas-section');
+            const ideasContainer = document.getElementById('ideas-container');
+            ideasContainer.innerHTML = '';
+            
+            // Initialize selections tracker
+            const selections = {};
+            let creditsRequired = 0;
+            
+            imageIds.forEach(imageId => {
+                // Get image data
+                const imageData = simulatedBackend.storage.uploadedImages[imageId] || simulatedBackend.storage.generatedImages[imageId];
+                if (!imageData) return;
+                
+                // Get options for this image
+                const options = simulatedBackend.storage.currentOptions[imageId] || [];
+                if (options.length === 0) return;
+                
+                // Create section for this image
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'image-ideas-section';
+                
+                // Add thumbnail
+                const thumbnailEl = document.createElement('img');
+                thumbnailEl.src = imageData.url;
+                thumbnailEl.alt = imageData.name || 'Product image';
+                thumbnailEl.className = 'idea-thumbnail';
+                sectionEl.appendChild(thumbnailEl);
+                
+                // Add options
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'options-container';
+                
+                const title = document.createElement('h4');
+                title.textContent = imageData.name || `Image ${imageId}`;
+                optionsContainer.appendChild(title);
+                
+                // Create selection checkboxes
+                options.forEach(option => {
+                    const optionRow = document.createElement('div');
+                    optionRow.style.display = 'flex';
+                    optionRow.style.alignItems = 'center';
+                    optionRow.style.marginBottom = '10px';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `option-${imageId}-${option.id}`;
+                    checkbox.dataset.imageId = imageId;
+                    checkbox.dataset.optionId = option.id;
+                    
+                    // Option selection logic
+                    checkbox.addEventListener('change', function() {
+                        if (!selections[imageId]) {
+                            selections[imageId] = [];
+                        }
+                        
+                        if (this.checked) {
+                            // Add to selections
+                            if (!selections[imageId].includes(option.id)) {
+                                selections[imageId].push(option.id);
+                                creditsRequired++;
+                            }
+                        } else {
+                            // Remove from selections
+                            const index = selections[imageId].indexOf(option.id);
+                            if (index !== -1) {
+                                selections[imageId].splice(index, 1);
+                                creditsRequired--;
+                            }
+                            
+                            // Remove empty arrays
+                            if (selections[imageId].length === 0) {
+                                delete selections[imageId];
+                            }
+                        }
+                        
+                        // Update UI
+                        document.getElementById('credits-required').textContent = creditsRequired;
+                        
+                        // Check if enough credits
+                        const creditWarning = document.getElementById('credit-warning');
+                        if (creditsRequired > simulatedBackend.storage.availableCredits) {
+                            creditWarning.style.display = 'block';
+                            document.getElementById('submit-selections').disabled = true;
+                        } else {
+                            creditWarning.style.display = 'none';
+                            document.getElementById('submit-selections').disabled = false;
+                        }
+                        
+                        // Store selections for processing
+                        simulatedBackend.storage.selections = selections;
+                    });
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `option-${imageId}-${option.id}`;
+                    label.style.display = 'flex';
+                    label.style.alignItems = 'center';
+                    label.style.fontWeight = 'normal';
+                    label.style.margin = '0 0 0 10px';
+                    label.style.cursor = 'pointer';
+                    
+                    const optionTitle = document.createElement('span');
+                    optionTitle.textContent = option.name;
+                    optionTitle.style.fontWeight = 'bold';
+                    
+                    const optionDesc = document.createElement('span');
+                    optionDesc.textContent = ` - ${option.description}`;
+                    optionDesc.style.color = '#666';
+                    optionDesc.style.fontSize = '14px';
+                    
+                    label.appendChild(optionTitle);
+                    label.appendChild(optionDesc);
+                    
+                    optionRow.appendChild(checkbox);
+                    optionRow.appendChild(label);
+                    
+                    optionsContainer.appendChild(optionRow);
+                });
+                
+                sectionEl.appendChild(optionsContainer);
+                ideasContainer.appendChild(sectionEl);
+            });
+            
+            // Display the options section
+            ideasSection.style.display = 'block';
+            
+            // Submit selections button
+            document.getElementById('submit-selections').addEventListener('click', function() {
+                if (Object.keys(selections).length === 0) {
+                    alert('Please select at least one enhancement option.');
+                    return;
+                }
+                
+                // Process selections
+                const result = simulatedBackend.processSelections(selections);
+                
+                if (result.success) {
+                    // Display results
+                    displayResults(result.results);
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            });
+        }
+        
+        // Display transformation results
+        function displayResults(results) {
+            const resultsSection = document.getElementById('results-section');
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '';
+            
+            if (Object.keys(results).length === 0) {
+                const noResults = document.createElement('p');
+                noResults.textContent = 'No transformations were created.';
+                resultsContainer.appendChild(noResults);
+                resultsSection.style.display = 'block';
+                return;
+            }
+            
+            // Group results by original image
+            const groupedResults = {};
+            
+            Object.values(results).forEach(result => {
+                if (!groupedResults[result.imageId]) {
+                    groupedResults[result.imageId] = [];
+                }
+                groupedResults[result.imageId].push(result);
+            });
+            
+            // Create result cards
+            Object.keys(groupedResults).forEach(imageId => {
+                const resultsList = groupedResults[imageId];
+                const originalImage = resultsList[0].originalImage;
+                
+                resultsList.forEach(result => {
+                    // Create result card
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'result-card';
+                    
+                    // Result title
+                    const resultTitle = document.createElement('h4');
+                    resultTitle.textContent = `${originalImage.name || 'Image'} - ${result.optionName}`;
+                    resultCard.appendChild(resultTitle);
+                    
+                    // Image comparison
+                    const comparison = document.createElement('div');
+                    comparison.className = 'image-comparison';
+                    
+                    // Original image
+                    const beforeImg = document.createElement('img');
+                    beforeImg.src = originalImage.url;
+                    beforeImg.alt = 'Original image';
+                    beforeImg.className = 'before-image';
+                    
+                    // Transformed image
+                    const afterImg = document.createElement('img');
+                    afterImg.src = result.transformedUrl;
+                    afterImg.alt = 'Transformed image';
+                    afterImg.className = 'after-image';
+                    
+                    comparison.appendChild(beforeImg);
+                    comparison.appendChild(afterImg);
+                    resultCard.appendChild(comparison);
+                    
+                    // Download button
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = result.transformedUrl;
+                    downloadBtn.textContent = 'Download Image';
+                    downloadBtn.className = 'download-button';
+                    downloadBtn.setAttribute('download', `${originalImage ? originalImage.name.replace(/\.[^/.]+$/, '') : imageId}_transformed.jpg`);
+                    resultCard.appendChild(downloadBtn);
+                    
+                    resultsContainer.appendChild(resultCard);
+                });
+            });
+            
+            resultsSection.style.display = 'block';
+        }
+        
+        // Event listeners for forms
+        function setupForms() {
+            const uploadForm = document.getElementById('product-upload-form');
+            const generateForm = document.getElementById('generate-form');
+            
+            // Product upload form
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const industry = document.getElementById('industry-input').value;
+                const additionalInfo = document.getElementById('additional-info').value;
+                const images = document.getElementById('product-images').files;
+                
+                if (images.length === 0) {
+                    alert('Please select at least one image to upload.');
+                    return;
+                }
+                
+                // Process images
+                const result = simulatedBackend.processUploadedImages(industry, additionalInfo, images);
+                
+                if (result.success) {
+                    // Display previews
+                    displayPreviews(simulatedBackend.storage.uploadedImages);
+                    
+                    // Display enhancement options
+                    displayEnhancementOptions(result.imageIds);
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            });
+            
+            // Image generation form
+            generateForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const industry = document.getElementById('generate-industry-input').value;
+                const additionalInfo = document.getElementById('generate-additional-info').value;
+                const description = document.getElementById('product-description').value;
+                const numImages = parseInt(document.getElementById('num-images').value, 10);
+                
+                // Generate images
+                const result = simulatedBackend.generateImages(industry, additionalInfo, description, numImages);
+                
+                if (result.success) {
+                    // Display previews
+                    displayPreviews(simulatedBackend.storage.generatedImages);
+                    
+                    // Display enhancement options
+                    displayEnhancementOptions(result.imageIds);
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            });
+        }
+        
+        // Test controls
+        function setupTestControls() {
+            const updateCreditsBtn = document.getElementById('update-credits-btn');
+            const resetTestBtn = document.getElementById('reset-test-btn');
+            
+            // Update credits
+            updateCreditsBtn.addEventListener('click', function() {
+                const creditsInput = document.getElementById('test-credits');
+                const credits = parseInt(creditsInput.value, 10);
+                
+                if (isNaN(credits) || credits < 0) {
+                    alert('Please enter a valid number of credits.');
+                    return;
+                }
+                
+                simulatedBackend.storage.availableCredits = credits;
+                document.getElementById('available-credits').textContent = credits;
+                logStatus(`Credits updated to ${credits}`);
+            });
+            
+            // Reset test
+            resetTestBtn.addEventListener('click', function() {
+                simulatedBackend.resetData();
+                
+                // Reset UI
+                document.getElementById('preview-container').innerHTML = '';
+                document.getElementById('ideas-section').style.display = 'none';
+                document.getElementById('results-section').style.display = 'none';
+                
+                // Reset forms
+                document.getElementById('product-upload-form').reset();
+                document.getElementById('generate-form').reset();
+                
+                // Reset credits to default
+                simulatedBackend.storage.availableCredits = 10;
+                document.getElementById('available-credits').textContent = 10;
+                document.getElementById('test-credits').value = 10;
+                
+                logStatus('Test reset complete');
+            });
+        }
+        
+        // Initialize the app
+        function initApp() {
+            setupTabs();
+            setupForms();
+            setupTestControls();
+            logStatus('Product Image Lab initialized');
+        }
+        
+        // Start the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
