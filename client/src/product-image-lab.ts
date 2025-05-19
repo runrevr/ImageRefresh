@@ -1,23 +1,22 @@
 /**
  * Product Image Lab - Core functionality for product image transformations
- * 
+ *
  * This module provides functionality for:
  * - Handling image uploads
- * - Processing product image transformations
+ * - Processing product image transformations with OpenAI gpt-image-01
  * - Managing credit usage
- * - Interfacing with OpenAI's image transformation APIs
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 // Enums and Constants
 export enum TransformationType {
-  REMOVE_BACKGROUND = 'remove-background',
-  ENHANCE_LIGHTING = 'enhance-lighting',
-  LIFESTYLE_CONTEXT = 'lifestyle-context',
-  SOCIAL_MEDIA_READY = 'social-media-ready',
-  E_COMMERCE_PACK = 'e-commerce-pack',
-  SEASONAL_THEME = 'seasonal-theme',
+  REMOVE_BACKGROUND = "remove-background",
+  ENHANCE_LIGHTING = "enhance-lighting",
+  LIFESTYLE_CONTEXT = "lifestyle-context",
+  SOCIAL_MEDIA_READY = "social-media-ready",
+  E_COMMERCE_PACK = "e-commerce-pack",
+  SEASONAL_THEME = "seasonal-theme",
 }
 
 // Type Definitions
@@ -27,6 +26,7 @@ export interface UploadedImage {
   name: string;
   url: string;
   uploadedAt: string;
+  base64?: string; // Add base64 for OpenAI API
 }
 
 export interface TransformationOption {
@@ -59,11 +59,6 @@ export interface TransformationRequest {
 export interface ProductImageLabOptions {
   initialCredits?: number;
   onCreditChange?: (credits: number) => void;
-  webhookUrl?: string;
-  optionsEndpoint?: string;
-  selectionsEndpoint?: string;
-  resultsEndpoint?: string;
-  generateEndpoint?: string;
   testMode?: boolean;
   simulateApiCalls?: boolean; // Flag to simulate API calls instead of making real ones
 }
@@ -79,8 +74,12 @@ export interface ProductImageLabHook {
   debugInfo: Record<string, any>;
   handleImageUpload: (files: FileList) => Promise<UploadedImage[]>;
   getEnhancementsForIndustry: (industry: string) => TransformationOption[];
-  transformImage: (params: TransformationRequest) => Promise<TransformationResult>;
-  batchTransformImages: (transformations: TransformationRequest[]) => Promise<TransformationResult[]>;
+  transformImage: (
+    params: TransformationRequest,
+  ) => Promise<TransformationResult>;
+  batchTransformImages: (
+    transformations: TransformationRequest[],
+  ) => Promise<TransformationResult[]>;
   addCredits: (amount: number) => void;
   resetLab: () => void;
   setTestMode: (enabled: boolean) => void;
@@ -89,77 +88,88 @@ export interface ProductImageLabHook {
   enhancementOptions: TransformationOption[];
 }
 
+export interface OpenAIImageResponse {
+  transformedImageUrl: string;
+  prompt: string;
+}
+
 // Sample enhancement options
 export const ENHANCEMENT_OPTIONS: TransformationOption[] = [
   {
     id: TransformationType.REMOVE_BACKGROUND,
-    name: 'Remove Background',
-    description: 'Isolate product with clean white background and subtle shadow',
-    industry: 'all',
+    name: "Remove Background",
+    description:
+      "Isolate product with clean white background and subtle shadow",
+    industry: "all",
     creditCost: 1,
-    prompt: 'Remove the background from this product image and replace it with a clean white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined.'
+    prompt:
+      "Remove the background from this product image and replace it with a clean white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined. The product must remain EXACTLY as shown in the original image. Do not modify the product's shape, color, size, or details in any way.",
   },
   {
     id: TransformationType.ENHANCE_LIGHTING,
-    name: 'Enhance Lighting',
-    description: 'Improve product visibility with professional studio lighting',
-    industry: 'all',
+    name: "Enhance Lighting",
+    description: "Improve product visibility with professional studio lighting",
+    industry: "all",
     creditCost: 1,
-    prompt: 'Enhance this product image with professional studio lighting. Add soft key lights to highlight the product\'s best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy while maintaining natural appearance.'
+    prompt:
+      "Enhance this product image with professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy while maintaining natural appearance. The product must remain EXACTLY as shown in the original image. Only improve the lighting, not the product itself.",
   },
   {
     id: TransformationType.LIFESTYLE_CONTEXT,
-    name: 'Lifestyle Context',
-    description: 'Place product in realistic lifestyle setting',
-    industry: 'all',
+    name: "Lifestyle Context",
+    description: "Place product in realistic lifestyle setting",
+    industry: "all",
     creditCost: 2,
-    prompt: 'Place this product in a natural lifestyle environment. Integrate it seamlessly with realistic shadows and reflections that match the environment\'s lighting. Ensure the product remains the focal point while the setting provides context and atmosphere.'
+    prompt:
+      "Place this product in a natural lifestyle environment. Integrate it seamlessly with realistic shadows and reflections that match the environment's lighting. The product must remain EXACTLY as shown - do not modify, resize, recolor or reinterpret the product in any way. Only change the environment around it, keeping the product as the focal point.",
   },
   {
     id: TransformationType.SOCIAL_MEDIA_READY,
-    name: 'Social Media Ready',
-    description: 'Optimize for social media with trendy elements and space for text',
-    industry: 'all',
+    name: "Social Media Ready",
+    description:
+      "Optimize for social media with trendy elements and space for text",
+    industry: "all",
     creditCost: 2,
-    prompt: 'Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with vibrant colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay and ensure the product pops against a carefully designed background.'
+    prompt:
+      "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with vibrant colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay. The product itself must remain EXACTLY as shown in the original - do not modify the product, only enhance the presentation around it.",
   },
   {
     id: TransformationType.E_COMMERCE_PACK,
-    name: 'E-commerce Pack',
-    description: 'Create multiple angles/views optimized for online stores',
-    industry: 'retail,fashion,home goods',
+    name: "E-commerce Pack",
+    description: "Create multiple angles/views optimized for online stores",
+    industry: "retail,fashion,home goods",
     creditCost: 3,
-    prompt: 'Create a professional e-commerce presentation of this product. Generate multiple angles of the same product optimized for online stores, including front view, side view, and detail shots. Use consistent lighting and a clean background suitable for e-commerce platforms.'
+    prompt:
+      "Create a professional e-commerce presentation of this product. Generate multiple angles of the same product optimized for online stores, including front view, side view, and detail shots. Use consistent lighting and a clean background suitable for e-commerce platforms. The product must remain EXACTLY as shown - do not modify, resize, recolor or reinterpret the product in any way.",
   },
   {
     id: TransformationType.SEASONAL_THEME,
-    name: 'Seasonal Theme',
-    description: 'Add seasonal elements (holiday, summer, etc.) to product images',
-    industry: 'retail,food,gift',
+    name: "Seasonal Theme",
+    description:
+      "Add seasonal elements (holiday, summer, etc.) to product images",
+    industry: "retail,food,gift",
     creditCost: 2,
-    prompt: 'Add seasonal elements to this product image that enhance its appeal. Incorporate tasteful, contextually appropriate seasonal decorations or backgrounds while ensuring the product remains the clear focus. Create an atmosphere that evokes the current or upcoming season.'
-  }
+    prompt:
+      "Add seasonal elements to this product image that enhance its appeal. Incorporate tasteful, contextually appropriate seasonal decorations or backgrounds while ensuring the product remains the clear focus. The product itself must remain EXACTLY as shown in the original - do not modify, resize, recolor or reinterpret the product in any way. Only add seasonal elements around it.",
+  },
 ];
 
 /**
  * Custom hook for managing product image transformations
- * 
+ *
  * @param options - Configuration options
  * @returns Methods and state for image transformations
  */
-export const useProductImageLab = (options: ProductImageLabOptions = {}): ProductImageLabHook => {
-  const { 
-    initialCredits = 10,
+export const useProductImageLab = (
+  options: ProductImageLabOptions = {},
+): ProductImageLabHook => {
+  const {
+    initialCredits = 1,
     onCreditChange = () => {},
-    webhookUrl = 'https://www.n8nemma.live/webhook-dbf2c53a',
-    optionsEndpoint = 'https://www.n8nemma.live/webhook-options-dbf2c53a',
-    selectionsEndpoint = 'https://www.n8nemma.live/webhook-selections-dbf2c53a',
-    resultsEndpoint = 'https://www.n8nemma.live/webhook-results-dbf2c53a',
-    generateEndpoint = 'https://www.n8nemma.live/webhook-generate-dbf2c53a',
     testMode = false,
-    simulateApiCalls = true // Default to true for safer operation
+    simulateApiCalls = false, // Set to false by default for using real API calls
   } = options;
-  
+
   const [availableCredits, setAvailableCredits] = useState<number>(initialCredits);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -168,26 +178,44 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const [isTestModeEnabled, setIsTestModeEnabled] = useState<boolean>(testMode);
   const [isSimulationMode, setIsSimulationMode] = useState<boolean>(simulateApiCalls);
   const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
-  
+
   // Track transactions to prevent duplicate credit deductions
   const [pendingTransactions, setPendingTransactions] = useState<Record<string, boolean>>({});
-  
+
   // Track last credit update to prevent excessive calls
   const lastCreditUpdate = useRef<number>(availableCredits);
-  
+
   // Update the parent component when credits change - with debounce
   useEffect(() => {
     // Update the ref to the current value
     lastCreditUpdate.current = availableCredits;
-    
+
     // Use a small timeout to debounce rapid credit changes
     const timeoutId = setTimeout(() => {
       onCreditChange(availableCredits);
     }, 300); // 300ms debounce
-    
+
     return () => clearTimeout(timeoutId);
   }, [availableCredits, onCreditChange]);
-  
+
+  /**
+   * File to base64
+   * @param file - File object
+   * @returns Promise with base64 string
+   */
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   /**
    * Handle file uploads
    * @param files - Files from input element
@@ -197,28 +225,36 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     try {
       setError(null);
       const imageFiles = Array.from(files);
-      
+
       // Process each file to get a URL and metadata
       const timestamp = Date.now(); // Use same timestamp for batch to avoid duplication
-      const processedImages: UploadedImage[] = imageFiles.map((file, index) => ({
-        id: `upload-${timestamp}-${index}`,
-        file,
-        name: file.name,
-        url: URL.createObjectURL(file),
-        uploadedAt: new Date().toISOString(),
-      }));
-      
+      const processedImagesPromises = imageFiles.map(async (file, index) => {
+        // Convert file to base64 for API calls
+        const base64 = await fileToBase64(file);
+
+        return {
+          id: `upload-${timestamp}-${index}`,
+          file,
+          name: file.name,
+          url: URL.createObjectURL(file),
+          base64,
+          uploadedAt: new Date().toISOString(),
+        };
+      });
+
+      const processedImages = await Promise.all(processedImagesPromises);
+
       // Replace existing images to prevent duplication
       setUploadedImages(processedImages);
       return processedImages;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error uploading images';
+      const errorMessage = err instanceof Error ? err.message : "Unknown error uploading images";
       setError(errorMessage);
-      console.error('Error uploading images:', err);
+      console.error("Error uploading images:", err);
       return [];
     }
   };
-  
+
   /**
    * Get available enhancements for a specific industry
    * @param industry - Industry name
@@ -226,41 +262,132 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
    */
   const getEnhancementsForIndustry = (industry: string): TransformationOption[] => {
     if (!industry) return ENHANCEMENT_OPTIONS;
-    
-    return ENHANCEMENT_OPTIONS.filter(option => 
-      option.industry === 'all' || 
-      option.industry.split(',').some(ind => industry.toLowerCase().includes(ind.trim()))
+
+    return ENHANCEMENT_OPTIONS.filter(
+      (option) =>
+        option.industry === "all" ||
+        option.industry
+          .split(",")
+          .some((ind) => industry.toLowerCase().includes(ind.trim())),
     );
   };
-  
+
+  /**
+   * Call OpenAI for image transformation using gpt-image-01
+   * @param imageBase64 - Base64 encoded image
+   * @param prompt - Transformation prompt
+   * @returns Transformed image URL
+   */
+  const callOpenAIImage01 = async (
+    imageBase64: string,
+    prompt: string
+  ): Promise<OpenAIImageResponse> => {
+    try {
+      console.log("Calling OpenAI gpt-image-01 API for image transformation");
+
+      // Log the call for debugging
+      setDebugInfo((prev) => ({
+        ...prev,
+        openaiApiCall: {
+          timestamp: new Date().toISOString(),
+          model: "gpt-image-01",
+          promptLength: prompt.length,
+          imageSize: Math.round((imageBase64.length * 3) / 4), // Approximate size calculation
+        },
+      }));
+
+      // Make API call to the server endpoint which will call OpenAI
+      const response = await fetch("/api/openai/transform-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageBase64,
+          prompt,
+          model: "gpt-image-01",
+        }),
+      });
+
+      if (!response.ok) {
+        // Handle API error
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || `API error: ${response.status}`;
+
+        console.error("OpenAI API error:", errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // Parse the response
+      const data = await response.json();
+
+      // Log successful response
+      setDebugInfo((prev) => ({
+        ...prev,
+        openaiApiResponse: {
+          timestamp: new Date().toISOString(),
+          status: "success",
+          model: "gpt-image-01",
+        },
+      }));
+
+      return {
+        transformedImageUrl: data.transformedImageUrl || `data:image/jpeg;base64,${data.base64Image}`,
+        prompt,
+      };
+    } catch (error) {
+      // Log API error
+      console.error("OpenAI API error:", error);
+
+      setDebugInfo((prev) => ({
+        ...prev,
+        openaiApiError: {
+          timestamp: new Date().toISOString(),
+          error: error instanceof Error ? error.message : String(error),
+          model: "gpt-image-01",
+        },
+      }));
+
+      throw error;
+    }
+  };
+
   /**
    * Process image transformation
    * @param params - Transformation parameters
    * @returns Transformed image result
    */
-  const transformImage = async (params: TransformationRequest): Promise<TransformationResult> => {
+  const transformImage = async (
+    params: TransformationRequest,
+  ): Promise<TransformationResult> => {
     const { imageId, transformationType, customPrompt = null } = params;
-    
+
     // Log the transformation attempt
-    console.log(`Starting transformation for image: ${imageId}, type: ${transformationType}`);
-    
+    console.log(
+      `Starting transformation for image: ${imageId}, type: ${transformationType}`,
+    );
+
     try {
       // Find the image and transformation option
-      const image = uploadedImages.find(img => img.id === imageId);
-      const transformOption = ENHANCEMENT_OPTIONS.find(opt => opt.id === transformationType);
-      
+      const image = uploadedImages.find((img) => img.id === imageId);
+      const transformOption = ENHANCEMENT_OPTIONS.find(
+        (opt) => opt.id === transformationType,
+      );
+
       if (!image) {
         console.error(`Image with ID ${imageId} not found`);
         setError(`Image not found. Please try re-uploading the image.`);
         throw new Error(`Image with ID ${imageId} not found`);
       }
-      
+
       if (!transformOption) {
         console.error(`Transformation type ${transformationType} not found`);
-        setError(`Enhancement type not found. Please select a different enhancement.`);
+        setError(
+          `Enhancement type not found. Please select a different enhancement.`,
+        );
         throw new Error(`Transformation type ${transformationType} not found`);
       }
-      
+
       // Check if user has enough credits (bypass check if in test mode)
       if (!isTestModeEnabled && availableCredits < transformOption.creditCost) {
         const errorMessage = `Not enough credits. Required: ${transformOption.creditCost}, Available: ${availableCredits}`;
@@ -268,16 +395,16 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
         setError(errorMessage);
         throw new Error(errorMessage);
       }
-      
+
       setIsProcessing(true);
       setError(null);
-      
+
       // Track whether we're using simulation mode
       let isSimulated = isSimulationMode;
-      let transformedImageUrl = '';
-      
+      let transformedImageUrl = "";
+
       // Store debug info for this transformation
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         currentTransformation: {
           imageId,
@@ -285,267 +412,73 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
           prompt: customPrompt || transformOption.prompt,
           timestamp: new Date().toISOString(),
           simulationMode: isSimulated,
-          testMode: isTestModeEnabled
-        }
+          testMode: isTestModeEnabled,
+          model: "gpt-image-01",
+        },
       }));
-      
-      // Prepare the form data for API calls
-      const formData = new FormData();
-      formData.append('image', image.file);
-      formData.append('prompt', customPrompt || transformOption.prompt);
-      formData.append('transformationType', transformationType);
-      
-      // If we're not in simulation mode, try to call the actual API
+
+      // If we're not in simulation mode, call the OpenAI API
       if (!isSimulated) {
         try {
-          console.log(`Attempting API call to ${webhookUrl} for image transformation`);
-          console.log(`Request data: imageId=${imageId}, transformationType=${transformationType}, using N8N webhook`);
-          
-          // Add timeout for API calls
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => {
-            controller.abort();
-            console.error('API call timed out after 15 seconds');
-            setError('The transformation request timed out. Please try again.');
-          }, 15000); // 15 second timeout
-          
-          // First try the N8N webhook endpoint
-          let response;
-          try {
-            // Log webhook details for debugging
-            console.log(`Sending webhook to: ${webhookUrl}`);
-            console.log(`Image name: ${image.name}, size: ${Math.round(image.file.size / 1024)} KB`);
-            console.log(`Transformation: ${transformOption.name} (${transformationType})`);
-            
-            // Store webhook attempt in debug info
-            setDebugInfo(prev => ({
-              ...prev,
-              webhookAttempts: [...(prev.webhookAttempts || []), {
-                url: webhookUrl,
-                imageId: imageId,
-                transformationType: transformationType,
-                timestamp: new Date().toISOString(),
-                imageSize: Math.round(image.file.size / 1024)
-              }]
-            }));
-            
-            // Add CORS handling for external APIs and ensure proper webhook communication
-            console.log('Sending webhook with the following data:', {
-              imageId,
-              transformationType,
-              timestamp: new Date().toISOString()
-            });
-            
-            // Create a more complete webhook payload
-            const webhookFormData = new FormData();
-            webhookFormData.append('image', image.file);
-            webhookFormData.append('transformationType', transformationType);
-            webhookFormData.append('imageId', imageId);
-            webhookFormData.append('timestamp', new Date().toISOString());
-            webhookFormData.append('prompt', transformOption.prompt);
-            
-            // Use the dedicated transformation endpoint
-            const transformEndpoint = `${webhookUrl}-transform`;
-            console.log(`Connecting to transformation endpoint: ${transformEndpoint}`);
-            
-            response = await fetch(transformEndpoint, {
-              method: 'POST',
-              body: webhookFormData,
-              signal: controller.signal,
-              mode: 'cors',
-              credentials: 'omit',  // Don't include credentials to avoid CORS preflight issues
-              headers: {
-                'Accept': 'application/json'
-              }
-            });
-          } catch (corsError) {
-            console.error('CORS or network error with N8N endpoint:', corsError);
-            
-            // Store webhook error in debug info
-            setDebugInfo(prev => ({
-              ...prev,
-              webhookErrors: [...(prev.webhookErrors || []), {
-                url: webhookUrl,
-                imageId: imageId,
-                transformationType: transformationType,
-                error: corsError instanceof Error ? corsError.message : 'Unknown error',
-                timestamp: new Date().toISOString()
-              }]
-            }));
-            
-            // Try fallback to local API if N8N endpoint fails
-            console.log('Attempting fallback to local API endpoint');
-            const localApiUrl = '/api/webhooks/transform-image';
-            
-            try {
-              response = await fetch(localApiUrl, {
-                method: 'POST',
-                body: formData,
-                signal: controller.signal
-              });
-              
-              console.log('Successfully connected to local API fallback');
-              
-              // Log successful fallback
-              setDebugInfo(prev => ({
-                ...prev,
-                fallbackSuccess: [...(prev.fallbackSuccess || []), {
-                  originalUrl: webhookUrl,
-                  fallbackUrl: localApiUrl,
-                  imageId: imageId,
-                  transformationType: transformationType,
-                  timestamp: new Date().toISOString()
-                }]
-              }));
-            } catch (localApiError) {
-              console.error('Local API fallback also failed:', localApiError);
-              
-              // Store fallback error in debug info
-              setDebugInfo(prev => ({
-                ...prev,
-                fallbackErrors: [...(prev.fallbackErrors || []), {
-                  originalUrl: webhookUrl,
-                  fallbackUrl: localApiUrl,
-                  imageId: imageId,
-                  transformationType: transformationType,
-                  error: localApiError instanceof Error ? localApiError.message : 'Unknown error',
-                  timestamp: new Date().toISOString()
-                }]
-              }));
-              
-              throw new Error('Unable to connect to transformation service. Please try again later.');
-            }
+          console.log(
+            `Attempting OpenAI gpt-image-01 API call for image transformation: ${transformationType}`,
+          );
+
+          // Make sure we have base64 data
+          if (!image.base64) {
+            throw new Error("Image base64 data is missing");
           }
-          
-          clearTimeout(timeoutId);
-          
-          if (!response.ok) {
-            // API returned an error - log and switch to simulation
-            const errorText = await response.text();
-            console.error(`API error (${response.status}): ${errorText}`);
-            
-            // Store API error in debug info
-            setDebugInfo(prev => ({
-              ...prev,
-              apiErrors: [...(prev.apiErrors || []), {
-                url: webhookUrl,
-                status: response.status,
-                statusText: response.statusText,
-                responseText: errorText,
-                imageId: imageId,
-                transformationType: transformationType,
-                timestamp: new Date().toISOString()
-              }]
-            }));
-            
-            // Set a user-friendly error message
-            if (response.status === 0 || response.status === 404) {
-              setError('Unable to connect to the transformation service. Check your network connection.');
-            } else if (response.status === 429) {
-              setError('Too many requests. Please try again in a moment.');
-            } else if (response.status >= 500) {
-              setError('The transformation service is currently unavailable. Please try again later.');
-            } else {
-              setError(`Error ${response.status}: ${response.statusText || 'Unknown error'}`);
-            }
-            
-            // Fall back to simulation mode
-            console.log('Falling back to simulation mode due to API error');
-            isSimulated = true;
-          } else {
-            // Success - try to parse response
-            try {
-              const data = await response.json();
-              transformedImageUrl = data.transformedImageUrl;
-              
-              // Clear any previous errors
-              setError(null);
-              
-              // Log detailed response for debugging
-              console.log('N8N webhook API call successful:', {
-                transformedImageUrl,
-                responseData: data,
-                timestamp: new Date().toISOString()
-              });
-              
-              // Store debug info for webhook response
-              setDebugInfo(prev => ({
-                ...prev,
-                lastN8NResponse: {
-                  endpoint: webhookUrl,
-                  responseData: data,
-                  timestamp: new Date().toISOString(),
-                  status: 'success'
-                }
-              }));
-            } catch (parseError) {
-              // JSON parse error - log and switch to simulation
-              console.error('Failed to parse API response:', parseError);
-              
-              setError('Received an invalid response from the server. Please try again.');
-              
-              // Log detailed error for debugging
-              console.error('N8N webhook response parsing error:', {
-                error: parseError instanceof Error ? parseError.message : String(parseError),
-                responseText: await response.text(),
-                status: response.status,
-                timestamp: new Date().toISOString()
-              });
-              
-              // Store debug info for webhook error
-              setDebugInfo(prev => ({
-                ...prev,
-                lastN8NError: {
-                  endpoint: webhookUrl,
-                  errorType: 'parse',
-                  error: parseError instanceof Error ? parseError.message : String(parseError),
-                  timestamp: new Date().toISOString()
-                }
-              }));
-              
-              // Fall back to simulation mode
-              console.log('Falling back to simulation mode due to parsing error');
-              isSimulated = true;
-            }
-          }
+
+          // Call OpenAI gpt-image-01 API
+          const result = await callOpenAIImage01(
+            image.base64,
+            customPrompt || transformOption.prompt
+          );
+
+          transformedImageUrl = result.transformedImageUrl;
+
+          // Clear any previous errors
+          setError(null);
+
+          console.log("OpenAI gpt-image-01 transformation successful");
         } catch (apiError) {
-          // Network error or other fetch issue - log and switch to simulation
-          console.error('API call failed:', apiError);
-          
-          // Set user-friendly error message based on error type
-          if (apiError instanceof DOMException && apiError.name === 'AbortError') {
-            setError('The transformation request timed out. Please try again later.');
-          } else {
-            // Provide specific error message about N8N webhook connection
-            setError('Unable to connect to the N8N transformation service. This might be due to CORS restrictions or network issues. Falling back to simulation mode.');
-          }
-          
+          // API error - log and switch to simulation
+          console.error("OpenAI API call failed:", apiError);
+
+          // Set user-friendly error message
+          setError(
+            `Error processing image transformation: ${apiError instanceof Error ? apiError.message : "Unknown error"}. Falling back to simulation mode.`,
+          );
+
           // Fall back to simulation mode
-          console.log('Falling back to simulation mode due to network/fetch error');
+          console.log("Falling back to simulation mode due to API error");
           isSimulated = true;
         }
       }
-      
+
       // If we're in simulation mode (either by choice or as a fallback)
       if (isSimulated) {
-        console.log('Using simulation mode for image transformation');
-        
+        console.log("Using simulation mode for image transformation");
+
         // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         // In simulation mode, just use the original image URL
         transformedImageUrl = image.url;
-        
+
         // Log simulation in debug info
-        setDebugInfo(prev => ({
+        setDebugInfo((prev) => ({
           ...prev,
           simulationUsed: {
-            reason: isSimulationMode ? 'Manual simulation mode enabled' : 'Fallback after API failure',
-            timestamp: new Date().toISOString()
-          }
+            reason: isSimulationMode
+              ? "Manual simulation mode enabled"
+              : "Fallback after API failure",
+            timestamp: new Date().toISOString(),
+            model: "gpt-image-01",
+          },
         }));
       }
-      
+
       // Create the result object
       const result: TransformationResult = {
         id: `result-${Date.now()}`,
@@ -556,76 +489,92 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
         transformedImageUrl: transformedImageUrl || image.url, // Fallback to original if empty
         creditCost: transformOption.creditCost,
         prompt: customPrompt || transformOption.prompt,
-        completedAt: new Date().toISOString()
+        completedAt: new Date().toISOString(),
       };
-      
+
       // Log completion
-      console.log(`Transformation completed for image: ${imageId}, type: ${transformationType}`);
-      
+      console.log(
+        `Transformation completed for image: ${imageId}, type: ${transformationType}`,
+      );
+
       // Create a unique transaction ID for this transformation
       const transactionId = `${imageId}-${transformationType}-${Date.now()}`;
-      
+
       // Only deduct credits if:
       // 1. Not in test mode AND
       // 2. Not using simulation mode OR (simulation mode was a fallback but we still want to charge) AND
       // 3. Transaction hasn't been processed yet
-      if (!isTestModeEnabled && 
-          (!isSimulated || !isSimulationMode) && 
-          !pendingTransactions[transactionId]) {
-        
+      if (
+        !isTestModeEnabled &&
+        (!isSimulated || !isSimulationMode) &&
+        !pendingTransactions[transactionId]
+      ) {
         // Mark this transaction as processed
-        setPendingTransactions(prev => ({
+        setPendingTransactions((prev) => ({
           ...prev,
-          [transactionId]: true
+          [transactionId]: true,
         }));
-        
-        console.log(`Deducting ${transformOption.creditCost} credits (Transaction: ${transactionId})`);
-        setAvailableCredits(prev => prev - transformOption.creditCost);
+
+        console.log(
+          `Deducting ${transformOption.creditCost} credits (Transaction: ${transactionId})`,
+        );
+        setAvailableCredits((prev) => prev - transformOption.creditCost);
       } else {
-        console.log('No credits deducted (test mode, simulation mode, or already processed)');
+        console.log(
+          "No credits deducted (test mode, simulation mode, or already processed)",
+        );
       }
-      
+
       // Store the transformation result
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         lastCompletedTransformation: {
           result,
           timestamp: new Date().toISOString(),
-          simulationMode: isSimulated
-        }
+          simulationMode: isSimulated,
+          model: "gpt-image-01",
+        },
       }));
-      
+
       // Check for duplicates before adding to transformed images
-      setTransformedImages(prev => {
+      setTransformedImages((prev) => {
         // Check if we already have this transformation
-        if (prev.some(item => 
-          item.originalImageId === imageId && 
-          item.transformationType === transformationType)) {
-          console.log('Skipping duplicate transformation result');
+        if (
+          prev.some(
+            (item) =>
+              item.originalImageId === imageId &&
+              item.transformationType === transformationType,
+          )
+        ) {
+          console.log("Skipping duplicate transformation result");
           return prev;
         }
         return [...prev, result];
       });
-      
+
       return result;
     } catch (err) {
       // Handle all errors
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error processing transformation';
-      console.error('Transformation error:', errorMessage);
-      
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Unknown error processing transformation";
+      console.error("Transformation error:", errorMessage);
+
       // Store error in debug info
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         lastTransformationError: {
           error: errorMessage,
           stack: err instanceof Error ? err.stack : undefined,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+          model: "gpt-image-01",
+        },
       }));
-      
+
       // Make sure error is set
       setError(errorMessage);
-      
+
       // Re-throw for upstream handling
       throw err;
     } finally {
@@ -633,34 +582,41 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
       setIsProcessing(false);
     }
   };
-  
+
   /**
    * Process multiple transformations at once
    * @param transformations - Array of transformation requests
    * @returns Results of all transformations
    */
-  const batchTransformImages = async (transformations: TransformationRequest[]): Promise<TransformationResult[]> => {
-    console.log(`Starting batch transformation with ${transformations.length} requests`);
-    
+  const batchTransformImages = async (
+    transformations: TransformationRequest[],
+  ): Promise<TransformationResult[]> => {
+    console.log(
+      `Starting batch transformation with ${transformations.length} requests`,
+    );
+
     try {
       // Calculate total credit cost
       const totalCreditCost = transformations.reduce((total, transform) => {
-        const option = ENHANCEMENT_OPTIONS.find(opt => opt.id === transform.transformationType);
+        const option = ENHANCEMENT_OPTIONS.find(
+          (opt) => opt.id === transform.transformationType,
+        );
         return total + (option?.creditCost || 0);
       }, 0);
-      
+
       // Log batch information
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         batchStartInfo: {
           transformationCount: transformations.length,
           totalCreditCost,
           timestamp: new Date().toISOString(),
           testMode: isTestModeEnabled,
-          simulationMode: isSimulationMode
-        }
+          simulationMode: isSimulationMode,
+          model: "gpt-image-01",
+        },
       }));
-      
+
       // Check if user has enough credits (bypass check if in test mode)
       if (!isTestModeEnabled && availableCredits < totalCreditCost) {
         const errorMessage = `Not enough credits. Required: ${totalCreditCost}, Available: ${availableCredits}`;
@@ -668,293 +624,253 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
         setError(errorMessage);
         throw new Error(errorMessage);
       }
-      
+
       setIsProcessing(true);
       setError(null);
-      
+
       // Process each transformation sequentially
       const results: TransformationResult[] = [];
-      const failures: Array<{request: TransformationRequest, error: string}> = [];
-      
+      const failures: Array<{ request: TransformationRequest; error: string }> =
+        [];
+
       // Attempt to process all transformations, collecting successes and failures
       for (const transform of transformations) {
         try {
           // Log the current transformation being processed
-          console.log(`Processing transformation for imageId: ${transform.imageId}, type: ${transform.transformationType}`);
-          
+          console.log(
+            `Processing transformation for imageId: ${transform.imageId}, type: ${transform.transformationType}`,
+          );
+
           const result = await transformImage(transform);
           results.push(result);
-          
+
           // Log success
-          console.log(`Successfully processed transformation for imageId: ${transform.imageId}`);
+          console.log(
+            `Successfully processed transformation for imageId: ${transform.imageId}`,
+          );
         } catch (transformError) {
           // Log failure but continue with other transformations
-          const errorMessage = transformError instanceof Error ? transformError.message : 'Unknown transformation error';
-          console.error(`Transformation failed for imageId: ${transform.imageId}:`, errorMessage);
-          
+          const errorMessage =
+            transformError instanceof Error
+              ? transformError.message
+              : "Unknown transformation error";
+          console.error(
+            `Transformation failed for imageId: ${transform.imageId}:`,
+            errorMessage,
+          );
+
           // Add to failures list
           failures.push({
             request: transform,
-            error: errorMessage
+            error: errorMessage,
           });
         }
       }
-      
+
       // Log batch completion
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         batchCompleteInfo: {
           successCount: results.length,
           failureCount: failures.length,
           timestamp: new Date().toISOString(),
-          failures: failures.length > 0 ? failures : undefined
-        }
+          failures: failures.length > 0 ? failures : undefined,
+          model: "gpt-image-01",
+        },
       }));
-      
+
       // If we have any results but also failures, show a partial success message
       if (results.length > 0 && failures.length > 0) {
-        setError(`${failures.length} of ${transformations.length} transformations failed. Partial results are shown.`);
-      } 
+        setError(
+          `${failures.length} of ${transformations.length} transformations failed. Partial results are shown.`,
+        );
+      }
       // If all failed, show a more serious error
       else if (results.length === 0 && failures.length > 0) {
         const errorMessage = `All ${failures.length} transformations failed. Please check the image files and try again.`;
         setError(errorMessage);
         throw new Error(errorMessage);
       }
-      
-      console.log(`Batch transformation completed: ${results.length} successes, ${failures.length} failures`);
+
+      console.log(
+        `Batch transformation completed: ${results.length} successes, ${failures.length} failures`,
+      );
       return results;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error processing batch transformations';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Unknown error processing batch transformations";
       setError(errorMessage);
-      console.error('Error processing batch transformations:', err);
-      
+      console.error("Error processing batch transformations:", err);
+
       // Log the batch error
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         batchError: {
           error: errorMessage,
           stack: err instanceof Error ? err.stack : undefined,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+          model: "gpt-image-01",
+        },
       }));
-      
+
       throw err;
     } finally {
       setIsProcessing(false);
     }
   };
-  
+
   /**
    * Add credits to the user's account
    * @param amount - Number of credits to add
    */
   const addCredits = (amount: number): void => {
     if (!amount || amount <= 0) return;
-    setAvailableCredits(prev => prev + amount);
+    setAvailableCredits((prev) => prev + amount);
   };
-  
+
   /**
    * Reset the state of the lab
    */
   const resetLab = (): void => {
     // Clean up object URLs to prevent memory leaks
-    uploadedImages.forEach(img => {
-      if (img.url.startsWith('blob:')) {
+    uploadedImages.forEach((img) => {
+      if (img.url.startsWith("blob:")) {
         URL.revokeObjectURL(img.url);
       }
     });
-    
+
     setUploadedImages([]);
     setTransformedImages([]);
     setError(null);
     setIsProcessing(false);
     setDebugInfo({});
   };
-  
+
   /**
    * Set test mode
    * @param enabled - Whether test mode should be enabled
    */
   const setTestMode = (enabled: boolean): void => {
     setIsTestModeEnabled(enabled);
-    
+
     // Log test mode change to debug info
-    setDebugInfo(prev => ({
+    setDebugInfo((prev) => ({
       ...prev,
       testModeChange: {
         enabled,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     }));
   };
-  
+
   /**
    * Set simulation mode
    * @param enabled - Whether simulation mode should be enabled
    */
   const setSimulationMode = (enabled: boolean): void => {
     setIsSimulationMode(enabled);
-    
+
     // Log simulation mode change to debug info
-    setDebugInfo(prev => ({
+    setDebugInfo((prev) => ({
       ...prev,
       simulationModeChange: {
         enabled,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     }));
   };
-  
+
   /**
-   * Test API connection to verify N8N webhook is accessible
+   * Test API connection to OpenAI
    * @returns Promise resolving to true if successful, false if failed
    */
   const testApiConnection = async (): Promise<boolean> => {
     try {
-      console.log(`Testing API connection to ${webhookUrl}/test`);
-      
+      console.log(`Testing OpenAI gpt-image-01 API connection`);
+
       // Add test info to debug
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         apiConnectionTest: {
-          url: `${webhookUrl}/test`,
+          endpoint: "/api/openai/test-connection",
           timestamp: new Date().toISOString(),
-          status: 'pending'
-        }
+          status: "pending",
+          model: "gpt-image-01",
+        },
       }));
-      
+
       // Skip the actual API call in simulation mode
       if (isSimulationMode) {
-        console.log('Simulation mode active - skipping actual API call');
-        
+        console.log("Simulation mode active - skipping actual API call");
+
         // Update debug info for simulation
-        setDebugInfo(prev => ({
+        setDebugInfo((prev) => ({
           ...prev,
           apiConnectionTest: {
             ...prev.apiConnectionTest,
-            status: 'simulated',
-            simulated: true
-          }
+            status: "simulated",
+            simulated: true,
+          },
         }));
-        
+
         return true;
       }
-      
-      // Create controller for timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-      
-      try {
-        // Make a POST request to the test endpoint
-        const response = await fetch(`${webhookUrl}/test`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ 
-            test: true, 
-            timestamp: new Date().toISOString() 
-          }),
-          mode: 'cors',
-          credentials: 'include',
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        // Update debug info
-        setDebugInfo(prev => ({
-          ...prev,
-          apiConnectionTest: {
-            ...prev.apiConnectionTest,
-            status: response.ok ? 'success' : 'error',
-            statusCode: response.status,
-            statusText: response.statusText,
-            response: response.ok ? 'success' : 'failed'
-          }
-        }));
-        
-        return response.ok;
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        console.error('N8N webhook test failed (likely CORS issue):', fetchError);
-        
-        // Log CORS error to debug info
-        setDebugInfo(prev => ({
-          ...prev,
-          apiConnectionTest: {
-            ...prev.apiConnectionTest,
-            status: 'cors_error',
-            error: fetchError instanceof Error ? fetchError.message : String(fetchError)
-          }
-        }));
-        
-        // Try fallback to local API if available
-        try {
-          console.log('Attempting local API fallback test');
-          
-          const localResponse = await fetch('/api/test-connection', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ test: true })
-          });
-          
-          // Log fallback results
-          setDebugInfo(prev => ({
-            ...prev,
-            apiConnectionTest: {
-              ...prev.apiConnectionTest,
-              fallback: {
-                url: '/api/test-connection',
-                status: localResponse.ok ? 'success' : 'error',
-                statusCode: localResponse.status,
-                statusText: localResponse.statusText
-              }
-            }
-          }));
-          
-          console.log('Local API fallback test result:', localResponse.ok);
-          return localResponse.ok;
-        } catch (fallbackError) {
-          console.error('Local API fallback also failed:', fallbackError);
-          
-          // Log fallback error
-          setDebugInfo(prev => ({
-            ...prev,
-            apiConnectionTest: {
-              ...prev.apiConnectionTest,
-              fallback: {
-                url: '/api/test-connection',
-                status: 'error',
-                error: fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
-              }
-            }
-          }));
-          
-          return false;
-        }
-      }
-    } catch (err) {
-      console.error('API connection test completely failed:', err);
-      
-      // Log error to debug info
-      setDebugInfo(prev => ({
+
+      // Test OpenAI connection through server endpoint
+      const response = await fetch("/api/openai/test-connection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          test: true,
+          model: "gpt-image-01",
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      // Update debug info
+      setDebugInfo((prev) => ({
         ...prev,
         apiConnectionTest: {
           ...prev.apiConnectionTest,
-          status: 'critical_error',
-          error: err instanceof Error ? err.message : String(err)
-        }
+          status: response.ok ? "success" : "error",
+          statusCode: response.status,
+          statusText: response.statusText,
+          response: response.ok ? "success" : "failed",
+        },
       }));
-      
+
+      if (!response.ok) {
+        // If the API test fails, enable simulation mode
+        setSimulationMode(true);
+        console.log("API test failed. Enabling simulation mode.");
+      }
+
+      return response.ok;
+    } catch (err) {
+      console.error("API connection test completely failed:", err);
+
+      // Log error to debug info
+      setDebugInfo((prev) => ({
+        ...prev,
+        apiConnectionTest: {
+          ...prev.apiConnectionTest,
+          status: "critical_error",
+          error: err instanceof Error ? err.message : String(err),
+        },
+      }));
+
+      // Enable simulation mode on failure
+      setSimulationMode(true);
+      console.log("API test failed with error. Enabling simulation mode.");
+
       return false;
     }
   };
-  
+
   return {
     // State
     availableCredits,
@@ -965,7 +881,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     isTestModeEnabled,
     isSimulationMode,
     debugInfo,
-    
+
     // Methods
     handleImageUpload,
     getEnhancementsForIndustry,
@@ -976,7 +892,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     setTestMode,
     setSimulationMode,
     testApiConnection,
-    
+
     // Constants
     enhancementOptions: ENHANCEMENT_OPTIONS,
   };

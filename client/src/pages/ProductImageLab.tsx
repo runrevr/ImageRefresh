@@ -104,8 +104,7 @@ export default function ProductImageLabPage() {
   const generateFormRef = useRef<HTMLFormElement>(null);
   
   // N8N webhook URL
-  const webhookUrl = '/api/webhooks/transform-image';
-  const maxUploads = 5;
+  const webhookUrl = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9';  const maxUploads = 5;
   
   // Initialize product image lab hook with error handling
   const {
