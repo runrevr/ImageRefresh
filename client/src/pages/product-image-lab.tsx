@@ -11,7 +11,6 @@ import {
 import '../product-image-lab.css';
 import Navbar from '@/components/Navbar';
 import GlobalFooter from '@/components/Footer';
-import ErrorBoundary from '@/components/ErrorBoundary';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -33,67 +32,6 @@ interface AuthCredits {
  * ProductImageLab Page
  * A standalone page for product image transformations
  */
-// Component to render when an error occurs
-function ProductImageLabErrorFallback({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }) {
-  const { toast } = useToast();
-  
-  useEffect(() => {
-    // Show error toast when component mounts
-    toast({
-      title: "Error Occurred",
-      description: error.message || "Something went wrong in the Product Image Lab",
-      variant: "destructive"
-    });
-  }, [error, toast]);
-  
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <main className="flex-grow pt-20">
-        <div className="product-lab-container">
-          <div className="product-lab-header">
-            <h1 className="product-lab-title">Product Image Lab</h1>
-            <p className="product-lab-subtitle">There was a problem with the Product Image Lab</p>
-          </div>
-          
-          <div className="product-lab-card" style={{ backgroundColor: '#fff8f8', borderLeft: '4px solid #e62600' }}>
-            <h2>Something went wrong</h2>
-            <p style={{ marginBottom: '1rem' }}>
-              We encountered an error while processing your request. Please try again or contact support if the issue persists.
-            </p>
-            
-            <details style={{ marginBottom: '1.5rem' }}>
-              <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>View Error Details</summary>
-              <pre style={{ 
-                marginTop: '10px',
-                padding: '10px',
-                background: '#f5f5f5',
-                borderRadius: '5px',
-                overflow: 'auto',
-                fontSize: '0.8rem'
-              }}>
-                {error.message}
-                {error.stack && `\n\n${error.stack}`}
-              </pre>
-            </details>
-            
-            <button 
-              className="product-lab-button product-lab-button-primary"
-              onClick={resetErrorBoundary}
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </main>
-      
-      <GlobalFooter />
-    </div>
-  );
-}
-
-// Main Product Image Lab Page Component
 export default function ProductImageLabPage() {
   // Auth and credits
   const { user } = useAuth();
@@ -523,20 +461,7 @@ export default function ProductImageLabPage() {
     });
   };
   
-  const handleError = (error: Error) => {
-    console.error("Product Image Lab Error:", error);
-    toast({
-      title: "Error Occurred",
-      description: "An error occurred in the Product Image Lab. The application has recovered, but some data may have been lost.",
-      variant: "destructive"
-    });
-  };
-
   return (
-    <ErrorBoundary 
-      onError={handleError}
-      fallback={<ProductImageLabErrorFallback error={new Error("Component crashed")} resetErrorBoundary={() => window.location.reload()} />}
-    >
       <div className="min-h-screen flex flex-col">
         <Navbar freeCredits={credits?.free || 0} paidCredits={credits?.paid || 0} />
         
