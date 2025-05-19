@@ -357,6 +357,7 @@ export default function FixedProductImageLab({
                     'Accept': 'application/json'
                   },
                   mode: 'cors',
+                  credentials: 'include',
                   body: JSON.stringify({ test: true })
                 })
                 .then(response => {

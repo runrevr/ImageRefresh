@@ -315,6 +315,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
               body: formData,
               signal: controller.signal,
               mode: 'cors',
+              credentials: 'include',  // Include credentials like cookies if needed
               headers: {
                 'Accept': 'application/json'
               }
