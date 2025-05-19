@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Image Lab - Testing</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 1.5rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .card h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    
+    .card p {
+      color: #4b5563;
+      margin-bottom: 1.5rem;
+    }
+    
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .btn:hover {
+      background-color: #e5e7eb;
+    }
+    
+    .btn-blue {
+      background-color: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    
+    .btn-blue:hover {
+      background-color: #2563eb;
+    }
+    
+    .btn-green {
+      background-color: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+    
+    .btn-green:hover {
+      background-color: #059669;
+    }
+    
+    .btn-amber {
+      background-color: #f59e0b;
+      color: white;
+      border-color: #f59e0b;
+    }
+    
+    .btn-amber:hover {
+      background-color: #d97706;
+    }
+    
+    .btn-red {
+      background-color: #ef4444;
+      color: white;
+      border-color: #ef4444;
+    }
+    
+    .btn-red:hover {
+      background-color: #dc2626;
+    }
+    
+    .btn-purple {
+      background-color: #8b5cf6;
+      color: white;
+      border-color: #8b5cf6;
+    }
+    
+    .btn-purple:hover {
+      background-color: #7c3aed;
+    }
+    
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .image-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s ease;
+    }
+    
+    .image-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .image-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    
+    .image-card-content {
+      padding: 1.5rem;
+    }
+    
+    .image-card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+      color: #1f2937;
+    }
+    
+    .image-card p {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    
+    .tag {
+      display: inline-block;
+      background-color: #f3f4f6;
+      color: #4b5563;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .upload-section {
+      margin-top: 3rem;
+      text-align: center;
+    }
+    
+    .upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 0.5rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      background-color: #f9fafb;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .upload-area:hover {
+      border-color: #9ca3af;
+      background-color: #f3f4f6;
+    }
+    
+    .upload-area p {
+      margin: 1rem 0 0;
+      color: #6b7280;
+    }
+    
+    #file-input {
+      display: none;
+    }
+    
+    .result-section {
+      margin-top: 3rem;
+      display: none;
+    }
+    
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .comparison-item {
+      text-align: center;
+    }
+    
+    .comparison-item img {
+      max-width: 100%;
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+    
+    .comparison-item h3 {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #4b5563;
+    }
+    
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Product Image Lab</h1>
+      <p class="subtitle">Test different transformations for your product images</p>
+    </header>
+    
+    <div class="card">
+      <h2>Navigation</h2>
+      <p>Access different views and testing pages</p>
+      
+      <div class="flex">
+        <a href="/" class="btn">Home</a>
+        <a href="/product-enhancement" class="btn btn-green">Product Enhancement</a>
+        <a href="/direct-product-enhancement.html" class="btn btn-amber">Direct Enhancement</a>
+        <a href="/api/health" class="btn btn-purple">API Health Check</a>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Transformation Styles</h2>
+      <p>Choose from our available product image transformations</p>
+      
+      <div class="image-grid">
+        <div class="image-card">
+          <img src="/examples/transformed-product-white.png" alt="Clean Background">
+          <div class="image-card-content">
+            <h3>Remove Background</h3>
+            <p>Isolate the product with a clean, solid or transparent background</p>
+            <div>
+              <span class="tag">clean</span>
+              <span class="tag">professional</span>
+              <span class="tag">isolated</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="image-card">
+          <img src="/examples/transformed-product-lighting.png" alt="Enhanced Lighting">
+          <div class="image-card-content">
+            <h3>Enhanced Lighting & Colors</h3>
+            <p>Improve product appearance with professional studio lighting and color enhancement</p>
+            <div>
+              <span class="tag">studio</span>
+              <span class="tag">professional</span>
+              <span class="tag">commercial</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="image-card">
+          <img src="/examples/transformed-product-lifestyle.png" alt="Lifestyle Integration">
+          <div class="image-card-content">
+            <h3>Lifestyle Integration</h3>
+            <p>Place the product in a realistic lifestyle environment</p>
+            <div>
+              <span class="tag">contextual</span>
+              <span class="tag">environment</span>
+              <span class="tag">natural</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="image-card">
+          <img src="/examples/transformed-product-social.png" alt="Social Media Ready">
+          <div class="image-card-content">
+            <h3>Social Media Ready</h3>
+            <p>Optimize product presentation for social media platforms</p>
+            <div>
+              <span class="tag">instagram</span>
+              <span class="tag">trendy</span>
+              <span class="tag">marketing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Test Transformation</h2>
+      <p>Upload your own product image and test our AI transformation capabilities</p>
+      
+      <div class="upload-section">
+        <div class="upload-area" id="upload-area">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload-cloud" style="margin: 0 auto; color: #6b7280;">
+            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+            <path d="M12 12v9"></path>
+            <path d="m16 16-4-4-4 4"></path>
+          </svg>
+          <p>Drag and drop your product image here<br>or click to browse</p>
+        </div>
+        <input type="file" id="file-input" accept="image/*">
+      </div>
+      
+      <div id="transformation-options" style="margin-top: 2rem; display: none;">
+        <h3>Select Transformation Style</h3>
+        <div class="flex" style="margin-top: 1rem;">
+          <button class="btn btn-blue" data-transform="remove-background">Remove Background</button>
+          <button class="btn" data-transform="enhanced-lighting">Enhanced Lighting</button>
+          <button class="btn" data-transform="lifestyle-integration">Lifestyle Integration</button>
+          <button class="btn" data-transform="social-media-ready">Social Media Ready</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="result-section" id="result-section">
+      <div class="card">
+        <h2>Transformation Results</h2>
+        <p>View the comparison between your original image and the AI-transformed version</p>
+        
+        <div class="comparison">
+          <div class="comparison-item">
+            <img id="original-image" src="" alt="Original Image">
+            <h3>Original Image</h3>
+          </div>
+          <div class="comparison-item">
+            <img id="transformed-image" src="" alt="Transformed Image">
+            <h3>Transformed Image</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // DOM Elements
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const transformationOptions = document.getElementById('transformation-options');
+    const resultSection = document.getElementById('result-section');
+    const originalImage = document.getElementById('original-image');
+    const transformedImage = document.getElementById('transformed-image');
+    const transformButtons = document.querySelectorAll('[data-transform]');
+    
+    // Upload area click handler
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    // File input change handler
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+          // Display original image
+          originalImage.src = event.target.result;
+          
+          // Show transformation options
+          transformationOptions.style.display = 'block';
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Drag and drop handlers
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#3b82f6';
+      uploadArea.style.backgroundColor = '#eff6ff';
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.borderColor = '#d1d5db';
+      uploadArea.style.backgroundColor = '#f9fafb';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#d1d5db';
+      uploadArea.style.backgroundColor = '#f9fafb';
+      
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        
+        const file = e.dataTransfer.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+          // Display original image
+          originalImage.src = event.target.result;
+          
+          // Show transformation options
+          transformationOptions.style.display = 'block';
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Transformation button click handlers
+    transformButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Set all buttons to default style
+        transformButtons.forEach(btn => {
+          btn.className = 'btn';
+        });
+        
+        // Set selected button to primary style
+        button.className = 'btn btn-blue';
+        
+        const transformationType = button.getAttribute('data-transform');
+        
+        // For demonstration purposes - would normally call API
+        // Show result section with mock transformed image
+        resultSection.style.display = 'block';
+        
+        // In a real implementation, we would send the image to the API and get the transformed version back
+        // For now, we'll just use example images
+        switch(transformationType) {
+          case 'remove-background':
+            transformedImage.src = '/examples/transformed-product-white.png';
+            break;
+          case 'enhanced-lighting':
+            transformedImage.src = '/examples/transformed-product-lighting.png';
+            break;
+          case 'lifestyle-integration':
+            transformedImage.src = '/examples/transformed-product-lifestyle.png';
+            break;
+          case 'social-media-ready':
+            transformedImage.src = '/examples/transformed-product-social.png';
+            break;
+          default:
+            transformedImage.src = '/examples/transformed-product-white.png';
+        }
+        
+        // Scroll to results
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+    
+    // Log page load
+    window.addEventListener('load', function() {
+      console.log('Product Image Lab Test page loaded successfully');
+    });
+    
+    // Log any errors
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error('Error detected:', message);
+    };
+  </script>
+</body>
+</html>
