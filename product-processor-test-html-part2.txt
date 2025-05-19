@@ -1,0 +1,200 @@
+                    const imageSection = document.createElement('div');
+                    imageSection.classList.add('image-ideas-section');
+                    
+                    // Show image thumbnail
+                    const thumb = document.createElement('img');
+                    thumb.src = image.previewSrc;
+                    thumb.classList.add('idea-thumbnail');
+                    imageSection.appendChild(thumb);
+                    
+                    // Create options container
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.classList.add('options-container');
+                    
+                    // Add title
+                    const title = document.createElement('h4');
+                    title.textContent = 'Select enhancement option:';
+                    optionsContainer.appendChild(title);
+                    
+                    // Create option selection
+                    const optionsSelect = document.createElement('select');
+                    optionsSelect.id = `options-for-${image.id}`;
+                    optionsSelect.dataset.imageId = image.id;
+                    
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select an option';
+                    defaultOption.selected = true;
+                    defaultOption.disabled = true;
+                    optionsSelect.appendChild(defaultOption);
+                    
+                    // Add each option
+                    imageOptions.forEach((option) => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = option.id || option;
+                        optionElement.textContent = option.text || option;
+                        optionsSelect.appendChild(optionElement);
+                    });
+                    
+                    // Handle selection change
+                    optionsSelect.addEventListener('change', (e) => {
+                        const imageId = e.target.dataset.imageId;
+                        const selectedOptionValue = e.target.value;
+                        
+                        // Store selection
+                        selectedIdeas[imageId] = selectedOptionValue;
+                        updateCreditsRequired();
+                    });
+                    
+                    optionsContainer.appendChild(optionsSelect);
+                    imageSection.appendChild(optionsContainer);
+                    ideasContainer.appendChild(imageSection);
+                });
+            }
+            
+            // Update the credits required display
+            function updateCreditsRequired() {
+                const creditsNeeded = Object.keys(selectedIdeas).length;
+                creditsRequiredElement.textContent = creditsNeeded;
+                
+                // Check if user has enough credits
+                checkCreditAvailability();
+            }
+            
+            // Get available credits from the user's account
+            async function updateAvailableCredits() {
+                try {
+                    const credits = await creditSystem.getUserCredits();
+                    availableCreditsElement.textContent = credits;
+                    
+                    // Check credit availability if selections are already made
+                    if (Object.keys(selectedIdeas).length > 0) {
+                        checkCreditAvailability();
+                    }
+                } catch (error) {
+                    console.error('Error fetching credits:', error);
+                    availableCreditsElement.textContent = '0';
+                }
+            }
+            
+            // Check if user has enough credits for current selections
+            function checkCreditAvailability() {
+                const availableCredits = parseInt(availableCreditsElement.textContent);
+                const creditsNeeded = parseInt(creditsRequiredElement.textContent);
+                
+                if (creditsNeeded > availableCredits) {
+                    creditWarningElement.style.display = 'block';
+                    submitSelectionsBtn.disabled = true;
+                } else {
+                    creditWarningElement.style.display = 'none';
+                    submitSelectionsBtn.disabled = (creditsNeeded === 0);
+                }
+            }
+            
+            // Handle idea selection submission
+            submitSelectionsBtn.addEventListener('click', async () => {
+                // Validate selections
+                const requiredSelections = uploadedImages.length;
+                const actualSelections = Object.keys(selectedIdeas).length;
+                
+                if (actualSelections < requiredSelections) {
+                    alert(`Please select options for all ${requiredSelections} images.`);
+                    return;
+                }
+                
+                // Verify credit availability one more time
+                const availableCredits = parseInt(availableCreditsElement.textContent);
+                const creditsNeeded = actualSelections;
+                
+                if (creditsNeeded > availableCredits) {
+                    alert(`You need ${creditsNeeded} credits but only have ${availableCredits} available. Please purchase more credits or reduce your selections.`);
+                    return;
+                }
+                
+                // Show loading state
+                submitSelectionsBtn.disabled = true;
+                submitSelectionsBtn.textContent = 'Processing...';
+                
+                try {
+                    // Process selections
+                    await simulatedBackend.processSelections(selectedIdeas);
+                    
+                    // Update available credits display
+                    updateAvailableCredits();
+                    
+                    // Get results
+                    const data = await simulatedBackend.getResults();
+                    displayResults(data.results);
+                    
+                    // Show results section
+                    resultsSection.style.display = 'block';
+                    
+                    // Update submission button
+                    submitSelectionsBtn.disabled = false;
+                    submitSelectionsBtn.textContent = 'Create Transformations';
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    submitSelectionsBtn.textContent = 'Error: Try Again';
+                    submitSelectionsBtn.disabled = false;
+                    alert(`Error: ${error.message}`);
+                }
+            });
+            
+            // Display results
+            function displayResults(results) {
+                resultsContainer.innerHTML = '';
+                
+                // Create a card for each result
+                Object.keys(results).forEach(imageId => {
+                    const result = results[imageId];
+                    
+                    const resultCard = document.createElement('div');
+                    resultCard.classList.add('result-card');
+                    
+                    // Add before/after comparison
+                    const beforeImg = document.createElement('img');
+                    beforeImg.classList.add('before-image');
+                    // Find the original image data
+                    const originalImage = uploadedImages.find(img => img.id === imageId);
+                    if (originalImage) {
+                        beforeImg.src = originalImage.previewSrc;
+                    }
+                    
+                    const afterImg = document.createElement('img');
+                    afterImg.src = result.imageUrl || `data:image/jpeg;base64,${result.base64}`;
+                    afterImg.classList.add('after-image');
+                    
+                    const comparison = document.createElement('div');
+                    comparison.classList.add('image-comparison');
+                    comparison.appendChild(beforeImg);
+                    comparison.appendChild(afterImg);
+                    
+                    // Add idea text
+                    const ideaText = document.createElement('p');
+                    ideaText.textContent = result.ideaText || result.optionText || 'Transformed image';
+                    ideaText.classList.add('idea-text');
+                    
+                    resultCard.appendChild(comparison);
+                    resultCard.appendChild(ideaText);
+                    
+                    // Add download button if image data available
+                    const downloadBtn = document.createElement('a');
+                    if (result.imageUrl) {
+                        downloadBtn.href = result.imageUrl;
+                    } else if (result.base64) {
+                        downloadBtn.href = `data:image/jpeg;base64,${result.base64}`;
+                    }
+                    downloadBtn.textContent = 'Download';
+                    downloadBtn.classList.add('download-button');
+                    downloadBtn.setAttribute('download', `${originalImage ? originalImage.name.replace(/\.[^/.]+$/, '') : imageId}_transformed.jpg`);
+                    resultCard.appendChild(downloadBtn);
+                    
+                    resultsContainer.appendChild(resultCard);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
