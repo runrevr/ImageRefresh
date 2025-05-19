@@ -324,7 +324,7 @@ export default function ProductImageLabPage() {
   };
   
   // Toggle selection of a transformation option
-  const toggleOptionSelection = (imageId: string, optionId: string) => {
+  const toggleOptionSelection = (imageId: string, optionId: TransformationType) => {
     setSelections(prevSelections => {
       const newSelections = { ...prevSelections };
       
@@ -462,8 +462,107 @@ export default function ProductImageLabPage() {
       <main className="flex-grow pt-20">
         <div className="product-lab-container">
           <div className="product-lab-header">
-            <h1 className="product-lab-title">Product Image Lab</h1>
-            <p className="product-lab-subtitle">Transform and enhance your product images with AI</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h1 className="product-lab-title">Product Image Lab</h1>
+              
+              {(isAdmin || isTestModeEnabled) && (
+                <button 
+                  className="product-lab-button product-lab-button-default"
+                  onClick={() => setShowAdminPanel(!showAdminPanel)}
+                  style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+                >
+                  {showAdminPanel ? 'Hide Admin Panel' : 'Show Admin Panel'}
+                </button>
+              )}
+            </div>
+            
+            <p className="product-lab-subtitle">
+              Transform and enhance your product images with AI
+              
+              {isTestModeEnabled && (
+                <span style={{ 
+                  marginLeft: '10px',
+                  background: '#ff7b54', 
+                  color: 'white', 
+                  padding: '2px 8px', 
+                  borderRadius: '4px', 
+                  fontSize: '0.8rem',
+                  fontWeight: 'bold'
+                }}>
+                  TEST MODE
+                </span>
+              )}
+            </p>
+            
+            {/* Admin Control Panel */}
+            {showAdminPanel && (isAdmin || isTestModeEnabled) && (
+              <div className="product-lab-card" style={{ 
+                marginTop: '1rem', 
+                padding: '1rem', 
+                background: '#f8f9fa',
+                border: '1px solid #ccc',
+                borderLeft: '4px solid #ff7b54'
+              }}>
+                <h3 style={{ marginTop: 0 }}>Admin Controls</h3>
+                
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  <div>
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <label htmlFor="test-mode-toggle" style={{ fontWeight: 'bold', marginRight: '0.5rem' }}>
+                        Test Mode:
+                      </label>
+                      <input 
+                        id="test-mode-toggle"
+                        type="checkbox" 
+                        checked={adminTestMode} 
+                        onChange={(e) => toggleTestMode(e.target.checked)}
+                      />
+                      <span style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
+                        (Credit checks will be bypassed)
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <label htmlFor="test-credits" style={{ fontWeight: 'bold' }}>Set Credits:</label>
+                      <input 
+                        id="test-credits"
+                        type="number" 
+                        style={{ width: '5rem', padding: '0.25rem' }}
+                        value={testCredits}
+                        onChange={(e) => setTestCredits(parseInt(e.target.value) || 0)}
+                        min="0"
+                      />
+                      <button 
+                        className="product-lab-button product-lab-button-primary"
+                        onClick={handleSetTestCredits}
+                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Debug Info Display */}
+                {Object.keys(debugInfo).length > 0 && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <h4 style={{ margin: '0.5rem 0' }}>Debug Information</h4>
+                    <pre style={{ 
+                      background: '#f0f0f0', 
+                      padding: '0.5rem', 
+                      borderRadius: '4px', 
+                      fontSize: '0.8rem',
+                      maxHeight: '200px',
+                      overflow: 'auto'
+                    }}>
+                      {JSON.stringify(debugInfo, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           
           <div className="product-lab-card">
@@ -698,7 +797,7 @@ export default function ProductImageLabPage() {
                                 <input 
                                   type="checkbox" 
                                   checked={selections[image.id]?.includes(option.id) || false}
-                                  onChange={() => toggleOptionSelection(image.id, option.id)}
+                                  onChange={() => toggleOptionSelection(image.id, option.id as TransformationType)}
                                   style={{ marginRight: '10px' }}
                                 />
                                 <div>
