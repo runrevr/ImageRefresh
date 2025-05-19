@@ -317,6 +317,18 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
             console.log(`Image name: ${image.name}, size: ${Math.round(image.file.size / 1024)} KB`);
             console.log(`Transformation: ${transformOption.name} (${transformationType})`);
             
+            // Store webhook attempt in debug info
+            setDebugInfo(prev => ({
+              ...prev,
+              webhookAttempts: [...(prev.webhookAttempts || []), {
+                url: webhookUrl,
+                imageId: imageId,
+                transformationType: transformationType,
+                timestamp: new Date().toISOString(),
+                imageSize: Math.round(image.file.size / 1024)
+              }]
+            }));
+            
             // Add CORS handling for external APIs
             response = await fetch(webhookUrl, {
               method: 'POST',
@@ -331,6 +343,18 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
           } catch (corsError) {
             console.error('CORS or network error with N8N endpoint:', corsError);
             
+            // Store webhook error in debug info
+            setDebugInfo(prev => ({
+              ...prev,
+              webhookErrors: [...(prev.webhookErrors || []), {
+                url: webhookUrl,
+                imageId: imageId,
+                transformationType: transformationType,
+                error: corsError instanceof Error ? corsError.message : 'Unknown error',
+                timestamp: new Date().toISOString()
+              }]
+            }));
+            
             // Try fallback to local API if N8N endpoint fails
             console.log('Attempting fallback to local API endpoint');
             const localApiUrl = '/api/webhooks/transform-image';
@@ -343,8 +367,34 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
               });
               
               console.log('Successfully connected to local API fallback');
+              
+              // Log successful fallback
+              setDebugInfo(prev => ({
+                ...prev,
+                fallbackSuccess: [...(prev.fallbackSuccess || []), {
+                  originalUrl: webhookUrl,
+                  fallbackUrl: localApiUrl,
+                  imageId: imageId,
+                  transformationType: transformationType,
+                  timestamp: new Date().toISOString()
+                }]
+              }));
             } catch (localApiError) {
               console.error('Local API fallback also failed:', localApiError);
+              
+              // Store fallback error in debug info
+              setDebugInfo(prev => ({
+                ...prev,
+                fallbackErrors: [...(prev.fallbackErrors || []), {
+                  originalUrl: webhookUrl,
+                  fallbackUrl: localApiUrl,
+                  imageId: imageId,
+                  transformationType: transformationType,
+                  error: localApiError instanceof Error ? localApiError.message : 'Unknown error',
+                  timestamp: new Date().toISOString()
+                }]
+              }));
+              
               throw new Error('Unable to connect to transformation service. Please try again later.');
             }
           }
@@ -355,6 +405,20 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
             // API returned an error - log and switch to simulation
             const errorText = await response.text();
             console.error(`API error (${response.status}): ${errorText}`);
+            
+            // Store API error in debug info
+            setDebugInfo(prev => ({
+              ...prev,
+              apiErrors: [...(prev.apiErrors || []), {
+                url: webhookUrl,
+                status: response.status,
+                statusText: response.statusText,
+                responseText: errorText,
+                imageId: imageId,
+                transformationType: transformationType,
+                timestamp: new Date().toISOString()
+              }]
+            }));
             
             // Set a user-friendly error message
             if (response.status === 0 || response.status === 404) {
