@@ -794,54 +794,141 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
    */
   const testApiConnection = async (): Promise<boolean> => {
     try {
-      console.log(`Testing API connection to ${webhookUrl}`);
+      console.log(`Testing API connection to ${webhookUrl}/test`);
       
       // Add test info to debug
       setDebugInfo(prev => ({
         ...prev,
         apiConnectionTest: {
-          url: webhookUrl,
+          url: `${webhookUrl}/test`,
           timestamp: new Date().toISOString(),
           status: 'pending'
         }
       }));
       
+      // Skip the actual API call in simulation mode
+      if (isSimulationMode) {
+        console.log('Simulation mode active - skipping actual API call');
+        
+        // Update debug info for simulation
+        setDebugInfo(prev => ({
+          ...prev,
+          apiConnectionTest: {
+            ...prev.apiConnectionTest,
+            status: 'simulated',
+            simulated: true
+          }
+        }));
+        
+        return true;
+      }
+      
       // Create controller for timeout
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
-      // Make a simple OPTIONS request to check endpoint availability
-      const response = await fetch(webhookUrl, {
-        method: 'OPTIONS',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      // Update debug info
-      setDebugInfo(prev => ({
-        ...prev,
-        apiConnectionTest: {
-          ...prev.apiConnectionTest,
-          status: response.ok ? 'success' : 'error',
-          statusCode: response.status,
-          statusText: response.statusText
+      try {
+        // Make a POST request to the test endpoint
+        const response = await fetch(`${webhookUrl}/test`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ 
+            test: true, 
+            timestamp: new Date().toISOString() 
+          }),
+          mode: 'cors',
+          credentials: 'include',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        // Update debug info
+        setDebugInfo(prev => ({
+          ...prev,
+          apiConnectionTest: {
+            ...prev.apiConnectionTest,
+            status: response.ok ? 'success' : 'error',
+            statusCode: response.status,
+            statusText: response.statusText,
+            response: response.ok ? 'success' : 'failed'
+          }
+        }));
+        
+        return response.ok;
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        console.error('N8N webhook test failed (likely CORS issue):', fetchError);
+        
+        // Log CORS error to debug info
+        setDebugInfo(prev => ({
+          ...prev,
+          apiConnectionTest: {
+            ...prev.apiConnectionTest,
+            status: 'cors_error',
+            error: fetchError instanceof Error ? fetchError.message : String(fetchError)
+          }
+        }));
+        
+        // Try fallback to local API if available
+        try {
+          console.log('Attempting local API fallback test');
+          
+          const localResponse = await fetch('/api/test-connection', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ test: true })
+          });
+          
+          // Log fallback results
+          setDebugInfo(prev => ({
+            ...prev,
+            apiConnectionTest: {
+              ...prev.apiConnectionTest,
+              fallback: {
+                url: '/api/test-connection',
+                status: localResponse.ok ? 'success' : 'error',
+                statusCode: localResponse.status,
+                statusText: localResponse.statusText
+              }
+            }
+          }));
+          
+          console.log('Local API fallback test result:', localResponse.ok);
+          return localResponse.ok;
+        } catch (fallbackError) {
+          console.error('Local API fallback also failed:', fallbackError);
+          
+          // Log fallback error
+          setDebugInfo(prev => ({
+            ...prev,
+            apiConnectionTest: {
+              ...prev.apiConnectionTest,
+              fallback: {
+                url: '/api/test-connection',
+                status: 'error',
+                error: fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+              }
+            }
+          }));
+          
+          return false;
         }
-      }));
-      
-      return response.ok;
+      }
     } catch (err) {
-      console.error('API connection test failed:', err);
+      console.error('API connection test completely failed:', err);
       
       // Log error to debug info
       setDebugInfo(prev => ({
         ...prev,
         apiConnectionTest: {
           ...prev.apiConnectionTest,
-          status: 'error',
+          status: 'critical_error',
           error: err instanceof Error ? err.message : String(err)
         }
       }));
