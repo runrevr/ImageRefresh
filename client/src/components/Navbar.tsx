@@ -46,12 +46,6 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             Ideas
           </Link>
           <Link
-            href="/product-enhancement-webhook"
-            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
-          >
-            Enhance Products
-          </Link>
-          <Link
             href="/pricing"
             className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
           >
@@ -184,13 +178,6 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Ideas
-                </Link>
-                <Link
-                  href="/product-enhancement-webhook"
-                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Enhance Products
                 </Link>
                 <Link
                   href="/pricing"
