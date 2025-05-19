@@ -755,14 +755,22 @@ export const useProductImageLab = (
         },
       });
 
-      // Log API test result
+      // Get response text first - handle this with a separate try-catch
+      let responseText = "Could not read response text";
+      try {
+        responseText = await response.text();
+      } catch (err) {
+        console.error("Error reading response text:", err);
+      }
+      
+      // Then log API test result
       setDebugInfo((prev) => ({
         ...prev,
         apiConnectionTest: {
           ...prev.apiConnectionTest,
           status: response.ok ? "success" : "failed",
           statusCode: response.status,
-          response: await response.text().catch(() => "Could not read response text"),
+          response: responseText,
         },
       }));
 
