@@ -60,6 +60,7 @@ export interface ProductImageLabOptions {
   initialCredits?: number;
   onCreditChange?: (credits: number) => void;
   webhookUrl?: string;
+  testMode?: boolean;
 }
 
 export interface ProductImageLabHook {
@@ -68,12 +69,15 @@ export interface ProductImageLabHook {
   error: string | null;
   uploadedImages: UploadedImage[];
   transformedImages: TransformationResult[];
+  isTestModeEnabled: boolean;
+  debugInfo: Record<string, any>;
   handleImageUpload: (files: FileList) => Promise<UploadedImage[]>;
   getEnhancementsForIndustry: (industry: string) => TransformationOption[];
   transformImage: (params: TransformationRequest) => Promise<TransformationResult>;
   batchTransformImages: (transformations: TransformationRequest[]) => Promise<TransformationResult[]>;
   addCredits: (amount: number) => void;
   resetLab: () => void;
+  setTestMode: (enabled: boolean) => void;
   enhancementOptions: TransformationOption[];
 }
 
@@ -139,7 +143,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const { 
     initialCredits = 10,
     onCreditChange = () => {},
-    webhookUrl = '/api/webhooks/transform-image'
+    webhookUrl = '/api/webhooks/transform-image',
+    testMode = false
   } = options;
   
   const [availableCredits, setAvailableCredits] = useState<number>(initialCredits);
@@ -147,6 +152,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const [error, setError] = useState<string | null>(null);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [transformedImages, setTransformedImages] = useState<TransformationResult[]>([]);
+  const [isTestModeEnabled, setIsTestModeEnabled] = useState<boolean>(testMode);
+  const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
   
   // Update the parent component when credits change
   useEffect(() => {
