@@ -17,6 +17,7 @@ import {
 } from '../product-image-lab';
 import '../product-image-lab.css';
 import { useToast } from '@/hooks/use-toast';
+import WebhookTester from './WebhookTester';
 
 // Types
 interface TabState {
@@ -344,6 +345,34 @@ export default function FixedProductImageLab({
               <span style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
                 (Credit checks will be bypassed)
               </span>
+            </div>
+            
+            {/* Webhook Tester */}
+            <div style={{ width: '100%', margin: '1rem 0' }}>
+              <WebhookTester 
+                webhookUrl="https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9"
+                onResult={(success, data) => {
+                  if (success) {
+                    setDebugInfo(prev => ({
+                      ...prev,
+                      webhookTest: {
+                        success: true,
+                        data,
+                        timestamp: new Date().toISOString()
+                      }
+                    }));
+                  } else {
+                    setDebugInfo(prev => ({
+                      ...prev,
+                      webhookTest: {
+                        success: false,
+                        error: data,
+                        timestamp: new Date().toISOString()
+                      }
+                    }));
+                  }
+                }}
+              />
             </div>
             
             {/* Debug Info Section */}
