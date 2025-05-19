@@ -47,6 +47,11 @@ function Router() {
       <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
       <Route path="/product-image-lab" component={ProductImageLabPage} />
       <Route path="/fixed-product-lab" component={FixedProductLabPage} />
+      <Route path="/webhook-test" component={() => {
+        // This is a simpler way to import the component without TypeScript errors
+        const WebhookTest = require("../pages/webhook-test").default;
+        return <WebhookTest />;
+      }} />
       <Route path="/router-debug" component={RouterDebugPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login">
