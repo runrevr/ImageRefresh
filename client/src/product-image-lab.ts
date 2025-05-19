@@ -61,6 +61,7 @@ export interface ProductImageLabOptions {
   onCreditChange?: (credits: number) => void;
   webhookUrl?: string;
   testMode?: boolean;
+  simulateApiCalls?: boolean; // Flag to simulate API calls instead of making real ones
 }
 
 export interface ProductImageLabHook {
