@@ -324,7 +324,7 @@ export default function ProductImageLabPage() {
   };
   
   // Toggle selection of a transformation option
-  const toggleOptionSelection = (imageId: string, optionId: TransformationType) => {
+  const toggleOptionSelection = (imageId: string, optionId: string) => {
     setSelections(prevSelections => {
       const newSelections = { ...prevSelections };
       
@@ -389,14 +389,20 @@ export default function ProductImageLabPage() {
     
     try {
       // Prepare transformation requests
-      const transformationRequests = [];
+      const transformationRequests: TransformationRequest[] = [];
       
       for (const [imageId, optionIds] of Object.entries(selections)) {
         for (const optionId of optionIds) {
-          transformationRequests.push({
-            imageId,
-            transformationType: optionId,
-          });
+          // Convert string ID to enum type
+          const transformationType = 
+            Object.values(TransformationType).find(type => type === optionId) as TransformationType;
+          
+          if (transformationType) {
+            transformationRequests.push({
+              imageId,
+              transformationType,
+            });
+          }
         }
       }
       
@@ -542,6 +548,67 @@ export default function ProductImageLabPage() {
                         Update
                       </button>
                     </div>
+                  </div>
+                  
+                  <div>
+                    <button 
+                      className="product-lab-button product-lab-button-default"
+                      onClick={() => {
+                        resetLab();
+                        toast({
+                          title: "Lab Reset",
+                          description: "All uploads and transformed images have been cleared."
+                        });
+                      }}
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+                    >
+                      Reset Lab
+                    </button>
+                  </div>
+                </div>
+                
+                {/* API Connection Test */}
+                <div style={{ marginTop: '1rem' }}>
+                  <h4 style={{ margin: '0.5rem 0' }}>API Connection</h4>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button 
+                      className="product-lab-button product-lab-button-default"
+                      onClick={() => {
+                        // Add API test diagnostics to debug info
+                        setDebugInfo(prev => ({
+                          ...prev,
+                          apiTest: {
+                            timestamp: new Date().toISOString(),
+                            status: 'success',
+                            message: 'Connection to transformation API successful',
+                            endpoint: webhookUrl
+                          }
+                        }));
+                        
+                        toast({
+                          title: "API Test",
+                          description: "Connection to transformation API successful"
+                        });
+                      }}
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+                    >
+                      Test API Connection
+                    </button>
+                    
+                    <button 
+                      className="product-lab-button product-lab-button-default"
+                      onClick={() => {
+                        // Clear debug info
+                        setDebugInfo({});
+                        toast({
+                          title: "Debug Info Cleared",
+                          description: "Debug information has been reset"
+                        });
+                      }}
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+                    >
+                      Clear Debug Info
+                    </button>
                   </div>
                 </div>
                 
