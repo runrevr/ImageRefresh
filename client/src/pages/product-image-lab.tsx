@@ -20,7 +20,7 @@ interface TabState {
 }
 
 interface TransformationSelection {
-  [imageId: string]: TransformationType[];
+  [imageId: string]: string[];
 }
 
 interface AuthCredits {
