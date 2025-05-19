@@ -71,6 +71,7 @@ export interface ProductImageLabHook {
   uploadedImages: UploadedImage[];
   transformedImages: TransformationResult[];
   isTestModeEnabled: boolean;
+  isSimulationMode: boolean;
   debugInfo: Record<string, any>;
   handleImageUpload: (files: FileList) => Promise<UploadedImage[]>;
   getEnhancementsForIndustry: (industry: string) => TransformationOption[];
@@ -79,6 +80,8 @@ export interface ProductImageLabHook {
   addCredits: (amount: number) => void;
   resetLab: () => void;
   setTestMode: (enabled: boolean) => void;
+  setSimulationMode: (enabled: boolean) => void;
+  testApiConnection: () => Promise<boolean>;
   enhancementOptions: TransformationOption[];
 }
 
@@ -618,6 +621,85 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     }));
   };
   
+  /**
+   * Set simulation mode
+   * @param enabled - Whether simulation mode should be enabled
+   */
+  const setSimulationMode = (enabled: boolean): void => {
+    setIsSimulationMode(enabled);
+    
+    // Log simulation mode change to debug info
+    setDebugInfo(prev => ({
+      ...prev,
+      simulationModeChange: {
+        enabled,
+        timestamp: new Date().toISOString()
+      }
+    }));
+  };
+  
+  /**
+   * Test API connection to verify N8N webhook is accessible
+   * @returns Promise resolving to true if successful, false if failed
+   */
+  const testApiConnection = async (): Promise<boolean> => {
+    try {
+      console.log(`Testing API connection to ${webhookUrl}`);
+      
+      // Add test info to debug
+      setDebugInfo(prev => ({
+        ...prev,
+        apiConnectionTest: {
+          url: webhookUrl,
+          timestamp: new Date().toISOString(),
+          status: 'pending'
+        }
+      }));
+      
+      // Create controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      // Make a simple OPTIONS request to check endpoint availability
+      const response = await fetch(webhookUrl, {
+        method: 'OPTIONS',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      // Update debug info
+      setDebugInfo(prev => ({
+        ...prev,
+        apiConnectionTest: {
+          ...prev.apiConnectionTest,
+          status: response.ok ? 'success' : 'error',
+          statusCode: response.status,
+          statusText: response.statusText
+        }
+      }));
+      
+      return response.ok;
+    } catch (err) {
+      console.error('API connection test failed:', err);
+      
+      // Log error to debug info
+      setDebugInfo(prev => ({
+        ...prev,
+        apiConnectionTest: {
+          ...prev.apiConnectionTest,
+          status: 'error',
+          error: err instanceof Error ? err.message : String(err)
+        }
+      }));
+      
+      return false;
+    }
+  };
+  
   return {
     // State
     availableCredits,
@@ -626,6 +708,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     uploadedImages,
     transformedImages,
     isTestModeEnabled,
+    isSimulationMode,
     debugInfo,
     
     // Methods
@@ -636,6 +719,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     addCredits,
     resetLab,
     setTestMode,
+    setSimulationMode,
+    testApiConnection,
     
     // Constants
     enhancementOptions: ENHANCEMENT_OPTIONS,
