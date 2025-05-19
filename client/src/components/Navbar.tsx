@@ -46,6 +46,12 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             Ideas
           </Link>
           <Link
+            href="/product-image-lab"
+            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
+          >
+            Product Image Lab
+          </Link>
+          <Link
             href="/pricing"
             className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
           >
@@ -178,6 +184,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Ideas
+                </Link>
+                <Link
+                  href="/product-image-lab"
+                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Product Image Lab
                 </Link>
                 <Link
                   href="/pricing"
