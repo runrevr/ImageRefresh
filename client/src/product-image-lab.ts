@@ -223,8 +223,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
       throw new Error(`Transformation type ${transformationType} not found`);
     }
     
-    // Check if user has enough credits
-    if (availableCredits < transformOption.creditCost) {
+    // Check if user has enough credits (bypass check if in test mode)
+    if (!isTestModeEnabled && availableCredits < transformOption.creditCost) {
       throw new Error(`Not enough credits. Required: ${transformOption.creditCost}, Available: ${availableCredits}`);
     }
     
@@ -263,8 +263,22 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
         completedAt: new Date().toISOString()
       };
       
-      // Deduct credits
-      setAvailableCredits(prev => prev - transformOption.creditCost);
+      // Deduct credits (skip if in test mode)
+      if (!isTestModeEnabled) {
+        setAvailableCredits(prev => prev - transformOption.creditCost);
+      }
+      
+      // Store debug info
+      setDebugInfo(prev => ({
+        ...prev,
+        lastTransformation: {
+          type: transformationType,
+          prompt: customPrompt || transformOption.prompt,
+          timestamp: new Date().toISOString(),
+          creditCost: transformOption.creditCost,
+          testMode: isTestModeEnabled
+        }
+      }));
       
       // Add to transformed images
       setTransformedImages(prev => [...prev, result]);
@@ -292,8 +306,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
       return total + (option?.creditCost || 0);
     }, 0);
     
-    // Check if user has enough credits
-    if (availableCredits < totalCreditCost) {
+    // Check if user has enough credits (bypass check if in test mode)
+    if (!isTestModeEnabled && availableCredits < totalCreditCost) {
       throw new Error(`Not enough credits. Required: ${totalCreditCost}, Available: ${availableCredits}`);
     }
     
@@ -343,6 +357,24 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     setTransformedImages([]);
     setError(null);
     setIsProcessing(false);
+    setDebugInfo({});
+  };
+  
+  /**
+   * Set test mode
+   * @param enabled - Whether test mode should be enabled
+   */
+  const setTestMode = (enabled: boolean): void => {
+    setIsTestModeEnabled(enabled);
+    
+    // Log test mode change to debug info
+    setDebugInfo(prev => ({
+      ...prev,
+      testModeChange: {
+        enabled,
+        timestamp: new Date().toISOString()
+      }
+    }));
   };
   
   return {
@@ -352,6 +384,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     error,
     uploadedImages,
     transformedImages,
+    isTestModeEnabled,
+    debugInfo,
     
     // Methods
     handleImageUpload,
@@ -360,6 +394,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     batchTransformImages,
     addCredits,
     resetLab,
+    setTestMode,
     
     // Constants
     enhancementOptions: ENHANCEMENT_OPTIONS,

@@ -43,6 +43,20 @@ export default function ProductImageLabPage() {
   // Get available credits
   const availableUserCredits: number = credits?.free + credits?.paid || 0;
   
+  // Check URL for test mode parameter
+  const [searchParams] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams();
+  });
+  
+  // Determine if user is admin (would normally come from user roles)
+  const isAdmin = user?.email?.includes('admin') || user?.username?.includes('admin') || false;
+  
+  // Initialize test mode from URL parameter
+  const initialTestMode = searchParams.get('testMode') === 'true';
+  
   // State management
   const [tabState, setTabState] = useState<TabState>({ activeTab: 'upload' });
   const [industry, setIndustry] = useState<string>('');
@@ -66,6 +80,11 @@ export default function ProductImageLabPage() {
   const webhookUrl = '/api/webhooks/transform-image';
   const maxUploads = 5;
   
+  // Admin panel states
+  const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
+  const [testCredits, setTestCredits] = useState<number>(100);
+  const [adminTestMode, setAdminTestMode] = useState<boolean>(initialTestMode);
+  
   // Initialize product image lab hook
   const {
     availableCredits,
@@ -73,14 +92,18 @@ export default function ProductImageLabPage() {
     error,
     uploadedImages,
     transformedImages,
+    isTestModeEnabled,
+    debugInfo,
     handleImageUpload,
     getEnhancementsForIndustry,
     transformImage,
     batchTransformImages,
     addCredits,
-    resetLab
+    resetLab,
+    setTestMode
   } = useProductImageLab({ 
     initialCredits: availableUserCredits,
+    testMode: initialTestMode,
     onCreditChange: (newCredits: number): void => {
       // Here you would update the user's credits in your backend
       console.log('Credits updated:', newCredits);
@@ -90,6 +113,30 @@ export default function ProductImageLabPage() {
       // apiRequest('/api/credits/update', { method: 'POST', body: { credits: newCredits } });
     }
   });
+  
+  // Toggle admin test mode
+  const toggleTestMode = (enabled: boolean): void => {
+    setAdminTestMode(enabled);
+    setTestMode(enabled);
+    
+    toast({
+      title: enabled ? "Test Mode Enabled" : "Test Mode Disabled",
+      description: enabled 
+        ? "Credits will not be consumed during operations" 
+        : "Credits will be consumed normally during operations",
+      variant: enabled ? "default" : "destructive"
+    });
+  };
+  
+  // Handle setting test credits
+  const handleSetTestCredits = (): void => {
+    addCredits(testCredits - availableCredits);
+    
+    toast({
+      title: "Credits Updated",
+      description: `Available credits set to ${testCredits}`,
+    });
+  };
   
   // Update status when there's an error or processing change
   useEffect(() => {
