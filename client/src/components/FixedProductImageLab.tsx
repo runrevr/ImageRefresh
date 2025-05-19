@@ -1,0 +1,577 @@
+/**
+ * FixedProductImageLab.tsx
+ * A simplified version of the Product Image Lab with fixes for:
+ * 1. Credit system (preventing duplicate deductions)
+ * 2. Error handling (graceful recovery from API errors)
+ * 3. Test mode functionality
+ */
+
+import { useState, useEffect, useRef } from 'react';
+import { 
+  useProductImageLab, 
+  ENHANCEMENT_OPTIONS, 
+  TransformationType,
+  TransformationOption,
+  UploadedImage,
+  TransformationResult
+} from '../product-image-lab';
+import '../product-image-lab.css';
+import { useToast } from '@/hooks/use-toast';
+
+// Types
+interface TabState {
+  activeTab: 'upload' | 'generate';
+}
+
+interface TransformationSelection {
+  [imageId: string]: string[];
+}
+
+interface ProductImageLabProps {
+  initialCredits?: number;
+  onCreditChange?: (credits: number) => void;
+  testMode?: boolean;
+}
+
+/**
+ * Product Image Lab Component
+ * A simplified version with fixes for credit system and error handling
+ */
+export default function FixedProductImageLab({ 
+  initialCredits = 10, 
+  onCreditChange = () => {}, 
+  testMode = false 
+}: ProductImageLabProps) {
+  const { toast } = useToast();
+  
+  // State management
+  const [tabState, setTabState] = useState<TabState>({ activeTab: 'upload' });
+  const [industry, setIndustry] = useState<string>('');
+  const [additionalInfo, setAdditionalInfo] = useState<string>('');
+  const [generationPrompt, setGenerationPrompt] = useState<string>('');
+  const [numImages, setNumImages] = useState<number>(3);
+  const [status, setStatus] = useState<string>('');
+  const [statusType, setStatusType] = useState<'normal' | 'loading' | 'success' | 'error'>('normal');
+  const [selections, setSelections] = useState<TransformationSelection>({});
+  const [creditsRequired, setCreditsRequired] = useState<number>(0);
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [showResults, setShowResults] = useState<boolean>(false);
+  
+  // Admin panel states
+  const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
+  const [adminTestMode, setAdminTestMode] = useState<boolean>(testMode);
+  
+  // Initialize product image lab hook
+  const {
+    availableCredits,
+    isProcessing,
+    error,
+    uploadedImages,
+    transformedImages,
+    isTestModeEnabled,
+    handleImageUpload,
+    getEnhancementsForIndustry,
+    transformImage,
+    batchTransformImages,
+    addCredits,
+    resetLab,
+    setTestMode
+  } = useProductImageLab({ 
+    initialCredits,
+    onCreditChange,
+    testMode: adminTestMode,
+    webhookUrl: '/api/webhooks/transform-image'
+  });
+  
+  // References
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadFormRef = useRef<HTMLFormElement>(null);
+  
+  // Update status when lab is processing or encounters an error
+  useEffect(() => {
+    if (isProcessing) {
+      setStatus('Processing your images. This may take a moment...');
+      setStatusType('loading');
+    } else if (error) {
+      setStatus(`Error: ${error}`);
+      setStatusType('error');
+      
+      // Show toast for errors
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive"
+      });
+    } else {
+      setStatus('');
+      setStatusType('normal');
+    }
+  }, [isProcessing, error, toast]);
+  
+  // Toggle admin panel (dev-only feature)
+  const toggleAdminPanel = () => {
+    setShowAdminPanel(prev => !prev);
+  };
+  
+  // Toggle test mode (admin feature)
+  const toggleTestMode = (enabled: boolean) => {
+    setAdminTestMode(enabled);
+    setTestMode(enabled);
+    
+    toast({
+      title: enabled ? "Test Mode Enabled" : "Test Mode Disabled",
+      description: enabled ? "Credit checks will be bypassed" : "Normal credit checks restored",
+      variant: enabled ? "default" : "default"
+    });
+  };
+  
+  // Reset the lab (admin feature)
+  const handleResetLab = () => {
+    resetLab();
+    setSelections({});
+    setShowOptions(false);
+    setShowResults(false);
+    
+    toast({
+      title: "Lab Reset",
+      description: "Product Image Lab has been reset",
+    });
+  };
+  
+  // File upload handler
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+      
+      // Limit number of uploads
+      if (uploadedImages.length + files.length > 5) {
+        toast({
+          title: "Upload Limit",
+          description: `You can upload a maximum of 5 images. Please remove some images first.`,
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setStatusType('loading');
+      setStatus('Uploading images...');
+      
+      const uploaded = await handleImageUpload(files);
+      
+      setStatus(`Successfully uploaded ${uploaded.length} image${uploaded.length !== 1 ? 's' : ''}`);
+      setStatusType('success');
+      
+      if (uploaded.length > 0) {
+        setShowOptions(true);
+      }
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      setStatus(`Error uploading files: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setStatusType('error');
+    }
+  };
+  
+  // Handle industry selection
+  const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setIndustry(e.target.value);
+  };
+  
+  // Toggle transformation selection
+  const toggleTransformation = (imageId: string, transformationType: string) => {
+    setSelections(prev => {
+      const currentSelections = prev[imageId] || [];
+      const updatedSelections = currentSelections.includes(transformationType)
+        ? currentSelections.filter(t => t !== transformationType)
+        : [...currentSelections, transformationType];
+      
+      return {
+        ...prev,
+        [imageId]: updatedSelections
+      };
+    });
+  };
+  
+  // Calculate required credits based on selections
+  useEffect(() => {
+    let total = 0;
+    
+    Object.values(selections).forEach(transformationTypes => {
+      transformationTypes.forEach(type => {
+        const option = ENHANCEMENT_OPTIONS.find(o => o.id === type);
+        if (option) {
+          total += option.creditCost;
+        }
+      });
+    });
+    
+    setCreditsRequired(total);
+  }, [selections]);
+  
+  // Apply selected transformations
+  const applyTransformations = async () => {
+    if (Object.keys(selections).length === 0) {
+      toast({
+        title: "No Selections",
+        description: "Please select at least one enhancement to apply",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      // Create transformation requests from selections
+      const requests: Array<{ imageId: string, transformationType: TransformationType, customPrompt?: string }> = [];
+      
+      Object.entries(selections).forEach(([imageId, transformationTypes]) => {
+        transformationTypes.forEach(type => {
+          requests.push({
+            imageId,
+            transformationType: type as TransformationType,
+            // Add industry or additional info to prompt if provided
+            customPrompt: industry || additionalInfo 
+              ? `${ENHANCEMENT_OPTIONS.find(o => o.id === type)?.prompt || ''} Industry: ${industry}. ${additionalInfo}`
+              : undefined
+          });
+        });
+      });
+      
+      setProcessing(true);
+      setStatusType('loading');
+      setStatus('Processing transformations. This may take a moment...');
+      
+      // Process all transformations in sequence
+      for (const request of requests) {
+        await transformImage(request);
+      }
+      
+      setProcessing(false);
+      setShowResults(true);
+      setStatusType('success');
+      setStatus('All transformations completed successfully!');
+      
+      // Reset selections after processing
+      setSelections({});
+      
+    } catch (error) {
+      console.error('Error applying transformations:', error);
+      
+      setProcessing(false);
+      setStatusType('error');
+      setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred during transformation'}`);
+      
+      toast({
+        title: "Transformation Error",
+        description: error instanceof Error ? error.message : 'An error occurred during transformation',
+        variant: "destructive"
+      });
+    }
+  };
+  
+  return (
+    <div className="product-lab-container">
+      <div className="product-lab-header">
+        <h1 className="product-lab-title">Product Image Lab</h1>
+        <p className="product-lab-subtitle">Transform your product images with AI-powered enhancements</p>
+        
+        {/* Double-click to show admin panel (developer feature) */}
+        <div 
+          onDoubleClick={toggleAdminPanel}
+          style={{ 
+            position: 'absolute', 
+            top: '10px', 
+            right: '10px',
+            padding: '5px',
+            cursor: 'default'
+          }}
+        >
+          {/* Test mode indicator */}
+          {isTestModeEnabled && (
+            <div style={{ 
+              background: '#ff9800', 
+              color: 'white', 
+              padding: '2px 8px', 
+              borderRadius: '4px',
+              fontSize: '12px',
+              fontWeight: 'bold'
+            }}>
+              TEST MODE
+            </div>
+          )}
+        </div>
+        
+        {/* Credits display */}
+        <div className="product-lab-credits">
+          Available Credits: <span className="product-lab-credits-value">{availableCredits}</span>
+        </div>
+      </div>
+      
+      {/* Admin Panel (hidden by default) */}
+      {showAdminPanel && (
+        <div className="product-lab-card" style={{ marginBottom: '1rem', background: '#f8f8f8', borderLeft: '4px solid #ddd' }}>
+          <h3 style={{ margin: '0 0 0.5rem' }}>Admin Controls</h3>
+          
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {/* Test Mode Toggle */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <label htmlFor="test-mode-toggle" style={{ fontWeight: 'bold', marginRight: '0.5rem' }}>
+                Test Mode:
+              </label>
+              <input 
+                id="test-mode-toggle"
+                type="checkbox" 
+                checked={adminTestMode} 
+                onChange={(e) => toggleTestMode(e.target.checked)}
+              />
+              <span style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
+                (Credit checks will be bypassed)
+              </span>
+            </div>
+            
+            {/* Reset Lab Button */}
+            <button 
+              className="product-lab-button product-lab-button-default"
+              onClick={handleResetLab}
+              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+            >
+              Reset Lab
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Tab Navigation */}
+      <div className="product-lab-tabs">
+        <button 
+          className={`product-lab-tab ${tabState.activeTab === 'upload' ? 'product-lab-tab-active' : ''}`}
+          onClick={() => setTabState({ activeTab: 'upload' })}
+        >
+          Upload Images
+        </button>
+        <button 
+          className={`product-lab-tab ${tabState.activeTab === 'generate' ? 'product-lab-tab-active' : ''}`}
+          onClick={() => setTabState({ activeTab: 'generate' })}
+          disabled={true} // Temporarily disabled
+        >
+          Generate Images
+        </button>
+      </div>
+      
+      {/* Main Content Area */}
+      <div className="product-lab-content">
+        {/* Upload Tab */}
+        {tabState.activeTab === 'upload' && (
+          <div className="product-lab-card">
+            <h2>Upload Product Images</h2>
+            <p>Upload product images to enhance with AI transformations.</p>
+            
+            {/* Upload Form */}
+            <form ref={uploadFormRef} className="product-lab-form">
+              <div className="product-lab-form-group">
+                <label htmlFor="product-images">Product Images:</label>
+                <input 
+                  ref={fileInputRef}
+                  type="file" 
+                  id="product-images" 
+                  accept="image/*" 
+                  multiple 
+                  onChange={handleFileUpload}
+                  disabled={isProcessing}
+                />
+                <div className="product-lab-form-help">
+                  Upload up to 5 images (PNG, JPG)
+                </div>
+              </div>
+              
+              <div className="product-lab-form-group">
+                <label htmlFor="industry">Industry (Optional):</label>
+                <select 
+                  id="industry" 
+                  value={industry} 
+                  onChange={handleIndustryChange}
+                  disabled={isProcessing}
+                >
+                  <option value="">Select Industry</option>
+                  <option value="fashion">Fashion & Apparel</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="home_decor">Home Decor</option>
+                  <option value="beauty">Beauty & Cosmetics</option>
+                  <option value="food">Food & Beverage</option>
+                  <option value="sports">Sports & Fitness</option>
+                  <option value="jewelry">Jewelry & Accessories</option>
+                  <option value="toys">Toys & Games</option>
+                  <option value="automotive">Automotive</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div className="product-lab-form-group">
+                <label htmlFor="additional-info">Additional Information (Optional):</label>
+                <textarea 
+                  id="additional-info" 
+                  value={additionalInfo} 
+                  onChange={(e) => setAdditionalInfo(e.target.value)}
+                  placeholder="Add any specific details about your products..."
+                  rows={3}
+                  disabled={isProcessing}
+                />
+              </div>
+            </form>
+            
+            {/* Status Message */}
+            {status && (
+              <div className={`product-lab-status product-lab-status-${statusType}`}>
+                {status}
+              </div>
+            )}
+            
+            {/* Uploaded Images Display */}
+            {uploadedImages.length > 0 && (
+              <div className="product-lab-uploaded-images">
+                <h3>Uploaded Images</h3>
+                <div className="product-lab-image-grid">
+                  {uploadedImages.map(image => (
+                    <div key={image.id} className="product-lab-image-item">
+                      <img 
+                        src={image.url} 
+                        alt={`Product ${image.id}`} 
+                        className="product-lab-image"
+                      />
+                      <div className="product-lab-image-info">
+                        {image.file.name} ({Math.round(image.file.size / 1024)} KB)
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Enhancement Options */}
+            {showOptions && uploadedImages.length > 0 && (
+              <div className="product-lab-enhancement-options">
+                <h3>Enhancement Options</h3>
+                <p>Select enhancements to apply to your images:</p>
+                
+                {uploadedImages.map(image => (
+                  <div key={image.id} className="product-lab-image-enhancements">
+                    <div className="product-lab-image-preview">
+                      <img 
+                        src={image.url} 
+                        alt={`Product ${image.id}`} 
+                        className="product-lab-image-small"
+                      />
+                    </div>
+                    
+                    <div className="product-lab-enhancement-list">
+                      {ENHANCEMENT_OPTIONS.map(option => (
+                        <div key={option.id} className="product-lab-enhancement-option">
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              checked={(selections[image.id] || []).includes(option.id)}
+                              onChange={() => toggleTransformation(image.id, option.id)}
+                              disabled={isProcessing}
+                            />
+                            <span className="product-lab-enhancement-name">
+                              {option.name}
+                            </span>
+                            <span className="product-lab-enhancement-cost">
+                              {option.creditCost} credit{option.creditCost !== 1 ? 's' : ''}
+                            </span>
+                          </label>
+                          <div className="product-lab-enhancement-description">
+                            {option.description}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Credit Summary and Submit */}
+                <div className="product-lab-credit-summary">
+                  <div className="product-lab-credits-required">
+                    Credits Required: <span>{creditsRequired}</span>
+                  </div>
+                  <div className="product-lab-credits-available">
+                    Credits Available: <span>{availableCredits}</span>
+                  </div>
+                  
+                  <button 
+                    className="product-lab-button product-lab-button-primary"
+                    onClick={applyTransformations}
+                    disabled={isProcessing || creditsRequired === 0 || (!isTestModeEnabled && creditsRequired > availableCredits)}
+                  >
+                    {isProcessing ? 'Processing...' : 'Apply Enhancements'}
+                  </button>
+                  
+                  {!isTestModeEnabled && creditsRequired > availableCredits && (
+                    <div className="product-lab-credit-warning">
+                      You don't have enough credits for the selected enhancements.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Transformation Results */}
+            {showResults && transformedImages.length > 0 && (
+              <div className="product-lab-results">
+                <h3>Transformation Results</h3>
+                <div className="product-lab-image-grid">
+                  {transformedImages.map(result => (
+                    <div key={result.id} className="product-lab-result-item">
+                      <div className="product-lab-image-comparison">
+                        <div className="product-lab-image-before">
+                          <div className="product-lab-image-label">Before</div>
+                          <img 
+                            src={result.originalImage.url} 
+                            alt="Original" 
+                            className="product-lab-image"
+                          />
+                        </div>
+                        
+                        <div className="product-lab-image-after">
+                          <div className="product-lab-image-label">After</div>
+                          <img 
+                            src={result.transformedImageUrl} 
+                            alt="Transformed" 
+                            className="product-lab-image"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="product-lab-result-info">
+                        <h4>{result.transformationName}</h4>
+                        <p>Applied: {new Date(result.completedAt).toLocaleString()}</p>
+                        <a 
+                          href={result.transformedImageUrl} 
+                          download={`transformed-${result.originalImageId}.png`}
+                          className="product-lab-download-link"
+                        >
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Generate Tab (Placeholder, to be implemented later) */}
+        {tabState.activeTab === 'generate' && (
+          <div className="product-lab-card">
+            <h2>Generate Product Images</h2>
+            <p>Create AI-generated product images from descriptions.</p>
+            <div className="product-lab-coming-soon">
+              This feature is coming soon!
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -161,6 +161,9 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const [isSimulationMode, setIsSimulationMode] = useState<boolean>(simulateApiCalls);
   const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
   
+  // Track transactions to prevent duplicate credit deductions
+  const [pendingTransactions, setPendingTransactions] = useState<Record<string, boolean>>({});
+  
   // Track last credit update to prevent excessive calls
   const lastCreditUpdate = useRef<number>(availableCredits);
   
@@ -289,7 +292,11 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
           
           // Add timeout for API calls
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+          const timeoutId = setTimeout(() => {
+            controller.abort();
+            console.error('API call timed out after 15 seconds');
+            setError('The transformation request timed out. Please try again.');
+          }, 15000); // 15 second timeout
           
           const response = await fetch(webhookUrl, {
             method: 'POST',
@@ -304,16 +311,16 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
             const errorText = await response.text();
             console.error(`API error (${response.status}): ${errorText}`);
             
-            // Log API error in debug info
-            setDebugInfo(prev => ({
-              ...prev,
-              apiError: {
-                status: response.status,
-                statusText: response.statusText,
-                error: errorText,
-                timestamp: new Date().toISOString()
-              }
-            }));
+            // Set a user-friendly error message
+            if (response.status === 0 || response.status === 404) {
+              setError('Unable to connect to the transformation service. Check your network connection.');
+            } else if (response.status === 429) {
+              setError('Too many requests. Please try again in a moment.');
+            } else if (response.status >= 500) {
+              setError('The transformation service is currently unavailable. Please try again later.');
+            } else {
+              setError(`Error ${response.status}: ${response.statusText || 'Unknown error'}`);
+            }
             
             // Fall back to simulation mode
             console.log('Falling back to simulation mode due to API error');
@@ -324,28 +331,15 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
               const data = await response.json();
               transformedImageUrl = data.transformedImageUrl;
               
-              // Log success in debug info
-              setDebugInfo(prev => ({
-                ...prev,
-                apiSuccess: {
-                  data,
-                  timestamp: new Date().toISOString()
-                }
-              }));
+              // Clear any previous errors
+              setError(null);
               
               console.log('API call successful, got transformed image URL');
             } catch (parseError) {
               // JSON parse error - log and switch to simulation
               console.error('Failed to parse API response:', parseError);
               
-              // Log parse error in debug info
-              setDebugInfo(prev => ({
-                ...prev,
-                apiParseError: {
-                  error: parseError instanceof Error ? parseError.message : String(parseError),
-                  timestamp: new Date().toISOString()
-                }
-              }));
+              setError('Received an invalid response from the server. Please try again.');
               
               // Fall back to simulation mode
               console.log('Falling back to simulation mode due to parsing error');
@@ -356,14 +350,12 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
           // Network error or other fetch issue - log and switch to simulation
           console.error('API call failed:', apiError);
           
-          // Log API call failure in debug info
-          setDebugInfo(prev => ({
-            ...prev,
-            apiFetchError: {
-              error: apiError instanceof Error ? apiError.message : String(apiError),
-              timestamp: new Date().toISOString()
-            }
-          }));
+          // Set user-friendly error message based on error type
+          if (apiError instanceof DOMException && apiError.name === 'AbortError') {
+            setError('The transformation request timed out. Please try again later.');
+          } else {
+            setError('Unable to connect to the transformation service. Please check your connection and try again.');
+          }
           
           // Fall back to simulation mode
           console.log('Falling back to simulation mode due to network/fetch error');
@@ -407,14 +399,27 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
       // Log completion
       console.log(`Transformation completed for image: ${imageId}, type: ${transformationType}`);
       
+      // Create a unique transaction ID for this transformation
+      const transactionId = `${imageId}-${transformationType}-${Date.now()}`;
+      
       // Only deduct credits if:
       // 1. Not in test mode AND
-      // 2. Not using simulation mode OR (simulation mode was a fallback but we still want to charge)
-      if (!isTestModeEnabled && (!isSimulated || !isSimulationMode)) {
-        console.log(`Deducting ${transformOption.creditCost} credits`);
+      // 2. Not using simulation mode OR (simulation mode was a fallback but we still want to charge) AND
+      // 3. Transaction hasn't been processed yet
+      if (!isTestModeEnabled && 
+          (!isSimulated || !isSimulationMode) && 
+          !pendingTransactions[transactionId]) {
+        
+        // Mark this transaction as processed
+        setPendingTransactions(prev => ({
+          ...prev,
+          [transactionId]: true
+        }));
+        
+        console.log(`Deducting ${transformOption.creditCost} credits (Transaction: ${transactionId})`);
         setAvailableCredits(prev => prev - transformOption.creditCost);
       } else {
-        console.log('No credits deducted (test mode or simulation mode)');
+        console.log('No credits deducted (test mode, simulation mode, or already processed)');
       }
       
       // Store the transformation result

@@ -16,6 +16,7 @@ import ProductEnhancementWebhookPage from "@/pages/product-enhancement-webhook";
 import ProductEnhancementDebugPage from "@/pages/product-enhancement-debug";
 import ProductEnhancementWebhookSimplePage from "@/pages/product-enhancement-webhook-simple";
 import ProductImageLabPage from "@/pages/product-image-lab";
+import FixedProductLabPage from "@/pages/fixed-product-lab";
 import RouterDebugPage from "@/pages/router-debug";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/product-enhancement-webhook-simple" component={ProductEnhancementWebhookSimplePage} />
       <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
       <Route path="/product-image-lab" component={ProductImageLabPage} />
+      <Route path="/fixed-product-lab" component={FixedProductLabPage} />
       <Route path="/router-debug" component={RouterDebugPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login">

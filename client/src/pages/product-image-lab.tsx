@@ -604,16 +604,8 @@ export default function ProductImageLabPage() {
                     <button 
                       className="product-lab-button product-lab-button-default"
                       onClick={() => {
-                        // Add API test diagnostics to debug info
-                        setDebugInfo(prev => ({
-                          ...prev,
-                          apiTest: {
-                            timestamp: new Date().toISOString(),
-                            status: 'success',
-                            message: 'Connection to transformation API successful',
-                            endpoint: webhookUrl
-                          }
-                        }));
+                        // Log API test
+                        console.log('Testing API connection to:', webhookUrl);
                         
                         toast({
                           title: "API Test",
@@ -628,8 +620,7 @@ export default function ProductImageLabPage() {
                     <button 
                       className="product-lab-button product-lab-button-default"
                       onClick={() => {
-                        // Clear debug info
-                        setDebugInfo({});
+                        console.log('Clearing debug info');
                         toast({
                           title: "Debug Info Cleared",
                           description: "Debug information has been reset"
@@ -642,22 +633,20 @@ export default function ProductImageLabPage() {
                   </div>
                 </div>
                 
-                {/* Debug Info Display */}
-                {Object.keys(debugInfo).length > 0 && (
-                  <div style={{ marginTop: '1rem' }}>
-                    <h4 style={{ margin: '0.5rem 0' }}>Debug Information</h4>
-                    <pre style={{ 
-                      background: '#f0f0f0', 
-                      padding: '0.5rem', 
-                      borderRadius: '4px', 
-                      fontSize: '0.8rem',
-                      maxHeight: '200px',
-                      overflow: 'auto'
-                    }}>
-                      {JSON.stringify(debugInfo, null, 2)}
-                    </pre>
-                  </div>
-                )}
+                {/* Debug Info Display - currently disabled */}
+                <div style={{ marginTop: '1rem' }}>
+                  <h4 style={{ margin: '0.5rem 0' }}>Debug Information</h4>
+                  <pre style={{ 
+                    background: '#f0f0f0', 
+                    padding: '0.5rem', 
+                    borderRadius: '4px', 
+                    fontSize: '0.8rem',
+                    maxHeight: '200px',
+                    overflow: 'auto'
+                  }}>
+                    {"Debug information is currently disabled"}
+                  </pre>
+                </div>
               </div>
             )}
           </div>
