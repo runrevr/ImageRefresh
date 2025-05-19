@@ -10,20 +10,77 @@
 
 import { useState, useEffect } from 'react';
 
-// Constants for transformation types
-export const TRANSFORMATION_TYPES = {
-  REMOVE_BACKGROUND: 'remove-background',
-  ENHANCE_LIGHTING: 'enhance-lighting',
-  LIFESTYLE_CONTEXT: 'lifestyle-context',
-  SOCIAL_MEDIA_READY: 'social-media-ready',
-  E_COMMERCE_PACK: 'e-commerce-pack',
-  SEASONAL_THEME: 'seasonal-theme',
-};
+// Enums and Constants
+export enum TransformationType {
+  REMOVE_BACKGROUND = 'remove-background',
+  ENHANCE_LIGHTING = 'enhance-lighting',
+  LIFESTYLE_CONTEXT = 'lifestyle-context',
+  SOCIAL_MEDIA_READY = 'social-media-ready',
+  E_COMMERCE_PACK = 'e-commerce-pack',
+  SEASONAL_THEME = 'seasonal-theme',
+}
 
-// Sample enhancement options (to be replaced with dynamic data from backend)
-export const ENHANCEMENT_OPTIONS = [
+// Type Definitions
+export interface UploadedImage {
+  id: string;
+  file: File;
+  name: string;
+  url: string;
+  uploadedAt: string;
+}
+
+export interface TransformationOption {
+  id: TransformationType;
+  name: string;
+  description: string;
+  industry: string;
+  creditCost: number;
+  prompt: string;
+}
+
+export interface TransformationResult {
+  id: string;
+  originalImageId: string;
+  transformationType: TransformationType;
+  originalImage: UploadedImage;
+  transformationName: string;
+  transformedImageUrl: string;
+  creditCost: number;
+  prompt: string;
+  completedAt: string;
+}
+
+export interface TransformationRequest {
+  imageId: string;
+  transformationType: TransformationType;
+  customPrompt?: string;
+}
+
+export interface ProductImageLabOptions {
+  initialCredits?: number;
+  onCreditChange?: (credits: number) => void;
+  webhookUrl?: string;
+}
+
+export interface ProductImageLabHook {
+  availableCredits: number;
+  isProcessing: boolean;
+  error: string | null;
+  uploadedImages: UploadedImage[];
+  transformedImages: TransformationResult[];
+  handleImageUpload: (files: FileList) => Promise<UploadedImage[]>;
+  getEnhancementsForIndustry: (industry: string) => TransformationOption[];
+  transformImage: (params: TransformationRequest) => Promise<TransformationResult>;
+  batchTransformImages: (transformations: TransformationRequest[]) => Promise<TransformationResult[]>;
+  addCredits: (amount: number) => void;
+  resetLab: () => void;
+  enhancementOptions: TransformationOption[];
+}
+
+// Sample enhancement options
+export const ENHANCEMENT_OPTIONS: TransformationOption[] = [
   {
-    id: TRANSFORMATION_TYPES.REMOVE_BACKGROUND,
+    id: TransformationType.REMOVE_BACKGROUND,
     name: 'Remove Background',
     description: 'Isolate product with clean white background and subtle shadow',
     industry: 'all',
@@ -31,7 +88,7 @@ export const ENHANCEMENT_OPTIONS = [
     prompt: 'Remove the background from this product image and replace it with a clean white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined.'
   },
   {
-    id: TRANSFORMATION_TYPES.ENHANCE_LIGHTING,
+    id: TransformationType.ENHANCE_LIGHTING,
     name: 'Enhance Lighting',
     description: 'Improve product visibility with professional studio lighting',
     industry: 'all',
@@ -39,7 +96,7 @@ export const ENHANCEMENT_OPTIONS = [
     prompt: 'Enhance this product image with professional studio lighting. Add soft key lights to highlight the product\'s best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy while maintaining natural appearance.'
   },
   {
-    id: TRANSFORMATION_TYPES.LIFESTYLE_CONTEXT,
+    id: TransformationType.LIFESTYLE_CONTEXT,
     name: 'Lifestyle Context',
     description: 'Place product in realistic lifestyle setting',
     industry: 'all',
@@ -47,7 +104,7 @@ export const ENHANCEMENT_OPTIONS = [
     prompt: 'Place this product in a natural lifestyle environment. Integrate it seamlessly with realistic shadows and reflections that match the environment\'s lighting. Ensure the product remains the focal point while the setting provides context and atmosphere.'
   },
   {
-    id: TRANSFORMATION_TYPES.SOCIAL_MEDIA_READY,
+    id: TransformationType.SOCIAL_MEDIA_READY,
     name: 'Social Media Ready',
     description: 'Optimize for social media with trendy elements and space for text',
     industry: 'all',
@@ -55,7 +112,7 @@ export const ENHANCEMENT_OPTIONS = [
     prompt: 'Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with vibrant colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay and ensure the product pops against a carefully designed background.'
   },
   {
-    id: TRANSFORMATION_TYPES.E_COMMERCE_PACK,
+    id: TransformationType.E_COMMERCE_PACK,
     name: 'E-commerce Pack',
     description: 'Create multiple angles/views optimized for online stores',
     industry: 'retail,fashion,home goods',
@@ -63,7 +120,7 @@ export const ENHANCEMENT_OPTIONS = [
     prompt: 'Create a professional e-commerce presentation of this product. Generate multiple angles of the same product optimized for online stores, including front view, side view, and detail shots. Use consistent lighting and a clean background suitable for e-commerce platforms.'
   },
   {
-    id: TRANSFORMATION_TYPES.SEASONAL_THEME,
+    id: TransformationType.SEASONAL_THEME,
     name: 'Seasonal Theme',
     description: 'Add seasonal elements (holiday, summer, etc.) to product images',
     industry: 'retail,food,gift',
@@ -75,22 +132,21 @@ export const ENHANCEMENT_OPTIONS = [
 /**
  * Custom hook for managing product image transformations
  * 
- * @param {Object} options - Configuration options
- * @param {number} options.initialCredits - Initial number of credits available
- * @param {Function} options.onCreditChange - Callback when credits change
- * @returns {Object} Methods and state for image transformations
+ * @param options - Configuration options
+ * @returns Methods and state for image transformations
  */
-export const useProductImageLab = (options = {}) => {
+export const useProductImageLab = (options: ProductImageLabOptions = {}): ProductImageLabHook => {
   const { 
     initialCredits = 10,
-    onCreditChange = () => {}
+    onCreditChange = () => {},
+    webhookUrl = '/api/webhooks/transform-image'
   } = options;
   
-  const [availableCredits, setAvailableCredits] = useState(initialCredits);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
-  const [uploadedImages, setUploadedImages] = useState([]);
-  const [transformedImages, setTransformedImages] = useState([]);
+  const [availableCredits, setAvailableCredits] = useState<number>(initialCredits);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [transformedImages, setTransformedImages] = useState<TransformationResult[]>([]);
   
   // Update the parent component when credits change
   useEffect(() => {
@@ -99,16 +155,16 @@ export const useProductImageLab = (options = {}) => {
   
   /**
    * Handle file uploads
-   * @param {FileList} files - Files from input element
-   * @returns {Promise<Array>} - Array of uploaded image objects
+   * @param files - Files from input element
+   * @returns Array of uploaded image objects
    */
-  const handleImageUpload = async (files) => {
+  const handleImageUpload = async (files: FileList): Promise<UploadedImage[]> => {
     try {
       setError(null);
       const imageFiles = Array.from(files);
       
       // Process each file to get a URL and metadata
-      const processedImages = imageFiles.map((file, index) => ({
+      const processedImages: UploadedImage[] = imageFiles.map((file, index) => ({
         id: `upload-${Date.now()}-${index}`,
         file,
         name: file.name,
@@ -119,7 +175,8 @@ export const useProductImageLab = (options = {}) => {
       setUploadedImages(prev => [...prev, ...processedImages]);
       return processedImages;
     } catch (err) {
-      setError('Error uploading images: ' + err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error uploading images';
+      setError(errorMessage);
       console.error('Error uploading images:', err);
       return [];
     }
@@ -127,27 +184,24 @@ export const useProductImageLab = (options = {}) => {
   
   /**
    * Get available enhancements for a specific industry
-   * @param {string} industry - Industry name
-   * @returns {Array} - Filtered enhancement options
+   * @param industry - Industry name
+   * @returns Filtered enhancement options
    */
-  const getEnhancementsForIndustry = (industry) => {
+  const getEnhancementsForIndustry = (industry: string): TransformationOption[] => {
     if (!industry) return ENHANCEMENT_OPTIONS;
     
     return ENHANCEMENT_OPTIONS.filter(option => 
       option.industry === 'all' || 
-      option.industry.split(',').some(ind => industry.toLowerCase().includes(ind))
+      option.industry.split(',').some(ind => industry.toLowerCase().includes(ind.trim()))
     );
   };
   
   /**
    * Process image transformation
-   * @param {Object} params - Transformation parameters
-   * @param {string} params.imageId - ID of the image to transform
-   * @param {string} params.transformationType - Type of transformation to apply
-   * @param {string} params.customPrompt - Optional custom prompt overriding the default
-   * @returns {Promise<Object>} - Transformed image result
+   * @param params - Transformation parameters
+   * @returns Transformed image result
    */
-  const transformImage = async (params) => {
+  const transformImage = async (params: TransformationRequest): Promise<TransformationResult> => {
     const { imageId, transformationType, customPrompt = null } = params;
     
     // Find the image and transformation option
@@ -172,25 +226,24 @@ export const useProductImageLab = (options = {}) => {
       setError(null);
       
       // In a real implementation, this would call an API endpoint
-      // For demonstration purposes, we'll use a timeout to simulate processing
-      
       // Prepare the form data that would be sent to an API
       const formData = new FormData();
       formData.append('image', image.file);
       formData.append('prompt', customPrompt || transformOption.prompt);
       formData.append('transformationType', transformationType);
       
-      // This would be where the API call happens in a real implementation
-      // const response = await fetch('/api/transform-image', {
+      // This would be the actual API call in a production environment
+      // const response = await fetch(webhookUrl, {
       //   method: 'POST',
       //   body: formData
       // });
+      // const data = await response.json();
       
       // Simulate API call with a delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Create a mock result (in production, would be from the API response)
-      const result = {
+      const result: TransformationResult = {
         id: `result-${Date.now()}`,
         originalImageId: imageId,
         transformationType,
@@ -211,7 +264,8 @@ export const useProductImageLab = (options = {}) => {
       
       return result;
     } catch (err) {
-      setError('Error transforming image: ' + err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error transforming image';
+      setError(errorMessage);
       console.error('Error transforming image:', err);
       throw err;
     } finally {
@@ -221,10 +275,10 @@ export const useProductImageLab = (options = {}) => {
   
   /**
    * Process multiple transformations at once
-   * @param {Array} transformations - Array of transformation requests
-   * @returns {Promise<Array>} - Results of all transformations
+   * @param transformations - Array of transformation requests
+   * @returns Results of all transformations
    */
-  const batchTransformImages = async (transformations) => {
+  const batchTransformImages = async (transformations: TransformationRequest[]): Promise<TransformationResult[]> => {
     // Calculate total credit cost
     const totalCreditCost = transformations.reduce((total, transform) => {
       const option = ENHANCEMENT_OPTIONS.find(opt => opt.id === transform.transformationType);
@@ -241,7 +295,7 @@ export const useProductImageLab = (options = {}) => {
       setError(null);
       
       // Process each transformation sequentially
-      const results = [];
+      const results: TransformationResult[] = [];
       for (const transform of transformations) {
         const result = await transformImage(transform);
         results.push(result);
@@ -249,7 +303,8 @@ export const useProductImageLab = (options = {}) => {
       
       return results;
     } catch (err) {
-      setError('Error processing batch transformations: ' + err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error processing batch transformations';
+      setError(errorMessage);
       console.error('Error processing batch transformations:', err);
       throw err;
     } finally {
@@ -259,9 +314,9 @@ export const useProductImageLab = (options = {}) => {
   
   /**
    * Add credits to the user's account
-   * @param {number} amount - Number of credits to add
+   * @param amount - Number of credits to add
    */
-  const addCredits = (amount) => {
+  const addCredits = (amount: number): void => {
     if (!amount || amount <= 0) return;
     setAvailableCredits(prev => prev + amount);
   };
@@ -269,7 +324,7 @@ export const useProductImageLab = (options = {}) => {
   /**
    * Reset the state of the lab
    */
-  const resetLab = () => {
+  const resetLab = (): void => {
     // Clean up object URLs to prevent memory leaks
     uploadedImages.forEach(img => {
       if (img.url.startsWith('blob:')) {

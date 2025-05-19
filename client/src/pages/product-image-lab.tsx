@@ -1,9 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { useProductImageLab, ENHANCEMENT_OPTIONS } from '../product-image-lab';
+import { 
+  useProductImageLab, 
+  ENHANCEMENT_OPTIONS, 
+  TransformationType,
+  TransformationOption,
+  UploadedImage,
+  TransformationResult,
+  TransformationRequest
+} from '../product-image-lab.ts';
 import '../product-image-lab.css';
 import Navbar from '@/components/Navbar';
 import GlobalFooter from '@/components/Footer';
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
 // Types
@@ -12,7 +20,12 @@ interface TabState {
 }
 
 interface TransformationSelection {
-  [key: string]: string[];
+  [imageId: string]: TransformationType[];
+}
+
+interface AuthCredits {
+  free: number;
+  paid: number;
 }
 
 /**
@@ -21,11 +34,14 @@ interface TransformationSelection {
  */
 export default function ProductImageLabPage() {
   // Auth and credits
-  const { user, credits } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   
+  // Mock credits for development - in production this would come from your auth context
+  const credits: AuthCredits = { free: 5, paid: 5 };
+  
   // Get available credits
-  const availableUserCredits = credits?.free + credits?.paid || 0;
+  const availableUserCredits: number = credits?.free + credits?.paid || 0;
   
   // State management
   const [tabState, setTabState] = useState<TabState>({ activeTab: 'upload' });
@@ -65,9 +81,13 @@ export default function ProductImageLabPage() {
     resetLab
   } = useProductImageLab({ 
     initialCredits: availableUserCredits,
-    onCreditChange: (newCredits) => {
+    onCreditChange: (newCredits: number): void => {
       // Here you would update the user's credits in your backend
       console.log('Credits updated:', newCredits);
+      
+      // In a real implementation, you would make an API call to update credits
+      // For example:
+      // apiRequest('/api/credits/update', { method: 'POST', body: { credits: newCredits } });
     }
   });
   
@@ -282,7 +302,7 @@ export default function ProductImageLabPage() {
     
     Object.entries(selections).forEach(([imageId, optionIds]) => {
       optionIds.forEach(optionId => {
-        const option = ENHANCEMENT_OPTIONS.find(opt => opt.id === optionId);
+        const option = ENHANCEMENT_OPTIONS.find((opt: TransformationOption) => opt.id === optionId);
         if (option) {
           totalCredits += option.creditCost;
         }
@@ -592,7 +612,7 @@ export default function ProductImageLabPage() {
             <div className="product-lab-card">
               <h2>Uploaded Images</h2>
               <div className="product-lab-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))' }}>
-                {uploadedImages.map(image => (
+                {uploadedImages.map((image: UploadedImage) => (
                   <div key={image.id} className="product-lab-image-card" style={{ height: '150px' }}>
                     <img 
                       src={image.url} 
@@ -610,8 +630,8 @@ export default function ProductImageLabPage() {
             <div className="product-lab-card">
               <h2>Select Enhancement Options</h2>
               
-              {uploadedImages.map(image => {
-                const enhancementOptions = getEnhancementsForIndustry(industry);
+              {uploadedImages.map((image: UploadedImage) => {
+                const enhancementOptions: TransformationOption[] = getEnhancementsForIndustry(industry);
                 
                 return (
                   <div key={image.id} className="product-lab-card" style={{ marginBottom: '15px' }}>
@@ -625,7 +645,7 @@ export default function ProductImageLabPage() {
                         <h3>{image.name || 'Product Image'}</h3>
                         
                         <div className="product-lab-form-group">
-                          {enhancementOptions.map(option => (
+                          {enhancementOptions.map((option: TransformationOption) => (
                             <div key={option.id} style={{ marginBottom: '10px' }}>
                               <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', cursor: 'pointer' }}>
                                 <input 
@@ -671,8 +691,8 @@ export default function ProductImageLabPage() {
             <div className="product-lab-card">
               <h2>Transformation Results</h2>
               
-              {transformedImages.map(result => {
-                const originalImage = uploadedImages.find(img => img.id === result.originalImageId);
+              {transformedImages.map((result: TransformationResult) => {
+                const originalImage = uploadedImages.find((img: UploadedImage) => img.id === result.originalImageId);
                 
                 if (!originalImage) return null;
                 

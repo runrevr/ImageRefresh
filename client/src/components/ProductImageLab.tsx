@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { useProductImageLab, ENHANCEMENT_OPTIONS } from '../product-image-lab';
+import { 
+  useProductImageLab, 
+  ENHANCEMENT_OPTIONS, 
+  TransformationType,
+  TransformationOption,
+  UploadedImage,
+  TransformationResult,
+  TransformationRequest
+} from '../product-image-lab.ts';
 import '../product-image-lab.css';
 
 // Types
@@ -17,7 +25,7 @@ interface TabState {
 }
 
 interface TransformationSelection {
-  [key: string]: string[];
+  [imageId: string]: TransformationType[];
 }
 
 const ProductImageLab = ({
@@ -62,7 +70,12 @@ const ProductImageLab = ({
     resetLab
   } = useProductImageLab({ 
     initialCredits,
-    onCreditChange
+    onCreditChange: (newCredits: number): void => {
+      if (onCreditChange) {
+        onCreditChange(newCredits);
+      }
+    },
+    webhookUrl
   });
   
   // Update status when there's an error or processing change
@@ -77,19 +90,19 @@ const ProductImageLab = ({
   }, [error, isProcessing]);
   
   // Handle tab switching
-  const switchTab = (tab: 'upload' | 'generate') => {
+  const switchTab = (tab: 'upload' | 'generate'): void => {
     setTabState({ activeTab: tab });
   };
   
   // Handle file upload button click
-  const triggerFileUpload = () => {
+  const triggerFileUpload = (): void => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
   
   // Process uploaded files
-  const processUploadedFiles = async (files: FileList | null) => {
+  const processUploadedFiles = async (files: FileList | null): Promise<void> => {
     if (!files || files.length === 0) {
       setStatus('No files selected');
       return;
@@ -116,7 +129,7 @@ const ProductImageLab = ({
   };
   
   // Handle upload form submission
-  const handleUploadSubmit = async (e: React.FormEvent) => {
+  const handleUploadSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
     if (!industry) {
@@ -134,7 +147,7 @@ const ProductImageLab = ({
   };
   
   // Handle image generation form submission
-  const handleGenerateSubmit = async (e: React.FormEvent) => {
+  const handleGenerateSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
     if (!industry) {
@@ -187,7 +200,7 @@ const ProductImageLab = ({
   };
   
   // Toggle selection of a transformation option
-  const toggleOptionSelection = (imageId: string, optionId: string) => {
+  const toggleOptionSelection = (imageId: string, optionId: TransformationType): void => {
     setSelections(prevSelections => {
       const newSelections = { ...prevSelections };
       
@@ -212,7 +225,7 @@ const ProductImageLab = ({
     
     Object.entries(selections).forEach(([imageId, optionIds]) => {
       optionIds.forEach(optionId => {
-        const option = ENHANCEMENT_OPTIONS.find(opt => opt.id === optionId);
+        const option = ENHANCEMENT_OPTIONS.find((opt: TransformationOption) => opt.id === optionId);
         if (option) {
           totalCredits += option.creditCost;
         }
@@ -223,7 +236,7 @@ const ProductImageLab = ({
   }, [selections]);
   
   // Process selected transformations
-  const processTransformations = async () => {
+  const processTransformations = async (): Promise<void> => {
     if (Object.keys(selections).length === 0) {
       setStatus('Please select at least one transformation option');
       setStatusType('error');
@@ -242,7 +255,7 @@ const ProductImageLab = ({
     
     try {
       // Prepare transformation requests
-      const transformationRequests = [];
+      const transformationRequests: TransformationRequest[] = [];
       
       for (const [imageId, optionIds] of Object.entries(selections)) {
         for (const optionId of optionIds) {
@@ -268,7 +281,7 @@ const ProductImageLab = ({
   };
   
   // Reset component
-  const resetComponent = () => {
+  const resetComponent = (): void => {
     resetLab();
     setIndustry('');
     setAdditionalInfo('');
@@ -502,7 +515,7 @@ const ProductImageLab = ({
         <div className="product-lab-card">
           <h2>Uploaded Images</h2>
           <div className="product-lab-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))' }}>
-            {uploadedImages.map(image => (
+            {uploadedImages.map((image: UploadedImage) => (
               <div key={image.id} className="product-lab-image-card" style={{ height: '150px' }}>
                 <img 
                   src={image.url} 
@@ -520,8 +533,8 @@ const ProductImageLab = ({
         <div className="product-lab-card">
           <h2>Select Enhancement Options</h2>
           
-          {uploadedImages.map(image => {
-            const enhancementOptions = getEnhancementsForIndustry(industry);
+          {uploadedImages.map((image: UploadedImage) => {
+            const enhancementOptions: TransformationOption[] = getEnhancementsForIndustry(industry);
             
             return (
               <div key={image.id} className="product-lab-card" style={{ marginBottom: '15px' }}>
@@ -535,7 +548,7 @@ const ProductImageLab = ({
                     <h3>{image.name || 'Product Image'}</h3>
                     
                     <div className="product-lab-form-group">
-                      {enhancementOptions.map(option => (
+                      {enhancementOptions.map((option: TransformationOption) => (
                         <div key={option.id} style={{ marginBottom: '10px' }}>
                           <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', cursor: 'pointer' }}>
                             <input 
@@ -581,8 +594,8 @@ const ProductImageLab = ({
         <div className="product-lab-card">
           <h2>Transformation Results</h2>
           
-          {transformedImages.map(result => {
-            const originalImage = uploadedImages.find(img => img.id === result.originalImageId);
+          {transformedImages.map((result: TransformationResult) => {
+            const originalImage = uploadedImages.find((img: UploadedImage) => img.id === result.originalImageId);
             
             if (!originalImage) return null;
             
