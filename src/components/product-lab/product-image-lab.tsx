@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   useProductImageLab, 
   ENHANCEMENT_OPTIONS, 
@@ -8,6 +8,7 @@ import {
   TransformationResult,
   TransformationRequest
 } from '../../hooks/product-lab/product-image-lab';
+// Note: You may need to create this CSS file or adjust the import path
 import '../../product-image-lab.css';
 
 // Types
@@ -175,18 +176,44 @@ const ProductImageLab = ({
       
       // Create placeholder generated images for demonstration
       const generatedFiles = [];
+      const dummyFileList = {
+        length: 0,
+        item: (index: number) => null,
+        [Symbol.iterator]: function* () {
+          for (let i = 0; i < this.length; i++) {
+            yield this[i];
+          }
+        }
+      } as FileList;
+      
       for (let i = 0; i < numImages; i++) {
         const placeholderUrl = `https://via.placeholder.com/500x500/f0f0f0/333333?text=Generated+Image+${i+1}`;
         
         // Create a blob from placeholder
-        const response = await fetch(placeholderUrl);
-        const blob = await response.blob();
-        const file = new File([blob], `generated-image-${i+1}.jpg`, { type: 'image/jpeg' });
-        generatedFiles.push(file);
+        try {
+          const response = await fetch(placeholderUrl);
+          const blob = await response.blob();
+          const file = new File([blob], `generated-image-${i+1}.jpg`, { type: 'image/jpeg' });
+          generatedFiles.push(file);
+          Object.defineProperty(dummyFileList, i.toString(), {
+            value: file,
+            writable: false
+          });
+          Object.defineProperty(dummyFileList, 'length', {
+            value: i + 1,
+            writable: true
+          });
+        } catch (err) {
+          console.error("Error creating placeholder image:", err);
+        }
       }
       
-      // Process the generated files
-      await handleImageUpload(generatedFiles as unknown as FileList);
+      // Process the generated files if we have any
+      if (dummyFileList.length > 0) {
+        await handleImageUpload(dummyFileList);
+      } else {
+        throw new Error("Failed to create placeholder images");
+      }
       
       setStatus('Images generated successfully');
       setStatusType('success');
