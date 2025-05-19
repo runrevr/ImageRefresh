@@ -81,7 +81,11 @@ export default function FixedProductImageLab({
     initialCredits,
     onCreditChange,
     testMode: adminTestMode,
-    webhookUrl: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9'
+    webhookUrl: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9',
+    optionsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options',
+    selectionsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections',
+    resultsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results',
+    generateEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate'
   });
   
   // References
@@ -333,9 +337,60 @@ export default function FixedProductImageLab({
             <button 
               className="product-lab-button product-lab-button-default"
               onClick={handleResetLab}
-              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem', marginRight: '0.5rem' }}
             >
               Reset Lab
+            </button>
+            
+            {/* Test N8N Connection Button */}
+            <button 
+              className="product-lab-button product-lab-button-default"
+              onClick={() => {
+                setStatusType('loading');
+                setStatus('Testing connection to N8N webhook...');
+                
+                // Test the N8N webhook connection
+                fetch('https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                  },
+                  mode: 'cors',
+                  body: JSON.stringify({ test: true })
+                })
+                .then(response => {
+                  if (response.ok) {
+                    setStatusType('success');
+                    setStatus('Successfully connected to N8N webhook!');
+                    toast({
+                      title: "Connection Successful",
+                      description: "Connected to N8N webhook service"
+                    });
+                  } else {
+                    setStatusType('error');
+                    setStatus(`Connection failed with status: ${response.status}`);
+                    toast({
+                      title: "Connection Failed",
+                      description: `Failed to connect to N8N webhook: ${response.statusText}`,
+                      variant: "destructive"
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.error('N8N connection test failed:', error);
+                  setStatusType('error');
+                  setStatus('Unable to connect to N8N webhook. Check browser console for details.');
+                  toast({
+                    title: "Connection Error",
+                    description: "Failed to connect to N8N webhook. This could be due to CORS restrictions.",
+                    variant: "destructive"
+                  });
+                });
+              }}
+              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+            >
+              Test N8N Connection
             </button>
           </div>
         </div>

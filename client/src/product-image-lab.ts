@@ -60,6 +60,10 @@ export interface ProductImageLabOptions {
   initialCredits?: number;
   onCreditChange?: (credits: number) => void;
   webhookUrl?: string;
+  optionsEndpoint?: string;
+  selectionsEndpoint?: string;
+  resultsEndpoint?: string;
+  generateEndpoint?: string;
   testMode?: boolean;
   simulateApiCalls?: boolean; // Flag to simulate API calls instead of making real ones
 }
@@ -148,6 +152,10 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     initialCredits = 10,
     onCreditChange = () => {},
     webhookUrl = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9',
+    optionsEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options',
+    selectionsEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections',
+    resultsEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results',
+    generateEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate',
     testMode = false,
     simulateApiCalls = true // Default to true for safer operation
   } = options;
@@ -298,16 +306,39 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
             setError('The transformation request timed out. Please try again.');
           }, 15000); // 15 second timeout
           
-          // Add CORS handling for external APIs
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            body: formData,
-            signal: controller.signal,
-            mode: 'cors',
-            headers: {
-              'Accept': 'application/json'
+          // First try the N8N webhook endpoint
+          let response;
+          try {
+            // Add CORS handling for external APIs
+            response = await fetch(webhookUrl, {
+              method: 'POST',
+              body: formData,
+              signal: controller.signal,
+              mode: 'cors',
+              headers: {
+                'Accept': 'application/json'
+              }
+            });
+          } catch (corsError) {
+            console.error('CORS or network error with N8N endpoint:', corsError);
+            
+            // Try fallback to local API if N8N endpoint fails
+            console.log('Attempting fallback to local API endpoint');
+            const localApiUrl = '/api/webhooks/transform-image';
+            
+            try {
+              response = await fetch(localApiUrl, {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+              });
+              
+              console.log('Successfully connected to local API fallback');
+            } catch (localApiError) {
+              console.error('Local API fallback also failed:', localApiError);
+              throw new Error('Unable to connect to transformation service. Please try again later.');
             }
-          });
+          }
           
           clearTimeout(timeoutId);
           
@@ -359,7 +390,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
           if (apiError instanceof DOMException && apiError.name === 'AbortError') {
             setError('The transformation request timed out. Please try again later.');
           } else {
-            setError('Unable to connect to the transformation service. Please check your connection and try again.');
+            // Provide specific error message about N8N webhook connection
+            setError('Unable to connect to the N8N transformation service. This might be due to CORS restrictions or network issues. Falling back to simulation mode.');
           }
           
           // Fall back to simulation mode
