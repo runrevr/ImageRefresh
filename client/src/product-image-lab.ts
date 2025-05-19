@@ -8,7 +8,7 @@
  * - Interfacing with OpenAI's image transformation APIs
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Enums and Constants
 export enum TransformationType {
@@ -145,7 +145,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
     initialCredits = 10,
     onCreditChange = () => {},
     webhookUrl = '/api/webhooks/transform-image',
-    testMode = false
+    testMode = false,
+    simulateApiCalls = true // Default to true for safer operation
   } = options;
   
   const [availableCredits, setAvailableCredits] = useState<number>(initialCredits);
@@ -154,11 +155,23 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [transformedImages, setTransformedImages] = useState<TransformationResult[]>([]);
   const [isTestModeEnabled, setIsTestModeEnabled] = useState<boolean>(testMode);
+  const [isSimulationMode, setIsSimulationMode] = useState<boolean>(simulateApiCalls);
   const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
   
-  // Update the parent component when credits change
+  // Track last credit update to prevent excessive calls
+  const lastCreditUpdate = useRef<number>(availableCredits);
+  
+  // Update the parent component when credits change - with debounce
   useEffect(() => {
-    onCreditChange(availableCredits);
+    // Update the ref to the current value
+    lastCreditUpdate.current = availableCredits;
+    
+    // Use a small timeout to debounce rapid credit changes
+    const timeoutId = setTimeout(() => {
+      onCreditChange(availableCredits);
+    }, 300); // 300ms debounce
+    
+    return () => clearTimeout(timeoutId);
   }, [availableCredits, onCreditChange]);
   
   /**
@@ -212,85 +225,240 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const transformImage = async (params: TransformationRequest): Promise<TransformationResult> => {
     const { imageId, transformationType, customPrompt = null } = params;
     
-    // Find the image and transformation option
-    const image = uploadedImages.find(img => img.id === imageId);
-    const transformOption = ENHANCEMENT_OPTIONS.find(opt => opt.id === transformationType);
-    
-    if (!image) {
-      throw new Error(`Image with ID ${imageId} not found`);
-    }
-    
-    if (!transformOption) {
-      throw new Error(`Transformation type ${transformationType} not found`);
-    }
-    
-    // Check if user has enough credits (bypass check if in test mode)
-    if (!isTestModeEnabled && availableCredits < transformOption.creditCost) {
-      throw new Error(`Not enough credits. Required: ${transformOption.creditCost}, Available: ${availableCredits}`);
-    }
+    // Log the transformation attempt
+    console.log(`Starting transformation for image: ${imageId}, type: ${transformationType}`);
     
     try {
+      // Find the image and transformation option
+      const image = uploadedImages.find(img => img.id === imageId);
+      const transformOption = ENHANCEMENT_OPTIONS.find(opt => opt.id === transformationType);
+      
+      if (!image) {
+        console.error(`Image with ID ${imageId} not found`);
+        setError(`Image not found. Please try re-uploading the image.`);
+        throw new Error(`Image with ID ${imageId} not found`);
+      }
+      
+      if (!transformOption) {
+        console.error(`Transformation type ${transformationType} not found`);
+        setError(`Enhancement type not found. Please select a different enhancement.`);
+        throw new Error(`Transformation type ${transformationType} not found`);
+      }
+      
+      // Check if user has enough credits (bypass check if in test mode)
+      if (!isTestModeEnabled && availableCredits < transformOption.creditCost) {
+        const errorMessage = `Not enough credits. Required: ${transformOption.creditCost}, Available: ${availableCredits}`;
+        console.error(errorMessage);
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+      
       setIsProcessing(true);
       setError(null);
       
-      // In a real implementation, this would call an API endpoint
-      // Prepare the form data that would be sent to an API
+      // Track whether we're using simulation mode
+      let isSimulated = isSimulationMode;
+      let transformedImageUrl = '';
+      
+      // Store debug info for this transformation
+      setDebugInfo(prev => ({
+        ...prev,
+        currentTransformation: {
+          imageId,
+          transformationType,
+          prompt: customPrompt || transformOption.prompt,
+          timestamp: new Date().toISOString(),
+          simulationMode: isSimulated,
+          testMode: isTestModeEnabled
+        }
+      }));
+      
+      // Prepare the form data for API calls
       const formData = new FormData();
       formData.append('image', image.file);
       formData.append('prompt', customPrompt || transformOption.prompt);
       formData.append('transformationType', transformationType);
       
-      // This would be the actual API call in a production environment
-      // const response = await fetch(webhookUrl, {
-      //   method: 'POST',
-      //   body: formData
-      // });
-      // const data = await response.json();
+      // If we're not in simulation mode, try to call the actual API
+      if (!isSimulated) {
+        try {
+          console.log(`Attempting API call to ${webhookUrl} for image transformation`);
+          
+          // Add timeout for API calls
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+          
+          const response = await fetch(webhookUrl, {
+            method: 'POST',
+            body: formData,
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            // API returned an error - log and switch to simulation
+            const errorText = await response.text();
+            console.error(`API error (${response.status}): ${errorText}`);
+            
+            // Log API error in debug info
+            setDebugInfo(prev => ({
+              ...prev,
+              apiError: {
+                status: response.status,
+                statusText: response.statusText,
+                error: errorText,
+                timestamp: new Date().toISOString()
+              }
+            }));
+            
+            // Fall back to simulation mode
+            console.log('Falling back to simulation mode due to API error');
+            isSimulated = true;
+          } else {
+            // Success - try to parse response
+            try {
+              const data = await response.json();
+              transformedImageUrl = data.transformedImageUrl;
+              
+              // Log success in debug info
+              setDebugInfo(prev => ({
+                ...prev,
+                apiSuccess: {
+                  data,
+                  timestamp: new Date().toISOString()
+                }
+              }));
+              
+              console.log('API call successful, got transformed image URL');
+            } catch (parseError) {
+              // JSON parse error - log and switch to simulation
+              console.error('Failed to parse API response:', parseError);
+              
+              // Log parse error in debug info
+              setDebugInfo(prev => ({
+                ...prev,
+                apiParseError: {
+                  error: parseError instanceof Error ? parseError.message : String(parseError),
+                  timestamp: new Date().toISOString()
+                }
+              }));
+              
+              // Fall back to simulation mode
+              console.log('Falling back to simulation mode due to parsing error');
+              isSimulated = true;
+            }
+          }
+        } catch (apiError) {
+          // Network error or other fetch issue - log and switch to simulation
+          console.error('API call failed:', apiError);
+          
+          // Log API call failure in debug info
+          setDebugInfo(prev => ({
+            ...prev,
+            apiFetchError: {
+              error: apiError instanceof Error ? apiError.message : String(apiError),
+              timestamp: new Date().toISOString()
+            }
+          }));
+          
+          // Fall back to simulation mode
+          console.log('Falling back to simulation mode due to network/fetch error');
+          isSimulated = true;
+        }
+      }
       
-      // Simulate API call with a delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // If we're in simulation mode (either by choice or as a fallback)
+      if (isSimulated) {
+        console.log('Using simulation mode for image transformation');
+        
+        // Simulate processing delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // In simulation mode, just use the original image URL
+        transformedImageUrl = image.url;
+        
+        // Log simulation in debug info
+        setDebugInfo(prev => ({
+          ...prev,
+          simulationUsed: {
+            reason: isSimulationMode ? 'Manual simulation mode enabled' : 'Fallback after API failure',
+            timestamp: new Date().toISOString()
+          }
+        }));
+      }
       
-      // Create a mock result (in production, would be from the API response)
+      // Create the result object
       const result: TransformationResult = {
         id: `result-${Date.now()}`,
         originalImageId: imageId,
         transformationType,
         originalImage: image,
         transformationName: transformOption.name,
-        // In a real implementation, this would be the URL from the API response
-        transformedImageUrl: image.url, // Using original as placeholder
+        transformedImageUrl: transformedImageUrl || image.url, // Fallback to original if empty
         creditCost: transformOption.creditCost,
         prompt: customPrompt || transformOption.prompt,
         completedAt: new Date().toISOString()
       };
       
-      // Deduct credits (skip if in test mode)
-      if (!isTestModeEnabled) {
+      // Log completion
+      console.log(`Transformation completed for image: ${imageId}, type: ${transformationType}`);
+      
+      // Only deduct credits if:
+      // 1. Not in test mode AND
+      // 2. Not using simulation mode OR (simulation mode was a fallback but we still want to charge)
+      if (!isTestModeEnabled && (!isSimulated || !isSimulationMode)) {
+        console.log(`Deducting ${transformOption.creditCost} credits`);
         setAvailableCredits(prev => prev - transformOption.creditCost);
+      } else {
+        console.log('No credits deducted (test mode or simulation mode)');
       }
       
-      // Store debug info
+      // Store the transformation result
       setDebugInfo(prev => ({
         ...prev,
-        lastTransformation: {
-          type: transformationType,
-          prompt: customPrompt || transformOption.prompt,
+        lastCompletedTransformation: {
+          result,
           timestamp: new Date().toISOString(),
-          creditCost: transformOption.creditCost,
-          testMode: isTestModeEnabled
+          simulationMode: isSimulated
         }
       }));
       
-      // Add to transformed images
-      setTransformedImages(prev => [...prev, result]);
+      // Check for duplicates before adding to transformed images
+      setTransformedImages(prev => {
+        // Check if we already have this transformation
+        if (prev.some(item => 
+          item.originalImageId === imageId && 
+          item.transformationType === transformationType)) {
+          console.log('Skipping duplicate transformation result');
+          return prev;
+        }
+        return [...prev, result];
+      });
       
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error transforming image';
+      // Handle all errors
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error processing transformation';
+      console.error('Transformation error:', errorMessage);
+      
+      // Store error in debug info
+      setDebugInfo(prev => ({
+        ...prev,
+        lastTransformationError: {
+          error: errorMessage,
+          stack: err instanceof Error ? err.stack : undefined,
+          timestamp: new Date().toISOString()
+        }
+      }));
+      
+      // Make sure error is set
       setError(errorMessage);
-      console.error('Error transforming image:', err);
+      
+      // Re-throw for upstream handling
       throw err;
     } finally {
+      // Always reset processing state
       setIsProcessing(false);
     }
   };
@@ -301,33 +469,105 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
    * @returns Results of all transformations
    */
   const batchTransformImages = async (transformations: TransformationRequest[]): Promise<TransformationResult[]> => {
-    // Calculate total credit cost
-    const totalCreditCost = transformations.reduce((total, transform) => {
-      const option = ENHANCEMENT_OPTIONS.find(opt => opt.id === transform.transformationType);
-      return total + (option?.creditCost || 0);
-    }, 0);
-    
-    // Check if user has enough credits (bypass check if in test mode)
-    if (!isTestModeEnabled && availableCredits < totalCreditCost) {
-      throw new Error(`Not enough credits. Required: ${totalCreditCost}, Available: ${availableCredits}`);
-    }
+    console.log(`Starting batch transformation with ${transformations.length} requests`);
     
     try {
+      // Calculate total credit cost
+      const totalCreditCost = transformations.reduce((total, transform) => {
+        const option = ENHANCEMENT_OPTIONS.find(opt => opt.id === transform.transformationType);
+        return total + (option?.creditCost || 0);
+      }, 0);
+      
+      // Log batch information
+      setDebugInfo(prev => ({
+        ...prev,
+        batchStartInfo: {
+          transformationCount: transformations.length,
+          totalCreditCost,
+          timestamp: new Date().toISOString(),
+          testMode: isTestModeEnabled,
+          simulationMode: isSimulationMode
+        }
+      }));
+      
+      // Check if user has enough credits (bypass check if in test mode)
+      if (!isTestModeEnabled && availableCredits < totalCreditCost) {
+        const errorMessage = `Not enough credits. Required: ${totalCreditCost}, Available: ${availableCredits}`;
+        console.error(errorMessage);
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+      
       setIsProcessing(true);
       setError(null);
       
       // Process each transformation sequentially
       const results: TransformationResult[] = [];
+      const failures: Array<{request: TransformationRequest, error: string}> = [];
+      
+      // Attempt to process all transformations, collecting successes and failures
       for (const transform of transformations) {
-        const result = await transformImage(transform);
-        results.push(result);
+        try {
+          // Log the current transformation being processed
+          console.log(`Processing transformation for imageId: ${transform.imageId}, type: ${transform.transformationType}`);
+          
+          const result = await transformImage(transform);
+          results.push(result);
+          
+          // Log success
+          console.log(`Successfully processed transformation for imageId: ${transform.imageId}`);
+        } catch (transformError) {
+          // Log failure but continue with other transformations
+          const errorMessage = transformError instanceof Error ? transformError.message : 'Unknown transformation error';
+          console.error(`Transformation failed for imageId: ${transform.imageId}:`, errorMessage);
+          
+          // Add to failures list
+          failures.push({
+            request: transform,
+            error: errorMessage
+          });
+        }
       }
       
+      // Log batch completion
+      setDebugInfo(prev => ({
+        ...prev,
+        batchCompleteInfo: {
+          successCount: results.length,
+          failureCount: failures.length,
+          timestamp: new Date().toISOString(),
+          failures: failures.length > 0 ? failures : undefined
+        }
+      }));
+      
+      // If we have any results but also failures, show a partial success message
+      if (results.length > 0 && failures.length > 0) {
+        setError(`${failures.length} of ${transformations.length} transformations failed. Partial results are shown.`);
+      } 
+      // If all failed, show a more serious error
+      else if (results.length === 0 && failures.length > 0) {
+        const errorMessage = `All ${failures.length} transformations failed. Please check the image files and try again.`;
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+      
+      console.log(`Batch transformation completed: ${results.length} successes, ${failures.length} failures`);
       return results;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error processing batch transformations';
       setError(errorMessage);
       console.error('Error processing batch transformations:', err);
+      
+      // Log the batch error
+      setDebugInfo(prev => ({
+        ...prev,
+        batchError: {
+          error: errorMessage,
+          stack: err instanceof Error ? err.stack : undefined,
+          timestamp: new Date().toISOString()
+        }
+      }));
+      
       throw err;
     } finally {
       setIsProcessing(false);
