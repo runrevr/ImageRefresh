@@ -52,6 +52,11 @@ function Router() {
         const WebhookTest = require("../pages/webhook-test").default;
         return <WebhookTest />;
       }} />
+      <Route path="/n8n-test" component={() => {
+        // Import the N8N test page
+        const N8NTest = require("../pages/n8n-test").default;
+        return <N8NTest />;
+      }} />
       <Route path="/router-debug" component={RouterDebugPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login">

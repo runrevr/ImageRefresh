@@ -9,6 +9,7 @@ import * as dotenv from 'dotenv';
 import { setupTestRoutes } from "./routes/test-route";
 import { setupOpenAITestRoutes } from "./openai-test-route";
 import { setupSimpleRouter } from "./simple-router";
+import { setupWebhookTestRoutes } from "./routes/webhook-test";
 import fs from 'fs';
 import path from 'path';
 
@@ -75,6 +76,9 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Setup authentication (passport, sessions, etc.)
 setupAuth(app);
+
+// Set up webhook test routes for N8N integration
+app.use('/api', setupWebhookTestRoutes());
 
 // Create a special middleware just for debugging request bodies
 app.use((req, res, next) => {
