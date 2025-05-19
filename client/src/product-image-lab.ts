@@ -147,7 +147,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const { 
     initialCredits = 10,
     onCreditChange = () => {},
-    webhookUrl = '/api/webhooks/transform-image',
+    webhookUrl = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9',
     testMode = false,
     simulateApiCalls = true // Default to true for safer operation
   } = options;
@@ -298,10 +298,15 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
             setError('The transformation request timed out. Please try again.');
           }, 15000); // 15 second timeout
           
+          // Add CORS handling for external APIs
           const response = await fetch(webhookUrl, {
             method: 'POST',
             body: formData,
-            signal: controller.signal
+            signal: controller.signal,
+            mode: 'cors',
+            headers: {
+              'Accept': 'application/json'
+            }
           });
           
           clearTimeout(timeoutId);

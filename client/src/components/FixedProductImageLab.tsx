@@ -81,7 +81,7 @@ export default function FixedProductImageLab({
     initialCredits,
     onCreditChange,
     testMode: adminTestMode,
-    webhookUrl: '/api/webhooks/transform-image'
+    webhookUrl: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9'
   });
   
   // References
