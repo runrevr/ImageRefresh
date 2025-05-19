@@ -151,11 +151,11 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
   const { 
     initialCredits = 10,
     onCreditChange = () => {},
-    webhookUrl = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9',
-    optionsEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options',
-    selectionsEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections',
-    resultsEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results',
-    generateEndpoint = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate',
+    webhookUrl = 'https://www.n8nemma.live/webhook-dbf2c53a',
+    optionsEndpoint = 'https://www.n8nemma.live/webhook-options-dbf2c53a',
+    selectionsEndpoint = 'https://www.n8nemma.live/webhook-selections-dbf2c53a',
+    resultsEndpoint = 'https://www.n8nemma.live/webhook-results-dbf2c53a',
+    generateEndpoint = 'https://www.n8nemma.live/webhook-generate-dbf2c53a',
     testMode = false,
     simulateApiCalls = true // Default to true for safer operation
   } = options;
@@ -344,8 +344,8 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
             webhookFormData.append('timestamp', new Date().toISOString());
             webhookFormData.append('prompt', transformOption.prompt);
             
-            // Use the updated webhook URL with the specific transformation endpoint
-            const transformEndpoint = `${webhookUrl}/transform`;
+            // Use the dedicated transformation endpoint
+            const transformEndpoint = `${webhookUrl}-transform`;
             console.log(`Connecting to transformation endpoint: ${transformEndpoint}`);
             
             response = await fetch(transformEndpoint, {

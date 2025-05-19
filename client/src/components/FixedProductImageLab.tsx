@@ -350,7 +350,7 @@ export default function FixedProductImageLab({
             {/* Webhook Tester */}
             <div style={{ width: '100%', margin: '1rem 0' }}>
               <WebhookTester 
-                webhookUrl="https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9"
+                webhookUrl="https://www.n8nemma.live/webhook-dbf2c53a"
                 onResult={(success, data) => {
                   if (success) {
                     setDebugInfo(prev => ({
@@ -380,11 +380,11 @@ export default function FixedProductImageLab({
               <div style={{ width: '100%', marginTop: '1rem' }}>
                 <h4 style={{ margin: '0.5rem 0', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem' }}>N8N Webhook Configuration</h4>
                 <div style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
-                  <div><strong>Main Webhook URL:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9</div>
-                  <div><strong>Options Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options</div>
-                  <div><strong>Selections Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections</div>
-                  <div><strong>Results Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results</div>
-                  <div><strong>Generate Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate</div>
+                  <div><strong>Main Webhook URL:</strong> https://www.n8nemma.live/webhook-dbf2c53a</div>
+                  <div><strong>Options Endpoint:</strong> https://www.n8nemma.live/webhook-options-dbf2c53a</div>
+                  <div><strong>Selections Endpoint:</strong> https://www.n8nemma.live/webhook-selections-dbf2c53a</div>
+                  <div><strong>Results Endpoint:</strong> https://www.n8nemma.live/webhook-results-dbf2c53a</div>
+                  <div><strong>Generate Endpoint:</strong> https://www.n8nemma.live/webhook-generate-dbf2c53a</div>
                 </div>
                 
                 <h4 style={{ margin: '0.5rem 0', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem' }}>Debug Information</h4>

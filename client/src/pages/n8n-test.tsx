@@ -11,7 +11,7 @@ export default function N8NTestPage() {
   const [error, setError] = useState<string | null>(null);
   const [testMode, setTestMode] = useState<'n8n' | 'local'>('n8n');
 
-  const webhookUrl = 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9';
+  const webhookUrl = 'https://www.n8nemma.live/webhook-dbf2c53a';
   const localUrl = '/api/test-webhook';
 
   const testConnection = async () => {

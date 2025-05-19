@@ -71,9 +71,19 @@ export default function WebhookTester({ webhookUrl, onResult }: WebhookTesterPro
           formData.append(key, String(value));
         });
         
-        // Add a small test file
-        const testBlob = new Blob(['test file content'], { type: 'text/plain' });
-        formData.append('file', testBlob, 'test.txt');
+        // Create a small test image (1x1 pixel transparent PNG)
+        const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+        const byteString = atob(base64Image);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        
+        for (let i = 0; i < byteString.length; i++) {
+          uint8Array[i] = byteString.charCodeAt(i);
+        }
+        
+        const testBlob = new Blob([uint8Array], { type: 'image/png' });
+        formData.append('image', testBlob, 'test-image.png');
+        formData.append('transformationType', 'test-transform');
         
         const formResponse = await fetch(`${webhookUrl}/test`, {
           method: 'POST',
