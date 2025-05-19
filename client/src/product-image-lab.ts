@@ -329,13 +329,31 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
               }]
             }));
             
-            // Add CORS handling for external APIs
-            response = await fetch(webhookUrl, {
+            // Add CORS handling for external APIs and ensure proper webhook communication
+            console.log('Sending webhook with the following data:', {
+              imageId,
+              transformationType,
+              timestamp: new Date().toISOString()
+            });
+            
+            // Create a more complete webhook payload
+            const webhookFormData = new FormData();
+            webhookFormData.append('image', image.file);
+            webhookFormData.append('transformationType', transformationType);
+            webhookFormData.append('imageId', imageId);
+            webhookFormData.append('timestamp', new Date().toISOString());
+            webhookFormData.append('prompt', transformOption.prompt);
+            
+            // Use the updated webhook URL with the specific transformation endpoint
+            const transformEndpoint = `${webhookUrl}/transform`;
+            console.log(`Connecting to transformation endpoint: ${transformEndpoint}`);
+            
+            response = await fetch(transformEndpoint, {
               method: 'POST',
-              body: formData,
+              body: webhookFormData,
               signal: controller.signal,
               mode: 'cors',
-              credentials: 'include',  // Include credentials like cookies if needed
+              credentials: 'omit',  // Don't include credentials to avoid CORS preflight issues
               headers: {
                 'Accept': 'application/json'
               }
