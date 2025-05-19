@@ -57,10 +57,23 @@ export default function FixedProductImageLab({
   const [processing, setProcessing] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showResults, setShowResults] = useState<boolean>(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   
   // Admin panel states
   const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
   const [adminTestMode, setAdminTestMode] = useState<boolean>(testMode);
+  const [showDebugInfo, setShowDebugInfo] = useState<boolean>(false);
+  const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
+  
+  // Check URL for debug mode parameter
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('debug') === 'true') {
+        setShowDebugInfo(true);
+      }
+    }
+  }, []);
   
   // Initialize product image lab hook
   const {
@@ -333,6 +346,34 @@ export default function FixedProductImageLab({
               </span>
             </div>
             
+            {/* Debug Info Section */}
+            {showDebugInfo && (
+              <div style={{ width: '100%', marginTop: '1rem' }}>
+                <h4 style={{ margin: '0.5rem 0', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem' }}>N8N Webhook Configuration</h4>
+                <div style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
+                  <div><strong>Main Webhook URL:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9</div>
+                  <div><strong>Options Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options</div>
+                  <div><strong>Selections Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections</div>
+                  <div><strong>Results Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results</div>
+                  <div><strong>Generate Endpoint:</strong> https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate</div>
+                </div>
+                
+                <h4 style={{ margin: '0.5rem 0', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem' }}>Debug Information</h4>
+                <div style={{ 
+                  background: '#f0f0f0', 
+                  padding: '1rem', 
+                  borderRadius: '4px', 
+                  maxHeight: '300px', 
+                  overflow: 'auto',
+                  fontFamily: 'monospace',
+                  fontSize: '0.85rem',
+                  whiteSpace: 'pre-wrap'
+                }}>
+                  {JSON.stringify(debugInfo, null, 2) || 'No debug information available yet. Use the "Test N8N Connection" button to populate this section.'}
+                </div>
+              </div>
+            )}
+            
             {/* Reset Lab Button */}
             <button 
               className="product-lab-button product-lab-button-default"
@@ -349,6 +390,9 @@ export default function FixedProductImageLab({
                 setStatusType('loading');
                 setStatus('Testing connection to N8N webhook...');
                 
+                // For debugging
+                console.log('Testing N8N webhook connection to:', 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test');
+                
                 // Test the N8N webhook connection
                 fetch('https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test', {
                   method: 'POST',
@@ -361,6 +405,8 @@ export default function FixedProductImageLab({
                   body: JSON.stringify({ test: true })
                 })
                 .then(response => {
+                  console.log('N8N webhook test response status:', response.status);
+                  
                   if (response.ok) {
                     setStatusType('success');
                     setStatus('Successfully connected to N8N webhook!');
@@ -377,6 +423,17 @@ export default function FixedProductImageLab({
                       variant: "destructive"
                     });
                   }
+                  
+                  // Store results in debug info
+                  setDebugInfo(prev => ({
+                    ...prev,
+                    n8nTestConnection: {
+                      url: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test',
+                      status: response.status,
+                      statusText: response.statusText,
+                      timestamp: new Date().toISOString()
+                    }
+                  }));
                 })
                 .catch(error => {
                   console.error('N8N connection test failed:', error);
@@ -387,11 +444,30 @@ export default function FixedProductImageLab({
                     description: "Failed to connect to N8N webhook. This could be due to CORS restrictions.",
                     variant: "destructive"
                   });
+                  
+                  // Store error in debug info
+                  setDebugInfo(prev => ({
+                    ...prev,
+                    n8nTestError: {
+                      url: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test',
+                      error: error instanceof Error ? error.message : 'Unknown error',
+                      timestamp: new Date().toISOString()
+                    }
+                  }));
                 });
               }}
-              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem', marginRight: '0.5rem' }}
             >
               Test N8N Connection
+            </button>
+            
+            {/* Toggle Debug Info Button */}
+            <button 
+              className="product-lab-button product-lab-button-default"
+              onClick={() => setShowDebugInfo(prev => !prev)}
+              style={{ padding: '0.25rem 0.5rem', fontSize: '0.9rem' }}
+            >
+              {showDebugInfo ? 'Hide Debug Info' : 'Show Debug Info'}
             </button>
           </div>
         </div>
@@ -509,41 +585,70 @@ export default function FixedProductImageLab({
                 <h3>Enhancement Options</h3>
                 <p>Select enhancements to apply to your images:</p>
                 
-                {uploadedImages.map(image => (
-                  <div key={image.id} className="product-lab-image-enhancements">
-                    <div className="product-lab-image-preview">
+                {/* Image selection tabs */}
+                <div className="product-lab-image-tabs">
+                  {uploadedImages.map((image, index) => (
+                    <button 
+                      key={image.id}
+                      className={`product-lab-image-tab ${selectedImageIndex === index ? 'active' : ''}`}
+                      onClick={() => setSelectedImageIndex(index)}
+                    >
+                      Image {index + 1}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Show only the selected image with its enhancement options */}
+                {uploadedImages[selectedImageIndex] && (
+                  <div className="product-lab-image-enhancements" style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
+                    <div className="product-lab-image-preview" style={{ flex: '0 0 200px' }}>
                       <img 
-                        src={image.url} 
-                        alt={`Product ${image.id}`} 
+                        src={uploadedImages[selectedImageIndex].url} 
+                        alt={`Product ${uploadedImages[selectedImageIndex].id}`} 
                         className="product-lab-image-small"
+                        style={{ width: '100%', height: 'auto', borderRadius: '6px', border: '1px solid #ddd' }}
                       />
+                      <div style={{ marginTop: '5px', fontSize: '0.9rem', color: '#666' }}>
+                        {uploadedImages[selectedImageIndex].file.name}
+                      </div>
                     </div>
                     
-                    <div className="product-lab-enhancement-list">
+                    <div className="product-lab-enhancement-list" style={{ flex: '1', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '10px' }}>
                       {ENHANCEMENT_OPTIONS.map(option => (
-                        <div key={option.id} className="product-lab-enhancement-option">
-                          <label>
+                        <div 
+                          key={option.id} 
+                          className="product-lab-enhancement-option"
+                          style={{ 
+                            padding: '10px', 
+                            border: '1px solid #ddd', 
+                            borderRadius: '6px',
+                            background: (selections[uploadedImages[selectedImageIndex].id] || []).includes(option.id) ? '#f0f7ff' : '#fff',
+                            boxShadow: (selections[uploadedImages[selectedImageIndex].id] || []).includes(option.id) ? '0 0 0 2px #3e97ff' : 'none'
+                          }}
+                        >
+                          <label style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
                             <input 
                               type="checkbox" 
-                              checked={(selections[image.id] || []).includes(option.id)}
-                              onChange={() => toggleTransformation(image.id, option.id)}
+                              checked={(selections[uploadedImages[selectedImageIndex].id] || []).includes(option.id)}
+                              onChange={() => toggleTransformation(uploadedImages[selectedImageIndex].id, option.id)}
                               disabled={isProcessing}
+                              style={{ marginRight: '8px' }}
                             />
-                            <span className="product-lab-enhancement-name">
+                            <span className="product-lab-enhancement-name" style={{ fontWeight: 'bold', flex: '1' }}>
                               {option.name}
                             </span>
-                            <span className="product-lab-enhancement-cost">
+                            <span className="product-lab-enhancement-cost" style={{ backgroundColor: '#3e97ff', color: 'white', padding: '2px 6px', borderRadius: '12px', fontSize: '0.8rem' }}>
                               {option.creditCost} credit{option.creditCost !== 1 ? 's' : ''}
                             </span>
                           </label>
-                          <div className="product-lab-enhancement-description">
+                          <div className="product-lab-enhancement-description" style={{ fontSize: '0.9rem', color: '#555' }}>
                             {option.description}
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                ))}
+                )}
                 
                 {/* Credit Summary and Submit */}
                 <div className="product-lab-credit-summary">
