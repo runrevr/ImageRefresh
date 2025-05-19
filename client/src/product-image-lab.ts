@@ -199,15 +199,17 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
       const imageFiles = Array.from(files);
       
       // Process each file to get a URL and metadata
+      const timestamp = Date.now(); // Use same timestamp for batch to avoid duplication
       const processedImages: UploadedImage[] = imageFiles.map((file, index) => ({
-        id: `upload-${Date.now()}-${index}`,
+        id: `upload-${timestamp}-${index}`,
         file,
         name: file.name,
         url: URL.createObjectURL(file),
         uploadedAt: new Date().toISOString(),
       }));
       
-      setUploadedImages(prev => [...prev, ...processedImages]);
+      // Replace existing images to prevent duplication
+      setUploadedImages(processedImages);
       return processedImages;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error uploading images';
@@ -297,6 +299,7 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
       if (!isSimulated) {
         try {
           console.log(`Attempting API call to ${webhookUrl} for image transformation`);
+          console.log(`Request data: imageId=${imageId}, transformationType=${transformationType}, using N8N webhook`);
           
           // Add timeout for API calls
           const controller = new AbortController();
@@ -309,6 +312,11 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
           // First try the N8N webhook endpoint
           let response;
           try {
+            // Log webhook details for debugging
+            console.log(`Sending webhook to: ${webhookUrl}`);
+            console.log(`Image name: ${image.name}, size: ${Math.round(image.file.size / 1024)} KB`);
+            console.log(`Transformation: ${transformOption.name} (${transformationType})`);
+            
             // Add CORS handling for external APIs
             response = await fetch(webhookUrl, {
               method: 'POST',
@@ -371,12 +379,47 @@ export const useProductImageLab = (options: ProductImageLabOptions = {}): Produc
               // Clear any previous errors
               setError(null);
               
-              console.log('API call successful, got transformed image URL');
+              // Log detailed response for debugging
+              console.log('N8N webhook API call successful:', {
+                transformedImageUrl,
+                responseData: data,
+                timestamp: new Date().toISOString()
+              });
+              
+              // Store debug info for webhook response
+              setDebugInfo(prev => ({
+                ...prev,
+                lastN8NResponse: {
+                  endpoint: webhookUrl,
+                  responseData: data,
+                  timestamp: new Date().toISOString(),
+                  status: 'success'
+                }
+              }));
             } catch (parseError) {
               // JSON parse error - log and switch to simulation
               console.error('Failed to parse API response:', parseError);
               
               setError('Received an invalid response from the server. Please try again.');
+              
+              // Log detailed error for debugging
+              console.error('N8N webhook response parsing error:', {
+                error: parseError instanceof Error ? parseError.message : String(parseError),
+                responseText: await response.text(),
+                status: response.status,
+                timestamp: new Date().toISOString()
+              });
+              
+              // Store debug info for webhook error
+              setDebugInfo(prev => ({
+                ...prev,
+                lastN8NError: {
+                  endpoint: webhookUrl,
+                  errorType: 'parse',
+                  error: parseError instanceof Error ? parseError.message : String(parseError),
+                  timestamp: new Date().toISOString()
+                }
+              }));
               
               // Fall back to simulation mode
               console.log('Falling back to simulation mode due to parsing error');
