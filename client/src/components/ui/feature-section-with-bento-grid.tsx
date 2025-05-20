@@ -123,7 +123,7 @@ export const SkeletonOne = () => {
       </div>
       
       <div className="flex justify-center mt-2 relative z-30">
-        <RainbowButton>Transform Image</RainbowButton>
+        <RainbowButton>Let's Make Magic</RainbowButton>
       </div>
 
       <div className="absolute bottom-0 z-20 inset-x-0 h-40 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
