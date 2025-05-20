@@ -14,19 +14,31 @@ const features = [
   },
   { 
     title: "Cartoon Effects", 
-    image: "/src/assets/ghibli.png"
+    image: "/src/assets/pixar us.png"
+  },
+  { 
+    title: "Restaurant", 
+    image: "/src/assets/Mexican Food.png"
   },
   { 
     title: "Ghibli Style", 
-    image: "/src/assets/lego-character.png"
+    image: "/src/assets/Ghibli Style.png"
+  },
+  { 
+    title: "Scroll Stopping", 
+    image: "/src/assets/headphones.png"
   },
   { 
     title: "Renaissance Art", 
     image: "/src/assets/Renaissance.png"
   },
   { 
+    title: "1980's", 
+    image: "/src/assets/80s.png"
+  },
+  { 
     title: "Game Characters", 
-    image: "/src/assets/trump-mullet.png"
+    image: "/src/assets/mario.png"
   },
   { 
     title: "Pet Transformations", 
@@ -36,6 +48,31 @@ const features = [
     title: "Old Western", 
     image: "/src/assets/Western.png"
   },
+  { 
+    title: "Lego", 
+    image: "/src/assets/Lego.png"
+  },
+  // 5 additional categories
+  { 
+    title: "Anime Style", 
+    image: "/src/assets/trump-mullet.png"
+  },
+  { 
+    title: "Cyberpunk", 
+    image: "/src/assets/tk-ts-baby.jpg" 
+  },
+  { 
+    title: "Watercolor", 
+    image: "/src/assets/sunset-shampoo.jpg"
+  },
+  { 
+    title: "Pop Art", 
+    image: "/src/assets/Disco.png"
+  },
+  { 
+    title: "Fantasy Characters", 
+    image: "/src/assets/alicorn-drawing.jpg"
+  }
 ]
 
 const velocity = [3, -3]
