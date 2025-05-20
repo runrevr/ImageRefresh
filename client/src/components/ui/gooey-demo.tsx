@@ -1,36 +1,57 @@
 import { useScreenSize } from "@/hooks/use-screen-size"
 import { PixelTrail } from "@/components/ui/pixel-trail"
 import { GooeyFilter } from "@/components/ui/gooey-filter"
-import kidsDrawingConverted from "@/assets/kids-drawing-converted.png"
 
 function GooeyDemo() {
   const screenSize = useScreenSize()
 
   return (
-    <div className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-center gap-8 bg-black text-center text-pretty overflow-hidden">
-      <img
-        src={kidsDrawingConverted}
-        alt="Child's drawing converted to 3D character" 
-        className="w-full h-full object-contain absolute inset-0"
-      />
-
-      <GooeyFilter id="gooey-filter-pixel-trail" strength={5} />
-
-      <div
-        className="absolute inset-0 z-0"
-        style={{ filter: "url(#gooey-filter-pixel-trail)" }}
-      >
-        <PixelTrail
-          pixelSize={screenSize.lessThan(`md`) ? 24 : 32}
-          fadeDuration={0}
-          delay={500}
-          pixelClassName="bg-white"
-        />
+    <div className="relative w-full min-h-[700px] flex flex-col items-center justify-center py-16 bg-black text-center overflow-hidden">
+      <div className="container mx-auto px-4">
+        <div className="max-w-5xl mx-auto bg-[#111] p-8 rounded-2xl">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="flex flex-col items-center">
+              <h3 className="text-2xl font-bungee text-blue-400 mb-4">Kid's Drawing</h3>
+              <div className="w-full aspect-square bg-[#222] rounded-xl overflow-hidden">
+                <img 
+                  src="https://i.ibb.co/SVQ4cK7/kid-drawing.jpg" 
+                  alt="Child's drawing" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col items-center">
+              <h3 className="text-2xl font-bungee text-orange-400 mb-4">AI Generated</h3>
+              <div className="w-full aspect-square bg-[#222] rounded-xl overflow-hidden">
+                <img 
+                  src="https://i.ibb.co/hZDgf5F/kid-drawing-3d.jpg" 
+                  alt="AI generated 3D character" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <h2 className="text-5xl md:text-6xl font-bungee text-white mt-12 leading-tight">
+            Convert your child's drawings into real life characters
+          </h2>
+          
+          <div className="mt-8 relative">
+            <GooeyFilter id="gooey-filter-pixel-trail" strength={5} />
+            <div
+              className="h-20 z-0"
+              style={{ filter: "url(#gooey-filter-pixel-trail)" }}
+            >
+              <PixelTrail
+                pixelSize={screenSize.lessThan(`md`) ? 16 : 24}
+                fadeDuration={0}
+                delay={300}
+                pixelClassName="bg-blue-500"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-
-      <p className="text-white text-6xl md:text-7xl z-10 font-bungee w-4/5 md:w-3/4 lg:w-2/3 mx-auto mt-20">
-        Convert your child's drawings into real life characters
-      </p>
     </div>
   )
 }
