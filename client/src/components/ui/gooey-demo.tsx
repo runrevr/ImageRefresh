@@ -8,7 +8,7 @@ function GooeyDemo() {
   return (
     <div className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-center gap-8 bg-black text-center text-pretty overflow-hidden">
       <img
-        src="/images/kids drawing converted.png"
+        src="/images/kids-drawing-converted.png"
         alt="Child's drawing converted to 3D character" 
         className="w-full h-full object-contain absolute inset-0"
       />
