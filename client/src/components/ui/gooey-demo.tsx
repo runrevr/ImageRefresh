@@ -6,12 +6,15 @@ function GooeyDemo() {
   const screenSize = useScreenSize()
 
   return (
-    <div className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-center gap-8 bg-black text-center text-pretty overflow-hidden">
-      <img
-        src="/images/kids-drawing-converted.png"
-        alt="Child's drawing converted to 3D character" 
-        className="w-full h-full object-contain absolute inset-0"
-      />
+    <div 
+      className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-center gap-8 bg-black text-center text-pretty overflow-hidden"
+      style={{
+        backgroundImage: "url('https://i.ibb.co/LdvHQVD/kids-drawing-converted.png')",
+        backgroundPosition: "center",
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat"
+      }}
+    >
 
       <GooeyFilter id="gooey-filter-pixel-trail" strength={5} />
 
