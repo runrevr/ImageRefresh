@@ -156,54 +156,7 @@ function DemoPage() {
         </motion.div>
       </section>
 
-      {/* Demo Text Rotation Section */}
-      <section className="py-20 px-4 bg-black/30 backdrop-blur-sm">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8">Animation Showcase</h2>
-          
-          <div className="mb-12 p-8 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-md shadow-xl">
-            <h3 className="text-xl mb-6">Text Rotation Component</h3>
-            <div className="text-2xl md:text-3xl font-bold mb-6 h-12">
-              <TextRotate
-                ref={textRotateRef}
-                texts={[
-                  "Staggered character animations",
-                  "Simple text rotation",
-                  "Customizable transitions",
-                  "Multiple animation modes",
-                  "Interactive controls",
-                ]}
-                rotationInterval={3000}
-                staggerDuration={0.05}
-                staggerFrom="center"
-                mainClassName="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400"
-              />
-            </div>
-            
-            <div className="flex justify-center gap-2 mt-4">
-              <Button 
-                variant="secondary"
-                size="sm"
-                onClick={() => textRotateRef.current?.previous()}
-              >
-                Previous
-              </Button>
-              <Button 
-                variant="secondary"
-                size="sm"
-                onClick={() => textRotateRef.current?.next()}
-              >
-                Next
-              </Button>
-              <Button 
-                variant="secondary"
-                size="sm"
-                onClick={() => textRotateRef.current?.reset()}
-              >
-                Reset
-              </Button>
-            </div>
-          </div>
+      
           
           <div className="p-8 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-md shadow-xl">
             <h3 className="text-xl mb-6">Parallax Floating Images</h3>
