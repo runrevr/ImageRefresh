@@ -63,13 +63,12 @@ function CreativePricing({
                     >
                         <div
                             className={cn(
-                                "absolute inset-0 bg-white dark:bg-zinc-900",
-                                "border-2 border-zinc-900 dark:border-white",
-                                "rounded-lg shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
+                                "absolute inset-0 bg-white dark:bg-dark",
+                                "border border-dark dark:border-light",
+                                "rounded-lg shadow-lg",
                                 "transition-all duration-300",
-                                "group-hover:shadow-[8px_8px_0px_0px]",
-                                "group-hover:translate-x-[-4px]",
-                                "group-hover:translate-y-[-4px]"
+                                "group-hover:shadow-xl",
+                                "group-hover:translate-y-[-2px]"
                             )}
                         />
 
@@ -94,20 +93,20 @@ function CreativePricing({
                                 >
                                     {tier.icon}
                                 </div>
-                                <h3 className="font-handwritten text-2xl text-zinc-900 dark:text-white">
+                                <h3 className="font-bungee text-2xl text-dark dark:text-light">
                                     {tier.name}
                                 </h3>
-                                <p className="font-handwritten text-zinc-600 dark:text-zinc-400">
+                                <p className="font-montserrat text-body dark:text-light">
                                     {tier.description}
                                 </p>
                             </div>
 
                             {/* Price */}
-                            <div className="mb-6 font-handwritten">
-                                <span className="text-4xl font-bold text-zinc-900 dark:text-white">
+                            <div className="mb-6 font-montserrat">
+                                <span className="text-4xl font-bold text-dark dark:text-light">
                                     ${tier.price}
                                 </span>
-                                <span className="text-zinc-600 dark:text-zinc-400">
+                                <span className="text-body dark:text-light">
                                     /month
                                 </span>
                             </div>
@@ -119,12 +118,12 @@ function CreativePricing({
                                         className="flex items-center gap-3"
                                     >
                                         <div
-                                            className="w-5 h-5 rounded-full border-2 border-zinc-900 
-                                            dark:border-white flex items-center justify-center"
+                                            className="w-5 h-5 rounded-full border-2 border-brand-primary
+                                            flex items-center justify-center"
                                         >
-                                            <Check className="w-3 h-3" />
+                                            <Check className="w-3 h-3 text-brand-primary" />
                                         </div>
-                                        <span className="font-handwritten text-lg text-zinc-900 dark:text-white">
+                                        <span className="font-montserrat text-lg text-dark dark:text-light">
                                             {feature}
                                         </span>
                                     </div>
@@ -133,25 +132,17 @@ function CreativePricing({
 
                             <Button
                                 className={cn(
-                                    "w-full h-12 font-handwritten text-lg relative",
-                                    "border-2 border-zinc-900 dark:border-white",
+                                    "w-full h-12 font-montserrat text-lg relative",
+                                    "border border-dark dark:border-light rounded-md",
                                     "transition-all duration-300",
-                                    "shadow-[4px_4px_0px_0px] shadow-zinc-900 dark:shadow-white",
-                                    "hover:shadow-[6px_6px_0px_0px]",
-                                    "hover:translate-x-[-2px] hover:translate-y-[-2px]",
                                     tier.popular
                                         ? [
-                                              "bg-amber-400 text-zinc-900",
-                                              "hover:bg-amber-300",
-                                              "active:bg-amber-400",
-                                              "dark:hover:bg-amber-300",
-                                              "dark:active:bg-amber-400",
+                                              "bg-brand-secondary text-white",
+                                              "hover:bg-brand-secondary/90",
                                           ]
                                         : [
-                                              "bg-zinc-50 dark:bg-zinc-800",
-                                              "text-zinc-900 dark:text-white",
-                                              "hover:bg-white dark:hover:bg-zinc-700",
-                                              "active:bg-zinc-50 dark:active:bg-zinc-800",
+                                              "bg-brand-primary text-white",
+                                              "hover:bg-brand-primary/90",
                                           ]
                                 )}
                             >

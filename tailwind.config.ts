@@ -7,6 +7,7 @@ export default {
     extend: {
       fontFamily: {
         bungee: ["Bungee", "cursive"],
+        montserrat: ["Montserrat", "sans-serif"],
         rubik: ["Rubik", "sans-serif"],
       },
       borderRadius: {
