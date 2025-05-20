@@ -9,6 +9,7 @@ import shampooBottle2 from "@/assets/shampoo-2.png";
 import shampooBottle3 from "@/assets/shampoo-3.png";
 import shampooBottle4 from "@/assets/shampoo-4.png";
 import shampooBottle5 from "@/assets/sunset-shampoo.jpg";
+import minecraftImage from "@assets/Minecraft.png";
 // @ts-ignore - cobe doesn't have types
 import createGlobe from "cobe";
 
@@ -38,7 +39,7 @@ export function FeaturesSectionWithBentoGrid() {
         "col-span-1 md:col-span-3 lg:col-span-3 border-b md:border-r dark:border-neutral-800",
     },
     {
-      title: "Turn Your Little Ones Into Superheroes",
+      title: "Turn Your Little Ones Into Their Favorite Cartoon Character",
       description:
         "Create magical memories by transforming your children's photos into Minecraft characters, LEGO figurines, Super Mario Bros adventures, superheroes, Pixar-style animations and more—making them the stars of their own favorite universes.",
       skeleton: <SkeletonFour />,
@@ -226,8 +227,8 @@ export const SkeletonFour = () => {
     <div className="h-60 md:h-60 flex flex-col items-center justify-center relative bg-transparent dark:bg-transparent mt-10">
       <div className="flex items-center justify-center w-full h-full">
         <img 
-          src="https://images.unsplash.com/photo-1486783046960-64d2ef697c62?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Kids playing"
+          src={minecraftImage}
+          alt="Minecraft character named Bobby"
           className="w-full h-full object-cover rounded-xl shadow-xl"
         />
       </div>
