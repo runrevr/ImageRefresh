@@ -47,74 +47,77 @@ function DemoPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
       {/* Hero Section with Parallax Effect */}
-      <section className="w-full h-screen overflow-hidden md:overflow-visible flex flex-col items-center justify-center relative">
-        <Floating sensitivity={0.5} className="h-full w-full">
-          <FloatingElement
-            depth={0.5}
-            className="top-[15%] left-[2%] md:top-[25%] md:left-[5%]"
-          >
-            <motion.img
-              src={exampleImages[0].url}
-              alt={exampleImages[0].title}
-              className="w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform -rotate-[3deg] shadow-2xl rounded-xl"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            />
-          </FloatingElement>
+      <section className="w-full h-screen relative flex items-center justify-center overflow-hidden">
+        {/* Background with Floating Images */}
+        <div className="absolute inset-0 w-full h-full">
+          <Floating sensitivity={0.5} className="h-full w-full">
+            <FloatingElement
+              depth={0.5}
+              className="top-[15%] left-[2%] md:top-[25%] md:left-[5%]"
+            >
+              <motion.img
+                src={exampleImages[0].url}
+                alt={exampleImages[0].title}
+                className="w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform -rotate-[3deg] shadow-2xl rounded-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              />
+            </FloatingElement>
 
-          <FloatingElement
-            depth={1}
-            className="top-[8%] right-[10%] md:top-[10%] md:right-[15%]"
-          >
-            <motion.img
-              src={exampleImages[1].url}
-              alt={exampleImages[1].title}
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform rotate-3 shadow-2xl rounded-xl"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            />
-          </FloatingElement>
+            <FloatingElement
+              depth={1}
+              className="top-[8%] right-[10%] md:top-[10%] md:right-[15%]"
+            >
+              <motion.img
+                src={exampleImages[1].url}
+                alt={exampleImages[1].title}
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform rotate-3 shadow-2xl rounded-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+              />
+            </FloatingElement>
 
-          <FloatingElement
-            depth={1.5}
-            className="bottom-[15%] left-[10%] md:bottom-[25%] md:left-[15%]"
-          >
-            <motion.img
-              src={exampleImages[2].url}
-              alt={exampleImages[2].title}
-              className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform rotate-6 shadow-2xl rounded-xl"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
-            />
-          </FloatingElement>
+            <FloatingElement
+              depth={1.5}
+              className="bottom-[15%] left-[10%] md:bottom-[25%] md:left-[15%]"
+            >
+              <motion.img
+                src={exampleImages[2].url}
+                alt={exampleImages[2].title}
+                className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform rotate-6 shadow-2xl rounded-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9 }}
+              />
+            </FloatingElement>
 
-          <FloatingElement
-            depth={2}
-            className="bottom-[10%] right-[5%] md:bottom-[15%] md:right-[10%]"
-          >
-            <motion.img
-              src={exampleImages[3].url}
-              alt={exampleImages[3].title}
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform -rotate-6 shadow-2xl rounded-xl"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.1 }}
-            />
-          </FloatingElement>
-        </Floating>
+            <FloatingElement
+              depth={2}
+              className="bottom-[10%] right-[5%] md:bottom-[15%] md:right-[10%]"
+            >
+              <motion.img
+                src={exampleImages[3].url}
+                alt={exampleImages[3].title}
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform -rotate-6 shadow-2xl rounded-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.1 }}
+              />
+            </FloatingElement>
+          </Floating>
+        </div>
 
-        {/* Center Content */}
+        {/* Center Content - Now fully centered and with proper z-index */}
         <motion.div 
-          className="z-10 text-center px-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          className="z-20 w-full max-w-4xl mx-auto px-6 text-center relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
           <img src={logo} alt="Logo" className="h-12 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             Transform Images with{" "}
             <TextRotate
               texts={[
@@ -133,7 +136,7 @@ function DemoPage() {
               mainClassName="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 font-bold"
             />
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
             Our AI-powered platform transforms your images into stunning works of art with just a few clicks.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
