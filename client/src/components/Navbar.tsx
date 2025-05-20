@@ -45,12 +45,12 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
           >
             Ideas
           </Link>
-          <Link
-            href="/product-image-lab"
+          <a
+            href="/product-image-lab-html"
             className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
           >
             Product Image Lab
-          </Link>
+          </a>
           <Link
             href="/pricing"
             className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
