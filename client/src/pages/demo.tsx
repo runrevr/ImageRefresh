@@ -53,7 +53,7 @@ function DemoPage() {
           <Floating sensitivity={0.5} className="h-full w-full">
             <FloatingElement
               depth={0.8}
-              className="top-[20%] left-[20%] md:top-[25%] md:left-[25%]"
+              className="top-[5%] left-[5%] md:top-[8%] md:left-[8%]"
             >
               <motion.img
                 src={exampleImages[0].url}
@@ -67,7 +67,7 @@ function DemoPage() {
 
             <FloatingElement
               depth={1}
-              className="top-[20%] right-[20%] md:top-[25%] md:right-[25%]"
+              className="top-[5%] right-[5%] md:top-[8%] md:right-[8%]"
             >
               <motion.img
                 src={exampleImages[1].url}
@@ -81,7 +81,7 @@ function DemoPage() {
 
             <FloatingElement
               depth={1.5}
-              className="bottom-[20%] left-[20%] md:bottom-[25%] md:left-[25%]"
+              className="bottom-[5%] left-[5%] md:bottom-[8%] md:left-[8%]"
             >
               <motion.img
                 src={exampleImages[2].url}
@@ -95,7 +95,7 @@ function DemoPage() {
 
             <FloatingElement
               depth={2}
-              className="bottom-[20%] right-[20%] md:bottom-[25%] md:right-[25%]"
+              className="bottom-[5%] right-[5%] md:bottom-[8%] md:right-[8%]"
             >
               <motion.img
                 src={exampleImages[3].url}
