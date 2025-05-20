@@ -11,6 +11,7 @@ import { setupOpenAITestRoutes } from "./openai-test-route";
 import { setupSimpleRouter } from "./simple-router";
 import { setupWebhookTestRoutes } from "./routes/webhook-test";
 import { setupStaticRoutes } from "./routes/static-routes";
+import { setupProductImageLabRoutes } from "./routes/product-image-lab-routes";
 import fs from 'fs';
 import path from 'path';
 
