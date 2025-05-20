@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import { LayoutGroup, motion } from "framer-motion"
 import { TextRotate, TextRotateRef } from "@/components/ui/text-rotate"
 import Floating, { FloatingElement } from "@/components/ui/parallax-floating"
+import { FeaturesSectionWithBentoGrid } from "@/components/ui/feature-section-with-bento-grid"
 import { Button } from "@/components/ui/button"
 import { Link } from "wouter"
 
@@ -236,6 +237,11 @@ function DemoPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Features Bento Grid Section */}
+      <section className="bg-white dark:bg-gray-950 text-black dark:text-white py-10">
+        <FeaturesSectionWithBentoGrid />
       </section>
     </div>
   );
