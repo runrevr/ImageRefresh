@@ -23,14 +23,14 @@ export function FeaturesSectionWithBentoGrid() {
         "Upload any photo and watch our AI transform it into funny clips, superhero portraits, or professional product shots—all with just one click.",
       skeleton: <SkeletonOne />,
       className:
-        "col-span-1 md:col-span-4 lg:col-span-4 border-b md:border-r dark:border-neutral-800",
+        "col-span-1 md:col-span-3 lg:col-span-3 border-b md:border-r dark:border-neutral-800",
     },
     {
       title: "Sell More With Stunning Product Photos",
       description:
         "Small business owners save thousands on photography. Our AI analyzes your product and industry to create scroll-stopping images that convert browsers into buyers.",
       skeleton: <SkeletonTwo />,
-      className: "col-span-1 md:col-span-2 lg:col-span-2 border-b dark:border-neutral-800",
+      className: "col-span-1 md:col-span-3 lg:col-span-3 border-b dark:border-neutral-800",
     },
     {
       title: "Unleash Your Imagination",
