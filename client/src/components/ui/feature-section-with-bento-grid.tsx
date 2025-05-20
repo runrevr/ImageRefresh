@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
+import dinoHorseImage from "@/assets/dino-horse.webp";
 // @ts-ignore - cobe doesn't have types
 import createGlobe from "cobe";
 
@@ -108,9 +109,9 @@ export const SkeletonOne = () => {
       <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
         <div className="flex flex-1 w-full h-full flex-col space-y-2">
             <img
-              src="https://images.unsplash.com/photo-1517322048670-4fba75cbbb62?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              src={dinoHorseImage}
               alt="Dinosaur-Horse Hybrid"
-              className="h-full w-full aspect-square object-cover object-left-top rounded-sm"
+              className="h-full w-full aspect-square object-cover object-center rounded-sm"
             />
           </div>
 
