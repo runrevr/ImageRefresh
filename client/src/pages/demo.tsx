@@ -117,15 +117,17 @@ function DemoPage() {
           transition={{ delay: 0.3 }}
         >
           <img src={logo} alt="Logo" className="h-12 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Transform Images with{" "}
+          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
+            Make your{" "}
+            <br className="hidden sm:block" />
+            website{" "}
             <TextRotate
               texts={[
-                "AI",
-                "Creativity",
-                "Magic",
-                "Intelligence",
-                "Precision",
+                "lovely",
+                "beautiful",
+                "perfect",
+                "amazing",
+                "stunning",
               ]}
               rotationInterval={2000}
               staggerDuration={0.03}
@@ -133,13 +135,13 @@ function DemoPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "-50%", opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              mainClassName="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 font-bold"
+              mainClassName="text-blue-600 font-bold inline-block"
             />
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
-            Our AI-powered platform transforms your images into stunning works of art with just a few clicks.
+          <p className="text-xl md:text-2xl text-gray-800 mb-12 max-w-3xl mx-auto leading-relaxed">
+            with a growing library of ready-to-use react components & microinteractions. free & open source.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link href="/home">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
                 Try it Now
