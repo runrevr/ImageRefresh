@@ -134,7 +134,7 @@ function DemoPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "-50%", opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              mainClassName="text-blue-600 font-bold inline-block"
+              mainClassName="text-[#FF7B54] font-bold inline-block"
             />
           </h1>
           <p className="text-xl md:text-2xl text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
