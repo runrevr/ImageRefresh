@@ -51,19 +51,7 @@ function DemoPage() {
         {/* Background with Floating Images */}
         <div className="absolute inset-0 w-full h-full">
           <Floating sensitivity={0.5} className="h-full w-full">
-            <FloatingElement
-              depth={0.5}
-              className="top-[15%] left-[2%] md:top-[25%] md:left-[5%]"
-            >
-              <motion.img
-                src={exampleImages[0].url}
-                alt={exampleImages[0].title}
-                className="w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 object-cover hover:scale-105 duration-200 cursor-pointer transition-transform -rotate-[3deg] shadow-2xl rounded-xl"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              />
-            </FloatingElement>
+            
 
             <FloatingElement
               depth={1}
