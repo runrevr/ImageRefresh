@@ -2,15 +2,15 @@
 
 import { ScrollVelocity } from "@/components/ui/scroll-velocity"
 
-// Import image assets
-import mulletImage from '@assets/Trump Mullet.png'
-import minecraftImage from '@assets/Minecraft.png'
-import imageRefreshLogo from '@assets/image_1747768935300.png'
-import ghibliImage from '@assets/image_1747770172166.png'
-import cartoonsImage from '@assets/image_1747772845891.png'
-import bearImage from '@assets/image_1747772928802.png'
-import catsImage from '@assets/image_1747773056439.png'
-import robotImage from '@assets/image_1747773067533.png'
+// Define relative paths to assets
+const mulletImage = '../../assets/Trump Mullet.png'
+const minecraftImage = '../../assets/Minecraft.png'
+const imageRefreshLogo = '../../assets/image_1747768935300.png'
+const ghibliImage = '../../assets/image_1747770172166.png'
+const cartoonsImage = '../../assets/image_1747772845891.png'
+const bearImage = '../../assets/image_1747772928802.png'
+const catsImage = '../../assets/image_1747773056439.png'
+const robotImage = '../../assets/image_1747773067533.png'
 
 const images = [
   {
