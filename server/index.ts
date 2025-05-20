@@ -10,6 +10,7 @@ import { setupTestRoutes } from "./routes/test-route";
 import { setupOpenAITestRoutes } from "./openai-test-route";
 import { setupSimpleRouter } from "./simple-router";
 import { setupWebhookTestRoutes } from "./routes/webhook-test";
+import { setupStaticRoutes } from "./routes/static-routes";
 import fs from 'fs';
 import path from 'path';
 
