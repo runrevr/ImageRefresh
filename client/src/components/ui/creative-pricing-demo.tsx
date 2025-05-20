@@ -1,47 +1,47 @@
 import { CreativePricing } from "@/components/ui/creative-pricing"
 import type { PricingTier } from "@/components/ui/creative-pricing"
-import { Check, Pencil, Star, Sparkles } from "lucide-react";
+import { Check, Pencil, Star, Sparkles, Image } from "lucide-react";
 
 const sampleTiers: PricingTier[] = [
     {
+        name: "Free",
+        icon: <Image className="w-6 h-6" />,
+        price: 0,
+        description: "Try out our amazing transformations",
+        color: "green",
+        features: [
+            "3 Free Transformations",
+            "Basic Image Styles",
+            "Standard Resolution",
+            "Watermarked Exports",
+        ],
+    },
+    {
         name: "Creator",
         icon: <Pencil className="w-6 h-6" />,
-        price: 29,
-        description: "Perfect for short video beginners",
+        price: 19,
+        description: "Perfect for casual creators",
         color: "amber",
         features: [
-            "60-second Video Export",
-            "10 Trending Templates",
-            "Auto Text-to-Speech",
-            "Basic Transitions",
+            "25 Transformations/Month",
+            "50+ Premium Styles",
+            "High-Resolution Exports",
+            "No Watermarks",
         ],
     },
     {
-        name: "Influencer",
-        icon: <Star className="w-6 h-6" />,
-        price: 79,
-        description: "For serious content creators",
-        color: "blue",
-        features: [
-            "3-minute Video Export",
-            "Voice Effects & Filters",
-            "Trending Sound Library",
-            "Auto Captions & Subtitles",
-        ],
-        popular: true,
-    },
-    {
-        name: "Pro Studio",
+        name: "Pro",
         icon: <Sparkles className="w-6 h-6" />,
-        price: 149,
-        description: "For viral content masters",
+        price: 49,
+        description: "For professional needs",
         color: "purple",
         features: [
-            "Multi-clip Editing",
-            "Green Screen Effects",
-            "Viral Sound Detection",
-            "Engagement Analytics",
+            "Unlimited Transformations",
+            "100+ Premium Styles",
+            "4K Resolution Exports",
+            "Priority Processing",
         ],
+        popular: true,
     },
 ];
 
