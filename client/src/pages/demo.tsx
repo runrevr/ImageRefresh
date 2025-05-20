@@ -4,6 +4,7 @@ import { TextRotate, TextRotateRef } from "@/components/ui/text-rotate"
 import Floating, { FloatingElement } from "@/components/ui/parallax-floating"
 import { FeaturesSectionWithBentoGrid } from "@/components/ui/feature-section-with-bento-grid"
 import { ScrollVelocityDemo } from "@/components/ui/scroll-velocity-demo"
+import { CreativePricingDemo } from "@/components/ui/creative-pricing-demo"
 import { Button } from "@/components/ui/button"
 import { Link } from "wouter"
 
@@ -164,6 +165,11 @@ function DemoPage() {
       {/* Scroll Velocity Demo Section */}
       <section className="bg-white text-black">
         <ScrollVelocityDemo />
+      </section>
+      
+      {/* Creative Pricing Section */}
+      <section className="bg-white text-black py-20">
+        <CreativePricingDemo />
       </section>
     </div>
   );

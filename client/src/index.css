@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import a handwritten-style Google Font for the Creative Pricing component */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
+
+@layer base {
+  .font-handwritten {
+    font-family: 'Caveat', cursive;
+  }
+}
+
 .mt-screen {
   margin-top: 100vh;
 }
