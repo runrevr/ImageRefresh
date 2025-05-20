@@ -9,6 +9,13 @@
 }
 
 :root {
+  /* Rainbow button colors */
+  --color-1: 0 100% 63%;
+  --color-2: 270 100% 63%;
+  --color-3: 210 100% 63%;
+  --color-4: 195 100% 63%;
+  --color-5: 90 100% 63%;
+  
   --background: 0 0% 100%;
   --foreground: 0 0% 20%; /* #333333 (neutral-dark) */
   --muted: 0 0% 95%; /* #F2F2F2 (neutral-light) */
