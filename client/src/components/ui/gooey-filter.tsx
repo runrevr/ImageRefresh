@@ -1,30 +1,23 @@
-const GooeyFilter = ({
-  id = "goo-filter",
-  strength = 10,
-}: {
-  id?: string
+interface GooeyFilterProps {
+  id: string
   strength?: number
-}) => {
+}
+
+export function GooeyFilter({ id, strength = 6 }: GooeyFilterProps) {
   return (
-    <svg className="hidden absolute">
+    <svg style={{ position: "absolute", width: 0, height: 0 }}>
       <defs>
         <filter id={id}>
-          <feGaussianBlur
-            in="SourceGraphic"
-            stdDeviation={strength}
-            result="blur"
-          />
+          <feGaussianBlur in="SourceGraphic" stdDeviation={strength} result="blur" />
           <feColorMatrix
             in="blur"
-            type="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-            result="goo"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+            result="gooey"
           />
-          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
         </filter>
       </defs>
     </svg>
   )
 }
-
-export { GooeyFilter }

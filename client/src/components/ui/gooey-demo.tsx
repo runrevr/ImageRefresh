@@ -10,7 +10,7 @@ function GooeyDemo() {
       <img
         src="/attached_assets/kids drawing converted.png"
         alt="Child's drawing converted to 3D character" 
-        className="w-full h-full object-contain absolute inset-0 opacity-100"
+        className="w-full h-full object-contain absolute inset-0"
       />
 
       <GooeyFilter id="gooey-filter-pixel-trail" strength={5} />
@@ -27,7 +27,7 @@ function GooeyDemo() {
         />
       </div>
 
-      <p className="text-white text-6xl md:text-7xl z-10 font-bungee w-4/5 md:w-3/4 lg:w-2/3 mx-auto">
+      <p className="text-white text-6xl md:text-7xl z-10 font-bungee w-4/5 md:w-3/4 lg:w-2/3 mx-auto mt-20">
         Convert your child's drawings into real life characters
       </p>
     </div>
