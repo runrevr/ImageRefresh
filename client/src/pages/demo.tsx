@@ -116,7 +116,6 @@ function DemoPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <img src={logo} alt="Logo" className="h-12 mx-auto mb-6" />
           <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
             Make your{" "}
             <br className="hidden sm:block" />
