@@ -2,18 +2,15 @@ import { useScreenSize } from "@/hooks/use-screen-size"
 import { PixelTrail } from "@/components/ui/pixel-trail"
 import { GooeyFilter } from "@/components/ui/gooey-filter"
 
-// Import a child drawing image from assets
-import childDrawing from "@/assets/alicorn-drawing.jpg"
-
 function GooeyDemo() {
   const screenSize = useScreenSize()
 
   return (
     <div className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-center gap-8 bg-black text-center text-pretty overflow-hidden">
       <img
-        src={childDrawing}
-        alt="child's drawing"
-        className="w-full h-full object-cover absolute inset-0 opacity-70"
+        src="/attached_assets/kids drawing converted.png"
+        alt="Child's drawing converted to 3D character" 
+        className="w-full h-full object-contain absolute inset-0 opacity-100"
       />
 
       <GooeyFilter id="gooey-filter-pixel-trail" strength={5} />
