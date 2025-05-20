@@ -83,7 +83,7 @@ const FeatureCard = ({
   className?: string;
 }) => {
   return (
-    <div className={cn(`p-4 sm:p-8 relative overflow-hidden`, className)}>
+    <div className={cn(`p-4 sm:p-8 relative overflow-hidden w-full lg:w-[80%] xl:w-[70%] mx-auto`, className)}>
       {children}
     </div>
   );
