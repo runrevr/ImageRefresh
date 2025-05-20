@@ -4,7 +4,11 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import dinoHorseImage from "@/assets/dino-horse.webp";
-import shampooBottleImage from "@/assets/shampoo-bottle.jpg";
+import shampooBottle1 from "@/assets/shampoo-1.jpg";
+import shampooBottle2 from "@/assets/shampoo-2.png";
+import shampooBottle3 from "@/assets/shampoo-3.png";
+import shampooBottle4 from "@/assets/shampoo-4.png";
+import shampooBottle5 from "@/assets/sunset-shampoo.jpg";
 // @ts-ignore - cobe doesn't have types
 import createGlobe from "cobe";
 
@@ -146,8 +150,14 @@ export const SkeletonThree = () => {
 };
 
 export const SkeletonTwo = () => {
-  // Create an array with 5 elements all having the same shampoo bottle image
-  const images = Array(5).fill(shampooBottleImage);
+  // Use different shampoo bottle images for visual variety
+  const shampooImages = [
+    shampooBottle1,
+    shampooBottle2, 
+    shampooBottle3,
+    shampooBottle4,
+    shampooBottle5
+  ];
 
   const imageVariants = {
     whileHover: {
@@ -161,10 +171,11 @@ export const SkeletonTwo = () => {
       zIndex: 100,
     },
   };
+  
   return (
     <div className="relative flex flex-col items-start p-8 gap-10 h-full overflow-hidden">
       <div className="flex flex-row -ml-20">
-        {images.map((image, idx) => (
+        {shampooImages.map((image, idx) => (
           <motion.div
             variants={imageVariants}
             key={"images-first" + idx}
@@ -177,14 +188,14 @@ export const SkeletonTwo = () => {
           >
             <img
               src={image}
-              alt="Nounou shampoo bottle"
+              alt={`Shampoo bottle ${idx + 1}`}
               className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
             />
           </motion.div>
         ))}
       </div>
       <div className="flex flex-row">
-        {images.map((image, idx) => (
+        {[...shampooImages].reverse().map((image, idx) => (
           <motion.div
             key={"images-second" + idx}
             style={{
@@ -197,7 +208,7 @@ export const SkeletonTwo = () => {
           >
             <img
               src={image}
-              alt="Nounou shampoo bottle"
+              alt={`Shampoo bottle ${idx + 1}`}
               className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
             />
           </motion.div>
