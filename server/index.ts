@@ -165,6 +165,9 @@ app.use((req, res, next) => {
   
   // Register static HTML routes
   app.use(setupStaticRoutes());
+  
+  // Register Product Image Lab routes
+  app.use(setupProductImageLabRoutes());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

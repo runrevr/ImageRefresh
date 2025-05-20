@@ -1227,7 +1227,79 @@
   </div>
 
   <script>
+    // Global variables to store state
+    let uploadedImage = null;
+    let selectedEnhancements = [];
+    let currentCredits = 10;
+
+    // API endpoints
+    const API = {
+      upload: '/api/product-image-lab/upload',
+      transform: '/api/product-image-lab/transform',
+      credits: '/api/product-image-lab/credits'
+    };
+
+    // Utility functions
+    function updateCreditsDisplay(credits) {
+      const creditsDisplay = document.getElementById('credits-count');
+      if (creditsDisplay) {
+        creditsDisplay.textContent = `${credits} credits`;
+      }
+      currentCredits = credits;
+    }
+
+    function showStatus(message, type = 'normal') {
+      const statusTypes = ['normal', 'loading', 'success', 'error'];
+      const uploadTab = document.getElementById('upload-tab');
+      const ideasTab = document.getElementById('ideas-tab');
+      const optionsTab = document.getElementById('options-tab');
+      
+      let statusMessage;
+      
+      if (uploadTab.classList.contains('active')) {
+        statusMessage = uploadTab.querySelector('.status-message');
+      } else if (ideasTab.classList.contains('active')) {
+        statusMessage = ideasTab.querySelector('.status-message');
+      } else if (optionsTab.classList.contains('active')) {
+        statusMessage = optionsTab.querySelector('.status-message');
+      }
+      
+      if (statusMessage) {
+        // Remove all status types
+        statusTypes.forEach(t => statusMessage.classList.remove(`status-${t}`));
+        
+        // Add the current status type
+        statusMessage.classList.add(`status-${type}`);
+        
+        // Update the message
+        if (type === 'loading') {
+          statusMessage.innerHTML = '<div class="spinner"></div><span>' + message + '</span>';
+        } else {
+          const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+          statusMessage.innerHTML = '<i class="fas fa-' + icon + '"></i><span>' + message + '</span>';
+        }
+      }
+    }
+
+    // Initialize the app
+    async function initApp() {
+      try {
+        // Fetch user credits
+        const response = await fetch(API.credits);
+        const data = await response.json();
+        
+        if (data && data.credits) {
+          updateCreditsDisplay(data.credits.total);
+        }
+      } catch (error) {
+        console.error('Error initializing app:', error);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the app
+      initApp();
+      
       // Handle tab navigation
       const tabs = document.querySelectorAll('.tab');
       const tabContents = document.querySelectorAll('.tab-content');
@@ -1316,7 +1388,7 @@
         
         fileInput.addEventListener('change', handleFileChange);
         
-        function handleFileChange() {
+        async function handleFileChange() {
           if (fileInput.files.length) {
             const file = fileInput.files[0];
             const status = document.getElementById('upload-status');
@@ -1325,24 +1397,57 @@
             const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
             if (!validTypes.includes(file.type)) {
               status.textContent = 'Invalid file type';
+              showStatus('Invalid file type. Only JPG, PNG and WEBP are allowed.', 'error');
               return;
             }
             
             // Check file size (10MB max)
             if (file.size > 10 * 1024 * 1024) {
               status.textContent = 'File too large (max 10MB)';
+              showStatus('File too large. Maximum size is 10MB.', 'error');
               return;
             }
             
-            status.textContent = 'File selected: ' + file.name;
+            status.textContent = 'Uploading: ' + file.name;
+            showStatus('Uploading image...', 'loading');
             
-            // Simulate upload
-            document.querySelector('.status-message span').textContent = 'Image uploaded successfully!';
-            document.querySelector('.status-message').classList.remove('status-normal');
-            document.querySelector('.status-message').classList.add('status-success');
-            
-            // Enable the next button
-            document.getElementById('next-to-ideas').classList.remove('btn-disabled');
+            try {
+              // Create a FormData object to send the file
+              const formData = new FormData();
+              formData.append('image', file);
+              
+              // Upload the file to the server
+              const response = await fetch(API.upload, {
+                method: 'POST',
+                body: formData
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                status.textContent = 'File uploaded: ' + file.name;
+                showStatus('Image uploaded successfully!', 'success');
+                
+                // Store the uploaded image information
+                uploadedImage = data.file;
+                
+                // Show the original image in the ideas tab
+                const originalImage = document.querySelector('.original-image img');
+                if (originalImage) {
+                  originalImage.src = uploadedImage.url;
+                }
+                
+                // Enable the next button
+                document.getElementById('next-to-ideas').classList.remove('btn-disabled');
+              } else {
+                status.textContent = 'Upload failed: ' + (data.message || 'Unknown error');
+                showStatus('Upload failed: ' + (data.message || 'Unknown error'), 'error');
+              }
+            } catch (error) {
+              console.error('Error uploading file:', error);
+              status.textContent = 'Upload failed: Network error';
+              showStatus('Upload failed: Network error. Please try again.', 'error');
+            }
           }
         }
       }
@@ -1353,6 +1458,38 @@
       ideaCards.forEach(card => {
         card.addEventListener('click', () => {
           card.classList.toggle('selected');
+          
+          // Get the enhancement type from the card
+          const enhancementTitle = card.querySelector('h3').textContent;
+          
+          // Check if the card is now selected
+          if (card.classList.contains('selected')) {
+            // Add the enhancement type to the selectedEnhancements array if it's not already there
+            if (!selectedEnhancements.includes(enhancementTitle)) {
+              selectedEnhancements.push(enhancementTitle);
+            }
+          } else {
+            // Remove the enhancement type from the selectedEnhancements array
+            const index = selectedEnhancements.indexOf(enhancementTitle);
+            if (index !== -1) {
+              selectedEnhancements.splice(index, 1);
+            }
+          }
+          
+          // Update the status message with the number of selected enhancements
+          const message = selectedEnhancements.length > 0 ? 
+            `Selected ${selectedEnhancements.length} enhancement${selectedEnhancements.length > 1 ? 's' : ''}` : 
+            'Select one or more enhancements to apply to your product image';
+          
+          showStatus(message, 'normal');
+          
+          // Enable the next button if at least one enhancement is selected
+          const nextBtn = document.getElementById('next-to-options');
+          if (selectedEnhancements.length > 0) {
+            nextBtn.classList.remove('btn-disabled');
+          } else {
+            nextBtn.classList.add('btn-disabled');
+          }
         });
       });
       
@@ -1410,30 +1547,107 @@
       }
       
       if (generateResults) {
-        generateResults.addEventListener('click', () => {
-          // Show loading state
-          const statusMessage = document.querySelector('#options-tab .status-message');
-          statusMessage.className = 'status-message status-loading';
-          statusMessage.innerHTML = '<div class="spinner"></div><span>Generating results...</span>';
+        generateResults.addEventListener('click', async () => {
+          // Check if we have an uploaded image
+          if (!uploadedImage) {
+            showStatus('No image has been uploaded. Please go back and upload an image first.', 'error');
+            return;
+          }
           
-          // Simulate API call with delay
-          setTimeout(() => {
-            // Activate results tab
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
+          // Check if we have selected enhancements
+          if (selectedEnhancements.length === 0) {
+            showStatus('No enhancements selected. Please go back and select at least one enhancement.', 'error');
+            return;
+          }
+          
+          // Get the number of variations from the form
+          const numImages = parseInt(document.getElementById('num-images').value) || 1;
+          
+          // Check if we have enough credits
+          if (currentCredits < numImages) {
+            showStatus(`Not enough credits. You need ${numImages} credits but have ${currentCredits}.`, 'error');
+            return;
+          }
+          
+          // Show loading state
+          showStatus(`Generating ${numImages} variations with ${selectedEnhancements.join(', ')}...`, 'loading');
+          
+          try {
+            // Get additional information from form
+            const industry = document.getElementById('industry-select').value;
+            const additionalInfo = document.getElementById('additional-info').value;
             
-            document.querySelector('[data-tab="results"]').classList.add('active');
-            document.getElementById('results-tab').classList.add('active');
+            // Prepare the transformation request
+            const transformationRequest = {
+              imageId: uploadedImage.id,
+              transformationType: selectedEnhancements[0], // Use the first enhancement as the main type
+              options: {
+                enhancements: selectedEnhancements,
+                industry: industry,
+                additionalInfo: additionalInfo,
+                numVariations: numImages
+              }
+            };
             
-            // Update credits
-            const creditsDisplay = document.getElementById('credits-count');
-            const currentCredits = parseInt(creditsDisplay.textContent);
-            creditsDisplay.textContent = (currentCredits - 3) + ' credits';
+            // Call the API to transform the image
+            const response = await fetch(API.transform, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(transformationRequest)
+            });
             
-            // Reset status message
-            statusMessage.className = 'status-message status-normal';
-            statusMessage.innerHTML = '<i class="fas fa-info-circle"></i><span>This transformation will use 1 credit per variation</span>';
-          }, 2000);
+            const data = await response.json();
+            
+            if (data.success) {
+              // Activate results tab
+              tabs.forEach(t => t.classList.remove('active'));
+              tabContents.forEach(c => c.classList.remove('active'));
+              
+              document.querySelector('[data-tab="results"]').classList.add('active');
+              document.getElementById('results-tab').classList.add('active');
+              
+              // Update the result cards with the transformed image
+              const resultCards = document.querySelectorAll('.result-card');
+              if (resultCards.length > 0 && data.transformation) {
+                // Update the first result card with the transformation
+                const resultImage = resultCards[0].querySelector('img');
+                const resultTitle = resultCards[0].querySelector('h3');
+                const resultTime = resultCards[0].querySelector('.result-meta span:last-child');
+                
+                if (resultImage) {
+                  resultImage.src = data.transformation.transformedUrl;
+                }
+                
+                if (resultTitle) {
+                  resultTitle.textContent = data.transformation.type;
+                }
+                
+                if (resultTime) {
+                  resultTime.textContent = 'Just now';
+                }
+              }
+              
+              // Update credits (simulate credit deduction for now)
+              updateCreditsDisplay(Math.max(0, currentCredits - numImages));
+              
+              // Show success message
+              const resultsStatusMessage = document.querySelector('#results-tab .status-message');
+              if (resultsStatusMessage) {
+                resultsStatusMessage.className = 'status-message status-success';
+                resultsStatusMessage.innerHTML = '<i class="fas fa-check-circle"></i><span>All images have been successfully generated!</span>';
+              }
+              
+              // Reset status message in options tab
+              showStatus('This transformation will use 1 credit per variation', 'normal');
+            } else {
+              showStatus(`Error: ${data.message || 'Unknown error during transformation'}`, 'error');
+            }
+          } catch (error) {
+            console.error('Error transforming image:', error);
+            showStatus('Network error during transformation. Please try again.', 'error');
+          }
         });
       }
       
@@ -1481,19 +1695,59 @@
       const modalImage = document.getElementById('modal-image');
       const downloadImageBtn = document.getElementById('download-image');
       
-      // View full size buttons
-      const viewFullSizeButtons = document.querySelectorAll('.overlay-btn:nth-child(2)');
+      // Function to open the modal with an image
+      function openImageModal(imgSrc) {
+        modalImage.src = imgSrc;
+        downloadImageBtn.href = imgSrc;
+        
+        // Extract filename from URL for the download attribute
+        const filename = imgSrc.split('/').pop();
+        downloadImageBtn.setAttribute('download', filename);
+        
+        // Show the modal
+        imageModal.classList.add('active');
+      }
       
-      viewFullSizeButtons.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-          // Get the image src from the result card
-          const imgSrc = document.querySelectorAll('.result-image img')[index].src;
-          modalImage.src = imgSrc;
-          downloadImageBtn.href = imgSrc;
-          
-          // Show the modal
-          imageModal.classList.add('active');
-        });
+      // View full size buttons - use event delegation for dynamically added elements
+      document.addEventListener('click', (e) => {
+        // Check if the clicked element is a view full size button or its child
+        const viewButton = e.target.closest('.overlay-btn:nth-child(2)');
+        if (viewButton) {
+          // Find the closest result card
+          const resultCard = viewButton.closest('.result-card');
+          if (resultCard) {
+            // Get the image source
+            const imgElement = resultCard.querySelector('.result-image img');
+            if (imgElement && imgElement.src) {
+              openImageModal(imgElement.src);
+            }
+          }
+        }
+        
+        // Check if the clicked element is a download button
+        const downloadButton = e.target.closest('.overlay-btn:nth-child(1)');
+        if (downloadButton) {
+          // Find the closest result card
+          const resultCard = downloadButton.closest('.result-card');
+          if (resultCard) {
+            // Get the image source
+            const imgElement = resultCard.querySelector('.result-image img');
+            if (imgElement && imgElement.src) {
+              // Create a temporary link to download the image
+              const tempLink = document.createElement('a');
+              tempLink.href = imgElement.src;
+              
+              // Extract filename from URL
+              const filename = imgElement.src.split('/').pop();
+              tempLink.setAttribute('download', filename);
+              
+              // Simulate click to start download
+              document.body.appendChild(tempLink);
+              tempLink.click();
+              document.body.removeChild(tempLink);
+            }
+          }
+        }
       });
       
       modalCloseButtons.forEach(btn => {
