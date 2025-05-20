@@ -45,7 +45,7 @@ function DemoPage() {
   const textRotateRef = useRef<TextRotateRef>(null);
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-white text-[#333333]">
       {/* Hero Section with Parallax Effect */}
       <section className="w-full h-screen relative flex items-center justify-center overflow-hidden">
         {/* Background with Floating Images */}
@@ -147,7 +147,7 @@ function DemoPage() {
               </Button>
             </Link>
             <Link href="/transformations">
-              <Button size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className="bg-transparent border-2 border-[#333333] text-[#333333] hover:bg-[#333333]/5">
                 View Examples
               </Button>
             </Link>
