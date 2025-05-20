@@ -45,7 +45,7 @@ function DemoPage() {
   const textRotateRef = useRef<TextRotateRef>(null);
   
   return (
-    <div className="min-h-screen bg-white text-[#333333]">
+    <div className="min-h-screen bg-black text-white">
       {/* Hero Section with Parallax Effect */}
       <section className="w-full h-screen relative flex items-center justify-center overflow-hidden">
         {/* Background with Floating Images */}
@@ -156,7 +156,7 @@ function DemoPage() {
       </section>
       
       {/* Features Bento Grid Section */}
-      <section className="bg-white text-[#333333] py-10">
+      <section className="bg-black text-white py-10">
         <FeaturesSectionWithBentoGrid />
       </section>
     </div>
