@@ -41,7 +41,7 @@ export function FeaturesSectionWithBentoGrid() {
         "col-span-1 md:col-span-3 lg:col-span-3 border-b md:border-r dark:border-neutral-800",
     },
     {
-      title: "Turn Your Little Ones Into Their Favorite Cartoon Character",
+      title: "Turn Your Little Ones Into Superheroes",
       description:
         "Create magical memories by transforming your children's photos into Minecraft characters, LEGO figurines, Super Mario Bros adventures, superheroes, Pixar-style animations and more—making them the stars of their own favorite universes.",
       skeleton: <SkeletonFour />,
@@ -113,40 +113,38 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
 
 export const SkeletonOne = () => {
   return (
-    <div className="relative flex py-8 px-2 gap-10 h-full">
-      <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
-        <div className="flex flex-1 w-full h-full flex-col space-y-4">
-            <img
-              src={dinoHorseImage}
-              alt="Dinosaur-Horse Hybrid"
-              className="h-full w-full aspect-square object-contain rounded-sm"
-            />
-            <div className="flex justify-center mt-4">
-              <RainbowButton>Transform Image</RainbowButton>
-            </div>
-          </div>
+    <div className="relative flex flex-col py-8 px-2 gap-10 h-full">
+      <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group">
+        <img
+          src={dinoHorseImage}
+          alt="Dinosaur-Horse Hybrid"
+          className="w-full aspect-square object-contain rounded-sm"
+        />
+      </div>
+      
+      <div className="flex justify-center mt-2 relative z-30">
+        <RainbowButton>Transform Image</RainbowButton>
       </div>
 
-      <div className="absolute bottom-0 z-40 inset-x-0 h-60 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
-      <div className="absolute top-0 z-40 inset-x-0 h-60 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent w-full pointer-events-none" />
+      <div className="absolute bottom-0 z-20 inset-x-0 h-40 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
+      <div className="absolute top-0 z-20 inset-x-0 h-40 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent w-full pointer-events-none" />
     </div>
   );
 };
 
 export const SkeletonThree = () => {
   return (
-    <div className="relative flex gap-10 h-full">
-      <div className="w-full mx-auto bg-white dark:bg-neutral-900 shadow-xl rounded-sm group h-full">
-        <div className="flex flex-1 w-full h-full flex-col space-y-4">
-          <img
-            src={mulletImage}
-            alt="Person with a mullet hairstyle"
-            className="h-full w-full aspect-square object-cover object-center rounded-sm"
-          />
-          <div className="flex justify-center mt-4">
-            <RainbowButton>Create Transformation</RainbowButton>
-          </div>
-        </div>
+    <div className="relative flex flex-col gap-10 h-full">
+      <div className="w-full mx-auto bg-white dark:bg-neutral-900 shadow-xl rounded-sm">
+        <img
+          src={mulletImage}
+          alt="Person with a mullet hairstyle"
+          className="w-full aspect-square object-cover object-center rounded-sm"
+        />
+      </div>
+      
+      <div className="flex justify-center mt-2 relative z-30">
+        <RainbowButton>Create Transformation</RainbowButton>
       </div>
     </div>
   );
@@ -218,28 +216,28 @@ export const SkeletonTwo = () => {
         ))}
       </div>
       
-      <div className="flex justify-center w-full mt-6">
+      <div className="flex justify-center w-full mt-2 relative z-30">
         <RainbowButton>Create Product Photo</RainbowButton>
       </div>
 
-      <div className="absolute left-0 z-[100] inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent h-full pointer-events-none" />
-      <div className="absolute right-0 z-[100] inset-y-0 w-20 bg-gradient-to-l from-white dark:from-black to-transparent h-full pointer-events-none" />
+      <div className="absolute left-0 z-20 inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent h-full pointer-events-none" />
+      <div className="absolute right-0 z-20 inset-y-0 w-20 bg-gradient-to-l from-white dark:from-black to-transparent h-full pointer-events-none" />
     </div>
   );
 };
 
 export const SkeletonFour = () => {
   return (
-    <div className="h-60 md:h-60 flex flex-col items-center justify-center relative bg-transparent dark:bg-transparent mt-10">
-      <div className="flex flex-col items-center justify-center w-full h-full">
+    <div className="flex flex-col items-center justify-center h-full relative">
+      <div className="w-full h-60 md:h-60 bg-transparent dark:bg-transparent">
         <img 
           src={minecraftImage}
           alt="Minecraft character named Bobby"
           className="w-full h-full object-cover rounded-xl shadow-xl"
         />
-        <div className="mt-4">
-          <RainbowButton>Make Minecraft Me</RainbowButton>
-        </div>
+      </div>
+      <div className="mt-4 relative z-30">
+        <RainbowButton>Make Minecraft Me</RainbowButton>
       </div>
     </div>
   );
