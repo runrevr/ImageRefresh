@@ -1,0 +1,5 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect x="125" y="50" width="150" height="150" rx="10" fill="#3f51b5"/>
+  <text x="200" y="230" font-family="Arial" font-size="16" text-anchor="middle" fill="#1a237e">Background Removed</text>
+</svg>

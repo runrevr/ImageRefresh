@@ -1,0 +1,7 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#e8f5e9"/>
+  <rect x="125" y="50" width="150" height="150" rx="10" fill="#8bc34a"/>
+  <rect x="145" y="70" width="50" height="110" fill="#4caf50"/>
+  <rect x="205" y="70" width="50" height="110" fill="#2e7d32"/>
+  <text x="200" y="230" font-family="Arial" font-size="16" text-anchor="middle" fill="#1b5e20">Color Enhanced</text>
+</svg>
