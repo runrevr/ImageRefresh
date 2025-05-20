@@ -91,7 +91,7 @@ const FeatureCard = ({
 
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <p className="max-w-5xl mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">
+    <p className="max-w-5xl mx-auto text-left tracking-tight text-[#333333] text-xl md:text-2xl md:leading-snug">
       {children}
     </p>
   );
@@ -102,7 +102,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
     <p
       className={cn(
         "text-sm md:text-base max-w-4xl text-left mx-auto",
-        "text-neutral-500 text-center font-normal dark:text-neutral-300",
+        "text-[#666666] text-center font-normal",
         "text-left max-w-sm mx-0 md:text-sm my-2"
       )}
     >
@@ -114,7 +114,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
 export const SkeletonOne = () => {
   return (
     <div className="relative flex flex-col py-8 px-2 gap-10 h-full">
-      <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group">
+      <div className="w-full p-5 mx-auto bg-white shadow-2xl group">
         <img
           src={dinoHorseImage}
           alt="Dinosaur-Horse Hybrid"
@@ -135,7 +135,7 @@ export const SkeletonOne = () => {
 export const SkeletonThree = () => {
   return (
     <div className="relative flex flex-col gap-10 h-full">
-      <div className="w-full mx-auto bg-white dark:bg-neutral-900 shadow-xl rounded-sm">
+      <div className="w-full mx-auto bg-white shadow-xl rounded-sm">
         <img
           src={mulletImage}
           alt="Person with a mullet hairstyle"
