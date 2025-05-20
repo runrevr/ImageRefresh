@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react"
-import { LayoutGroup, motion } from "framer-motion"
+import { useRef } from "react"
+import { motion } from "framer-motion"
 import { TextRotate, TextRotateRef } from "@/components/ui/text-rotate"
 import Floating, { FloatingElement } from "@/components/ui/parallax-floating"
 import { FeaturesSectionWithBentoGrid } from "@/components/ui/feature-section-with-bento-grid"
@@ -13,7 +13,6 @@ import giraffeReal from "@/assets/giraffe-real.png"
 import giraffeDrawing from "@/assets/giraffe-drawing.png"
 import dogCatReal from "@/assets/dog-and-cat-real.png"
 import dogCatDrawing from "@/assets/dog-and-cat-drawing.png"
-import logo from "@/assets/logo.png"
 
 const exampleImages = [
   {
@@ -110,7 +109,7 @@ function DemoPage() {
           </Floating>
         </div>
 
-        {/* Center Content - Now fully centered and with proper z-index */}
+        {/* Center Content */}
         <motion.div 
           className="z-20 w-full max-w-4xl mx-auto px-6 text-center relative"
           initial={{ opacity: 0, y: 20 }}
@@ -138,8 +137,8 @@ function DemoPage() {
               mainClassName="text-blue-600 font-bold inline-block"
             />
           </h1>
-          <p className="text-xl md:text-2xl text-gray-800 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Take your old photos and transform them into something magical in seconds with zero technical ability needed.  First one's on us 🍻
+          <p className="text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link href="/home">
@@ -156,9 +155,56 @@ function DemoPage() {
         </motion.div>
       </section>
 
-      
+      {/* Demo Showcase Section */}
+      <section className="py-20 px-4 bg-black/30 backdrop-blur-sm">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Animation Showcase</h2>
           
           <div className="p-8 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-md shadow-xl">
+            <h3 className="text-xl mb-6">Text Rotation Component</h3>
+            <div className="text-2xl md:text-3xl font-bold mb-6 h-12">
+              <TextRotate
+                ref={textRotateRef}
+                texts={[
+                  "Staggered character animations",
+                  "Simple text rotation",
+                  "Customizable transitions",
+                  "Multiple animation modes",
+                  "Interactive controls",
+                ]}
+                rotationInterval={3000}
+                staggerDuration={0.05}
+                staggerFrom="center"
+                mainClassName="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400"
+              />
+            </div>
+            
+            <div className="flex justify-center gap-2 mt-4">
+              <Button 
+                variant="secondary"
+                size="sm"
+                onClick={() => textRotateRef.current?.previous()}
+              >
+                Previous
+              </Button>
+              <Button 
+                variant="secondary"
+                size="sm"
+                onClick={() => textRotateRef.current?.next()}
+              >
+                Next
+              </Button>
+              <Button 
+                variant="secondary"
+                size="sm"
+                onClick={() => textRotateRef.current?.reset()}
+              >
+                Reset
+              </Button>
+            </div>
+          </div>
+          
+          <div className="mt-12 p-8 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-md shadow-xl">
             <h3 className="text-xl mb-6">Parallax Floating Images</h3>
             <p className="text-gray-300 mb-6">
               Move your mouse around to see the parallax effect in action.
