@@ -118,7 +118,7 @@ export const SkeletonOne = () => {
             <img
               src={dinoHorseImage}
               alt="Dinosaur-Horse Hybrid"
-              className="h-full w-full aspect-square object-cover object-center rounded-sm"
+              className="h-full w-full aspect-square object-contain rounded-sm"
             />
           </div>
 
