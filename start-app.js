@@ -2,12 +2,17 @@
  * Simple script to start the application server
  * Run with: node start-app.js
  */
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// Get current directory in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050; // Using port 5050 instead
 
 // Serve the public directory as static files
 app.use(express.static(path.join(__dirname, 'public')));
