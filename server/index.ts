@@ -161,6 +161,9 @@ app.use((req, res, next) => {
   
   // Register simple compatibility routes
   app.use(setupSimpleRouter());
+  
+  // Register static HTML routes
+  app.use(setupStaticRoutes());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
