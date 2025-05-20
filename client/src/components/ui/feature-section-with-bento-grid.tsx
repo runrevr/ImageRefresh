@@ -10,6 +10,7 @@ import shampooBottle3 from "@/assets/shampoo-3.png";
 import shampooBottle4 from "@/assets/shampoo-4.png";
 import shampooBottle5 from "@/assets/sunset-shampoo.jpg";
 import minecraftImage from "@assets/Minecraft.png";
+import mulletImage from "@assets/Trump Mullet.png";
 // @ts-ignore - cobe doesn't have types
 import createGlobe from "cobe";
 
@@ -140,8 +141,8 @@ export const SkeletonThree = () => {
         <div className="flex flex-1 w-full h-full flex-col space-y-2 relative">
           <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto" />
           <img
-            src="https://assets.aceternity.com/fireship.jpg"
-            alt="header"
+            src={mulletImage}
+            alt="Person with a mullet hairstyle"
             className="h-full w-full aspect-square object-cover object-center rounded-sm blur-none group-hover/image:blur-md transition-all duration-200"
           />
         </div>
