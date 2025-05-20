@@ -19,6 +19,7 @@ import ProductImageLabPage from "@/pages/product-image-lab";
 import FixedProductLabPage from "@/pages/fixed-product-lab";
 import RouterDebugPage from "@/pages/router-debug";
 import DemoPage from "@/pages/demo";
+import FeaturesDemoPage from "@/pages/features-demo";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/product-image-lab" component={ProductImageLabPage} />
       <Route path="/fixed-product-lab" component={FixedProductLabPage} />
       <Route path="/demo" component={DemoPage} />
+      <Route path="/features-demo" component={FeaturesDemoPage} />
       <Route path="/webhook-test" component={() => {
         // This is a simpler way to import the component without TypeScript errors
         const WebhookTest = require("../pages/webhook-test").default;
