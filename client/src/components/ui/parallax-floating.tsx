@@ -98,8 +98,8 @@ const Floating: React.FC<FloatingProps> = ({
         React.Children.map(children, (child) => {
           if (React.isValidElement(child) && child.type === FloatingElement) {
             const depth = child.props.depth || 1
-            const translateX = springX.get() * 50 * depth * sensitivity
-            const translateY = springY.get() * 50 * depth * sensitivity
+            const translateX = springX.get() * 35 * depth * sensitivity
+            const translateY = springY.get() * 35 * depth * sensitivity
 
             return (
               <motion.div
@@ -108,8 +108,16 @@ const Floating: React.FC<FloatingProps> = ({
                   x: translateX,
                   y: translateY,
                   zIndex: child.props.style?.zIndex || "auto",
+                  transform: `translate(-50%, -50%)`,
                 }}
-                transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  damping: 25, 
+                  stiffness: 150,
+                  mass: 1
+                }}
                 className={child.props.className}
               >
                 {child.props.children}
