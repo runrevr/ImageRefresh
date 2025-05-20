@@ -51,17 +51,17 @@ export function FeaturesSectionWithBentoGrid() {
   return (
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
-        <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
+        <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-[#333333]">
           Transform Any Photo Into Something Magical
         </h4>
 
-        <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
+        <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-[#666666] text-center font-normal">
           From professional product shots to turning your kids into their favorite characters, our AI tools bring your images to life in ways you never thought possible.
         </p>
       </div>
 
       <div className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800 max-w-[80%] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-6 mt-12 xl:border border-gray-200 rounded-md max-w-[80%] mx-auto">
           {features.map((feature) => (
             <FeatureCard key={feature.title} className={feature.className}>
               <FeatureTitle>{feature.title}</FeatureTitle>

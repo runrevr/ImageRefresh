@@ -156,7 +156,7 @@ function DemoPage() {
       </section>
       
       {/* Features Bento Grid Section */}
-      <section className="bg-white dark:bg-gray-950 text-black dark:text-white py-10">
+      <section className="bg-white text-[#333333] py-10">
         <FeaturesSectionWithBentoGrid />
       </section>
     </div>
