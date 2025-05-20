@@ -156,14 +156,14 @@ function DemoPage() {
         </motion.div>
       </section>
       
-      {/* Scroll Velocity Demo Section */}
-      <section className="bg-black text-white">
-        <ScrollVelocityDemo />
-      </section>
-      
       {/* Features Bento Grid Section */}
       <section className="bg-black text-white py-10">
         <FeaturesSectionWithBentoGrid />
+      </section>
+      
+      {/* Scroll Velocity Demo Section */}
+      <section className="bg-black text-white">
+        <ScrollVelocityDemo />
       </section>
     </div>
   );

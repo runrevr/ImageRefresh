@@ -33,7 +33,7 @@ const features = [
     image: "/src/assets/dog-and-cat-drawing.png"
   },
   { 
-    title: "Sci-Fi Style", 
+    title: "Old Western", 
     image: "/src/assets/Western.png"
   },
 ]
@@ -65,7 +65,7 @@ function ScrollVelocityDemo() {
             ))}
           </ScrollVelocity>
         ))}
-        <ScrollVelocity velocity={5} className="text-[#FF7B54] mt-8">
+        <ScrollVelocity velocity={2} className="text-[#FF7B54] mt-8">
           TRANSFORM YOUR IMAGES • CREATE MAGIC • UNLIMITED POSSIBILITIES • EASY TO USE •
         </ScrollVelocity>
       </div>
