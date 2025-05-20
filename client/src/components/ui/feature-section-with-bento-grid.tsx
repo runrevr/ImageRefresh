@@ -144,7 +144,7 @@ export const SkeletonThree = () => {
       </div>
       
       <div className="flex justify-center mt-2 relative z-30">
-        <RainbowButton>Create Transformation</RainbowButton>
+        <RainbowButton>Create Something Epic</RainbowButton>
       </div>
     </div>
   );
@@ -217,7 +217,7 @@ export const SkeletonTwo = () => {
       </div>
       
       <div className="flex justify-center w-full mt-2 relative z-30">
-        <RainbowButton>Create Product Photo</RainbowButton>
+        <RainbowButton>Product Image Lab</RainbowButton>
       </div>
 
       <div className="absolute left-0 z-20 inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent h-full pointer-events-none" />
@@ -237,7 +237,7 @@ export const SkeletonFour = () => {
         />
       </div>
       <div className="mt-4 relative z-30">
-        <RainbowButton>Make Minecraft Me</RainbowButton>
+        <RainbowButton>Start Kids Fun</RainbowButton>
       </div>
     </div>
   );

@@ -92,7 +92,7 @@ const Floating: React.FC<FloatingProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative overflow-hidden bg-white text-[#333333] ${className}`}
     >
       {mounted &&
         React.Children.map(children, (child) => {
