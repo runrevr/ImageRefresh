@@ -14,6 +14,8 @@ import { v4 as uuid } from "uuid";
 
 import { type InsertTransformation } from "../shared/schema";
 import { createColoringBookImage } from "./coloring-book";
+// Import the Product AI Studio router
+import productAiStudioRouter from "./product-ai-studio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Add detailed console logs for debugging
@@ -61,6 +63,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
+
+  // Register Product AI Studio routes
+  app.use('/api/product-ai-studio', productAiStudioRouter);
 
   // API routes
   app.get("/api/health", (req, res) => {
@@ -763,6 +768,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       maxUploadSize: 10 * 1024 * 1024, // 10MB
       featureFlags: {
         newUI: true,
+        productAiStudio: true, // Add feature flag for the new Product AI Studio feature
       },
     });
   });
