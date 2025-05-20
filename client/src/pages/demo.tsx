@@ -120,14 +120,14 @@ function DemoPage() {
           <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
             Make your{" "}
             <br className="hidden sm:block" />
-            website{" "}
+            pictures{" "}
             <TextRotate
               texts={[
-                "lovely",
-                "beautiful",
-                "perfect",
                 "amazing",
-                "stunning",
+                "funny",
+                "sell better",
+                "exceptional",
+                "magical",
               ]}
               rotationInterval={2000}
               staggerDuration={0.03}
@@ -139,7 +139,7 @@ function DemoPage() {
             />
           </h1>
           <p className="text-xl md:text-2xl text-gray-800 mb-12 max-w-3xl mx-auto leading-relaxed">
-            with a growing library of ready-to-use react components & microinteractions. free & open source.
+            Take your old photos and transform them into something magical in seconds with zero technical ability needed.  First one's on us 🍻
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link href="/home">
