@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 5055;
 
 // Set up middleware
 app.use(express.json());
