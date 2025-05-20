@@ -162,7 +162,7 @@ function DemoPage() {
       </section>
       
       {/* Scroll Velocity Demo Section */}
-      <section className="bg-black text-white">
+      <section className="bg-white text-black">
         <ScrollVelocityDemo />
       </section>
     </div>
