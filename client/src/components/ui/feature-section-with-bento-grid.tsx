@@ -228,15 +228,16 @@ export const SkeletonTwo = () => {
 
 export const SkeletonFour = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-full relative">
-      <div className="w-full h-60 md:h-60 bg-transparent dark:bg-transparent">
+    <div className="flex flex-col items-center justify-center space-y-6 py-6">
+      <div className="w-full bg-white dark:bg-neutral-900 shadow-xl rounded-xl p-2">
         <img 
           src={minecraftImage}
           alt="Minecraft character named Bobby"
-          className="w-full h-full object-cover rounded-xl shadow-xl"
+          className="w-full object-cover rounded-lg"
+          style={{ maxHeight: "280px" }}
         />
       </div>
-      <div className="mt-4 relative z-30">
+      <div className="relative z-30 mt-4">
         <RainbowButton>Start Kids Fun</RainbowButton>
       </div>
     </div>
