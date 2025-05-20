@@ -132,22 +132,17 @@ export const SkeletonOne = () => {
 
 export const SkeletonThree = () => {
   return (
-    <a
-      href="https://www.youtube.com/watch?v=RPa3_AD1_Vs"
-      target="__blank"
-      className="relative flex gap-10 h-full group/image"
-    >
-      <div className="w-full mx-auto bg-transparent dark:bg-transparent group h-full">
-        <div className="flex flex-1 w-full h-full flex-col space-y-2 relative">
-          <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto" />
+    <div className="relative flex gap-10 h-full">
+      <div className="w-full mx-auto bg-white dark:bg-neutral-900 shadow-xl rounded-sm group h-full">
+        <div className="flex flex-1 w-full h-full flex-col space-y-2">
           <img
             src={mulletImage}
             alt="Person with a mullet hairstyle"
-            className="h-full w-full aspect-square object-cover object-center rounded-sm blur-none group-hover/image:blur-md transition-all duration-200"
+            className="h-full w-full aspect-square object-cover object-center rounded-sm"
           />
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
