@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import { TextRotate, TextRotateRef } from "@/components/ui/text-rotate"
 import Floating, { FloatingElement } from "@/components/ui/parallax-floating"
 import { FeaturesSectionWithBentoGrid } from "@/components/ui/feature-section-with-bento-grid"
+import { ScrollVelocityDemo } from "@/components/ui/scroll-velocity-demo"
 import { Button } from "@/components/ui/button"
 import { Link } from "wouter"
 
@@ -153,6 +154,11 @@ function DemoPage() {
             </Link>
           </div>
         </motion.div>
+      </section>
+      
+      {/* Scroll Velocity Demo Section */}
+      <section className="bg-black text-white">
+        <ScrollVelocityDemo />
       </section>
       
       {/* Features Bento Grid Section */}
