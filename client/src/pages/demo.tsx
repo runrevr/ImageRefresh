@@ -5,6 +5,7 @@ import Floating, { FloatingElement } from "@/components/ui/parallax-floating"
 import { FeaturesSectionWithBentoGrid } from "@/components/ui/feature-section-with-bento-grid"
 import { ScrollVelocityDemo } from "@/components/ui/scroll-velocity-demo"
 import { CreativePricingDemo } from "@/components/ui/creative-pricing-demo"
+import { GooeyDemo } from "@/components/ui/gooey-demo"
 import { Button } from "@/components/ui/button"
 import { Link } from "wouter"
 
@@ -165,6 +166,11 @@ function DemoPage() {
       {/* Scroll Velocity Demo Section */}
       <section className="bg-white text-black">
         <ScrollVelocityDemo />
+      </section>
+      
+      {/* Gooey Demo Section - Child Drawing Transformation */}
+      <section className="bg-black">
+        <GooeyDemo />
       </section>
       
       {/* Creative Pricing Section */}
