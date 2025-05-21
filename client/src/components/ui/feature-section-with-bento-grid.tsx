@@ -124,7 +124,7 @@ export const SkeletonOne = () => {
       </div>
       
       <div className="flex justify-center mt-2 relative z-30">
-        <Link to="/kids-drawing">
+        <Link to="/upload">
           <RainbowButton>Let's Make Magic</RainbowButton>
         </Link>
       </div>
