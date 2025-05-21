@@ -11,13 +11,13 @@ import { RainbowButton } from "@/components/ui/rainbow-button"
 import { Link } from "wouter"
 
 // Import some example images from the assets folder
-import bearReal from "@/assets/sunglasses beach.png"
-import bearAfter from "@/assets/prison-cat.png"
-import giraffeReal from "@/assets/mullet.png"
-import giraffeDrawing from "@/assets/work boots.png"
-import dogCatReal from "@/assets/dog-and-cat-real.png"
-import dogCatDrawing from "@/assets/dog-and-cat-drawing.png"
-import kidsDrawingConverted from "@/assets/kids-drawing-converted2.png"
+import bearReal from "@assets/sunglasses-beach.png" 
+import bearAfter from "@assets/prison-cat.png"
+import giraffeReal from "@assets/mullet.png"
+import giraffeDrawing from "@assets/work-boots.png"
+import dogCatReal from "@assets/dog-and-cat-real.png"
+import dogCatDrawing from "@assets/dog-and-cat-drawing.png"
+import kidsDrawingConverted from "@assets/kids-drawing-converted2.png"
 
 const exampleImages = [
   {
