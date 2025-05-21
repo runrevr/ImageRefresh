@@ -152,7 +152,7 @@ function DemoPage() {
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">
-            <Link to="/kids-drawing#uploader">
+            <Link to="/product-image-lab">
               <RainbowButton className="px-10 py-5 text-xl">
                 Try For Free
               </RainbowButton>
