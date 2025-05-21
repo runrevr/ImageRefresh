@@ -41,6 +41,23 @@ export default function KidsDrawingPage() {
   // For carousel auto-scrolling
   const [carouselApi, setCarouselApi] = useState<any>(null);
   
+  // Check if we should automatically scroll to the uploader
+  useEffect(() => {
+    const directUpload = sessionStorage.getItem('showUploaderDirectly');
+    if (directUpload === 'true') {
+      // Clear the flag so it doesn't trigger again on page refresh
+      sessionStorage.removeItem('showUploaderDirectly');
+      
+      // Scroll to the uploader section
+      setTimeout(() => {
+        const uploaderElement = document.getElementById('uploader');
+        if (uploaderElement) {
+          uploaderElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  }, []);
+  
   useEffect(() => {
     if (carouselApi) {
       // Set up a timer to auto-advance the carousel

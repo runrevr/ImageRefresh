@@ -33,6 +33,7 @@ import SubscribePage from "@/pages/subscribe";
 import BuyCreditsPage from "@/pages/buy-credits";
 import CheckoutDemoPage from "@/pages/checkout-demo";
 import CheckoutFlowDemoPage from "@/pages/checkout-flow-demo";
+import DirectUploadPage from "@/pages/direct-upload";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/ideas" component={IdeasPage} />
       <Route path="/help" component={HelpPage} />
       <Route path="/kids-drawing" component={KidsDrawingPage} />
+      <Route path="/direct-upload" component={DirectUploadPage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/product-enhancement" component={ProductEnhancementPage} />
       <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
