@@ -115,14 +115,18 @@ export function HeroSection() {
                                             <div className="mt-4 rounded-lg bg-white p-3 shadow-sm">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div className="overflow-hidden rounded-md">
-                                                        <div className="bg-gray-200 h-24 w-full flex items-center justify-center text-gray-500 text-xs">
-                                                            Before
-                                                        </div>
+                                                        <img 
+                                                            src="/src/assets/mexican-food-original.png" 
+                                                            alt="Before enhancement" 
+                                                            className="h-24 w-full object-cover"
+                                                        />
                                                     </div>
                                                     <div className="overflow-hidden rounded-md">
-                                                        <div className="bg-[#A3E4D7]/20 h-24 w-full flex items-center justify-center text-[#2A7B9B] text-xs">
-                                                            After
-                                                        </div>
+                                                        <img 
+                                                            src="/src/assets/mexican-food-enhanced.png" 
+                                                            alt="After enhancement" 
+                                                            className="h-24 w-full object-cover"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -259,16 +263,51 @@ export function HeroSection() {
                                         speed={25} 
                                         className="flex"
                                     >
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                            <div 
-                                                key={`showcase-1-${i}`}
-                                                className="h-[300px] w-[200px] shrink-0 rounded-xl bg-[#F2F2F2] p-3 mx-2 shadow-md"
-                                            >
-                                                <div className="h-full w-full rounded-lg bg-[#E5E5E5] flex items-center justify-center">
-                                                    <span className="text-sm text-[#2A7B9B]">Sample {i+1}</span>
-                                                </div>
-                                            </div>
-                                        ))}
+                                        <div 
+                                            className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
+                                        >
+                                            <img 
+                                                src="/src/assets/shampoo-original.jpg" 
+                                                alt="Original product" 
+                                                className="h-full w-full object-cover rounded-lg"
+                                            />
+                                        </div>
+                                        <div 
+                                            className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
+                                        >
+                                            <img 
+                                                src="/src/assets/shampoo-bottle.jpg" 
+                                                alt="Enhanced product" 
+                                                className="h-full w-full object-cover rounded-lg"
+                                            />
+                                        </div>
+                                        <div 
+                                            className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
+                                        >
+                                            <img 
+                                                src="/src/assets/sunset-shampoo.jpg" 
+                                                alt="Product with background" 
+                                                className="h-full w-full object-cover rounded-lg"
+                                            />
+                                        </div>
+                                        <div 
+                                            className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
+                                        >
+                                            <img 
+                                                src="/src/assets/sweatshirt-basic.png" 
+                                                alt="Basic apparel" 
+                                                className="h-full w-full object-cover rounded-lg"
+                                            />
+                                        </div>
+                                        <div 
+                                            className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
+                                        >
+                                            <img 
+                                                src="/src/assets/sweatshirt-lifestyle.png" 
+                                                alt="Lifestyle apparel" 
+                                                className="h-full w-full object-cover rounded-lg"
+                                            />
+                                        </div>
                                     </InfiniteSlider>
                                 </div>
                             </ProgressiveBlur>
