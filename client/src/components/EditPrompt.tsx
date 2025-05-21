@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { RainbowButton } from '@/components/ui/rainbow-button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Wand2 } from 'lucide-react';
@@ -185,10 +186,10 @@ export default function EditPrompt({
               onChange={(e) => setPrompt(e.target.value)}
               className="w-full h-32 rounded-lg p-4 resize-none text-white bg-black shadow-inner"
             />
-            <Button
-              variant="ghost"
+            <RainbowButton
+              variant="outline"
               size="sm"
-              className="absolute right-2 top-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full p-1.5"
+              className="absolute right-2 top-2 rounded-full p-1.5"
               onClick={enhancePrompt}
               disabled={isEnhancing || prompt.trim().length === 0}
               title="Enhance prompt with AI"
@@ -198,49 +199,49 @@ export default function EditPrompt({
               ) : (
                 <Wand2 className="h-4 w-4" />
               )}
-            </Button>
+            </RainbowButton>
           </div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
-            <Button
-              variant="link"
+            <RainbowButton
+              variant="outline"
               size="sm"
-              className="text-xs text-primary-500 p-1 h-auto"
+              className="text-xs p-1 h-auto"
               onClick={enhancePrompt}
               disabled={isEnhancing || prompt.trim().length === 0}
             >
               <Wand2 className="h-3 w-3 mr-1" /> 
               {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
-            </Button>
+            </RainbowButton>
           </div>
         </div>
         
         <div className="mb-5">
           <h4 className="text-sm font-medium mb-2">Image Size</h4>
           <div className="flex flex-wrap gap-2">
-            <Button 
+            <RainbowButton 
               type="button"
               variant="outline" 
-              className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1024" ? "border-2 bg-gray-100" : "border"}`}
+              className={`${selectedSize === "1024x1024" ? "border-2 bg-gray-100" : "border"}`}
               onClick={() => handleSizeSelection("1024x1024")}
             >
               Square (1024×1024)
-            </Button>
-            <Button 
+            </RainbowButton>
+            <RainbowButton 
               type="button"
               variant="outline" 
-              className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1024x1536" ? "border-2 bg-gray-100" : "border"}`}
+              className={`${selectedSize === "1024x1536" ? "border-2 bg-gray-100" : "border"}`}
               onClick={() => handleSizeSelection("1024x1536")}
             >
               Portrait (1024×1536)
-            </Button>
-            <Button 
+            </RainbowButton>
+            <RainbowButton 
               type="button"
               variant="outline" 
-              className={`border-dashed border-black text-black bg-white hover:bg-gray-100 ${selectedSize === "1536x1024" ? "border-2 bg-gray-100" : "border"}`}
+              className={`${selectedSize === "1536x1024" ? "border-2 bg-gray-100" : "border"}`}
               onClick={() => handleSizeSelection("1536x1024")}
             >
               Landscape (1536×1024)
-            </Button>
+            </RainbowButton>
           </div>
         </div>
         
@@ -256,20 +257,18 @@ export default function EditPrompt({
         )}
         
         <div className="flex flex-col sm:flex-row gap-4 justify-end">
-          <Button 
+          <RainbowButton 
             type="button" 
             variant="outline" 
             onClick={onSkip}
-            className="text-white bg-black"
           >
             Skip Edit
-          </Button>
-          <Button 
-            type="submit" 
-            className="text-white bg-black"
+          </RainbowButton>
+          <RainbowButton 
+            type="submit"
           >
             {editsUsed > 0 ? "Apply Edit (Use 1 Credit)" : "Apply Edit"}
-          </Button>
+          </RainbowButton>
         </div>
       </form>
       

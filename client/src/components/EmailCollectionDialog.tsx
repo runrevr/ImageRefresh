@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { RainbowButton } from '@/components/ui/rainbow-button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -92,22 +93,20 @@ const EmailCollectionDialog = ({
             </div>
             
             <div className="flex justify-end space-x-3">
-              <Button 
+              <RainbowButton 
                 type="button" 
                 variant="outline" 
                 onClick={onClose}
-                className="border-gray-600 text-gray-300"
                 disabled={isSubmitting}
               >
                 Cancel
-              </Button>
-              <Button 
+              </RainbowButton>
+              <RainbowButton 
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Submitting..." : "Show My Image"}
-              </Button>
+              </RainbowButton>
             </div>
           </form>
         </div>

@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { Button } from '@/components/ui/button'
+import { RainbowButton } from '@/components/ui/rainbow-button'
 import { Link } from 'wouter'
 
 export function CtaSection() {
@@ -12,14 +13,14 @@ export function CtaSection() {
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link href="/upload">
-                        <Button size="lg" className="rounded-full bg-white text-[#2A7B9B] hover:bg-white/90">
+                        <RainbowButton size="lg" className="rounded-full">
                             Start Free Trial
-                        </Button>
+                        </RainbowButton>
                     </Link>
                     <Link href="/pricing">
-                        <Button size="lg" variant="outline" className="rounded-full border-white text-white hover:bg-white/10">
+                        <RainbowButton size="lg" className="rounded-full" variant="outline">
                             See pricing
-                        </Button>
+                        </RainbowButton>
                     </Link>
                 </div>
             </div>

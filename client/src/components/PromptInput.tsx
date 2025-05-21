@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
@@ -823,14 +824,14 @@ export default function PromptInput({
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       {/* Back button */}
       <div>
-        <Button
-          variant="ghost"
-          className="pl-0 text-muted-foreground hover:text-foreground"
+        <RainbowButton
+          variant="outline"
+          className="pl-2"
           onClick={onBack}
         >
           <ChevronLeft className="mr-2 h-4 w-4" />
           Back to Image Upload
-        </Button>
+        </RainbowButton>
       </div>
 
       {/* Show the uploaded image */}
@@ -1157,15 +1158,14 @@ export default function PromptInput({
 
       {/* Submit Button */}
       <div className="flex justify-end mt-4">
-        <Button
+        <RainbowButton
           onClick={handleSubmit}
           disabled={isLoading || !promptText.trim()}
-          className="bg-secondary hover:bg-secondary/80 text-white"
           size="lg"
         >
           {isLoading ? "Processing..." : "Transform Image"}
           <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
+        </RainbowButton>
       </div>
     </div>
   );

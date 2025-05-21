@@ -2,6 +2,7 @@
 import React from 'react'
 import { Mail, SendHorizonal, Upload, Sparkles, PanelTop, Image, Wand2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { RainbowButton } from '@/components/ui/rainbow-button'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import { cn } from '@/lib/utils'
 import { Link } from 'wouter'
@@ -72,16 +73,14 @@ export function HeroSection() {
                                 />
 
                                 <div className="md:pr-1.5 lg:pr-0">
-                                    <Button
-                                        aria-label="submit"
-                                        size="sm"
-                                        className="rounded-[0.5rem] bg-[#2A7B9B] hover:bg-[#2A7B9B]/90">
+                                    <RainbowButton
+                                        aria-label="submit">
                                         <span className="hidden md:block">Get Started</span>
                                         <SendHorizonal
                                             className="relative mx-auto size-5 md:hidden"
                                             strokeWidth={2}
                                         />
-                                    </Button>
+                                    </RainbowButton>
                                 </div>
                             </div>
                         </form>
@@ -132,9 +131,9 @@ export function HeroSection() {
                                     
                                     {/* CTA Button */}
                                     <Link href="/upload">
-                                        <Button className="mt-4 w-full bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white">
+                                        <RainbowButton className="mt-4 w-full">
                                             Upload Photos
-                                        </Button>
+                                        </RainbowButton>
                                     </Link>
                                 </div>
                             </div>
@@ -176,9 +175,9 @@ export function HeroSection() {
                                     
                                     {/* CTA Button */}
                                     <Link href="/product-enhancement">
-                                        <Button className="mt-4 w-full bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white">
+                                        <RainbowButton className="mt-4 w-full">
                                             Explore Prebuilt Tools
-                                        </Button>
+                                        </RainbowButton>
                                     </Link>
                                 </div>
                             </div>
@@ -213,9 +212,9 @@ export function HeroSection() {
                                     
                                     {/* CTA Button */}
                                     <Link href="/upload?mode=variations">
-                                        <Button className="mt-4 w-full bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white">
+                                        <RainbowButton className="mt-4 w-full">
                                             Create Variations
-                                        </Button>
+                                        </RainbowButton>
                                     </Link>
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ImageUploader from "@/components/ImageUploader";
 import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Link } from "wouter";
 
 export default function DirectUploadPage() {
@@ -70,7 +71,7 @@ export default function DirectUploadPage() {
                   </div>
                   
                   <div className="mt-4 flex justify-between">
-                    <Button
+                    <RainbowButton
                       variant="outline"
                       onClick={() => {
                         setOriginalImage(null);
@@ -78,12 +79,12 @@ export default function DirectUploadPage() {
                       }}
                     >
                       Upload Different Image
-                    </Button>
+                    </RainbowButton>
                     
                     <Link to={`/old-home?image=${encodeURIComponent(uploadedImagePath || '')}`}>
-                      <Button className="bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white">
+                      <RainbowButton>
                         Continue to Transformation
-                      </Button>
+                      </RainbowButton>
                     </Link>
                   </div>
                 </div>

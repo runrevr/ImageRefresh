@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageIcon, Download } from "lucide-react";
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
@@ -123,14 +124,14 @@ export default function ViewTransformation() {
       )}
       
       <div className="flex justify-center space-x-4">
-        <Button onClick={handleRetry} disabled={loading} variant="outline">
+        <RainbowButton onClick={handleRetry} disabled={loading} variant="outline">
           {loading ? "Loading..." : "Refresh"}
-        </Button>
+        </RainbowButton>
         
         {transformedImage && (
-          <Button onClick={handleDownload} disabled={loading}>
+          <RainbowButton onClick={handleDownload} disabled={loading}>
             <Download className="h-4 w-4 mr-2" /> Download Image
-          </Button>
+          </RainbowButton>
         )}
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { RainbowButton } from '@/components/ui/rainbow-button';
 import { Badge } from '@/components/ui/badge';
 import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, Check, BookOpen, Loader2 } from 'lucide-react';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
@@ -314,8 +315,8 @@ export default function ResultView({
         <div className="flex flex-col space-y-4">
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             {canEdit && onEditImage && (
-              <Button
-                className="text-[#FF7B54] bg-[#333333] hover:bg-[#333333]/90 flex-1"
+              <RainbowButton
+                className="flex-1"
                 onClick={() => {
                   // If user is not logged in and email hasn't been collected, show email dialog
                   if (isGuest && !emailAlreadyCollected) {
@@ -338,40 +339,40 @@ export default function ResultView({
                     1 Credit
                   </span>
                 )}
-              </Button>
+              </RainbowButton>
             )}
-            <Button 
+            <RainbowButton 
               className="flex-1"
               onClick={handleDownload}
             >
               <Download className="h-4 w-4 mr-2" /> Download Image
-            </Button>
+            </RainbowButton>
           </div>
 
           {/* Second row: Coloring Book Style, Try Another Prompt and Upload New Image */}
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button 
+            <RainbowButton 
               variant="outline" 
               onClick={onTryAgain}
-              className="text-[#A3E4D7] border-[#A3E4D7] hover:bg-[#A3E4D7]/10 flex-1"
+              className="flex-1"
             >
               <ArrowLeftRight className="h-4 w-4 mr-2" />
               Try Another Prompt
-            </Button>
-            <Button 
+            </RainbowButton>
+            <RainbowButton 
               variant="outline"
-              className="border-[#333333] text-black hover:bg-gray-100 bg-[#f2f2f2] flex-1"
+              className="flex-1"
               onClick={onNewImage}
             >
               <Upload className="h-4 w-4 mr-2" />
               Upload New Image
-            </Button>
+            </RainbowButton>
           </div>
 
           {/* Third row: Coloring Book button */}
           <div className="mt-4">
-            <Button
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white"
+            <RainbowButton
+              className="w-full"
               onClick={handleColoringBookTransform}
               disabled={isColoringBookLoading}
             >
@@ -391,7 +392,7 @@ export default function ResultView({
                   )}
                 </>
               )}
-            </Button>
+            </RainbowButton>
           </div>
         </div>
 

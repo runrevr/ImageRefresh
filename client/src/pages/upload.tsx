@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import {
   getSavedStyle,
   clearSavedStyle,
@@ -920,14 +921,14 @@ export default function UploadPage() {
                     </div>
                     
                     <div className="mt-3">
-                      <Button 
+                      <RainbowButton 
                         variant="outline" 
                         size="sm"
                         className="w-full"
                         onClick={() => setCurrentStep(Step.Result)}
                       >
                         Cancel Edit
-                      </Button>
+                      </RainbowButton>
                     </div>
                   </div>
                   

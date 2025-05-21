@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { RainbowButton } from '@/components/ui/rainbow-button';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { ArrowUpFromLine, Image, FileWarning } from 'lucide-react';
@@ -146,9 +147,9 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
                 onChange={handleFileInputChange}
                 accept="image/jpeg,image/png,image/webp"
               />
-              <Button>
+              <RainbowButton>
                 Select Image
-              </Button>
+              </RainbowButton>
               <p className="text-sm text-gray-500 mt-4">
                 Accepted formats: JPG, PNG, WebP • Max size: 10MB
               </p>

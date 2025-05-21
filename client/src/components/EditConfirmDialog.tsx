@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { RainbowButton } from '@/components/ui/rainbow-button';
 
 interface EditConfirmDialogProps {
   open: boolean;
@@ -31,21 +32,19 @@ const EditConfirmDialog = ({
           </p>
           
           <div className="flex justify-end space-x-3">
-            <Button 
+            <RainbowButton 
               type="button" 
               variant="outline" 
               onClick={onClose}
-              className="border-gray-300"
             >
               Cancel
-            </Button>
-            <Button 
+            </RainbowButton>
+            <RainbowButton 
               type="button" 
-              className="bg-black text-white"
               onClick={onConfirm}
             >
               Yes, Use 1 Credit
-            </Button>
+            </RainbowButton>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { Button } from '@/components/ui/button'
+import { RainbowButton } from '@/components/ui/rainbow-button'
 import { Link } from 'wouter'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
@@ -78,9 +79,9 @@ export function ShowcaseSection() {
                 
                 <div className="mt-12 text-center">
                     <Link href="/gallery">
-                        <Button variant="outline" className="rounded-full border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B]/10">
+                        <RainbowButton className="rounded-full">
                             View our gallery
-                        </Button>
+                        </RainbowButton>
                     </Link>
                 </div>
             </div>
