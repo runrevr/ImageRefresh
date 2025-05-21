@@ -3,18 +3,24 @@
 import { ScrollVelocity } from "@/components/ui/scroll-velocity"
 
 // Feature showcases for the scrolling demo with images from our assets
-// Import images using the @ notation for proper Vite handling
-import agingImage from "@assets/aging.png"
-import bearAfterImage from "@assets/bear after.png"
-import pixarImage from "@assets/pixar us.png"
-import mexicanFoodImage from "@assets/Mexican Food.png"
-import ghibliStyleImage from "@assets/Ghibli Style.png"
-import headphonesImage from "@assets/headphones.png"
-import renaissanceImage from "@assets/Renaissance.png"
-import eightiesImage from "@assets/80s.png"
-import marioImage from "@assets/mario.png"
-import dogCatDrawingImage from "@assets/dog and cat.png"
-import westernImage from "@assets/Western.png"
+// Import images directly from assets folder
+import agingImage from "../../assets/aging.png"
+import bearAfterImage from "../../assets/bear-after.png"
+import pixarImage from "../../assets/pixar us.png"
+import mexicanFoodImage from "../../assets/Mexican Food.png"
+import ghibliStyleImage from "../../assets/Ghibli Style.png"
+import headphonesImage from "../../assets/headphones.png"
+import renaissanceImage from "../../assets/Renaissance.png"
+import eightiesImage from "../../assets/80s.png"
+import marioImage from "../../assets/mario.png"
+import dogCatDrawingImage from "../../assets/dog-and-cat-drawing.png"
+import westernImage from "../../assets/Western.png"
+import legoImage from "../../assets/Lego.png"
+import animeImage from "../../assets/trump-mullet.png"
+import cyberpunkImage from "../../assets/tk-ts-baby.jpg"
+import watercolorImage from "../../assets/sunset-shampoo.jpg"
+import popArtImage from "../../assets/Disco.png"
+import fantasyImage from "../../assets/alicorn-drawing.jpg"
 
 const features = [
   { 
@@ -63,28 +69,28 @@ const features = [
   },
   { 
     title: "Lego", 
-    image: new URL('@assets/Lego.png', import.meta.url).href
+    image: legoImage
   },
   // 5 additional categories
   { 
     title: "Anime Style", 
-    image: new URL('@assets/Trump Mullet.png', import.meta.url).href
+    image: animeImage
   },
   { 
     title: "Cyberpunk", 
-    image: new URL('@assets/TK TS baby.jpg', import.meta.url).href 
+    image: cyberpunkImage
   },
   { 
     title: "Watercolor", 
-    image: new URL('@assets/shampoo-bottle5.jpg', import.meta.url).href
+    image: watercolorImage
   },
   { 
     title: "Pop Art", 
-    image: new URL('@assets/20250428_1834_Oil Painting Transformation_remix_01jszjstc3efatce04n29h4gv4.png', import.meta.url).href
+    image: popArtImage
   },
   { 
     title: "Fantasy Characters", 
-    image: new URL('@assets/Alicorn.jpg', import.meta.url).href
+    image: fantasyImage
   }
 ]
 
