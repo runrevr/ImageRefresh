@@ -174,7 +174,7 @@ function DemoPage() {
           imageUrl={kidsDrawingConverted}
           heading="Turn Your Child's Drawings Into Real Life Creatures"
           buttonText="Let's Make Some Magic"
-          buttonLink="/try-it"
+          buttonLink="/kids-drawing"
         />
       </section>
       
