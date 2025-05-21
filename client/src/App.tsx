@@ -33,7 +33,7 @@ import SubscribePage from "@/pages/subscribe";
 import BuyCreditsPage from "@/pages/buy-credits";
 import CheckoutDemoPage from "@/pages/checkout-demo";
 import CheckoutFlowDemoPage from "@/pages/checkout-flow-demo";
-import DirectUploadPage from "@/pages/direct-upload";
+import UploadPage from "@/pages/upload";
 
 function Router() {
   return (
