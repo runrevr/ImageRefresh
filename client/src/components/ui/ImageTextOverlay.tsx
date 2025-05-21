@@ -1,6 +1,7 @@
 import React from "react";
 // Using wouter for routing in this project
 import { Link } from "wouter";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 interface ImageTextOverlayProps {
   imageUrl?: string;
@@ -42,11 +43,10 @@ function ImageTextOverlay({
             <p className="text-xl text-purple-200 mb-10">
               Our AI transforms your child's imagination into stunning visual creations they'll love!
             </p>
-            <Link 
-              to={buttonLink}
-              className="inline-block px-8 py-4 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              {buttonText}
+            <Link to={buttonLink}>
+              <RainbowButton className="px-8 py-4 text-lg transform hover:scale-105">
+                {buttonText}
+              </RainbowButton>
             </Link>
           </div>
         </div>
