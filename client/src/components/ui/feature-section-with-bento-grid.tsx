@@ -147,7 +147,7 @@ export const SkeletonThree = () => {
       </div>
       
       <div className="flex justify-center mt-2 relative z-30">
-        <Link to="/kids-drawing">
+        <Link to="/upload">
           <RainbowButton>Create Something Epic</RainbowButton>
         </Link>
       </div>
