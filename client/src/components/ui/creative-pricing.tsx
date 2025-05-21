@@ -36,7 +36,7 @@ function CreativePricing({
                         rounded-full blur-sm" />
                     </h3>
                 </div>
-                <p className="text-xl text-body dark:text-light font-montserrat">
+                <p className="text-xl text-[#333333] font-montserrat">
                     {description}
                 </p>
             </div>
