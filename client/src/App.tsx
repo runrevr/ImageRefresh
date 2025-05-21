@@ -49,40 +49,41 @@ function Router() {
         <Route path="/kids-drawing" component={KidsDrawingPage} />
         <Route path="/upload" component={UploadPage} />
         <Route path="/about" component={AboutPage} />
-      <Route path="/product-enhancement" component={ProductEnhancementPage} />
-      <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
-      <Route path="/product-enhancement-webhook-simple" component={ProductEnhancementWebhookSimplePage} />
-      <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
-      <Route path="/product-image-lab" component={ProductImageLabPage} />
-      <Route path="/fixed-product-lab" component={FixedProductLabPage} />
-      <Route path="/features-demo" component={FeaturesDemoPage} />
-      <Route path="/webhook-test" component={() => {
-        // This is a simpler way to import the component without TypeScript errors
-        const WebhookTest = require("../pages/webhook-test").default;
-        return <WebhookTest />;
-      }} />
-      <Route path="/n8n-test" component={() => {
-        // Import the N8N test page
-        const N8NTest = require("../pages/n8n-test").default;
-        return <N8NTest />;
-      }} />
-      <Route path="/router-debug" component={RouterDebugPage} />
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/login">
-        {() => <Redirect to="/auth?tab=login" />}
-      </Route>
-      <Route path="/register">
-        {() => <Redirect to="/auth" />}
-      </Route>
-      <ProtectedRoute path="/account" component={AccountPage} />
-      <ProtectedRoute path="/transformations" component={TransformationsPage} />
-      <ProtectedRoute path="/checkout" component={CheckoutPage} />
-      <ProtectedRoute path="/subscribe" component={SubscribePage} />
-      <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
-      <Route path="/checkout-demo" component={CheckoutDemoPage} />
-      <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
-      <Route component={NotFound} />
-    </Switch>
+        <Route path="/product-enhancement" component={ProductEnhancementPage} />
+        <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
+        <Route path="/product-enhancement-webhook-simple" component={ProductEnhancementWebhookSimplePage} />
+        <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
+        <Route path="/product-image-lab" component={ProductImageLabPage} />
+        <Route path="/fixed-product-lab" component={FixedProductLabPage} />
+        <Route path="/features-demo" component={FeaturesDemoPage} />
+        <Route path="/webhook-test" component={() => {
+          // This is a simpler way to import the component without TypeScript errors
+          const WebhookTest = require("../pages/webhook-test").default;
+          return <WebhookTest />;
+        }} />
+        <Route path="/n8n-test" component={() => {
+          // Import the N8N test page
+          const N8NTest = require("../pages/n8n-test").default;
+          return <N8NTest />;
+        }} />
+        <Route path="/router-debug" component={RouterDebugPage} />
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/login">
+          {() => <Redirect to="/auth?tab=login" />}
+        </Route>
+        <Route path="/register">
+          {() => <Redirect to="/auth" />}
+        </Route>
+        <ProtectedRoute path="/account" component={AccountPage} />
+        <ProtectedRoute path="/transformations" component={TransformationsPage} />
+        <ProtectedRoute path="/checkout" component={CheckoutPage} />
+        <ProtectedRoute path="/subscribe" component={SubscribePage} />
+        <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
+        <Route path="/checkout-demo" component={CheckoutDemoPage} />
+        <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
