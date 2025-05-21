@@ -51,12 +51,12 @@ const exampleImages = [
 
 function DemoPage() {
   const textRotateRef = useRef<TextRotateRef>(null);
-  
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
       <Navbar />
-      
+
       {/* Hero Section with Parallax Effect */}
       <section className="w-full h-screen relative flex items-center justify-center overflow-hidden">
         {/* Background with Floating Images */}
@@ -156,36 +156,27 @@ function DemoPage() {
               <RainbowButton 
                 className="px-10 py-5 text-xl"
                 onClick={() => {
-                  // This matches exactly what "Let's Make Some Magic" does:
-                  // 1. Set the flag to show the upload form directly
-                  localStorage.setItem('showUploadForm', 'true');
-                  
-                  // 2. We also ensure to scroll to the uploader after the page loads
-                  setTimeout(() => {
-                    const uploaderEl = document.getElementById('uploader');
-                    if (uploaderEl) {
-                      uploaderEl.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }, 300);
+                  // Direct link to the upload functionality without going through the old homepage
+                  window.location.href = "/old-home?showUpload=true";
                 }}
               >
-                Try For Free
+                ⚡ Let's Make Some Magic
               </RainbowButton>
             </Link>
           </div>
         </motion.div>
       </section>
-      
+
       {/* Features Bento Grid Section */}
       <section className="bg-black text-white py-10">
         <FeaturesSectionWithBentoGrid />
       </section>
-      
+
       {/* Scroll Velocity Demo Section */}
       <section className="bg-white text-black">
         <ScrollVelocityDemo />
       </section>
-      
+
       <section>
         <ImageTextOverlay 
           imageUrl={kidsDrawingConverted}
@@ -194,12 +185,12 @@ function DemoPage() {
           buttonLink="/kids-drawing#uploader"
         />
       </section>
-      
+
       {/* Creative Pricing Section */}
       <section className="bg-white text-black py-20">
         <CreativePricingDemo />
       </section>
-      
+
       {/* Footer */}
       <Footer />
     </div>
