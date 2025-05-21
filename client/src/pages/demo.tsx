@@ -152,7 +152,7 @@ function DemoPage() {
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">
-            <Link to="/kids-drawing">
+            <Link to="/kids-drawing#uploader">
               <RainbowButton className="px-10 py-5 text-xl">
                 Try For Free
               </RainbowButton>
@@ -176,7 +176,7 @@ function DemoPage() {
           imageUrl={kidsDrawingConverted}
           heading="Turn Your Child's Drawings Into Real Life Creatures"
           buttonText="Let's Make Some Magic"
-          buttonLink="/kids-drawing"
+          buttonLink="/kids-drawing#uploader"
         />
       </section>
       
