@@ -55,7 +55,7 @@ function DemoPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
-      <Navbar />
+      <Navbar freeCredits={0} paidCredits={0} />
 
       {/* Hero Section with Parallax Effect */}
       <section className="w-full h-screen relative flex items-center justify-center overflow-hidden">
