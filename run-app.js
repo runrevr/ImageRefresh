@@ -1,26 +1,26 @@
-// Simple script to run the application
-const { spawn } = require('child_process');
-const path = require('path');
+// Start the application server
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
 
-console.log('Starting ImageRefresh application...');
+console.log('Starting application server...');
 
-// Run the server
-const server = spawn('node', ['-r', 'tsx/register', 'server/index.ts'], {
-  stdio: 'inherit',
-  env: { 
-    ...process.env, 
-    NODE_ENV: 'development',
-    PORT: '5000'
+try {
+  // Make sure the uploads directory exists
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const uploadsDir = path.join(__dirname, 'uploads');
+  
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Created uploads directory');
   }
-});
 
-// Handle server events
-server.on('error', (err) => {
-  console.error('Failed to start server:', err);
-});
-
-process.on('SIGINT', () => {
-  console.log('Shutting down server...');
-  server.kill('SIGINT');
-  process.exit(0);
-});
+  // Run the server in development mode
+  execSync('NODE_ENV=development tsx server/index.ts', {
+    stdio: 'inherit'
+  });
+} catch (error) {
+  console.error('Error starting application:', error);
+  process.exit(1);
+}
