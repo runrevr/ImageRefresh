@@ -11,13 +11,14 @@ import { RainbowButton } from "@/components/ui/rainbow-button"
 import { Link } from "wouter"
 
 // Import some example images from the assets folder
-import bearReal from "@assets/bear.png" 
-import bearAfter from "@assets/prison cat.png"
-import giraffeReal from "@assets/giraffe.png"
-import giraffeDrawing from "@assets/giraffe after.png"
-import dogCatReal from "@assets/dog and cat.png"
-import dogCatDrawing from "@assets/dog and cat after.png"
-import kidsDrawingConverted from "@assets/kids drawing converted2.png"
+// Using the format that works with file names that have spaces
+const bearReal = new URL('@assets/sunglasses beach.png', import.meta.url).href
+const bearAfter = new URL('@assets/prison cat.png', import.meta.url).href
+const giraffeReal = new URL('@assets/mullet.png', import.meta.url).href
+const giraffeDrawing = new URL('@assets/work boots.png', import.meta.url).href
+const dogCatReal = new URL('@assets/dog and cat.png', import.meta.url).href
+const dogCatDrawing = new URL('@assets/dog and cat after.png', import.meta.url).href
+const kidsDrawingConverted = new URL('@assets/kids drawing converted2.png', import.meta.url).href
 
 const exampleImages = [
   {
