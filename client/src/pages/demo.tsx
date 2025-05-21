@@ -171,7 +171,7 @@ function DemoPage() {
       {/* Image Text Overlay Section */}
       <section>
         <ImageTextOverlay 
-          imageUrl="/images/kids-drawing-converted.png"
+          imageUrl="/images/Cover photo.png"
           heading="Speaking things into existence"
           buttonText="Try it Now"
           buttonLink="/try-it"

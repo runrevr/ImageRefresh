@@ -22,6 +22,10 @@ function ImageTextOverlay({
         src={imageUrl} 
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover"
+        onError={(e) => {
+          console.error("Error loading image:", imageUrl);
+          e.currentTarget.style.display = 'none';
+        }}
       />
       
       {/* Overlay to improve text readability */}
