@@ -856,8 +856,10 @@ export default function UploadPage() {
                   
                   <div className="w-full md:w-2/3">
                     <PromptInput
+                      originalImage={originalImage || ""}
                       onSubmit={handlePromptSubmit}
-                      defaultSelectedCategory={selectedTransformation}
+                      onBack={handleNewImage}
+                      selectedTransformation={selectedTransformation}
                       savedStyle={savedStyle}
                       defaultPrompt={prompt}
                     />
@@ -867,7 +869,10 @@ export default function UploadPage() {
             )}
 
             {currentStep === Step.Processing && (
-              <ProcessingState originalImage={originalImage || ""} />
+              <ProcessingState 
+                originalImage={originalImage || ""} 
+                onCancel={() => setCurrentStep(Step.Prompt)} 
+              />
             )}
 
             {currentStep === Step.Result && transformedImage && (
@@ -876,10 +881,12 @@ export default function UploadPage() {
                 transformedImage={transformedImage}
                 secondTransformedImage={secondTransformedImage}
                 prompt={prompt}
-                onEdit={handleStartEdit}
+                onEditImage={handleStartEdit}
                 onTryAgain={handleTryAgain}
                 onNewImage={handleNewImage}
-                hasTriedAnotherPrompt={hasTriedAnotherPrompt}
+                freeCredits={userCredits?.freeCreditsUsed ? 0 : 1}
+                paidCredits={userCredits?.paidCredits || 0}
+                canEdit={true}
               />
             )}
 
@@ -920,8 +927,11 @@ export default function UploadPage() {
                   
                   <div className="w-full md:w-2/3">
                     <EditPrompt
+                      originalImage={originalImage || ""}
+                      transformedImage={transformedImage || ""}
+                      initialPrompt={prompt}
                       onSubmit={handleEditSubmit}
-                      previousPrompt={prompt}
+                      onSkip={() => setCurrentStep(Step.Result)}
                     />
                   </div>
                 </div>
