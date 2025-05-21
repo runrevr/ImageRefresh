@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom"; // or whichever router you're using
+// Using wouter for routing in this project
+import { Link } from "wouter";
 
 interface ImageTextOverlayProps {
   imageUrl?: string;
@@ -35,12 +36,12 @@ function ImageTextOverlay({
           </h1>
           
           {/* Button */}
-          <a 
-            href={buttonLink}
+          <Link 
+            to={buttonLink}
             className="inline-block px-8 py-4 mt-8 bg-white text-black font-bold rounded-full hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105"
           >
             {buttonText}
-          </a>
+          </Link>
         </div>
       </div>
     </div>
