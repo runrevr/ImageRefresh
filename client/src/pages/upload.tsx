@@ -781,6 +781,11 @@ export default function UploadPage() {
       }, 300);
     }
   }, [autoSubmitStyle, savedStyle, currentStep]);
+  
+  // Reset scroll position when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Extract any parameters from the URL
   const [location] = useLocation();

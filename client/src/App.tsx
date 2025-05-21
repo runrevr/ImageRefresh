@@ -23,6 +23,7 @@ import FeaturesDemoPage from "@/pages/features-demo";
 import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
+import ScrollToTop from "@/components/ScrollToTop";
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -37,15 +38,17 @@ import UploadPage from "@/pages/upload";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={DemoPage} />
-      <Route path="/old-home" component={Home} />
-      <Route path="/pricing" component={PricingPage} />
-      <Route path="/ideas" component={IdeasPage} />
-      <Route path="/help" component={HelpPage} />
-      <Route path="/kids-drawing" component={KidsDrawingPage} />
-      <Route path="/upload" component={UploadPage} />
-      <Route path="/about" component={AboutPage} />
+    <>
+      <ScrollToTop />
+      <Switch>
+        <Route path="/" component={DemoPage} />
+        <Route path="/old-home" component={Home} />
+        <Route path="/pricing" component={PricingPage} />
+        <Route path="/ideas" component={IdeasPage} />
+        <Route path="/help" component={HelpPage} />
+        <Route path="/kids-drawing" component={KidsDrawingPage} />
+        <Route path="/upload" component={UploadPage} />
+        <Route path="/about" component={AboutPage} />
       <Route path="/product-enhancement" component={ProductEnhancementPage} />
       <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
       <Route path="/product-enhancement-webhook-simple" component={ProductEnhancementWebhookSimplePage} />
