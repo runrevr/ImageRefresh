@@ -169,7 +169,7 @@ function DemoPage() {
                   }, 300);
                 }}
               >
-                Try For Free
+                ⚡ Let's Make Some Magic
               </RainbowButton>
             </Link>
           </div>
