@@ -152,8 +152,22 @@ function DemoPage() {
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">
-            <Link to="/kids-drawing#uploader">
-              <RainbowButton className="px-10 py-5 text-xl">
+            <Link to="/old-home">
+              <RainbowButton 
+                className="px-10 py-5 text-xl"
+                onClick={() => {
+                  // Set localStorage to show upload form directly
+                  localStorage.setItem('showUploadForm', 'true');
+                  
+                  // We also need to delay the scroll to ensure the page has loaded
+                  setTimeout(() => {
+                    const uploaderEl = document.getElementById('uploader');
+                    if (uploaderEl) {
+                      uploaderEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }, 500);
+                }}
+              >
                 Try For Free
               </RainbowButton>
             </Link>
