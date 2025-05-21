@@ -26,9 +26,9 @@ function CreativePricing({
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
             <div className="text-center space-y-6 mb-16">
-                <div className="text-xl text-brand-primary font-montserrat">
+                <h2 className="text-3xl md:text-4xl text-brand-primary font-bungee">
                     {tag}
-                </div>
+                </h2>
                 <div className="relative">
                     <h2 className="text-4xl md:text-5xl font-bungee text-dark dark:text-light">
                         {title}
