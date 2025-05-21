@@ -174,6 +174,16 @@ function DemoPage() {
         <ChildDrawingSection />
       </section>
       
+      {/* Image Text Overlay Section */}
+      <section>
+        <ImageTextOverlay 
+          imageUrl="/images/kids-drawing-converted.png"
+          heading="Speaking things into existence"
+          buttonText="Try it Now"
+          buttonLink="/try-it"
+        />
+      </section>
+      
       {/* Creative Pricing Section */}
       <section className="bg-white text-black py-20">
         <CreativePricingDemo />
