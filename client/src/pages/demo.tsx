@@ -170,7 +170,7 @@ function DemoPage() {
       
       <section>
         <ImageTextOverlay 
-          imageUrl="/images/Cover photo.png"
+          imageUrl="/images/kids drawing converted2.png"
           heading="Turn Your Child's Drawings Into Real Life Creatures"
           buttonText="Let's Make Some Magic"
           buttonLink="/try-it"
