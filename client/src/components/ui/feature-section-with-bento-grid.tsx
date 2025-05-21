@@ -12,6 +12,7 @@ import shampooBottle5 from "@/assets/sunset-shampoo.jpg";
 import minecraftImage from "@assets/Minecraft.png";
 import mulletImage from "@assets/Trump Mullet.png";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import { Link } from "wouter";
 // @ts-ignore - cobe doesn't have types
 import createGlobe from "cobe";
 
@@ -123,7 +124,9 @@ export const SkeletonOne = () => {
       </div>
       
       <div className="flex justify-center mt-2 relative z-30">
-        <RainbowButton>Let's Make Magic</RainbowButton>
+        <Link to="/kids-drawing">
+          <RainbowButton>Let's Make Magic</RainbowButton>
+        </Link>
       </div>
 
       <div className="absolute bottom-0 z-20 inset-x-0 h-40 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
@@ -144,7 +147,9 @@ export const SkeletonThree = () => {
       </div>
       
       <div className="flex justify-center mt-2 relative z-30">
-        <RainbowButton>Create Something Epic</RainbowButton>
+        <Link to="/kids-drawing">
+          <RainbowButton>Create Something Epic</RainbowButton>
+        </Link>
       </div>
     </div>
   );
