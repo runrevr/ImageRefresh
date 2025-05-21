@@ -16,6 +16,7 @@ import ProductEnhancementWebhookPage from "@/pages/product-enhancement-webhook";
 import ProductEnhancementDebugPage from "@/pages/product-enhancement-debug";
 import ProductEnhancementWebhookSimplePage from "@/pages/product-enhancement-webhook-simple";
 import ProductImageLabPage from "@/pages/product-image-lab";
+import SimpleProductLabPage from "@/pages/simple-product-lab";
 import FixedProductLabPage from "@/pages/fixed-product-lab";
 import RouterDebugPage from "@/pages/router-debug";
 import DemoPage from "@/pages/demo";
@@ -53,7 +54,8 @@ function Router() {
         <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
         <Route path="/product-enhancement-webhook-simple" component={ProductEnhancementWebhookSimplePage} />
         <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
-        <Route path="/product-image-lab" component={ProductImageLabPage} />
+        <Route path="/product-image-lab" component={SimpleProductLabPage} />
+        <Route path="/product-image-lab-complex" component={ProductImageLabPage} />
         <Route path="/fixed-product-lab" component={FixedProductLabPage} />
         <Route path="/features-demo" component={FeaturesDemoPage} />
         <Route path="/webhook-test" component={() => {
