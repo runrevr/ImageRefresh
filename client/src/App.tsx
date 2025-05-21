@@ -37,7 +37,8 @@ import CheckoutFlowDemoPage from "@/pages/checkout-flow-demo";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={DemoPage} />
+      <Route path="/old-home" component={Home} />
       <Route path="/pricing" component={PricingPage} />
       <Route path="/ideas" component={IdeasPage} />
       <Route path="/help" component={HelpPage} />
@@ -49,7 +50,6 @@ function Router() {
       <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
       <Route path="/product-image-lab" component={ProductImageLabPage} />
       <Route path="/fixed-product-lab" component={FixedProductLabPage} />
-      <Route path="/demo" component={DemoPage} />
       <Route path="/features-demo" component={FeaturesDemoPage} />
       <Route path="/webhook-test" component={() => {
         // This is a simpler way to import the component without TypeScript errors
