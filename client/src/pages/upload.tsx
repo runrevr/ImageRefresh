@@ -15,6 +15,7 @@ import {
   getSavedStyle,
   clearSavedStyle,
   hasSavedStyle,
+  type SavedStyle
 } from "@/components/StyleIntegration";
 
 // Enum for the different steps in the process
@@ -932,6 +933,9 @@ export default function UploadPage() {
                       initialPrompt={prompt}
                       onSubmit={handleEditSubmit}
                       onSkip={() => setCurrentStep(Step.Result)}
+                      editsUsed={0}
+                      freeCreditsUsed={userCredits?.freeCreditsUsed || false}
+                      paidCredits={userCredits?.paidCredits || 0}
                     />
                   </div>
                 </div>

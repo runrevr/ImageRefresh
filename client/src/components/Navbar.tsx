@@ -185,6 +185,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               </div>
               <div className="flex flex-col space-y-4">
                 <Link
+                  href="/upload"
+                  className="header-menu py-2 text-[#FF7B54] hover:text-[#FF6B44] transition font-bold"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Transform Images
+                </Link>
+                <Link
                   href="/ideas"
                   className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
                   onClick={() => setIsMenuOpen(false)}
