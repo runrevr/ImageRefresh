@@ -3,75 +3,88 @@
 import { ScrollVelocity } from "@/components/ui/scroll-velocity"
 
 // Feature showcases for the scrolling demo with images from our assets
+// Import images using the @ notation for proper Vite handling
+import agingImage from "@assets/aging.png"
+import bearAfterImage from "@assets/bear after.png"
+import pixarImage from "@assets/pixar us.png"
+import mexicanFoodImage from "@assets/Mexican Food.png"
+import ghibliStyleImage from "@assets/Ghibli Style.png"
+import headphonesImage from "@assets/headphones.png"
+import renaissanceImage from "@assets/Renaissance.png"
+import eightiesImage from "@assets/80s.png"
+import marioImage from "@assets/mario.png"
+import dogCatDrawingImage from "@assets/dog and cat.png"
+import westernImage from "@assets/Western.png"
+
 const features = [
   { 
     title: "Aging Transformations", 
-    image: "/src/assets/aging.png"
+    image: agingImage
   },
   { 
     title: "Character Art", 
-    image: "/src/assets/bear-after.png"
+    image: bearAfterImage
   },
   { 
     title: "Cartoon Effects", 
-    image: "/src/assets/pixar us.png"
+    image: pixarImage
   },
   { 
     title: "Restaurant", 
-    image: "/src/assets/Mexican Food.png"
+    image: mexicanFoodImage
   },
   { 
     title: "Ghibli Style", 
-    image: "/src/assets/Ghibli Style.png"
+    image: ghibliStyleImage
   },
   { 
     title: "Scroll Stopping", 
-    image: "/src/assets/headphones.png"
+    image: headphonesImage
   },
   { 
     title: "Renaissance Art", 
-    image: "/src/assets/Renaissance.png"
+    image: renaissanceImage
   },
   { 
     title: "1980's", 
-    image: "/src/assets/80s.png"
+    image: eightiesImage
   },
   { 
     title: "Game Characters", 
-    image: "/src/assets/mario.png"
+    image: marioImage
   },
   { 
     title: "Pet Transformations", 
-    image: "/src/assets/dog-and-cat-drawing.png"
+    image: dogCatDrawingImage
   },
   { 
     title: "Old Western", 
-    image: "/src/assets/Western.png"
+    image: westernImage
   },
   { 
     title: "Lego", 
-    image: "/src/assets/Lego.png"
+    image: new URL('@assets/Lego.png', import.meta.url).href
   },
   // 5 additional categories
   { 
     title: "Anime Style", 
-    image: "/src/assets/trump-mullet.png"
+    image: new URL('@assets/Trump Mullet.png', import.meta.url).href
   },
   { 
     title: "Cyberpunk", 
-    image: "/src/assets/tk-ts-baby.jpg" 
+    image: new URL('@assets/TK TS baby.jpg', import.meta.url).href 
   },
   { 
     title: "Watercolor", 
-    image: "/src/assets/sunset-shampoo.jpg"
+    image: new URL('@assets/shampoo-bottle5.jpg', import.meta.url).href
   },
   { 
     title: "Pop Art", 
-    image: "/src/assets/Disco.png"
+    image: new URL('@assets/20250428_1834_Oil Painting Transformation_remix_01jszjstc3efatce04n29h4gv4.png', import.meta.url).href
   },
   { 
     title: "Fantasy Characters", 
-    image: "/src/assets/alicorn-drawing.jpg"
+    image: new URL('@assets/Alicorn.jpg', import.meta.url).href
   }
 ]
 
