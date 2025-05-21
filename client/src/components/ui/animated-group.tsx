@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { motion, Variants, HTMLMotionProps } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 
 export interface AnimatedGroupProps extends HTMLMotionProps<'div'> {
-  variants?: Variants
+  variants?: any
   children: React.ReactNode
   className?: string
   childClassName?: string
