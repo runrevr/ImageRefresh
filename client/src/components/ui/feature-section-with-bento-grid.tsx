@@ -222,7 +222,9 @@ export const SkeletonTwo = () => {
       </div>
       
       <div className="flex justify-center w-full mt-2 relative z-30">
-        <RainbowButton>Product Image Lab</RainbowButton>
+        <Link to="/kids-drawing">
+          <RainbowButton>Product Image Lab</RainbowButton>
+        </Link>
       </div>
 
       <div className="absolute left-0 z-20 inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent h-full pointer-events-none" />
@@ -243,7 +245,9 @@ export const SkeletonFour = () => {
         />
       </div>
       <div className="relative z-30 mt-4">
-        <RainbowButton>Start Kids Fun</RainbowButton>
+        <Link to="/kids-drawing">
+          <RainbowButton>Start Kids Fun</RainbowButton>
+        </Link>
       </div>
     </div>
   );
