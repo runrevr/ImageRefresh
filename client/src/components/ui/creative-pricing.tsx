@@ -30,11 +30,11 @@ function CreativePricing({
                     {tag}
                 </h2>
                 <div className="relative">
-                    <h2 className="text-4xl md:text-5xl font-bungee text-dark dark:text-light">
+                    <h3 className="text-4xl md:text-5xl font-bungee text-[#333333]">
                         {title}
                         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-3 bg-brand-primary/20 
                         rounded-full blur-sm" />
-                    </h2>
+                    </h3>
                 </div>
                 <p className="text-xl text-body dark:text-light font-montserrat">
                     {description}
