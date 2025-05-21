@@ -35,12 +35,7 @@ function CreativePricing({
                         <div className="absolute -right-12 top-0 text-brand-secondary">
                             ✨
                         </div>
-                        <div className="absolute -left-8 bottom-0 text-brand-primary">
-                            ⭐️
-                        </div>
-                    </h2>
-                    <div
-                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-3 bg-brand-primary/20 
+                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-3 bg-brand-primary/20 
                         rounded-full blur-sm"
                     />
                 </div>
