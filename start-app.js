@@ -1,55 +1,36 @@
 /**
- * Simple script to start the application server
- * Run with: node start-app.js
+ * Script to start the application for testing
  */
-import express from 'express';
+
+import { spawn } from 'child_process';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-// Get current directory in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+console.log('Starting the application in development mode...');
 
-const app = express();
-const PORT = process.env.PORT || 5050; // Using port 5050 instead
+// Set the NODE_ENV environment variable to development
+process.env.NODE_ENV = 'development';
 
-// Serve the public directory as static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Serve uploaded files as static content
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Serve examples directory if it exists
-if (fs.existsSync(path.join(__dirname, 'examples'))) {
-  app.use('/examples', express.static(path.join(__dirname, 'examples')));
-}
-
-// Create a placeholder endpoint for API requests in our static HTML page
-app.get('/api/placeholder/:width/:height', (req, res) => {
-  const { width, height } = req.params;
-  res.redirect(`https://via.placeholder.com/${width}x${height}`);
+// Start the server using tsx
+const server = spawn('npx', ['tsx', 'server/index.ts'], {
+  stdio: 'inherit',
+  shell: true
 });
 
-// Basic API endpoints
-app.get('/api/config', (req, res) => {
-  res.json({
-    openaiConfigured: !!process.env.OPENAI_API_KEY,
-    maxUploadSize: 10 * 1024 * 1024 // 10MB
-  });
+console.log('Server process started with PID:', server.pid);
+
+// Handle server process events
+server.on('close', (code) => {
+  console.log(`Server process exited with code ${code}`);
 });
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+server.on('error', (err) => {
+  console.error('Failed to start server process:', err);
 });
 
-// Special endpoint for the Product Image Lab HTML page
-app.get('/product-image-lab-html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'product-image-lab.html'));
-});
-
-// Start the server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Product Image Lab server running on http://0.0.0.0:${PORT}`);
-  console.log(`View the Product Image Lab at: http://localhost:${PORT}/product-image-lab-html`);
+// Log a message when the script ends
+process.on('SIGINT', () => {
+  console.log('Received SIGINT signal. Shutting down server...');
+  server.kill('SIGINT');
+  process.exit(0);
 });
