@@ -35,7 +35,7 @@ const transitionVariants = {
 export function HeroSection() {
     return (
         <section>
-            <div className="relative mx-auto max-w-6xl px-6 pt-32 lg:pb-16 lg:pt-48">
+            <div className="relative mx-auto max-w-6xl px-6 pt-16 lg:pb-16 lg:pt-24">
                 <div className="relative z-10 mx-auto max-w-4xl text-center">
                     <AnimatedGroup
                         variants={{
