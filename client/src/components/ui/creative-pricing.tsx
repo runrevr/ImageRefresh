@@ -25,6 +25,25 @@ function CreativePricing({
     description?: string;
     tiers: PricingTier[];
 }) {
+    const [, navigate] = useLocation();
+    const { toast } = useToast();
+    
+    const handlePurchase = (tier: PricingTier) => {
+        if (tier.name === "Free") {
+            toast({
+                title: "Free Plan",
+                description: "You already have access to the free plan!",
+            });
+            return;
+        }
+
+        // For paid plans, navigate to the appropriate checkout page
+        if (tier.name === "Core") {
+            navigate("/checkout");
+        } else if (tier.name === "Premium") {
+            navigate("/subscribe");
+        }
+    };
     return (
         <div className="w-full max-w-6xl mx-auto px-4">
             <div className="text-center space-y-6 mb-16">
@@ -125,6 +144,7 @@ function CreativePricing({
                             </div>
 
                             <Button
+                                onClick={() => handlePurchase(tier)}
                                 className={cn(
                                     "w-full h-12 font-montserrat text-lg relative",
                                     "border border-dark dark:border-light rounded-md",
@@ -140,7 +160,7 @@ function CreativePricing({
                                           ]
                                 )}
                             >
-                                Get Started
+                                {tier.name === "Free" ? "Get Started" : `Choose ${tier.name}`}
                             </Button>
                         </div>
                     </div>
