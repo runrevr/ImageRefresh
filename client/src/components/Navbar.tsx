@@ -40,12 +40,6 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
 
         <div className="hidden md:flex items-center space-x-8">
           <Link
-            href="/upload"
-            className="header-menu text-[#FF7B54] hover:text-[#FF6B44] transition text-lg font-bold"
-          >
-            Transform Images
-          </Link>
-          <Link
             href="/ideas"
             className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
           >
