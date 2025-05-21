@@ -8,8 +8,8 @@ import { CreativePricingDemo } from "@/components/ui/creative-pricing-demo"
 import { ImageTextOverlay } from "@/components/ui/ImageTextOverlay"
 import { Button } from "@/components/ui/button"
 import { RainbowButton } from "@/components/ui/rainbow-button"
-import { Navbar } from "@/components/ui/navbar"
-import { Footer } from "@/components/ui/footer"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 import { Link } from "wouter"
 
 // Import some example images from the assets folder
