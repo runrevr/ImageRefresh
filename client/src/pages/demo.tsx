@@ -168,13 +168,14 @@ function DemoPage() {
         <ScrollVelocityDemo />
       </section>
       
-      {/* Image Text Overlay Section */}
       <section>
         <ImageTextOverlay 
-          imageUrl="/images/Cover photo.png"
-          heading="Speaking things into existence"
-          buttonText="Try it Now"
+          imageUrl="/client/src/assets/kids drawing converted.png"  // Updated path
+          heading="Turn Your Child's Drawings Into Real Life Creatures"
+          buttonText="Let's Make Some Magic"
           buttonLink="/try-it"
+        />
+      </section>
         />
       </section>
       

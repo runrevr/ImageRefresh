@@ -38,7 +38,7 @@ const sampleTiers: PricingTier[] = [
         features: [
             "50 credits per month",
             "Credits reset monthly",
-            "4K resolution output",
+            "Highest resolution output",
             "Commercial usage rights",
         ],
         popular: true,
