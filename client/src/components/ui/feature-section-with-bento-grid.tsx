@@ -245,7 +245,7 @@ export const SkeletonFour = () => {
         />
       </div>
       <div className="relative z-30 mt-4">
-        <Link to="/kids-drawing">
+        <Link to="/upload">
           <RainbowButton>Start Kids Fun</RainbowButton>
         </Link>
       </div>
