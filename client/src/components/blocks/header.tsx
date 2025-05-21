@@ -5,6 +5,9 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Link } from 'wouter'
 
+// Import logo
+import logoImage from '../../assets/logo.png'
+
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -14,6 +17,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <Link href="/">
             <a className="flex items-center">
+              <img src={logoImage} alt="ImageRefresh Logo" className="h-8 w-auto mr-2" />
               <span className="text-xl font-bold text-[#2A7B9B]">ImageRefresh</span>
             </a>
           </Link>

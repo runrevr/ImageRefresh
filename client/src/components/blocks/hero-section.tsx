@@ -8,6 +8,10 @@ import { Link } from 'wouter'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
+// Import images
+import mexicanFoodOriginal from '../../assets/mexican-food-original.png'
+import mexicanFoodEnhanced from '../../assets/mexican-food-enhanced.png'
+
 const transitionVariants = {
     item: {
         hidden: {
@@ -111,14 +115,14 @@ export function HeroSection() {
                                         <div className="grid grid-cols-2 gap-2">
                                             <div className="overflow-hidden rounded-md">
                                                 <img 
-                                                    src="/src/assets/mexican-food-original.png" 
+                                                    src={mexicanFoodOriginal} 
                                                     alt="Before enhancement" 
                                                     className="h-24 w-full object-cover"
                                                 />
                                             </div>
                                             <div className="overflow-hidden rounded-md">
                                                 <img 
-                                                    src="/src/assets/mexican-food-enhanced.png" 
+                                                    src={mexicanFoodEnhanced} 
                                                     alt="After enhancement" 
                                                     className="h-24 w-full object-cover"
                                                 />

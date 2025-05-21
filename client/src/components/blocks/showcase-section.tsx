@@ -5,6 +5,13 @@ import { Link } from 'wouter'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
+// Import showcase images
+import shampooOriginal from '../../assets/shampoo-original.jpg'
+import shampooBottle from '../../assets/shampoo-bottle.jpg'
+import sunsetShampoo from '../../assets/sunset-shampoo.jpg'
+import sweatshirtBasic from '../../assets/sweatshirt-basic.png'
+import sweatshirtLifestyle from '../../assets/sweatshirt-lifestyle.png'
+
 export function ShowcaseSection() {
     return (
         <section className="py-24 relative overflow-hidden bg-white">
@@ -23,7 +30,7 @@ export function ShowcaseSection() {
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src="/src/assets/shampoo-original.jpg" 
+                                        src={shampooOriginal} 
                                         alt="Original product" 
                                         className="h-full w-full object-cover rounded-lg"
                                     />
@@ -32,7 +39,7 @@ export function ShowcaseSection() {
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src="/src/assets/shampoo-bottle.jpg" 
+                                        src={shampooBottle} 
                                         alt="Enhanced product" 
                                         className="h-full w-full object-cover rounded-lg"
                                     />
@@ -41,7 +48,7 @@ export function ShowcaseSection() {
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src="/src/assets/sunset-shampoo.jpg" 
+                                        src={sunsetShampoo} 
                                         alt="Product with background" 
                                         className="h-full w-full object-cover rounded-lg"
                                     />
@@ -50,7 +57,7 @@ export function ShowcaseSection() {
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src="/src/assets/sweatshirt-basic.png" 
+                                        src={sweatshirtBasic} 
                                         alt="Basic apparel" 
                                         className="h-full w-full object-cover rounded-lg"
                                     />
@@ -59,7 +66,7 @@ export function ShowcaseSection() {
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src="/src/assets/sweatshirt-lifestyle.png" 
+                                        src={sweatshirtLifestyle} 
                                         alt="Lifestyle apparel" 
                                         className="h-full w-full object-cover rounded-lg"
                                     />
