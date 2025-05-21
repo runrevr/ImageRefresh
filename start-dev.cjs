@@ -1,19 +1,17 @@
 /**
  * Simple script to start the development server
  */
-const { spawn } = require('child_process');
-const path = require('path');
 
-console.log('Starting the development server...');
+const { execSync } = require('child_process');
 
-// Start the server using npm run dev
-const dev = spawn('npx', ['tsx', 'server/index.ts'], {
-  stdio: 'inherit',
-  shell: true
-});
+console.log('Starting application in development mode...');
 
-dev.on('error', (error) => {
-  console.error('Failed to start development server:', error);
-});
-
-console.log('Development server started!');
+try {
+  // Run the development server
+  execSync('NODE_ENV=development npx tsx server/index.ts', {
+    stdio: 'inherit'
+  });
+} catch (error) {
+  console.error('Error starting the server:', error.message);
+  process.exit(1);
+}
