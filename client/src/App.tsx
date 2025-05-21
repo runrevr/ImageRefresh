@@ -44,7 +44,7 @@ function Router() {
       <Route path="/ideas" component={IdeasPage} />
       <Route path="/help" component={HelpPage} />
       <Route path="/kids-drawing" component={KidsDrawingPage} />
-      <Route path="/direct-upload" component={DirectUploadPage} />
+      <Route path="/upload" component={UploadPage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/product-enhancement" component={ProductEnhancementPage} />
       <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />

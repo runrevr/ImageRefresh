@@ -152,13 +152,9 @@ function DemoPage() {
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">
-            <Link to="/old-home">
+            <Link to="/upload">
               <RainbowButton 
                 className="px-10 py-5 text-xl"
-                onClick={() => {
-                  // Direct link to the upload functionality without going through the old homepage
-                  window.location.href = "/old-home?showUpload=true";
-                }}
               >
                 ⚡ Let's Make Some Magic
               </RainbowButton>
