@@ -152,12 +152,21 @@ function DemoPage() {
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">
-            <Link to="/kids-drawing">
+            <Link to="/old-home">
               <RainbowButton 
                 className="px-10 py-5 text-xl"
                 onClick={() => {
-                  // Add a flag in sessionStorage that the kids-drawing page can check
-                  sessionStorage.setItem('showUploaderDirectly', 'true');
+                  // This matches exactly what "Let's Make Some Magic" does:
+                  // 1. Set the flag to show the upload form directly
+                  localStorage.setItem('showUploadForm', 'true');
+                  
+                  // 2. We also ensure to scroll to the uploader after the page loads
+                  setTimeout(() => {
+                    const uploaderEl = document.getElementById('uploader');
+                    if (uploaderEl) {
+                      uploaderEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }, 300);
                 }}
               >
                 Try For Free
