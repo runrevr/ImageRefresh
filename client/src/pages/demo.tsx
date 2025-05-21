@@ -180,6 +180,9 @@ function DemoPage() {
       <section className="bg-white text-black py-20">
         <CreativePricingDemo />
       </section>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
