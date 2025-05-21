@@ -16,6 +16,7 @@ import giraffeReal from "@/assets/giraffe-real.png"
 import giraffeDrawing from "@/assets/giraffe-drawing.png"
 import dogCatReal from "@/assets/dog-and-cat-real.png"
 import dogCatDrawing from "@/assets/dog-and-cat-drawing.png"
+import kidsDrawingConverted from "@/assets/kids-drawing-converted2.png"
 
 const exampleImages = [
   {
@@ -170,7 +171,7 @@ function DemoPage() {
       
       <section>
         <ImageTextOverlay 
-          imageUrl="/images/kids drawing converted2.png"
+          imageUrl={kidsDrawingConverted}
           heading="Turn Your Child's Drawings Into Real Life Creatures"
           buttonText="Let's Make Some Magic"
           buttonLink="/try-it"
