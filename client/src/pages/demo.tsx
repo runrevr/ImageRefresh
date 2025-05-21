@@ -8,6 +8,7 @@ import { CreativePricingDemo } from "@/components/ui/creative-pricing-demo"
 import { ImageTextOverlay } from "@/components/ui/ImageTextOverlay"
 import { Button } from "@/components/ui/button"
 import { RainbowButton } from "@/components/ui/rainbow-button"
+import { Navbar } from "@/components/ui/navbar"
 import { Footer } from "@/components/ui/footer"
 import { Link } from "wouter"
 
@@ -53,6 +54,9 @@ function DemoPage() {
   
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Navbar */}
+      <Navbar />
+      
       {/* Hero Section with Parallax Effect */}
       <section className="w-full h-screen relative flex items-center justify-center overflow-hidden">
         {/* Background with Floating Images */}
