@@ -222,7 +222,7 @@ export const SkeletonTwo = () => {
       </div>
       
       <div className="flex justify-center w-full mt-2 relative z-30">
-        <Link to="/kids-drawing">
+        <Link to="/product-image-lab">
           <RainbowButton>Product Image Lab</RainbowButton>
         </Link>
       </div>

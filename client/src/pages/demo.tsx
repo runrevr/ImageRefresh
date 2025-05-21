@@ -7,6 +7,7 @@ import { ScrollVelocityDemo } from "@/components/ui/scroll-velocity-demo"
 import { CreativePricingDemo } from "@/components/ui/creative-pricing-demo"
 import { ImageTextOverlay } from "@/components/ui/ImageTextOverlay"
 import { Button } from "@/components/ui/button"
+import { RainbowButton } from "@/components/ui/rainbow-button"
 import { Link } from "wouter"
 
 // Import some example images from the assets folder
@@ -144,16 +145,11 @@ function DemoPage() {
           <p className="text-xl md:text-2xl text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link href="/home">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-                Try it Now
-              </Button>
-            </Link>
-            <Link href="/transformations">
-              <Button size="lg" variant="outline" className="bg-transparent border-2 border-[#333333] text-[#333333] hover:bg-[#333333]/5">
-                View Examples
-              </Button>
+          <div className="flex justify-center mt-4">
+            <Link to="/kids-drawing">
+              <RainbowButton className="px-10 py-5 text-xl">
+                Try For Free
+              </RainbowButton>
             </Link>
           </div>
         </motion.div>
