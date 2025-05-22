@@ -16,7 +16,7 @@ export default function ProductImageFixedPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="text-center">
               <h1 className="text-4xl sm:text-5xl font-medium mb-6 text-gray-800">
-                Transform your product photos
+                Stop Losing Sales to Bad Product Photos
               </h1>
               <p className="mx-auto max-w-2xl text-lg text-gray-600 mb-8">
                 Professional-quality product images in minutes, no design skills needed. Perfect for small business owners and entrepreneurs.
@@ -39,7 +39,7 @@ export default function ProductImageFixedPage() {
                     />
                   </div>
                   <button className="py-3 px-6 text-white font-medium rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 sm:whitespace-nowrap">
-                    Get Started
+                    Try Now For Free
                   </button>
                 </div>
               </div>
@@ -52,26 +52,17 @@ export default function ProductImageFixedPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Card 1: Upload Enhancement */}
-              <div className="bg-gray-50 rounded-xl p-6 shadow-md border border-gray-100">
+              <div className="bg-white rounded-[1.25rem] border-l-4 border-l-[#2A7B9B] border-t border-r border-b border-gray-200 p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                  <div className="w-16 h-16 bg-[#2A7B9B]/10 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#2A7B9B]" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" />
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-center mb-3">Upload Enhancement</h3>
-                <p className="text-center text-gray-600 mb-6">Upload your product images and our AI will enhance them automatically</p>
+                <h3 className="text-xl font-semibold text-center mb-3 text-black">AI Product Enhancement</h3>
+                <p className="text-center text-gray-600 mb-6">Upload your product image, our AI will analyze the image and make image enhancement suggestions based on popular trends. Get up to 5 ideas for each image.</p>
                 
-                {/* Before/After Example */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-white p-2 rounded shadow-sm">
-                    <div className="h-20 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">Before</div>
-                  </div>
-                  <div className="bg-white p-2 rounded shadow-sm">
-                    <div className="h-20 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">After</div>
-                  </div>
-                </div>
                 
                 <button className="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-purple-700">
                   Upload Photos
@@ -79,56 +70,37 @@ export default function ProductImageFixedPage() {
               </div>
               
               {/* Card 2: Prebuilt Prompts */}
-              <div className="bg-gray-50 rounded-xl p-6 shadow-md border border-gray-100">
+              <div className="bg-white rounded-[1.25rem] border-l-4 border-l-[#2A7B9B] border-t border-r border-b border-gray-200 p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
-                    </svg>
-                  </div>
+                  <div className="w-16 h-16 bg-[#FF7B54]/10 rounded-full flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#FF7B54]" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+  </svg>
+</div>
                 </div>
-                <h3 className="text-xl font-semibold text-center mb-3">Prebuilt Prompts</h3>
-                <p className="text-center text-gray-600 mb-6">Use our expert-designed prompts to quickly transform your images</p>
+                <h3 className="text-xl font-semibold text-center mb-3 text-black">Prebuilt Prompts</h3>
+                <p className="text-center text-gray-600 mb-6">Use our expert-designed prompts to quickly transform your images. Choose from things like background removal, enhanced lighting, real world uses, etc</p>
                 
-                {/* Prompt Examples */}
-                <div className="grid grid-cols-3 gap-2 mb-6">
-                  <div className="bg-white p-2 rounded shadow-sm">
-                    <div className="h-14 bg-red-50 rounded flex items-center justify-center text-xs text-red-500">Remove BG</div>
-                  </div>
-                  <div className="bg-white p-2 rounded shadow-sm">
-                    <div className="h-14 bg-blue-50 rounded flex items-center justify-center text-xs text-blue-500">Lighting</div>
-                  </div>
-                  <div className="bg-white p-2 rounded shadow-sm">
-                    <div className="h-14 bg-green-50 rounded flex items-center justify-center text-xs text-green-500">Shadows</div>
-                  </div>
-                </div>
-                
+               
                 <button className="w-full py-2 px-4 bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium rounded-lg hover:from-green-600 hover:to-teal-600">
                   Explore Prompts
                 </button>
               </div>
               
               {/* Card 3: Text-to-Image */}
-              <div className="bg-gray-50 rounded-xl p-6 shadow-md border border-gray-100">
+              <div className="bg-white rounded-[1.25rem] border-l-4 border-l-[#2A7B9B] border-t border-r border-b border-gray-200 p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
-                      <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
+                  <div className="w-16 h-16 bg-[#A3E4D7]/20 rounded-full flex items-center justify-center">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#2A7B9B]" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+    <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
+  </svg>
+</div>
                 </div>
-                <h3 className="text-xl font-semibold text-center mb-3">Text-to-Image</h3>
-                <p className="text-center text-gray-600 mb-6">Generate product variations with simple text descriptions</p>
+                <h3 className="text-xl font-semibold text-center mb-3 text-black">Text-to-Image</h3>
+                <p className="text-center text-gray-600 mb-6">Explain what you want in detail and AI will produce the image for you. For example, " I need images of a serene massage room with a womans hands in image."</p>
                 
-                {/* Color Variations */}
-                <div className="flex justify-center gap-2 mb-6">
-                  <div className="h-10 w-10 rounded-full bg-red-500"></div>
-                  <div className="h-10 w-10 rounded-full bg-blue-500"></div>
-                  <div className="h-10 w-10 rounded-full bg-green-500"></div>
-                  <div className="h-10 w-10 rounded-full bg-yellow-500"></div>
-                  <div className="h-10 w-10 rounded-full bg-purple-500"></div>
-                </div>
+                
                 
                 <button className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600">
                   Create Variations

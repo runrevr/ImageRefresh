@@ -107,7 +107,7 @@ export function HeroSection() {
                                             
                                             {/* Heading and Description */}
                                             <div className="text-center">
-                                                <h3 className="text-xl font-semibold text-[#333333]">Enhance your product photos</h3>
+                                                <h3 className="text-xl font-semibold text-gray-900">Enhance your product photos</h3>
                                                 <p className="mt-2 text-[#333333]/80">Upload up to 5 images and our AI will suggest professional improvements</p>
                                             </div>
                                             
@@ -150,7 +150,7 @@ export function HeroSection() {
                                             
                                             {/* Heading and Description */}
                                             <div className="text-center">
-                                                <h3 className="text-xl font-semibold text-[#333333]">Quick fixes with prebuilt tools</h3>
+                                                <h3 className="text-xl font-semibold text-gray-900">Quick fixes with prebuilt tools</h3>
                                                 <p className="mt-2 text-[#333333]/80">Choose from expert-designed enhancements for your product images</p>
                                             </div>
                                             
