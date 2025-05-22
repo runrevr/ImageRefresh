@@ -84,9 +84,9 @@ export default function ProductImageFixedPage() {
                 <p className="text-center text-gray-600 mb-6">Use our expert-designed prompts to quickly transform your images. Choose from things like background removal, enhanced lighting, real world uses, etc</p>
                 
                
-                <button className="w-full py-2 px-4 bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium rounded-lg hover:from-green-600 hover:to-teal-600">
+                <RainbowButton className="w-full py-2 px-4">
                   Explore Prompts
-                </button>
+                </RainbowButton>
               </div>
               
               {/* Card 3: Text-to-Image */}
@@ -234,12 +234,12 @@ export default function ProductImageFixedPage() {
             <p className="text-xl text-white/80 mb-8">Start enhancing your visuals today</p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="py-3 px-8 bg-white text-blue-600 font-medium rounded-lg hover:bg-gray-100">
+              <RainbowButton className="py-3 px-8">
                 Start Free Trial
-              </button>
-              <button className="py-3 px-8 bg-transparent text-white font-medium rounded-lg border border-white hover:bg-white/10">
+              </RainbowButton>
+              <RainbowButton className="py-3 px-8">
                 See pricing
-              </button>
+              </RainbowButton>
             </div>
           </div>
         </section>
