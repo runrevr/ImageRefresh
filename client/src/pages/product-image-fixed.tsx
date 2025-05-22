@@ -1,6 +1,8 @@
 import React from 'react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { RainbowButton } from '@/components/ui/rainbow-button'
+import { Link } from 'wouter'
 
 export default function ProductImageFixedPage() {
   // Mock credits for development
@@ -38,9 +40,9 @@ export default function ProductImageFixedPage() {
                       className="py-3 pl-10 pr-4 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-                  <button className="py-3 px-6 text-white font-medium rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 sm:whitespace-nowrap">
+                  <RainbowButton className="py-3 px-6">
                     Try Now For Free
-                  </button>
+                  </RainbowButton>
                 </div>
               </div>
             </div>
@@ -64,9 +66,9 @@ export default function ProductImageFixedPage() {
                 <p className="text-center text-gray-600 mb-6">Upload your product image, our AI will analyze the image and make image enhancement suggestions based on popular trends. Get up to 5 ideas for each image.</p>
                 
                 
-                <button className="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-purple-700">
+                <RainbowButton className="w-full py-2 px-4">
                   Upload Photos
-                </button>
+                </RainbowButton>
               </div>
               
               {/* Card 2: Prebuilt Prompts */}
@@ -102,9 +104,9 @@ export default function ProductImageFixedPage() {
                 
                 
                 
-                <button className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600">
+                <RainbowButton className="w-full py-2 px-4">
                   Create Variations
-                </button>
+                </RainbowButton>
               </div>
             </div>
           </div>
