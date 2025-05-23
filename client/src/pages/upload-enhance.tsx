@@ -17,6 +17,7 @@ export default function UploadEnhancePage() {
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
   const [brandDescription, setBrandDescription] = useState("");
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,6 +31,46 @@ export default function UploadEnhancePage() {
     { id: 3, name: "Enhance", description: "AI Processing" },
     { id: 4, name: "Download", description: "Get Results" }
   ];
+
+  const industryPills = [
+    "E-commerce",
+    "Fashion & Apparel", 
+    "Technology",
+    "Food & Beverage",
+    "Beauty & Cosmetics",
+    "Home & Decor",
+    "B2B Services",
+    "Healthcare"
+  ];
+
+  // Toggle industry pill selection
+  const toggleIndustryPill = (industryName: string) => {
+    setSelectedIndustries(prev => {
+      let newSelection;
+      if (prev.includes(industryName)) {
+        newSelection = prev.filter(item => item !== industryName);
+      } else {
+        newSelection = [...prev, industryName];
+      }
+      
+      // Update the textarea with selected industries
+      const industryText = newSelection.length > 0 
+        ? `My business operates in: ${newSelection.join(', ')}.` 
+        : '';
+      
+      // Preserve existing custom text if any, or replace with industry text
+      const currentText = brandDescription;
+      const hasCustomText = currentText && !currentText.startsWith('My business operates in:');
+      
+      if (hasCustomText) {
+        setBrandDescription(`${industryText} ${currentText}`);
+      } else {
+        setBrandDescription(industryText);
+      }
+      
+      return newSelection;
+    });
+  };
 
   // Validate file before adding to array
   const validateFile = (file: File): string | null => {
@@ -325,45 +366,81 @@ export default function UploadEnhancePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="industry">Industry</Label>
-                <Select value={industry} onValueChange={setIndustry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your industry" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fashion">Fashion & Apparel</SelectItem>
-                    <SelectItem value="electronics">Electronics</SelectItem>
-                    <SelectItem value="home">Home & Garden</SelectItem>
-                    <SelectItem value="beauty">Beauty & Cosmetics</SelectItem>
-                    <SelectItem value="food">Food & Beverage</SelectItem>
-                    <SelectItem value="jewelry">Jewelry & Accessories</SelectItem>
-                    <SelectItem value="sports">Sports & Fitness</SelectItem>
-                    <SelectItem value="automotive">Automotive</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Industry Pills Section */}
+              <div className="space-y-3">
+                <Label className="brand-font-heading font-medium brand-text-neutral">
+                  Select Your Industries
+                </Label>
+                <p className="text-sm text-gray-600 brand-font-body">
+                  Choose one or more industries that best describe your business
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {industryPills.map((industryName) => (
+                    <button
+                      key={industryName}
+                      type="button"
+                      onClick={() => toggleIndustryPill(industryName)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium brand-font-body transition-all duration-200 ${
+                        selectedIndustries.includes(industryName)
+                          ? 'brand-bg-primary text-white shadow-md transform scale-105'
+                          : 'bg-gray-100 hover:bg-gray-200 brand-text-neutral border-2 border-transparent hover:brand-border-secondary'
+                      }`}
+                    >
+                      {industryName}
+                    </button>
+                  ))}
+                </div>
               </div>
 
+              {/* Product Type */}
               <div className="space-y-2">
-                <Label htmlFor="productType">Product Type</Label>
+                <Label htmlFor="productType" className="brand-font-heading font-medium brand-text-neutral">
+                  Product Type
+                </Label>
                 <Input
                   id="productType"
-                  placeholder="e.g., Sneakers, Smartphone, Coffee Mug"
+                  placeholder="e.g., Sneakers, Smartphone, Coffee Mug, Office Chair"
                   value={productType}
                   onChange={(e) => setProductType(e.target.value)}
+                  className="brand-font-body"
                 />
+                <p className="text-xs text-gray-500 brand-font-body">
+                  Be specific about your main product category
+                </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="brandDescription">Brand Description (Optional)</Label>
+              {/* Business Description Textarea */}
+              <div className="space-y-3">
+                <Label htmlFor="brandDescription" className="brand-font-heading font-medium brand-text-neutral">
+                  Business Description
+                </Label>
                 <Textarea
                   id="brandDescription"
-                  placeholder="Describe your brand style, target audience, or specific enhancement preferences..."
+                  placeholder="Tell us about your business, brand style, target audience, and any specific enhancement preferences..."
                   value={brandDescription}
                   onChange={(e) => setBrandDescription(e.target.value)}
-                  rows={4}
+                  rows={5}
+                  className="brand-font-body resize-none"
                 />
+                
+                {/* Helper Text with Examples */}
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm brand-text-primary font-medium brand-font-body mb-2">
+                    💡 Examples to help you get started:
+                  </p>
+                  <div className="text-xs text-gray-600 brand-font-body space-y-1">
+                    <p><strong>E-commerce:</strong> "We sell trendy accessories for young professionals. Focus on clean, modern backgrounds with bright lighting."</p>
+                    <p><strong>Food & Beverage:</strong> "Artisanal coffee roastery targeting coffee enthusiasts. Prefer warm, cozy aesthetics with rustic elements."</p>
+                    <p><strong>Fashion:</strong> "Sustainable fashion brand for eco-conscious millennials. Emphasize natural lighting and minimal backgrounds."</p>
+                    <p><strong>Technology:</strong> "B2B software company. Need professional, sleek product shots for marketing materials and website."</p>
+                  </div>
+                </div>
+                
+                {/* Character Count */}
+                <div className="flex justify-between items-center text-xs text-gray-500 brand-font-body">
+                  <span>The more details you provide, the better our AI can enhance your images</span>
+                  <span>{brandDescription.length}/500</span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -550,7 +627,7 @@ export default function UploadEnhancePage() {
           
           <Button 
             onClick={() => currentStep < 3 ? setCurrentStep(currentStep + 1) : handleSubmit()}
-            disabled={selectedFiles.length === 0 || (currentStep === 2 && !industry)}
+            disabled={selectedFiles.length === 0 || (currentStep === 2 && selectedIndustries.length === 0)}
             className="brand-button-primary brand-font-body font-medium"
           >
             {currentStep === 3 ? "Start Enhancement" : "Next Step"}
@@ -570,7 +647,7 @@ export default function UploadEnhancePage() {
             <Button 
               size="lg" 
               className="brand-button-accent px-8 py-3 text-lg brand-font-body font-medium"
-              disabled={selectedFiles.length === 0 || !industry}
+              disabled={selectedFiles.length === 0 || selectedIndustries.length === 0}
               onClick={handleSubmit}
             >
               <Sparkles className="mr-2 h-5 w-5" />
