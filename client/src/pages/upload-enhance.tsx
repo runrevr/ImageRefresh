@@ -23,7 +23,7 @@ export default function UploadEnhancePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
-  const [brandDescription, setBrandDescription] = useState("");
+  const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [uploadError, setUploadError] = useState("");
   const [processingStep, setProcessingStep] = useState(0);
@@ -65,31 +65,34 @@ export default function UploadEnhancePage() {
   // Toggle industry pill selection
   const toggleIndustryPill = (industryName: string) => {
     setSelectedIndustries(prev => {
-      let newSelection;
       if (prev.includes(industryName)) {
-        newSelection = prev.filter(item => item !== industryName);
+        return prev.filter(item => item !== industryName);
       } else {
-        newSelection = [...prev, industryName];
+        return [...prev, industryName];
       }
-      
-      // Update the textarea with selected industries
-      const industryText = newSelection.length > 0 
-        ? `My business operates in: ${newSelection.join(', ')}.` 
-        : '';
-      
-      // Preserve existing custom text if any, or replace with industry text
-      const currentText = brandDescription;
-      const hasCustomText = currentText && !currentText.startsWith('My business operates in:');
-      
-      if (hasCustomText) {
-        setBrandDescription(`${industryText} ${currentText}`);
-      } else {
-        setBrandDescription(industryText);
-      }
-      
-      return newSelection;
     });
   };
+
+  // Toggle purpose selection
+  const togglePurpose = (purposeId: string) => {
+    setSelectedPurposes(prev => {
+      if (prev.includes(purposeId)) {
+        return prev.filter(item => item !== purposeId);
+      } else {
+        return [...prev, purposeId];
+      }
+    });
+  };
+
+  const purposeOptions = [
+    { id: "social", icon: "📱", label: "Social Media", subtitle: "Instagram, TikTok, Facebook" },
+    { id: "website", icon: "💻", label: "Website", subtitle: "Hero images, Product pages" },
+    { id: "ads", icon: "📢", label: "Digital Ads", subtitle: "Google, Facebook, Display" },
+    { id: "ecommerce", icon: "🛍️", label: "E-commerce", subtitle: "Amazon, Shopify, eBay" },
+    { id: "email", icon: "📧", label: "Email Marketing", subtitle: "Newsletters, Campaigns" },
+    { id: "presentations", icon: "📊", label: "Presentations", subtitle: "Decks, Reports" },
+    { id: "print", icon: "🎯", label: "Print Marketing", subtitle: "Brochures, Flyers" }
+  ];
 
   // Validate file before adding to array
   const validateFile = (file: File): string | null => {
@@ -199,8 +202,9 @@ export default function UploadEnhancePage() {
   // Validation helpers
   const hasImages = selectedFiles.length > 0;
   const hasIndustryInfo = selectedIndustries.length > 0;
-  const hasContent = hasImages || hasIndustryInfo || productType.trim() || brandDescription.trim();
-  const canSubmit = hasImages && hasIndustryInfo;
+  const hasPurposes = selectedPurposes.length > 0;
+  const hasContent = hasImages || hasIndustryInfo || productType.trim() || hasPurposes;
+  const canSubmit = hasImages && hasIndustryInfo && hasPurposes;
 
   // Multi-step loading indicator with comprehensive error handling
   const submitForProcessing = async () => {
@@ -223,7 +227,7 @@ export default function UploadEnhancePage() {
       // Add metadata
       formData.append('industries', JSON.stringify(selectedIndustries));
       formData.append('productType', productType);
-      formData.append('brandDescription', brandDescription);
+      formData.append('purposes', JSON.stringify(selectedPurposes));
       formData.append('imageCount', selectedFiles.length.toString());
 
       // Step 1: Upload Images with real API call
@@ -261,13 +265,13 @@ export default function UploadEnhancePage() {
           const industryContext = {
             industries: selectedIndustries,
             productType: productType,
-            brandDescription: brandDescription,
+            purposes: selectedPurposes,
             targetAudience: selectedIndustries.includes('B2B Services') ? 'business' : 'consumer'
           };
 
           const analysisPrompt = `Analyze these product images for a ${selectedIndustries.join(', ')} business. 
             Product type: ${productType}. 
-            Brand context: ${brandDescription}. 
+            Intended use: ${selectedPurposes.join(', ')}. 
             Focus on identifying enhancement opportunities for lighting, composition, background, and overall visual appeal.`;
 
           const analysisResponse = await fetch('/api/analyze-products', {
@@ -441,7 +445,7 @@ export default function UploadEnhancePage() {
     
     // Clear form fields
     setProductType("");
-    setBrandDescription("");
+    setSelectedPurposes([]);
     
     // Clear any errors
     setUploadError("");
@@ -746,38 +750,58 @@ export default function UploadEnhancePage() {
                 </p>
               </div>
 
-              {/* Business Description Textarea */}
-              <div className="space-y-3">
-                <Label htmlFor="brandDescription" className="brand-font-heading font-medium brand-text-neutral">
-                  Business Description
-                </Label>
-                <Textarea
-                  id="brandDescription"
-                  placeholder="Tell us about your business, brand style, target audience, and any specific enhancement preferences..."
-                  value={brandDescription}
-                  onChange={(e) => setBrandDescription(e.target.value)}
-                  rows={5}
-                  className="brand-font-body resize-none"
-                />
-                
-                {/* Helper Text with Examples */}
-                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm brand-text-primary font-medium brand-font-body mb-2">
-                    💡 Examples to help you get started:
+              {/* Purpose Selection */}
+              <div className="space-y-4">
+                <div>
+                  <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
+                    How will you use these images?
+                  </Label>
+                  <p className="text-sm text-gray-600 brand-font-body mt-1">
+                    This helps our AI create scroll-stopping visuals optimized for your needs
                   </p>
-                  <div className="text-xs text-gray-600 brand-font-body space-y-1">
-                    <p><strong>E-commerce:</strong> "We sell trendy accessories for young professionals. Focus on clean, modern backgrounds with bright lighting."</p>
-                    <p><strong>Food & Beverage:</strong> "Artisanal coffee roastery targeting coffee enthusiasts. Prefer warm, cozy aesthetics with rustic elements."</p>
-                    <p><strong>Fashion:</strong> "Sustainable fashion brand for eco-conscious millennials. Emphasize natural lighting and minimal backgrounds."</p>
-                    <p><strong>Technology:</strong> "B2B software company. Need professional, sleek product shots for marketing materials and website."</p>
-                  </div>
                 </div>
                 
-                {/* Character Count */}
-                <div className="flex justify-between items-center text-xs text-gray-500 brand-font-body">
-                  <span>The more details you provide, the better our AI can enhance your images</span>
-                  <span>{brandDescription.length}/500</span>
+                <div className="grid grid-cols-1 gap-3">
+                  {purposeOptions.map((purpose) => (
+                    <button
+                      key={purpose.id}
+                      type="button"
+                      onClick={() => togglePurpose(purpose.id)}
+                      className={`p-4 rounded-lg border-2 text-left transition-all duration-200 ${
+                        selectedPurposes.includes(purpose.id)
+                          ? 'border-[#3DA5D9] bg-blue-50 shadow-md'
+                          : 'border-gray-200 hover:border-[#3DA5D9] hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">{purpose.icon}</span>
+                        <div className="flex-grow">
+                          <h3 className="font-semibold brand-text-neutral brand-font-heading">
+                            {purpose.label}
+                          </h3>
+                          <p className="text-sm text-gray-600 brand-font-body">
+                            {purpose.subtitle}
+                          </p>
+                        </div>
+                        {selectedPurposes.includes(purpose.id) && (
+                          <div className="w-6 h-6 rounded-full bg-[#3DA5D9] flex items-center justify-center">
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  ))}
                 </div>
+                
+                {selectedPurposes.length > 0 && (
+                  <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                    <p className="text-sm brand-text-primary font-medium brand-font-body">
+                      ✨ Perfect! Our AI will optimize your images for {selectedPurposes.length} specific use case{selectedPurposes.length > 1 ? 's' : ''}
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
