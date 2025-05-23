@@ -1,0 +1,74 @@
+"We need to update how we generate the final edit prompts for GPT-image-01. This happens AFTER users select their ideas:
+
+1. **In the /api/generate-ideas endpoint, keep the current creative idea generation**
+   - Don't include edit_prompt yet
+   - Just generate the 5 creative concepts
+
+2. **Create a new function to generate edit prompts for SELECTED ideas:**
+```javascript
+// When processing selected enhancements before sending to GPT-image-01
+async function generateEditPrompts(selectedIdeas, productAnalysis) {
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+  
+  // Identify which concepts were selected (especially if #5 is included)
+  const hasChaosConcept = selectedIdeas.some((idea, index) => 
+    idea.originalIndex === 4 || idea.title.includes('CHAOS') || idea.description.includes('surreal')
+  );
+  
+  const message = await anthropic.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1500,
+    temperature: hasChaosConcept ? 1.0 : 0.8,
+    messages: [{
+      role: "user",
+      content: `Transform the selected photography concepts into detailed image generation prompts optimized for GPT Image 01:
+
+Selected concepts: ${JSON.stringify(selectedIdeas.map(i => ({ title: i.title, description: i.description })))}
+Original product: ${productAnalysis.product_identification}
+
+FIRST: Identify which concepts were selected and adapt your approach:
+- If Concepts 1-4: Create polished, professional prompts
+- If Concept 5: UNLEASH ABSOLUTE CREATIVE CHAOS
+- If multiple selected: Generate separate prompts for each
+
+**FOR CONCEPTS 1-4 (Professional/Lifestyle):**
+Create concise 80-100 word prompts focusing on:
+- Realistic product placement
+- Authentic environments
+- Natural lighting
+- Lifestyle storytelling
+- Professional photography terminology
+
+**FOR CONCEPT 5 (The Unhinged One):**
+GO ABSOLUTELY WILD - 100-120 words of pure creative insanity:
+- Start with product accuracy THEN EXPLODE INTO MADNESS
+- Layer impossible elements
+- Defy physics, logic, and reason
+- Mix artistic movements, pop culture, and fever dreams
+- Use words like: "surreal," "impossible," "gravity-defying," "metamorphosing," "transcendent"
+- Reference art styles: "Dalí meets Banksy meets Studio Ghibli"
+- Push every boundary while keeping product as hero
+
+**CONCEPT 5 EXAMPLE - GOING FULL HAM:**
+"This artisanal coffee maker with chrome finish and brand logo perfectly preserved transforms into a cyberpunk deity in a neon-soaked Tokyo made entirely of coffee beans, brewing liquid aurora borealis while coffee cup warriors wage epic battles on a countertop that fractures into infinite dimensions, steam forming dragon shapes that morph into Van Gogh's Starry Night, gravity reversed as coffee rains upward into constellation patterns, shot through a kaleidoscope lens in the style of Inception meets Japanese anime meets Renaissance religious art, hyperrealistic product details amid absolute photographic chaos"
+
+**OUTPUT FORMAT:**
+Return a JSON array with one edit_prompt for each selected concept:
+[
+  {
+    "concept_title": "original concept title",
+    "edit_prompt": "the detailed prompt for GPT-image-01"
+  }
+]
+
+For each selected concept, create one prompt that:
+1. Maintains exact product appearance
+2. Matches the ambition level of the original idea
+3. For #5: Goes even harder than the original concept suggested`
+    }]
+  });
+  
+  return JSON.parse(message.content[0].text);
+}

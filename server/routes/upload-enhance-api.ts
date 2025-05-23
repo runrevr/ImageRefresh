@@ -210,6 +210,112 @@ router.post('/analyze-products', async (req, res) => {
   }
 });
 
+// POST /api/generate-edit-prompts
+// Generate optimized edit prompts for selected concepts using Claude
+router.post('/generate-edit-prompts', async (req, res) => {
+  try {
+    console.log('=== Claude Edit Prompt Generation ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+
+    const { selectedIdeas, productAnalysis } = req.body;
+    
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('Anthropic API key not configured');
+    }
+
+    // Import Anthropic SDK
+    const Anthropic = require('@anthropic-ai/sdk');
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+    
+    // Identify which concepts were selected (especially if #5 is included)
+    const hasChaosConcept = selectedIdeas.some((idea, index) => 
+      idea.originalIndex === 4 || idea.title.includes('CHAOS') || idea.description.includes('surreal')
+    );
+    
+    const message = await anthropic.messages.create({
+      model: "claude-3-7-sonnet-20250219", // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+      max_tokens: 1500,
+      temperature: hasChaosConcept ? 1.0 : 0.8,
+      messages: [{
+        role: "user",
+        content: `Transform the selected photography concepts into detailed image generation prompts optimized for GPT Image 01:
+
+Selected concepts: ${JSON.stringify(selectedIdeas.map(i => ({ title: i.title, description: i.description })))}
+Original product: ${productAnalysis.product_identification}
+
+FIRST: Identify which concepts were selected and adapt your approach:
+- If Concepts 1-4: Create polished, professional prompts
+- If Concept 5: UNLEASH ABSOLUTE CREATIVE CHAOS
+- If multiple selected: Generate separate prompts for each
+
+**FOR CONCEPTS 1-4 (Professional/Lifestyle):**
+Create concise 80-100 word prompts focusing on:
+- Realistic product placement
+- Authentic environments
+- Natural lighting
+- Lifestyle storytelling
+- Professional photography terminology
+
+**FOR CONCEPT 5 (The Unhinged One):**
+GO ABSOLUTELY WILD - 100-120 words of pure creative insanity:
+- Start with product accuracy THEN EXPLODE INTO MADNESS
+- Layer impossible elements
+- Defy physics, logic, and reason
+- Mix artistic movements, pop culture, and fever dreams
+- Use words like: "surreal," "impossible," "gravity-defying," "metamorphosing," "transcendent"
+- Reference art styles: "Dalí meets Banksy meets Studio Ghibli"
+- Push every boundary while keeping product as hero
+
+**OUTPUT FORMAT:**
+Return a JSON array with one edit_prompt for each selected concept:
+[
+  {
+    "concept_title": "original concept title",
+    "edit_prompt": "the detailed prompt for GPT-image-01"
+  }
+]
+
+For each selected concept, create one prompt that:
+1. Maintains exact product appearance
+2. Matches the ambition level of the original idea
+3. For #5: Goes even harder than the original concept suggested`
+      }]
+    });
+    
+    const responseText = message.content[0].text;
+    
+    // Extract JSON from Claude's response
+    const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error('No valid JSON found in Claude edit prompt response');
+    }
+
+    const editPrompts = JSON.parse(jsonMatch[0]);
+    
+    console.log(`[Claude Edit Prompts] Generated ${editPrompts.length} optimized prompts`);
+    res.json({
+      success: true,
+      edit_prompts: editPrompts,
+      processing_metadata: {
+        generation_time: new Date().toISOString(),
+        model_used: "claude-3-7-sonnet-20250219",
+        has_chaos_concept: hasChaosConcept,
+        concepts_processed: selectedIdeas.length
+      }
+    });
+    
+  } catch (error) {
+    console.error('Edit prompt generation error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate edit prompts',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+});
+
 // POST /api/generate-enhancement
 // Generate enhanced images using GPT-image-01 based on selected concepts
 router.post('/generate-enhancement', async (req, res) => {
