@@ -1,0 +1,84 @@
+"For now, keep the demo version so we can test the complete UI flow. However, please create the backend API endpoint stubs that return properly formatted mock data. 
+
+Create these three endpoints:
+
+1. POST /api/upload-images
+   - Accept FormData with images
+   - Return mock response: 
+   {
+     "success": true,
+     "urls": [
+       "https://placeholder.com/image1.jpg",
+       "https://placeholder.com/image2.jpg"
+     ]
+   }
+
+2. POST /api/analyze-products
+   - Accept JSON with image_urls and industry_context
+   - Return mock response:
+   {
+     "success": true,
+     "analysis": {
+       "images": [
+         {
+           "url": "https://placeholder.com/image1.jpg",
+           "strengths": ["Good lighting", "Clear product focus"],
+           "improvements": ["Could use lifestyle context", "Add props"],
+           "audience_appeal": "Appeals to young professionals",
+           "quality_score": 7.5,
+           "brand_alignment": "Matches modern aesthetic"
+         }
+       ]
+     }
+   }
+
+3. POST /api/generate-ideas  
+   - Accept JSON with vision_analysis and industry_context
+   - Return mock response:
+   {
+     "success": true,
+     "ideas": [
+       {
+         "image_index": 0,
+         "ideas": [
+           {
+             "id": "idea_1",
+             "title": "Lifestyle Context Shot",
+             "description": "Place product in a home environment with natural lighting",
+             "impact": "high",
+             "difficulty": "easy"
+           },
+           {
+             "id": "idea_2", 
+             "title": "Minimalist White Background",
+             "description": "Clean product shot on pure white for e-commerce",
+             "impact": "medium",
+             "difficulty": "easy"
+           },
+           {
+             "id": "idea_3",
+             "title": "Dynamic Action Shot",
+             "description": "Show product in use with motion blur effects",
+             "impact": "high", 
+             "difficulty": "medium"
+           },
+           {
+             "id": "idea_4",
+             "title": "Seasonal Theme",
+             "description": "Add seasonal decorations and colors to match current trends",
+             "impact": "medium",
+             "difficulty": "easy"
+           },
+           {
+             "id": "idea_5",
+             "title": "Premium Black Background", 
+             "description": "Dramatic lighting on black for luxury feel",
+             "impact": "high",
+             "difficulty": "medium"
+           }
+         ]
+       }
+     ]
+   }
+
+Make sure each endpoint logs the received data to console for debugging."

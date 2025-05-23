@@ -12,6 +12,7 @@ import { setupSimpleRouter } from "./simple-router";
 import { setupWebhookTestRoutes } from "./routes/webhook-test";
 import { setupStaticRoutes } from "./routes/static-routes";
 import { setupProductImageLabRoutes } from "./routes/product-image-lab-routes";
+import uploadEnhanceApiRoutes from "./routes/upload-enhance-api";
 import fs from 'fs';
 import path from 'path';
 
@@ -168,6 +169,9 @@ app.use((req, res, next) => {
   
   // Register Product Image Lab routes
   app.use(setupProductImageLabRoutes());
+  
+  // Register Upload Enhance API routes
+  app.use('/api', uploadEnhanceApiRoutes);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
