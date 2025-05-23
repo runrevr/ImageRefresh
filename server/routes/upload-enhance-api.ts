@@ -408,7 +408,11 @@ For each selected concept, create one prompt that:
 router.post('/generate-enhancement', async (req, res) => {
   try {
     console.log('=== GPT-Image-01 Enhancement Generation ===');
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    console.log('Generate image request:', {
+      hasImage: !!req.body.original_image_url,
+      promptLength: req.body.enhancement_prompt?.length,
+      title: req.body.enhancement_title
+    });
 
     const { original_image_url, enhancement_prompt, enhancement_title } = req.body;
     
@@ -489,11 +493,18 @@ router.post('/generate-enhancement', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Image generation error:', error);
+    console.error('Detailed image generation error:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      headers: error.response?.headers
+    });
+    
+    // Return the actual error from OpenAI
     res.status(500).json({
       success: false,
-      error: 'Failed to generate enhanced image',
-      message: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error.response?.data?.error?.message || error.message,
+      details: error.response?.data
     });
   }
 });
