@@ -1,0 +1,56 @@
+"The image generation call to OpenAI is never happening. After the edit prompt is generated, we need to call the image generation API:
+
+1. **Check the frontend - is it calling /api/generate-image?**
+In the browser Network tab, you should see:
+- ✅ /api/generate-edit-prompt (this is working)
+- ❌ /api/generate-image (this is missing!)
+
+2. **Fix the frontend to call both endpoints:**
+```javascript
+// In generateSingleImage function
+async function generateSingleImage(enhancement, index) {
+  try {
+    // Step 1: Get edit prompt (this works)
+    updateEnhancementStatus(index, 'creating_prompt');
+    
+    const promptResponse = await fetch('/api/generate-edit-prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idea_title: enhancement.title,
+        idea_description: enhancement.description,
+        product_info: enhancement.product_info,
+        is_chaos_concept: enhancement.is_chaos_concept
+      })
+    });
+    
+    const promptData = await promptResponse.json();
+    console.log('Edit prompt received:', promptData);
+    
+    // Step 2: Generate image (THIS IS MISSING!)
+    updateEnhancementStatus(index, 'generating');
+    
+    const imageResponse = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        original_image_url: enhancement.original_image_url,
+        enhancement_prompt: promptData.edit_prompt,
+        enhancement_title: enhancement.title
+      })
+    });
+    
+    const imageData = await imageResponse.json();
+    console.log('Image generation response:', imageData);
+    
+    if (imageData.success) {
+      updateEnhancementStatus(index, 'completed', imageData.enhanced_image_url);
+    } else {
+      throw new Error(imageData.error);
+    }
+    
+  } catch (error) {
+    console.error('Generation error:', error);
+    updateEnhancementStatus(index, 'failed', null, error.message);
+  }
+}

@@ -100,7 +100,7 @@ export default function GenerateEnhancementsPage() {
     
     // Start authentic AI processing
     setTimeout(() => {
-      startAuthenticProcessing(enhancementJobs)
+      processEnhancements(enhancementJobs)
     }, 1000)
   }, [])
 
