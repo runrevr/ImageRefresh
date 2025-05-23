@@ -715,19 +715,21 @@ export default function UploadEnhancePage() {
                 <p className="text-sm text-gray-600 brand-font-body">
                   Choose one or more industries that best describe your business
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {industryPills.map((industryName) => (
                     <button
                       key={industryName}
                       type="button"
                       onClick={() => toggleIndustryPill(industryName)}
-                      className={`px-3 py-2 md:px-4 md:py-2 rounded-full text-sm font-medium brand-font-body transition-all duration-200 mobile-text-sm ${
+                      className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[70px] flex flex-col items-center justify-center gap-1 ${
                         selectedIndustries.includes(industryName)
-                          ? 'brand-bg-primary text-white shadow-md transform scale-105'
-                          : 'bg-gray-100 hover:bg-gray-200 brand-text-neutral border-2 border-transparent hover:brand-border-secondary'
+                          ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
                       }`}
                     >
-                      {industryName}
+                      <span className="text-xs font-medium brand-font-body leading-tight">
+                        {industryName}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -761,35 +763,26 @@ export default function UploadEnhancePage() {
                   </p>
                 </div>
                 
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {purposeOptions.map((purpose) => (
                     <button
                       key={purpose.id}
                       type="button"
                       onClick={() => togglePurpose(purpose.id)}
-                      className={`p-4 rounded-lg border-2 text-left transition-all duration-200 ${
+                      className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[80px] flex flex-col items-center justify-center gap-2 ${
                         selectedPurposes.includes(purpose.id)
-                          ? 'border-[#3DA5D9] bg-blue-50 shadow-md'
-                          : 'border-gray-200 hover:border-[#3DA5D9] hover:bg-gray-50'
+                          ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
                       }`}
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">{purpose.icon}</span>
-                        <div className="flex-grow">
-                          <h3 className="font-semibold brand-text-neutral brand-font-heading">
-                            {purpose.label}
-                          </h3>
-                          <p className="text-sm text-gray-600 brand-font-body">
-                            {purpose.subtitle}
-                          </p>
+                      <span className="text-lg">{purpose.icon}</span>
+                      <div className="text-center">
+                        <div className="text-xs font-medium brand-font-body leading-tight">
+                          {purpose.label}
                         </div>
-                        {selectedPurposes.includes(purpose.id) && (
-                          <div className="w-6 h-6 rounded-full bg-[#3DA5D9] flex items-center justify-center">
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                        )}
+                        <div className="text-xs opacity-75 leading-tight mt-1">
+                          {purpose.subtitle.split(',')[0]}
+                        </div>
                       </div>
                     </button>
                   ))}
