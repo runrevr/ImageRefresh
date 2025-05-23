@@ -228,81 +228,44 @@ router.post('/api/generate-edit-prompt', async (req, res) => {
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
     
+    // Simpler prompt that just asks for the text
     const message = await anthropic.messages.create({
       model: "claude-3-7-sonnet-20250219",
-      max_tokens: 800,
+      max_tokens: 1000,
       temperature: is_chaos_concept ? 1.0 : 0.8,
       messages: [{
         role: "user",
-        content: `Transform this creative concept into a detailed GPT-image-01 edit prompt:
-
+        content: `Create an edit prompt for GPT-image-01 based on this concept:
+        
 Title: ${idea_title}
 Description: ${idea_description}
-Product: ${product_info || 'beverage product'}
-Is Chaos Concept: ${is_chaos_concept}
+Type: ${is_chaos_concept ? 'CHAOS CONCEPT - GO WILD!' : 'Professional/Lifestyle'}
+
+Generate ${is_chaos_concept ? '100-120' : '80-100'} words describing exactly how to edit the product image.
 
 ${is_chaos_concept ? 
-  `**CHAOS MODE ACTIVATED - GO ABSOLUTELY WILD:**
-   Create a 100-120 word prompt of pure creative insanity:
-   - Start with product accuracy THEN EXPLODE INTO MADNESS
-   - Layer impossible elements, defy physics and logic
-   - Mix artistic movements: "Dalí meets Banksy meets Studio Ghibli"
-   - Use words like: "surreal," "gravity-defying," "metamorphosing," "transcendent"
-   - Push every boundary while keeping product as hero` :
-  `**PROFESSIONAL MODE:**
-   Create a polished 80-100 word prompt focusing on:
-   - Realistic product placement and natural lighting
-   - Authentic environments and lifestyle storytelling
-   - Professional photography terminology`}
+  'UNLEASH CREATIVE CHAOS! Start with product accuracy then EXPLODE into impossible surreal madness!' : 
+  'Create a professional, realistic scene with natural lighting and authentic environments.'}
 
-CRITICAL: Return ONLY a valid JSON object in this exact format with no other text:
-{
-  "edit_prompt": "your detailed 80-120 word prompt here"
-}
-
-Do not include any explanation, markdown, or other text. Only the JSON object.`
+Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       }]
     });
     
-    // Parse the response more carefully
-    const responseText = message.content[0].text.trim();
+    // Get the raw text response
+    const editPrompt = message.content[0].text.trim();
     
-    try {
-      // Remove any potential markdown code blocks
-      const cleanedText = responseText
-        .replace(/```json\n?/g, '')
-        .replace(/```\n?/g, '')
-        .trim();
-      
-      const parsed = JSON.parse(cleanedText);
-      
-      console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
-      res.json({
-        success: true,
-        edit_prompt: parsed.edit_prompt,
-        processing_metadata: {
-          generation_time: new Date().toISOString(),
-          model_used: "claude-3-7-sonnet-20250219",
-          chaos_mode: is_chaos_concept
-        }
-      });
-      
-    } catch (parseError) {
-      console.error('Failed to parse Claude response:', parseError);
-      console.log('Raw Claude response:', responseText);
-      
-      // Fallback: try to extract the prompt even if JSON fails
-      res.json({
-        success: true,
-        edit_prompt: responseText, // Use raw response as fallback
-        processing_metadata: {
-          generation_time: new Date().toISOString(),
-          model_used: "claude-3-7-sonnet-20250219",
-          chaos_mode: is_chaos_concept,
-          fallback_used: true
-        }
-      });
-    }
+    console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
+    
+    // Return it wrapped in our JSON
+    res.json({
+      success: true,
+      edit_prompt: editPrompt,
+      processing_metadata: {
+        generation_time: new Date().toISOString(),
+        model_used: "claude-3-7-sonnet-20250219",
+        chaos_mode: is_chaos_concept
+      }
+    });
     
   } catch (error) {
     console.error('Single edit prompt error:', error);
