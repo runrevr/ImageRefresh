@@ -32,26 +32,25 @@ export default function SelectIdeasPage() {
 
   // Load uploaded images and authentic Claude ideas from sessionStorage
   useEffect(() => {
-    const storedIdeas = sessionStorage.getItem('enhancement_ideas')
-    const storedImages = sessionStorage.getItem('original_images')
-    const storedData = sessionStorage.getItem('uploadEnhanceResults')
+    const storedIdeas = sessionStorage.getItem('enhancement_ideas');
+    const storedImages = sessionStorage.getItem('original_images');
+    const storedData = sessionStorage.getItem('uploadEnhanceResults');
     
-    if (storedIdeas && storedImages && storedData) {
-      try {
-        const ideasData = JSON.parse(storedIdeas)
-        const imageUrls = JSON.parse(storedImages)
-        const sessionData = JSON.parse(storedData)
-        
-        console.log('Retrieved authentic Claude ideas:', ideasData)
-        console.log('Retrieved image URLs:', imageUrls)
-        
-        // Convert stored data to ProductImage format with authentic Claude-generated ideas
-        const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
-          id: `product-${index + 1}`,
-          fileName: img.name,
-          url: img.url, // Use the object URL from upload
-          ideas: ideasData.ideas || [] // Use real Claude-generated ideas
-        }))
+    if (storedIdeas) {
+      const realIdeas = JSON.parse(storedIdeas);
+      console.log('Loading real ideas:', realIdeas);
+      
+      if (storedData) {
+        try {
+          const sessionData = JSON.parse(storedData);
+          
+          // Convert stored data to ProductImage format with authentic Claude-generated ideas
+          const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
+            id: `product-${index + 1}`,
+            fileName: img.name,
+            url: img.url, // Use the object URL from upload
+            ideas: realIdeas.ideas || realIdeas // Use real Claude-generated ideas
+          }))
         
         console.log(`Creating enhancement sections for ${productData.length} uploaded images`)
         setProductImages(productData)
