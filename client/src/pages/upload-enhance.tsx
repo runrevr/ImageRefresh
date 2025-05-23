@@ -564,6 +564,31 @@ export default function UploadEnhancePage() {
           border-color: var(--primary);
           background-color: rgba(13, 120, 119, 0.05);
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+          .mobile-stack {
+            grid-template-columns: 1fr !important;
+          }
+          
+          .mobile-full-width {
+            width: 100% !important;
+          }
+          
+          .mobile-text-sm {
+            font-size: 0.875rem !important;
+          }
+          
+          .mobile-px-2 {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+          }
+          
+          .mobile-py-3 {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+          }
+        }
       `}</style>
       
       <div className="min-h-screen brand-bg-light">
@@ -617,7 +642,7 @@ export default function UploadEnhancePage() {
         </div>
 
         {/* Two-Column Grid Layout */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid lg:grid-cols-2 gap-8 mb-8 mobile-stack">
           {/* Left Column: Industry Information Form */}
           <Card className="brand-card">
             <CardHeader>
@@ -644,7 +669,7 @@ export default function UploadEnhancePage() {
                       key={industryName}
                       type="button"
                       onClick={() => toggleIndustryPill(industryName)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium brand-font-body transition-all duration-200 ${
+                      className={`px-3 py-2 md:px-4 md:py-2 rounded-full text-sm font-medium brand-font-body transition-all duration-200 mobile-text-sm ${
                         selectedIndustries.includes(industryName)
                           ? 'brand-bg-primary text-white shadow-md transform scale-105'
                           : 'bg-gray-100 hover:bg-gray-200 brand-text-neutral border-2 border-transparent hover:brand-border-secondary'
@@ -876,13 +901,13 @@ export default function UploadEnhancePage() {
 
         {/* Action Buttons Section - Show only when user has added content */}
         {hasContent && (
-          <div className="flex justify-between items-center mb-8">
-            <div className="flex gap-3">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <Button 
                 variant="outline"
                 disabled={currentStep === 1}
                 onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-                className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white"
+                className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white w-full sm:w-auto mobile-py-3"
               >
                 Previous Step
               </Button>
@@ -890,20 +915,20 @@ export default function UploadEnhancePage() {
               <Button 
                 variant="outline"
                 onClick={startOver}
-                className="brand-font-body border-2 border-red-200 text-red-600 hover:bg-red-50"
+                className="brand-font-body border-2 border-red-200 text-red-600 hover:bg-red-50 w-full sm:w-auto mobile-py-3"
               >
                 Start Over
               </Button>
             </div>
             
-            <div className="text-sm text-gray-500 brand-font-body">
+            <div className="text-sm text-gray-500 brand-font-body order-first md:order-none">
               Step {currentStep} of {steps.length}
             </div>
             
             <Button 
               onClick={() => currentStep < 3 ? setCurrentStep(currentStep + 1) : handleSubmit()}
               disabled={!canSubmit}
-              className={`brand-font-body font-medium transition-all duration-200 ${
+              className={`brand-font-body font-medium transition-all duration-200 w-full md:w-auto mobile-py-3 ${
                 canSubmit 
                   ? 'brand-button-primary' 
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
