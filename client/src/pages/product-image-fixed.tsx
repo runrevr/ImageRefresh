@@ -24,9 +24,11 @@ export default function ProductImageFixedPage() {
   Upload your product image, get AI-powered enhancement ideas, download professional results. No design experience required.
 </p>
              
-              <RainbowButton className="py-3 px-6">
-                Transform My Product Photos Now
-              </RainbowButton>
+              <Link href="/upload-enhance">
+                <RainbowButton className="py-3 px-6">
+                  Transform My Product Photos Now
+                </RainbowButton>
+              </Link>
 
               <p className="mt-4 text-sm text-gray-500 text-center">
                 No credit card required • 1 free enhancement
@@ -219,9 +221,11 @@ export default function ProductImageFixedPage() {
                     <p className="text-center text-gray-600 mb-6">Upload your product image, our AI will analyze the image and make image enhancement suggestions based on popular trends. Get up to 5 ideas for each image.</p>
                   </div>
 
-                  <RainbowButton className="w-full py-2 px-4 mt-auto">
-                    Upload Photos
-                  </RainbowButton>
+                  <Link href="/upload-enhance">
+                    <RainbowButton className="w-full py-2 px-4 mt-auto">
+                      Upload Photos
+                    </RainbowButton>
+                  </Link>
                 </div>
               </div>
 
