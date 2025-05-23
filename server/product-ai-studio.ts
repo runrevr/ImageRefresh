@@ -75,56 +75,56 @@ const ENHANCEMENT_IDEAS = [
     title: 'Clean White Background',
     description: 'Remove the background and place your product on a clean white surface',
     icon: 'background_remove',
-    prompt: 'Transform this product image to have a pure white background, maintaining perfect product detail and accurate colors. Remove all other elements and shadows.'
+    prompt: 'Edit this product photo: remove the current background and replace it with a pure white background. Maintain the original product exactly as it is, preserving all details, colors, and proportions. Only change the background to clean white.'
   },
   {
     id: 'shadow_effect',
     title: 'Professional Shadow',
     description: 'Add a subtle, professional shadow effect for depth',
     icon: 'shadow',
-    prompt: 'Add a subtle, professional drop shadow beneath this product against a clean white background. The shadow should be soft, realistic, and add depth without being distracting.'
+    prompt: 'Edit this product photo: add a subtle, realistic drop shadow beneath the product. Keep the original product unchanged but enhance it with a soft, professional shadow that adds depth and dimension.'
   },
   {
     id: 'lifestyle_context',
     title: 'Lifestyle Setting',
     description: 'Place your product in a natural, lifestyle context',
     icon: 'lifestyle',
-    prompt: 'Place this product in a natural lifestyle context that showcases its use. Create a warm, inviting scene that helps customers visualize the product in their lives. Maintain product accuracy while enhancing appeal.'
+    prompt: 'Edit this product photo: place the original product in a natural lifestyle setting that shows how it would be used. Maintain the product exactly as shown but add an appropriate background environment that enhances its appeal.'
   },
   {
     id: 'detail_highlight',
     title: 'Detail Focus',
     description: 'Highlight specific product features or textures',
     icon: 'detail',
-    prompt: 'Enhance this product image to highlight its key details, textures, and features. Improve clarity and lighting to showcase craftsmanship and quality while maintaining complete accuracy.'
+    prompt: 'Edit this product photo: enhance the lighting and contrast to better highlight the product details, textures, and key features. Improve clarity while keeping the original product unchanged, just making it more visually appealing.'
   },
   {
     id: 'color_variants',
     title: 'Color Variations',
     description: 'Create color variations of your product',
     icon: 'color',
-    prompt: 'Create professional color variations of this product while maintaining the exact same position, lighting, and details. Produce realistic alternative color options that look factory-made.'
+    prompt: 'Edit this product photo: change the product color while maintaining the exact same shape, position, lighting, and details. Keep everything else identical but modify the product to show a realistic alternative color option.'
   },
   {
     id: 'seasonal_theme',
     title: 'Seasonal Theme',
     description: 'Apply a seasonal theme appropriate for marketing',
     icon: 'seasonal',
-    prompt: 'Place this product in a seasonal themed setting appropriate for marketing. Create a professional composition that highlights the product while adding seasonal context that would appeal to customers.'
+    prompt: 'Edit this product photo: add seasonal decorations and themed elements around the original product. Keep the product unchanged but enhance the background with appropriate seasonal context for marketing appeal.'
   },
   {
     id: 'premium_packaging',
     title: 'Premium Packaging',
     description: 'Showcase your product with premium packaging',
     icon: 'packaging',
-    prompt: 'Transform this product image to include premium, upscale packaging. Create a professional product presentation that communicates quality and luxury while keeping the product as the main focus.'
+    prompt: 'Edit this product photo: add premium packaging elements around the original product. Keep the main product visible and unchanged but enhance it with luxury packaging materials and presentation elements.'
   },
   {
     id: 'scale_visualization',
     title: 'Size Perspective',
     description: 'Show scale with common objects for reference',
     icon: 'scale',
-    prompt: 'Show this product with common objects for size reference to help customers understand its scale. Create a clean, professional composition that clearly demonstrates the product dimensions in a helpful way.'
+    prompt: 'Edit this product photo: add common reference objects nearby to show scale. Keep the original product unchanged but place familiar items like coins, hands, or everyday objects to help customers understand the product size.'
   }
 ];
 
