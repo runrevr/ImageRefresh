@@ -40,6 +40,7 @@ import CheckoutDemoPage from "@/pages/checkout-demo";
 import CheckoutFlowDemoPage from "@/pages/checkout-flow-demo";
 import UploadPage from "@/pages/upload";
 import UploadEnhancePage from "@/pages/upload-enhance";
+import SelectIdeasPage from "@/pages/select-ideas";
 
 function Router() {
   return (
@@ -54,6 +55,7 @@ function Router() {
         <Route path="/kids-drawing" component={KidsDrawingPage} />
         <Route path="/upload" component={UploadPage} />
         <Route path="/upload-enhance" component={UploadEnhancePage} />
+        <Route path="/select-ideas" component={SelectIdeasPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/product-enhancement" component={ProductEnhancementPage} />
         <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
