@@ -44,6 +44,11 @@ export default function ResultsPage() {
   const [, setLocation] = useLocation()
   const [results, setResults] = useState<EnhancedResult[]>([])
   const [viewMode, setViewMode] = useState<'grid' | 'compare' | 'list'>('grid')
+  
+  // Ensure page loads at top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [selectedFormat, setSelectedFormat] = useState<'PNG' | 'JPG'>('PNG')
   const [selectedResolution, setSelectedResolution] = useState<'original' | 'hd' | '4k'>('original')
   const [emailAddress, setEmailAddress] = useState('')

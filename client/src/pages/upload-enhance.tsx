@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,11 @@ import { useLocation } from "wouter";
 export default function UploadEnhancePage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [showStepHighlight, setShowStepHighlight] = useState(false);
+  
+  // Ensure page loads at top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);

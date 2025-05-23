@@ -26,6 +26,11 @@ export default function GenerateEnhancementsPage() {
   const [, setLocation] = useLocation()
   const [jobs, setJobs] = useState<EnhancementJob[]>([])
   const [overallProgress, setOverallProgress] = useState(0)
+  
+  // Ensure page loads at top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [completedCount, setCompletedCount] = useState(0)
   const [failedCount, setFailedCount] = useState(0)
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState(0)

@@ -24,6 +24,11 @@ export default function SelectIdeasPage() {
   const [, setLocation] = useLocation()
   const [selectedIdeas, setSelectedIdeas] = useState<{ [productId: string]: string[] }>({})
   const [productImages, setProductImages] = useState<ProductImage[]>([])
+  
+  // Ensure page loads at top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Load uploaded images from sessionStorage
   useEffect(() => {
