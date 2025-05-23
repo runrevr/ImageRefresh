@@ -104,6 +104,101 @@ export default function GenerateEnhancementsPage() {
     }, 1000)
   }, [])
 
+  // Real AI processing function that calls Claude + GPT-image-01
+  const processEnhancements = async (initialJobs: EnhancementJob[]) => {
+    console.log('Starting authentic AI processing for', initialJobs.length, 'enhancements');
+    setIsProcessing(true);
+    
+    const currentJobs = [...initialJobs];
+    setJobs(currentJobs);
+    
+    for (let i = 0; i < currentJobs.length; i++) {
+      const job = currentJobs[i];
+      setCurrentJobIndex(i);
+      setCurrentJobMessage(`[${job.enhancementTitle}] Step 1: Creating prompt with Claude...`);
+      
+      try {
+        // Step 1: Generate edit prompt with Claude
+        currentJobs[i] = { ...currentJobs[i], status: 'creating_prompt', progress: 20 };
+        setJobs([...currentJobs]);
+        
+        const promptResponse = await fetch('/api/generate-edit-prompt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            idea_title: job.enhancementTitle,
+            idea_description: job.ideaDescription,
+            is_chaos_concept: job.isChaosMode
+          })
+        });
+        
+        if (!promptResponse.ok) {
+          throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
+        }
+        
+        const promptResult = await promptResponse.json();
+        console.log(`[${job.enhancementTitle}] Edit prompt received:`, promptResult.edit_prompt);
+        
+        // Step 2: Generate image with GPT-image-01
+        setCurrentJobMessage(`[${job.enhancementTitle}] Step 2: Creating enhanced image...`);
+        currentJobs[i] = { 
+          ...currentJobs[i], 
+          status: 'generating_image', 
+          progress: 60,
+          enhancementPrompt: promptResult.edit_prompt
+        };
+        setJobs([...currentJobs]);
+        
+        const imageResponse = await fetch('/api/generate-enhancement', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            original_image_url: job.originalImageUrl,
+            enhancement_prompt: promptResult.edit_prompt,
+            enhancement_title: job.enhancementTitle
+          })
+        });
+        
+        if (!imageResponse.ok) {
+          throw new Error(`Image generation failed: ${imageResponse.statusText}`);
+        }
+        
+        const imageResult = await imageResponse.json();
+        console.log(`[${job.enhancementTitle}] GPT-image-01 success!`, imageResult.enhanced_image_url);
+        
+        // Mark job as complete
+        currentJobs[i] = { 
+          ...currentJobs[i], 
+          status: 'complete', 
+          progress: 100,
+          resultImageUrl: imageResult.enhanced_image_url
+        };
+        setJobs([...currentJobs]);
+        setCompletedCount(prev => prev + 1);
+        
+        // Brief pause between jobs
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+      } catch (error) {
+        console.error(`[${job.enhancementTitle}] Error:`, error);
+        
+        // Mark job as failed
+        currentJobs[i] = { 
+          ...currentJobs[i], 
+          status: 'failed', 
+          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        };
+        setJobs([...currentJobs]);
+        setFailedCount(prev => prev + 1);
+      }
+    }
+    
+    // All jobs complete
+    setIsProcessing(false);
+    setCurrentJobMessage('All enhancements complete!');
+    console.log('Authentic AI processing complete!');
+  };
+
   const startAuthenticProcessing = async (initialJobs: EnhancementJob[]) => {
     console.log('Starting authentic AI processing for', initialJobs.length, 'enhancements');
     let currentJobs = [...initialJobs];

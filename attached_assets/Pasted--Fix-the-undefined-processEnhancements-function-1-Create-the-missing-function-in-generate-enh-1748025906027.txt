@@ -1,0 +1,65 @@
+"Fix the undefined processEnhancements function:
+
+1. **Create the missing function in generate-enhancements page:**
+```javascript
+// Add this function to handle the enhancement processing
+async function processEnhancements(enhancementJobs) {
+  console.log('Starting to process enhancements:', enhancementJobs);
+  
+  for (let i = 0; i < enhancementJobs.length; i++) {
+    const enhancement = enhancementJobs[i];
+    
+    try {
+      // Update progress
+      updateProgress(i + 1, enhancementJobs.length);
+      
+      // Generate the image
+      await generateSingleImage(enhancement, i);
+      
+      // Small delay between requests
+      if (i < enhancementJobs.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+      
+    } catch (error) {
+      console.error(`Failed to process enhancement ${i}:`, error);
+    }
+  }
+  
+  // All done - redirect to results
+  setTimeout(() => {
+    const completedEnhancements = getCompletedEnhancements();
+    sessionStorage.setItem('generated_images', JSON.stringify(completedEnhancements));
+    window.location.href = '/results';
+  }, 2000);
+}
+
+// Helper function to update overall progress
+function updateProgress(current, total) {
+  const progressText = document.querySelector('.progress-text');
+  if (progressText) {
+    progressText.textContent = `${current} of ${total} enhancements complete`;
+  }
+  
+  const progressBar = document.querySelector('.progress-bar');
+  if (progressBar) {
+    const percentage = (current / total) * 100;
+    progressBar.style.width = `${percentage}%`;
+  }
+}
+
+// Helper to get completed enhancements
+function getCompletedEnhancements() {
+  const completed = [];
+  document.querySelectorAll('.enhancement-card').forEach(card => {
+    const img = card.querySelector('.generated-image');
+    if (img && img.src) {
+      completed.push({
+        title: card.querySelector('.title').textContent,
+        original_url: card.querySelector('.original-image').src,
+        enhanced_url: img.src
+      });
+    }
+  });
+  return completed;
+}
