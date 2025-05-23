@@ -42,6 +42,7 @@ import UploadPage from "@/pages/upload";
 import UploadEnhancePage from "@/pages/upload-enhance";
 import SelectIdeasPage from "@/pages/select-ideas";
 import GenerateEnhancementsPage from "@/pages/generate-enhancements";
+import ResultsPage from "@/pages/results";
 
 function Router() {
   return (
@@ -58,6 +59,7 @@ function Router() {
         <Route path="/upload-enhance" component={UploadEnhancePage} />
         <Route path="/select-ideas" component={SelectIdeasPage} />
         <Route path="/generate-enhancements" component={GenerateEnhancementsPage} />
+        <Route path="/results" component={ResultsPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/product-enhancement" component={ProductEnhancementPage} />
         <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
