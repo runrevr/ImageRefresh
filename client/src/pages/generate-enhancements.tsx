@@ -122,14 +122,17 @@ export default function GenerateEnhancementsPage() {
     
     for (let i = 0; i < currentJobs.length; i++) {
       const job = currentJobs[i];
+      console.log(`Processing job ${i + 1}/${currentJobs.length}:`, job.enhancementTitle);
       setCurrentJobIndex(i);
       setCurrentJobMessage(`[${job.enhancementTitle}] Step 1: Creating prompt with Claude...`);
       
       try {
+        console.log('About to call Claude API for prompt generation...');
         // Step 1: Generate edit prompt with Claude
         currentJobs[i] = { ...currentJobs[i], status: 'creating_prompt', progress: 20 };
         setJobs([...currentJobs]);
         
+        console.log('Making fetch request to /api/generate-edit-prompt...');
         const promptResponse = await fetch('/api/generate-edit-prompt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
