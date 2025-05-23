@@ -677,7 +677,7 @@ export default function UploadEnhancePage() {
       </div>
 
       {/* Main Container */}
-      <main className="max-w-screen-xl mx-auto px-4 py-8 mt-32">
+      <main className="max-w-screen-xl mx-auto px-4 py-8 mt-40">
         {/* Page Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl brand-font-heading font-extrabold brand-text-neutral mb-4">
