@@ -365,7 +365,7 @@ export default function UploadEnhancePage() {
               businessContext: {
                 industries: selectedIndustries,
                 productType: productType,
-                brandDescription: brandDescription
+                purposes: selectedPurposes
               },
               aiAnalysis: analysisResult.analysis,
               enhancementIdeas: ideasResult.ideas,
