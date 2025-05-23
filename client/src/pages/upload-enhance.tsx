@@ -194,18 +194,14 @@ export default function UploadEnhancePage() {
   const hasContent = hasImages || hasIndustryInfo || productType.trim() || brandDescription.trim();
   const canSubmit = hasImages && hasIndustryInfo;
 
-  // Main processing function with API calls and session storage
+  // Multi-step loading indicator with timed progressions
   const submitForProcessing = async () => {
     try {
       setIsLoading(true);
       setProcessingStep(1);
-      setProcessingStatus("Preparing your images for upload...");
+      setProcessingStatus("Uploading images to server...");
 
-      // Step 1: Upload Images
-      // POST /api/upload-images
-      // Accepts: FormData with multiple images
-      // Returns: { urls: array of image URLs }
-      
+      // Prepare FormData for upload
       const formData = new FormData();
       selectedFiles.forEach((file, index) => {
         formData.append(`image_${index}`, file);
@@ -216,99 +212,44 @@ export default function UploadEnhancePage() {
       formData.append('productType', productType);
       formData.append('brandDescription', brandDescription);
       formData.append('imageCount', selectedFiles.length.toString());
-      
-      setProcessingStatus("Uploading images to secure cloud storage...");
-      
-      // Placeholder for image upload API call
-      const uploadResponse = await fetch('/api/upload-images', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to upload images');
-      }
-      
-      const uploadResult = await uploadResponse.json();
-      const imageUrls = uploadResult.urls; // Array of uploaded image URLs
-      
-      // Step 2: AI Product Analysis
+
+      // Step 1: Upload Images (1.5s)
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setProcessingStep(2);
-      setProcessingStatus("AI is analyzing your product images...");
-      
-      // POST /api/analyze-products
-      // Accepts: { image_urls, industry_context, analysis_prompt }
-      // Returns: { analysis: detailed product analysis }
-      
+      setProcessingStatus("Analyzing with GPT Vision...");
+
+      // Prepare industry context for analysis
       const industryContext = {
         industries: selectedIndustries,
         productType: productType,
         brandDescription: brandDescription,
         targetAudience: selectedIndustries.includes('B2B Services') ? 'business' : 'consumer'
       };
+
+      // Step 2: AI Product Analysis (3s)
+      // POST /api/analyze-products
+      // Accepts: { image_urls, industry_context, analysis_prompt }
+      // Returns: { analysis: detailed product analysis }
       
       const analysisPrompt = `Analyze these product images for a ${selectedIndustries.join(', ')} business. 
         Product type: ${productType}. 
         Brand context: ${brandDescription}. 
         Focus on identifying enhancement opportunities for lighting, composition, background, and overall visual appeal.`;
-      
-      const analysisResponse = await fetch('/api/analyze-products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          image_urls: imageUrls,
-          industry_context: industryContext,
-          analysis_prompt: analysisPrompt
-        })
-      });
-      
-      if (!analysisResponse.ok) {
-        throw new Error('Failed to analyze products');
-      }
-      
-      const analysisResult = await analysisResponse.json();
-      const visionAnalysis = analysisResult.analysis; // Detailed AI analysis of each image
-      
-      // Step 3: Generate Enhancement Ideas
+
+      await new Promise(resolve => setTimeout(resolve, 3000));
       setProcessingStep(3);
-      setProcessingStatus("Generating personalized enhancement ideas...");
-      
+      setProcessingStatus("Generating enhancement ideas...");
+
+      // Step 3: Generate Enhancement Ideas (2.5s)
       // POST /api/generate-ideas
       // Accepts: { vision_analysis, industry_context, ideas_per_image: 5 }
       // Returns: { ideas: array of 5 ideas per image }
-      
-      const ideasResponse = await fetch('/api/generate-ideas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          vision_analysis: visionAnalysis,
-          industry_context: industryContext,
-          ideas_per_image: 5,
-          enhancement_focus: [
-            'lighting_optimization',
-            'background_enhancement',
-            'color_correction',
-            'composition_improvement',
-            'style_transformation'
-          ]
-        })
-      });
-      
-      if (!ideasResponse.ok) {
-        throw new Error('Failed to generate enhancement ideas');
-      }
-      
-      const ideasResult = await ideasResponse.json();
-      const enhancementIdeas = ideasResult.ideas; // Array of 5 ideas per image
-      
-      // Step 4: Finalize and Store Results
+
+      await new Promise(resolve => setTimeout(resolve, 2500));
       setProcessingStep(4);
       setProcessingStatus("Preparing your results...");
-      
+
+      // Step 4: Finalize and Store Results (1s)
       // Prepare comprehensive session data
       const sessionData = {
         timestamp: new Date().toISOString(),
@@ -316,35 +257,83 @@ export default function UploadEnhancePage() {
           files: selectedFiles.map(file => ({
             name: file.name,
             size: file.size,
-            type: file.type
+            type: file.type,
+            url: URL.createObjectURL(file) // For demo purposes
           })),
-          urls: imageUrls
+          // Simulated uploaded URLs
+          urls: selectedFiles.map((file, index) => 
+            `/api/images/uploaded_${Date.now()}_${index}.${file.type.split('/')[1]}`
+          )
         },
         businessContext: {
           industries: selectedIndustries,
           productType: productType,
           brandDescription: brandDescription
         },
-        aiAnalysis: visionAnalysis,
-        enhancementIdeas: enhancementIdeas,
+        // Simulated AI analysis
+        aiAnalysis: selectedFiles.map((file, index) => ({
+          imageIndex: index,
+          fileName: file.name,
+          analysis: `Professional analysis for ${productType} in ${selectedIndustries.join(', ')} industry. Recommendations for lighting, composition, and background improvements.`
+        })),
+        // Simulated enhancement ideas (5 per image)
+        enhancementIdeas: selectedFiles.flatMap((file, imageIndex) => [
+          {
+            imageIndex,
+            id: `idea_${imageIndex}_1`,
+            title: "Professional Lighting Enhancement",
+            description: "Optimize lighting to create professional studio-quality illumination",
+            category: "lighting_optimization"
+          },
+          {
+            imageIndex,
+            id: `idea_${imageIndex}_2`,
+            title: "Background Transformation",
+            description: "Replace or enhance background for better product focus",
+            category: "background_enhancement"
+          },
+          {
+            imageIndex,
+            id: `idea_${imageIndex}_3`,
+            title: "Color Correction & Vibrancy",
+            description: "Adjust colors to make products more appealing and accurate",
+            category: "color_correction"
+          },
+          {
+            imageIndex,
+            id: `idea_${imageIndex}_4`,
+            title: "Composition Improvement",
+            description: "Optimize framing and positioning for better visual impact",
+            category: "composition_improvement"
+          },
+          {
+            imageIndex,
+            id: `idea_${imageIndex}_5`,
+            title: "Style Enhancement",
+            description: `Apply ${selectedIndustries[0] || 'modern'} industry-specific styling`,
+            category: "style_transformation"
+          }
+        ]),
         processingMetadata: {
           processingTime: Date.now(),
           imageCount: selectedFiles.length,
-          ideasGenerated: enhancementIdeas.length
+          ideasGenerated: selectedFiles.length * 5,
+          processingDuration: 8000 // Total time in ms
         }
       };
       
       // Store in sessionStorage for the next page
       sessionStorage.setItem('uploadEnhanceResults', JSON.stringify(sessionData));
       sessionStorage.setItem('currentStep', 'select-ideas');
-      
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setProcessingStatus("Complete! Redirecting to idea selection...");
       
       // Small delay to show completion
       setTimeout(() => {
         setIsLoading(false);
         navigate('/select-ideas');
-      }, 1000);
+      }, 500);
       
     } catch (error) {
       console.error('Processing error:', error);
