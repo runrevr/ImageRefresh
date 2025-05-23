@@ -104,44 +104,19 @@ export async function transformImage(
   prompt: string
 ): Promise<{ url: string }> {
   try {
-    // First analyze the image
-    const vision = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `Analyze this image for transformation with the following prompt: ${prompt}`
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
-              }
-            }
-          ],
-        },
-      ],
-      max_tokens: 500,
-    });
+    // Convert base64 to buffer for the image edit API
+    const imageBuffer = Buffer.from(base64Image, 'base64');
     
-    const analysis = vision.choices[0].message.content;
-    
-    // Then generate a new image based on the analysis and prompt
-    const enhancedPrompt = `Based on this image analysis: ${analysis}. 
-                           Create a transformed version with these instructions: ${prompt}`;
-    
-    const generation = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: enhancedPrompt,
+    // Use GPT-image-01 with the /edits endpoint to modify the original image
+    const response = await openai.images.edit({
+      model: "gpt-image-01",
+      image: imageBuffer,
+      prompt: prompt,
       n: 1,
       size: "1024x1024",
-      quality: "standard",
     });
     
-    return { url: generation.data?.[0]?.url || "" };
+    return { url: response.data?.[0]?.url || "" };
   } catch (error: any) {
     console.error("Image transformation failed:", error);
     throw new Error("Failed to transform image: " + (error.message || "Unknown error"));

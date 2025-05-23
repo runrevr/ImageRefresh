@@ -51,11 +51,10 @@ export async function transformImage(
     const imageBuffer = fs.readFileSync(originalImagePath);
     const base64Image = imageBuffer.toString("base64");
 
-    // Call OpenAI API for image transformation
-    // Note: Using the newest OpenAI model "gpt-4o" which was released May 13, 2024
-    // Using "dall-e-3" for image generation
+    // Call OpenAI API for image editing using GPT-image-01
+    // Note: Using the GPT-image-01 model for image editing/enhancement
     const response = await openai.images.edit({
-      model: "dall-e-3",
+      model: "gpt-image-01",
       image: fs.createReadStream(originalImagePath),
       prompt: prompt,
       n: 1,

@@ -46,17 +46,19 @@ export async function transformImage(
     const transformedFileName = `transformed-${Date.now()}.png`;
     const transformedPath = path.join(process.cwd(), "uploads", transformedFileName);
     
-    // Call OpenAI API with base64-encoded image
-    console.log('[OpenAI] Calling OpenAI API with GPT-Image-01 model');
+    // Call OpenAI API using the images.edit endpoint with GPT-image-01
+    console.log('[OpenAI] Calling OpenAI API with GPT-image-01 model');
     
-    // Make the API call with the exact parameters requested
+    // Convert base64 to buffer for proper file upload
+    const imageBuffer = Buffer.from(base64Image, 'base64');
+    
+    // Make the API call with the correct GPT-image-01 model
     const response = await openai.images.edit({
-      model: "gpt-image-1",
-      image: base64Image,
+      model: "gpt-image-01",
+      image: imageBuffer,
       prompt: prompt,
       n: 2,
-      moderation: "low",
-      size: finalSize as any, // Type assertion needed as the SDK might not have updated typings yet
+      size: finalSize as any,
     });
     
     console.log('[OpenAI] Response received from API');
