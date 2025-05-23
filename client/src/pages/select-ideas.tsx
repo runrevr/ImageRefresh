@@ -193,9 +193,9 @@ export default function SelectIdeasPage() {
   const canProceed = getTotalSelectedCount() > 0
 
   const handleGenerateEnhancements = () => {
-    // In production, this would navigate to the processing/results page
+    // Pass selected ideas to generation page (in production would save to sessionStorage or API)
     console.log('Generating enhancements for:', selectedIdeas)
-    // setLocation('/enhancement-results')
+    setLocation('/generate-enhancements')
   }
 
   return (
