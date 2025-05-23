@@ -12,6 +12,7 @@ import { setupSimpleRouter } from "./simple-router";
 import { setupWebhookTestRoutes } from "./routes/webhook-test";
 import { setupStaticRoutes } from "./routes/static-routes";
 import { setupProductImageLabRoutes } from "./routes/product-image-lab-routes";
+import { setupAnthropicTestRoutes } from "./routes/anthropic-test";
 import uploadEnhanceApiRoutes from "./routes/upload-enhance-api";
 import fs from 'fs';
 import path from 'path';
@@ -169,6 +170,9 @@ app.use((req, res, next) => {
   
   // Register Product Image Lab routes
   app.use(setupProductImageLabRoutes());
+  
+  // Register Anthropic API test routes
+  app.use('/api', setupAnthropicTestRoutes());
   
   // Register Upload Enhance API routes
   app.use('/api', uploadEnhanceApiRoutes);
