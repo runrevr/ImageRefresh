@@ -56,65 +56,16 @@ export default function SelectIdeasPage() {
         setProductImages(productData)
       } catch (error) {
         console.error('Error parsing stored data:', error)
-        // Fallback to demo data if parsing fails
-        setProductImages(getDemoData())
+        // Redirect to upload page since we need authentic data
+        setLocation('/upload-enhance')
       }
     } else {
-      // No stored data, use single demo image for testing
-      console.log('No stored image data found, using single demo image')
-      setProductImages([{
-        id: 'product-1',
-        fileName: 'demo-product.jpg',
-        url: '/api/placeholder/200/200',
-        ideas: generateIdeasForProduct(0)
-      }])
+      console.error('No authentic ideas found - redirecting to upload page')
+      setLocation('/upload-enhance')
     }
   }, [])
 
-  const generateIdeasForProduct = (index: number) => [
-    {
-      id: `idea-${index + 1}-1`,
-      title: 'Professional Studio Lighting',
-      description: 'Add dramatic studio lighting with soft shadows to create a premium, professional look that highlights product details.'
-    },
-    {
-      id: `idea-${index + 1}-2`,
-      title: 'Lifestyle Background Scene',
-      description: 'Place your product in a realistic lifestyle setting that shows how customers would use it in their daily lives.'
-    },
-    {
-      id: `idea-${index + 1}-3`,
-      title: 'Clean White Background',
-      description: 'Remove current background and replace with a clean, pure white background perfect for e-commerce listings.'
-    },
-    {
-      id: `idea-${index + 1}-4`,
-      title: 'Color Variations Display',
-      description: 'Show multiple color options of your product in an elegant arrangement to highlight available choices.'
-    },
-    {
-      id: `idea-${index + 1}-5`,
-      title: 'Scale & Size Reference',
-      description: 'Add common objects or hands to show the true size and scale of your product for better customer understanding.'
-    }
-  ]
-
-  const getDemoData = (): ProductImage[] => [
-    {
-      id: 'product-1',
-      fileName: 'product-photo-1.jpg',
-      url: '/api/placeholder/200/200',
-      ideas: generateIdeasForProduct(0)
-    },
-    {
-      id: 'product-2',
-      fileName: 'product-photo-2.jpg',
-      url: '/api/placeholder/200/200',
-      ideas: generateIdeasForProduct(1)
-    }
-  ]
-
-
+  // Removed all mock data - using only authentic Claude-generated ideas
 
   const handleIdeaToggle = (productId: string, ideaId: string) => {
     setSelectedIdeas(prev => {
