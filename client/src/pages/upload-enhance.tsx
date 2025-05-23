@@ -17,7 +17,12 @@ export default function UploadEnhancePage() {
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
   const [brandDescription, setBrandDescription] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const MAX_FILES = 5;
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
   const steps = [
     { id: 1, name: "Upload", description: "Select Images" },
@@ -26,9 +31,64 @@ export default function UploadEnhancePage() {
     { id: 4, name: "Download", description: "Get Results" }
   ];
 
+  // Validate file before adding to array
+  const validateFile = (file: File): string | null => {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return `${file.name}: Only JPEG, PNG, and WebP images are allowed`;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return `${file.name}: File size must be less than 10MB`;
+    }
+    return null;
+  };
+
+  // Add files to the array with validation
+  const addFiles = (newFiles: FileList | File[]) => {
+    const filesArray = Array.from(newFiles);
+    const validFiles: File[] = [];
+    let errors: string[] = [];
+
+    // Check if adding these files would exceed the limit
+    if (selectedFiles.length + filesArray.length > MAX_FILES) {
+      setUploadError(`Maximum ${MAX_FILES} images allowed. You can only add ${MAX_FILES - selectedFiles.length} more.`);
+      return;
+    }
+
+    // Validate each file
+    filesArray.forEach(file => {
+      const error = validateFile(file);
+      if (error) {
+        errors.push(error);
+      } else {
+        // Check for duplicates
+        const isDuplicate = selectedFiles.some(existingFile => 
+          existingFile.name === file.name && existingFile.size === file.size
+        );
+        if (!isDuplicate) {
+          validFiles.push(file);
+        }
+      }
+    });
+
+    if (errors.length > 0) {
+      setUploadError(errors.join('. '));
+      return;
+    }
+
+    if (validFiles.length > 0) {
+      setSelectedFiles(prev => [...prev, ...validFiles]);
+      setUploadError("");
+    }
+  };
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (selectedFiles.length >= MAX_FILES) {
+      return; // Don't allow drag if max files reached
+    }
+    
     if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
     } else if (e.type === "dragleave") {
@@ -41,25 +101,39 @@ export default function UploadEnhancePage() {
     e.stopPropagation();
     setDragActive(false);
 
-    const files = Array.from(e.dataTransfer.files).filter(file => 
-      file.type.startsWith('image/')
-    );
-    setSelectedFiles(files);
+    if (selectedFiles.length >= MAX_FILES) {
+      setUploadError(`Maximum ${MAX_FILES} images allowed`);
+      return;
+    }
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      addFiles(files);
+    }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      setSelectedFiles(files);
+    if (e.target.files && e.target.files.length > 0) {
+      addFiles(e.target.files);
     }
+    // Reset the input value so the same file can be selected again
+    e.target.value = '';
   };
 
   const removeFile = (index: number) => {
     setSelectedFiles(files => files.filter((_, i) => i !== index));
+    setUploadError("");
+  };
+
+  const clearAllFiles = () => {
+    setSelectedFiles([]);
+    setUploadError("");
   };
 
   const openFileDialog = () => {
-    fileInputRef.current?.click();
+    if (selectedFiles.length < MAX_FILES) {
+      fileInputRef.current?.click();
+    }
   };
 
   const handleSubmit = async () => {
@@ -306,36 +380,68 @@ export default function UploadEnhancePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div
-                className={`upload-zone rounded-lg p-8 text-center cursor-pointer ${
-                  dragActive ? "active" : ""
-                }`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                onClick={openFileDialog}
-              >
-                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
-                  Drop images here or click to browse
-                </h3>
-                <p className="text-gray-500 brand-font-body mb-4">
-                  Maximum 5 images, up to 10MB each
-                </p>
-                <Button variant="outline" type="button" className="brand-button-primary border-none">
-                  Choose Files
-                </Button>
-                
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-              </div>
+              {/* Show upload area only if less than 5 images */}
+              {selectedFiles.length < MAX_FILES ? (
+                <div
+                  className={`upload-zone rounded-lg p-8 text-center cursor-pointer ${
+                    dragActive ? "active" : ""
+                  }`}
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={openFileDialog}
+                >
+                  <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
+                    Drop images here or click to browse
+                  </h3>
+                  <p className="text-gray-500 brand-font-body mb-4">
+                    {selectedFiles.length > 0 
+                      ? `Add ${MAX_FILES - selectedFiles.length} more images (up to 10MB each)`
+                      : `Maximum ${MAX_FILES} images, up to 10MB each`
+                    }
+                  </p>
+                  <Button variant="outline" type="button" className="brand-button-primary border-none">
+                    Choose Files
+                  </Button>
+                  
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                </div>
+              ) : (
+                /* Show when max files reached */
+                <div className="upload-zone rounded-lg p-8 text-center bg-gray-50">
+                  <Check className="mx-auto h-12 w-12 brand-text-accent mb-4" />
+                  <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
+                    Maximum images reached
+                  </h3>
+                  <p className="text-gray-500 brand-font-body mb-4">
+                    You've selected {MAX_FILES} images. Remove some to add different ones.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    type="button" 
+                    onClick={clearAllFiles}
+                    className="brand-button-primary border-none"
+                  >
+                    Clear All Images
+                  </Button>
+                </div>
+              )}
+
+              {/* Error Display */}
+              {uploadError && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-600 brand-font-body text-sm">{uploadError}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -343,31 +449,85 @@ export default function UploadEnhancePage() {
         {/* Image Preview Grid */}
         {selectedFiles.length > 0 && (
           <Card className="mb-8 brand-card">
-            <CardHeader>
-              <CardTitle className="brand-font-heading font-semibold brand-text-neutral">Selected Images ({selectedFiles.length}/5)</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="brand-font-heading font-semibold brand-text-neutral">
+                Selected Images ({selectedFiles.length}/{MAX_FILES})
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearAllFiles}
+                className="text-red-600 border-red-200 hover:bg-red-50"
+              >
+                Clear All
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {selectedFiles.map((file, index) => (
-                  <div key={index} className="relative group">
-                    <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                  <div key={`${file.name}-${index}`} className="relative group">
+                    <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-secondary transition-all duration-200">
                       <img
                         src={URL.createObjectURL(file)}
                         alt={file.name}
                         className="w-full h-full object-cover"
+                        onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))} // Clean up memory
                       />
+                      {/* Remove button - always visible on mobile, hover on desktop */}
                       <button
-                        onClick={() => removeFile(index)}
-                        className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeFile(index);
+                        }}
+                        className="absolute top-2 right-2 w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
+                        title="Remove image"
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-4 w-4" />
                       </button>
+                      
+                      {/* File size indicator */}
+                      <div className="absolute bottom-2 left-2 px-2 py-1 bg-black bg-opacity-60 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        {(file.size / (1024 * 1024)).toFixed(1)}MB
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1 truncate">
-                      {file.name}
-                    </p>
+                    
+                    {/* File info */}
+                    <div className="mt-2">
+                      <p className="text-xs brand-font-body brand-text-neutral truncate font-medium">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-gray-500 brand-font-body">
+                        {file.type.split('/')[1].toUpperCase()} • {(file.size / (1024 * 1024)).toFixed(1)}MB
+                      </p>
+                    </div>
                   </div>
                 ))}
+                
+                {/* Add more button if less than max */}
+                {selectedFiles.length < MAX_FILES && (
+                  <div 
+                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-secondary hover:bg-gray-50 transition-all duration-200"
+                    onClick={openFileDialog}
+                  >
+                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <p className="text-xs text-gray-500 brand-font-body text-center">
+                      Add More<br />
+                      ({MAX_FILES - selectedFiles.length} left)
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              {/* Summary info */}
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex justify-between items-center text-sm brand-font-body">
+                  <span className="brand-text-neutral">
+                    Total: {selectedFiles.length} image{selectedFiles.length !== 1 ? 's' : ''}
+                  </span>
+                  <span className="text-gray-500">
+                    Total size: {(selectedFiles.reduce((acc, file) => acc + file.size, 0) / (1024 * 1024)).toFixed(1)}MB
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
