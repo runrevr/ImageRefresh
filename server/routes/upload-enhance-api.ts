@@ -452,32 +452,27 @@ router.post('/generate-enhancement', async (req, res) => {
       .png()
       .toBuffer();
     
-    // Import FormData for multipart/form-data
-    const FormData = require('form-data');
-    const axios = require('axios');
+    // Import required modules
+    const fs = require('fs').promises;
+    const path = require('path');
     
-    // Create form data for GPT-image-01
-    const formData = new FormData();
-    formData.append('image', processedImage, {
-      filename: 'image.png',
-      contentType: 'image/png'
+    // Save image temporarily (OpenAI SDK needs a file path)
+    const tempPath = path.join(process.cwd(), 'temp', `edit-${Date.now()}.png`);
+    await fs.mkdir(path.dirname(tempPath), { recursive: true });
+    await fs.writeFile(tempPath, processedImage);
+    
+    // Call OpenAI edit endpoint using SDK
+    console.log('Calling OpenAI edit API with prompt:', enhancement_prompt.substring(0, 100) + '...');
+    
+    const enhancementResponse = await openai.images.edit({
+      image: fs.createReadStream(tempPath),
+      prompt: enhancement_prompt,
+      n: 1,
+      size: "1024x1024"
     });
-    formData.append('prompt', enhancement_prompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
-    formData.append('model', 'gpt-image-01');
     
-    // Call GPT-image-01 edit endpoint with proper multipart format
-    const enhancementResponse = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      formData,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          ...formData.getHeaders()
-        }
-      }
-    );
+    // Clean up temp file
+    await fs.unlink(tempPath);
     
     console.log('Image generated successfully with GPT-image-01');
     

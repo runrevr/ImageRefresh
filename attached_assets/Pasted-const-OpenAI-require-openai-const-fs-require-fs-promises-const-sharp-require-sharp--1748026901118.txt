@@ -1,0 +1,83 @@
+const OpenAI = require('openai');
+const fs = require('fs').promises;
+const sharp = require('sharp');
+const path = require('path');
+
+async function generateImage(req, res) {
+  try {
+    const { original_image_url, enhancement_prompt, enhancement_title } = req.body;
+    
+    console.log('Generating image with OpenAI edit endpoint for:', enhancement_title);
+    
+    // Initialize OpenAI
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    
+    // Get image as buffer
+    let imageBuffer;
+    if (original_image_url.startsWith('data:')) {
+      const base64Data = original_image_url.split(',')[1];
+      imageBuffer = Buffer.from(base64Data, 'base64');
+    } else if (original_image_url.startsWith('/uploads/')) {
+      // Read from local uploads
+      const filePath = path.join(process.cwd(), 'public', original_image_url);
+      imageBuffer = await fs.readFile(filePath);
+    } else {
+      // Fetch from URL
+      const response = await fetch(original_image_url);
+      imageBuffer = Buffer.from(await response.arrayBuffer());
+    }
+    
+    // Process image to meet OpenAI requirements (square PNG)
+    const processedImage = await sharp(imageBuffer)
+      .resize(1024, 1024, { 
+        fit: 'cover',
+        position: 'center'
+      })
+      .png()
+      .toBuffer();
+    
+    // Save temporarily (OpenAI SDK needs a file path)
+    const tempPath = path.join(process.cwd(), 'temp', `edit-${Date.now()}.png`);
+    await fs.mkdir(path.dirname(tempPath), { recursive: true });
+    await fs.writeFile(tempPath, processedImage);
+    
+    // Call OpenAI edit endpoint
+    console.log('Calling OpenAI edit API with prompt:', enhancement_prompt.substring(0, 100) + '...');
+    
+    const response = await openai.images.edit({
+      image: fs.createReadStream(tempPath),
+      prompt: enhancement_prompt,
+      n: 1,
+      size: "1024x1024"
+    });
+    
+    // Clean up temp file
+    await fs.unlink(tempPath);
+    
+    console.log('OpenAI edit successful, image URL:', response.data[0].url);
+    
+    res.json({
+      success: true,
+      enhanced_image_url: response.data[0].url,
+      title: enhancement_title
+    });
+    
+  } catch (error) {
+    console.error('OpenAI Edit API Error:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      details: error.response?.data
+    });
+    
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      details: error.response?.data?.error || 'Image generation failed'
+    });
+  }
+}
+
+module.exports = { generateImage };
