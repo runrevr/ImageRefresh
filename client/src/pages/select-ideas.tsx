@@ -25,14 +25,70 @@ export default function SelectIdeasPage() {
   const [selectedIdeas, setSelectedIdeas] = useState<{ [productId: string]: string[] }>({})
   const [productImages, setProductImages] = useState<ProductImage[]>([])
 
-  // Mock data for development - in production this would come from API/sessionStorage
+  // Load uploaded images from sessionStorage
   useEffect(() => {
-    const mockData: ProductImage[] = [
-      {
-        id: 'product-1',
-        fileName: 'product-photo-1.jpg',
-        url: '/api/placeholder/200/200',
-        ideas: [
+    const storedData = sessionStorage.getItem('uploadedProductData')
+    
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData)
+        console.log('Retrieved image data from sessionStorage:', parsedData)
+        
+        // Convert stored data to ProductImage format with enhancement ideas
+        const productData: ProductImage[] = parsedData.images.map((img: any, index: number) => ({
+          id: img.id || `product-${index + 1}`,
+          fileName: img.fileName,
+          url: img.objectURL || img.base64, // Use objectURL first, fallback to base64
+          ideas: generateIdeasForProduct(index)
+        }))
+        
+        setProductImages(productData)
+      } catch (error) {
+        console.error('Error parsing stored data:', error)
+        // Fallback to demo data if parsing fails
+        setProductImages(getDemoData())
+      }
+    } else {
+      // No stored data, use demo data
+      console.log('No stored image data found, using demo data')
+      setProductImages(getDemoData())
+    }
+  }, [])
+
+  const generateIdeasForProduct = (index: number) => [
+    {
+      id: `idea-${index + 1}-1`,
+      title: 'Professional Studio Lighting',
+      description: 'Add dramatic studio lighting with soft shadows to create a premium, professional look that highlights product details.'
+    },
+    {
+      id: `idea-${index + 1}-2`,
+      title: 'Lifestyle Background Scene',
+      description: 'Place your product in a realistic lifestyle setting that shows how customers would use it in their daily lives.'
+    },
+    {
+      id: `idea-${index + 1}-3`,
+      title: 'Clean White Background',
+      description: 'Remove current background and replace with a clean, pure white background perfect for e-commerce listings.'
+    },
+    {
+      id: `idea-${index + 1}-4`,
+      title: 'Color Variations Display',
+      description: 'Show multiple color options of your product in an elegant arrangement to highlight available choices.'
+    },
+    {
+      id: `idea-${index + 1}-5`,
+      title: 'Scale & Size Reference',
+      description: 'Add common objects or hands to show the true size and scale of your product for better customer understanding.'
+    }
+  ]
+
+  const getDemoData = (): ProductImage[] => [
+    {
+      id: 'product-1',
+      fileName: 'product-photo-1.jpg',
+      url: '/api/placeholder/200/200',
+      ideas: [
           {
             id: 'idea-1-1',
             title: 'Professional Studio Lighting',
