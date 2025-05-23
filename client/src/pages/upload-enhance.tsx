@@ -304,6 +304,7 @@ export default function UploadEnhancePage() {
                 industry_context: selectedIndustries,
                 image_purposes: selectedPurposes,
                 product_type: productType,
+                brand_description: selectedIndustries.join(', ') + ' business focused on ' + selectedPurposes.join(', '),
                 ideas_per_image: 5
               })
             });
