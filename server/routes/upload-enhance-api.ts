@@ -251,15 +251,35 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       }]
     });
     
-    // Get the raw text response
-    const editPrompt = message.content[0].text.trim();
-    
+    // LOG THE RAW RESPONSE
+    console.log('Claude raw response:', JSON.stringify(message));
+    console.log('Content type:', typeof message.content);
+    console.log('Content:', message.content);
+    console.log('First content item:', message.content[0]);
+
+    // Try different ways to get the text
+    let editPrompt;
+    if (message.content && message.content[0]) {
+      if (typeof message.content[0] === 'string') {
+        editPrompt = message.content[0];
+      } else if (message.content[0].text) {
+        editPrompt = message.content[0].text;
+      } else {
+        console.error('Unexpected content structure:', message.content[0]);
+        editPrompt = JSON.stringify(message.content[0]);
+      }
+    } else {
+      console.error('No content found in Claude response');
+      editPrompt = 'Failed to extract content from Claude response';
+    }
+
+    console.log('Extracted edit prompt:', editPrompt);
     console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
     
     // Return it wrapped in our JSON
     res.json({
       success: true,
-      edit_prompt: editPrompt,
+      edit_prompt: editPrompt.trim(),
       processing_metadata: {
         generation_time: new Date().toISOString(),
         model_used: "claude-3-7-sonnet-20250219",
