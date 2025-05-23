@@ -6,6 +6,14 @@ import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-serv
 
 const router = Router();
 
+// Debug API keys on startup
+console.log('🔑 API Keys Check:', {
+  hasOpenAI: !!process.env.OPENAI_API_KEY,
+  hasAnthropic: !!process.env.ANTHROPIC_API_KEY,
+  openAILength: process.env.OPENAI_API_KEY?.length || 0,
+  anthropicLength: process.env.ANTHROPIC_API_KEY?.length || 0
+});
+
 // Configure multer for file uploads and disk storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -102,14 +110,26 @@ router.post('/analyze-products', async (req, res) => {
 
         console.log(`[AI Analysis] Analyzing image ${index + 1}: ${imagePath}`);
         
-        // Use your live OpenAI GPT-4 Vision API
-        const visionAnalysis = await analyzeProductImage(
-          imagePath,
-          industry_context.industries?.join(', ') || 'general',
-          industry_context.productType
-        );
-        
-        console.log(`[AI Analysis] Vision analysis complete for image ${index + 1}`);
+        // Use your live OpenAI GPT-4 Vision API with enhanced error handling
+        try {
+          const visionAnalysis = await analyzeProductImage(
+            imagePath,
+            industry_context.industries?.join(', ') || 'general',
+            industry_context.productType
+          );
+          
+          console.log(`[AI Analysis] Vision analysis complete for image ${index + 1}`);
+          console.log(`[AI Analysis] Results: ${JSON.stringify(visionAnalysis, null, 2)}`);
+          
+          return {
+            url: url,
+            index: index,
+            ...visionAnalysis
+          };
+        } catch (visionError) {
+          console.error(`[AI Analysis] Vision API error for image ${index + 1}:`, visionError);
+          throw new Error(`Vision analysis failed: ${visionError.message}`);
+        }
         
         return {
           url: url,
