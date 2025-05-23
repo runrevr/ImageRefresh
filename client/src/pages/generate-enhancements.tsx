@@ -163,11 +163,16 @@ export default function GenerateEnhancementsPage() {
     // All jobs complete
     setIsProcessing(false)
     
-    // Auto-redirect after 2 seconds if all successful
-    if (currentJobs.every(job => job.status === 'complete')) {
-      setTimeout(() => {
-        setLocation('/results')
-      }, 2000)
+    // Show email capture modal for free users, or navigate directly for logged in users
+    if (!credits.userEmail && checkFreeCredit()) {
+      setShowEmailModal(true)
+    } else {
+      // Auto-redirect after 2 seconds if all successful
+      if (currentJobs.every(job => job.status === 'complete')) {
+        setTimeout(() => {
+          setLocation('/results')
+        }, 2000)
+      }
     }
   }
 
@@ -259,6 +264,39 @@ export default function GenerateEnhancementsPage() {
     )
     setCompletedCount(prev => prev + 1)
     setFailedCount(prev => prev - 1)
+  }
+
+  // Handle email submission for free users
+  const handleEmailSubmit = async (email: string) => {
+    try {
+      // Use the free credit and save email
+      useFreeCredit(email)
+      
+      // Close modal and redirect to results
+      setShowEmailModal(false)
+      setTimeout(() => {
+        setLocation('/results')
+      }, 500)
+    } catch (error) {
+      console.error('Failed to submit email:', error)
+      throw new Error('Failed to save email. Please try again.')
+    }
+  }
+
+  // Handle upgrade prompt actions
+  const handleSignUp = () => {
+    setShowUpgradePrompt(false)
+    setLocation('/pricing')
+  }
+
+  const handleViewPricing = () => {
+    setShowUpgradePrompt(false)
+    setLocation('/pricing')
+  }
+
+  const handleUpgradeClose = () => {
+    setShowUpgradePrompt(false)
+    setLocation('/select-ideas')
   }
 
   const getStatusIcon = (status: string) => {
@@ -618,6 +656,22 @@ export default function GenerateEnhancementsPage() {
           </div>
         </div>
       </div>
+
+      {/* Email Capture Modal */}
+      <EmailCaptureModal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onEmailSubmit={handleEmailSubmit}
+        enhancementCount={jobs.filter(job => job.status === 'complete').length}
+      />
+
+      {/* Upgrade Prompt Modal */}
+      <UpgradePrompt
+        isOpen={showUpgradePrompt}
+        onClose={handleUpgradeClose}
+        onSignUp={handleSignUp}
+        onViewPricing={handleViewPricing}
+      />
     </>
   )
 }
