@@ -116,12 +116,28 @@ router.post('/analyze-products', async (req, res) => {
     const analysisPromises = image_urls.map(async (url: string, index: number) => {
       try {
         // Convert URL to file path for local analysis
-        const imagePath = path.join(process.cwd(), 'uploads', url.replace('/uploads/', ''));
+        const filename = url.replace('/uploads/', '');
+        const imagePath = path.join(process.cwd(), 'uploads', filename);
+        
+        console.log(`🔍 Looking for image at: ${imagePath}`);
         
         if (!fs.existsSync(imagePath)) {
-          console.warn(`Image not found: ${imagePath}`);
+          console.warn(`❌ Image not found: ${imagePath}`);
+          console.log(`📂 Checking uploads directory...`);
+          
+          // List what's actually in the uploads folder
+          try {
+            const uploadDir = path.join(process.cwd(), 'uploads');
+            const files = fs.readdirSync(uploadDir);
+            console.log(`📁 Files in uploads: ${files.join(', ')}`);
+          } catch (dirError) {
+            console.log(`📁 Uploads directory issue: ${dirError}`);
+          }
+          
           return null;
         }
+        
+        console.log(`✅ Image found: ${imagePath}`);
 
         console.log(`[AI Analysis] Analyzing image ${index + 1}: ${imagePath}`);
         
