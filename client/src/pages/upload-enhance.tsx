@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Upload, Camera, Sparkles, Check, Loader2, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useLocation } from "wouter";
 
 export default function UploadEnhancePage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -19,7 +20,10 @@ export default function UploadEnhancePage() {
   const [brandDescription, setBrandDescription] = useState("");
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [uploadError, setUploadError] = useState("");
+  const [processingStep, setProcessingStep] = useState(0);
+  const [processingStatus, setProcessingStatus] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [, navigate] = useLocation();
 
   const MAX_FILES = 5;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -41,6 +45,13 @@ export default function UploadEnhancePage() {
     "Home & Decor",
     "B2B Services",
     "Healthcare"
+  ];
+
+  const processingSteps = [
+    { id: 1, name: "Uploading Images", description: "Securely uploading your product images" },
+    { id: 2, name: "AI Analysis", description: "Analyzing products with computer vision" },
+    { id: 3, name: "Generating Ideas", description: "Creating enhancement suggestions" },
+    { id: 4, name: "Finalizing", description: "Preparing your results" }
   ];
 
   // Toggle industry pill selection
@@ -183,13 +194,168 @@ export default function UploadEnhancePage() {
   const hasContent = hasImages || hasIndustryInfo || productType.trim() || brandDescription.trim();
   const canSubmit = hasImages && hasIndustryInfo;
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    // Simulate processing
-    setTimeout(() => {
+  // Main processing function with API calls and session storage
+  const submitForProcessing = async () => {
+    try {
+      setIsLoading(true);
+      setProcessingStep(1);
+      setProcessingStatus("Preparing your images for upload...");
+
+      // Step 1: Upload Images
+      // POST /api/upload-images
+      // Accepts: FormData with multiple images
+      // Returns: { urls: array of image URLs }
+      
+      const formData = new FormData();
+      selectedFiles.forEach((file, index) => {
+        formData.append(`image_${index}`, file);
+      });
+      
+      // Add metadata
+      formData.append('industries', JSON.stringify(selectedIndustries));
+      formData.append('productType', productType);
+      formData.append('brandDescription', brandDescription);
+      formData.append('imageCount', selectedFiles.length.toString());
+      
+      setProcessingStatus("Uploading images to secure cloud storage...");
+      
+      // Placeholder for image upload API call
+      const uploadResponse = await fetch('/api/upload-images', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload images');
+      }
+      
+      const uploadResult = await uploadResponse.json();
+      const imageUrls = uploadResult.urls; // Array of uploaded image URLs
+      
+      // Step 2: AI Product Analysis
+      setProcessingStep(2);
+      setProcessingStatus("AI is analyzing your product images...");
+      
+      // POST /api/analyze-products
+      // Accepts: { image_urls, industry_context, analysis_prompt }
+      // Returns: { analysis: detailed product analysis }
+      
+      const industryContext = {
+        industries: selectedIndustries,
+        productType: productType,
+        brandDescription: brandDescription,
+        targetAudience: selectedIndustries.includes('B2B Services') ? 'business' : 'consumer'
+      };
+      
+      const analysisPrompt = `Analyze these product images for a ${selectedIndustries.join(', ')} business. 
+        Product type: ${productType}. 
+        Brand context: ${brandDescription}. 
+        Focus on identifying enhancement opportunities for lighting, composition, background, and overall visual appeal.`;
+      
+      const analysisResponse = await fetch('/api/analyze-products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image_urls: imageUrls,
+          industry_context: industryContext,
+          analysis_prompt: analysisPrompt
+        })
+      });
+      
+      if (!analysisResponse.ok) {
+        throw new Error('Failed to analyze products');
+      }
+      
+      const analysisResult = await analysisResponse.json();
+      const visionAnalysis = analysisResult.analysis; // Detailed AI analysis of each image
+      
+      // Step 3: Generate Enhancement Ideas
+      setProcessingStep(3);
+      setProcessingStatus("Generating personalized enhancement ideas...");
+      
+      // POST /api/generate-ideas
+      // Accepts: { vision_analysis, industry_context, ideas_per_image: 5 }
+      // Returns: { ideas: array of 5 ideas per image }
+      
+      const ideasResponse = await fetch('/api/generate-ideas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          vision_analysis: visionAnalysis,
+          industry_context: industryContext,
+          ideas_per_image: 5,
+          enhancement_focus: [
+            'lighting_optimization',
+            'background_enhancement',
+            'color_correction',
+            'composition_improvement',
+            'style_transformation'
+          ]
+        })
+      });
+      
+      if (!ideasResponse.ok) {
+        throw new Error('Failed to generate enhancement ideas');
+      }
+      
+      const ideasResult = await ideasResponse.json();
+      const enhancementIdeas = ideasResult.ideas; // Array of 5 ideas per image
+      
+      // Step 4: Finalize and Store Results
+      setProcessingStep(4);
+      setProcessingStatus("Preparing your results...");
+      
+      // Prepare comprehensive session data
+      const sessionData = {
+        timestamp: new Date().toISOString(),
+        originalImages: {
+          files: selectedFiles.map(file => ({
+            name: file.name,
+            size: file.size,
+            type: file.type
+          })),
+          urls: imageUrls
+        },
+        businessContext: {
+          industries: selectedIndustries,
+          productType: productType,
+          brandDescription: brandDescription
+        },
+        aiAnalysis: visionAnalysis,
+        enhancementIdeas: enhancementIdeas,
+        processingMetadata: {
+          processingTime: Date.now(),
+          imageCount: selectedFiles.length,
+          ideasGenerated: enhancementIdeas.length
+        }
+      };
+      
+      // Store in sessionStorage for the next page
+      sessionStorage.setItem('uploadEnhanceResults', JSON.stringify(sessionData));
+      sessionStorage.setItem('currentStep', 'select-ideas');
+      
+      setProcessingStatus("Complete! Redirecting to idea selection...");
+      
+      // Small delay to show completion
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate('/select-ideas');
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Processing error:', error);
       setIsLoading(false);
-      setCurrentStep(4);
-    }, 3000);
+      setProcessingStep(0);
+      setUploadError(`Processing failed: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+    }
+  };
+
+  const handleSubmit = async () => {
+    await submitForProcessing();
   };
 
   return (
@@ -740,19 +906,68 @@ export default function UploadEnhancePage() {
         )}
       </main>
 
-      {/* Loading Overlay */}
+      {/* Enhanced Loading Overlay with Processing Steps */}
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
-            <Loader2 className="mx-auto h-12 w-12 text-blue-500 animate-spin mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Processing Your Images
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Our AI is working its magic on your product images. This may take a few minutes.
-            </p>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }} />
+          <div className="bg-white rounded-lg p-8 max-w-lg mx-4 text-center">
+            <div className="mb-6">
+              <Loader2 className="mx-auto h-16 w-16 brand-text-primary animate-spin mb-4" />
+              <h3 className="text-2xl brand-font-heading font-bold brand-text-neutral mb-2">
+                Processing Your Images
+              </h3>
+              <p className="brand-text-neutral brand-font-body mb-4">
+                {processingStatus}
+              </p>
+            </div>
+
+            {/* Processing Steps Progress */}
+            <div className="space-y-3 mb-6">
+              {processingSteps.map((step, index) => (
+                <div key={step.id} className="flex items-center text-left">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                    step.id < processingStep 
+                      ? "brand-bg-accent brand-text-neutral" 
+                      : step.id === processingStep 
+                        ? "brand-bg-primary text-white" 
+                        : "bg-gray-200 text-gray-500"
+                  }`}>
+                    {step.id < processingStep ? (
+                      <Check className="h-4 w-4" />
+                    ) : step.id === processingStep ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      step.id
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className={`font-medium brand-font-body text-sm ${
+                      step.id <= processingStep ? "brand-text-neutral" : "text-gray-500"
+                    }`}>
+                      {step.name}
+                    </p>
+                    <p className="text-xs text-gray-500 brand-font-body">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+              <div 
+                className="brand-bg-primary h-3 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${(processingStep / processingSteps.length) * 100}%` }}
+              />
+            </div>
+
+            {/* Processing Stats */}
+            <div className="text-xs text-gray-500 brand-font-body space-y-1">
+              <p>Processing {selectedFiles.length} image{selectedFiles.length !== 1 ? 's' : ''}</p>
+              <p>Industries: {selectedIndustries.join(', ')}</p>
+              <p className="brand-text-primary font-medium">
+                ✨ Generating 5 enhancement ideas per image
+              </p>
             </div>
           </div>
         </div>
