@@ -177,6 +177,12 @@ export default function UploadEnhancePage() {
     }
   };
 
+  // Validation helpers
+  const hasImages = selectedFiles.length > 0;
+  const hasIndustryInfo = selectedIndustries.length > 0;
+  const hasContent = hasImages || hasIndustryInfo || productType.trim() || brandDescription.trim();
+  const canSubmit = hasImages && hasIndustryInfo;
+
   const handleSubmit = async () => {
     setIsLoading(true);
     // Simulate processing
@@ -610,51 +616,128 @@ export default function UploadEnhancePage() {
           </Card>
         )}
 
-        {/* Action Buttons Section */}
-        <div className="flex justify-between items-center mb-8">
-          <Button 
-            variant="outline"
-            disabled={currentStep === 1}
-            onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-            className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white"
-          >
-            Previous Step
-          </Button>
-          
-          <div className="text-sm text-gray-500 brand-font-body">
-            Step {currentStep} of {steps.length}
-          </div>
-          
-          <Button 
-            onClick={() => currentStep < 3 ? setCurrentStep(currentStep + 1) : handleSubmit()}
-            disabled={selectedFiles.length === 0 || (currentStep === 2 && selectedIndustries.length === 0)}
-            className="brand-button-primary brand-font-body font-medium"
-          >
-            {currentStep === 3 ? "Start Enhancement" : "Next Step"}
-          </Button>
-        </div>
-
-        {/* Submit Section with Prominent CTA */}
-        <Card className="text-center brand-card" style={{ background: 'linear-gradient(135deg, rgba(13, 120, 119, 0.1) 0%, rgba(61, 165, 217, 0.1) 100%)', borderColor: 'var(--secondary)' }}>
-          <CardContent className="pt-8 pb-8">
-            <h3 className="text-2xl brand-font-heading font-bold brand-text-neutral mb-4">
-              Ready to Transform Your Images?
-            </h3>
-            <p className="brand-text-neutral brand-font-body mb-6 max-w-2xl mx-auto">
-              Our AI will enhance your product images with professional lighting, 
-              color correction, and background optimization to make them stand out.
-            </p>
+        {/* Action Buttons Section - Show only when user has added content */}
+        {hasContent && (
+          <div className="flex justify-between items-center mb-8">
             <Button 
-              size="lg" 
-              className="brand-button-accent px-8 py-3 text-lg brand-font-body font-medium"
-              disabled={selectedFiles.length === 0 || selectedIndustries.length === 0}
-              onClick={handleSubmit}
+              variant="outline"
+              disabled={currentStep === 1}
+              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+              className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white"
             >
-              <Sparkles className="mr-2 h-5 w-5" />
-              Enhance {selectedFiles.length} Image{selectedFiles.length !== 1 ? 's' : ''}
+              Previous Step
             </Button>
-          </CardContent>
-        </Card>
+            
+            <div className="text-sm text-gray-500 brand-font-body">
+              Step {currentStep} of {steps.length}
+            </div>
+            
+            <Button 
+              onClick={() => currentStep < 3 ? setCurrentStep(currentStep + 1) : handleSubmit()}
+              disabled={!canSubmit}
+              className={`brand-font-body font-medium transition-all duration-200 ${
+                canSubmit 
+                  ? 'brand-button-primary' 
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              {currentStep === 3 ? "Start Enhancement" : "Next Step"}
+            </Button>
+          </div>
+        )}
+
+        {/* Progress Indicator - Show when no content yet */}
+        {!hasContent && (
+          <div className="text-center mb-8 p-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+            <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
+              Get Started
+            </h3>
+            <p className="text-gray-600 brand-font-body">
+              Upload your first image or select your industry to begin the enhancement process
+            </p>
+          </div>
+        )}
+
+        {/* Submit Section with Dynamic Validation */}
+        {hasContent && (
+          <Card className={`text-center brand-card transition-all duration-300 ${
+            canSubmit 
+              ? 'border-2 border-accent' 
+              : 'border-2 border-gray-200'
+          }`} style={{ 
+            background: canSubmit 
+              ? 'linear-gradient(135deg, rgba(13, 120, 119, 0.1) 0%, rgba(61, 165, 217, 0.1) 100%)' 
+              : 'linear-gradient(135deg, rgba(243, 244, 246, 0.8) 0%, rgba(249, 250, 251, 0.8) 100%)'
+          }}>
+            <CardContent className="pt-8 pb-8">
+              <h3 className="text-2xl brand-font-heading font-bold brand-text-neutral mb-4">
+                {canSubmit ? "Ready to Transform Your Images!" : "Almost Ready!"}
+              </h3>
+              
+              {canSubmit ? (
+                <p className="brand-text-neutral brand-font-body mb-6 max-w-2xl mx-auto">
+                  Our AI will enhance your product images with professional lighting, 
+                  color correction, and background optimization to make them stand out.
+                </p>
+              ) : (
+                <div className="mb-6 max-w-2xl mx-auto">
+                  <p className="brand-text-neutral brand-font-body mb-4">
+                    Complete these requirements to start enhancing your images:
+                  </p>
+                  
+                  {/* Validation Checklist */}
+                  <div className="text-left space-y-2">
+                    <div className={`flex items-center gap-3 p-2 rounded ${hasImages ? 'bg-green-50' : 'bg-red-50'}`}>
+                      {hasImages ? (
+                        <Check className="h-5 w-5 text-green-600" />
+                      ) : (
+                        <X className="h-5 w-5 text-red-500" />
+                      )}
+                      <span className={`brand-font-body text-sm ${hasImages ? 'text-green-700' : 'text-red-600'}`}>
+                        Upload at least one image ({selectedFiles.length}/5 uploaded)
+                      </span>
+                    </div>
+                    
+                    <div className={`flex items-center gap-3 p-2 rounded ${hasIndustryInfo ? 'bg-green-50' : 'bg-red-50'}`}>
+                      {hasIndustryInfo ? (
+                        <Check className="h-5 w-5 text-green-600" />
+                      ) : (
+                        <X className="h-5 w-5 text-red-500" />
+                      )}
+                      <span className={`brand-font-body text-sm ${hasIndustryInfo ? 'text-green-700' : 'text-red-600'}`}>
+                        Select your industry ({selectedIndustries.length} selected)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <Button 
+                size="lg" 
+                className={`px-8 py-3 text-lg brand-font-body font-medium transition-all duration-200 ${
+                  canSubmit 
+                    ? 'brand-button-accent transform hover:scale-105' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+                disabled={!canSubmit}
+                onClick={handleSubmit}
+              >
+                <Sparkles className="mr-2 h-5 w-5" />
+                {canSubmit 
+                  ? `Enhance ${selectedFiles.length} Image${selectedFiles.length !== 1 ? 's' : ''}`
+                  : 'Complete Requirements Above'
+                }
+              </Button>
+              
+              {/* Progress indicator when ready */}
+              {canSubmit && (
+                <div className="mt-4 text-xs text-gray-500 brand-font-body">
+                  ✨ Everything looks great! Click to start the AI enhancement process
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </main>
 
       {/* Loading Overlay */}
