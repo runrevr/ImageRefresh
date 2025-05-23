@@ -33,35 +33,32 @@ export default function SelectIdeasPage() {
   // Load uploaded images and authentic Claude ideas from sessionStorage
   useEffect(() => {
     const storedIdeas = sessionStorage.getItem('enhancement_ideas');
-    const storedImages = sessionStorage.getItem('original_images');
     const storedData = sessionStorage.getItem('uploadEnhanceResults');
     
-    if (storedIdeas) {
-      const realIdeas = JSON.parse(storedIdeas);
-      console.log('Loading real ideas:', realIdeas);
-      
-      if (storedData) {
-        try {
-          const sessionData = JSON.parse(storedData);
-          
-          // Convert stored data to ProductImage format with authentic Claude-generated ideas
-          const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
-            id: `product-${index + 1}`,
-            fileName: img.name,
-            url: img.url, // Use the object URL from upload
-            ideas: realIdeas.ideas || realIdeas // Use real Claude-generated ideas
-          }))
+    if (storedIdeas && storedData) {
+      try {
+        const realIdeas = JSON.parse(storedIdeas);
+        const sessionData = JSON.parse(storedData);
         
-        console.log(`Creating enhancement sections for ${productData.length} uploaded images`)
-        setProductImages(productData)
+        console.log('Loading real ideas:', realIdeas);
+        
+        // Convert stored data to ProductImage format with authentic Claude-generated ideas
+        const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
+          id: `product-${index + 1}`,
+          fileName: img.name,
+          url: img.url,
+          ideas: realIdeas.ideas || realIdeas
+        }));
+        
+        console.log(`Creating enhancement sections for ${productData.length} uploaded images`);
+        setProductImages(productData);
       } catch (error) {
-        console.error('Error parsing stored data:', error)
-        // Redirect to upload page since we need authentic data
-        setLocation('/upload-enhance')
+        console.error('Error parsing stored data:', error);
+        setLocation('/upload-enhance');
       }
     } else {
-      console.error('No authentic ideas found - redirecting to upload page')
-      setLocation('/upload-enhance')
+      console.error('No authentic ideas found - redirecting to upload page');
+      setLocation('/upload-enhance');
     }
   }, [])
 
