@@ -221,16 +221,9 @@ Return EXACTLY 5 concepts as a JSON array:
     "description": "The full 2-3 sentence vivid scene description",
     "edit_prompt": "Specific prompt for GPT-image-01 edit endpoint based on this concept"
   }
-]`
-                     "category": "background",
-                     "estimatedTime": "15-30 min",
-                     "toolsNeeded": ["GPT-image-01"],
-                     "industryRelevance": 9.0,
-                     "editPrompt": "Edit this product photo: [specific prompt for GPT-image-01 edit endpoint]"
-                   }
-                 ]
-                 
-                 Make each idea specific, actionable, and appropriate for image editing that maintains the original product.`
+]
+
+Make each idea specific, actionable, and appropriate for image editing that maintains the original product.`
       }]
     });
 

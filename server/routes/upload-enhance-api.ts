@@ -106,7 +106,7 @@ router.post('/analyze-products', async (req, res) => {
     console.log('=== Live AI Product Analysis ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
-    const { image_urls, industry_context, analysis_prompt } = req.body;
+    const { image_urls, industry_context, image_purposes, product_type, brand_description } = req.body;
 
     // Log what we're processing
     console.log('📊 Processing images:', image_urls?.length || 0);
@@ -149,8 +149,8 @@ router.post('/analyze-products', async (req, res) => {
         try {
           const visionAnalysis = await analyzeProductImage(
             imagePath,
-            industry_context.industries?.join(', ') || 'general',
-            industry_context.productType
+            Array.isArray(industry_context) ? industry_context.join(', ') : 'general',
+            product_type
           );
           
           console.log(`[AI Analysis] Vision analysis complete for image ${index + 1}`);
@@ -185,7 +185,7 @@ router.post('/analyze-products', async (req, res) => {
         images: validResults,
         overall_assessment: {
           average_quality: validResults.reduce((sum, img) => sum + img.quality_score, 0) / validResults.length,
-          industry_fit: `Good match for ${industry_context.industries.join(', ')}`,
+          industry_fit: `Good match for ${Array.isArray(industry_context) ? industry_context.join(', ') : industry_context}`,
           enhancement_potential: "High - significant improvement opportunities identified"
         }
       },
