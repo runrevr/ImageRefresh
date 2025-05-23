@@ -255,22 +255,54 @@ ${is_chaos_concept ?
    - Authentic environments and lifestyle storytelling
    - Professional photography terminology`}
 
-Return ONLY the edit prompt text, no JSON formatting.`
+CRITICAL: Return ONLY a valid JSON object in this exact format with no other text:
+{
+  "edit_prompt": "your detailed 80-120 word prompt here"
+}
+
+Do not include any explanation, markdown, or other text. Only the JSON object.`
       }]
     });
     
-    const editPrompt = message.content[0].text.trim();
+    // Parse the response more carefully
+    const responseText = message.content[0].text.trim();
     
-    console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
-    res.json({
-      success: true,
-      edit_prompt: editPrompt,
-      processing_metadata: {
-        generation_time: new Date().toISOString(),
-        model_used: "claude-3-7-sonnet-20250219",
-        chaos_mode: is_chaos_concept
-      }
-    });
+    try {
+      // Remove any potential markdown code blocks
+      const cleanedText = responseText
+        .replace(/```json\n?/g, '')
+        .replace(/```\n?/g, '')
+        .trim();
+      
+      const parsed = JSON.parse(cleanedText);
+      
+      console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
+      res.json({
+        success: true,
+        edit_prompt: parsed.edit_prompt,
+        processing_metadata: {
+          generation_time: new Date().toISOString(),
+          model_used: "claude-3-7-sonnet-20250219",
+          chaos_mode: is_chaos_concept
+        }
+      });
+      
+    } catch (parseError) {
+      console.error('Failed to parse Claude response:', parseError);
+      console.log('Raw Claude response:', responseText);
+      
+      // Fallback: try to extract the prompt even if JSON fails
+      res.json({
+        success: true,
+        edit_prompt: responseText, // Use raw response as fallback
+        processing_metadata: {
+          generation_time: new Date().toISOString(),
+          model_used: "claude-3-7-sonnet-20250219",
+          chaos_mode: is_chaos_concept,
+          fallback_used: true
+        }
+      });
+    }
     
   } catch (error) {
     console.error('Single edit prompt error:', error);
