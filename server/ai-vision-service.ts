@@ -42,71 +42,111 @@ interface EnhancementIdea {
 }
 
 /**
- * Analyze product image using OpenAI Vision (GPT-4o)
+ * Analyze product image using Claude Vision with optimized image processing
  */
 export async function analyzeProductImage(imagePath: string): Promise<VisionAnalysis> {
   try {
-    console.log('[AI Vision] Starting product image analysis...');
+    console.log('[Claude Vision] Starting product image analysis...');
     
-    // Convert image to base64
+    // Read and optimize image for Claude Vision
+    const sharp = require('sharp');
     const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
     
-    // Use GPT-4o for detailed vision analysis
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `Analyze this product image in detail. Provide a comprehensive assessment covering:
-
-1. Product identification and type
-2. Current image strengths and weaknesses  
-3. Target audience appeal
-4. Technical quality (composition, lighting, background, colors)
-5. Enhancement opportunities for e-commerce/marketing
-
-Please be specific and actionable in your analysis. Format your response as structured data that can guide image enhancement decisions.`
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
-              }
-            }
-          ],
-        },
-      ],
+    // Resize if too large (Claude has limits)
+    const resized = await sharp(imageBuffer)
+      .resize(1500, 1500, { fit: 'inside' })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+      
+    const base64Image = resized.toString('base64');
+    
+    // Use Claude Vision for detailed analysis
+    // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+    const response = await anthropic.messages.create({
+      model: "claude-3-7-sonnet-20250219", 
       max_tokens: 1000,
+      messages: [{
+        role: "user",
+        content: [
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: "image/jpeg",
+              data: base64Image
+            }
+          },
+          {
+            type: "text",
+            text: `Analyze this product image in detail. Provide a comprehensive assessment in JSON format:
+
+{
+  "product_identification": "what product is this",
+  "current_quality": {
+    "lighting": "detailed lighting assessment",
+    "background": "background evaluation", 
+    "composition": "composition analysis",
+    "technical": "technical quality notes"
+  },
+  "strengths": ["strength1", "strength2", "strength3"],
+  "improvements_needed": ["improvement1", "improvement2", "improvement3"],
+  "audience_appeal": "description of target audience appeal",
+  "quality_score": 8.5,
+  "brand_alignment": "assessment of brand representation",
+  "enhancement_opportunities": ["opportunity1", "opportunity2", "opportunity3"]
+}`
+          }
+        ]
+      }]
     });
 
-    const analysisText = response.choices[0].message.content || '';
+    const analysisText = (response.content[0] as any).text || '';
     
-    // Parse the analysis into structured format
+    // Parse Claude's JSON response
+    let parsedAnalysis;
+    try {
+      parsedAnalysis = JSON.parse(analysisText);
+    } catch {
+      // Fallback parsing if JSON is malformed
+      parsedAnalysis = {
+        product_identification: extractProductType(analysisText),
+        current_quality: {
+          lighting: extractTechnicalDetail(analysisText, 'lighting'),
+          background: extractTechnicalDetail(analysisText, 'background'),
+          composition: extractTechnicalDetail(analysisText, 'composition'),
+          technical: extractTechnicalDetail(analysisText, 'technical')
+        },
+        strengths: extractStrengths(analysisText),
+        improvements_needed: extractImprovements(analysisText),
+        audience_appeal: extractAudienceAppeal(analysisText),
+        quality_score: extractQualityScore(analysisText),
+        brand_alignment: extractBrandAlignment(analysisText),
+        enhancement_opportunities: extractEnhancementOpportunities(analysisText)
+      };
+    }
+    
+    // Convert to our interface format
     const analysis: VisionAnalysis = {
-      productType: extractProductType(analysisText),
-      strengths: extractStrengths(analysisText),
-      improvements: extractImprovements(analysisText),
-      audienceAppeal: extractAudienceAppeal(analysisText),
-      qualityScore: extractQualityScore(analysisText),
-      brandAlignment: extractBrandAlignment(analysisText),
+      productType: parsedAnalysis.product_identification || 'Product',
+      strengths: parsedAnalysis.strengths || [],
+      improvements: parsedAnalysis.improvements_needed || [],
+      audienceAppeal: parsedAnalysis.audience_appeal || 'Appeals to general audience',
+      qualityScore: parsedAnalysis.quality_score || 7.5,
+      brandAlignment: parsedAnalysis.brand_alignment || 'Good brand representation',
       technicalDetails: {
-        composition: extractTechnicalDetail(analysisText, 'composition'),
-        lighting: extractTechnicalDetail(analysisText, 'lighting'),
-        background: extractTechnicalDetail(analysisText, 'background'),
-        colorBalance: extractTechnicalDetail(analysisText, 'color')
+        composition: parsedAnalysis.current_quality?.composition || 'Well-centered placement',
+        lighting: parsedAnalysis.current_quality?.lighting || 'Adequate lighting',
+        background: parsedAnalysis.current_quality?.background || 'Clean background',
+        colorBalance: parsedAnalysis.current_quality?.technical || 'Good color accuracy'
       },
-      enhancementOpportunities: extractEnhancementOpportunities(analysisText)
+      enhancementOpportunities: parsedAnalysis.enhancement_opportunities || []
     };
 
-    console.log('[AI Vision] Analysis complete');
+    console.log('[Claude Vision] Analysis complete');
     return analysis;
     
   } catch (error) {
-    console.error('[AI Vision] Error analyzing image:', error);
+    console.error('[Claude Vision] Error analyzing image:', error);
     throw new Error(`Vision analysis failed: ${error}`);
   }
 }
