@@ -1,0 +1,60 @@
+"For step #4, update to use Claude 4 Sonnet (the latest model):
+
+4. **Update /api/generate-ideas Endpoint:**
+```javascript
+async function generateIdeas(req, res) {
+  try {
+    const { vision_analyses, industry_context, product_type } = req.body;
+    
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+    
+    const allIdeas = [];
+    
+    // Generate ideas for each analyzed image
+    for (const analysis of vision_analyses) {
+      const message = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",  // Claude 4 Sonnet - latest
+        max_tokens: 1500,
+        messages: [{
+          role: "user",
+          content: `Based on this product image analysis:
+                   ${JSON.stringify(analysis.analysis, null, 2)}
+                   
+                   Industry: ${industry_context}
+                   Product Type: ${product_type}
+                   
+                   Generate exactly 5 enhancement ideas for GPT-image-01 /edit endpoint.
+                   
+                   Return as JSON array:
+                   [
+                     {
+                       "title": "Enhancement Title (max 50 chars)",
+                       "description": "What this enhancement does (max 200 chars)",
+                       "edit_prompt": "Specific prompt for GPT-image-01 edit endpoint"
+                     }
+                   ]
+                   
+                   Make each idea specific, actionable, and appropriate for image editing.`
+        }]
+      });
+      
+      const ideas = JSON.parse(message.content[0].text);
+      allIdeas.push({
+        image_url: analysis.image_url,
+        ideas: ideas
+      });
+    }
+    
+    res.json({ success: true, ideas: allIdeas });
+    
+  } catch (error) {
+    console.error('Idea generation error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to generate ideas',
+      details: error.message 
+    });
+  }
+}

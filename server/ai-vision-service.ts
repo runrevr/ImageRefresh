@@ -60,10 +60,9 @@ export async function analyzeProductImage(imagePath: string): Promise<VisionAnal
       
     const base64Image = resized.toString('base64');
     
-    // Use Claude Vision for detailed analysis
-    // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+    // Use Claude 4 Sonnet for detailed analysis - the latest and most powerful model
     const response = await anthropic.messages.create({
-      model: "claude-3-7-sonnet-20250219", 
+      model: "claude-sonnet-4-20250514", 
       max_tokens: 1000,
       messages: [{
         role: "user",
@@ -152,7 +151,7 @@ export async function analyzeProductImage(imagePath: string): Promise<VisionAnal
 }
 
 /**
- * Generate enhancement ideas using Claude based on vision analysis
+ * Generate enhancement ideas using Claude 4 Sonnet based on vision analysis
  */
 export async function generateEnhancementIdeas(
   visionAnalysis: VisionAnalysis,
@@ -160,72 +159,64 @@ export async function generateEnhancementIdeas(
   productType?: string
 ): Promise<EnhancementIdea[]> {
   try {
-    console.log('[Claude Ideas] Generating enhancement ideas...');
+    console.log('[Claude 4 Ideas] Generating enhancement ideas with latest model...');
     
-    // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+    // Use Claude 4 Sonnet - the most advanced model for idea generation
     const response = await anthropic.messages.create({
-      model: "claude-3-7-sonnet-20250219",
-      max_tokens: 2000,
-      system: `You are an expert product photography and e-commerce optimization consultant. Generate creative, actionable enhancement ideas based on image analysis.
-
-Create 5 unique enhancement ideas that:
-- Use edit-focused language (maintain original product while enhancing)
-- Are specific to the product type and industry
-- Provide clear implementation guidance
-- Include realistic difficulty and impact assessments
-
-Each idea should be practical for the GPT-image-01 edit endpoint.`,
-      messages: [
-        {
-          role: "user",
-          content: `Based on this product image analysis, generate 5 specific enhancement ideas:
-
-**Product Analysis:**
-- Type: ${visionAnalysis.productType}
-- Current Strengths: ${visionAnalysis.strengths.join(', ')}
-- Areas for Improvement: ${visionAnalysis.improvements.join(', ')}
-- Quality Score: ${visionAnalysis.qualityScore}/10
-- Technical Issues: Lighting: ${visionAnalysis.technicalDetails.lighting}, Background: ${visionAnalysis.technicalDetails.background}
-
-**Industry Context:** ${industryContext.join(', ')}
-**Product Category:** ${productType || 'General Product'}
-
-Generate 5 enhancement ideas in this exact JSON format:
-[
-  {
-    "id": "unique_id",
-    "title": "Enhancement Title",
-    "description": "Clear description of what this enhancement does",
-    "impact": "high|medium|low",
-    "difficulty": "easy|medium|hard", 
-    "category": "background|lighting|lifestyle|commercial|luxury",
-    "estimatedTime": "15-30 min",
-    "toolsNeeded": ["Photo editing software"],
-    "industryRelevance": 8.5,
-    "editPrompt": "Edit this product photo: [specific edit instructions that maintain original product]"
-  }
-]
-
-Focus on realistic enhancements that preserve the original product while improving its commercial appeal.`
-        }
-      ]
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1500,
+      messages: [{
+        role: "user",
+        content: `Based on this product image analysis:
+                 ${JSON.stringify({
+                   productType: visionAnalysis.productType,
+                   strengths: visionAnalysis.strengths,
+                   improvements: visionAnalysis.improvements,
+                   qualityScore: visionAnalysis.qualityScore,
+                   technicalDetails: visionAnalysis.technicalDetails,
+                   enhancementOpportunities: visionAnalysis.enhancementOpportunities
+                 }, null, 2)}
+                 
+                 Industry: ${industryContext.join(', ')}
+                 Product Type: ${productType || 'General Product'}
+                 
+                 Generate exactly 5 enhancement ideas for GPT-image-01 /edit endpoint.
+                 
+                 Return as JSON array:
+                 [
+                   {
+                     "id": "unique_id_1",
+                     "title": "Enhancement Title (max 50 chars)",
+                     "description": "What this enhancement does (max 200 chars)",
+                     "impact": "high",
+                     "difficulty": "easy",
+                     "category": "background",
+                     "estimatedTime": "15-30 min",
+                     "toolsNeeded": ["GPT-image-01"],
+                     "industryRelevance": 9.0,
+                     "editPrompt": "Edit this product photo: [specific prompt for GPT-image-01 edit endpoint]"
+                   }
+                 ]
+                 
+                 Make each idea specific, actionable, and appropriate for image editing that maintains the original product.`
+      }]
     });
 
     const responseText = (response.content[0] as any).text || '';
     
-    // Extract JSON from Claude's response
+    // Extract JSON from Claude 4's response
     const jsonMatch = responseText.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
-      throw new Error('No valid JSON found in Claude response');
+      throw new Error('No valid JSON found in Claude 4 response');
     }
 
     const ideas: EnhancementIdea[] = JSON.parse(jsonMatch[0]);
     
-    console.log(`[Claude Ideas] Generated ${ideas.length} enhancement ideas`);
+    console.log(`[Claude 4 Ideas] Generated ${ideas.length} enhancement ideas`);
     return ideas;
     
   } catch (error) {
-    console.error('[Claude Ideas] Error generating ideas:', error);
+    console.error('[Claude 4 Ideas] Error generating ideas:', error);
     throw new Error(`Idea generation failed: ${error}`);
   }
 }
