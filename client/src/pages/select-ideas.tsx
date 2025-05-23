@@ -281,7 +281,7 @@ export default function SelectIdeasPage() {
             </h1>
             <p className="text-lg text-gray-600 brand-font-body max-w-3xl mx-auto">
               Choose which AI-generated enhancements you'd like to create for each product. 
-              Select up to 3 ideas per image to get the best results.
+              Select as many concepts as you'd like to bring to life!
             </p>
           </div>
 
@@ -289,7 +289,7 @@ export default function SelectIdeasPage() {
           <div className="space-y-8">
             {productImages.map((product, index) => {
               const selectedCount = getSelectedCount(product.id)
-              const maxReached = selectedCount >= 3
+              const maxReached = false // Removed selection limit - users can select all they want!
 
               return (
                 <Card key={product.id} className="brand-card">
