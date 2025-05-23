@@ -32,19 +32,25 @@ export default function SelectIdeasPage() {
 
   // Load uploaded images and authentic Claude ideas from sessionStorage
   useEffect(() => {
+    const storedIdeas = sessionStorage.getItem('enhancement_ideas')
+    const storedImages = sessionStorage.getItem('original_images')
     const storedData = sessionStorage.getItem('uploadEnhanceResults')
     
-    if (storedData) {
+    if (storedIdeas && storedImages && storedData) {
       try {
-        const parsedData = JSON.parse(storedData)
-        console.log('Retrieved authentic enhancement data from sessionStorage:', parsedData)
+        const ideasData = JSON.parse(storedIdeas)
+        const imageUrls = JSON.parse(storedImages)
+        const sessionData = JSON.parse(storedData)
+        
+        console.log('Retrieved authentic Claude ideas:', ideasData)
+        console.log('Retrieved image URLs:', imageUrls)
         
         // Convert stored data to ProductImage format with authentic Claude-generated ideas
-        const productData: ProductImage[] = parsedData.originalImages.files.map((img: any, index: number) => ({
+        const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
           id: `product-${index + 1}`,
           fileName: img.name,
           url: img.url, // Use the object URL from upload
-          ideas: parsedData.enhancementIdeas || [] // Use real Claude-generated ideas
+          ideas: ideasData.ideas || [] // Use real Claude-generated ideas
         }))
         
         console.log(`Creating enhancement sections for ${productData.length} uploaded images`)

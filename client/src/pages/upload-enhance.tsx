@@ -328,7 +328,7 @@ export default function UploadEnhancePage() {
             }
 
             const ideasResult = await ideasResponse.json();
-            console.log('Ideas generation successful:', ideasResult);
+            console.log('Real ideas from Claude:', ideasResult);
 
             if (!ideasResult.success || !ideasResult.ideas) {
               throw new Error('Invalid ideas response format');
@@ -342,6 +342,11 @@ export default function UploadEnhancePage() {
             // Step 4: Finalize and Store Results
             console.log('Step 4: Finalizing results...');
             
+            // Store authentic Claude ideas and image data using consistent keys
+            sessionStorage.setItem('enhancement_ideas', JSON.stringify(ideasResult));
+            sessionStorage.setItem('original_images', JSON.stringify(imageUrls));
+            
+            // Also store complete session data for reference
             const sessionData = {
               timestamp: new Date().toISOString(),
               originalImages: {
@@ -368,7 +373,6 @@ export default function UploadEnhancePage() {
               }
             };
             
-            // Store in sessionStorage for the next page
             sessionStorage.setItem('uploadEnhanceResults', JSON.stringify(sessionData));
             sessionStorage.setItem('currentStep', 'select-ideas');
 
