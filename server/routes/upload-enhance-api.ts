@@ -135,55 +135,27 @@ router.post('/analyze-products', async (req, res) => {
     if (validResults.length === 0) {
       return res.status(500).json({ error: 'Failed to analyze any images' });
     }
-      const mockAnalysis = {
-        success: true,
-        analysis: {
-          images: image_urls.map((url: string, index: number) => ({
-            url: url,
-            index: index,
-            strengths: [
-              "Good product visibility",
-              "Clear focus and sharpness",
-              "Adequate lighting exposure"
-            ],
-            improvements: [
-              "Could benefit from lifestyle context",
-              "Background could be more engaging",
-              "Add complementary props",
-              "Optimize for target audience"
-            ],
-            audience_appeal: `Appeals to ${industry_context.targetAudience || 'general'} audience in ${industry_context.industries.join(' and ')} sector`,
-            quality_score: Math.round((7 + Math.random() * 2) * 10) / 10, // Random score 7-9
-            brand_alignment: `Matches ${industry_context.industries[0] || 'modern'} industry aesthetic`,
-            technical_details: {
-              composition: "Well-centered product placement",
-              lighting: "Natural lighting with soft shadows",
-              background: "Clean but could be enhanced",
-              color_balance: "Good color accuracy"
-            },
-            enhancement_opportunities: [
-              "Professional studio lighting setup",
-              "Brand-specific background styling",
-              "Industry-appropriate prop integration",
-              "Color grading for brand consistency"
-            ]
-          })),
-          overall_assessment: {
-            average_quality: 7.8,
-            industry_fit: "Good match for " + industry_context.industries.join(', '),
-            enhancement_potential: "High - significant improvement opportunities identified"
-          }
-        },
-        processing_metadata: {
-          analysis_time: new Date().toISOString(),
-          model_used: "GPT-4 Vision",
-          confidence_score: 0.92
-        }
-      };
 
-      console.log('Analysis response:', JSON.stringify(mockAnalysis, null, 2));
-      res.json(mockAnalysis);
-    }, 1000); // Simulate AI processing time
+    const liveAnalysis = {
+      success: true,
+      analysis: {
+        images: validResults,
+        overall_assessment: {
+          average_quality: validResults.reduce((sum, img) => sum + img.quality_score, 0) / validResults.length,
+          industry_fit: `Good match for ${industry_context.industries.join(', ')}`,
+          enhancement_potential: "High - significant improvement opportunities identified"
+        }
+      },
+      processing_metadata: {
+        analysis_time: new Date().toISOString(),
+        model_used: "GPT-4o Vision",
+        confidence_score: 0.92,
+        images_processed: validResults.length
+      }
+    };
+
+    console.log(`[AI Analysis] Live analysis complete for ${validResults.length} images`);
+    res.json(liveAnalysis);
 
   } catch (error) {
     console.error('Analysis error:', error);
@@ -196,20 +168,66 @@ router.post('/analyze-products', async (req, res) => {
 });
 
 // POST /api/generate-ideas
-// Accept JSON with vision_analysis and industry_context, return enhancement ideas
-router.post('/generate-ideas', (req, res) => {
+// Accept JSON with vision_analysis and industry_context, return live AI-generated ideas
+router.post('/generate-ideas', async (req, res) => {
   try {
-    console.log('=== Generate Ideas Endpoint ===');
+    console.log('=== Live Claude Enhancement Ideas Generation ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
     const { vision_analysis, industry_context, ideas_per_image } = req.body;
 
-    // Simulate idea generation processing time
-    setTimeout(() => {
-      const ideaTemplates = [
-        {
-          title: "Lifestyle Context Shot",
-          description: "Place product in a realistic home or office environment with natural lighting",
+    if (!vision_analysis || !vision_analysis.images || vision_analysis.images.length === 0) {
+      return res.status(400).json({ error: 'No vision analysis provided' });
+    }
+
+    // Generate enhancement ideas using your live Claude API
+    const ideaPromises = vision_analysis.images.map(async (imageAnalysis: any, index: number) => {
+      try {
+        console.log(`[Claude Ideas] Generating ideas for image ${index + 1}`);
+        
+        const enhancementIdeas = await generateEnhancementIdeas(
+          {
+            productType: imageAnalysis.product_type || 'Product',
+            strengths: imageAnalysis.strengths || [],
+            improvements: imageAnalysis.improvements || [],
+            audienceAppeal: imageAnalysis.audience_appeal || '',
+            qualityScore: imageAnalysis.quality_score || 7,
+            brandAlignment: imageAnalysis.brand_alignment || '',
+            technicalDetails: imageAnalysis.technical_details || {},
+            enhancementOpportunities: imageAnalysis.enhancement_opportunities || []
+          },
+          industry_context.industries || ['general'],
+          industry_context.productType
+        );
+
+        console.log(`[Claude Ideas] Generated ${enhancementIdeas.length} ideas for image ${index + 1}`);
+        return enhancementIdeas;
+      } catch (error) {
+        console.error(`[Claude Ideas] Error generating ideas for image ${index + 1}:`, error);
+        return [];
+      }
+    });
+
+    const allIdeas = await Promise.all(ideaPromises);
+    const flattenedIdeas = allIdeas.flat();
+
+    if (flattenedIdeas.length === 0) {
+      return res.status(500).json({ error: 'Failed to generate enhancement ideas' });
+    }
+
+    const liveIdeasResponse = {
+      success: true,
+      ideas: flattenedIdeas,
+      total_ideas: flattenedIdeas.length,
+      processing_metadata: {
+        generation_time: new Date().toISOString(),
+        model_used: "Claude-3.7-Sonnet",
+        images_processed: vision_analysis.images.length
+      }
+    };
+
+    console.log(`[Claude Ideas] Generated ${flattenedIdeas.length} total enhancement ideas`);
+    res.json(liveIdeasResponse);
           impact: "high",
           difficulty: "easy",
           category: "lifestyle"
