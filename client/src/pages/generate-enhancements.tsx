@@ -107,10 +107,18 @@ export default function GenerateEnhancementsPage() {
   // Real AI processing function that calls Claude + GPT-image-01
   const processEnhancements = async (initialJobs: EnhancementJob[]) => {
     console.log('Starting authentic AI processing for', initialJobs.length, 'enhancements');
+    console.log('Initial jobs data:', initialJobs);
     setIsProcessing(true);
+    
+    if (!initialJobs || initialJobs.length === 0) {
+      console.error('No jobs to process!');
+      return;
+    }
     
     const currentJobs = [...initialJobs];
     setJobs(currentJobs);
+    
+    console.log('About to start processing loop for', currentJobs.length, 'jobs');
     
     for (let i = 0; i < currentJobs.length; i++) {
       const job = currentJobs[i];
