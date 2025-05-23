@@ -72,8 +72,123 @@ export default function UploadEnhancePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50">
-      <Navbar freeCredits={0} paidCredits={0} />
+    <div>
+      {/* Google Fonts */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link 
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;800&family=Montserrat:wght@400;500&display=swap" 
+        rel="stylesheet" 
+      />
+      
+      <style>{`
+        :root {
+          --primary: #0D7877;
+          --secondary: #3DA5D9;
+          --accent: #C1F50A;
+          --neutral: #333333;
+          --light: #F2F4F6;
+        }
+        
+        .brand-font-heading {
+          font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        .brand-font-body {
+          font-family: 'Montserrat', sans-serif;
+        }
+        
+        .brand-bg-primary { background-color: var(--primary); }
+        .brand-bg-secondary { background-color: var(--secondary); }
+        .brand-bg-accent { background-color: var(--accent); }
+        .brand-bg-light { background-color: var(--light); }
+        
+        .brand-text-primary { color: var(--primary); }
+        .brand-text-secondary { color: var(--secondary); }
+        .brand-text-accent { color: var(--accent); }
+        .brand-text-neutral { color: var(--neutral); }
+        
+        .brand-border-primary { border-color: var(--primary); }
+        .brand-border-secondary { border-color: var(--secondary); }
+        .brand-border-accent { border-color: var(--accent); }
+        
+        .brand-gradient-primary {
+          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .brand-gradient-accent {
+          background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+        }
+        
+        .brand-button-primary {
+          background: var(--primary);
+          color: white;
+          transition: all 0.3s ease;
+        }
+        
+        .brand-button-primary:hover {
+          background: var(--secondary);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(13, 120, 119, 0.3);
+        }
+        
+        .brand-button-accent {
+          background: var(--accent);
+          color: var(--neutral);
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
+        
+        .brand-button-accent:hover {
+          background: #A8D209;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(193, 245, 10, 0.3);
+        }
+        
+        .brand-card {
+          background: white;
+          border: 2px solid var(--light);
+          transition: all 0.3s ease;
+        }
+        
+        .brand-card:hover {
+          border-color: var(--secondary);
+          box-shadow: 0 8px 25px rgba(61, 165, 217, 0.15);
+        }
+        
+        .progress-step-active {
+          background: var(--primary);
+          color: white;
+        }
+        
+        .progress-step-completed {
+          background: var(--accent);
+          color: var(--neutral);
+        }
+        
+        .progress-step-inactive {
+          background: var(--light);
+          color: var(--neutral);
+        }
+        
+        .upload-zone {
+          border: 2px dashed var(--light);
+          transition: all 0.3s ease;
+        }
+        
+        .upload-zone:hover {
+          border-color: var(--secondary);
+          background-color: rgba(61, 165, 217, 0.05);
+        }
+        
+        .upload-zone.active {
+          border-color: var(--primary);
+          background-color: rgba(13, 120, 119, 0.05);
+        }
+      `}</style>
+      
+      <div className="min-h-screen brand-bg-light">
+        <Navbar freeCredits={0} paidCredits={0} />
       
       {/* Fixed Progress Bar */}
       <div className="fixed top-16 left-0 right-0 z-30 bg-white shadow-sm border-b">
@@ -82,17 +197,17 @@ export default function UploadEnhancePage() {
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium brand-font-body ${
                     step.id < currentStep 
-                      ? "bg-green-500 text-white" 
+                      ? "progress-step-completed" 
                       : step.id === currentStep 
-                        ? "bg-blue-500 text-white" 
-                        : "bg-gray-200 text-gray-600"
+                        ? "progress-step-active" 
+                        : "progress-step-inactive"
                   }`}>
                     {step.id < currentStep ? <Check className="h-4 w-4" /> : step.id}
                   </div>
-                  <div className="ml-3 text-sm">
-                    <p className={`font-medium ${step.id <= currentStep ? "text-gray-900" : "text-gray-500"}`}>
+                  <div className="ml-3 text-sm brand-font-body">
+                    <p className={`font-medium ${step.id <= currentStep ? "brand-text-neutral" : "text-gray-500"}`}>
                       {step.name}
                     </p>
                     <p className="text-gray-500">{step.description}</p>
@@ -100,7 +215,7 @@ export default function UploadEnhancePage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div className={`hidden sm:block w-20 h-0.5 mx-4 ${
-                    step.id < currentStep ? "bg-green-500" : "bg-gray-200"
+                    step.id < currentStep ? "brand-bg-accent" : "bg-gray-200"
                   }`} />
                 )}
               </div>
@@ -113,10 +228,10 @@ export default function UploadEnhancePage() {
       <main className="max-w-screen-xl mx-auto px-4 py-8 mt-32">
         {/* Page Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl brand-font-heading font-extrabold brand-text-neutral mb-4">
             Upload Your Product Images
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl brand-font-body brand-text-neutral max-w-2xl mx-auto">
             Transform your product images with AI-powered enhancements. 
             Get professional-quality results in minutes.
           </p>
@@ -125,13 +240,13 @@ export default function UploadEnhancePage() {
         {/* Two-Column Grid Layout */}
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Left Column: Industry Information Form */}
-          <Card>
+          <Card className="brand-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 brand-font-heading font-semibold brand-text-neutral">
+                <Sparkles className="h-5 w-5 brand-text-primary" />
                 Product Information
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="brand-font-body text-gray-600">
                 Help us understand your brand and products for better AI enhancement
               </CardDescription>
             </CardHeader>
@@ -180,22 +295,20 @@ export default function UploadEnhancePage() {
           </Card>
 
           {/* Right Column: Image Upload Area */}
-          <Card>
+          <Card className="brand-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Camera className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 brand-font-heading font-semibold brand-text-neutral">
+                <Camera className="h-5 w-5 brand-text-secondary" />
                 Upload Images
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="brand-font-body text-gray-600">
                 Select up to 5 high-quality product images (JPEG, PNG, WebP)
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer ${
-                  dragActive
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300 hover:border-gray-400"
+                className={`upload-zone rounded-lg p-8 text-center cursor-pointer ${
+                  dragActive ? "active" : ""
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -204,13 +317,13 @@ export default function UploadEnhancePage() {
                 onClick={openFileDialog}
               >
                 <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
                   Drop images here or click to browse
                 </h3>
-                <p className="text-gray-500 mb-4">
+                <p className="text-gray-500 brand-font-body mb-4">
                   Maximum 5 images, up to 10MB each
                 </p>
-                <Button variant="outline" type="button">
+                <Button variant="outline" type="button" className="brand-button-primary border-none">
                   Choose Files
                 </Button>
                 
@@ -229,9 +342,9 @@ export default function UploadEnhancePage() {
 
         {/* Image Preview Grid */}
         {selectedFiles.length > 0 && (
-          <Card className="mb-8">
+          <Card className="mb-8 brand-card">
             <CardHeader>
-              <CardTitle>Selected Images ({selectedFiles.length}/5)</CardTitle>
+              <CardTitle className="brand-font-heading font-semibold brand-text-neutral">Selected Images ({selectedFiles.length}/5)</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -266,17 +379,19 @@ export default function UploadEnhancePage() {
             variant="outline"
             disabled={currentStep === 1}
             onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+            className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white"
           >
             Previous Step
           </Button>
           
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 brand-font-body">
             Step {currentStep} of {steps.length}
           </div>
           
           <Button 
             onClick={() => currentStep < 3 ? setCurrentStep(currentStep + 1) : handleSubmit()}
             disabled={selectedFiles.length === 0 || (currentStep === 2 && !industry)}
+            className="brand-button-primary brand-font-body font-medium"
           >
             {currentStep === 3 ? "Start Enhancement" : "Next Step"}
           </Button>
@@ -324,6 +439,7 @@ export default function UploadEnhancePage() {
       )}
 
       <Footer />
+      </div>
     </div>
   );
 }
