@@ -81,6 +81,16 @@ app.use(cookieParser());
 // Serve uploaded files as static content
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
+// API key test endpoint
+app.get('/api/test', (req, res) => {
+  res.json({
+    success: true,
+    hasOpenAI: !!process.env.OPENAI_API_KEY,
+    hasAnthropic: !!process.env.ANTHROPIC_API_KEY,
+    timestamp: new Date()
+  });
+});
+
 // Setup authentication (passport, sessions, etc.)
 setupAuth(app);
 
