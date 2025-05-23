@@ -381,8 +381,12 @@ export default function AccountPage() {
                           <div className="mt-2 pt-2 border-t border-gray-200">
                             <p className="text-sm font-medium text-green-600">
                               Active{" "}
-                              {subscriptionData.subscriptionTier === "basic"
-                                ? "Basic"
+                              {subscriptionData.subscriptionTier === "starter"
+                                ? "Starter"
+                                : subscriptionData.subscriptionTier === "professional"
+                                ? "Professional"
+                                : subscriptionData.subscriptionTier === "business"
+                                ? "Business"
                                 : "Premium"}{" "}
                               Subscription
                             </p>

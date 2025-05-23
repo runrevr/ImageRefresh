@@ -35,42 +35,42 @@ const creditPackages: CreditPackage[] = [
   { 
     id: 'single', 
     credits: 1, 
-    price: 100, 
-    priceLabel: '$1.00 each',
-    pricePerCredit: 100 // $1.00 per credit
+    price: 150, 
+    priceLabel: '$1.50 each',
+    pricePerCredit: 150 // $1.50 per credit
   },
   { 
     id: 'bundle-small', 
     credits: 5, 
-    price: 500, 
-    priceLabel: '$5.00', 
-    savings: 'No discount',
-    pricePerCredit: 100 // $1.00 per credit
+    price: 650, 
+    priceLabel: '$6.50', 
+    savings: 'Save 13%',
+    pricePerCredit: 130 // $1.30 per credit
   },
   { 
     id: 'bundle-medium', 
-    credits: 20, 
-    price: 1000, 
-    priceLabel: '$10.00', 
-    savings: 'Save 50%', 
+    credits: 12, 
+    price: 1200, 
+    priceLabel: '$12.00', 
+    savings: 'Save 33%', 
     recommended: true,
-    pricePerCredit: 50 // $0.50 per credit
+    pricePerCredit: 100 // $1.00 per credit (matches Starter subscription value)
   },
   { 
     id: 'bundle-large', 
-    credits: 50, 
-    price: 2000, 
-    priceLabel: '$20.00', 
-    savings: 'Save 60%',
-    pricePerCredit: 40 // $0.40 per credit
+    credits: 30, 
+    price: 2400, 
+    priceLabel: '$24.00', 
+    savings: 'Save 47%',
+    pricePerCredit: 80 // $0.80 per credit (better than Professional subscription)
   },
   { 
     id: 'bundle-xl', 
-    credits: 100, 
-    price: 5000, 
-    priceLabel: '$50.00', 
-    savings: 'Save 50%',
-    pricePerCredit: 50 // $0.50 per credit
+    credits: 75, 
+    price: 5250, 
+    priceLabel: '$52.50', 
+    savings: 'Save 53%',
+    pricePerCredit: 70 // $0.70 per credit (better than Business subscription)
   }
 ];
 

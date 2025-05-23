@@ -25,32 +25,48 @@ const pricingTiers: PricingTier[] = [
     borderClass: "border-t-4 border-gray-200"
   },
   {
-    name: "Core",
+    name: "Starter",
     price: "$10/month",
     features: [
-      { available: true, text: "20 credits per month" },
+      { available: true, text: "12 credits per month" },
       { available: true, text: "Credits reset monthly" },
       { available: true, text: "HD resolution output" },
       { available: true, text: "All images created are stored in your account" }
     ],
     popular: false,
-    buttonText: "Choose Core",
+    buttonText: "Choose Starter",
     buttonClass: "bg-[#2A7B9B] text-white hover:bg-[#1e6988]",
     borderClass: "border-t-4 border-[#2A7B9B]"
   },
   {
-    name: "Premium",
+    name: "Professional",
     price: "$20/month",
     features: [
-      { available: true, text: "50 credits per month" },
+      { available: true, text: "30 credits per month" },
       { available: true, text: "Credits reset monthly" },
       { available: true, text: "4K resolution output" },
       { available: true, text: "Commercial usage rights" }
     ],
     popular: true,
-    buttonText: "Choose Premium",
+    buttonText: "Choose Professional",
     buttonClass: "bg-[#FF7B54] text-white hover:bg-[#e56c49]",
     borderClass: "border-t-4 border-[#FF7B54]"
+  },
+  {
+    name: "Business",
+    price: "$50/month",
+    features: [
+      { available: true, text: "75 credits per month" },
+      { available: true, text: "Credits reset monthly" },
+      { available: true, text: "Ultra HD 4K+ resolution output" },
+      { available: true, text: "Priority processing (faster generation)" },
+      { available: true, text: "Commercial usage rights" },
+      { available: true, text: "API access for integrations" }
+    ],
+    popular: false,
+    buttonText: "Choose Business",
+    buttonClass: "bg-[#0D7877] text-white hover:bg-[#0a5d5f]",
+    borderClass: "border-t-4 border-[#0D7877]"
   }
 ];
 

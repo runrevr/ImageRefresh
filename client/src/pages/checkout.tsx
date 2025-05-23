@@ -87,15 +87,15 @@ const CheckoutForm = ({ user }: CheckoutFormProps) => {
       // Update subscription status
       const response = await apiRequest("POST", "/api/update-user-subscription", {
         userId: user.id,
-        subscriptionTier: "core",
+        subscriptionTier: "starter",
         subscriptionStatus: "active",
         stripeCustomerId: user.stripeCustomerId || `cus_${user.id}_${timestamp}`,
         stripeSubscriptionId: subscriptionId,
         // Also include initial credits
-        credits: 20,
+        credits: 12,
         amount: 1000, // $10.00 in cents
         paymentIntentId: result.paymentIntent?.id || subscriptionId,
-        description: "Core Subscription (Monthly)",
+        description: "Starter Subscription (Monthly)",
         timestamp,
       });
 
