@@ -162,35 +162,66 @@ export async function generateEnhancementIdeas(
   try {
     console.log('[Claude 4 Ideas] Generating enhancement ideas with latest model...');
     
-    // Use Claude 4 Sonnet - the most advanced model for idea generation
+    // Use Claude 4 Sonnet with enhanced creative prompt for scroll-stopping concepts
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 1500,
+      max_tokens: 2000,
+      temperature: 0.9,  // Increase creativity
       messages: [{
         role: "user",
-        content: `Based on this product image analysis:
-                 ${JSON.stringify({
-                   productType: visionAnalysis.productType,
-                   strengths: visionAnalysis.strengths,
-                   improvements: visionAnalysis.improvements,
-                   qualityScore: visionAnalysis.qualityScore,
-                   technicalDetails: visionAnalysis.technicalDetails,
-                   enhancementOpportunities: visionAnalysis.enhancementOpportunities
-                 }, null, 2)}
-                 
-                 Industry: ${industryContext.join(', ')}
-                 Product Type: ${productType || 'General Product'}
-                 
-                 Generate exactly 5 enhancement ideas for GPT-image-01 /edit endpoint.
-                 
-                 Return as JSON array:
-                 [
-                   {
-                     "id": "unique_id_1",
-                     "title": "Enhancement Title (max 50 chars)",
-                     "description": "What this enhancement does (max 200 chars)",
-                     "impact": "high",
-                     "difficulty": "easy",
+        content: `You are a visionary product photographer creating scroll-stopping concepts for small business owners.
+
+Product info: 
+- Product: ${visionAnalysis.productType || 'Product'}
+- Current image analysis: ${JSON.stringify({
+  productType: visionAnalysis.productType,
+  strengths: visionAnalysis.strengths,
+  improvements: visionAnalysis.improvements,
+  qualityScore: visionAnalysis.qualityScore,
+  technicalDetails: visionAnalysis.technicalDetails,
+  enhancementOpportunities: visionAnalysis.enhancementOpportunities
+}, null, 2)}
+- Business context: ${industryContext.join(', ')}
+- Product type: ${productType || 'General Product'}
+
+Generate 5 product photography concepts. Each should be 2-3 sentences describing a specific, vivid scene.
+
+**Concepts 1-4: Premium Commercial Photography**
+Create scenes that feel like they belong in high-end magazines or viral social posts:
+- Authentic lifestyle moments showing the product in use
+- Specific environments with rich sensory details
+- Natural human interaction (describe gestures, not just "hands holding")
+- Atmospheric elements (steam, light rays, shadows, movement)
+- Emotional resonance (cozy mornings, productive afternoons, celebratory evenings)
+- Unexpected angles or perspectives while maintaining realism
+
+Think: Apple ads, Kinfolk magazine, viral food photography, luxury brand campaigns - elevated but achievable.
+
+**Concept 5: Artistic Fever Dream**
+Start by identifying the product, then unleash absolute creative chaos:
+- Impossible environments or scale
+- Surreal but visually stunning
+- Pop culture/art history mashups
+- Laws of physics optional
+- The product must remain the clear focal point
+
+FORMAT: "This [product type] becomes/transforms into/is revealed as [insane scenario]..."
+
+EXAMPLE OF HOW WILD: "This artisanal honey jar becomes the power source of a bee civilization - the jar sits at the center of a bee cathedral where thousands of bees form stained glass windows with their wings, golden honey drips upward like reverse waterfalls defying gravity, while the jar glows like an ancient artifact on an altar made of honeycomb that extends into infinity, shot from below like a Baroque ceiling painting."
+
+Note: Always mention what the product IS so the scene makes contextual sense. Exact product details/branding will be preserved in the image generation phase.
+
+Avoid generic descriptions like "product on table" or "clean background." Every concept should make someone stop scrolling.
+
+Return EXACTLY 5 concepts as a JSON array:
+[
+  {
+    "id": "unique_id_1",
+    "title": "Catchy Title (max 50 chars)",
+    "description": "The full 2-3 sentence vivid scene description",
+    "edit_prompt": "Specific prompt for GPT-image-01 edit endpoint based on this concept"
+  }
+]`
                      "category": "background",
                      "estimatedTime": "15-30 min",
                      "toolsNeeded": ["GPT-image-01"],
