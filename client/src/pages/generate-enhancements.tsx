@@ -43,9 +43,10 @@ export default function GenerateEnhancementsPage() {
   const [currentJobMessage, setCurrentJobMessage] = useState('')
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+  const [creditStatus, setCreditStatus] = useState<any>(null)
   
-  // Free credits system
-  const { credits, checkFreeCredit, useFreeCredit } = useFreeCredits()
+  // Integrated credit system
+  const { checkUserCredits, useCredit, isAuthenticated } = useFreeCredits()
 
   // Mock data for development - in production this would come from the previous page
   useEffect(() => {
@@ -108,12 +109,15 @@ export default function GenerateEnhancementsPage() {
     ]
     setJobs(mockJobs)
     
-    // Check free credits before starting
-    if (!checkFreeCredit()) {
-      setShowUpgradePrompt(true)
-      setIsProcessing(false)
-      return
-    }
+    // Check credits before starting (async)
+    checkUserCredits().then(credits => {
+      setCreditStatus(credits)
+      if (!credits.hasCredits) {
+        setShowUpgradePrompt(true)
+        setIsProcessing(false)
+        return
+      }
+    })
     
     // Start processing simulation
     setTimeout(() => {
@@ -163,8 +167,8 @@ export default function GenerateEnhancementsPage() {
     // All jobs complete
     setIsProcessing(false)
     
-    // Show email capture modal for free users, or navigate directly for logged in users
-    if (!credits.userEmail && checkFreeCredit()) {
+    // Show email capture modal for guest users, or navigate directly for authenticated users
+    if (!isAuthenticated && creditStatus?.requiresEmail) {
       setShowEmailModal(true)
     } else {
       // Auto-redirect after 2 seconds if all successful
@@ -266,11 +270,11 @@ export default function GenerateEnhancementsPage() {
     setFailedCount(prev => prev - 1)
   }
 
-  // Handle email submission for free users
+  // Handle email submission for guest users
   const handleEmailSubmit = async (email: string) => {
     try {
-      // Use the free credit and save email
-      useFreeCredit(email)
+      // Use the credit and save email using your existing system
+      await useCredit(email)
       
       // Close modal and redirect to results
       setShowEmailModal(false)
