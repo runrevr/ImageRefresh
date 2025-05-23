@@ -11,7 +11,8 @@ import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
 
 export default function UploadEnhancePage() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1)
+  const [showStepHighlight, setShowStepHighlight] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -587,6 +588,44 @@ export default function UploadEnhancePage() {
           .mobile-py-3 {
             padding-top: 0.75rem !important;
             padding-bottom: 0.75rem !important;
+          }
+        }
+        
+        .step-highlight {
+          animation: pulse-highlight 2s ease-in-out 3;
+          border: 3px solid var(--secondary) !important;
+          box-shadow: 0 0 20px rgba(61, 165, 217, 0.3) !important;
+        }
+        
+        @keyframes pulse-highlight {
+          0%, 100% { 
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(61, 165, 217, 0.3);
+          }
+          50% { 
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(13, 120, 119, 0.4);
+          }
+        }
+        
+        .scroll-arrow {
+          animation: bounce-down 2s infinite;
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 10;
+        }
+        
+        @keyframes bounce-down {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateX(-50%) translateY(0);
+          }
+          40% {
+            transform: translateX(-50%) translateY(10px);
+          }
+          60% {
+            transform: translateX(-50%) translateY(5px);
           }
         }
       `}</style>
