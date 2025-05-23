@@ -11,8 +11,6 @@ interface EnhancementIdea {
   id: string
   title: string
   description: string
-  difficulty: 'Easy' | 'Medium' | 'Hard'
-  impact: 'High' | 'Medium' | 'Low'
 }
 
 interface ProductImage {
@@ -38,37 +36,27 @@ export default function SelectIdeasPage() {
           {
             id: 'idea-1-1',
             title: 'Professional Studio Lighting',
-            description: 'Add dramatic studio lighting with soft shadows to create a premium, professional look that highlights product details.',
-            difficulty: 'Easy',
-            impact: 'High'
+            description: 'Add dramatic studio lighting with soft shadows to create a premium, professional look that highlights product details.'
           },
           {
             id: 'idea-1-2',
             title: 'Lifestyle Background Scene',
-            description: 'Place your product in a realistic lifestyle setting that shows how customers would use it in their daily lives.',
-            difficulty: 'Medium',
-            impact: 'High'
+            description: 'Place your product in a realistic lifestyle setting that shows how customers would use it in their daily lives.'
           },
           {
             id: 'idea-1-3',
             title: 'Clean White Background',
-            description: 'Remove current background and replace with a clean, pure white background perfect for e-commerce listings.',
-            difficulty: 'Easy',
-            impact: 'Medium'
+            description: 'Remove current background and replace with a clean, pure white background perfect for e-commerce listings.'
           },
           {
             id: 'idea-1-4',
             title: 'Color Variations Display',
-            description: 'Show multiple color options of your product in an elegant arrangement to highlight available choices.',
-            difficulty: 'Hard',
-            impact: 'High'
+            description: 'Show multiple color options of your product in an elegant arrangement to highlight available choices.'
           },
           {
             id: 'idea-1-5',
             title: 'Scale & Size Reference',
-            description: 'Add common objects or hands to show the true size and scale of your product for better customer understanding.',
-            difficulty: 'Medium',
-            impact: 'Medium'
+            description: 'Add common objects or hands to show the true size and scale of your product for better customer understanding.'
           }
         ]
       },
@@ -80,37 +68,27 @@ export default function SelectIdeasPage() {
           {
             id: 'idea-2-1',
             title: 'Premium Packaging Display',
-            description: 'Create an unboxing scene that showcases your product alongside its premium packaging and presentation.',
-            difficulty: 'Medium',
-            impact: 'High'
+            description: 'Create an unboxing scene that showcases your product alongside its premium packaging and presentation.'
           },
           {
             id: 'idea-2-2',
             title: 'Action Shot in Use',
-            description: 'Show your product being actively used in its intended environment to demonstrate functionality.',
-            difficulty: 'Hard',
-            impact: 'High'
+            description: 'Show your product being actively used in its intended environment to demonstrate functionality.'
           },
           {
             id: 'idea-2-3',
             title: 'Minimalist Aesthetic',
-            description: 'Apply a clean, minimalist style with negative space and subtle textures for a modern, premium feel.',
-            difficulty: 'Easy',
-            impact: 'Medium'
+            description: 'Apply a clean, minimalist style with negative space and subtle textures for a modern, premium feel.'
           },
           {
             id: 'idea-2-4',
             title: 'Detail & Feature Callouts',
-            description: 'Highlight key features and details with elegant callout annotations and close-up detail shots.',
-            difficulty: 'Medium',
-            impact: 'High'
+            description: 'Highlight key features and details with elegant callout annotations and close-up detail shots.'
           },
           {
             id: 'idea-2-5',
             title: 'Seasonal Theme Integration',
-            description: 'Integrate seasonal elements and themes that align with current trends and shopping seasons.',
-            difficulty: 'Easy',
-            impact: 'Low'
+            description: 'Integrate seasonal elements and themes that align with current trends and shopping seasons.'
           }
         ]
       }
@@ -118,23 +96,7 @@ export default function SelectIdeasPage() {
     setProductImages(mockData)
   }, [])
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-[#C1F50A] text-black'
-      case 'Medium': return 'bg-yellow-400 text-black'
-      case 'Hard': return 'bg-red-500 text-white'
-      default: return 'bg-gray-400 text-white'
-    }
-  }
 
-  const getImpactColor = (impact: string) => {
-    switch (impact) {
-      case 'High': return 'bg-[#0D7877] text-white'
-      case 'Medium': return 'bg-[#3DA5D9] text-white'
-      case 'Low': return 'bg-gray-400 text-white'
-      default: return 'bg-gray-400 text-white'
-    }
-  }
 
   const handleIdeaToggle = (productId: string, ideaId: string) => {
     setSelectedIdeas(prev => {
@@ -410,15 +372,6 @@ export default function SelectIdeasPage() {
                                 <p className="text-sm text-gray-600 brand-font-body">
                                   {idea.description}
                                 </p>
-                              </div>
-                              
-                              <div className="flex flex-col gap-2">
-                                <Badge className={`text-xs ${getDifficultyColor(idea.difficulty)}`}>
-                                  {idea.difficulty}
-                                </Badge>
-                                <Badge className={`text-xs ${getImpactColor(idea.impact)}`}>
-                                  {idea.impact} Impact
-                                </Badge>
                               </div>
                             </div>
                           </div>
