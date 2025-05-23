@@ -1,3 +1,7 @@
+// Configure environment variables first
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -5,7 +9,6 @@ import { runCleanupTasks } from "./cleanup";
 import { demoAccessMiddleware } from "./demo-access-control";
 import { setupAuth } from "./auth";
 import cookieParser from "cookie-parser";
-import * as dotenv from 'dotenv';
 import { setupTestRoutes } from "./routes/test-route";
 import { setupOpenAITestRoutes } from "./openai-test-route";
 import { setupSimpleRouter } from "./simple-router";
