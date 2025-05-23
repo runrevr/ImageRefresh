@@ -50,29 +50,33 @@ router.post('/upload-images', upload.array('images', 5), (req, res) => {
       imageCount: req.body.imageCount
     });
 
-    // Simulate processing time
-    setTimeout(() => {
-      const mockUrls = [];
-      const files = req.files as Express.Multer.File[] | undefined;
-      const fileCount = files?.length || 0;
-      
-      for (let i = 0; i < fileCount; i++) {
-        mockUrls.push(`https://placeholder.com/600x400/0D7877/ffffff/png?text=Product+Image+${i + 1}`);
+    const files = req.files as Express.Multer.File[] | undefined;
+    const fileCount = files?.length || 0;
+    
+    if (fileCount === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    console.log('📁 Processing uploaded files...');
+    
+    // Create real file URLs for AI analysis
+    const realUrls = files!.map(file => {
+      console.log(`✅ File saved: ${file.filename}`);
+      return `/uploads/${file.filename}`;
+    });
+
+    const response = {
+      success: true,
+      urls: realUrls,
+      message: `Successfully uploaded ${fileCount} images`,
+      metadata: {
+        uploadTime: new Date().toISOString(),
+        imageCount: fileCount
       }
+    };
 
-      const response = {
-        success: true,
-        urls: mockUrls,
-        message: `Successfully uploaded ${fileCount} images`,
-        metadata: {
-          uploadTime: new Date().toISOString(),
-          imageCount: fileCount
-        }
-      };
-
-      console.log('Upload response:', response);
-      res.json(response);
-    }, 500); // Small delay to simulate upload time
+    console.log('📤 Upload response:', response);
+    res.json(response);
 
   } catch (error) {
     console.error('Upload error:', error);
