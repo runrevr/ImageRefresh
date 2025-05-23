@@ -398,18 +398,18 @@ export default function UploadEnhancePage() {
         </div>
 
         {/* Submit Section with Prominent CTA */}
-        <Card className="text-center bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
+        <Card className="text-center brand-card" style={{ background: 'linear-gradient(135deg, rgba(13, 120, 119, 0.1) 0%, rgba(61, 165, 217, 0.1) 100%)', borderColor: 'var(--secondary)' }}>
           <CardContent className="pt-8 pb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-2xl brand-font-heading font-bold brand-text-neutral mb-4">
               Ready to Transform Your Images?
             </h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            <p className="brand-text-neutral brand-font-body mb-6 max-w-2xl mx-auto">
               Our AI will enhance your product images with professional lighting, 
               color correction, and background optimization to make them stand out.
             </p>
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3 text-lg"
+              className="brand-button-accent px-8 py-3 text-lg brand-font-body font-medium"
               disabled={selectedFiles.length === 0 || !industry}
               onClick={handleSubmit}
             >
