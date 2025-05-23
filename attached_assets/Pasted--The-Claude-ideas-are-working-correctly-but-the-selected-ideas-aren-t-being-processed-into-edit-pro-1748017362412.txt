@@ -1,0 +1,51 @@
+"The Claude ideas are working correctly, but the selected ideas aren't being processed into edit prompts for image generation. Fix the flow:
+
+1. **The current flow should be:**
+   - ✅ Claude generates creative ideas (Post-Workout Victory, etc.)
+   - ✅ User selects which ideas they want
+   - ❌ Selected ideas need edit prompts generated
+   - ❌ Edit prompts sent to GPT-image-01
+
+2. **Add the missing edit prompt generation step:**
+When the generation page loads, BEFORE calling GPT-image-01:
+
+```javascript
+// In the generate-enhancements page
+async function startGeneration() {
+  const selectedIdeas = JSON.parse(sessionStorage.getItem('selected_enhancements') || '[]');
+  
+  // For each selected idea, generate an edit prompt
+  for (const idea of selectedIdeas) {
+    // Call Claude to create the edit prompt
+    const promptResponse = await fetch('/api/generate-edit-prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idea_title: idea.title,
+        idea_description: idea.description,
+        product_info: idea.product_info,
+        is_chaos_concept: idea.title.includes('Levitating') || selectedIdeas.indexOf(idea) === 4
+      })
+    });
+    
+    const { edit_prompt } = await promptResponse.json();
+    
+    // NOW send to GPT-image-01
+    const imageResponse = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        original_image_url: idea.original_image_url,
+        enhancement_prompt: edit_prompt, // The Claude-generated prompt
+        enhancement_title: idea.title
+      })
+    });
+  }
+}
+
+Create the /api/generate-edit-prompt endpoint if it doesn't exist:
+This endpoint should implement the creative prompt generation you provided earlier, taking the selected idea and creating a detailed edit prompt for GPT-image-01.
+Also fix: Only process SELECTED ideas, not all 5
+Make sure the generation page is reading from 'selected_enhancements' not 'enhancement_ideas'.
+
+The issue is that the creative ideas need to be transformed into specific edit prompts before sending to GPT-image-01!"

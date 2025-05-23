@@ -210,6 +210,78 @@ router.post('/analyze-products', async (req, res) => {
   }
 });
 
+// POST /api/generate-edit-prompt  
+// Generate optimized edit prompt for a single selected concept using Claude
+router.post('/api/generate-edit-prompt', async (req, res) => {
+  try {
+    console.log('=== Single Claude Edit Prompt Generation ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+
+    const { idea_title, idea_description, product_info, is_chaos_concept } = req.body;
+    
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('Anthropic API key not configured');
+    }
+
+    const Anthropic = require('@anthropic-ai/sdk');
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+    
+    const message = await anthropic.messages.create({
+      model: "claude-3-7-sonnet-20250219",
+      max_tokens: 800,
+      temperature: is_chaos_concept ? 1.0 : 0.8,
+      messages: [{
+        role: "user",
+        content: `Transform this creative concept into a detailed GPT-image-01 edit prompt:
+
+Title: ${idea_title}
+Description: ${idea_description}
+Product: ${product_info || 'beverage product'}
+Is Chaos Concept: ${is_chaos_concept}
+
+${is_chaos_concept ? 
+  `**CHAOS MODE ACTIVATED - GO ABSOLUTELY WILD:**
+   Create a 100-120 word prompt of pure creative insanity:
+   - Start with product accuracy THEN EXPLODE INTO MADNESS
+   - Layer impossible elements, defy physics and logic
+   - Mix artistic movements: "Dalí meets Banksy meets Studio Ghibli"
+   - Use words like: "surreal," "gravity-defying," "metamorphosing," "transcendent"
+   - Push every boundary while keeping product as hero` :
+  `**PROFESSIONAL MODE:**
+   Create a polished 80-100 word prompt focusing on:
+   - Realistic product placement and natural lighting
+   - Authentic environments and lifestyle storytelling
+   - Professional photography terminology`}
+
+Return ONLY the edit prompt text, no JSON formatting.`
+      }]
+    });
+    
+    const editPrompt = message.content[0].text.trim();
+    
+    console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
+    res.json({
+      success: true,
+      edit_prompt: editPrompt,
+      processing_metadata: {
+        generation_time: new Date().toISOString(),
+        model_used: "claude-3-7-sonnet-20250219",
+        chaos_mode: is_chaos_concept
+      }
+    });
+    
+  } catch (error) {
+    console.error('Single edit prompt error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate edit prompt',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+});
+
 // POST /api/generate-edit-prompts
 // Generate optimized edit prompts for selected concepts using Claude
 router.post('/generate-edit-prompts', async (req, res) => {
