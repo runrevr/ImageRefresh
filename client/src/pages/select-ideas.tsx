@@ -40,6 +40,7 @@ export default function SelectIdeasPage() {
         console.log('Retrieved image data from sessionStorage:', parsedData)
         
         // Convert stored data to ProductImage format with enhancement ideas
+        // Only create sections for the actual number of uploaded images
         const productData: ProductImage[] = parsedData.images.map((img: any, index: number) => ({
           id: img.id || `product-${index + 1}`,
           fileName: img.fileName,
@@ -47,6 +48,7 @@ export default function SelectIdeasPage() {
           ideas: generateIdeasForProduct(index)
         }))
         
+        console.log(`Creating enhancement sections for ${productData.length} uploaded images`)
         setProductImages(productData)
       } catch (error) {
         console.error('Error parsing stored data:', error)
@@ -54,9 +56,14 @@ export default function SelectIdeasPage() {
         setProductImages(getDemoData())
       }
     } else {
-      // No stored data, use demo data
-      console.log('No stored image data found, using demo data')
-      setProductImages(getDemoData())
+      // No stored data, use single demo image for testing
+      console.log('No stored image data found, using single demo image')
+      setProductImages([{
+        id: 'product-1',
+        fileName: 'demo-product.jpg',
+        url: '/api/placeholder/200/200',
+        ideas: generateIdeasForProduct(0)
+      }])
     }
   }, [])
 
