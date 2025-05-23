@@ -102,8 +102,12 @@ router.post('/analyze-products', async (req, res) => {
 
         console.log(`[AI Analysis] Analyzing image ${index + 1}: ${imagePath}`);
         
-        // Use your live OpenAI Vision API
-        const visionAnalysis = await analyzeProductImage(imagePath);
+        // Use your live OpenAI GPT-4 Vision API
+        const visionAnalysis = await analyzeProductImage(
+          imagePath,
+          industry_context.industries?.join(', ') || 'general',
+          industry_context.productType
+        );
         
         console.log(`[AI Analysis] Vision analysis complete for image ${index + 1}`);
         

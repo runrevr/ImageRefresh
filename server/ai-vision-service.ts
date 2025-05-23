@@ -42,69 +42,70 @@ interface EnhancementIdea {
 }
 
 /**
- * Analyze product image using Claude Vision with optimized image processing
+ * Analyze product image using OpenAI GPT-4 Vision for superior image analysis
  */
-export async function analyzeProductImage(imagePath: string): Promise<VisionAnalysis> {
+export async function analyzeProductImage(imagePath: string, industryContext?: string, productType?: string): Promise<VisionAnalysis> {
   try {
-    console.log('[Claude Vision] Starting product image analysis...');
+    console.log('[GPT-4 Vision] Starting product image analysis...');
     
-    // Read and optimize image for Claude Vision
-    const sharp = require('sharp');
+    // Convert image to base64 for GPT-4 Vision
     const imageBuffer = fs.readFileSync(imagePath);
+    const base64Image = imageBuffer.toString('base64');
     
-    // Resize if too large (Claude has limits)
-    const resized = await sharp(imageBuffer)
-      .resize(1500, 1500, { fit: 'inside' })
-      .jpeg({ quality: 85 })
-      .toBuffer();
-      
-    const base64Image = resized.toString('base64');
-    
-    // Use Claude 4 Sonnet for detailed analysis - the latest and most powerful model
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514", 
-      max_tokens: 1000,
-      messages: [{
-        role: "user",
-        content: [
-          {
-            type: "image",
-            source: {
-              type: "base64",
-              media_type: "image/jpeg",
-              data: base64Image
+    // Use GPT-4 Vision for detailed analysis
+    // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `Analyze this product image for a ${industryContext || 'general'} business.
+                     Product type: ${productType || 'Not specified'}
+                     
+                     Provide analysis in JSON format:
+                     {
+                       "product_identification": "what product is this",
+                       "current_quality": {
+                         "lighting": "detailed lighting assessment",
+                         "background": "background evaluation",
+                         "composition": "composition analysis", 
+                         "technical": "technical quality notes"
+                       },
+                       "strengths": ["strength1", "strength2", "strength3"],
+                       "improvements_needed": ["improvement1", "improvement2", "improvement3"],
+                       "audience_appeal": "description of target audience appeal",
+                       "quality_score": 8.5,
+                       "brand_alignment": "assessment of brand representation",
+                       "enhancement_opportunities": ["opportunity1", "opportunity2", "opportunity3"]
+                     }`
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`
+              }
             }
-          },
-          {
-            type: "text",
-            text: `Analyze this product image in detail. Provide a comprehensive assessment in JSON format:
-
-{
-  "product_identification": "what product is this",
-  "current_quality": {
-    "lighting": "detailed lighting assessment",
-    "background": "background evaluation", 
-    "composition": "composition analysis",
-    "technical": "technical quality notes"
-  },
-  "strengths": ["strength1", "strength2", "strength3"],
-  "improvements_needed": ["improvement1", "improvement2", "improvement3"],
-  "audience_appeal": "description of target audience appeal",
-  "quality_score": 8.5,
-  "brand_alignment": "assessment of brand representation",
-  "enhancement_opportunities": ["opportunity1", "opportunity2", "opportunity3"]
-}`
-          }
-        ]
-      }]
+          ],
+        },
+      ],
+      max_tokens: 1000,
     });
 
-    const analysisText = (response.content[0] as any).text || '';
+    const analysisText = response.choices[0].message.content || '';
     
-    // Parse Claude's JSON response
+    // Parse GPT-4 Vision's JSON response
     let parsedAnalysis;
     try {
-      parsedAnalysis = JSON.parse(analysisText);
+      // Extract JSON from the response
+      const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsedAnalysis = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found in response');
+      }
     } catch {
       // Fallback parsing if JSON is malformed
       parsedAnalysis = {
@@ -141,11 +142,11 @@ export async function analyzeProductImage(imagePath: string): Promise<VisionAnal
       enhancementOpportunities: parsedAnalysis.enhancement_opportunities || []
     };
 
-    console.log('[Claude Vision] Analysis complete');
+    console.log('[GPT-4 Vision] Analysis complete');
     return analysis;
     
   } catch (error) {
-    console.error('[Claude Vision] Error analyzing image:', error);
+    console.error('[GPT-4 Vision] Error analyzing image:', error);
     throw new Error(`Vision analysis failed: ${error}`);
   }
 }

@@ -1,0 +1,85 @@
+"To clarify the correct AI setup:
+
+1. **For Vision Analysis (Step #3)**: 
+   - Use OpenAI GPT-4 Vision (gpt-4-vision-preview)
+   - This analyzes the uploaded product images
+   - NOT Claude
+
+2. **For Idea Generation (Step #4)**:
+   - Use Claude 4 Sonnet (claude-sonnet-4-20250514)
+   - This takes the text analysis from GPT-4 Vision
+   - Generates enhancement ideas based on the analysis
+
+Please UPDATE the code:
+
+**Step #3 - Replace Claude with GPT-4 Vision:**
+```javascript
+const OpenAI = require('openai');
+
+async function analyzeProducts(req, res) {
+  try {
+    const { image_urls, industry_context, product_type } = req.body;
+    
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    
+    const analyses = [];
+    
+    for (const imageUrl of image_urls) {
+      // Prepare image for GPT-4 Vision
+      const response = await openai.chat.completions.create({
+        model: "gpt-4-vision-preview",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Analyze this product image for a ${industry_context} business.
+                       Product type: ${product_type || 'Not specified'}
+                       
+                       Provide analysis in JSON format:
+                       {
+                         "product_identification": "what product is this",
+                         "current_quality": {
+                           "lighting": "description",
+                           "background": "description",
+                           "composition": "description",
+                           "technical": "description"
+                         },
+                         "strengths": ["strength1", "strength2"],
+                         "improvements_needed": ["improvement1", "improvement2"],
+                         "target_audience_score": 7,
+                         "ecommerce_readiness": 6
+                       }`
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: imageUrl
+                }
+              }
+            ],
+          },
+        ],
+        max_tokens: 1000,
+      });
+      
+      analyses.push({
+        image_url: imageUrl,
+        analysis: JSON.parse(response.choices[0].message.content)
+      });
+    }
+    
+    res.json({ success: true, analyses });
+    
+  } catch (error) {
+    console.error('Vision analysis error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to analyze images',
+      details: error.message 
+    });
+  }
+}
