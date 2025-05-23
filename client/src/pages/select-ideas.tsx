@@ -88,69 +88,15 @@ export default function SelectIdeasPage() {
       id: 'product-1',
       fileName: 'product-photo-1.jpg',
       url: '/api/placeholder/200/200',
-      ideas: [
-          {
-            id: 'idea-1-1',
-            title: 'Professional Studio Lighting',
-            description: 'Add dramatic studio lighting with soft shadows to create a premium, professional look that highlights product details.'
-          },
-          {
-            id: 'idea-1-2',
-            title: 'Lifestyle Background Scene',
-            description: 'Place your product in a realistic lifestyle setting that shows how customers would use it in their daily lives.'
-          },
-          {
-            id: 'idea-1-3',
-            title: 'Clean White Background',
-            description: 'Remove current background and replace with a clean, pure white background perfect for e-commerce listings.'
-          },
-          {
-            id: 'idea-1-4',
-            title: 'Color Variations Display',
-            description: 'Show multiple color options of your product in an elegant arrangement to highlight available choices.'
-          },
-          {
-            id: 'idea-1-5',
-            title: 'Scale & Size Reference',
-            description: 'Add common objects or hands to show the true size and scale of your product for better customer understanding.'
-          }
-        ]
-      },
-      {
-        id: 'product-2',
-        fileName: 'product-photo-2.jpg',
-        url: '/api/placeholder/200/200',
-        ideas: [
-          {
-            id: 'idea-2-1',
-            title: 'Premium Packaging Display',
-            description: 'Create an unboxing scene that showcases your product alongside its premium packaging and presentation.'
-          },
-          {
-            id: 'idea-2-2',
-            title: 'Action Shot in Use',
-            description: 'Show your product being actively used in its intended environment to demonstrate functionality.'
-          },
-          {
-            id: 'idea-2-3',
-            title: 'Minimalist Aesthetic',
-            description: 'Apply a clean, minimalist style with negative space and subtle textures for a modern, premium feel.'
-          },
-          {
-            id: 'idea-2-4',
-            title: 'Detail & Feature Callouts',
-            description: 'Highlight key features and details with elegant callout annotations and close-up detail shots.'
-          },
-          {
-            id: 'idea-2-5',
-            title: 'Seasonal Theme Integration',
-            description: 'Integrate seasonal elements and themes that align with current trends and shopping seasons.'
-          }
-        ]
-      }
-    ]
-    setProductImages(mockData)
-  }, [])
+      ideas: generateIdeasForProduct(0)
+    },
+    {
+      id: 'product-2',
+      fileName: 'product-photo-2.jpg',
+      url: '/api/placeholder/200/200',
+      ideas: generateIdeasForProduct(1)
+    }
+  ]
 
 
 
