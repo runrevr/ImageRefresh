@@ -121,8 +121,29 @@ export default function SelectIdeasPage() {
   const canProceed = getTotalSelectedCount() > 0
 
   const handleGenerateEnhancements = () => {
-    // Pass selected ideas to generation page (in production would save to sessionStorage or API)
-    console.log('Generating enhancements for:', selectedIdeas)
+    // Build array of only selected enhancements for each product
+    const selectedEnhancements = [];
+    
+    productImages.forEach((product) => {
+      const productSelections = selectedIdeas[product.id] || [];
+      
+      if (productSelections.length > 0) {
+        // Get only the selected ideas for this product
+        const selectedIdeasForProduct = product.ideas.filter(idea => 
+          productSelections.includes(idea.id)
+        );
+        
+        selectedEnhancements.push({
+          image_url: product.url,
+          image_id: product.id,
+          fileName: product.fileName,
+          selected_ideas: selectedIdeasForProduct // Only the checked ones!
+        });
+      }
+    });
+    
+    console.log('Selected ideas to generate:', selectedEnhancements);
+    sessionStorage.setItem('selected_enhancements', JSON.stringify(selectedEnhancements));
     setLocation('/generate-enhancements')
   }
 
