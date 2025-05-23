@@ -262,27 +262,14 @@ export default function UploadEnhancePage() {
         try {
           console.log('Step 2: Starting AI analysis...');
           
-          const industryContext = {
-            industries: selectedIndustries,
-            productType: productType,
-            purposes: selectedPurposes,
-            targetAudience: selectedIndustries.includes('B2B Services') ? 'business' : 'consumer'
-          };
-
-          const analysisPrompt = `Analyze these product images for a ${selectedIndustries.join(', ')} business. 
-            Product type: ${productType}. 
-            Intended use: ${selectedPurposes.join(', ')}. 
-            Focus on identifying enhancement opportunities for lighting, composition, background, and overall visual appeal.`;
-
           const analysisResponse = await fetch('/api/analyze-products', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               image_urls: imageUrls,
-              industry_context: industryContext,
-              analysis_prompt: analysisPrompt
+              industry_context: selectedIndustries,
+              image_purposes: selectedPurposes,
+              product_type: productType
             })
           });
 
@@ -314,15 +301,10 @@ export default function UploadEnhancePage() {
               },
               body: JSON.stringify({
                 vision_analysis: analysisResult.analysis,
-                industry_context: industryContext,
-                ideas_per_image: 5,
-                enhancement_focus: [
-                  'lighting_optimization',
-                  'background_enhancement',
-                  'color_correction',
-                  'composition_improvement',
-                  'style_transformation'
-                ]
+                industry_context: selectedIndustries,
+                image_purposes: selectedPurposes,
+                product_type: productType,
+                ideas_per_image: 5
               })
             });
 
