@@ -1,11 +1,26 @@
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
 
 const router = Router();
 
-// Configure multer for handling file uploads
-const storage = multer.memoryStorage();
+// Configure multer for file uploads and disk storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
 const upload = multer({ 
   storage,
   limits: {
@@ -62,16 +77,64 @@ router.post('/upload-images', upload.array('images', 5), (req, res) => {
 });
 
 // POST /api/analyze-products
-// Accept JSON with image_urls and industry_context, return analysis
-router.post('/analyze-products', (req, res) => {
+// Accept JSON with image_urls and industry_context, return live AI analysis
+router.post('/analyze-products', async (req, res) => {
   try {
-    console.log('=== Analyze Products Endpoint ===');
+    console.log('=== Live AI Product Analysis ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
     const { image_urls, industry_context, analysis_prompt } = req.body;
 
-    // Simulate AI analysis processing time
-    setTimeout(() => {
+    if (!image_urls || image_urls.length === 0) {
+      return res.status(400).json({ error: 'No images provided for analysis' });
+    }
+
+    // Process each image with OpenAI Vision analysis
+    const analysisPromises = image_urls.map(async (url: string, index: number) => {
+      try {
+        // Convert URL to file path for local analysis
+        const imagePath = path.join(process.cwd(), 'uploads', url.replace('/uploads/', ''));
+        
+        if (!fs.existsSync(imagePath)) {
+          console.warn(`Image not found: ${imagePath}`);
+          return null;
+        }
+
+        console.log(`[AI Analysis] Analyzing image ${index + 1}: ${imagePath}`);
+        
+        // Use your live OpenAI Vision API
+        const visionAnalysis = await analyzeProductImage(imagePath);
+        
+        console.log(`[AI Analysis] Vision analysis complete for image ${index + 1}`);
+        
+        return {
+          url: url,
+          index: index,
+          strengths: visionAnalysis.strengths,
+          improvements: visionAnalysis.improvements,
+          audience_appeal: visionAnalysis.audienceAppeal,
+          quality_score: visionAnalysis.qualityScore,
+          brand_alignment: visionAnalysis.brandAlignment,
+          technical_details: {
+            composition: visionAnalysis.technicalDetails.composition,
+            lighting: visionAnalysis.technicalDetails.lighting,
+            background: visionAnalysis.technicalDetails.background,
+            color_balance: visionAnalysis.technicalDetails.colorBalance
+          },
+          enhancement_opportunities: visionAnalysis.enhancementOpportunities
+        };
+      } catch (error) {
+        console.error(`[AI Analysis] Error analyzing image ${index + 1}:`, error);
+        return null;
+      }
+    });
+
+    const analysisResults = await Promise.all(analysisPromises);
+    const validResults = analysisResults.filter(result => result !== null);
+
+    if (validResults.length === 0) {
+      return res.status(500).json({ error: 'Failed to analyze any images' });
+    }
       const mockAnalysis = {
         success: true,
         analysis: {
