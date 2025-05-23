@@ -87,11 +87,26 @@ router.post('/upload-images', upload.array('images', 5), (req, res) => {
 // POST /api/analyze-products
 // Accept JSON with image_urls and industry_context, return live AI analysis
 router.post('/analyze-products', async (req, res) => {
+  console.log('🔍 Analyze request received:', req.body);
+  
   try {
+    // Check if we have API keys
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('Anthropic API key not configured');
+    }
+    
+    console.log('✅ API keys verified');
     console.log('=== Live AI Product Analysis ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
     const { image_urls, industry_context, analysis_prompt } = req.body;
+
+    // Log what we're processing
+    console.log('📊 Processing images:', image_urls?.length || 0);
+    console.log('🏢 Industry context:', industry_context);
 
     if (!image_urls || image_urls.length === 0) {
       return res.status(400).json({ error: 'No images provided for analysis' });
@@ -128,25 +143,9 @@ router.post('/analyze-products', async (req, res) => {
           };
         } catch (visionError) {
           console.error(`[AI Analysis] Vision API error for image ${index + 1}:`, visionError);
-          throw new Error(`Vision analysis failed: ${visionError.message}`);
+          const errorMessage = visionError instanceof Error ? visionError.message : 'Unknown vision error';
+          throw new Error(`Vision analysis failed: ${errorMessage}`);
         }
-        
-        return {
-          url: url,
-          index: index,
-          strengths: visionAnalysis.strengths,
-          improvements: visionAnalysis.improvements,
-          audience_appeal: visionAnalysis.audienceAppeal,
-          quality_score: visionAnalysis.qualityScore,
-          brand_alignment: visionAnalysis.brandAlignment,
-          technical_details: {
-            composition: visionAnalysis.technicalDetails.composition,
-            lighting: visionAnalysis.technicalDetails.lighting,
-            background: visionAnalysis.technicalDetails.background,
-            color_balance: visionAnalysis.technicalDetails.colorBalance
-          },
-          enhancement_opportunities: visionAnalysis.enhancementOpportunities
-        };
       } catch (error) {
         console.error(`[AI Analysis] Error analyzing image ${index + 1}:`, error);
         return null;
