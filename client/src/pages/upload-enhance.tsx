@@ -421,6 +421,31 @@ export default function UploadEnhancePage() {
     submitForProcessing();
   };
 
+  // Start Over function - resets all form state
+  const startOver = () => {
+    // Clear all uploaded images
+    setSelectedFiles([]);
+    
+    // Reset industry selections
+    setSelectedIndustries([]);
+    
+    // Clear form fields
+    setProductType("");
+    setBrandDescription("");
+    
+    // Clear any errors
+    setUploadError("");
+    setProcessingError("");
+    setShowRetry(false);
+    
+    // Reset processing state
+    setProcessingStep(0);
+    setProcessingStatus("");
+    setIsLoading(false);
+    
+    console.log('Form reset - all fields cleared');
+  };
+
   const handleSubmit = async () => {
     await submitForProcessing();
   };
@@ -852,14 +877,24 @@ export default function UploadEnhancePage() {
         {/* Action Buttons Section - Show only when user has added content */}
         {hasContent && (
           <div className="flex justify-between items-center mb-8">
-            <Button 
-              variant="outline"
-              disabled={currentStep === 1}
-              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-              className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white"
-            >
-              Previous Step
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline"
+                disabled={currentStep === 1}
+                onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white"
+              >
+                Previous Step
+              </Button>
+              
+              <Button 
+                variant="outline"
+                onClick={startOver}
+                className="brand-font-body border-2 border-red-200 text-red-600 hover:bg-red-50"
+              >
+                Start Over
+              </Button>
+            </div>
             
             <div className="text-sm text-gray-500 brand-font-body">
               Step {currentStep} of {steps.length}
