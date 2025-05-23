@@ -448,20 +448,38 @@ router.post('/generate-enhancement', async (req, res) => {
       .png()
       .toBuffer();
     
-    // Call GPT-image-01 edit endpoint
-    const enhancementResponse = await openai.images.edit({
-      model: "gpt-image-01",
-      image: processedImage,
-      prompt: enhancement_prompt,
-      n: 1,
-      size: "1024x1024"
+    // Import FormData for multipart/form-data
+    const FormData = require('form-data');
+    const axios = require('axios');
+    
+    // Create form data for GPT-image-01
+    const formData = new FormData();
+    formData.append('image', processedImage, {
+      filename: 'image.png',
+      contentType: 'image/png'
     });
+    formData.append('prompt', enhancement_prompt);
+    formData.append('n', '1');
+    formData.append('size', '1024x1024');
+    formData.append('model', 'gpt-image-01');
+    
+    // Call GPT-image-01 edit endpoint with proper multipart format
+    const enhancementResponse = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          ...formData.getHeaders()
+        }
+      }
+    );
     
     console.log('Image generated successfully with GPT-image-01');
     
     res.json({
       success: true,
-      enhanced_image_url: enhancementResponse.data[0].url,
+      enhanced_image_url: enhancementResponse.data.data[0].url,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
