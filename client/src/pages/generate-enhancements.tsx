@@ -35,6 +35,9 @@ export default function GenerateEnhancementsPage() {
   const [failedCount, setFailedCount] = useState(0)
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState(0)
   const [isProcessing, setIsProcessing] = useState(true)
+  const [currentJobIndex, setCurrentJobIndex] = useState(0)
+  const [currentJobTimer, setCurrentJobTimer] = useState(0)
+  const [currentJobMessage, setCurrentJobMessage] = useState('')
 
   // Mock data for development - in production this would come from the previous page
   useEffect(() => {
@@ -48,7 +51,7 @@ export default function GenerateEnhancementsPage() {
         status: 'queued',
         progress: 0,
         retryCount: 0,
-        estimatedTime: 45
+        estimatedTime: 60
       },
       {
         id: 'job-2',
@@ -70,7 +73,7 @@ export default function GenerateEnhancementsPage() {
         status: 'queued',
         progress: 0,
         retryCount: 0,
-        estimatedTime: 50
+        estimatedTime: 60
       },
       {
         id: 'job-4',
@@ -81,7 +84,7 @@ export default function GenerateEnhancementsPage() {
         status: 'queued',
         progress: 0,
         retryCount: 0,
-        estimatedTime: 30
+        estimatedTime: 60
       },
       {
         id: 'job-5',
@@ -92,7 +95,7 @@ export default function GenerateEnhancementsPage() {
         status: 'queued',
         progress: 0,
         retryCount: 0,
-        estimatedTime: 55
+        estimatedTime: 60
       }
     ]
     setJobs(mockJobs)
@@ -135,9 +138,10 @@ export default function GenerateEnhancementsPage() {
       setJobs([...currentJobs])
       setOverallProgress(((i + 1) / currentJobs.length) * 100)
       
-      // Update estimated time remaining
+      // Update estimated time remaining and current job info
+      setCurrentJobIndex(i + 1)
       const remaining = currentJobs.length - (i + 1)
-      const avgTime = 45 // seconds
+      const avgTime = 60 // seconds per enhancement
       setEstimatedTimeRemaining(remaining * avgTime)
     }
     
@@ -155,21 +159,41 @@ export default function GenerateEnhancementsPage() {
   const simulateJobProgress = (job: EnhancementJob): Promise<boolean> => {
     return new Promise((resolve) => {
       let progress = 0
+      let timer = 0
+      const messages = [
+        'Analyzing your product details...',
+        'Applying AI enhancement settings...',
+        'Generating enhanced imagery...',
+        'Optimizing image quality...',
+        'Finalizing your enhancement...'
+      ]
+      
       const interval = setInterval(() => {
-        progress += Math.random() * 15 + 5 // Random progress increments
+        timer += 1
+        progress = (timer / 60) * 100 // 60 seconds = 100%
+        
+        // Update current job timer
+        setCurrentJobTimer(timer)
+        
+        // Change message every 12 seconds
+        const messageIndex = Math.floor(timer / 12)
+        if (messageIndex < messages.length) {
+          setCurrentJobMessage(messages[messageIndex])
+        }
         
         if (progress >= 100) {
           clearInterval(interval)
-          // 90% success rate for demo
-          resolve(Math.random() > 0.1)
+          setCurrentJobMessage('Enhancement complete!')
+          // 95% success rate for realistic demo
+          resolve(Math.random() > 0.05)
         } else {
           setJobs(prevJobs => 
             prevJobs.map(j => 
-              j.id === job.id ? { ...j, progress } : j
+              j.id === job.id ? { ...j, progress: Math.min(progress, 100) } : j
             )
           )
         }
-      }, 500)
+      }, 1000) // Update every second for realistic timing
     })
   }
 
@@ -385,9 +409,14 @@ export default function GenerateEnhancementsPage() {
             <h1 className="text-4xl font-bold mb-4 brand-text-neutral brand-font-heading">
               Creating Your Enhanced Images
             </h1>
-            <p className="text-lg text-gray-600 brand-font-body max-w-3xl mx-auto">
-              Our AI is working on your selected enhancements. This process typically takes 30-60 seconds per image.
+            <p className="text-lg text-gray-600 brand-font-body max-w-3xl mx-auto mb-2">
+              Our AI is working on your selected enhancements. Each enhancement takes approximately 60 seconds to complete.
             </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+              <p className="text-blue-800 brand-font-body text-sm">
+                ⚠️ Please don't close this tab - your images are being created. We'll notify you when complete!
+              </p>
+            </div>
           </div>
 
           {/* Overall Progress */}
@@ -401,16 +430,34 @@ export default function GenerateEnhancementsPage() {
                   </span>
                 </div>
                 <div className="text-right brand-font-body">
-                  <div className="text-sm text-gray-600">
-                    {completedCount + failedCount} of {jobs.length} enhancements
-                  </div>
-                  {isProcessing && estimatedTimeRemaining > 0 && (
-                    <div className="text-xs text-gray-500">
-                      Est. {formatTime(estimatedTimeRemaining)} remaining
+                  {isProcessing ? (
+                    <div>
+                      <div className="text-sm font-medium text-[#0D7877]">
+                        Generating enhancement {currentJobIndex} of {jobs.length}... ({60 - currentJobTimer}s)
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Completed: {completedCount} | In Progress: 1 | Waiting: {jobs.length - completedCount - failedCount - 1}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Total time remaining: ~{Math.ceil(estimatedTimeRemaining / 60)} minutes
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-600">
+                      {completedCount + failedCount} of {jobs.length} enhancements complete
                     </div>
                   )}
                 </div>
               </div>
+              
+              {/* Current Job Message */}
+              {isProcessing && currentJobMessage && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-blue-800 brand-font-body text-sm font-medium">
+                    {currentJobMessage}
+                  </p>
+                </div>
+              )}
               
               <Progress 
                 value={overallProgress} 
