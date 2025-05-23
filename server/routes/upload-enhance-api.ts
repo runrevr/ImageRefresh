@@ -210,6 +210,83 @@ router.post('/analyze-products', async (req, res) => {
   }
 });
 
+// POST /api/generate-enhancement
+// Generate enhanced images using GPT-image-01 based on selected concepts
+router.post('/generate-enhancement', async (req, res) => {
+  try {
+    console.log('=== GPT-Image-01 Enhancement Generation ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+
+    const { original_image_url, enhancement_prompt, enhancement_title } = req.body;
+    
+    console.log('Generating image for:', enhancement_title);
+    
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    // Import OpenAI SDK
+    const OpenAI = require('openai');
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    
+    // Fetch and prepare the original image
+    let imageBuffer;
+    if (original_image_url.startsWith('data:')) {
+      // Handle base64
+      const base64Data = original_image_url.split(',')[1];
+      imageBuffer = Buffer.from(base64Data, 'base64');
+    } else {
+      // Fetch from URL
+      const response = await fetch(original_image_url);
+      imageBuffer = await response.buffer();
+    }
+    
+    // Import sharp for image processing
+    const sharp = require('sharp');
+    
+    // Ensure image is square and proper size for GPT-image-01
+    const processedImage = await sharp(imageBuffer)
+      .resize(1024, 1024, { 
+        fit: 'cover',
+        position: 'center'
+      })
+      .png()
+      .toBuffer();
+    
+    // Call GPT-image-01 edit endpoint
+    const enhancementResponse = await openai.images.edit({
+      model: "gpt-image-01",
+      image: processedImage,
+      prompt: enhancement_prompt,
+      n: 1,
+      size: "1024x1024"
+    });
+    
+    console.log('Image generated successfully with GPT-image-01');
+    
+    res.json({
+      success: true,
+      enhanced_image_url: enhancementResponse.data[0].url,
+      title: enhancement_title,
+      processing_metadata: {
+        generation_time: new Date().toISOString(),
+        model_used: "GPT-image-01",
+        prompt_used: enhancement_prompt
+      }
+    });
+    
+  } catch (error) {
+    console.error('Image generation error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate enhanced image',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+});
+
 // POST /api/generate-ideas
 // Accept JSON with vision_analysis and industry_context, return live AI-generated ideas
 router.post('/generate-ideas', async (req, res) => {
