@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Check, Clock, AlertCircle, RefreshCw, ChevronLeft, Sparkles, Zap } from 'lucide-react'
+import { EmailCaptureModal } from '@/components/EmailCaptureModal'
+import { UpgradePrompt } from '@/components/UpgradePrompt'
+import { useFreeCredits } from '@/hooks/useFreeCredits'
 
 interface EnhancementJob {
   id: string
@@ -38,6 +41,11 @@ export default function GenerateEnhancementsPage() {
   const [currentJobIndex, setCurrentJobIndex] = useState(0)
   const [currentJobTimer, setCurrentJobTimer] = useState(0)
   const [currentJobMessage, setCurrentJobMessage] = useState('')
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+  
+  // Free credits system
+  const { credits, checkFreeCredit, useFreeCredit } = useFreeCredits()
 
   // Mock data for development - in production this would come from the previous page
   useEffect(() => {
@@ -99,6 +107,13 @@ export default function GenerateEnhancementsPage() {
       }
     ]
     setJobs(mockJobs)
+    
+    // Check free credits before starting
+    if (!checkFreeCredit()) {
+      setShowUpgradePrompt(true)
+      setIsProcessing(false)
+      return
+    }
     
     // Start processing simulation
     setTimeout(() => {
