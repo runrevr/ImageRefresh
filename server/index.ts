@@ -212,7 +212,7 @@ app.use((req, res, next) => {
         throw new Error('Anthropic API key not configured');
       }
 
-      const Anthropic = require('@anthropic-ai/sdk');
+      const { default: Anthropic } = await import('@anthropic-ai/sdk');
       const anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
       });
