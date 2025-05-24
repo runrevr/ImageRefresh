@@ -201,6 +201,17 @@ app.use((req, res, next) => {
   // Register Anthropic API test routes
   app.use('/api', setupAnthropicTestRoutes());
   
+  // PRIORITY: Ensure API routes are handled before Vite catches them
+  app.use('/api/generate-edit-prompt', (req, res, next) => {
+    console.log(`[API PRIORITY] Edit prompt request intercepted successfully`);
+    next();
+  });
+  
+  app.use('/api/generate-enhancement', (req, res, next) => {
+    console.log(`[API PRIORITY] Enhancement request intercepted successfully`);
+    next();
+  });
+
   // Add debugging middleware for API routes
   app.use('/api', (req, res, next) => {
     console.log(`[API DEBUG] ${req.method} ${req.path} - Request received`);
