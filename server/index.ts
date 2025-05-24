@@ -201,15 +201,60 @@ app.use((req, res, next) => {
   // Register Anthropic API test routes
   app.use('/api', setupAnthropicTestRoutes());
   
-  // PRIORITY: Ensure API routes are handled before Vite catches them
-  app.use('/api/generate-edit-prompt', (req, res, next) => {
-    console.log(`[API PRIORITY] Edit prompt request intercepted successfully`);
-    next();
-  });
-  
-  app.use('/api/generate-enhancement', (req, res, next) => {
-    console.log(`[API PRIORITY] Enhancement request intercepted successfully`);
-    next();
+  // CRITICAL: Direct route handlers to bypass Vite completely
+  app.post('/api/generate-edit-prompt', async (req, res) => {
+    console.log(`[DIRECT API] Edit prompt endpoint hit - bypassing Vite!`);
+    
+    try {
+      const { idea_title, idea_description, is_chaos_concept } = req.body;
+      
+      if (!process.env.ANTHROPIC_API_KEY) {
+        throw new Error('Anthropic API key not configured');
+      }
+
+      const Anthropic = require('@anthropic-ai/sdk');
+      const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY,
+      });
+      
+      const message = await anthropic.messages.create({
+        model: "claude-3-7-sonnet-20250219",
+        max_tokens: 1000,
+        temperature: is_chaos_concept ? 1.0 : 0.8,
+        messages: [{
+          role: "user",
+          content: `Create an edit prompt for GPT-image-01 based on this concept:
+          
+Title: ${idea_title}
+Description: ${idea_description}
+Type: ${is_chaos_concept ? 'CHAOS CONCEPT - GO WILD!' : 'Professional/Lifestyle'}
+
+Generate ${is_chaos_concept ? '100-120' : '80-100'} words describing exactly how to edit the product image.
+
+${is_chaos_concept ? 
+  'UNLEASH CREATIVE CHAOS! Start with product accuracy then EXPLODE into impossible surreal madness!' : 
+  'Create a professional, realistic scene with natural lighting and authentic environments.'}
+
+Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
+        }]
+      });
+
+      const editPrompt = message.content[0].text.trim();
+      
+      console.log(`[DIRECT API] Generated edit prompt successfully`);
+      
+      res.json({
+        success: true,
+        edit_prompt: editPrompt
+      });
+      
+    } catch (error) {
+      console.error('[DIRECT API] Error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
   });
 
   // Add debugging middleware for API routes
