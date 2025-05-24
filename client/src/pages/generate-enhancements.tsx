@@ -152,6 +152,10 @@ export default function GenerateEnhancementsPage() {
         }
         
         const promptResult = await promptResponse.json();
+        console.log('=== FRONTEND PROMPT RESPONSE ===');
+        console.log('Full response:', promptResult);
+        console.log('Edit prompt:', promptResult.edit_prompt);
+        console.log('Prompt length:', promptResult.edit_prompt?.length);
         console.log(`[${job.enhancementTitle}] Edit prompt received:`, promptResult.edit_prompt);
         
         // Step 2: Generate image with GPT-image-01

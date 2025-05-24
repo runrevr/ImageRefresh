@@ -273,7 +273,10 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       editPrompt = 'Failed to extract content from Claude response';
     }
 
-    console.log('Extracted edit prompt:', editPrompt);
+    console.log('=== CLAUDE EDIT PROMPT RESPONSE ===');
+    console.log('Raw prompt:', editPrompt);
+    console.log('Prompt length:', editPrompt.length);
+    console.log('First 200 chars:', editPrompt.substring(0, 200));
     console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
     
     // Return it wrapped in our JSON
@@ -500,6 +503,42 @@ router.post('/generate-enhancement', async (req, res) => {
       success: false,
       error: error.response?.data?.error?.message || error.message,
       details: error.response?.data
+    });
+  }
+});
+
+// GET /api/test-openai - Test OpenAI connection
+router.get('/test-openai', async (req, res) => {
+  try {
+    console.log('=== TESTING OPENAI CONNECTION ===');
+    console.log('OpenAI API Key exists:', !!process.env.OPENAI_API_KEY);
+    console.log('Key starts with:', process.env.OPENAI_API_KEY?.substring(0, 7));
+    
+    const OpenAI = require('openai');
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    
+    // Test with a simple completion
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: "Say hello" }],
+      max_tokens: 10
+    });
+    
+    console.log('OpenAI test successful:', completion.choices[0].message.content);
+    
+    res.json({ 
+      success: true, 
+      message: 'OpenAI connection working',
+      response: completion.choices[0].message.content
+    });
+  } catch (error) {
+    console.error('OpenAI connection error:', error);
+    res.json({ 
+      success: false, 
+      error: error.message,
+      details: error
     });
   }
 });
