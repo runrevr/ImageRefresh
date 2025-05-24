@@ -159,6 +159,8 @@ export default function GenerateEnhancementsPage() {
         console.log(`[${job.enhancementTitle}] Edit prompt received:`, promptResult.edit_prompt);
         
         // Step 2: Generate image with GPT-image-01
+        console.log('=== STARTING IMAGE GENERATION ===');
+        console.log('About to call image generation API...');
         setCurrentJobMessage(`[${job.enhancementTitle}] Step 2: Creating enhanced image...`);
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -168,6 +170,7 @@ export default function GenerateEnhancementsPage() {
         };
         setJobs([...currentJobs]);
         
+        console.log('Making fetch request to /api/generate-enhancement...');
         const imageResponse = await fetch('/api/generate-enhancement', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
