@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
+import Anthropic from '@anthropic-ai/sdk';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { runCleanupTasks } from "./cleanup";
@@ -212,7 +213,6 @@ app.use((req, res, next) => {
         throw new Error('Anthropic API key not configured');
       }
 
-      const { default: Anthropic } = await import('@anthropic-ai/sdk');
       const anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
       });
@@ -239,7 +239,7 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
         }]
       });
 
-      const editPrompt = message.content[0].text.trim();
+      const editPrompt = (message.content[0] as any).text.trim();
       
       console.log(`[DIRECT API] Generated edit prompt successfully`);
       
