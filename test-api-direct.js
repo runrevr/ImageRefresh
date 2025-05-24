@@ -6,8 +6,8 @@ const testAPI = async () => {
   try {
     console.log('Testing API connection...');
     
-    // Test edit prompt generation
-    const promptResponse = await fetch('/api/generate-edit-prompt', {
+    // Test edit prompt generation with full URL
+    const promptResponse = await fetch('http://localhost:3000/api/generate-edit-prompt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
