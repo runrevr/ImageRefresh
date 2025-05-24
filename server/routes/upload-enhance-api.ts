@@ -481,7 +481,7 @@ router.post('/generate-enhancement', async (req, res) => {
     
     res.json({
       success: true,
-      enhanced_image_url: enhancementResponse.data.data[0].url,
+      enhanced_image_url: enhancementResponse.data[0].url,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
