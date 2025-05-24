@@ -151,7 +151,21 @@ export default function GenerateEnhancementsPage() {
           throw new Error(`Prompt generation failed: ${promptResponse.statusText} - ${errorText}`);
         }
         
-        const promptResult = await promptResponse.json();
+        // Try to parse JSON with error handling
+        let promptResult;
+        try {
+          const responseText = await promptResponse.text();
+          console.log('Raw response text:', responseText);
+          console.log('Response text length:', responseText.length);
+          console.log('Response text preview:', responseText.substring(0, 200));
+          
+          promptResult = JSON.parse(responseText);
+          console.log('JSON parsing successful');
+        } catch (parseError) {
+          console.error('JSON parsing failed:', parseError);
+          console.error('Response that failed to parse:', await promptResponse.text());
+          throw new Error(`Failed to parse response as JSON: ${parseError}`);
+        }
         console.log('=== FRONTEND PROMPT RESPONSE ===');
         console.log('Response status:', promptResponse.status);
         console.log('Response headers:', promptResponse.headers);
