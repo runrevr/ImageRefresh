@@ -201,6 +201,14 @@ app.use((req, res, next) => {
   // Register Anthropic API test routes
   app.use('/api', setupAnthropicTestRoutes());
   
+  // Add debugging middleware for API routes
+  app.use('/api', (req, res, next) => {
+    console.log(`[API DEBUG] ${req.method} ${req.path} - Request received`);
+    console.log(`[API DEBUG] Full URL: ${req.originalUrl}`);
+    console.log(`[API DEBUG] Headers:`, req.headers);
+    next();
+  });
+
   // Register Upload Enhance API routes
   app.use('/api', uploadEnhanceApiRoutes);
 
