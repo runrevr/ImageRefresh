@@ -153,9 +153,14 @@ export default function GenerateEnhancementsPage() {
         
         const promptResult = await promptResponse.json();
         console.log('=== FRONTEND PROMPT RESPONSE ===');
-        console.log('Full response:', promptResult);
+        console.log('Response status:', promptResponse.status);
+        console.log('Response headers:', promptResponse.headers);
+        console.log('Full response:', JSON.stringify(promptResult, null, 2));
+        console.log('Response type:', typeof promptResult);
+        console.log('Has edit_prompt:', 'edit_prompt' in promptResult);
         console.log('Edit prompt:', promptResult.edit_prompt);
         console.log('Prompt length:', promptResult.edit_prompt?.length);
+        console.log('Prompt type:', typeof promptResult.edit_prompt);
         console.log(`[${job.enhancementTitle}] Edit prompt received:`, promptResult.edit_prompt);
         
         // Validate that we got a proper edit prompt
