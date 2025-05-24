@@ -143,8 +143,12 @@ export default function GenerateEnhancementsPage() {
           })
         });
         
+        console.log('Fetch response received:', promptResponse.status, promptResponse.statusText);
+        
         if (!promptResponse.ok) {
-          throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
+          const errorText = await promptResponse.text();
+          console.error('Prompt API error response:', errorText);
+          throw new Error(`Prompt generation failed: ${promptResponse.statusText} - ${errorText}`);
         }
         
         const promptResult = await promptResponse.json();
