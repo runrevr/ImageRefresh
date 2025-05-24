@@ -133,7 +133,7 @@ export default function GenerateEnhancementsPage() {
         setJobs([...currentJobs]);
         
         console.log('Making fetch request to /api/generate-edit-prompt...');
-        const promptResponse = await fetch('/api/generate-edit-prompt', {
+        const promptResponse = await fetch('http://localhost:5000/api/generate-edit-prompt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -199,7 +199,7 @@ export default function GenerateEnhancementsPage() {
         setJobs([...currentJobs]);
         
         console.log('Making fetch request to /api/generate-enhancement...');
-        const imageResponse = await fetch('/api/generate-enhancement', {
+        const imageResponse = await fetch('http://localhost:5000/api/generate-enhancement', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
