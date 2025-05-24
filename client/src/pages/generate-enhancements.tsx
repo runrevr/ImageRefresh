@@ -158,9 +158,18 @@ export default function GenerateEnhancementsPage() {
         console.log('Prompt length:', promptResult.edit_prompt?.length);
         console.log(`[${job.enhancementTitle}] Edit prompt received:`, promptResult.edit_prompt);
         
+        // Validate that we got a proper edit prompt
+        if (!promptResult.edit_prompt || promptResult.edit_prompt.trim().length === 0) {
+          throw new Error(`No edit prompt received from Claude API. Response: ${JSON.stringify(promptResult)}`);
+        }
+        
         // Step 2: Generate image with GPT-image-01
         console.log('=== STARTING IMAGE GENERATION ===');
         console.log('About to call image generation API...');
+        console.log('Original image URL:', job.originalImageUrl);
+        console.log('Enhancement prompt:', promptResult.edit_prompt);
+        console.log('Enhancement title:', job.enhancementTitle);
+        
         setCurrentJobMessage(`[${job.enhancementTitle}] Step 2: Creating enhanced image...`);
         currentJobs[i] = { 
           ...currentJobs[i], 
