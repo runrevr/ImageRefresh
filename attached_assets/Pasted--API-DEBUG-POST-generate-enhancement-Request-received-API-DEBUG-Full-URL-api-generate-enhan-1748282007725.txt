@@ -1,0 +1,44 @@
+[API DEBUG] POST /generate-enhancement - Request received
+[API DEBUG] Full URL: /api/generate-enhancement
+[API DEBUG] Headers: {
+  host: '699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+  'content-length': '741',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-US,en;q=0.9',
+  'content-type': 'application/json',
+  origin: 'https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev',
+  referer: 'https://699d68a2-cebf-4d3b-b956-5b2bfacfddb2-00-3a2oumzbq6qnb.kirk.replit.dev/generate-enhancements',
+  'sec-ch-ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'sec-fetch-dest': 'empty',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'same-origin',
+  'sec-fetch-storage-access': 'active',
+  'x-forwarded-for': '98.146.171.213, 10.82.9.57',
+  'x-forwarded-proto': 'https',
+  'x-replit-user-bio': '',
+  'x-replit-user-id': '',
+  'x-replit-user-name': '',
+  'x-replit-user-profile-image': '',
+  'x-replit-user-roles': '',
+  'x-replit-user-teams': '',
+  'x-replit-user-url': ''
+}
+=== GPT-Image-01 Enhancement Generation ===
+Received image URL: /uploads/images-1748281651470-249427521.jpg
+URL starts with: /uploads/images-1748281651470-249427521.jpg
+Generate image request: { hasImage: true, promptLength: 604, title: 'Mirror Lake Reflection' }
+Generating image for: Mirror Lake Reflection
+Reading local file: /home/runner/workspace/uploads/images-1748281651470-249427521.jpg
+Calling OpenAI edit API with prompt: Place the product on a highly polished glass or mirror surface that creates a perfect reflection ben...
+Detailed image generation error: {
+  message: "400 Invalid file 'image': unsupported mimetype ('application/octet-stream'). Supported file formats are 'image/png'.",
+  response: undefined,
+  status: undefined,
+  headers: undefined
+}
+5:48:30 PM [express] POST /api/generate-enhancement 500 in 471ms :: {"success":false,"error":"400 In…
+2025-05-26T17:48:30.023Z - POST /api/generate-enhancement - 500 (471ms)
