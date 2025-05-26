@@ -7,6 +7,7 @@ import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-serv
 import OpenAI from 'openai';
 import sharp from 'sharp';
 import FormData from 'form-data';
+import axios from 'axios';
 
 const router = Router();
 
@@ -485,7 +486,6 @@ router.post('/generate-enhancement', async (req, res) => {
     formData.append('size', '1024x1024');
     
     // Use axios instead of fetch for proper FormData handling
-    const axios = require('axios');
     const response = await axios.post(
       'https://api.openai.com/v1/images/edits',
       formData,
