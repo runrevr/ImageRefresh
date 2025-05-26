@@ -470,9 +470,12 @@ router.post('/generate-enhancement', async (req, res) => {
     console.log('Calling OpenAI images.edit with model gpt-image-01');
     console.log('Prompt:', enhancement_prompt);
 
+    // Create a File object from the buffer for OpenAI SDK
+    const imageFile = new File([processedImage], 'image.png', { type: 'image/png' });
+
     const response = await openai.images.edit({
       model: "gpt-image-01",
-      image: processedImage,
+      image: imageFile,
       prompt: enhancement_prompt,
       n: 1,
       size: "1024x1024",
