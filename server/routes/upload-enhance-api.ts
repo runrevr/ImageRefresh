@@ -463,37 +463,69 @@ router.post('/generate-enhancement', async (req, res) => {
       .toBuffer();
 
 
-    // Use OpenAI SDK for GPT-Image-1 image editing
+    // Use OpenAI SDK for image generation with GPT-image-1
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log('Calling OpenAI images.edit with gpt-image-1');
+    console.log('Calling OpenAI chat completions with gpt-image-1');
     console.log('Prompt:', enhancement_prompt);
 
-    // Create a File object from the buffer for GPT-Image-1 editing
-    const imageFile = new File([processedImage], 'image.png', { type: 'image/png' });
+    // Convert processed image to base64 for GPT-image-1
+    const base64Image = processedImage.toString('base64');
 
-    const ai_response = await openai.images.edit({
+    const ai_response = await openai.chat.completions.create({
       model: "gpt-image-1",
-      image: imageFile,
-      prompt: enhancement_prompt,
-      n: 1,
-      size: "1024x1024",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: enhancement_prompt
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/png;base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 1024,
     });
 
     console.log('OpenAI SDK response received successfully');
     console.log('Response structure:', JSON.stringify(ai_response, null, 2));
 
-    if (!ai_response.data || !ai_response.data[0] || !ai_response.data[0].url) {
+    if (!ai_response.choices || !ai_response.choices[0] || !ai_response.choices[0].message) {
       throw new Error('Invalid response structure from OpenAI API');
     }
 
-    console.log('Image edited successfully with GPT-Image-1');
+    // GPT-image-1 returns the generated image in the message content
+    const messageContent = ai_response.choices[0].message.content;
+    let imageUrl = null;
+
+    // Extract image URL from the response (format may vary)
+    if (typeof messageContent === 'string' && messageContent.includes('http')) {
+      // If the response contains a direct URL
+      const urlMatch = messageContent.match(/https?:\/\/[^\s]+/);
+      imageUrl = urlMatch ? urlMatch[0] : null;
+    } else if (ai_response.choices[0].message.content) {
+      // Handle other response formats from GPT-image-1
+      imageUrl = ai_response.choices[0].message.content;
+    }
+
+    if (!imageUrl) {
+      throw new Error('No image URL found in GPT-image-1 response');
+    }
+
+    console.log('Image generated successfully with GPT-image-1');
 
     res.json({
       success: true,
-      enhanced_image_url: ai_response.data[0].url,
+      enhanced_image_url: imageUrl,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
