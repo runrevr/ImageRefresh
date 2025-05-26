@@ -319,7 +319,7 @@ router.post('/generate-edit-prompts', async (req, res) => {
     }
 
     // Import Anthropic SDK
-    const Anthropic = require('@anthropic-ai/sdk');
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
@@ -542,7 +542,6 @@ router.get('/test-openai', async (req, res) => {
     console.log('OpenAI API Key exists:', !!process.env.OPENAI_API_KEY);
     console.log('Key starts with:', process.env.OPENAI_API_KEY?.substring(0, 7));
     
-    const OpenAI = require('openai');
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
