@@ -473,34 +473,17 @@ router.post('/generate-enhancement', async (req, res) => {
     await fsPromises.mkdir(path.dirname(tempPath), { recursive: true });
     await fsPromises.writeFile(tempPath, processedImage);
     
-    // Call OpenAI edit endpoint using FormData for proper MIME type
-    console.log('Calling OpenAI edit API with prompt:', enhancement_prompt.substring(0, 100) + '...');
+    // Use OpenAI SDK for image editing (following working pattern from openai-image-transformer.ts)
+    console.log('Calling OpenAI images.edit with prompt:', enhancement_prompt.substring(0, 100) + '...');
     
-    const formData = new FormData();
-    formData.append('image', fs.createReadStream(tempPath), {
-      filename: 'image.png',
-      contentType: 'image/png'
+    const enhancementResponse = await openai.images.edit({
+      image: fs.createReadStream(tempPath),
+      prompt: enhancement_prompt,
+      n: 1,
+      size: "1024x1024"
     });
-    formData.append('prompt', enhancement_prompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
     
-    // Use axios instead of fetch for proper FormData handling
-    const response = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      formData,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          ...formData.getHeaders()
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      }
-    );
-    
-    console.log('OpenAI API response received successfully');
-    const enhancementResponse = response.data;
+    console.log('OpenAI SDK response received successfully');
     
     // Clean up temp file
     await fsPromises.unlink(tempPath);
@@ -513,7 +496,7 @@ router.post('/generate-enhancement', async (req, res) => {
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "GPT-image-01",
+        model_used: "gpt-4",
         prompt_used: enhancement_prompt
       }
     });
