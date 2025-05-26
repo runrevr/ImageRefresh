@@ -471,9 +471,10 @@ router.post('/generate-enhancement', async (req, res) => {
     console.log('Calling OpenAI images.generations with gpt-image-1');
     console.log('Prompt:', enhancement_prompt);
 
-    // Use the images.generations endpoint for GPT-image-1
-    const ai_response = await openai.images.generate({
+    // Use the images.edit endpoint for GPT-image-1 (same as working transformation flow)
+    const ai_response = await openai.images.edit({
       model: "gpt-image-1",
+      image: processedImage,
       prompt: enhancement_prompt,
       n: 1,
       size: "1024x1024",
