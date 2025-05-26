@@ -440,9 +440,13 @@ router.post('/generate-enhancement', async (req, res) => {
     console.log('Reading local file:', imagePath);
     
     // Use EXACT same method as working openai-image-transformer.ts
-    // Read the image file as buffer directly - EXACT same as working transformation
-    const imageBuffer = fs.readFileSync(imagePath);
-    console.log(`[OpenAI] Image read as buffer (${imageBuffer.length} bytes)`);
+    // Read the image file and convert to base64 first, then to buffer
+    const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+    console.log(`[OpenAI] Image read and encoded as base64 (${base64Image.length} chars)`);
+    
+    // Convert base64 to buffer for proper file upload - EXACT same as working transformation
+    const imageBuffer = Buffer.from(base64Image, 'base64');
+    console.log(`[OpenAI] Buffer created from base64 (${imageBuffer.length} bytes)`);
 
     // Use OpenAI SDK exactly like working transformation
     const openai = new OpenAI({
