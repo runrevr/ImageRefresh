@@ -45,13 +45,40 @@ export default function SelectIdeasPage() {
         console.log('Available properties:', Object.keys(sessionData));
         console.log('Server URLs:', sessionData.urls);
         
+        // Detailed debugging
+        console.log('Full sessionData:', JSON.stringify(sessionData, null, 2));
+        console.log('originalImages:', sessionData.originalImages);
+        console.log('Do we have urls array?', sessionData.urls);
+        console.log('Do we have uploadUrls?', sessionData.uploadUrls);
+        console.log('Do we have originalImages.urls?', sessionData.originalImages?.urls);
+        console.log('Do we have fileUrls?', sessionData.fileUrls);
+        console.log('Do we have serverUrls?', sessionData.serverUrls);
+        
         // Convert stored data to ProductImage format with authentic Claude-generated ideas
-        const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
-          id: `product-${index + 1}`,
-          fileName: img.name,
-          url: sessionData.urls?.[index] || img.url,  // Use server URL from upload API
-          ideas: realIdeas.ideas || realIdeas
-        }));
+        const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => {
+          // Try multiple possible locations for server URLs
+          const serverUrl = sessionData.originalImages?.urls?.[index] || 
+                           sessionData.urls?.[index] || 
+                           sessionData.uploadUrls?.[index] || 
+                           sessionData.serverUrls?.[index] || 
+                           img.url;
+          
+          console.log(`Product ${index + 1} URL resolution:`, {
+            originalImageUrls: sessionData.originalImages?.urls?.[index],
+            sessionUrls: sessionData.urls?.[index],
+            uploadUrls: sessionData.uploadUrls?.[index],
+            serverUrls: sessionData.serverUrls?.[index],
+            imgUrl: img.url,
+            finalUrl: serverUrl
+          });
+          
+          return {
+            id: `product-${index + 1}`,
+            fileName: img.name,
+            url: serverUrl,
+            ideas: realIdeas.ideas || realIdeas
+          };
+        });
         
         console.log(`Creating enhancement sections for ${productData.length} uploaded images`);
         setProductImages(productData);
@@ -139,7 +166,11 @@ export default function SelectIdeasPage() {
         // Get the server URL from session data instead of using potentially blob URL
         const storedData = JSON.parse(sessionStorage.getItem('uploadEnhanceResults') || '{}');
         const productIndex = parseInt(product.id.replace('product-', '')) - 1;
-        const serverUrl = storedData.urls?.[productIndex] || product.url;
+        const serverUrl = storedData.originalImages?.urls?.[productIndex] || 
+                         storedData.urls?.[productIndex] || 
+                         storedData.uploadUrls?.[productIndex] || 
+                         storedData.serverUrls?.[productIndex] || 
+                         product.url;
         
         console.log(`Product ${product.id}: Using ${serverUrl.startsWith('blob:') ? 'BLOB' : 'SERVER'} URL`);
         
