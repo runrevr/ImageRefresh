@@ -433,25 +433,25 @@ router.post('/generate-enhancement', async (req, res) => {
       throw new Error('OPENAI_API_KEY environment variable not set.');
     }
 
-    // Fetch and prepare the original image (following working transformation pattern)
+    // Fetch and prepare the original image (exactly like working transformation)
     let imageBuffer;
     if (original_image_url.startsWith('data:')) {
       // Handle base64
       const base64Data = original_image_url.split(',')[1];
       imageBuffer = Buffer.from(base64Data, 'base64');
     } else if (original_image_url.startsWith('/uploads/')) {
-      // Handle local upload path - use same method as working transformation
+      // Handle local upload path - EXACT same method as working transformation
       const filename = original_image_url.replace('/uploads/', '');
       const imagePath = path.join(process.cwd(), 'uploads', filename);
 
       console.log('Reading local file:', imagePath);
-      // Read file and convert to base64 then back to buffer (same as working flow)
+      // Read file with exact same method as working openai-image-transformer.ts
       const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
       imageBuffer = Buffer.from(base64Image, 'base64');
     } else {
       // Handle full URLs
       const response = await fetch(original_image_url);
-      imageBuffer = await response.buffer();
+      imageBuffer = Buffer.from(await response.arrayBuffer());
     }
 
     // Use the raw imageBuffer directly (no Sharp processing like working transformation)
@@ -465,9 +465,9 @@ router.post('/generate-enhancement', async (req, res) => {
     console.log('Calling OpenAI images.generations with gpt-image-1');
     console.log('Prompt:', enhancement_prompt);
 
-    // Use the images.edit endpoint for GPT-image-1 (same as working transformation flow)
+    // Use the images.edit endpoint with exact same model name as working transformation
     const ai_response = await openai.images.edit({
-      model: "gpt-image-1",
+      model: "gpt-image-01",
       image: imageBuffer,
       prompt: enhancement_prompt,
       n: 1,
