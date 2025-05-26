@@ -3,6 +3,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
+import OpenAI from 'openai';
+import sharp from 'sharp';
 
 const router = Router();
 
@@ -223,14 +225,14 @@ router.post('/api/generate-edit-prompt', async (req, res) => {
       throw new Error('Anthropic API key not configured');
     }
 
-    const Anthropic = require('@anthropic-ai/sdk');
+
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
     
     // Simpler prompt that just asks for the text
     const message = await anthropic.messages.create({
-      model: "claude-3-7-sonnet-20250219",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 1000,
       temperature: is_chaos_concept ? 1.0 : 0.8,
       messages: [{
@@ -426,7 +428,7 @@ router.post('/generate-enhancement', async (req, res) => {
     }
 
     // Import OpenAI SDK
-    const OpenAI = require('openai');
+
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -442,9 +444,7 @@ router.post('/generate-enhancement', async (req, res) => {
       const response = await fetch(original_image_url);
       imageBuffer = await response.buffer();
     }
-    
-    // Import sharp for image processing
-    const sharp = require('sharp');
+
     
     // Ensure image is square and proper size for GPT-image-01
     const processedImage = await sharp(imageBuffer)
@@ -455,9 +455,6 @@ router.post('/generate-enhancement', async (req, res) => {
       .png()
       .toBuffer();
     
-    // Import required modules
-    const fs = require('fs').promises;
-    const path = require('path');
     
     // Save image temporarily (OpenAI SDK needs a file path)
     const tempPath = path.join(process.cwd(), 'temp', `edit-${Date.now()}.png`);

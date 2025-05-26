@@ -218,7 +218,7 @@ app.use((req, res, next) => {
       });
       
       const message = await anthropic.messages.create({
-        model: "claude-3-7-sonnet-20250219",
+        model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
         temperature: is_chaos_concept ? 1.0 : 0.8,
         messages: [{
