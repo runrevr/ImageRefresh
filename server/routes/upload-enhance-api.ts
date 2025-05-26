@@ -476,8 +476,14 @@ router.post('/generate-enhancement', async (req, res) => {
     // Use OpenAI SDK for image editing (following working pattern from openai-image-transformer.ts)
     console.log('Calling OpenAI images.edit with prompt:', enhancement_prompt.substring(0, 100) + '...');
     
+    // Create a proper file object with explicit MIME type
+    const imageFile = Object.assign(fs.createReadStream(tempPath), {
+      type: 'image/png',
+      name: 'image.png'
+    });
+    
     const enhancementResponse = await openai.images.edit({
-      image: fs.createReadStream(tempPath),
+      image: imageFile,
       prompt: enhancement_prompt,
       n: 1,
       size: "1024x1024"
