@@ -55,6 +55,8 @@ export default function GenerateEnhancementsPage() {
   useEffect(() => {
     const selectedEnhancements = JSON.parse(sessionStorage.getItem('selected_enhancements') || '[]');
     console.log('Generation page received:', selectedEnhancements);
+    console.log('Enhancement data:', selectedEnhancements);
+    console.log('First image URL:', selectedEnhancements[0]?.image_url);
     
     // Create jobs from authentic selected enhancements
     const enhancementJobs: EnhancementJob[] = [];

@@ -413,6 +413,8 @@ For each selected concept, create one prompt that:
 router.post('/generate-enhancement', async (req, res) => {
   try {
     console.log('=== GPT-Image-01 Enhancement Generation ===');
+    console.log('Received image URL:', req.body.original_image_url);
+    console.log('URL starts with:', req.body.original_image_url.substring(0, 50));
     console.log('Generate image request:', {
       hasImage: !!req.body.original_image_url,
       promptLength: req.body.enhancement_prompt?.length,

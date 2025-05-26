@@ -136,8 +136,15 @@ export default function SelectIdeasPage() {
           productSelections.includes(idea.id)
         );
         
+        // Get the server URL from session data instead of using potentially blob URL
+        const storedData = JSON.parse(sessionStorage.getItem('uploadEnhanceResults') || '{}');
+        const productIndex = parseInt(product.id.replace('product-', '')) - 1;
+        const serverUrl = storedData.urls?.[productIndex] || product.url;
+        
+        console.log(`Product ${product.id}: Using ${serverUrl.startsWith('blob:') ? 'BLOB' : 'SERVER'} URL`);
+        
         selectedEnhancements.push({
-          image_url: product.url,
+          image_url: serverUrl,  // Use server URL instead of blob URL
           image_id: product.id,
           fileName: product.fileName,
           selected_ideas: selectedIdeasForProduct // Only the checked ones!
