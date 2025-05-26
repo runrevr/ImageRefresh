@@ -481,19 +481,22 @@ router.post('/generate-enhancement', async (req, res) => {
       size: "1024x1024",
     });
 
-    const enhancementResponse = response.data;
-
     console.log('OpenAI SDK response received successfully');
+    console.log('Response structure:', JSON.stringify(response, null, 2));
+
+    if (!response.data || !response.data[0] || !response.data[0].url) {
+      throw new Error('Invalid response structure from OpenAI API');
+    }
 
     console.log('Image generated successfully with GPT-image-01');
 
     res.json({
       success: true,
-      enhanced_image_url: enhancementResponse.data[0].url,
+      enhanced_image_url: response.data[0].url,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "gpt-image-01",
+        model_used: "gpt-image-1",
         prompt_used: enhancement_prompt
       }
     });
