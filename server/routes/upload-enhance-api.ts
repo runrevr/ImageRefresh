@@ -473,21 +473,32 @@ router.post('/generate-enhancement', async (req, res) => {
     await fsPromises.mkdir(path.dirname(tempPath), { recursive: true });
     await fsPromises.writeFile(tempPath, processedImage);
     
-    // Use OpenAI SDK for image editing (following working pattern from openai-image-transformer.ts)
+    // Use direct FormData approach that works in your other implementations
     console.log('Calling OpenAI images.edit with prompt:', enhancement_prompt.substring(0, 100) + '...');
     
-    // Create a proper file object with explicit MIME type
-    const imageFile = Object.assign(fs.createReadStream(tempPath), {
-      type: 'image/png',
-      name: 'image.png'
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(tempPath), {
+      filename: 'image.png',
+      contentType: 'image/png'
     });
+    formData.append('prompt', enhancement_prompt);
+    formData.append('n', '1');
+    formData.append('size', '1024x1024');
     
-    const enhancementResponse = await openai.images.edit({
-      image: imageFile,
-      prompt: enhancement_prompt,
-      n: 1,
-      size: "1024x1024"
-    });
+    const response = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          ...formData.getHeaders()
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
+    
+    const enhancementResponse = response.data;
     
     console.log('OpenAI SDK response received successfully');
     
