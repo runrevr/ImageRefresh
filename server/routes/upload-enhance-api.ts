@@ -484,22 +484,23 @@ router.post('/generate-enhancement', async (req, res) => {
     formData.append('n', '1');
     formData.append('size', '1024x1024');
     
-    const response = await fetch('https://api.openai.com/v1/images/edits', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        ...formData.getHeaders()
-      },
-      body: formData
-    });
+    // Use axios instead of fetch for proper FormData handling
+    const axios = require('axios');
+    const response = await axios.post(
+      'https://api.openai.com/v1/images/edits',
+      formData,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          ...formData.getHeaders()
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
     
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('OpenAI API error:', response.status, errorData);
-      throw new Error(`OpenAI API error: ${response.status} ${errorData}`);
-    }
-    
-    const enhancementResponse = await response.json();
+    console.log('OpenAI API response received successfully');
+    const enhancementResponse = response.data;
     
     // Clean up temp file
     await fsPromises.unlink(tempPath);
