@@ -6,6 +6,7 @@ import { promises as fsPromises } from 'fs';
 import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
 import OpenAI from 'openai';
 import sharp from 'sharp';
+import FormData from 'form-data';
 
 const router = Router();
 
@@ -471,15 +472,34 @@ router.post('/generate-enhancement', async (req, res) => {
     await fsPromises.mkdir(path.dirname(tempPath), { recursive: true });
     await fsPromises.writeFile(tempPath, processedImage);
     
-    // Call OpenAI edit endpoint using SDK
+    // Call OpenAI edit endpoint using FormData for proper MIME type
     console.log('Calling OpenAI edit API with prompt:', enhancement_prompt.substring(0, 100) + '...');
     
-    const enhancementResponse = await openai.images.edit({
-      image: fs.createReadStream(tempPath),
-      prompt: enhancement_prompt,
-      n: 1,
-      size: "1024x1024"
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(tempPath), {
+      filename: 'image.png',
+      contentType: 'image/png'
     });
+    formData.append('prompt', enhancement_prompt);
+    formData.append('n', '1');
+    formData.append('size', '1024x1024');
+    
+    const response = await fetch('https://api.openai.com/v1/images/edits', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        ...formData.getHeaders()
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('OpenAI API error:', response.status, errorData);
+      throw new Error(`OpenAI API error: ${response.status} ${errorData}`);
+    }
+    
+    const enhancementResponse = await response.json();
     
     // Clean up temp file
     await fsPromises.unlink(tempPath);
