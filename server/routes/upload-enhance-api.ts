@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
+import * as fs from 'fs';
 import { promises as fsPromises } from 'fs';
 import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
 import OpenAI from 'openai';
@@ -468,8 +468,8 @@ router.post('/generate-enhancement', async (req, res) => {
     
     // Save image temporarily (OpenAI SDK needs a file path)
     const tempPath = path.join(process.cwd(), 'temp', `edit-${Date.now()}.png`);
-    await fs.mkdir(path.dirname(tempPath), { recursive: true });
-    await fs.writeFile(tempPath, processedImage);
+    await fsPromises.mkdir(path.dirname(tempPath), { recursive: true });
+    await fsPromises.writeFile(tempPath, processedImage);
     
     // Call OpenAI edit endpoint using SDK
     console.log('Calling OpenAI edit API with prompt:', enhancement_prompt.substring(0, 100) + '...');
@@ -482,7 +482,7 @@ router.post('/generate-enhancement', async (req, res) => {
     });
     
     // Clean up temp file
-    await fs.unlink(tempPath);
+    await fsPromises.unlink(tempPath);
     
     console.log('Image generated successfully with GPT-image-01');
     
