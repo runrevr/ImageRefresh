@@ -456,7 +456,7 @@ router.post('/generate-enhancement', async (req, res) => {
     console.log('Prompt:', enhancement_prompt);
 
     // Make the API call with the correct GPT-image-01 model - EXACT same as working transformation
-    const ai_response = await openai.images.edit({
+    const response = await openai.images.edit({
       model: "gpt-image-01",
       image: imageBuffer,
       prompt: enhancement_prompt,
@@ -464,24 +464,43 @@ router.post('/generate-enhancement', async (req, res) => {
       size: "1024x1024",
     });
 
-    console.log('OpenAI SDK response received successfully');
-    console.log('Response structure:', JSON.stringify(ai_response, null, 2));
-
-    if (!ai_response.data || !ai_response.data[0] || !ai_response.data[0].url) {
-      throw new Error('Invalid response structure from OpenAI API');
+    console.log('[OpenAI] Response received from API');
+    
+    if (!response.data || response.data.length === 0) {
+      throw new Error('No image data received from OpenAI API');
+    }
+    
+    // Process the first transformed image - EXACT same as working transformation
+    const imageUrl = response.data[0].url;
+    if (!imageUrl) {
+      throw new Error('No image URL in the OpenAI response');
     }
 
-    const imageUrl = ai_response.data[0].url;
+    // Download the image from the URL - EXACT same as working transformation
+    const imageResponse = await fetch(imageUrl);
+    if (!imageResponse.ok) {
+      throw new Error(`Failed to download image: ${imageResponse.status} ${imageResponse.statusText}`);
+    }
+    
+    // Save the image to the destination path - EXACT same as working transformation
+    const downloadedImageBuffer = await imageResponse.arrayBuffer();
+    const enhancedFileName = `enhanced-${Date.now()}.png`;
+    const enhancedPath = path.join(process.cwd(), "uploads", enhancedFileName);
+    fs.writeFileSync(enhancedPath, Buffer.from(downloadedImageBuffer));
+    
+    console.log(`[OpenAI] Enhanced image saved to ${enhancedPath}`);
+    
+    const savedImageUrl = `/uploads/${enhancedFileName}`;
 
-    console.log('Image generated successfully with GPT-image-1');
+    console.log('Image generated successfully with GPT-image-01');
 
     res.json({
       success: true,
-      enhanced_image_url: imageUrl,
+      enhanced_image_url: savedImageUrl,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "gpt-image-1",
+        model_used: "gpt-image-01",
         prompt_used: enhancement_prompt
       }
     });
