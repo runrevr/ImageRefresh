@@ -41,12 +41,15 @@ export default function SelectIdeasPage() {
         const sessionData = JSON.parse(storedData);
         
         console.log('Loading real ideas:', realIdeas);
+        console.log('Session data structure:', sessionData);
+        console.log('Available properties:', Object.keys(sessionData));
+        console.log('Server URLs:', sessionData.urls);
         
         // Convert stored data to ProductImage format with authentic Claude-generated ideas
         const productData: ProductImage[] = sessionData.originalImages.files.map((img: any, index: number) => ({
           id: `product-${index + 1}`,
           fileName: img.name,
-          url: img.url,
+          url: sessionData.urls?.[index] || img.url,  // Use server URL from upload API
           ideas: realIdeas.ideas || realIdeas
         }));
         
