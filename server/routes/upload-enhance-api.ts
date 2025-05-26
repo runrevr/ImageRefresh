@@ -433,34 +433,28 @@ router.post('/generate-enhancement', async (req, res) => {
       throw new Error('OPENAI_API_KEY environment variable not set.');
     }
 
-    // Fetch and prepare the original image
+    // Fetch and prepare the original image (following working transformation pattern)
     let imageBuffer;
     if (original_image_url.startsWith('data:')) {
       // Handle base64
       const base64Data = original_image_url.split(',')[1];
       imageBuffer = Buffer.from(base64Data, 'base64');
     } else if (original_image_url.startsWith('/uploads/')) {
-      // Handle local upload path
+      // Handle local upload path - use same method as working transformation
       const filename = original_image_url.replace('/uploads/', '');
       const imagePath = path.join(process.cwd(), 'uploads', filename);
 
       console.log('Reading local file:', imagePath);
-      imageBuffer = await fsPromises.readFile(imagePath);
+      // Read file and convert to base64 then back to buffer (same as working flow)
+      const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+      imageBuffer = Buffer.from(base64Image, 'base64');
     } else {
       // Handle full URLs
       const response = await fetch(original_image_url);
       imageBuffer = await response.buffer();
     }
 
-
-    // Ensure image is square and proper size for GPT-image-01
-    const processedImage = await sharp(imageBuffer)
-      .resize(1024, 1024, { 
-        fit: 'cover',
-        position: 'center'
-      })
-      .png()
-      .toBuffer();
+    // Use the raw imageBuffer directly (no Sharp processing like working transformation)
 
 
     // Use OpenAI SDK for image generation with GPT-image-1
@@ -474,7 +468,7 @@ router.post('/generate-enhancement', async (req, res) => {
     // Use the images.edit endpoint for GPT-image-1 (same as working transformation flow)
     const ai_response = await openai.images.edit({
       model: "gpt-image-1",
-      image: processedImage,
+      image: imageBuffer,
       prompt: enhancement_prompt,
       n: 1,
       size: "1024x1024",
