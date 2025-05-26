@@ -433,39 +433,29 @@ router.post('/generate-enhancement', async (req, res) => {
       throw new Error('OPENAI_API_KEY environment variable not set.');
     }
 
-    // Fetch and prepare the original image (exactly like working transformation)
-    let imageBuffer;
-    if (original_image_url.startsWith('data:')) {
-      // Handle base64
-      const base64Data = original_image_url.split(',')[1];
-      imageBuffer = Buffer.from(base64Data, 'base64');
-    } else if (original_image_url.startsWith('/uploads/')) {
-      // Handle local upload path - EXACT same method as working transformation
-      const filename = original_image_url.replace('/uploads/', '');
-      const imagePath = path.join(process.cwd(), 'uploads', filename);
+    // Fetch and prepare the original image - EXACT same method as working transformation
+    const filename = original_image_url.replace('/uploads/', '');
+    const imagePath = path.join(process.cwd(), 'uploads', filename);
 
-      console.log('Reading local file:', imagePath);
-      // Read file with exact same method as working openai-image-transformer.ts
-      const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
-      imageBuffer = Buffer.from(base64Image, 'base64');
-    } else {
-      // Handle full URLs
-      const response = await fetch(original_image_url);
-      imageBuffer = Buffer.from(await response.arrayBuffer());
-    }
+    console.log('Reading local file:', imagePath);
+    
+    // Use EXACT same method as working openai-image-transformer.ts
+    // Read the image file and convert to base64
+    const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+    console.log(`[OpenAI] Image read and encoded as base64 (${base64Image.length} chars)`);
+    
+    // Convert base64 to buffer for proper file upload - EXACT same as working transformation
+    const imageBuffer = Buffer.from(base64Image, 'base64');
 
-    // Use the raw imageBuffer directly (no Sharp processing like working transformation)
-
-
-    // Use OpenAI SDK for image generation with GPT-image-1
+    // Use OpenAI SDK exactly like working transformation
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log('Calling OpenAI images.generations with gpt-image-1');
+    console.log('Calling OpenAI images.edit with exact same approach as working transformation');
     console.log('Prompt:', enhancement_prompt);
 
-    // Use the images.edit endpoint with exact same model name as working transformation
+    // Make the API call with the correct GPT-image-01 model - EXACT same as working transformation
     const ai_response = await openai.images.edit({
       model: "gpt-image-01",
       image: imageBuffer,
