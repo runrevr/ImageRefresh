@@ -468,58 +468,25 @@ router.post('/generate-enhancement', async (req, res) => {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log('Calling OpenAI chat completions with gpt-image-1');
+    console.log('Calling OpenAI images.generations with gpt-image-1');
     console.log('Prompt:', enhancement_prompt);
 
-    // Convert processed image to base64 for GPT-image-1
-    const base64Image = processedImage.toString('base64');
-
-    const ai_response = await openai.chat.completions.create({
+    // Use the images.generations endpoint for GPT-image-1
+    const ai_response = await openai.images.generate({
       model: "gpt-image-1",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: enhancement_prompt
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/png;base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 1024,
+      prompt: enhancement_prompt,
+      n: 1,
+      size: "1024x1024",
     });
 
     console.log('OpenAI SDK response received successfully');
     console.log('Response structure:', JSON.stringify(ai_response, null, 2));
 
-    if (!ai_response.choices || !ai_response.choices[0] || !ai_response.choices[0].message) {
+    if (!ai_response.data || !ai_response.data[0] || !ai_response.data[0].url) {
       throw new Error('Invalid response structure from OpenAI API');
     }
 
-    // GPT-image-1 returns the generated image in the message content
-    const messageContent = ai_response.choices[0].message.content;
-    let imageUrl = null;
-
-    // Extract image URL from the response (format may vary)
-    if (typeof messageContent === 'string' && messageContent.includes('http')) {
-      // If the response contains a direct URL
-      const urlMatch = messageContent.match(/https?:\/\/[^\s]+/);
-      imageUrl = urlMatch ? urlMatch[0] : null;
-    } else if (ai_response.choices[0].message.content) {
-      // Handle other response formats from GPT-image-1
-      imageUrl = ai_response.choices[0].message.content;
-    }
-
-    if (!imageUrl) {
-      throw new Error('No image URL found in GPT-image-1 response');
-    }
+    const imageUrl = ai_response.data[0].url;
 
     console.log('Image generated successfully with GPT-image-1');
 
