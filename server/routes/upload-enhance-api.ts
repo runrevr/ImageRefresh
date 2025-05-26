@@ -861,13 +861,14 @@ router.post('/api/generate-edit-prompt', async (req, res) => {
     console.log('=== Single Claude Edit Prompt Generation ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
-    const { idea_title, idea_description, product_info, is_chaos_concept } =req.body;
+    const { idea_title, idea_description, product_info, is_chaos_concept } = req.body;
 
     if (!process.env.ANTHROPIC_API_KEY) {
       throw new Error('Anthropic API key not configured');
     }
 
-
+    // Import Anthropic SDK
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
