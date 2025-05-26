@@ -1,5 +1,5 @@
 
-const fs = require('fs');
+import fs from 'fs';
 
 try {
   const imageStream = fs.createReadStream('/home/runner/workspace/uploads/images-1748299014587-619687295.png');
