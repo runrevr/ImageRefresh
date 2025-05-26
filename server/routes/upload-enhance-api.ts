@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
 import OpenAI from 'openai';
 import sharp from 'sharp';
@@ -441,8 +442,15 @@ router.post('/generate-enhancement', async (req, res) => {
       // Handle base64
       const base64Data = original_image_url.split(',')[1];
       imageBuffer = Buffer.from(base64Data, 'base64');
+    } else if (original_image_url.startsWith('/uploads/')) {
+      // Handle local upload path
+      const filename = original_image_url.replace('/uploads/', '');
+      const imagePath = path.join(process.cwd(), 'uploads', filename);
+      
+      console.log('Reading local file:', imagePath);
+      imageBuffer = await fsPromises.readFile(imagePath);
     } else {
-      // Fetch from URL
+      // Handle full URLs
       const response = await fetch(original_image_url);
       imageBuffer = await response.buffer();
     }
