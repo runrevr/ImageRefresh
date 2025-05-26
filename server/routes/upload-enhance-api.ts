@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import multer from 'multer';
-import path from 'path';
-import * as fs from 'fs';
-import { promises as fsPromises } from 'fs';
-import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
-import OpenAI from 'openai';
 import sharp from 'sharp';
-import FormData from 'form-data';
 import axios from 'axios';
+import path from 'path';
+import { promises as fsPromises } from 'fs';
+import FormData from 'form-data';
+import OpenAI from 'openai';
+import * as fs from 'fs';
+import { analyzeProductImage, generateEnhancementIdeas } from '../ai-vision-service';
 
 const router = Router();
 
@@ -57,13 +57,13 @@ router.post('/upload-images', upload.array('images', 5), (req, res) => {
 
     const files = req.files as Express.Multer.File[] | undefined;
     const fileCount = files?.length || 0;
-    
+
     if (fileCount === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
     console.log('📁 Processing uploaded files...');
-    
+
     // Create real file URLs for AI analysis
     const realUrls = files!.map(file => {
       console.log(`✅ File saved: ${file.filename}`);
@@ -97,7 +97,7 @@ router.post('/upload-images', upload.array('images', 5), (req, res) => {
 // Accept JSON with image_urls and industry_context, return live AI analysis
 router.post('/analyze-products', async (req, res) => {
   console.log('🔍 Analyze request received:', req.body);
-  
+
   try {
     // Check if we have API keys
     if (!process.env.OPENAI_API_KEY) {
@@ -106,7 +106,7 @@ router.post('/analyze-products', async (req, res) => {
     if (!process.env.ANTHROPIC_API_KEY) {
       throw new Error('Anthropic API key not configured');
     }
-    
+
     console.log('✅ API keys verified');
     console.log('=== Live AI Product Analysis ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
@@ -127,13 +127,13 @@ router.post('/analyze-products', async (req, res) => {
         // Convert URL to file path for local analysis
         const filename = url.replace('/uploads/', '');
         const imagePath = path.join(process.cwd(), 'uploads', filename);
-        
+
         console.log(`🔍 Looking for image at: ${imagePath}`);
-        
+
         if (!fs.existsSync(imagePath)) {
           console.warn(`❌ Image not found: ${imagePath}`);
           console.log(`📂 Checking uploads directory...`);
-          
+
           // List what's actually in the uploads folder
           try {
             const uploadDir = path.join(process.cwd(), 'uploads');
@@ -142,14 +142,14 @@ router.post('/analyze-products', async (req, res) => {
           } catch (dirError) {
             console.log(`📁 Uploads directory issue: ${dirError}`);
           }
-          
+
           return null;
         }
-        
+
         console.log(`✅ Image found: ${imagePath}`);
 
         console.log(`[AI Analysis] Analyzing image ${index + 1}: ${imagePath}`);
-        
+
         // Use your live OpenAI GPT-4 Vision API with enhanced error handling
         try {
           const visionAnalysis = await analyzeProductImage(
@@ -157,10 +157,10 @@ router.post('/analyze-products', async (req, res) => {
             Array.isArray(industry_context) ? industry_context.join(', ') : 'general',
             product_type
           );
-          
+
           console.log(`[AI Analysis] Vision analysis complete for image ${index + 1}`);
           console.log(`[AI Analysis] Results: ${JSON.stringify(visionAnalysis, null, 2)}`);
-          
+
           return {
             url: url,
             index: index,
@@ -223,7 +223,7 @@ router.post('/api/generate-edit-prompt', async (req, res) => {
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
     const { idea_title, idea_description, product_info, is_chaos_concept } = req.body;
-    
+
     if (!process.env.ANTHROPIC_API_KEY) {
       throw new Error('Anthropic API key not configured');
     }
@@ -232,7 +232,7 @@ router.post('/api/generate-edit-prompt', async (req, res) => {
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
-    
+
     // Simpler prompt that just asks for the text
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
@@ -241,7 +241,7 @@ router.post('/api/generate-edit-prompt', async (req, res) => {
       messages: [{
         role: "user",
         content: `Create an edit prompt for GPT-image-01 based on this concept:
-        
+
 Title: ${idea_title}
 Description: ${idea_description}
 Type: ${is_chaos_concept ? 'CHAOS CONCEPT - GO WILD!' : 'Professional/Lifestyle'}
@@ -255,7 +255,7 @@ ${is_chaos_concept ?
 Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       }]
     });
-    
+
     // LOG THE RAW RESPONSE
     console.log('Claude raw response:', JSON.stringify(message));
     console.log('Content type:', typeof message.content);
@@ -283,7 +283,7 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
     console.log('Prompt length:', editPrompt.length);
     console.log('First 200 chars:', editPrompt.substring(0, 200));
     console.log(`[Single Edit Prompt] Generated for "${idea_title}"`);
-    
+
     // Return it wrapped in our JSON
     res.json({
       success: true,
@@ -294,7 +294,7 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
         chaos_mode: is_chaos_concept
       }
     });
-    
+
   } catch (error) {
     console.error('Single edit prompt error:', error);
     res.status(500).json({
@@ -313,7 +313,7 @@ router.post('/generate-edit-prompts', async (req, res) => {
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
     const { selectedIdeas, productAnalysis } = req.body;
-    
+
     if (!process.env.ANTHROPIC_API_KEY) {
       throw new Error('Anthropic API key not configured');
     }
@@ -323,12 +323,12 @@ router.post('/generate-edit-prompts', async (req, res) => {
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
-    
+
     // Identify which concepts were selected (especially if #5 is included)
     const hasChaosConcept = selectedIdeas.some((idea, index) => 
       idea.originalIndex === 4 || idea.title.includes('CHAOS') || idea.description.includes('surreal')
     );
-    
+
     const message = await anthropic.messages.create({
       model: "claude-3-7-sonnet-20250219", // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
       max_tokens: 1500,
@@ -378,9 +378,9 @@ For each selected concept, create one prompt that:
 3. For #5: Goes even harder than the original concept suggested`
       }]
     });
-    
+
     const responseText = message.content[0].text;
-    
+
     // Extract JSON from Claude's response
     const jsonMatch = responseText.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
@@ -388,7 +388,7 @@ For each selected concept, create one prompt that:
     }
 
     const editPrompts = JSON.parse(jsonMatch[0]);
-    
+
     console.log(`[Claude Edit Prompts] Generated ${editPrompts.length} optimized prompts`);
     res.json({
       success: true,
@@ -400,7 +400,7 @@ For each selected concept, create one prompt that:
         concepts_processed: selectedIdeas.length
       }
     });
-    
+
   } catch (error) {
     console.error('Edit prompt generation error:', error);
     res.status(500).json({
@@ -425,19 +425,13 @@ router.post('/generate-enhancement', async (req, res) => {
     });
 
     const { original_image_url, enhancement_prompt, enhancement_title } = req.body;
-    
+
     console.log('Generating image for:', enhancement_title);
-    
+
     if (!process.env.OPENAI_API_KEY) {
       throw new Error('OpenAI API key not configured');
     }
 
-    // Import OpenAI SDK
-
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-    
     // Fetch and prepare the original image
     let imageBuffer;
     if (original_image_url.startsWith('data:')) {
@@ -448,7 +442,7 @@ router.post('/generate-enhancement', async (req, res) => {
       // Handle local upload path
       const filename = original_image_url.replace('/uploads/', '');
       const imagePath = path.join(process.cwd(), 'uploads', filename);
-      
+
       console.log('Reading local file:', imagePath);
       imageBuffer = await fsPromises.readFile(imagePath);
     } else {
@@ -457,7 +451,7 @@ router.post('/generate-enhancement', async (req, res) => {
       imageBuffer = await response.buffer();
     }
 
-    
+
     // Ensure image is square and proper size for GPT-image-01
     const processedImage = await sharp(imageBuffer)
       .resize(1024, 1024, { 
@@ -466,80 +460,41 @@ router.post('/generate-enhancement', async (req, res) => {
       })
       .png()
       .toBuffer();
-    
-    
-    // Save image temporarily (OpenAI SDK needs a file path)
-    const tempPath = path.join(process.cwd(), 'temp', `edit-${Date.now()}.png`);
-    await fsPromises.mkdir(path.dirname(tempPath), { recursive: true });
-    await fsPromises.writeFile(tempPath, processedImage);
-    
-    // Create a mask image (required for OpenAI edits endpoint)
-    const maskPath = path.join(process.cwd(), 'temp', `mask-${Date.now()}.png`);
-    
-    // Generate a mask that covers the entire image (white = areas to edit)
-    const maskImage = await sharp({
-      create: {
-        width: 1024,
-        height: 1024,
-        channels: 4,
-        background: { r: 255, g: 255, b: 255, alpha: 1 }
-      }
-    })
-    .png()
-    .toBuffer();
-    
-    await fsPromises.writeFile(maskPath, maskImage);
-    
-    // Use direct FormData approach that works in your other implementations
-    console.log('Calling OpenAI images.edit with prompt:', enhancement_prompt.substring(0, 100) + '...');
-    
-    const formData = new FormData();
-    formData.append('image', fs.createReadStream(tempPath), {
-      filename: 'image.png',
-      contentType: 'image/png'
+
+
+    // Use OpenAI SDK for proper GPT-image-01 handling
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
     });
-    formData.append('mask', fs.createReadStream(maskPath), {
-      filename: 'mask.png',
-      contentType: 'image/png'
+
+    console.log('Calling OpenAI images.edit with model gpt-image-01');
+    console.log('Prompt:', enhancement_prompt);
+
+    const response = await openai.images.edit({
+      model: "gpt-image-01",
+      image: processedImage,
+      prompt: enhancement_prompt,
+      n: 1,
+      size: "1024x1024",
     });
-    formData.append('prompt', enhancement_prompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
-    
-    const response = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      formData,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          ...formData.getHeaders()
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      }
-    );
-    
+
     const enhancementResponse = response.data;
-    
+
     console.log('OpenAI SDK response received successfully');
-    
-    // Clean up temp files
-    await fsPromises.unlink(tempPath);
-    await fsPromises.unlink(maskPath);
-    
+
     console.log('Image generated successfully with GPT-image-01');
-    
+
     res.json({
       success: true,
       enhanced_image_url: enhancementResponse.data[0].url,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "gpt-4",
+        model_used: "gpt-image-01",
         prompt_used: enhancement_prompt
       }
     });
-    
+
   } catch (error) {
     console.error('Detailed image generation error:', {
       message: error.message,
@@ -547,7 +502,7 @@ router.post('/generate-enhancement', async (req, res) => {
       status: error.response?.status,
       headers: error.response?.headers
     });
-    
+
     // Return the actual error from OpenAI
     res.status(500).json({
       success: false,
@@ -563,20 +518,20 @@ router.get('/test-openai', async (req, res) => {
     console.log('=== TESTING OPENAI CONNECTION ===');
     console.log('OpenAI API Key exists:', !!process.env.OPENAI_API_KEY);
     console.log('Key starts with:', process.env.OPENAI_API_KEY?.substring(0, 7));
-    
+
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
-    
+
     // Test with a simple completion
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: "Say hello" }],
       max_tokens: 10
     });
-    
+
     console.log('OpenAI test successful:', completion.choices[0].message.content);
-    
+
     res.json({ 
       success: true, 
       message: 'OpenAI connection working',
@@ -609,7 +564,7 @@ router.post('/generate-ideas', async (req, res) => {
     const ideaPromises = vision_analysis.images.map(async (imageAnalysis: any, index: number) => {
       try {
         console.log(`[Claude Ideas] Generating ideas for image ${index + 1}`);
-        
+
         const enhancementIdeas = await generateEnhancementIdeas(
           {
             productType: imageAnalysis.product_type || 'Product',
