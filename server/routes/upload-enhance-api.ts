@@ -473,12 +473,33 @@ router.post('/generate-enhancement', async (req, res) => {
     await fsPromises.mkdir(path.dirname(tempPath), { recursive: true });
     await fsPromises.writeFile(tempPath, processedImage);
     
+    // Create a mask image (required for OpenAI edits endpoint)
+    const maskPath = path.join(process.cwd(), 'temp', `mask-${Date.now()}.png`);
+    
+    // Generate a mask that covers the entire image (white = areas to edit)
+    const maskImage = await sharp({
+      create: {
+        width: 1024,
+        height: 1024,
+        channels: 4,
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      }
+    })
+    .png()
+    .toBuffer();
+    
+    await fsPromises.writeFile(maskPath, maskImage);
+    
     // Use direct FormData approach that works in your other implementations
     console.log('Calling OpenAI images.edit with prompt:', enhancement_prompt.substring(0, 100) + '...');
     
     const formData = new FormData();
     formData.append('image', fs.createReadStream(tempPath), {
       filename: 'image.png',
+      contentType: 'image/png'
+    });
+    formData.append('mask', fs.createReadStream(maskPath), {
+      filename: 'mask.png',
       contentType: 'image/png'
     });
     formData.append('prompt', enhancement_prompt);
@@ -502,8 +523,9 @@ router.post('/generate-enhancement', async (req, res) => {
     
     console.log('OpenAI SDK response received successfully');
     
-    // Clean up temp file
+    // Clean up temp files
     await fsPromises.unlink(tempPath);
+    await fsPromises.unlink(maskPath);
     
     console.log('Image generated successfully with GPT-image-01');
     
