@@ -1,0 +1,45 @@
+=== GPT-Image-01 Enhancement Generation ===
+Received image URL: /uploads/images-1748284025771-360081640.png
+URL starts with: /uploads/images-1748284025771-360081640.png
+Generate image request: {
+  hasImage: true,
+  promptLength: 730,
+  title: 'Microscopic Universe Portal'
+}
+Generating image for: Microscopic Universe Portal
+Reading local file: /home/runner/workspace/uploads/images-1748284025771-360081640.png
+Calling OpenAI images.edit with prompt: Transform the product into a floating centerpiece within a microscopic universe portal. Surround it ...
+Detailed image generation error: {
+  message: 'Request failed with status code 400',
+  response: {
+    error: {
+      message: null,
+      type: 'image_generation_user_error',
+      param: null,
+      code: null
+    }
+  },
+  status: 400,
+  headers: Object [AxiosHeaders] {
+    date: 'Mon, 26 May 2025 18:28:07 GMT',
+    'content-type': 'application/json',
+    'content-length': '120',
+    connection: 'keep-alive',
+    'openai-version': '2020-10-01',
+    'openai-organization': 'collective-alchemy',
+    'x-request-id': 'req_c302bfe2965053d9f95c9b4d404d1b73',
+    'openai-processing-ms': '368',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    'cf-cache-status': 'DYNAMIC',
+    'set-cookie': [
+      '__cf_bm=StuP7VppdYRHfe2IG9KPekehu14KQDIZ4CRzrmUULq4-1748284087-1.0.1.1-_u1GEW1uL6RDKKedwfka4HBL7uSAFoN19Ot4RN75FdXvHncMfCZCdP_qH93MmZBnsZ2v74UGgxYAHNOjlS6eXJ5WOlcRZxOHC2TvNRIpygY; path=/; expires=Mon, 26-May-25 18:58:07 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None',
+      '_cfuvid=shtB1CGoUZ21mK7ElRd7k6qIODJQE3eT8ZtVicSWc2o-1748284087780-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None'
+    ],
+    'x-content-type-options': 'nosniff',
+    server: 'cloudflare',
+    'cf-ray': '945f549818506826-SEA',
+    'alt-svc': 'h3=":443"; ma=86400'
+  }
+}
+6:28:07 PM [express] POST /api/generate-enhancement 500 in 880ms :: {"success":false,"error":"Reques…
+2025-05-26T18:28:07.791Z - POST /api/generate-enhancement - 500 (881ms)
