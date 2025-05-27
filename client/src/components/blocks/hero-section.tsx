@@ -43,10 +43,10 @@ const transitionVariants = {
 };
 
 export function HeroSection() {
-    const [, navigate] = useLocation();
+    const [, setLocation] = useLocation();
 
     const handleTextToImageClick = () => {
-        navigate("/custom-prompts-beta");
+        setLocation("/custom-prompts-beta");
     };
 
     return (
@@ -252,10 +252,7 @@ export function HeroSection() {
                                         <Button
                                             className="mt-4 w-full bg-black text-white hover:bg-gray-800 transition-colors"
                                             size="lg"
-                                            onClick={() => {
-                                                window.location.href =
-                                                    "/custom-prompts-beta";
-                                            }}
+                                            onClick={handleTextToImageClick}
                                         >
                                             Create Variations
                                         </Button>
