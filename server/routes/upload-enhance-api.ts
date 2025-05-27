@@ -418,7 +418,6 @@ router.post('/generate-enhancement', async (req, res) => {
   try {
     console.log('=== GPT-Image-01 Enhancement Generation ===');
     console.log('Received image URL:', req.body.original_image_url);
-    console.log('URL starts with:', req.body.original_image_url.substring(0, 50));
     console.log('Generate image request:', {
       hasImage: !!req.body.original_image_url,
       promptLength: req.body.enhancement_prompt?.length,
@@ -427,23 +426,24 @@ router.post('/generate-enhancement', async (req, res) => {
 
     const { original_image_url, enhancement_prompt, enhancement_title } = req.body;
 
-    console.log('Generating image for:', enhancement_title);
-
     if (!process.env.OPENAI_API_KEY) {
       throw new Error('OPENAI_API_KEY environment variable not set.');
     }
 
-    // Fetch and prepare the original image - EXACT same method as working transformation
+    // Use the EXACT same approach as working openai-image-transformer.ts
     const filename = original_image_url.replace('/uploads/', '');
     const imagePath = path.join(process.cwd(), 'uploads', filename);
 
     console.log('Reading local file:', imagePath);
-    
-    // Use EXACT same method as working openai-image-transformer.ts
-    // Read the image file and convert to base64 first, then to buffer
+
+    if (!fs.existsSync(imagePath)) {
+      throw new Error(`Image file not found: ${imagePath}`);
+    }
+
+    // Read the image file and convert to base64 - EXACT same as working transformation
     const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
     console.log(`[OpenAI] Image read and encoded as base64 (${base64Image.length} chars)`);
-    
+
     // Convert base64 to buffer for proper file upload - EXACT same as working transformation
     const imageBuffer = Buffer.from(base64Image, 'base64');
     console.log(`[OpenAI] Buffer created from base64 (${imageBuffer.length} bytes)`);
@@ -466,11 +466,11 @@ router.post('/generate-enhancement', async (req, res) => {
     });
 
     console.log('[OpenAI] Response received from API');
-    
+
     if (!response.data || response.data.length === 0) {
       throw new Error('No image data received from OpenAI API');
     }
-    
+
     // Process the first transformed image - EXACT same as working transformation
     const imageUrl = response.data[0].url;
     if (!imageUrl) {
@@ -482,15 +482,15 @@ router.post('/generate-enhancement', async (req, res) => {
     if (!imageResponse.ok) {
       throw new Error(`Failed to download image: ${imageResponse.status} ${imageResponse.statusText}`);
     }
-    
+
     // Save the image to the destination path - EXACT same as working transformation
     const downloadedImageBuffer = await imageResponse.arrayBuffer();
     const enhancedFileName = `enhanced-${Date.now()}.png`;
     const enhancedPath = path.join(process.cwd(), "uploads", enhancedFileName);
     fs.writeFileSync(enhancedPath, Buffer.from(downloadedImageBuffer));
-    
+
     console.log(`[OpenAI] Enhanced image saved to ${enhancedPath}`);
-    
+
     const savedImageUrl = `/uploads/${enhancedFileName}`;
 
     console.log('Image generated successfully with GPT-image-01');
