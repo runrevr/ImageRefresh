@@ -430,74 +430,65 @@ router.post('/generate-enhancement', async (req, res) => {
       throw new Error('OPENAI_API_KEY environment variable not set.');
     }
 
-    // Use the EXACT same approach as working openai-image-transformer.ts
-    const filename = original_image_url.replace('/uploads/', '');
-    const imagePath = path.join(process.cwd(), 'uploads', filename);
+    // Handle URL vs file path exactly like routes.ts
+    let imageSrcPath;
+    const isUrl = original_image_url.startsWith('http');
 
-    console.log('Reading local file:', imagePath);
+    if (isUrl) {
+      console.log(`Original image is a URL, downloading first`);
+      try {
+        const tempFile = path.join(process.cwd(), 'temp', `downloaded-${Date.now()}.png`);
+        const tempDir = path.dirname(tempFile);
+        if (!fs.existsSync(tempDir)) {
+          fs.mkdirSync(tempDir, { recursive: true });
+        }
 
-    if (!fs.existsSync(imagePath)) {
-      throw new Error(`Image file not found: ${imagePath}`);
+        const imgResponse = await axios.get(original_image_url, { responseType: 'arraybuffer' });
+        fs.writeFileSync(tempFile, Buffer.from(imgResponse.data));
+        imageSrcPath = tempFile;
+        console.log(`Downloaded image to ${imageSrcPath}`);
+      } catch (downloadError) {
+        console.error(`Error downloading image from URL: ${downloadError.message}`);
+        return res.status(404).json({ message: "Failed to download image from URL" });
+      }
+    } else {
+      // Handle relative path like routes.ts
+      const filename = original_image_url.replace('/uploads/', '');
+      imageSrcPath = path.join(process.cwd(), 'uploads', filename);
     }
 
-    // Read the image file and convert to base64 - EXACT same as working transformation
-    const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
-    console.log(`[OpenAI] Image read and encoded as base64 (${base64Image.length} chars)`);
+    // Determine full path to image exactly like routes.ts
+    const fullImagePath = path.isAbsolute(imageSrcPath) ? imageSrcPath : path.join(process.cwd(), imageSrcPath);
 
-    // Convert base64 to buffer for proper file upload - EXACT same as working transformation
-    const imageBuffer = Buffer.from(base64Image, 'base64');
-    console.log(`[OpenAI] Buffer created from base64 (${imageBuffer.length} bytes)`);
+    console.log('Reading local file:', fullImagePath);
 
-    // Use OpenAI SDK exactly like working transformation
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    if (!fs.existsSync(fullImagePath)) {
+      throw new Error(`Image file not found: ${fullImagePath}`);
+    }
 
-    console.log('Calling OpenAI images.edit with exact same approach as working transformation');
+    // Import the EXACT same transformImage function used in working routes.ts
+    const { transformImage } = await import('../openai-final.js');
+
+    console.log('Using the same transformImage function as working routes.ts');
     console.log('Prompt:', enhancement_prompt);
 
-    // Make the API call with the correct gpt-image-1 model - EXACT same as working transformation
-    const response = await openai.images.edit({
-      model: "gpt-image-1",
-      image: imageBuffer,
-      prompt: enhancement_prompt,
-      n: 1,
-      size: "1024x1024",
-    });
+    // Use EXACT same transformation approach as routes.ts with size parameter
+    const result = await transformImage(fullImagePath, enhancement_prompt, "1024x1024");
 
-    console.log('[OpenAI] Response received from API');
+    console.log('[OpenAI] Transformation completed successfully');
 
-    if (!response.data || response.data.length === 0) {
-      throw new Error('No image data received from OpenAI API');
-    }
-
-    // Process the first transformed image - EXACT same as working transformation
-    const imageUrl = response.data[0].url;
-    if (!imageUrl) {
-      throw new Error('No image URL in the OpenAI response');
-    }
-
-    // Download the image from the URL - EXACT same as working transformation
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to download image: ${imageResponse.status} ${imageResponse.statusText}`);
-    }
-
-    // Save the image to the destination path - EXACT same as working transformation
-    const downloadedImageBuffer = await imageResponse.arrayBuffer();
-    const enhancedFileName = `enhanced-${Date.now()}.png`;
-    const enhancedPath = path.join(process.cwd(), "uploads", enhancedFileName);
-    fs.writeFileSync(enhancedPath, Buffer.from(downloadedImageBuffer));
-
-    console.log(`[OpenAI] Enhanced image saved to ${enhancedPath}`);
-
-    const savedImageUrl = `/uploads/${enhancedFileName}`;
+    // Create server-relative path for the transformed image like routes.ts
+    const baseUrl = req.protocol + "://" + req.get("host");
+    const transformedImagePath = result.transformedPath
+      .replace(process.cwd(), "")
+      .replace(/^\//, "");
+    const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
 
     console.log('Image generated successfully with gpt-image-1');
 
     res.json({
       success: true,
-      enhanced_image_url: savedImageUrl,
+      enhanced_image_url: transformedImageUrl,
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
@@ -514,7 +505,7 @@ router.post('/generate-enhancement', async (req, res) => {
       headers: error.response?.headers
     });
 
-    // Return the actual error from OpenAI
+    // Return the actual error from OpenAI like routes.ts
     res.status(500).json({
       success: false,
       error: error.response?.data?.error?.message || error.message,
