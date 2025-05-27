@@ -626,10 +626,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             paidCredits: user.paidCredits,
           };
 
-          // If user has no credits, return an error
-          if (userCredits.freeCreditsUsed && user.paidCredits < 1) {
-
-            // Simple credit check - user needs either free credit or paid credits
+          // Simple credit check - user needs either free credit or paid credits
           const totalCredits = (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits;
           console.log(`Credit check for user ${userId}:`, {
             hasMonthlyFreeCredit,
