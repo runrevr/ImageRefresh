@@ -184,46 +184,52 @@ Product info:
 - Business context: ${industryContext.join(', ')}
 - Product type: ${productType || 'General Product'}
 
-Generate 5 product photography concepts. Each should be 2-3 sentences describing a specific, vivid scene.
+Generate 5 visually distinct product photography concepts. Each must have COMPLETELY DIFFERENT lighting, mood, and setting.
 
-**Concepts 1-4: Premium Commercial Photography**
-Create scenes that feel like they belong in high-end magazines or viral social posts:
-- Authentic lifestyle moments showing the product in use
-- Specific environments with rich sensory details
-- Natural human interaction (describe gestures, not just "hands holding")
-- Atmospheric elements (steam, light rays, shadows, movement)
-- Emotional resonance (cozy mornings, productive afternoons, celebratory evenings)
-- Unexpected angles or perspectives while maintaining realism
+MANDATORY VARIETY CHECK: Reject and regenerate if any two concepts share similar times of day, color palettes, or moods.
 
-Think: Apple ads, Kinfolk magazine, viral food photography, luxury brand campaigns - elevated but achievable.
+**Concepts 1-3: Premium Commercial Photography**
+Create three DIFFERENT professional styles:
+- Concept 1: Clean & Modern (think: Apple, minimalist, geometric)
+- Concept 2: Lifestyle Energy (think: Nike ads, movement, dynamic)
+- Concept 3: Luxury Editorial (think: Vogue, dramatic, sophisticated)
 
-**Concept 5: Artistic Fever Dream**
-Start by identifying the product, then unleash absolute creative chaos:
-- Impossible environments or scale
-- Surreal but visually stunning
-- Pop culture/art history mashups
-- Laws of physics optional
-- The product must remain the clear focal point
+Each must include:
+- Specific props and environment details
+- Unique lighting approach (no repeated "warm" or "soft" lighting)
+- Different time/setting (morning vs night, indoor vs outdoor, etc.)
 
-FORMAT: "This [product type] becomes/transforms into/is revealed as [insane scenario]..."
+**Concept 4: Trending Aesthetic Mashup**
+Combine product with a specific visual trend or subculture:
+Examples: Y2K chrome aesthetic, cottagecore, dark academia, vaporwave, brutalist architecture, Wes Anderson symmetry, cyberpunk neon, 70s disco, Memphis design, liminal spaces
 
-EXAMPLE OF HOW WILD: "This artisanal honey jar becomes the power source of a bee civilization - the jar sits at the center of a bee cathedral where thousands of bees form stained glass windows with their wings, golden honey drips upward like reverse waterfalls defying gravity, while the jar glows like an ancient artifact on an altar made of honeycomb that extends into infinity, shot from below like a Baroque ceiling painting."
+**Concept 5: Reality-Breaking Art Piece**
+Format: "This [product type] [impossible scenario]..."
+Go absolutely unhinged - mix impossible scales, time periods, physics
+Think: Dalí meets Instagram, music video surrealism, dream logic
+Must be visually stunning even if physically impossible
 
-Note: Always mention what the product IS so the scene makes contextual sense. Exact product details/branding will be preserved in the image generation phase.
+FORBIDDEN ELEMENTS (auto-reject if used):
+- Golden hour, warm lighting, cozy atmospheres
+- Coffee cups, desks, laptops, morning routines
+- Generic descriptions like "sits on," "clean background," "professional setting"
+- Repetitive moods across concepts
 
-Avoid generic descriptions like "product on table" or "clean background." Every concept should make someone stop scrolling.
+REQUIRED:
+- Each concept: 2-3 vivid sentences
+- Mention the product type in concept 5
+- Specific, actionable details for image generation
+- Make someone stop scrolling
 
-Return EXACTLY 5 concepts as a JSON array:
+Return as JSON array:
 [
   {
-    "id": "unique_id_1",
-    "title": "Catchy Title (max 50 chars)",
-    "description": "The full 2-3 sentence vivid scene description",
-    "edit_prompt": "Specific prompt for GPT-image-01 edit endpoint based on this concept"
+    "id": "unique_id",
+    "title": "Short Catchy Title (max 5 words)",
+    "description": "Full 2-3 sentence scene description with specific visual details",
+    "edit_prompt": "Specific prompt for image generation"
   }
 ]
-
-Make each idea specific, actionable, and appropriate for image editing that maintains the original product.`
       }]
     });
 
