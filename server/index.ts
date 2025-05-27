@@ -298,12 +298,12 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       app.get('/custom-prompts-beta', (req, res) => {
         res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptUpload.html'));
       });
-      
+
       // Serve the JavaScript file
       app.get('/beta-custom-prompts/components/customPromptScript.js', (req, res) => {
         res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptScript.js'));
       });
-      
+
       // Serve the CSS file
       app.get('/beta-custom-prompts/styles/customPromptStyles.css', (req, res) => {
         res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/styles/customPromptStyles.css'));
@@ -313,6 +313,26 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
     } catch (error) {
       console.error('Failed to load custom prompts routes:', error);
     }
+  }
+
+  // Import custom prompts beta routes if enabled
+  if (process.env.ENABLE_CUSTOM_PROMPTS_BETA === 'true') {
+    try {
+      const customPromptsRoutes = require('../beta-custom-prompts/api/routes');
+      app.use('/api/beta', customPromptsRoutes.default || customPromptsRoutes);
+      console.log('Custom Prompts Beta feature enabled');
+
+      // Add basic test endpoint to verify routes are working
+      app.get('/api/beta/test', (req, res) => {
+        res.json({ success: true, message: 'Custom prompts beta API is working' });
+      });
+
+    } catch (error) {
+      console.error('Failed to load custom prompts routes:', error.message);
+      console.error('Error details:', error);
+    }
+  } else {
+    console.log('Custom Prompts Beta feature disabled');
   }
 
   // Function to start server with port fallback

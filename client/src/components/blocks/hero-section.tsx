@@ -46,7 +46,10 @@ export function HeroSection() {
     const [, setLocation] = useLocation();
 
     const handleTextToImageClick = () => {
+        console.log("Create Variations button clicked");
+        console.log("About to navigate to /custom-prompts-beta");
         setLocation("/custom-prompts-beta");
+        console.log("Navigation function called");
     };
 
     return (
