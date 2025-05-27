@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'wouter'
 import Navbar from '@/components/Navbar'
@@ -5,7 +6,25 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Check, Clock, AlertCircle, RefreshCw, ChevronLeft, Sparkles, Zap, Download, ExternalLink, Share2 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { 
+  Check, 
+  Clock, 
+  AlertCircle, 
+  RefreshCw, 
+  ChevronLeft, 
+  Sparkles, 
+  Zap, 
+  Download, 
+  ExternalLink, 
+  Share2,
+  Star,
+  StarOff,
+  Mail,
+  Upload,
+  Archive
+} from 'lucide-react'
 import { EmailCaptureModal } from '@/components/EmailCaptureModal'
 import { UpgradePrompt } from '@/components/UpgradePrompt'
 import { useFreeCredits } from '@/hooks/useFreeCredits'
@@ -26,6 +45,7 @@ interface EnhancementJob {
   isChaosMode?: boolean
   ideaDescription?: string
   fileName?: string
+  isFavorite?: boolean
 }
 
 export default function GenerateEnhancementsPage() {
@@ -47,6 +67,12 @@ export default function GenerateEnhancementsPage() {
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [creditStatus, setCreditStatus] = useState<any>(null)
+  const [showCelebration, setShowCelebration] = useState(false)
+  
+  // Download options
+  const [selectedFormat, setSelectedFormat] = useState<'PNG' | 'JPG'>('PNG')
+  const [selectedResolution, setSelectedResolution] = useState<'original' | 'hd' | '4k'>('original')
+  const [emailAddress, setEmailAddress] = useState('')
 
   // Integrated credit system
   const { checkUserCredits, useCredit, isAuthenticated } = useFreeCredits()
@@ -82,7 +108,8 @@ export default function GenerateEnhancementsPage() {
           estimatedTime: isChaosMode ? 90 : 60, // Chaos concepts take longer
           isChaosMode: isChaosMode,
           ideaDescription: idea.description,
-          fileName: enhancement.fileName
+          fileName: enhancement.fileName,
+          isFavorite: false
         });
       });
     });
@@ -248,209 +275,12 @@ export default function GenerateEnhancementsPage() {
     // All jobs complete
     setIsProcessing(false);
     setCurrentJobMessage('All enhancements complete!');
+    setShowCelebration(true);
     console.log('Authentic AI processing complete!');
 
-    // Auto-redirect for single enhancement after 3 seconds
-    if (currentJobs.length === 1 && currentJobs[0].status === 'complete') {
-      setTimeout(() => {
-        setLocation('/results');
-      }, 3000);
-    }
+    // Hide celebration after 5 seconds
+    setTimeout(() => setShowCelebration(false), 5000);
   };
-
-  const startAuthenticProcessing = async (initialJobs: EnhancementJob[]) => {
-    console.log('Starting authentic AI processing for', initialJobs.length, 'enhancements');
-    let currentJobs = [...initialJobs];
-
-    for (let i = 0; i < currentJobs.length; i++) {
-      const job = currentJobs[i];
-      setCurrentJobIndex(i);
-
-      try {
-        // Step 1: Generate edit prompt with Claude
-        console.log(`[${job.enhancementTitle}] Step 1: Creating prompt with Claude...`);
-        setCurrentJobMessage(`Creating prompt for "${job.enhancementTitle}"...`);
-
-        // Update job status to creating_prompt
-        currentJobs[i] = { ...job, status: 'creating_prompt', progress: 25, startTime: Date.now() };
-        setJobs([...currentJobs]);
-
-        const promptResponse = await fetch('/api/generate-edit-prompt', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            idea_title: job.enhancementTitle,
-            idea_description: job.ideaDescription,
-            product_info: `${job.fileName} product`,
-            is_chaos_concept: job.isChaosMode || false
-          })
-        });
-
-        if (!promptResponse.ok) {
-          throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
-        }
-
-        const promptResult = await promptResponse.json();
-        console.log(`[${job.enhancementTitle}] Claude generated prompt:`, promptResult.edit_prompt);
-
-        // Step 2: Generate image with GPT-image-01
-        console.log(`[${job.enhancementTitle}] Step 2: Generating image with GPT-image-01...`);
-        setCurrentJobMessage(`Generating "${job.enhancementTitle}" with AI...`);
-
-        // Update job status to generating_image
-        currentJobs[i] = { 
-          ...currentJobs[i], 
-          status: 'generating_image', 
-          progress: 60,
-          enhancementPrompt: promptResult.edit_prompt
-        };
-        setJobs([...currentJobs]);
-
-        const imageResponse = await fetch('/api/generate-enhancement', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            original_image_url: job.originalImageUrl,
-            enhancement_prompt: promptResult.edit_prompt,
-            enhancement_title: job.enhancementTitle
-          })
-        });
-
-        if (!imageResponse.ok) {
-          throw new Error(`Image generation failed: ${imageResponse.statusText}`);
-        }
-
-        const imageResult = await imageResponse.json();
-        console.log(`[${job.enhancementTitle}] GPT-image-01 success!`, imageResult.enhanced_image_url);
-
-        // Mark job as complete
-        currentJobs[i] = { 
-          ...currentJobs[i], 
-          status: 'complete', 
-          progress: 100,
-          resultImageUrl: imageResult.enhanced_image_url
-        };
-        setJobs([...currentJobs]);
-        setCompletedCount(prev => prev + 1);
-
-        // Brief pause between jobs
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-      } catch (error) {
-        console.error(`[${job.enhancementTitle}] Error:`, error);
-
-        // Mark job as failed
-        currentJobs[i] = { 
-          ...currentJobs[i], 
-          status: 'failed', 
-          errorMessage: error instanceof Error ? error.message : 'Unknown error'
-        };
-        setJobs([...currentJobs]);
-        setFailedCount(prev => prev + 1);
-      }
-    }
-
-    // All jobs complete
-    setIsProcessing(false);
-    setCurrentJobMessage('All enhancements complete!');
-    console.log('Authentic AI processing complete!');
-  }
-
-  const startProcessing = async (initialJobs: EnhancementJob[]) => {
-    let currentJobs = [...initialJobs]
-
-    for (let i = 0; i < currentJobs.length; i++) {
-      // Start processing current job
-      currentJobs[i] = { ...currentJobs[i], status: 'processing', startTime: Date.now() }
-      setJobs([...currentJobs])
-
-      // Simulate progress updates
-      const success = await simulateJobProgress(currentJobs[i])
-
-      // Update job status
-      if (success) {
-        currentJobs[i] = {
-          ...currentJobs[i],
-          status: 'complete',
-          progress: 100,
-          resultImageUrl: '/api/placeholder/400/400'
-        }
-        setCompletedCount(prev => prev + 1)
-      } else {
-        currentJobs[i] = {
-          ...currentJobs[i],
-          status: 'failed',
-          errorMessage: 'Generation failed due to content complexity. Please try again.'
-        }
-        setFailedCount(prev => prev + 1)
-      }
-
-      setJobs([...currentJobs])
-      setOverallProgress(((i + 1) / currentJobs.length) * 100)
-
-      // Update estimated time remaining and current job info
-      setCurrentJobIndex(i + 1)
-      const remaining = currentJobs.length - (i + 1)
-      const avgTime = 60 // seconds per enhancement
-      setEstimatedTimeRemaining(remaining * avgTime)
-    }
-
-    // All jobs complete
-    setIsProcessing(false)
-
-    // Show email capture modal for guest users, or navigate directly for authenticated users
-    if (!isAuthenticated && creditStatus?.requiresEmail) {
-      setShowEmailModal(true)
-    } else {
-      // Auto-redirect after 2 seconds if all successful
-      if (currentJobs.every(job => job.status === 'complete')) {
-        setTimeout(() => {
-          setLocation('/results')
-        }, 2000)
-      }
-    }
-  }
-
-  const simulateJobProgress = (job: EnhancementJob): Promise<boolean> => {
-    return new Promise((resolve) => {
-      let progress = 0
-      let timer = 0
-      const messages = [
-        'Analyzing your product details...',
-        'Applying AI enhancement settings...',
-        'Generating enhanced imagery...',
-        'Optimizing image quality...',
-        'Finalizing your enhancement...'
-      ]
-
-      const interval = setInterval(() => {
-        timer += 1
-        progress = (timer / 60) * 100 // 60 seconds = 100%
-
-        // Update current job timer
-        setCurrentJobTimer(timer)
-
-        // Change message every 12 seconds
-        const messageIndex = Math.floor(timer / 12)
-        if (messageIndex < messages.length) {
-          setCurrentJobMessage(messages[messageIndex])
-        }
-
-        if (progress >= 100) {
-          clearInterval(interval)
-          setCurrentJobMessage('Enhancement complete!')
-          // 95% success rate for realistic demo
-          resolve(Math.random() > 0.05)
-        } else {
-          setJobs(prevJobs => 
-            prevJobs.map(j => 
-              j.id === job.id ? { ...j, progress: Math.min(progress, 100) } : j
-            )
-          )
-        }
-      }, 1000) // Update every second for realistic timing
-    })
-  }
 
   const retryJob = async (jobId: string) => {
     const jobIndex = jobs.findIndex(j => j.id === jobId)
@@ -459,34 +289,79 @@ export default function GenerateEnhancementsPage() {
     const updatedJobs = [...jobs]
     updatedJobs[jobIndex] = {
       ...updatedJobs[jobIndex],
-      status: 'processing',
+      status: 'creating_prompt',
       progress: 0,
       retryCount: updatedJobs[jobIndex].retryCount + 1,
       errorMessage: undefined
     }
     setJobs(updatedJobs)
 
-    // Simulate retry
-    const success = await simulateJobProgress(updatedJobs[jobIndex])
+    // Re-run the actual processing for this job
+    try {
+      const job = updatedJobs[jobIndex];
+      
+      // Step 1: Generate edit prompt with Claude
+      const promptResponse = await fetch('/api/generate-edit-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea_title: job.enhancementTitle,
+          idea_description: job.ideaDescription,
+          is_chaos_concept: job.isChaosMode
+        })
+      });
 
-    if (success) {
+      if (!promptResponse.ok) {
+        throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
+      }
+
+      const promptResult = await promptResponse.json();
+      
+      // Update to generating image status
+      updatedJobs[jobIndex] = {
+        ...updatedJobs[jobIndex],
+        status: 'generating_image',
+        progress: 60,
+        enhancementPrompt: promptResult.edit_prompt
+      };
+      setJobs([...updatedJobs]);
+
+      // Step 2: Generate image
+      const imageResponse = await fetch('/api/generate-enhancement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          original_image_url: job.originalImageUrl,
+          enhancement_prompt: promptResult.edit_prompt,
+          enhancement_title: job.enhancementTitle
+        })
+      });
+
+      if (!imageResponse.ok) {
+        throw new Error(`Image generation failed: ${imageResponse.statusText}`);
+      }
+
+      const imageResult = await imageResponse.json();
+
+      // Mark as complete
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'complete',
         progress: 100,
-        resultImageUrl: '/api/placeholder/400/400'
-      }
-      setCompletedCount(prev => prev + 1)
-      setFailedCount(prev => prev - 1)
-    } else {
+        resultImageUrl: imageResult.enhanced_image_url
+      };
+      setJobs([...updatedJobs]);
+      setCompletedCount(prev => prev + 1);
+      setFailedCount(prev => prev - 1);
+
+    } catch (error) {
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'failed',
-        errorMessage: 'Generation failed again. This image may be too complex.'
-      }
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      };
+      setJobs([...updatedJobs]);
     }
-
-    setJobs(updatedJobs)
   }
 
   const skipJob = (jobId: string) => {
@@ -501,6 +376,60 @@ export default function GenerateEnhancementsPage() {
     setFailedCount(prev => prev - 1)
   }
 
+  const toggleFavorite = (jobId: string) => {
+    setJobs(prevJobs => 
+      prevJobs.map(job => 
+        job.id === jobId ? { ...job, isFavorite: !job.isFavorite } : job
+      )
+    )
+  }
+
+  const downloadImage = (imageUrl: string, filename: string, format: string = selectedFormat) => {
+    const link = document.createElement('a')
+    link.href = imageUrl
+    link.download = `${filename.replace(/\s+/g, '-')}.${format.toLowerCase()}`
+    link.click()
+  }
+
+  const downloadAll = () => {
+    const successfulJobs = jobs.filter(job => job.status === 'complete' && job.resultImageUrl)
+    successfulJobs.forEach((job, index) => {
+      setTimeout(() => {
+        downloadImage(job.resultImageUrl!, job.enhancementTitle, selectedFormat)
+      }, index * 500) // Stagger downloads
+    })
+  }
+
+  const downloadFavorites = () => {
+    const favorites = jobs.filter(job => job.isFavorite && job.resultImageUrl)
+    favorites.forEach((job, index) => {
+      setTimeout(() => {
+        downloadImage(job.resultImageUrl!, job.enhancementTitle, selectedFormat)
+      }, index * 500)
+    })
+  }
+
+  const emailResults = () => {
+    if (!emailAddress) return
+    console.log(`Emailing results to ${emailAddress}`)
+    // In production, would call API to send email
+  }
+
+  const shareResult = (job: EnhancementJob) => {
+    if (!job.resultImageUrl) return
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `${job.enhancementTitle} - Enhanced Image`,
+        text: 'Check out this AI-enhanced product image!',
+        url: job.resultImageUrl
+      })
+    } else {
+      navigator.clipboard.writeText(job.resultImageUrl)
+      // You could add a toast notification here
+    }
+  }
+
   // Handle email submission for guest users
   const handleEmailSubmit = async (email: string) => {
     try {
@@ -509,9 +438,6 @@ export default function GenerateEnhancementsPage() {
 
       // Close modal and redirect to results
       setShowEmailModal(false)
-      setTimeout(() => {
-        setLocation('/results')
-      }, 500)
     } catch (error) {
       console.error('Failed to submit email:', error)
       throw new Error('Failed to save email. Please try again.')
@@ -538,7 +464,8 @@ export default function GenerateEnhancementsPage() {
     switch (status) {
       case 'queued':
         return <Clock className="w-4 h-4 text-gray-400" />
-      case 'processing':
+      case 'creating_prompt':
+      case 'generating_image':
         return <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />
       case 'complete':
         return <Check className="w-4 h-4 text-green-500" />
@@ -552,7 +479,8 @@ export default function GenerateEnhancementsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'queued': return 'bg-gray-100 text-gray-600'
-      case 'processing': return 'bg-blue-100 text-blue-600'
+      case 'creating_prompt': return 'bg-blue-100 text-blue-600'
+      case 'generating_image': return 'bg-blue-100 text-blue-600'
       case 'complete': return 'bg-green-100 text-green-600'
       case 'failed': return 'bg-red-100 text-red-600'
       default: return 'bg-gray-100 text-gray-600'
@@ -566,6 +494,7 @@ export default function GenerateEnhancementsPage() {
   }
 
   const successfulJobs = jobs.filter(job => job.status === 'complete' && job.resultImageUrl)
+  const favoriteCount = jobs.filter(job => job.isFavorite).length
 
   return (
     <>
@@ -655,10 +584,50 @@ export default function GenerateEnhancementsPage() {
           border-top: 2px solid #e5e7eb;
           z-index: 10;
         }
+
+        .confetti {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          background: var(--accent);
+          animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+          to {
+            transform: translateY(100vh) rotate(360deg);
+          }
+        }
+
+        .celebration-pulse {
+          animation: celebration-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes celebration-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
       `}</style>
 
       <div className="min-h-screen brand-bg-light">
         <Navbar freeCredits={1} paidCredits={0} />
+
+        {/* Celebration Confetti */}
+        {showCelebration && (
+          <div className="fixed inset-0 pointer-events-none z-30">
+            {[...Array(20)].map((_, i) => (
+              <div 
+                key={i}
+                className="confetti"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  backgroundColor: i % 3 === 0 ? '#C1F50A' : i % 3 === 1 ? '#3DA5D9' : '#0D7877'
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Progress Bar */}
         <div className="bg-white border-b-2 border-gray-200 sticky top-0 z-20">
@@ -684,22 +653,14 @@ export default function GenerateEnhancementsPage() {
 
               <div className="flex-1 mx-4 h-1 bg-[#0D7877] rounded"></div>
 
-              {/* Step 3: Generate - ACTIVE */}
+              {/* Step 3: Generate & Download - ACTIVE */}
               <div className="flex items-center">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold">
-                  3
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold ${!isProcessing && showCelebration ? 'celebration-pulse' : ''}`}>
+                  {isProcessing ? '3' : <Check className="w-4 h-4" />}
                 </div>
-                <span className="ml-2 text-sm font-medium text-[#0D7877] brand-font-body">Generate</span>
-              </div>
-
-              <div className="flex-1 mx-4 h-1 bg-gray-300 rounded"></div>
-
-              {/* Step 4: Download */}
-              <div className="flex items-center">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-semibold">
-                  4
-                </div>
-                <span className="ml-2 text-sm font-medium text-gray-500 brand-font-body">Download</span>
+                <span className="ml-2 text-sm font-medium text-[#0D7877] brand-font-body">
+                  {isProcessing ? 'Generate' : 'Complete!'}
+                </span>
               </div>
             </div>
           </div>
@@ -709,23 +670,48 @@ export default function GenerateEnhancementsPage() {
         <div className="container mx-auto px-4 py-8 pb-32">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4 brand-text-neutral brand-font-heading">
-              Creating Your Enhanced Images
-            </h1>
-            <p className="text-lg text-gray-600 brand-font-body max-w-3xl mx-auto mb-2">
-              Our AI is working on your selected enhancements. Each enhancement takes approximately 60 seconds to complete.
-            </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
-              <p className="text-blue-800 brand-font-body text-sm">
-                ⚠️ Please don't close this tab - your images are being created. We'll notify you when complete!
-              </p>
-            </div>
+            {isProcessing ? (
+              <>
+                <h1 className="text-4xl font-bold mb-4 brand-text-neutral brand-font-heading">
+                  Creating Your Enhanced Images
+                </h1>
+                <p className="text-lg text-gray-600 brand-font-body max-w-3xl mx-auto mb-2">
+                  Our AI is working on your selected enhancements. Each enhancement takes approximately 60 seconds to complete.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+                  <p className="text-blue-800 brand-font-body text-sm">
+                    ⚠️ Please don't close this tab - your images are being created. We'll notify you when complete!
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={`mb-6 ${showCelebration ? 'celebration-pulse' : ''}`}>
+                  <div className="w-[120px] h-[120px] mx-auto mb-4 flex items-center justify-center bg-green-100 rounded-full">
+                    <Sparkles className="w-12 h-12 text-[#C1F50A]" />
+                  </div>
+                  <h1 className="text-4xl font-bold mb-4 brand-text-neutral brand-font-heading">
+                    ✨ All Enhancements Complete!
+                  </h1>
+                  <p className="text-lg text-gray-600 brand-font-body max-w-3xl mx-auto">
+                    Your enhanced images are ready! Download individual images or get them all at once.
+                  </p>
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span className="font-semibold text-[#0D7877] brand-font-body">
+                      {successfulJobs.length} of {jobs.length} enhancements generated successfully
+                      {failedCount > 0 && ` (${failedCount} failed)`}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Overall Progress */}
-          <Card className="brand-card mb-8">
-            <CardContent className="p-8">
-              {isProcessing ? (
+          {/* Overall Progress - Only show while processing */}
+          {isProcessing && (
+            <Card className="brand-card mb-8">
+              <CardContent className="p-8">
                 <div className="text-center">
                   {/* Circular Progress Indicator */}
                   <div className="relative mx-auto mb-6">
@@ -845,23 +831,9 @@ export default function GenerateEnhancementsPage() {
                     </div>
                   </div>
                 </div>
-              ) : (
-                /* Completion State */
-                <div className="text-center">
-                  <div className="w-[120px] h-[120px] mx-auto mb-4 flex items-center justify-center bg-green-100 rounded-full">
-                    <Check className="w-12 h-12 text-green-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2 brand-font-heading">
-                    All Enhancements Complete!
-                  </h3>
-                  <p className="text-gray-600 brand-font-body">
-                    {completedCount} of {jobs.length} enhancements generated successfully
-                    {failedCount > 0 && ` (${failedCount} failed)`}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Individual Job Cards */}
           <div className="space-y-6">
@@ -869,18 +841,35 @@ export default function GenerateEnhancementsPage() {
               <Card key={job.id} className={`brand-card transition-all duration-500 ${job.status === 'complete' ? 'animate-fade-in' : ''}`}>
                 <CardContent className="p-6">
                   {/* Header */}
-                  <div className="flex items-center justify-center gap-3 mb-6">
-                    {getStatusIcon(job.status)}
-                    <h3 className="text-xl font-semibold brand-text-neutral brand-font-heading">
-                      {job.enhancementTitle}
-                    </h3>
-                    <Badge className={`text-sm ${getStatusColor(job.status)}`}>
-                      {job.status === 'queued' && 'Waiting...'}
-                      {job.status === 'creating_prompt' && 'Creating Prompt...'}
-                      {job.status === 'generating_image' && 'Generating...'}
-                      {job.status === 'complete' && 'Complete!'}
-                      {job.status === 'failed' && 'Failed'}
-                    </Badge>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      {getStatusIcon(job.status)}
+                      <h3 className="text-xl font-semibold brand-text-neutral brand-font-heading">
+                        {job.enhancementTitle}
+                      </h3>
+                      <Badge className={`text-sm ${getStatusColor(job.status)}`}>
+                        {job.status === 'queued' && 'Waiting...'}
+                        {job.status === 'creating_prompt' && 'Creating Prompt...'}
+                        {job.status === 'generating_image' && 'Generating...'}
+                        {job.status === 'complete' && 'Complete!'}
+                        {job.status === 'failed' && 'Failed'}
+                      </Badge>
+                    </div>
+                    
+                    {/* Favorite Button */}
+                    {job.status === 'complete' && job.resultImageUrl && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleFavorite(job.id)}
+                      >
+                        {job.isFavorite ? (
+                          <Star className="w-5 h-5 text-yellow-500 fill-current" />
+                        ) : (
+                          <StarOff className="w-5 h-5 text-gray-400" />
+                        )}
+                      </Button>
+                    )}
                   </div>
 
                   {/* Progress Bar for Processing */}
@@ -951,18 +940,26 @@ export default function GenerateEnhancementsPage() {
                   {/* Action Buttons - Centered */}
                   {job.status === 'complete' && job.resultImageUrl && (
                     <div className="flex items-center justify-center gap-4">
-                      <Button
-                        onClick={() => {
-                          const link = document.createElement('a')
-                          link.href = job.resultImageUrl!
-                          link.download = `${job.enhancementTitle.replace(/\s+/g, '-')}-enhanced.png`
-                          link.click()
-                        }}
-                        className="brand-button-primary brand-font-body"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download Enhanced
-                      </Button>
+                      {/* Download with Format Selector */}
+                      <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() => downloadImage(job.resultImageUrl!, job.enhancementTitle, selectedFormat)}
+                          className="brand-button-primary brand-font-body"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download {selectedFormat}
+                        </Button>
+                        
+                        <Select value={selectedFormat} onValueChange={(value: 'PNG' | 'JPG') => setSelectedFormat(value)}>
+                          <SelectTrigger className="w-20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="PNG">PNG</SelectItem>
+                            <SelectItem value="JPG">JPG</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
                       <Button
                         variant="outline"
@@ -975,18 +972,7 @@ export default function GenerateEnhancementsPage() {
 
                       <Button
                         variant="outline"
-                        onClick={() => {
-                          if (navigator.share) {
-                            navigator.share({
-                              title: `${job.enhancementTitle} - Enhanced Image`,
-                              text: 'Check out this AI-enhanced product image!',
-                              url: job.resultImageUrl
-                            })
-                          } else {
-                            navigator.clipboard.writeText(job.resultImageUrl!)
-                            // You could add a toast notification here
-                          }
-                        }}
+                        onClick={() => shareResult(job)}
                         className="brand-button-secondary brand-font-body"
                       >
                         <Share2 className="w-4 h-4 mr-2" />
@@ -1030,6 +1016,94 @@ export default function GenerateEnhancementsPage() {
               </Card>
             ))}
           </div>
+
+          {/* Download Options - Only show when complete */}
+          {!isProcessing && successfulJobs.length > 0 && (
+            <>
+              {/* Divider */}
+              <div className="my-12 border-t-2 border-gray-300"></div>
+              
+              {/* Download Options */}
+              <Card className="brand-card">
+                <CardHeader>
+                  <CardTitle className="brand-font-heading brand-text-neutral">
+                    Download Options
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div>
+                      <label className="text-sm font-medium brand-font-body mb-2 block">Format</label>
+                      <Select value={selectedFormat} onValueChange={(value: 'PNG' | 'JPG') => setSelectedFormat(value)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PNG">PNG (High Quality)</SelectItem>
+                          <SelectItem value="JPG">JPG (Smaller Size)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium brand-font-body mb-2 block">Resolution</label>
+                      <Select value={selectedResolution} onValueChange={(value: 'original' | 'hd' | '4k') => setSelectedResolution(value)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="original">Original (1024×1024)</SelectItem>
+                          <SelectItem value="hd">HD (1920×1920)</SelectItem>
+                          <SelectItem value="4k">4K (3840×3840)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium brand-font-body mb-2 block">Email Results</label>
+                      <Input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={emailAddress}
+                        onChange={(e) => setEmailAddress(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className="flex items-end">
+                      <Button
+                        onClick={emailResults}
+                        disabled={!emailAddress}
+                        variant="outline"
+                        className="w-full brand-font-body"
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Send Email
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    <Button onClick={downloadAll} className="brand-button-primary brand-font-body">
+                      <Archive className="w-4 h-4 mr-2" />
+                      Download All ({successfulJobs.length})
+                    </Button>
+                    {favoriteCount > 0 && (
+                      <Button onClick={downloadFavorites} variant="outline" className="brand-font-body">
+                        <Star className="w-4 h-4 mr-2" />
+                        Download Favorites ({favoriteCount})
+                      </Button>
+                    )}
+                    <Link href="/upload-enhance">
+                      <Button variant="outline" className="brand-button-secondary brand-font-body">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Enhance Another Image
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         {/* Sticky Footer */}
@@ -1039,7 +1113,10 @@ export default function GenerateEnhancementsPage() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-[#0D7877]" />
                 <span className="font-medium brand-text-neutral brand-font-body">
-                  {isProcessing ? 'Generation in progress...' : 'Generation complete!'}
+                  {isProcessing 
+                    ? `Generation in progress... ${completedCount}/${jobs.length} complete`
+                    : `✓ ${successfulJobs.length} enhancements ready`
+                  }
                 </span>
               </div>
 
@@ -1051,19 +1128,26 @@ export default function GenerateEnhancementsPage() {
                   </Button>
                 </Link>
 
-                {!isProcessing && (
-                  <Button
-                    onClick={() => setLocation('/results')}
-                    disabled={successfulJobs.length === 0}
-                    className={`brand-font-body font-medium ${
-                      successfulJobs.length > 0 ? 'brand-button-primary' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    {successfulJobs.length === jobs.length 
-                      ? 'View All Results' 
-                      : `Continue with ${successfulJobs.length} Successful Enhancements`}
-                    <Sparkles className="w-4 h-4 ml-2" />
-                  </Button>
+                {!isProcessing && successfulJobs.length > 0 && (
+                  <>
+                    <Button
+                      onClick={downloadAll}
+                      className="brand-button-primary brand-font-body font-medium"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      Download All
+                    </Button>
+                    
+                    <Link href="/upload-enhance">
+                      <Button
+                        variant="outline"
+                        className="brand-button-secondary brand-font-body font-medium"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        New Enhancement
+                      </Button>
+                    </Link>
+                  </>
                 )}
               </div>
             </div>
