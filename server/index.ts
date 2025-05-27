@@ -1,73 +1,95 @@
+
 import express from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from 'openai';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-const configuration = new Configuration({
+// Serve static files
+app.use('/uploads', express.static('uploads'));
+app.use(express.static('public'));
+
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
-// Define a simple health check endpoint
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadsDir = 'uploads';
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const randomNum = Math.floor(Math.random() * 100000000);
+    cb(null, `images-${timestamp}-${randomNum}${path.extname(file.originalname)}`);
+  }
+});
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Add /api/generate-images endpoint for text-to-image functionality using gpt-image-1
+// API config endpoint
+app.get('/api/config', (req, res) => {
+  res.json({
+    featureFlags: {
+      newUI: true
+    },
+    openaiConfigured: !!process.env.OPENAI_API_KEY,
+    stripeConfigured: true,
+    maxUploadSize: 10 * 1024 * 1024
+  });
+});
+
+// Text-to-image generation endpoint
 app.post('/api/generate-images', async (req, res) => {
   try {
-    const { prompt, width = 512, height = 512 } = req.body;
+    const { prompt, width = 1024, height = 1024 } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
-    // For text-to-image generation with gpt-image-1, we need a base image
-    // Create a simple white canvas as the base image
-    const fs = (await import('fs')).default;
-    const path = (await import('path')).default;
-    const sharp = (await import('sharp')).default;
+    console.log('Generating image with prompt:', prompt);
 
-    // Create a white canvas as base image
-    const timestamp = Date.now();
-    const baseImagePath = path.join(process.cwd(), 'uploads', `base-${timestamp}.png`);
-
-    await sharp({
-        create: {
-          width,
-          height,
-          channels: 3,
-          background: { r: 255, g: 255, b: 255 }
-        }
-      })
-      .png()
-      .toFile(baseImagePath);
-    
-    const image_generation_response = await openai.createImage({
+    const response = await openai.images.generate({
+      model: "dall-e-3",
       prompt: prompt,
       n: 1,
       size: `${width}x${height}`,
       response_format: "b64_json",
     });
 
-    const base64ImageData = image_generation_response.data.data[0].b64_json;
+    const base64ImageData = response.data[0].b64_json;
 
     if (!base64ImageData) {
-        return res.status(500).json({ error: "Failed to generate image" });
+      return res.status(500).json({ error: "Failed to generate image" });
     }
     
-    // Convert base64 to image
+    // Convert base64 to buffer and send as image
     const buffer = Buffer.from(base64ImageData, "base64");
 
-    // Return image
     res.writeHead(200, {
       'Content-Type': 'image/png',
       'Content-Length': buffer.length
@@ -75,11 +97,42 @@ app.post('/api/generate-images', async (req, res) => {
     res.end(buffer);
 
   } catch (error: any) {
-    console.error("Image generation error", error);
-    res.status(500).json({ error: error.message || "Failed to generate image" });
+    console.error("Image generation error:", error);
+    res.status(500).json({ 
+      error: error.message || "Failed to generate image",
+      details: error.response?.data || error
+    });
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+// Basic image upload endpoint
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    res.json({
+      success: true,
+      filename: req.file.filename,
+      path: `/uploads/${req.file.filename}`
+    });
+  } catch (error: any) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});
+
+// Serve the main HTML files
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'text-to-image.html'));
+});
+
+app.get('/text-to-image', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'text-to-image.html'));
+});
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:${port}`);
+  console.log(`OpenAI configured: ${!!process.env.OPENAI_API_KEY}`);
 });
