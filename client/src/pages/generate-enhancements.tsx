@@ -32,7 +32,7 @@ export default function GenerateEnhancementsPage() {
   const [, setLocation] = useLocation()
   const [jobs, setJobs] = useState<EnhancementJob[]>([])
   const [overallProgress, setOverallProgress] = useState(0)
-  
+
   // Ensure page loads at top
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -40,14 +40,14 @@ export default function GenerateEnhancementsPage() {
   const [completedCount, setCompletedCount] = useState(0)
   const [failedCount, setFailedCount] = useState(0)
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState(0)
-  const [isProcessing, setIsProcessing] = useState(true)
+  const [isProcessing, setIsProcessing] = useState(isProcessing)
   const [currentJobIndex, setCurrentJobIndex] = useState(0)
   const [currentJobTimer, setCurrentJobTimer] = useState(0)
   const [currentJobMessage, setCurrentJobMessage] = useState('')
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [creditStatus, setCreditStatus] = useState<any>(null)
-  
+
   // Integrated credit system
   const { checkUserCredits, useCredit, isAuthenticated } = useFreeCredits()
 
@@ -57,10 +57,10 @@ export default function GenerateEnhancementsPage() {
     console.log('Generation page received:', selectedEnhancements);
     console.log('Enhancement data:', selectedEnhancements);
     console.log('First image URL:', selectedEnhancements[0]?.image_url);
-    
+
     // Create jobs from authentic selected enhancements
     const enhancementJobs: EnhancementJob[] = [];
-    
+
     selectedEnhancements.forEach((enhancement: any, index: number) => {
       enhancement.selected_ideas.forEach((idea: any, ideaIndex: number) => {
         // Check if this is a chaos concept (usually concept #5 or contains chaos indicators)
@@ -69,7 +69,7 @@ export default function GenerateEnhancementsPage() {
                            idea.title.includes('Infinite') ||
                            idea.description.includes('gravity-defying') ||
                            idea.description.includes('surreal');
-        
+
         enhancementJobs.push({
           id: `job-${index}-${ideaIndex}`,
           productId: enhancement.image_id,
@@ -86,10 +86,10 @@ export default function GenerateEnhancementsPage() {
         });
       });
     });
-    
+
     console.log('Created enhancement jobs:', enhancementJobs);
     setJobs(enhancementJobs)
-    
+
     // Check credits before starting (async)
     checkUserCredits().then(credits => {
       setCreditStatus(credits)
@@ -99,7 +99,7 @@ export default function GenerateEnhancementsPage() {
         return
       }
     })
-    
+
     // Start authentic AI processing
     setTimeout(() => {
       processEnhancements(enhancementJobs)
@@ -111,29 +111,29 @@ export default function GenerateEnhancementsPage() {
     console.log('Starting authentic AI processing for', initialJobs.length, 'enhancements');
     console.log('Initial jobs data:', initialJobs);
     setIsProcessing(true);
-    
+
     if (!initialJobs || initialJobs.length === 0) {
       console.error('No jobs to process!');
       return;
     }
-    
+
     const currentJobs = [...initialJobs];
     setJobs(currentJobs);
-    
+
     console.log('About to start processing loop for', currentJobs.length, 'jobs');
-    
+
     for (let i = 0; i < currentJobs.length; i++) {
       const job = currentJobs[i];
       console.log(`Processing job ${i + 1}/${currentJobs.length}:`, job.enhancementTitle);
       setCurrentJobIndex(i);
       setCurrentJobMessage(`[${job.enhancementTitle}] Step 1: Creating prompt with Claude...`);
-      
+
       try {
         console.log('About to call Claude API for prompt generation...');
         // Step 1: Generate edit prompt with Claude
         currentJobs[i] = { ...currentJobs[i], status: 'creating_prompt', progress: 20 };
         setJobs([...currentJobs]);
-        
+
         console.log('Making fetch request to /api/generate-edit-prompt...');
         const promptResponse = await fetch('/api/generate-edit-prompt', {
           method: 'POST',
@@ -144,15 +144,15 @@ export default function GenerateEnhancementsPage() {
             is_chaos_concept: job.isChaosMode
           })
         });
-        
+
         console.log('Fetch response received:', promptResponse.status, promptResponse.statusText);
-        
+
         if (!promptResponse.ok) {
           const errorText = await promptResponse.text();
           console.error('Prompt API error response:', errorText);
           throw new Error(`Prompt generation failed: ${promptResponse.statusText} - ${errorText}`);
         }
-        
+
         // Try to parse JSON with error handling
         let promptResult;
         try {
@@ -160,7 +160,7 @@ export default function GenerateEnhancementsPage() {
           console.log('Raw response text:', responseText);
           console.log('Response text length:', responseText.length);
           console.log('Response text preview:', responseText.substring(0, 200));
-          
+
           promptResult = JSON.parse(responseText);
           console.log('JSON parsing successful');
         } catch (parseError) {
@@ -178,19 +178,19 @@ export default function GenerateEnhancementsPage() {
         console.log('Prompt length:', promptResult.edit_prompt?.length);
         console.log('Prompt type:', typeof promptResult.edit_prompt);
         console.log(`[${job.enhancementTitle}] Edit prompt received:`, promptResult.edit_prompt);
-        
+
         // Validate that we got a proper edit prompt
         if (!promptResult.edit_prompt || promptResult.edit_prompt.trim().length === 0) {
           throw new Error(`No edit prompt received from Claude API. Response: ${JSON.stringify(promptResult)}`);
         }
-        
+
         // Step 2: Generate image with GPT-image-01
         console.log('=== STARTING IMAGE GENERATION ===');
         console.log('About to call image generation API...');
         console.log('Original image URL:', job.originalImageUrl);
         console.log('Enhancement prompt:', promptResult.edit_prompt);
         console.log('Enhancement title:', job.enhancementTitle);
-        
+
         setCurrentJobMessage(`[${job.enhancementTitle}] Step 2: Creating enhanced image...`);
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -199,7 +199,7 @@ export default function GenerateEnhancementsPage() {
           enhancementPrompt: promptResult.edit_prompt
         };
         setJobs([...currentJobs]);
-        
+
         console.log('Making fetch request to /api/generate-enhancement...');
         const imageResponse = await fetch('/api/generate-enhancement', {
           method: 'POST',
@@ -210,14 +210,14 @@ export default function GenerateEnhancementsPage() {
             enhancement_title: job.enhancementTitle
           })
         });
-        
+
         if (!imageResponse.ok) {
           throw new Error(`Image generation failed: ${imageResponse.statusText}`);
         }
-        
+
         const imageResult = await imageResponse.json();
         console.log(`[${job.enhancementTitle}] GPT-image-01 success!`, imageResult.enhanced_image_url);
-        
+
         // Mark job as complete
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -227,13 +227,13 @@ export default function GenerateEnhancementsPage() {
         };
         setJobs([...currentJobs]);
         setCompletedCount(prev => prev + 1);
-        
+
         // Brief pause between jobs
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
       } catch (error) {
         console.error(`[${job.enhancementTitle}] Error:`, error);
-        
+
         // Mark job as failed
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -244,30 +244,37 @@ export default function GenerateEnhancementsPage() {
         setFailedCount(prev => prev + 1);
       }
     }
-    
+
     // All jobs complete
     setIsProcessing(false);
     setCurrentJobMessage('All enhancements complete!');
     console.log('Authentic AI processing complete!');
+
+    // Auto-redirect for single enhancement after 3 seconds
+    if (currentJobs.length === 1 && currentJobs[0].status === 'complete') {
+      setTimeout(() => {
+        setLocation('/results');
+      }, 3000);
+    }
   };
 
   const startAuthenticProcessing = async (initialJobs: EnhancementJob[]) => {
     console.log('Starting authentic AI processing for', initialJobs.length, 'enhancements');
     let currentJobs = [...initialJobs];
-    
+
     for (let i = 0; i < currentJobs.length; i++) {
       const job = currentJobs[i];
       setCurrentJobIndex(i);
-      
+
       try {
         // Step 1: Generate edit prompt with Claude
         console.log(`[${job.enhancementTitle}] Step 1: Creating prompt with Claude...`);
         setCurrentJobMessage(`Creating prompt for "${job.enhancementTitle}"...`);
-        
+
         // Update job status to creating_prompt
         currentJobs[i] = { ...job, status: 'creating_prompt', progress: 25, startTime: Date.now() };
         setJobs([...currentJobs]);
-        
+
         const promptResponse = await fetch('/api/generate-edit-prompt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -278,18 +285,18 @@ export default function GenerateEnhancementsPage() {
             is_chaos_concept: job.isChaosMode || false
           })
         });
-        
+
         if (!promptResponse.ok) {
           throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
         }
-        
+
         const promptResult = await promptResponse.json();
         console.log(`[${job.enhancementTitle}] Claude generated prompt:`, promptResult.edit_prompt);
-        
+
         // Step 2: Generate image with GPT-image-01
         console.log(`[${job.enhancementTitle}] Step 2: Generating image with GPT-image-01...`);
         setCurrentJobMessage(`Generating "${job.enhancementTitle}" with AI...`);
-        
+
         // Update job status to generating_image
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -298,7 +305,7 @@ export default function GenerateEnhancementsPage() {
           enhancementPrompt: promptResult.edit_prompt
         };
         setJobs([...currentJobs]);
-        
+
         const imageResponse = await fetch('/api/generate-enhancement', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -308,14 +315,14 @@ export default function GenerateEnhancementsPage() {
             enhancement_title: job.enhancementTitle
           })
         });
-        
+
         if (!imageResponse.ok) {
           throw new Error(`Image generation failed: ${imageResponse.statusText}`);
         }
-        
+
         const imageResult = await imageResponse.json();
         console.log(`[${job.enhancementTitle}] GPT-image-01 success!`, imageResult.enhanced_image_url);
-        
+
         // Mark job as complete
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -325,13 +332,13 @@ export default function GenerateEnhancementsPage() {
         };
         setJobs([...currentJobs]);
         setCompletedCount(prev => prev + 1);
-        
+
         // Brief pause between jobs
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
       } catch (error) {
         console.error(`[${job.enhancementTitle}] Error:`, error);
-        
+
         // Mark job as failed
         currentJobs[i] = { 
           ...currentJobs[i], 
@@ -342,7 +349,7 @@ export default function GenerateEnhancementsPage() {
         setFailedCount(prev => prev + 1);
       }
     }
-    
+
     // All jobs complete
     setIsProcessing(false);
     setCurrentJobMessage('All enhancements complete!');
@@ -351,15 +358,15 @@ export default function GenerateEnhancementsPage() {
 
   const startProcessing = async (initialJobs: EnhancementJob[]) => {
     let currentJobs = [...initialJobs]
-    
+
     for (let i = 0; i < currentJobs.length; i++) {
       // Start processing current job
       currentJobs[i] = { ...currentJobs[i], status: 'processing', startTime: Date.now() }
       setJobs([...currentJobs])
-      
+
       // Simulate progress updates
       const success = await simulateJobProgress(currentJobs[i])
-      
+
       // Update job status
       if (success) {
         currentJobs[i] = {
@@ -377,20 +384,20 @@ export default function GenerateEnhancementsPage() {
         }
         setFailedCount(prev => prev + 1)
       }
-      
+
       setJobs([...currentJobs])
       setOverallProgress(((i + 1) / currentJobs.length) * 100)
-      
+
       // Update estimated time remaining and current job info
       setCurrentJobIndex(i + 1)
       const remaining = currentJobs.length - (i + 1)
       const avgTime = 60 // seconds per enhancement
       setEstimatedTimeRemaining(remaining * avgTime)
     }
-    
+
     // All jobs complete
     setIsProcessing(false)
-    
+
     // Show email capture modal for guest users, or navigate directly for authenticated users
     if (!isAuthenticated && creditStatus?.requiresEmail) {
       setShowEmailModal(true)
@@ -415,20 +422,20 @@ export default function GenerateEnhancementsPage() {
         'Optimizing image quality...',
         'Finalizing your enhancement...'
       ]
-      
+
       const interval = setInterval(() => {
         timer += 1
         progress = (timer / 60) * 100 // 60 seconds = 100%
-        
+
         // Update current job timer
         setCurrentJobTimer(timer)
-        
+
         // Change message every 12 seconds
         const messageIndex = Math.floor(timer / 12)
         if (messageIndex < messages.length) {
           setCurrentJobMessage(messages[messageIndex])
         }
-        
+
         if (progress >= 100) {
           clearInterval(interval)
           setCurrentJobMessage('Enhancement complete!')
@@ -461,7 +468,7 @@ export default function GenerateEnhancementsPage() {
 
     // Simulate retry
     const success = await simulateJobProgress(updatedJobs[jobIndex])
-    
+
     if (success) {
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
@@ -478,7 +485,7 @@ export default function GenerateEnhancementsPage() {
         errorMessage: 'Generation failed again. This image may be too complex.'
       }
     }
-    
+
     setJobs(updatedJobs)
   }
 
@@ -499,7 +506,7 @@ export default function GenerateEnhancementsPage() {
     try {
       // Use the credit and save email using your existing system
       await useCredit(email)
-      
+
       // Close modal and redirect to results
       setShowEmailModal(false)
       setTimeout(() => {
@@ -570,19 +577,19 @@ export default function GenerateEnhancementsPage() {
           --neutral: #333333;
           --light: #F2F4F6;
         }
-        
+
         .brand-bg-primary { background-color: var(--primary); }
         .brand-bg-secondary { background-color: var(--secondary); }
         .brand-bg-accent { background-color: var(--accent); }
         .brand-bg-light { background-color: var(--light); }
-        
+
         .brand-text-primary { color: var(--primary); }
         .brand-text-secondary { color: var(--secondary); }
         .brand-text-neutral { color: var(--neutral); }
-        
+
         .brand-border-primary { border-color: var(--primary); }
         .brand-border-secondary { border-color: var(--secondary); }
-        
+
         .brand-button-primary {
           background-color: var(--primary);
           color: white;
@@ -590,7 +597,7 @@ export default function GenerateEnhancementsPage() {
         .brand-button-primary:hover {
           background-color: #0a5d5f;
         }
-        
+
         .brand-button-secondary {
           background-color: transparent;
           color: var(--primary);
@@ -600,47 +607,47 @@ export default function GenerateEnhancementsPage() {
           background-color: var(--primary);
           color: white;
         }
-        
+
         .brand-font-heading {
           font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        
+
         .brand-font-body {
           font-family: 'Montserrat', sans-serif;
         }
-        
+
         .brand-card {
           background: white;
           border: 2px solid #e5e7eb;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
+
         .processing-gradient {
           background: linear-gradient(90deg, #3DA5D9 0%, #0D7877 50%, #3DA5D9 100%);
           background-size: 200% 100%;
           animation: shimmer 2s infinite;
         }
-        
+
         @keyframes shimmer {
           0% { background-position: -200% 0; }
           100% { background-position: 200% 0; }
         }
-        
+
         .animate-shimmer {
           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
           background-size: 200% 100%;
           animation: shimmer 2s infinite;
         }
-        
+
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .animate-fade-in {
           animation: fadeIn 0.5s ease-out;
         }
-        
+
         .sticky-footer {
           position: sticky;
           bottom: 0;
@@ -649,10 +656,10 @@ export default function GenerateEnhancementsPage() {
           z-index: 10;
         }
       `}</style>
-      
+
       <div className="min-h-screen brand-bg-light">
         <Navbar freeCredits={1} paidCredits={0} />
-        
+
         {/* Progress Bar */}
         <div className="bg-white border-b-2 border-gray-200 sticky top-0 z-20">
           <div className="container mx-auto px-4 py-4">
@@ -664,9 +671,9 @@ export default function GenerateEnhancementsPage() {
                 </div>
                 <span className="ml-2 text-sm font-medium text-gray-700 brand-font-body">Upload</span>
               </div>
-              
+
               <div className="flex-1 mx-4 h-1 bg-[#0D7877] rounded"></div>
-              
+
               {/* Step 2: Ideas Selection */}
               <div className="flex items-center">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold">
@@ -674,9 +681,9 @@ export default function GenerateEnhancementsPage() {
                 </div>
                 <span className="ml-2 text-sm font-medium text-gray-700 brand-font-body">Ideas Selection</span>
               </div>
-              
+
               <div className="flex-1 mx-4 h-1 bg-[#0D7877] rounded"></div>
-              
+
               {/* Step 3: Generate - ACTIVE */}
               <div className="flex items-center">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold">
@@ -684,9 +691,9 @@ export default function GenerateEnhancementsPage() {
                 </div>
                 <span className="ml-2 text-sm font-medium text-[#0D7877] brand-font-body">Generate</span>
               </div>
-              
+
               <div className="flex-1 mx-4 h-1 bg-gray-300 rounded"></div>
-              
+
               {/* Step 4: Download */}
               <div className="flex items-center">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-semibold">
@@ -763,7 +770,7 @@ export default function GenerateEnhancementsPage() {
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 brand-font-heading">
                       Currently Processing
                     </h3>
-                    
+
                     {/* Current Job Display */}
                     {jobs[currentJobIndex] && (
                       <div className="flex items-center justify-center gap-6 mb-4">
@@ -789,7 +796,7 @@ export default function GenerateEnhancementsPage() {
                           <div className="w-[150px] h-[150px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center relative overflow-hidden">
                             {/* Animated Background */}
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                            
+
                             {/* Loading Spinner */}
                             <div className="relative z-10">
                               <RefreshCw className="w-8 h-8 text-[#0D7877] animate-spin mb-2" />
@@ -822,7 +829,7 @@ export default function GenerateEnhancementsPage() {
                           Completes in ~{60 - currentJobTimer} seconds
                         </span>
                       </div>
-                      
+
                       {/* Live Countdown Bar */}
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
@@ -830,7 +837,7 @@ export default function GenerateEnhancementsPage() {
                           style={{ width: `${(currentJobTimer / 60) * 100}%` }}
                         ></div>
                       </div>
-                      
+
                       <div className="flex justify-between text-xs text-gray-500 mt-2 brand-font-body">
                         <span>Processing enhancement {currentJobIndex + 1} of {jobs.length}</span>
                         <span>{completedCount} completed, {jobs.length - completedCount - failedCount - 1} waiting</span>
@@ -875,7 +882,7 @@ export default function GenerateEnhancementsPage() {
                       {job.status === 'failed' && 'Failed'}
                     </Badge>
                   </div>
-                  
+
                   {/* Progress Bar for Processing */}
                   {(job.status === 'creating_prompt' || job.status === 'generating_image') && (
                     <div className="mb-6">
@@ -888,7 +895,7 @@ export default function GenerateEnhancementsPage() {
                       </p>
                     </div>
                   )}
-                  
+
                   {/* Image Container - Centered */}
                   <div className="flex items-center justify-center gap-8 mb-6">
                     {/* Before Image */}
@@ -901,14 +908,14 @@ export default function GenerateEnhancementsPage() {
                         onClick={() => window.open(job.originalImageUrl, '_blank')}
                       />
                     </div>
-                    
+
                     {/* Arrow */}
                     <div className="flex flex-col items-center">
                       <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center">
                         <span className="text-white text-xl">→</span>
                       </div>
                     </div>
-                    
+
                     {/* After Image */}
                     <div className="text-center">
                       <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">After</p>
@@ -940,7 +947,7 @@ export default function GenerateEnhancementsPage() {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Action Buttons - Centered */}
                   {job.status === 'complete' && job.resultImageUrl && (
                     <div className="flex items-center justify-center gap-4">
@@ -956,7 +963,7 @@ export default function GenerateEnhancementsPage() {
                         <Download className="w-4 h-4 mr-2" />
                         Download Enhanced
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         onClick={() => window.open(job.resultImageUrl, '_blank')}
@@ -965,7 +972,7 @@ export default function GenerateEnhancementsPage() {
                         <ExternalLink className="w-4 h-4 mr-2" />
                         View Full Size
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         onClick={() => {
@@ -987,7 +994,7 @@ export default function GenerateEnhancementsPage() {
                       </Button>
                     </div>
                   )}
-                  
+
                   {/* Error Handling */}
                   {job.status === 'failed' && (
                     <div className="text-center">
@@ -1035,7 +1042,7 @@ export default function GenerateEnhancementsPage() {
                   {isProcessing ? 'Generation in progress...' : 'Generation complete!'}
                 </span>
               </div>
-              
+
               <div className="flex gap-3">
                 <Link href="/select-ideas">
                   <Button variant="outline" className="brand-button-secondary brand-font-body">
@@ -1043,7 +1050,7 @@ export default function GenerateEnhancementsPage() {
                     Back to Ideas
                   </Button>
                 </Link>
-                
+
                 {!isProcessing && (
                   <Button
                     onClick={() => setLocation('/results')}
