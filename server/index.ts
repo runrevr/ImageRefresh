@@ -131,9 +131,23 @@ app.get('/text-to-image', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'text-to-image.html'));
 });
 
-// Serve the React app for all other routes (SPA routing)
+// Check if client dist exists, if not serve a simple message
 app.get('*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'client', 'dist', 'index.html'));
+  const indexPath = path.join(process.cwd(), 'client', 'dist', 'index.html');
+  if (require('fs').existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.send(`
+      <html>
+        <body>
+          <h1>Server Running</h1>
+          <p>Backend server is running on port ${port}</p>
+          <p>API endpoints available at /api/*</p>
+          <p>Build the client with: cd client && npm run build</p>
+        </body>
+      </html>
+    `);
+  }
 });
 
 app.listen(port, '0.0.0.0', () => {
