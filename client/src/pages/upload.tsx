@@ -828,9 +828,6 @@ export default function UploadPage() {
                   </p>
                 </div>
                 <ImageUploader onImageUploaded={handleUpload} />
-                <div className="text-center mt-4 text-sm text-gray-500">
-                  Accepts: JPG, PNG, WebP • Max size: 10MB
-                </div>
               </div>
             )}
 
