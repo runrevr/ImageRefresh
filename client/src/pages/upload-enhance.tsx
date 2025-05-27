@@ -448,6 +448,27 @@ export default function UploadEnhancePage() {
     await submitForProcessing();
   };
 
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDropNew = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFileSelect({ target: { files: e.dataTransfer.files } } as any);
+    }
+  };
+
+
   return (
     <div>
       {/* Google Fonts */}
@@ -666,34 +687,43 @@ export default function UploadEnhancePage() {
 
       {/* Main Container */}
       <main className="max-w-screen-xl mx-auto px-4 py-8 mt-40">
-        {/* Page Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl brand-font-heading font-extrabold brand-text-neutral mb-4">
-            Upload Your Product Images
-          </h1>
-          <p className="text-xl brand-font-body brand-text-neutral max-w-2xl mx-auto">
-            Transform your product images with AI-powered enhancements. 
-            Get professional-quality results in minutes.
-          </p>
-        </div>
+        
+        
+        
+        
 
         {/* Single Column Layout */}
         <div className="max-w-4xl mx-auto mb-8">
           {/* Main Upload Section - Always Visible */}
           <Card className="brand-card mb-8">
+            
             <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold brand-text-neutral text-2xl">
-                <Camera className="h-6 w-6 brand-text-secondary" />
-                Upload Your Product Image
-              </CardTitle>
-              <CardDescription className="brand-font-body text-gray-600 text-lg">
-                Select a high-quality product image to get started
-              </CardDescription>
+            <div className="text-center mb-8">
+            <h1 className="text-4xl brand-font-heading font-extrabold brand-text-neutral mb-4">
+            Upload Your Product Image
+            </h1>
+            <p className="text-xl brand-font-body brand-text-neutral max-w-2xl mx-auto">
+            Select a high-quality image to get AI-powered enhancements
+            </p>
+            </div>
             </CardHeader>
             <CardContent>
               {/* Large Upload Zone - Full Width */}
               {selectedFiles.length < MAX_FILES ? (
-                <div
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                 <div
                   className={`upload-zone rounded-xl p-12 text-center cursor-pointer border-2 ${
                     dragActive ? "active border-[#0D7877] bg-[#0D7877]/5" : "border-dashed border-gray-300 hover:border-[#3DA5D9] hover:bg-[#3DA5D9]/5"
                   } transition-all duration-200`}
@@ -710,7 +740,7 @@ export default function UploadEnhancePage() {
                   <p className="text-gray-500 brand-font-body mb-6 text-lg">
                     {selectedFiles.length > 0 
                       ? `Replace image (JPEG, PNG, WebP - up to 10MB each)`
-                      : `Maximum 1 image, JPEG, PNG, WebP format, up to 10MB each`
+                      : `One image at a time, JPEG, PNG, WebP format, up to 10MB each`
                     }
                   </p>
                   <Button variant="outline" type="button" className="brand-button-primary border-none text-lg px-8 py-3">
@@ -1112,7 +1142,7 @@ export default function UploadEnhancePage() {
             </div>
 
             {/* Processing Stats */}
-            
+
  <div className="text-xs text-gray-500 brand-font-body space-y-1">
                   <p>Processing your image</p>
                   <p>Industries: {selectedIndustries.join(', ')}</p>
