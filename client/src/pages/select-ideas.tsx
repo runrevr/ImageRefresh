@@ -24,6 +24,7 @@ export default function SelectIdeasPage() {
   const [, setLocation] = useLocation()
   const [selectedIdeas, setSelectedIdeas] = useState<{ [productId: string]: string[] }>({})
   const [productImages, setProductImages] = useState<ProductImage[]>([])
+  const [expandedIdeas, setExpandedIdeas] = useState<{ [ideaId: string]: boolean }>({})
   
   // Ensure page loads at top
   useEffect(() => {
@@ -138,6 +139,13 @@ export default function SelectIdeasPage() {
         [productId]: product.ideas.slice(0, 5).map(idea => idea.id)
       }))
     }
+  }
+
+  const toggleIdeaExpansion = (ideaId: string) => {
+    setExpandedIdeas(prev => ({
+      ...prev,
+      [ideaId]: !prev[ideaId]
+    }))
   }
 
   const getSelectedCount = (productId: string) => {
@@ -381,25 +389,49 @@ export default function SelectIdeasPage() {
                         return (
                           <div
                             key={idea.id}
-                            className={`idea-row p-4 rounded-lg border cursor-pointer ${
+                            className={`idea-row p-4 rounded-lg border ${
                               isSelected ? 'selected border-[#3DA5D9]' : 'border-gray-200'
-                            } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            onClick={() => !isDisabled && handleIdeaToggle(product.id, idea.id)}
+                            } ${isDisabled ? 'opacity-50' : ''}`}
                           >
                             <div className="flex items-start gap-3">
                               <Checkbox
                                 checked={isSelected}
                                 disabled={isDisabled}
                                 className="mt-1"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  if (!isDisabled) {
+                                    handleIdeaToggle(product.id, idea.id)
+                                  }
+                                }}
                               />
                               
                               <div className="flex-grow">
-                                <h3 className="font-semibold text-gray-900 brand-font-heading mb-1">
+                                <h3 className="font-semibold text-gray-900 brand-font-heading mb-2">
                                   {idea.title}
                                 </h3>
-                                <p className="text-sm text-gray-600 brand-font-body">
-                                  {idea.description}
-                                </p>
+                                
+                                {/* Description with Read more/less functionality */}
+                                <div className="text-sm text-gray-600 brand-font-body">
+                                  <p className="mb-2">
+                                    {expandedIdeas[idea.id] 
+                                      ? idea.description 
+                                      : `${idea.description.substring(0, 120)}${idea.description.length > 120 ? '...' : ''}`
+                                    }
+                                  </p>
+                                  
+                                  {idea.description.length > 120 && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        toggleIdeaExpansion(idea.id)
+                                      }}
+                                      className="text-[#3DA5D9] hover:text-[#2A7B9B] font-medium text-xs transition-colors"
+                                    >
+                                      {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
