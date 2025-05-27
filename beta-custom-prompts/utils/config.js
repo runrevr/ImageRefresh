@@ -2,7 +2,7 @@
 // Custom AI Prompts Configuration
 // This is completely separate from existing product lab
 
-const CUSTOM_AI_CONFIG = {
+export const CUSTOM_AI_CONFIG = {
   // Copy your product workflow URL here
   WORKFLOW_URL: process.env.PRODUCT_WORKFLOW_URL || 'your-workflow-url-here',
   API_KEY: process.env.PRODUCT_API_KEY || 'your-api-key-here',
@@ -19,4 +19,4 @@ const CUSTOM_AI_CONFIG = {
   }
 };
 
-module.exports = CUSTOM_AI_CONFIG;
+export default CUSTOM_AI_CONFIG;

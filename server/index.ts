@@ -315,6 +315,31 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
     }
   }
 
+  // Function to start server with port fallback
+  function startServer(port: number, altPorts: number[]) {
+    const server = app.listen(port, '0.0.0.0', () => {
+      log(`Server running on http://0.0.0.0:${port}`);
+    });
+
+    server.on('error', (err: any) => {
+      if (err.code === 'EADDRINUSE') {
+        log(`Port ${port} is busy, trying alternative ports...`);
+        if (altPorts.length > 0) {
+          const nextPort = altPorts.shift()!;
+          startServer(nextPort, altPorts);
+        } else {
+          log('No more alternative ports available. Exiting.');
+          process.exit(1);
+        }
+      } else {
+        throw err;
+      }
+    });
+
+    // Cleanup function for graceful shutdown
+    runCleanupTasks();
+  }
+
   // start with the default port and fallback to alternatives
   startServer(port, altPorts);
 })();
