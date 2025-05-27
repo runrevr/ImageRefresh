@@ -18,55 +18,39 @@ const pricingTiers: PricingTier[] = [
       { available: true, text: "1 free credit monthly" },
       { available: true, text: "Each credit = 1 image + 1 edit" },
       { available: true, text: "Standard resolution output" },
-      { available: false, text: "Access prior images in your account" }
+      { available: false, text: "Limited image history" }
     ],
     buttonText: "Get Started",
     buttonClass: "border border-gray-300 text-gray-700 hover:bg-gray-50",
     borderClass: "border-t-4 border-gray-200"
   },
   {
-    name: "Starter",
+    name: "Core",
     price: "$10/month",
     features: [
-      { available: true, text: "12 credits per month" },
+      { available: true, text: "20 credits per month" },
       { available: true, text: "Credits reset monthly" },
       { available: true, text: "HD resolution output" },
-      { available: true, text: "All images created are stored in your account" }
+      { available: true, text: "All images stored in your account" }
     ],
     popular: false,
-    buttonText: "Choose Starter",
+    buttonText: "Choose Core",
     buttonClass: "bg-[#2A7B9B] text-white hover:bg-[#1e6988]",
     borderClass: "border-t-4 border-[#2A7B9B]"
   },
   {
-    name: "Professional",
+    name: "Premium",
     price: "$20/month",
     features: [
-      { available: true, text: "30 credits per month" },
+      { available: true, text: "50 credits per month" },
       { available: true, text: "Credits reset monthly" },
-      { available: true, text: "4K resolution output" },
+      { available: true, text: "Highest resolution output" },
       { available: true, text: "Commercial usage rights" }
     ],
     popular: true,
-    buttonText: "Choose Professional",
+    buttonText: "Choose Premium",
     buttonClass: "bg-[#FF7B54] text-white hover:bg-[#e56c49]",
     borderClass: "border-t-4 border-[#FF7B54]"
-  },
-  {
-    name: "Business",
-    price: "$50/month",
-    features: [
-      { available: true, text: "75 credits per month" },
-      { available: true, text: "Credits reset monthly" },
-      { available: true, text: "Ultra HD 4K+ resolution output" },
-      { available: true, text: "Priority processing (faster generation)" },
-      { available: true, text: "Commercial usage rights" },
-      { available: true, text: "API access for integrations" }
-    ],
-    popular: false,
-    buttonText: "Choose Business",
-    buttonClass: "bg-[#0D7877] text-white hover:bg-[#0a5d5f]",
-    borderClass: "border-t-4 border-[#0D7877]"
   }
 ];
 
@@ -148,13 +132,22 @@ export default function PricingSection({ userId }: PricingSectionProps) {
       <div className="bg-gray-50 rounded-xl p-6 max-w-5xl mx-auto mt-8">
         <h3 className="text-lg font-bold mb-3">Need additional credits?</h3>
         <p className="text-gray-600 mb-4">You can purchase additional credits anytime at $1 each, with volume discounts available.</p>
-        <Button 
-          variant="default" 
-          className="bg-[#FF7B54] text-white hover:bg-[#e56c49]"
-          onClick={() => navigate("/buy-credits")}
-        >
-          Buy Credits
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button 
+            variant="default" 
+            className="bg-[#FF7B54] text-white hover:bg-[#e56c49]"
+            onClick={() => navigate("/buy-credits")}
+          >
+            Buy Credits
+          </Button>
+          <Button 
+            variant="outline" 
+            className="border-[#FF7B54] text-[#FF7B54] hover:bg-[#FF7B54] hover:text-white"
+            onClick={() => navigate("/pricing")}
+          >
+            Need more credits?
+          </Button>
+        </div>
       </div>
     </section>
   );
