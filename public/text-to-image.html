@@ -102,7 +102,6 @@
         .rainbow-input {
             width: 100%;
             padding: 20px 24px;
-            padding-right: 200px; /* Space for button */
             font-size: 1.125rem;
             border: none;
             border-radius: 50px;
@@ -111,6 +110,7 @@
             outline: none;
             transition: all 0.3s;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
 
         .rainbow-input:focus {
@@ -125,36 +125,33 @@
 
         /* Generate Button */
         .generate-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 10px 20px;
+            width: 100%;
+            padding: 16px 24px;
             background: #1a1a1a;
             color: #ffa500;
             border: none;
-            border-radius: 40px;
+            border-radius: 50px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.2s;
             opacity: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             white-space: nowrap;
         }
 
         .generate-btn::before {
             content: '⚡';
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             display: inline-block;
         }
 
         .generate-btn:hover {
             background: #000;
-            transform: translateY(-50%) scale(1.05);
+            transform: scale(1.02);
         }
 
         .generate-btn:disabled {
@@ -587,10 +584,8 @@
             }
 
             .generate-btn {
-                position: static;
-                width: 100%;
-                margin-top: 15px;
-                transform: none;
+                font-size: 1rem;
+                padding: 14px 20px;
             }
 
             .action-buttons {
@@ -618,10 +613,10 @@
                         id="promptInput"
                         placeholder="Try: 'relaxing massage therapy session' or 'professional plumber fixing pipes' or 'beautiful lawn care results'"
                     >
-                    <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
-                        Let's Make Some Magic
-                    </button>
                 </div>
+                <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
+                    Let's Make Some Magic
+                </button>
             </div>
 
             <div class="examples">
