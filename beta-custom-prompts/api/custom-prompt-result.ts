@@ -1,103 +1,28 @@
-
-import { NextApiRequest, NextApiResponse } from 'next';
-
-interface TransformationResult {
+// Custom prompt result handler
+export interface CustomPromptResult {
   id: string;
-  originalImageUrl: string;
-  transformedImageUrl: string;
+  status: 'pending' | 'completed' | 'failed';
+  originalImage: string;
+  processedImage?: string;
   prompt: string;
-  enhancedPrompt?: string;
-  timestamp: string;
-  metadata?: {
-    processingTime: number;
-    model: string;
-    userId?: string;
-  };
+  timestamp: number;
 }
 
-// In-memory storage for demo (in production, use a database)
-const transformationResults = new Map<string, TransformationResult>();
+// In-memory storage for demo purposes
+const results = new Map<string, CustomPromptResult>();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, query } = req;
-  const { id, userId } = query;
+export function getResult(id: string): CustomPromptResult | null {
+  return results.get(id) || null;
+}
 
-  if (method === 'GET') {
-    if (!id || typeof id !== 'string') {
-      return res.status(400).json({ error: 'Missing transformation ID' });
-    }
+export function setResult(id: string, result: CustomPromptResult): void {
+  results.set(id, result);
+}
 
-    const result = transformationResults.get(id);
-    if (!result) {
-      return res.status(404).json({ error: 'Transformation result not found' });
-    }
+export function getAllResults(): CustomPromptResult[] {
+  return Array.from(results.values());
+}
 
-    // Optional user filtering
-    if (userId && result.metadata?.userId !== userId) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
-    return res.status(200).json(result);
-  }
-
-  if (method === 'POST') {
-    const { 
-      originalImageUrl, 
-      transformedImageUrl, 
-      prompt, 
-      enhancedPrompt,
-      processingTime,
-      model,
-      userId 
-    } = req.body;
-    
-    if (!id || typeof id !== 'string') {
-      return res.status(400).json({ error: 'Missing transformation ID' });
-    }
-
-    if (!originalImageUrl || !transformedImageUrl || !prompt) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: originalImageUrl, transformedImageUrl, prompt' 
-      });
-    }
-
-    const result: TransformationResult = {
-      id: id as string,
-      originalImageUrl,
-      transformedImageUrl,
-      prompt,
-      enhancedPrompt,
-      timestamp: new Date().toISOString(),
-      metadata: {
-        processingTime: processingTime || 0,
-        model: model || 'gpt-image-01',
-        userId
-      }
-    };
-
-    transformationResults.set(id as string, result);
-
-    return res.status(200).json({
-      success: true,
-      result
-    });
-  }
-
-  if (method === 'DELETE') {
-    if (!id || typeof id !== 'string') {
-      return res.status(400).json({ error: 'Missing transformation ID' });
-    }
-
-    const deleted = transformationResults.delete(id);
-    if (!deleted) {
-      return res.status(404).json({ error: 'Transformation result not found' });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Transformation result deleted'
-    });
-  }
-
-  return res.status(405).json({ error: 'Method not allowed' });
+export function deleteResult(id: string): boolean {
+  return results.delete(id);
 }
