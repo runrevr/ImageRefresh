@@ -39,11 +39,10 @@ import BuyCreditsPage from "@/pages/buy-credits";
 import CheckoutDemoPage from "@/pages/checkout-demo";
 import CheckoutFlowDemoPage from "@/pages/checkout-flow-demo";
 import UploadPage from "@/pages/upload";
-import UploadEnhance from "./pages/upload-enhance";
-import SelectIdeas from "./pages/select-ideas";
-import GenerateEnhancements from "./pages/generate-enhancements";
-import Results from "./pages/results";
-import CustomPromptsBeta from "./pages/custom-prompts-beta";
+import UploadEnhancePage from "@/pages/upload-enhance";
+import SelectIdeasPage from "@/pages/select-ideas";
+import GenerateEnhancementsPage from "@/pages/generate-enhancements";
+import ResultsPage from "@/pages/results";
 
 function Router() {
   return (
@@ -57,10 +56,10 @@ function Router() {
         <Route path="/help" component={HelpPage} />
         <Route path="/kids-drawing" component={KidsDrawingPage} />
         <Route path="/upload" component={UploadPage} />
-        <Route path="/upload-enhance" component={UploadEnhance} />
-        <Route path="/select-ideas" component={SelectIdeas} />
-        <Route path="/generate-enhancements" component={GenerateEnhancements} />
-        <Route path="/results" component={Results} />
+        <Route path="/upload-enhance" component={UploadEnhancePage} />
+        <Route path="/select-ideas" component={SelectIdeasPage} />
+        <Route path="/generate-enhancements" component={GenerateEnhancementsPage} />
+        <Route path="/results" component={ResultsPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/product-enhancement" component={ProductEnhancementPage} />
         <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
@@ -97,7 +96,6 @@ function Router() {
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
-        <Route path="/custom-prompts-beta" component={CustomPromptsBeta} />
         <Route component={NotFound} />
       </Switch>
     </>
