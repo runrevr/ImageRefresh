@@ -288,20 +288,25 @@ export default function GenerateEnhancementsPage() {
     if (jobIndex === -1 || jobs[jobIndex].retryCount >= 3) return
 
     const updatedJobs = [...jobs]
+    const job = updatedJobs[jobIndex];
+    
+    console.log(`🔄 Retrying job: ${job.enhancementTitle} (attempt ${job.retryCount + 1}/3)`);
+    
+    // Update retry count and reset status
     updatedJobs[jobIndex] = {
       ...updatedJobs[jobIndex],
       status: 'creating_prompt',
-      progress: 0,
+      progress: 20,
       retryCount: updatedJobs[jobIndex].retryCount + 1,
-      errorMessage: undefined
+      errorMessage: undefined,
+      resultImageUrl: undefined
     }
     setJobs(updatedJobs)
 
-    // Re-run the actual processing for this job
     try {
-      const job = updatedJobs[jobIndex];
-
-      // Step 1: Generate edit prompt with Claude
+      console.log(`[Retry] Step 1: Generating prompt for "${job.enhancementTitle}"`);
+      
+      // Step 1: Generate edit prompt with Claude (same as main workflow)
       const promptResponse = await fetch('/api/generate-edit-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -313,10 +318,13 @@ export default function GenerateEnhancementsPage() {
       });
 
       if (!promptResponse.ok) {
+        const errorText = await promptResponse.text();
+        console.error('Retry prompt API error:', errorText);
         throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
       }
 
       const promptResult = await promptResponse.json();
+      console.log(`[Retry] Prompt generated:`, promptResult.edit_prompt);
 
       // Update to generating image status
       updatedJobs[jobIndex] = {
@@ -327,7 +335,9 @@ export default function GenerateEnhancementsPage() {
       };
       setJobs([...updatedJobs]);
 
-      // Step 2: Generate image
+      console.log(`[Retry] Step 2: Generating image with GPT-image-01`);
+      
+      // Step 2: Generate image (same as main workflow)
       const imageResponse = await fetch('/api/generate-enhancement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -339,10 +349,13 @@ export default function GenerateEnhancementsPage() {
       });
 
       if (!imageResponse.ok) {
+        const errorText = await imageResponse.text();
+        console.error('Retry image API error:', errorText);
         throw new Error(`Image generation failed: ${imageResponse.statusText}`);
       }
 
       const imageResult = await imageResponse.json();
+      console.log(`[Retry] Success! Image generated:`, imageResult.enhanced_image_url);
 
       // Mark as complete
       updatedJobs[jobIndex] = {
@@ -356,10 +369,12 @@ export default function GenerateEnhancementsPage() {
       setFailedCount(prev => prev - 1);
 
     } catch (error) {
+      console.error(`[Retry] Error for "${job.enhancementTitle}":`, error);
+      
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'failed',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        errorMessage: error instanceof Error ? error.message : 'Retry failed'
       };
       setJobs([...updatedJobs]);
     }
@@ -436,21 +451,25 @@ export default function GenerateEnhancementsPage() {
     if (jobIndex === -1) return
 
     const updatedJobs = [...jobs]
+    const job = updatedJobs[jobIndex];
+    
+    console.log(`🔄 Starting regeneration for: ${job.enhancementTitle}`);
+    
+    // Reset job status for regeneration
     updatedJobs[jobIndex] = {
       ...updatedJobs[jobIndex],
       status: 'creating_prompt',
-      progress: 0,
+      progress: 20,
       retryCount: 0,
       errorMessage: undefined,
       resultImageUrl: undefined
     }
-    setJobs(updatedJobs)
+    setJobs([...updatedJobs])
 
-    // Re-run the actual processing for this job
     try {
-      const job = updatedJobs[jobIndex];
-
-      // Step 1: Generate edit prompt with Claude
+      console.log(`[Regenerate] Step 1: Generating new prompt for "${job.enhancementTitle}"`);
+      
+      // Step 1: Generate fresh edit prompt with Claude (same as main workflow)
       const promptResponse = await fetch('/api/generate-edit-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -462,10 +481,13 @@ export default function GenerateEnhancementsPage() {
       });
 
       if (!promptResponse.ok) {
+        const errorText = await promptResponse.text();
+        console.error('Regenerate prompt API error:', errorText);
         throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
       }
 
       const promptResult = await promptResponse.json();
+      console.log(`[Regenerate] New prompt generated:`, promptResult.edit_prompt);
 
       // Update to generating image status
       updatedJobs[jobIndex] = {
@@ -476,7 +498,9 @@ export default function GenerateEnhancementsPage() {
       };
       setJobs([...updatedJobs]);
 
-      // Step 2: Generate image
+      console.log(`[Regenerate] Step 2: Generating new image with GPT-image-01`);
+      
+      // Step 2: Generate new image with fresh prompt (same as main workflow)
       const imageResponse = await fetch('/api/generate-enhancement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -488,12 +512,15 @@ export default function GenerateEnhancementsPage() {
       });
 
       if (!imageResponse.ok) {
+        const errorText = await imageResponse.text();
+        console.error('Regenerate image API error:', errorText);
         throw new Error(`Image generation failed: ${imageResponse.statusText}`);
       }
 
       const imageResult = await imageResponse.json();
+      console.log(`[Regenerate] Success! New image generated:`, imageResult.enhanced_image_url);
 
-      // Mark as complete
+      // Mark as complete with new image
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'complete',
@@ -503,10 +530,12 @@ export default function GenerateEnhancementsPage() {
       setJobs([...updatedJobs]);
 
     } catch (error) {
+      console.error(`[Regenerate] Error for "${job.enhancementTitle}":`, error);
+      
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'failed',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        errorMessage: error instanceof Error ? error.message : 'Regeneration failed'
       };
       setJobs([...updatedJobs]);
     }
