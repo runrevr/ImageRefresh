@@ -89,4 +89,8 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
+args = "cd client && npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
 args = "node start-server.mjs"

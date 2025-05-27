@@ -131,6 +131,11 @@ app.get('/text-to-image', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'text-to-image.html'));
 });
 
+// Main route should redirect to the React app
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'client', 'index.html'));
+});
+
 // Serve the React app for all other routes (SPA routing)
 app.get('*', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'client', 'index.html'));
