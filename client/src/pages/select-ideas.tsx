@@ -282,17 +282,21 @@ export default function SelectIdeasPage() {
         }
         
         .idea-row {
-          transition: all 0.2s ease-in-out;
+          transition: all 0.3s ease-in-out;
         }
         
         .idea-row:not(.opacity-50):hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
         }
         
         .idea-row.selected {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .border-3 {
+          border-width: 3px;
         }
         
         .sticky-footer {
@@ -413,14 +417,14 @@ export default function SelectIdeasPage() {
                   
                   <CardContent>
                     {/* Group buttons */}
-                    <div className="mb-4 flex flex-wrap gap-2">
+                    <div className="mb-6 flex flex-wrap gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleSelectGroup(product.id, 'professional')}
                         className="text-xs brand-font-body border-blue-300 text-blue-700 hover:bg-blue-50"
                       >
-                        Select All Professional (1-3)
+                        📸 Select All Professional (1-3)
                       </Button>
                       <Button
                         variant="outline"
@@ -428,15 +432,15 @@ export default function SelectIdeasPage() {
                         onClick={() => handleSelectGroup(product.id, 'creative')}
                         className="text-xs brand-font-body border-purple-300 text-purple-700 hover:bg-purple-50"
                       >
-                        Select Creative (4-5)
+                        ✨ Select Creative (4-5)
                       </Button>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-6">
                       {/* Professional Ideas (1-3) */}
-                      <div className="space-y-3">
-                        <div className="text-xs font-medium text-gray-500 brand-font-body mb-2 pl-2">
-                          PROFESSIONAL
+                      <div className="space-y-3 p-4 rounded-lg bg-blue-25" style={{backgroundColor: '#f8fafc'}}>
+                        <div className="text-xs font-medium text-blue-700 brand-font-body mb-3 pl-2 flex items-center gap-1">
+                          📸 PROFESSIONAL
                         </div>
                         {product.ideas.slice(0, 3).map((idea, index) => {
                           const isSelected = selectedIdeas[product.id]?.includes(idea.id) || false
@@ -446,29 +450,30 @@ export default function SelectIdeasPage() {
                           return (
                             <div
                               key={idea.id}
-                              className={`idea-row p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                              className={`idea-row p-4 rounded-lg cursor-pointer transition-all duration-200 relative ${
                                 isSelected 
-                                  ? 'selected border-blue-400 bg-blue-50 shadow-sm' 
-                                  : 'border-gray-200 bg-blue-25 hover:bg-blue-50'
+                                  ? 'selected border-3 border-blue-500 bg-blue-100 shadow-md transform scale-[1.02]' 
+                                  : 'border-2 border-blue-200 bg-white hover:bg-blue-50 hover:border-blue-300'
                               } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                               onClick={() => !isDisabled && handleIdeaToggle(product.id, idea.id)}
-                              style={{
-                                backgroundColor: isSelected ? '#eff6ff' : '#f8fafc'
-                              }}
                             >
+                              {/* Checkmark in corner when selected */}
+                              {isSelected && (
+                                <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
+                                  <Check className="w-4 h-4 text-white" />
+                                </div>
+                              )}
+                              
                               <div className="flex items-start gap-3">
                                 <div className="flex items-center gap-2 mt-1">
-                                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">
+                                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
+                                    isSelected ? 'bg-blue-500 text-white' : 'bg-blue-100 text-blue-700'
+                                  }`}>
                                     {ideaNumber}
                                   </div>
-                                  {isSelected && (
-                                    <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                                      <Check className="w-3 h-3 text-white" />
-                                    </div>
-                                  )}
                                 </div>
                                 
-                                <div className="flex-grow">
+                                <div className="flex-grow pr-8">
                                   <h3 className="font-semibold text-gray-900 brand-font-heading mb-2">
                                     {idea.title}
                                   </h3>
@@ -478,17 +483,17 @@ export default function SelectIdeasPage() {
                                     <p className="mb-2">
                                       {expandedIdeas[idea.id] 
                                         ? idea.description 
-                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
+                                        : `${idea.description.split(' ').slice(0, 10).join(' ')}${idea.description.split(' ').length > 10 ? '...' : ''}`
                                       }
                                     </p>
                                     
-                                    {idea.description.split(' ').length > 12 && (
+                                    {idea.description.split(' ').length > 10 && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           toggleIdeaExpansion(idea.id)
                                         }}
-                                        className="text-[#3DA5D9] hover:text-[#2A7B9B] font-medium text-xs transition-colors"
+                                        className="text-blue-600 hover:text-blue-800 font-medium text-xs transition-colors"
                                       >
                                         {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
                                       </button>
@@ -502,51 +507,58 @@ export default function SelectIdeasPage() {
                       </div>
 
                       {/* Divider */}
-                      <div className="border-t border-gray-200 my-6"></div>
+                      <div className="border-t-2 border-gray-300 my-8"></div>
 
                       {/* Creative Ideas (4-5) */}
-                      <div className="space-y-3">
-                        <div className="text-xs font-medium text-gray-500 brand-font-body mb-2 pl-2">
-                          CREATIVE
+                      <div className="space-y-3 p-4 rounded-lg" style={{backgroundColor: '#fdf4ff'}}>
+                        <div className="text-xs font-medium text-purple-700 brand-font-body mb-3 pl-2 flex items-center gap-1">
+                          ✨ CREATIVE
                         </div>
                         {product.ideas.slice(3).map((idea, index) => {
                           const isSelected = selectedIdeas[product.id]?.includes(idea.id) || false
                           const isDisabled = !isSelected && maxReached
                           const ideaNumber = index + 4
-                          const bgColor = ideaNumber === 4 ? 'purple' : 'orange'
+                          const colorScheme = ideaNumber === 4 ? 'purple' : 'orange'
 
                           return (
                             <div
                               key={idea.id}
-                              className={`idea-row p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                              className={`idea-row p-4 rounded-lg cursor-pointer transition-all duration-200 relative ${
                                 isSelected 
-                                  ? `selected border-${bgColor}-400 bg-${bgColor}-50 shadow-sm` 
-                                  : `border-gray-200 hover:bg-${bgColor}-50`
+                                  ? `selected border-3 shadow-md transform scale-[1.02] ${
+                                      colorScheme === 'purple' 
+                                        ? 'border-purple-500 bg-purple-100' 
+                                        : 'border-orange-500 bg-orange-100'
+                                    }` 
+                                  : `border-2 bg-white hover:border-opacity-70 ${
+                                      colorScheme === 'purple' 
+                                        ? 'border-purple-200 hover:bg-purple-50 hover:border-purple-300' 
+                                        : 'border-orange-200 hover:bg-orange-50 hover:border-orange-300'
+                                    }`
                               } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                               onClick={() => !isDisabled && handleIdeaToggle(product.id, idea.id)}
-                              style={{
-                                backgroundColor: isSelected 
-                                  ? bgColor === 'purple' ? '#f3e8ff' : '#fff7ed'
-                                  : bgColor === 'purple' ? '#faf5ff' : '#fffbf5'
-                              }}
                             >
+                              {/* Checkmark in corner when selected */}
+                              {isSelected && (
+                                <div className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center shadow-lg ${
+                                  colorScheme === 'purple' ? 'bg-purple-500' : 'bg-orange-500'
+                                }`}>
+                                  <Check className="w-4 h-4 text-white" />
+                                </div>
+                              )}
+                              
                               <div className="flex items-start gap-3">
                                 <div className="flex items-center gap-2 mt-1">
-                                  <div className={`w-6 h-6 rounded-full ${
-                                    bgColor === 'purple' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'
-                                  } flex items-center justify-center text-xs font-bold`}>
+                                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
+                                    isSelected 
+                                      ? colorScheme === 'purple' ? 'bg-purple-500 text-white' : 'bg-orange-500 text-white'
+                                      : colorScheme === 'purple' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'
+                                  }`}>
                                     {ideaNumber}
                                   </div>
-                                  {isSelected && (
-                                    <div className={`w-5 h-5 rounded-full ${
-                                      bgColor === 'purple' ? 'bg-purple-500' : 'bg-orange-500'
-                                    } flex items-center justify-center`}>
-                                      <Check className="w-3 h-3 text-white" />
-                                    </div>
-                                  )}
                                 </div>
                                 
-                                <div className="flex-grow">
+                                <div className="flex-grow pr-8">
                                   <h3 className="font-semibold text-gray-900 brand-font-heading mb-2">
                                     {idea.title}
                                   </h3>
@@ -556,17 +568,21 @@ export default function SelectIdeasPage() {
                                     <p className="mb-2">
                                       {expandedIdeas[idea.id] 
                                         ? idea.description 
-                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
+                                        : `${idea.description.split(' ').slice(0, 10).join(' ')}${idea.description.split(' ').length > 10 ? '...' : ''}`
                                       }
                                     </p>
                                     
-                                    {idea.description.split(' ').length > 12 && (
+                                    {idea.description.split(' ').length > 10 && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           toggleIdeaExpansion(idea.id)
                                         }}
-                                        className="text-[#3DA5D9] hover:text-[#2A7B9B] font-medium text-xs transition-colors"
+                                        className={`font-medium text-xs transition-colors ${
+                                          colorScheme === 'purple'
+                                            ? 'text-purple-600 hover:text-purple-800'
+                                            : 'text-orange-600 hover:text-orange-800'
+                                        }`}
                                       >
                                         {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
                                       </button>
