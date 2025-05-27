@@ -32,7 +32,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFileSelection(e.dataTransfer.files[0]);
     }
@@ -58,7 +58,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
 
   const uploadFile = async (file: File) => {
     setIsUploading(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('image', file);
@@ -74,12 +74,12 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
 
       const data = await response.json();
       console.log("Upload response data:", data);
-      
+
       if (!data.imagePath || !data.imageUrl) {
         console.error("Missing image path or URL in response:", data);
         throw new Error("Server returned incomplete image data");
       }
-      
+
       console.log("Calling onImageUploaded with:", data.imagePath, data.imageUrl);
       onImageUploaded(data.imagePath, data.imageUrl);
     } catch (error) {
@@ -120,11 +120,13 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
 
   return (
     <div className="p-8 flex flex-col items-center justify-center">
-      <div className="w-full max-w-xl mx-auto">
+      <div className="w-full max-w-2xl mx-auto">
         <div
-          className={`border-2 border-dashed ${
-            isDragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300'
-          } rounded-lg p-12 text-center cursor-pointer hover:bg-gray-50 transition`}
+          className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300 min-h-[400px] flex flex-col items-center justify-center ${
+          isDragging
+            ? "border-blue-500 bg-blue-50 border-solid scale-[1.02]"
+            : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-gray-100 hover:scale-[1.01]"
+        }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -156,7 +158,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
             </>
           )}
         </div>
-        
+
         {fileError && (
           <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md flex items-center">
             <FileWarning className="h-5 w-5 mr-2" />

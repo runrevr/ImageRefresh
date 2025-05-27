@@ -815,14 +815,22 @@ export default function UploadPage() {
             className="bg-white rounded-xl shadow-lg overflow-hidden p-6 mb-10"
           >
             {currentStep === Step.Upload && (
-              <div className="max-w-2xl mx-auto">
-                <h2 className="text-2xl font-bold mb-3 text-center">
-                  Upload Your Photo
-                </h2>
-                <p className="text-red-500 font-medium mb-4 text-center">
-                  Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
-                </p>
+              <div className="max-w-3xl mx-auto">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                    Transform Your Photos with AI Magic ✨
+                  </h2>
+                  <p className="text-lg text-gray-600">
+                    Turn ordinary photos into extraordinary art in seconds
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Works best with clear, well-lit photos
+                  </p>
+                </div>
                 <ImageUploader onImageUploaded={handleUpload} />
+                <div className="text-center mt-4 text-sm text-gray-500">
+                  Accepts: JPG, PNG, WebP • Max size: 10MB
+                </div>
               </div>
             )}
 
