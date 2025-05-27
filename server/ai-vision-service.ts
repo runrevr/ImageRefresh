@@ -47,11 +47,11 @@ interface EnhancementIdea {
 export async function analyzeProductImage(imagePath: string, industryContext?: string, productType?: string): Promise<VisionAnalysis> {
   try {
     console.log('[GPT-4 Vision] Starting product image analysis...');
-    
+
     // Convert image to base64 for GPT-4 Vision
     const imageBuffer = fs.readFileSync(imagePath);
     const base64Image = imageBuffer.toString('base64');
-    
+
     // Use GPT-4 Vision for detailed analysis
     // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
     const response = await openai.chat.completions.create({
@@ -64,7 +64,7 @@ export async function analyzeProductImage(imagePath: string, industryContext?: s
               type: "text",
               text: `Analyze this product image for a ${industryContext || 'general'} business.
                      Product type: ${productType || 'Not specified'}
-                     
+
                      Provide analysis in JSON format:
                      {
                        "product_identification": "what product is this",
@@ -95,7 +95,7 @@ export async function analyzeProductImage(imagePath: string, industryContext?: s
     });
 
     const analysisText = response.choices[0].message.content || '';
-    
+
     // Parse GPT-4 Vision's JSON response
     let parsedAnalysis;
     try {
@@ -124,7 +124,7 @@ export async function analyzeProductImage(imagePath: string, industryContext?: s
         enhancement_opportunities: extractEnhancementOpportunities(analysisText)
       };
     }
-    
+
     // Convert to our interface format
     const analysis: VisionAnalysis = {
       productType: parsedAnalysis.product_identification || 'Product',
@@ -144,7 +144,7 @@ export async function analyzeProductImage(imagePath: string, industryContext?: s
 
     console.log('[GPT-4 Vision] Analysis complete');
     return analysis;
-    
+
   } catch (error) {
     console.error('[GPT-4 Vision] Error analyzing image:', error);
     throw new Error(`Vision analysis failed: ${error}`);
@@ -161,7 +161,7 @@ export async function generateEnhancementIdeas(
 ): Promise<EnhancementIdea[]> {
   try {
     console.log('[Claude 4 Ideas] Generating enhancement ideas with latest model...');
-    
+
     // Use Claude 4 Sonnet with enhanced creative prompt for scroll-stopping concepts
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
@@ -234,7 +234,7 @@ Return as JSON array:
     });
 
     const responseText = (response.content[0] as any).text || '';
-    
+
     // Extract JSON from Claude 4's response
     const jsonMatch = responseText.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
@@ -242,10 +242,10 @@ Return as JSON array:
     }
 
     const ideas: EnhancementIdea[] = JSON.parse(jsonMatch[0]);
-    
+
     console.log(`[Claude 4 Ideas] Generated ${ideas.length} enhancement ideas`);
     return ideas;
-    
+
   } catch (error) {
     console.error('[Claude 4 Ideas] Error generating ideas:', error);
     throw new Error(`Idea generation failed: ${error}`);
@@ -259,12 +259,12 @@ function extractProductType(text: string): string {
     /this is (?:a|an)\s*([^.\n]+)/i,
     /appears to be (?:a|an)\s*([^.\n]+)/i
   ];
-  
+
   for (const pattern of patterns) {
     const match = text.match(pattern);
     if (match) return match[1].trim();
   }
-  
+
   return 'Product';
 }
 
