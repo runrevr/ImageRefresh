@@ -1,11 +1,10 @@
-
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
-import { ArrowUpFromLine, Image, FileWarning, Eye, Copy, Download } from 'lucide-react';
+import { ArrowUpFromLine, Image, FileWarning, Copy, Download } from 'lucide-react';
 import { formatBytes } from '@/lib/utils';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -44,7 +43,6 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     size: string;
     dimensions?: string;
   } | null>(null);
-  const [showSampleImages, setShowSampleImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -126,11 +124,11 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
   const handleFileSelection = async (file: File) => {
     if (validateFile(file)) {
       setSelectedFile(file);
-      
+
       // Create preview URL
       const preview = URL.createObjectURL(file);
       setPreviewUrl(preview);
-      
+
       // Get file details including dimensions
       const dimensions = await getImageDimensions(file);
       setFileDetails({
@@ -228,17 +226,17 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     try {
       setIsUploading(true);
       setUploadProgress(0);
-      
+
       // Fetch the sample image
       const response = await fetch(sampleImage.url);
       const blob = await response.blob();
       const file = new File([blob], sampleImage.name + '.jpg', { type: 'image/jpeg' });
-      
+
       // Create preview and details
       const preview = URL.createObjectURL(file);
       setPreviewUrl(preview);
       setSelectedFile(file);
-      
+
       const dimensions = await getImageDimensions(file);
       setFileDetails({
         name: file.name,
@@ -246,8 +244,6 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
         dimensions
       });
 
-      setShowSampleImages(false);
-      
       // Upload the sample image
       setTimeout(() => {
         uploadFile(file);
@@ -296,24 +292,10 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
                 onChange={handleFileInputChange}
                 accept="image/jpeg,image/png,image/webp"
               />
-              
-              <div className="flex flex-col sm:flex-row gap-3 items-center">
-                <RainbowButton>
+
+              <RainbowButton>
                   Select Image
                 </RainbowButton>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowSampleImages(!showSampleImages);
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  Try with sample image
-                </Button>
-              </div>
 
               <p className="text-sm text-gray-500 mt-4">
                 Accepted formats: JPG, PNG, WebP • Max size: 10MB
@@ -322,30 +304,6 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
                 💡 Tip: You can also paste images with Ctrl+V
               </p>
             </div>
-
-            {/* Sample Images Panel */}
-            {showSampleImages && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm animate-in slide-in-from-top-2 duration-300">
-                <h4 className="text-lg font-medium mb-4">Try with these sample images:</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {SAMPLE_IMAGES.map((sample, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-400 hover:shadow-md transition-all duration-200"
-                      onClick={() => handleSampleImageSelect(sample)}
-                    >
-                      <img
-                        src={sample.url}
-                        alt={sample.name}
-                        className="w-full h-24 object-cover rounded-md mb-3"
-                      />
-                      <h5 className="font-medium text-sm mb-1">{sample.name}</h5>
-                      <p className="text-xs text-gray-500">{sample.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           // File selected state with preview
