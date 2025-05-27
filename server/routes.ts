@@ -714,6 +714,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user credits endpoint
+  app.get('/api/credits/:userId', async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      console.log(`Credit check for user ${userId}`);
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Check if user gets a free credit this month
+      const hasMonthlyFreeCredit = await checkMonthlyFreeCredit(user);
+      const totalCredits = (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits;
+
+      console.log(`User ${userId} credit check: Free credits used: ${user.freeCreditsUsed}, Has monthly free: ${hasMonthlyFreeCredit}, Paid credits: ${user.paidCredits}, Total available: ${totalCredits}`);
+
+      const response = {
+        id: user.id,
+        freeCreditsUsed: user.freeCreditsUsed,
+        paidCredits: user.paidCredits,
+        totalCredits: totalCredits,
+        hasMonthlyFreeCredit
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error('Error fetching user credits:', error);
+      res.status(500).json({ error: 'Failed to fetch user credits' });
+    }
+  });
+
+  // Get guest credits endpoint
+  app.get('/api/credits/guest', async (req: Request, res: Response) => {
+    try {
+      // For guest users, return default credits
+      const response = {
+        id: null,
+        freeCreditsUsed: false,
+        paidCredits: 0,
+        totalCredits: 1, // Guest users get 1 free credit
+        hasMonthlyFreeCredit: true
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error('Error fetching guest credits:', error);
+      res.status(500).json({ error: 'Failed to fetch guest credits' });
+    }
+  });
+
   // Get user credits by ID endpoint (for client compatibility)
   app.get("/api/credits/:id", async (req, res) => {
     try {

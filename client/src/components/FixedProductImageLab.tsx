@@ -18,6 +18,7 @@ import {
 import '../product-image-lab.css';
 import { useToast } from '@/hooks/use-toast';
 import WebhookTester from './WebhookTester';
+import { useCredits } from '@/hooks/useCredits';
 
 // Types
 interface TabState {
@@ -314,6 +315,8 @@ export default function FixedProductImageLab({
       });
     }
   };
+    // Fetch credits using the useCredits hook
+    const creditsData = useCredits();
 
   return (
     <div className="product-lab-container">

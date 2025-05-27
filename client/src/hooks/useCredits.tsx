@@ -14,8 +14,10 @@ export function useCredits(): UseQueryResult<UserCredits, Error> {
   return useQuery<UserCredits, Error, UserCredits>({
     queryKey: user ? [`/api/credits/${user.id}`] : ['/api/credits/guest'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
-    enabled: !!user, // Only fetch if user is logged in
-    retry: false, // Don't retry on errors
+    enabled: true, // Always fetch, for both authenticated and guest users
+    retry: false,
+    refetchOnWindowFocus: false, // Prevent unnecessary refetches
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     // Default values when data is not available
     placeholderData: {
       totalCredits: 0,

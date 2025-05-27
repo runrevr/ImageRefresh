@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "wouter";
 import logoImage from "../assets/logo-new.png";
 import { useAuth } from "@/hooks/useAuth";
+import { useCredits } from "@/hooks/useCredits";
 import { Bot } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,6 +22,7 @@ interface NavbarProps {
 export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logoutMutation } = useAuth();
+  const { data: creditsData } = useCredits();
 
   const totalCredits = freeCredits + paidCredits;
 
