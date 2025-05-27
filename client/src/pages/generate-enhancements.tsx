@@ -626,6 +626,12 @@ export default function GenerateEnhancementsPage() {
           100% { background-position: 200% 0; }
         }
         
+        .animate-shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s infinite;
+        }
+        
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
@@ -711,54 +717,142 @@ export default function GenerateEnhancementsPage() {
 
           {/* Overall Progress */}
           <Card className="brand-card mb-8">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <Zap className="w-6 h-6 text-[#0D7877]" />
-                  <span className="font-semibold brand-text-neutral brand-font-heading">
-                    Generation Progress
-                  </span>
-                </div>
-                <div className="text-right brand-font-body">
-                  {isProcessing ? (
-                    <div>
-                      <div className="text-sm font-medium text-[#0D7877]">
-                        Generating enhancement {currentJobIndex} of {jobs.length}... ({60 - currentJobTimer}s)
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        Completed: {completedCount} | In Progress: 1 | Waiting: {jobs.length - completedCount - failedCount - 1}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Total time remaining: ~{Math.ceil(estimatedTimeRemaining / 60)} minutes
+            <CardContent className="p-8">
+              {isProcessing ? (
+                <div className="text-center">
+                  {/* Circular Progress Indicator */}
+                  <div className="relative mx-auto mb-6">
+                    <div className="w-[120px] h-[120px] mx-auto">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        {/* Background circle */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          stroke="#e5e7eb"
+                          strokeWidth="6"
+                          fill="none"
+                        />
+                        {/* Progress circle */}
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          stroke="#0D7877"
+                          strokeWidth="6"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeDasharray={`${overallProgress * 2.83} 283`}
+                          className="transition-all duration-500 ease-out"
+                          style={{
+                            filter: 'drop-shadow(0 0 6px rgba(13, 120, 119, 0.3))'
+                          }}
+                        />
+                      </svg>
+                      {/* Percentage in center */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl font-bold text-[#0D7877] brand-font-heading">
+                          {Math.round(overallProgress)}%
+                        </span>
                       </div>
                     </div>
-                  ) : (
-                    <div className="text-sm text-gray-600">
-                      {completedCount + failedCount} of {jobs.length} enhancements complete
+                  </div>
+
+                  {/* Currently Processing Section */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 brand-font-heading">
+                      Currently Processing
+                    </h3>
+                    
+                    {/* Current Job Display */}
+                    {jobs[currentJobIndex] && (
+                      <div className="flex items-center justify-center gap-6 mb-4">
+                        {/* Original Image Thumbnail */}
+                        <div className="text-center">
+                          <img
+                            src={jobs[currentJobIndex].originalImageUrl}
+                            alt="Original"
+                            className="w-[150px] h-[150px] object-cover rounded-lg border-2 border-gray-200 shadow-md"
+                          />
+                          <p className="text-sm text-gray-600 mt-2 brand-font-body">Original</p>
+                        </div>
+
+                        {/* Animated Arrow */}
+                        <div className="flex flex-col items-center">
+                          <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center animate-pulse">
+                            <span className="text-white text-xl">↓</span>
+                          </div>
+                        </div>
+
+                        {/* Loading Spinner with Preview */}
+                        <div className="text-center">
+                          <div className="w-[150px] h-[150px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center relative overflow-hidden">
+                            {/* Animated Background */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                            
+                            {/* Loading Spinner */}
+                            <div className="relative z-10">
+                              <RefreshCw className="w-8 h-8 text-[#0D7877] animate-spin mb-2" />
+                              <div className="text-xs text-gray-600 brand-font-body">Processing...</div>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-2 brand-font-body">Enhanced</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Enhancement Details */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                      <p className="text-blue-800 brand-font-body font-medium mb-2">
+                        Creating "{jobs[currentJobIndex]?.enhancementTitle}"
+                      </p>
+                      <p className="text-blue-700 brand-font-body text-sm">
+                        {jobs[currentJobIndex]?.status === 'creating_prompt' 
+                          ? 'Step 1 of 2: Analyzing requirements with Claude...'
+                          : 'Step 2 of 2: Applying effects with GPT-Image-01...'
+                        }
+                      </p>
                     </div>
-                  )}
+
+                    {/* Time Estimation */}
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <Clock className="w-5 h-5 text-gray-600" />
+                        <span className="text-gray-800 brand-font-body font-medium">
+                          Completes in ~{60 - currentJobTimer} seconds
+                        </span>
+                      </div>
+                      
+                      {/* Live Countdown Bar */}
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-[#0D7877] h-2 rounded-full transition-all duration-1000 ease-linear"
+                          style={{ width: `${(currentJobTimer / 60) * 100}%` }}
+                        ></div>
+                      </div>
+                      
+                      <div className="flex justify-between text-xs text-gray-500 mt-2 brand-font-body">
+                        <span>Processing enhancement {currentJobIndex + 1} of {jobs.length}</span>
+                        <span>{completedCount} completed, {jobs.length - completedCount - failedCount - 1} waiting</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              {/* Current Job Message */}
-              {isProcessing && currentJobMessage && (
-                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-blue-800 brand-font-body text-sm font-medium">
-                    {currentJobMessage}
+              ) : (
+                /* Completion State */
+                <div className="text-center">
+                  <div className="w-[120px] h-[120px] mx-auto mb-4 flex items-center justify-center bg-green-100 rounded-full">
+                    <Check className="w-12 h-12 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2 brand-font-heading">
+                    All Enhancements Complete!
+                  </h3>
+                  <p className="text-gray-600 brand-font-body">
+                    {completedCount} of {jobs.length} enhancements generated successfully
+                    {failedCount > 0 && ` (${failedCount} failed)`}
                   </p>
                 </div>
               )}
-              
-              <Progress 
-                value={overallProgress} 
-                className="h-3 mb-2"
-              />
-              
-              <div className="flex justify-between text-sm text-gray-600 brand-font-body">
-                <span>{completedCount} completed</span>
-                {failedCount > 0 && <span className="text-red-600">{failedCount} failed</span>}
-                <span>{Math.round(overallProgress)}%</span>
-              </div>
             </CardContent>
           </Card>
 
