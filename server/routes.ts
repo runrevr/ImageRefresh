@@ -726,7 +726,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if user gets a free credit this month
-      const hasMonthlyFreeCredit = await checkMonthlyFreeCredit(user);
+      const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
       const totalCredits = (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits;
 
       console.log(`User ${userId} credit check: Free credits used: ${user.freeCreditsUsed}, Has monthly free: ${hasMonthlyFreeCredit}, Paid credits: ${user.paidCredits}, Total available: ${totalCredits}`);
@@ -765,50 +765,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get user credits by ID endpoint (for client compatibility)
-  app.get("/api/credits/:id", async (req, res) => {
-    try {
-      const userId = parseInt(req.params.id);
-
-      if (isNaN(userId)) {
-        return res.status(400).json({ message: "Invalid user ID" });
-      }
-
-      const user = await storage.getUser(userId);
-
-      if (!user) {
-        return res.status(404).json({
-          paidCredits: 0,
-          freeCreditsUsed: false,
-          message: "User not found",
-        });
-      }
-
-      // Check if user has monthly free credit available
-      const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-
-      // Calculate total available credits
-      const freeCreditsAvailable = hasMonthlyFreeCredit ? 1 : 0;
-      const totalCredits = freeCreditsAvailable + user.paidCredits;
-
-      console.log(`User ${userId} credit check: Free credits used: ${user.freeCreditsUsed}, Has monthly free: ${hasMonthlyFreeCredit}, Paid credits: ${user.paidCredits}, Total available: ${totalCredits}`);
-
-      // Return user credits in the format expected by the client
-      return res.json({
-        id: user.id,
-        freeCreditsUsed: !hasMonthlyFreeCredit,
-        paidCredits: user.paidCredits,
-        totalCredits: totalCredits,
-        credits: totalCredits, // For compatibility
-      });
-    } catch (error: any) {
-      console.error("Error getting user credits by ID:", error);
-      return res.status(500).json({
-        message: "Error fetching user credits",
-        error: error.message,
-      });
-    }
-  });
+  
 
   // Fix for "user credits" 404. Add a new route for /api/user-credits/:id
   app.get("/api/user-credits/:id", async (req, res) => {
