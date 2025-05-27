@@ -141,6 +141,36 @@ export default function SelectIdeasPage() {
     }
   }
 
+  const handleSelectGroup = (productId: string, group: 'professional' | 'creative') => {
+    const product = productImages.find(p => p.id === productId)
+    if (!product) return
+
+    const currentSelections = selectedIdeas[productId] || []
+    const groupIdeas = group === 'professional' 
+      ? product.ideas.slice(0, 3).map(idea => idea.id)
+      : product.ideas.slice(3, 5).map(idea => idea.id)
+    
+    const allGroupSelected = groupIdeas.every(id => currentSelections.includes(id))
+
+    if (allGroupSelected) {
+      // Deselect group
+      setSelectedIdeas(prev => ({
+        ...prev,
+        [productId]: currentSelections.filter(id => !groupIdeas.includes(id))
+      }))
+    } else {
+      // Select group (respecting 5 idea limit)
+      const otherSelections = currentSelections.filter(id => !groupIdeas.includes(id))
+      const availableSlots = 5 - otherSelections.length
+      const ideasToAdd = groupIdeas.slice(0, availableSlots)
+      
+      setSelectedIdeas(prev => ({
+        ...prev,
+        [productId]: [...otherSelections, ...ideasToAdd]
+      }))
+    }
+  }
+
   const toggleIdeaExpansion = (ideaId: string) => {
     setExpandedIdeas(prev => ({
       ...prev,
@@ -255,13 +285,14 @@ export default function SelectIdeasPage() {
           transition: all 0.2s ease-in-out;
         }
         
-        .idea-row:hover {
-          background-color: rgba(61, 165, 217, 0.05);
+        .idea-row:not(.opacity-50):hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .idea-row.selected {
-          background-color: rgba(61, 165, 217, 0.1);
-          border-left: 4px solid var(--secondary);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
         .sticky-footer {
@@ -369,7 +400,7 @@ export default function SelectIdeasPage() {
                               onClick={() => handleSelectAll(product.id)}
                               className="text-xs brand-font-body"
                             >
-                              {selectedCount === Math.min(3, product.ideas.length) ? 'Deselect All' : 'Select All'}
+                              {selectedCount === Math.min(5, product.ideas.length) ? 'Deselect All' : 'Select All'}
                             </Button>
                           </div>
                         </div>
@@ -381,62 +412,179 @@ export default function SelectIdeasPage() {
                   </CardHeader>
                   
                   <CardContent>
-                    <div className="space-y-3">
-                      {product.ideas.map((idea) => {
-                        const isSelected = selectedIdeas[product.id]?.includes(idea.id) || false
-                        const isDisabled = !isSelected && maxReached
+                    {/* Group buttons */}
+                    <div className="mb-4 flex flex-wrap gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSelectGroup(product.id, 'professional')}
+                        className="text-xs brand-font-body border-blue-300 text-blue-700 hover:bg-blue-50"
+                      >
+                        Select All Professional (1-3)
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSelectGroup(product.id, 'creative')}
+                        className="text-xs brand-font-body border-purple-300 text-purple-700 hover:bg-purple-50"
+                      >
+                        Select Creative (4-5)
+                      </Button>
+                    </div>
 
-                        return (
-                          <div
-                            key={idea.id}
-                            className={`idea-row p-4 rounded-lg border ${
-                              isSelected ? 'selected border-[#3DA5D9]' : 'border-gray-200'
-                            } ${isDisabled ? 'opacity-50' : ''}`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <Checkbox
-                                checked={isSelected}
-                                disabled={isDisabled}
-                                className="mt-1"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (!isDisabled) {
-                                    handleIdeaToggle(product.id, idea.id)
-                                  }
-                                }}
-                              />
-                              
-                              <div className="flex-grow">
-                                <h3 className="font-semibold text-gray-900 brand-font-heading mb-2">
-                                  {idea.title}
-                                </h3>
-                                
-                                {/* Description with Read more/less functionality */}
-                                <div className="text-sm text-gray-600 brand-font-body">
-                                  <p className="mb-2">
-                                    {expandedIdeas[idea.id] 
-                                      ? idea.description 
-                                      : `${idea.description.substring(0, 120)}${idea.description.length > 120 ? '...' : ''}`
-                                    }
-                                  </p>
-                                  
-                                  {idea.description.length > 120 && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        toggleIdeaExpansion(idea.id)
-                                      }}
-                                      className="text-[#3DA5D9] hover:text-[#2A7B9B] font-medium text-xs transition-colors"
-                                    >
-                                      {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
-                                    </button>
+                    <div className="space-y-3">
+                      {/* Professional Ideas (1-3) */}
+                      <div className="space-y-3">
+                        <div className="text-xs font-medium text-gray-500 brand-font-body mb-2 pl-2">
+                          PROFESSIONAL
+                        </div>
+                        {product.ideas.slice(0, 3).map((idea, index) => {
+                          const isSelected = selectedIdeas[product.id]?.includes(idea.id) || false
+                          const isDisabled = !isSelected && maxReached
+                          const ideaNumber = index + 1
+
+                          return (
+                            <div
+                              key={idea.id}
+                              className={`idea-row p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                                isSelected 
+                                  ? 'selected border-blue-400 bg-blue-50 shadow-sm' 
+                                  : 'border-gray-200 bg-blue-25 hover:bg-blue-50'
+                              } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              onClick={() => !isDisabled && handleIdeaToggle(product.id, idea.id)}
+                              style={{
+                                backgroundColor: isSelected ? '#eff6ff' : '#f8fafc'
+                              }}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="flex items-center gap-2 mt-1">
+                                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">
+                                    {ideaNumber}
+                                  </div>
+                                  {isSelected && (
+                                    <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                                      <Check className="w-3 h-3 text-white" />
+                                    </div>
                                   )}
+                                </div>
+                                
+                                <div className="flex-grow">
+                                  <h3 className="font-semibold text-gray-900 brand-font-heading mb-2">
+                                    {idea.title}
+                                  </h3>
+                                  
+                                  {/* Description with Read more/less functionality */}
+                                  <div className="text-sm text-gray-600 brand-font-body">
+                                    <p className="mb-2">
+                                      {expandedIdeas[idea.id] 
+                                        ? idea.description 
+                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
+                                      }
+                                    </p>
+                                    
+                                    {idea.description.split(' ').length > 12 && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          toggleIdeaExpansion(idea.id)
+                                        }}
+                                        className="text-[#3DA5D9] hover:text-[#2A7B9B] font-medium text-xs transition-colors"
+                                      >
+                                        {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )
-                      })}
+                          )
+                        })}
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t border-gray-200 my-6"></div>
+
+                      {/* Creative Ideas (4-5) */}
+                      <div className="space-y-3">
+                        <div className="text-xs font-medium text-gray-500 brand-font-body mb-2 pl-2">
+                          CREATIVE
+                        </div>
+                        {product.ideas.slice(3).map((idea, index) => {
+                          const isSelected = selectedIdeas[product.id]?.includes(idea.id) || false
+                          const isDisabled = !isSelected && maxReached
+                          const ideaNumber = index + 4
+                          const bgColor = ideaNumber === 4 ? 'purple' : 'orange'
+
+                          return (
+                            <div
+                              key={idea.id}
+                              className={`idea-row p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+                                isSelected 
+                                  ? `selected border-${bgColor}-400 bg-${bgColor}-50 shadow-sm` 
+                                  : `border-gray-200 hover:bg-${bgColor}-50`
+                              } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              onClick={() => !isDisabled && handleIdeaToggle(product.id, idea.id)}
+                              style={{
+                                backgroundColor: isSelected 
+                                  ? bgColor === 'purple' ? '#f3e8ff' : '#fff7ed'
+                                  : bgColor === 'purple' ? '#faf5ff' : '#fffbf5'
+                              }}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="flex items-center gap-2 mt-1">
+                                  <div className={`w-6 h-6 rounded-full ${
+                                    bgColor === 'purple' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'
+                                  } flex items-center justify-center text-xs font-bold`}>
+                                    {ideaNumber}
+                                  </div>
+                                  {isSelected && (
+                                    <div className={`w-5 h-5 rounded-full ${
+                                      bgColor === 'purple' ? 'bg-purple-500' : 'bg-orange-500'
+                                    } flex items-center justify-center`}>
+                                      <Check className="w-3 h-3 text-white" />
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                <div className="flex-grow">
+                                  <h3 className="font-semibold text-gray-900 brand-font-heading mb-2">
+                                    {idea.title}
+                                  </h3>
+                                  
+                                  {/* Description with Read more/less functionality */}
+                                  <div className="text-sm text-gray-600 brand-font-body">
+                                    <p className="mb-2">
+                                      {expandedIdeas[idea.id] 
+                                        ? idea.description 
+                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
+                                      }
+                                    </p>
+                                    
+                                    {idea.description.split(' ').length > 12 && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          toggleIdeaExpansion(idea.id)
+                                        }}
+                                        className="text-[#3DA5D9] hover:text-[#2A7B9B] font-medium text-xs transition-colors"
+                                      >
+                                        {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+
+                      {/* Selection count */}
+                      <div className="mt-4 text-center">
+                        <span className="text-sm text-gray-600 brand-font-body">
+                          {selectedCount} of 5 ideas selected
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
