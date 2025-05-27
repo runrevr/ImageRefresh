@@ -109,10 +109,10 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
 
     // Create the form
     const form = new FormData();
-    form.append("model", "dall-e-2");  // Use correct model name
+    form.append("model", "gpt-image-1");
     form.append("prompt", prompt);
     form.append("size", size);
-    form.append("n", "1"); // Request 1 image (DALL-E-2 supports max 1 for edits)
+    form.append("n", "2"); // Request 2 images
     form.append("image", fs.createReadStream(optimizedImagePath), {
       filename: "image.png",
       contentType: "image/png",
@@ -243,7 +243,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
 
           // Create a new form without the 'n' parameter
           const retryForm = new FormData();
-          retryForm.append("model", "dall-e-2");  // Use correct model name
+          retryForm.append("model", "gpt-image-1");
           retryForm.append("prompt", prompt);
           retryForm.append("size", size);
           retryForm.append("image", fs.createReadStream(optimizedImagePath), {
