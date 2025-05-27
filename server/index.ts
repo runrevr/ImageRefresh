@@ -81,7 +81,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
+
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
   } else {
@@ -183,32 +183,32 @@ app.use((req, res, next) => {
 (async () => {
   // Register main routes
   const server = await registerRoutes(app);
-  
+
   // Register test routes
   app.use(setupTestRoutes());
-  
+
   // Register OpenAI test routes
   app.use(setupOpenAITestRoutes());
-  
+
   // Register simple compatibility routes
   app.use(setupSimpleRouter());
-  
+
   // Register static HTML routes
   app.use(setupStaticRoutes());
-  
+
   // Register Product Image Lab routes
   app.use(setupProductImageLabRoutes());
-  
+
   // Register Anthropic API test routes
   app.use('/api', setupAnthropicTestRoutes());
-  
+
   // CRITICAL: Direct route handlers to bypass Vite completely
   app.post('/api/generate-edit-prompt', async (req, res) => {
     console.log(`[DIRECT API] Edit prompt endpoint hit - bypassing Vite!`);
-    
+
     try {
       const { idea_title, idea_description, is_chaos_concept } = req.body;
-      
+
       if (!process.env.ANTHROPIC_API_KEY) {
         throw new Error('Anthropic API key not configured');
       }
@@ -216,7 +216,7 @@ app.use((req, res, next) => {
       const anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
       });
-      
+
       const message = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
@@ -224,7 +224,7 @@ app.use((req, res, next) => {
         messages: [{
           role: "user",
           content: `Create an edit prompt for GPT-image-01 based on this concept:
-          
+
 Title: ${idea_title}
 Description: ${idea_description}
 Type: ${is_chaos_concept ? 'CHAOS CONCEPT - GO WILD!' : 'Professional/Lifestyle'}
@@ -240,14 +240,14 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       });
 
       const editPrompt = (message.content[0] as any).text.trim();
-      
+
       console.log(`[DIRECT API] Generated edit prompt successfully`);
-      
+
       res.json({
         success: true,
         edit_prompt: editPrompt
       });
-      
+
     } catch (error) {
       console.error('[DIRECT API] Error:', error);
       res.status(500).json({
@@ -288,52 +288,23 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
   const altPorts = [3001, 8080, 8000]; // Alternative ports to try if main port is busy
 
-  // Function to attempt starting server on different ports
-  const startServer = (portToUse: number, remainingPorts: number[] = []): void => {
-    server.listen({
-      port: portToUse,
-      host: "0.0.0.0",
-      reusePort: true,
-    })
-    .on('listening', () => {
-      // Server started successfully
-      log(`Server started successfully on port ${portToUse}`);
+  // Beta Custom Prompts Feature (Safe Integration)
+  if (process.env.ENABLE_CUSTOM_PROMPTS === 'true') {
+    try {
+      const customPromptRoutes = await import('../beta-custom-prompts/api/routes.js');
+      app.use('/api/beta', customPromptRoutes.default);
 
-      // Run cleanup once at startup
-      runCleanupTasks()
-        .then(() => log('Initial cleanup tasks completed'))
-        .catch(err => console.error('Error during initial cleanup:', err));
+      // Serve the custom prompt page
+      app.get('/custom-prompts-beta', (req, res) => {
+        res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptUpload.html'));
+      });
 
-      // Schedule daily cleanup (86400000 ms = 24 hours)
-      const CLEANUP_INTERVAL = 86400000;
-      setInterval(() => {
-        log('Running scheduled cleanup tasks...');
-        runCleanupTasks()
-          .then(() => log('Scheduled cleanup tasks completed'))
-          .catch(err => console.error('Error during scheduled cleanup:', err));
-      }, CLEANUP_INTERVAL);
-    })
-    .on('error', (err: any) => {
-      if (err.code === 'EADDRINUSE') {
-        log(`Port ${portToUse} is already in use.`);
+      console.log('Custom Prompts Beta feature enabled');
+    } catch (error) {
+      console.error('Failed to load custom prompts routes:', error);
+    }
+  }
 
-        // Try the next port if there are any remaining ports
-        if (remainingPorts.length > 0) {
-          const nextPort = remainingPorts[0];
-          log(`Attempting to use alternative port ${nextPort}`);
-          startServer(nextPort, remainingPorts.slice(1));
-        } else {
-          console.error('All ports are in use. Please close some applications and try again.');
-          process.exit(1);
-        }
-      } else {
-        // Handle other server errors
-        console.error('Error starting server:', err);
-        process.exit(1);
-      }
-    });
-  };
-
-  // Start with the default port and fallback to alternatives
+  // start with the default port and fallback to alternatives
   startServer(port, altPorts);
 })();
