@@ -456,9 +456,9 @@ router.post('/generate-enhancement', async (req, res) => {
     console.log('Calling OpenAI images.edit with exact same approach as working transformation');
     console.log('Prompt:', enhancement_prompt);
 
-    // Make the API call with the correct GPT-image-01 model - EXACT same as working transformation
+    // Make the API call with the correct gpt-image-1 model - EXACT same as working transformation
     const response = await openai.images.edit({
-      model: "gpt-image-01",
+      model: "gpt-image-1",
       image: imageBuffer,
       prompt: enhancement_prompt,
       n: 1,
@@ -493,7 +493,7 @@ router.post('/generate-enhancement', async (req, res) => {
 
     const savedImageUrl = `/uploads/${enhancedFileName}`;
 
-    console.log('Image generated successfully with GPT-image-01');
+    console.log('Image generated successfully with gpt-image-1');
 
     res.json({
       success: true,
@@ -501,7 +501,7 @@ router.post('/generate-enhancement', async (req, res) => {
       title: enhancement_title,
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "gpt-image-01",
+        model_used: "gpt-image-1",
         prompt_used: enhancement_prompt
       }
     });
