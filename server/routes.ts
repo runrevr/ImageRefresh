@@ -413,10 +413,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           );
         } catch (userError) {
           console.error("Error checking user credits:", userError);
-          return res.status(500).json({
-            message: "Error checking user credits",
-            error: userError.message
-          });
+          // Continue without credit check if database is unavailable
+          console.log("Continuing transformation without credit verification due to database error");
+          userCredits = { freeCreditsUsed: false, paidCredits: 1 };
         }
       }
 

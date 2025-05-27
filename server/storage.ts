@@ -14,6 +14,7 @@ import {
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and, not, isNull } from "drizzle-orm";
+import { Pool } from 'pg';
 
 export interface IStorage {
   // User operations
@@ -54,7 +55,7 @@ export interface IStorage {
     selectedImagePath?: string,
   ): Promise<Transformation>;
   getUserTransformations(userId: number): Promise<Transformation[]>;
-  
+
   // Payment operations
   createPayment(payment: InsertPayment): Promise<Payment>;
   getPayment(id: number): Promise<Payment | undefined>;
@@ -62,21 +63,81 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  private pool: Pool;
+
+  constructor() {
+    this.initializePool();
+  }
+
+  private async initializePool() {
+    // Close existing pool if it exists
+    if (this.pool) {
+      try {
+        await this.pool.end();
+      } catch (error) {
+        console.log('Error closing existing pool:', error);
+      }
+    }
+
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+
+    // Test the connection
+    try {
+      const client = await this.pool.connect();
+      await client.query('SELECT NOW()');
+      client.release();
+      console.log('Database connection established successfully');
+    } catch (error) {
+      console.error('Failed to connect to database:', error);
+      throw error;
+    }
+  }
+
+
+  async query(text: string, params?: any[]): Promise<any> {
+    let client;
+    try {
+      client = await this.pool.connect();
+      const result = await client.query(text, params);
+      return result;
+    } catch (error) {
+      console.error('Database query error:', error);
+      // If it's a connection error, try to recreate the pool
+      if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.message.includes('connection')) {
+        console.log('Attempting to recreate database connection pool...');
+        await this.initializePool();
+        // Retry the query once with new pool
+        client = await this.pool.connect();
+        const result = await client.query(text, params);
+        return result;
+      }
+      throw error;
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  }
   // User operations
   async getUser(id: number): Promise<User | undefined> {
     console.log(`Storage getUser called with id: ${id}, type: ${typeof id}`);
-    
+
     // Enhanced validation - ensure id is a valid positive number
     if (id === undefined || id === null || typeof id !== 'number') {
       console.error(`Invalid user ID type: ${typeof id}`);
       return undefined;
     }
-    
+
     if (isNaN(id) || !Number.isFinite(id) || id <= 0) {
       console.error(`Invalid user ID value: ${id}`);
       return undefined;
     }
-    
+
     try {
       const [user] = await db.select().from(users).where(eq(users.id, id));
       console.log(`User lookup result for id ${id}:`, user ? 'Found' : 'Not found');
@@ -204,52 +265,57 @@ export class DatabaseStorage implements IStorage {
   }
 
   async checkAndResetMonthlyFreeCredit(id: number): Promise<boolean> {
-    const user = await this.getUser(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    try {
+      const user = await this.getUser(id);
+      if (!user) {
+        return false;
+      }
 
-    console.log(`Checking monthly free credit for user ${id}:`, {
-      freeCreditsUsed: user.freeCreditsUsed,
-      lastFreeCredit: user.lastFreeCredit
-    });
-
-    // No free credit used yet, user has free credit available
-    if (!user.freeCreditsUsed) {
-      console.log(`User ${id} has unused free credit available`);
-      return true;
-    }
-
-    // Check if the last free credit was used in a different month
-    if (user.lastFreeCredit) {
-      const lastMonth = user.lastFreeCredit.getMonth();
-      const lastYear = user.lastFreeCredit.getFullYear();
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-
-      console.log(`Credit date comparison:`, {
-        lastMonth, lastYear,
-        currentMonth, currentYear
+      console.log(`Checking monthly free credit for user ${id}:`, {
+        freeCreditsUsed: user.freeCreditsUsed,
+        lastFreeCredit: user.lastFreeCredit
       });
 
-      if (lastYear !== currentYear || lastMonth !== currentMonth) {
-        // Reset the free credit for new month/year
-        console.log(`Resetting free credit for user ${id} - new month/year`);
-        const [updatedUser] = await db
-          .update(users)
-          .set({
-            freeCreditsUsed: false,
-          })
-          .where(eq(users.id, id))
-          .returning();
-
+      // No free credit used yet, user has free credit available
+      if (!user.freeCreditsUsed) {
+        console.log(`User ${id} has unused free credit available`);
         return true;
       }
-    }
 
-    console.log(`User ${id} has already used free credit this month`);
-    return false;
+      // Check if the last free credit was used in a different month
+      if (user.lastFreeCredit) {
+        const lastMonth = user.lastFreeCredit.getMonth();
+        const lastYear = user.lastFreeCredit.getFullYear();
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        console.log(`Credit date comparison:`, {
+          lastMonth, lastYear,
+          currentMonth, currentYear
+        });
+
+        if (lastYear !== currentYear || lastMonth !== currentMonth) {
+          // Reset the free credit for new month/year
+          console.log(`Resetting free credit for user ${id} - new month/year`);
+          const [updatedUser] = await db
+            .update(users)
+            .set({
+              freeCreditsUsed: false,
+            })
+            .where(eq(users.id, id))
+            .returning();
+
+          return true;
+        }
+      }
+
+      console.log(`User ${id} has already used free credit this month`);
+      return false;
+    } catch (error) {
+      console.error(`Error checking monthly free credit:`, error);
+      return false;
+    }
   }
 
   // Membership operations
