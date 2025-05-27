@@ -67,27 +67,31 @@ export default function Home() {
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
   const [secondTransformedImage, setSecondTransformedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
-  const { user: authUser } = useAuth();
+  const { user: authUser, user } = useAuth();
   // Initialize local user state with data from auth
-  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
+  const [userCredits, setUserCredits] = useState<{
+    totalCredits: number;
+    paidCredits: number;
+    freeCreditsUsed: boolean;
+  }>({ totalCredits: 0, paidCredits: 0, freeCreditsUsed: true });
 
-  // Update local user state when auth user changes
+  // Fetch user credits when user changes
   useEffect(() => {
-    if (authUser) {
-      setUserCredits({
-        id: authUser.id,
-        freeCreditsUsed: authUser.freeCreditsUsed,
-        paidCredits: authUser.paidCredits
-      });
-    } else {
-      // For demo purposes when no user is authenticated, create a default guest user
-      setUserCredits({
-        id: 1,  // Use ID 1 as a default guest user
-        freeCreditsUsed: false,
-        paidCredits: 100  // Give demo users plenty of credits
-      });
+    if (user) {
+      fetch(`/api/credits/${user.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setUserCredits({
+            totalCredits: data.totalCredits || data.credits || 0,
+            paidCredits: data.paidCredits || 0,
+            freeCreditsUsed: data.freeCreditsUsed || false
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching credits:', error);
+        });
     }
-  }, [authUser]);
+  }, [user]);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
 
   const [selectedTransformation, setSelectedTransformation] =
@@ -104,18 +108,16 @@ export default function Home() {
   // Fetch user credits and OpenAI configuration on component mount
   useEffect(() => {
     const fetchUserCredits = async () => {
-      if (!userCredits) return;
+      if (!authUser) return;
 
       try {
-        const response = await apiRequest("GET", `/api/credits/${userCredits.id}`);
+        const response = await apiRequest("GET", `/api/credits/${authUser.id}`);
         const data = await response.json();
         setUserCredits(prevState => {
-          if (!prevState) return null;
           return {
-            ...prevState,
-            freeCreditsUsed: data.freeCreditsUsed,
-            paidCredits: data.paidCredits,
-            id: prevState.id
+            totalCredits: data.totalCredits || data.credits || 0,
+            paidCredits: data.paidCredits || 0,
+            freeCreditsUsed: data.freeCreditsUsed || false
           };
         });
       } catch (error) {
@@ -135,7 +137,7 @@ export default function Home() {
 
     fetchUserCredits();
     fetchConfig();
-  }, [userCredits]);
+  }, [authUser]);
 
   // Scroll to top when uploadForm appears
   useEffect(() => {
@@ -269,7 +271,7 @@ export default function Home() {
         originalImagePath,
         prompt: promptText,
         promptLength: promptText?.length || 0,
-        userId: userCredits?.id,
+        userId: authUser?.id,
         imageSize: imageSize,
       });
 
@@ -288,7 +290,7 @@ export default function Home() {
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath,
         prompt: promptText,
-        userId: userCredits?.id,
+        userId: authUser?.id,
         imageSize: imageSize,
       });
 
@@ -307,11 +309,11 @@ export default function Home() {
             if (data && typeof data.transformedImageUrl === "string") {
               // This is the primary response format we expect now
               img1 = data.transformedImageUrl;
-              
+
               if (data.secondTransformedImageUrl) {
                 img2 = data.secondTransformedImageUrl;
               }
-              
+
               // Store transformation data
               setCurrentTransformation({
                 id: data.id,
@@ -320,9 +322,9 @@ export default function Home() {
                 secondTransformedImageUrl: data.secondTransformedImageUrl,
                 prompt: data.prompt
               });
-              
+
               setPrompt(data.prompt || promptText);
-              
+
             } 
             // Handle legacy response formats for backward compatibility
             else if (typeof data === "string") {
@@ -344,7 +346,7 @@ export default function Home() {
               if (data.secondTransformedImageUrl) {
                 img2 = data.secondTransformedImageUrl;
               }
-              
+
               // Store transformation details
               setCurrentTransformation({
                 id: data.id,
@@ -380,14 +382,16 @@ export default function Home() {
           // Refresh user credits
           const creditsResponse = await apiRequest(
             "GET",
-            `/api/credits/${userCredits?.id}`,
+            `/api/credits/${authUser?.id}`,
           );
           const creditsData = await creditsResponse.json();
-          setUserCredits((prevUser) => prevUser ? {
-            ...prevUser,
-            freeCreditsUsed: creditsData.freeCreditsUsed,
-            paidCredits: creditsData.paidCredits,
-          } : null);
+          setUserCredits((prevUser) => {
+            return {
+              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+              paidCredits: creditsData.paidCredits || 0,
+              freeCreditsUsed: creditsData.freeCreditsUsed || false
+            };
+          });
 
           if (data.transformationId) {
             // Asynchronous response - we need to poll for the result
@@ -477,14 +481,16 @@ export default function Home() {
                   // Refresh user credits
                   const creditsResponse = await apiRequest(
                     "GET",
-                    `/api/credits/${userCredits?.id}`,
+                    `/api/credits/${authUser?.id}`,
                   );
                   const creditsData = await creditsResponse.json();
-                  setUserCredits((prevUser) => prevUser ? {
-                    ...prevUser,
-                    freeCreditsUsed: creditsData.freeCreditsUsed,
-                    paidCredits: creditsData.paidCredits,
-                  } : null);
+                  setUserCredits((prevUser) => {
+                      return {
+                        totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+                        paidCredits: creditsData.paidCredits || 0,
+                        freeCreditsUsed: creditsData.freeCreditsUsed || false
+                      };
+                    });
 
                   return true; // polling complete
                 } else if (statusData.status === "failed") {
@@ -562,11 +568,11 @@ export default function Home() {
             // Handle direct transformation response (new format)
             console.log("Image transformation completed successfully");
             setTransformedImage(data.transformedImageUrl);
-            
+
             if (data.secondTransformedImageUrl) {
               setSecondTransformedImage(data.secondTransformedImageUrl);
             }
-            
+
             // Store transformation data
             setCurrentTransformation({
               id: data.id,
@@ -575,7 +581,7 @@ export default function Home() {
               secondTransformedImageUrl: data.secondTransformedImageUrl,
               prompt: data.prompt
             });
-            
+
             setCurrentStep(Step.Result);
           } else {
             // No transformation ID or image URL - something went wrong
@@ -739,7 +745,7 @@ export default function Home() {
       const response = await apiRequest("POST", "/api/transform", {
         originalImagePath: transformedImagePath, // Use the transformed image as the new base
         prompt: editPrompt,
-        userId: userCredits?.id,
+        userId: authUser?.id,
         imageSize: imageSize,
         isEdit: true, // Flag to indicate this is an edit
         previousTransformation: previousTransformationId, // Pass the extracted transformation ID
@@ -757,14 +763,16 @@ export default function Home() {
         // Refresh user credits
         const creditsResponse = await apiRequest(
           "GET",
-          `/api/credits/${userCredits?.id}`,
+          `/api/credits/${authUser?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUserCredits((prevUser) => prevUser ? {
-          ...prevUser,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
-        } : null);
+        setUserCredits((prevUser) => {
+            return {
+              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+              paidCredits: creditsData.paidCredits || 0,
+              freeCreditsUsed: creditsData.freeCreditsUsed || false
+            };
+          });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -849,7 +857,7 @@ export default function Home() {
 
       const requestData = {
         originalImagePath,
-        userId: userCredits?.id,
+        userId: authUser?.id,
         preset: presetType,
         imageSize,
       };
@@ -883,18 +891,16 @@ export default function Home() {
         // Refetch user credits
         const creditsResponse = await apiRequest(
           "GET",
-          `/api/credits/${userCredits?.id}`,
+          `/api/credits/${authUser?.id}`,
         );
         const creditsData = await creditsResponse.json();
-        setUserCredits((prevUser) => prevUser ? {
-          ...prevUser,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
-        } : {
-          id: userCredits?.id || 0,
-          freeCreditsUsed: creditsData.freeCreditsUsed,
-          paidCredits: creditsData.paidCredits,
-        });
+        setUserCredits((prevUser) => {
+            return {
+              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+              paidCredits: creditsData.paidCredits || 0,
+              freeCreditsUsed: creditsData.freeCreditsUsed || false
+            };
+          });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -948,7 +954,7 @@ export default function Home() {
   // Function to handle Upload button clicks with account check
   const handleUploadClick = () => {
     // If already logged in, ignore the email storage and clear it
-    if (userCredits?.id) {
+    if (userCredits?.totalCredits) {
       localStorage.removeItem("emailCollected");
       localStorage.removeItem("collectedEmail");
       setStoredEmail(null);
@@ -956,7 +962,8 @@ export default function Home() {
       return;
     }
 
-    // If the user has previously used the email collection feature, show account dialog
+    // If the user has previously used the email collection feature,```text
+       show account dialog
     if (storedEmail) {
       setShowAccountNeededDialog(true);
     } else {
@@ -979,7 +986,7 @@ export default function Home() {
         open={showAccountNeededDialog}
         onClose={() => setShowAccountNeededDialog(false)}
         email={storedEmail}
-        isLoggedIn={Boolean(userCredits?.id)}
+        isLoggedIn={Boolean(userCredits?.totalCredits)}
         remainingCredits={userCredits?.paidCredits || 0}
       />
 
@@ -1029,7 +1036,7 @@ export default function Home() {
                     className="bg-[#2A7B99B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
                     onClick={() => {
                       // If user is logged in, skip email check
-                      if (userCredits?.id) {
+                      if (userCredits?.totalCredits) {
                         setShowUploadForm(true);
                         scrollToUploader();                        // Set transformation to mullet
                         setSelectedTransformation("other");
@@ -1071,7 +1078,7 @@ export default function Home() {
                     className="bg-[#FF7B54] hover:bg-[#e56c49] text-white font-bold text-base px-6 py-3"
                     onClick={() => {
                       // If user is logged in, skip email check
-                      if (userCredits?.id) {
+                      if (userCredits?.totalCredits) {
                         setShowUploadForm(true);
                         scrollToUploader();
                         // Set transformation to 80s style
@@ -1246,7 +1253,7 @@ export default function Home() {
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
                           // If user is logged in, skip email check
-                          if (userCredits?.id) {
+                          if (userCredits?.totalCredits) {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation("product");
@@ -1290,7 +1297,7 @@ export default function Home() {
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
                           // If user is logged in, skip email check
-                          if (userCredits?.id) {
+                          if (userCredits?.totalCredits) {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation("cartoon");
@@ -1334,7 +1341,7 @@ export default function Home() {
                         className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                         onClick={() => {
                           // If user is logged in, skip email check
-                          if (userCredits?.id) {
+                          if (userCredits?.totalCredits) {
                             setShowUploadForm(true);
                             scrollToUploader();
                             setSelectedTransformation("custom");
@@ -1359,7 +1366,7 @@ export default function Home() {
             <TransformationExamples
               onExampleClick={() => {
                 // If user is logged in, skip email check
-                if (userCredits?.id) {
+                if (userCredits?.totalCredits) {
                   setShowUploadForm(true);
                 } else if (storedEmail) {
                   setShowAccountNeededDialog(true);
@@ -1370,7 +1377,7 @@ export default function Home() {
             />
 
             {/* Pricing Section */}
-            <PricingSection userId={userCredits?.id} />
+            <PricingSection userId={authUser?.id} />
 
             {/* FAQ Section */}
             <FaqSection />
@@ -1379,7 +1386,7 @@ export default function Home() {
             <CtaSection
               onClick={() => {
                 // If user is logged in, skip email check
-                if (userCredits?.id) {
+                if (userCredits?.totalCredits) {
                   setShowUploadForm(true);
                   scrollToUploader();
                 } else if (storedEmail) {
@@ -1455,7 +1462,7 @@ export default function Home() {
                   canEdit={true}
                   transformationId={currentTransformation?.id?.toString()}
                   editsUsed={currentTransformation?.editsUsed || 0}
-                  userId={userCredits?.id}
+                  userId={authUser?.id}
                 />
               )}
 

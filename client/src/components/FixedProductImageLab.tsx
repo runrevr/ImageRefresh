@@ -44,7 +44,7 @@ export default function FixedProductImageLab({
   testMode = false 
 }: ProductImageLabProps) {
   const { toast } = useToast();
-  
+
   // State management
   const [tabState, setTabState] = useState<TabState>({ activeTab: 'upload' });
   const [industry, setIndustry] = useState<string>('');
@@ -59,13 +59,13 @@ export default function FixedProductImageLab({
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showResults, setShowResults] = useState<boolean>(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-  
+
   // Admin panel states
   const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
   const [adminTestMode, setAdminTestMode] = useState<boolean>(testMode);
   const [showDebugInfo, setShowDebugInfo] = useState<boolean>(false);
   const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
-  
+
   // Check URL for debug mode parameter
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -75,7 +75,35 @@ export default function FixedProductImageLab({
       }
     }
   }, []);
-  
+
+  // Get user credits using consistent method
+  const [userCredits, setUserCredits] = useState<{
+    totalCredits: number;
+    paidCredits: number;
+    freeCreditsUsed: boolean;
+  }>({ totalCredits: 0, paidCredits: 0, freeCreditsUsed: true });
+
+  // Fetch user credits when user changes
+  useEffect(() => {
+    // Assuming you have a way to get the user ID (e.g., from context or props)
+    // Replace 'user.id' with the actual way to get the user ID
+    const userId = 'user-id-placeholder'; // Replace with actual user ID
+    if (userId) {
+      fetch(`/api/credits/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          setUserCredits({
+            totalCredits: data.totalCredits || data.credits || 0,
+            paidCredits: data.paidCredits || 0,
+            freeCreditsUsed: data.freeCreditsUsed || false
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching credits:', error);
+        });
+    }
+  }, []);
+
   // Initialize product image lab hook
   const {
     availableCredits,
@@ -101,11 +129,11 @@ export default function FixedProductImageLab({
     resultsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results',
     generateEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate'
   });
-  
+
   // References
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadFormRef = useRef<HTMLFormElement>(null);
-  
+
   // Update status when lab is processing or encounters an error
   useEffect(() => {
     if (isProcessing) {
@@ -114,7 +142,7 @@ export default function FixedProductImageLab({
     } else if (error) {
       setStatus(`Error: ${error}`);
       setStatusType('error');
-      
+
       // Show toast for errors
       toast({
         title: "Error",
@@ -126,43 +154,43 @@ export default function FixedProductImageLab({
       setStatusType('normal');
     }
   }, [isProcessing, error, toast]);
-  
+
   // Toggle admin panel (dev-only feature)
   const toggleAdminPanel = () => {
     setShowAdminPanel(prev => !prev);
   };
-  
+
   // Toggle test mode (admin feature)
   const toggleTestMode = (enabled: boolean) => {
     setAdminTestMode(enabled);
     setTestMode(enabled);
-    
+
     toast({
       title: enabled ? "Test Mode Enabled" : "Test Mode Disabled",
       description: enabled ? "Credit checks will be bypassed" : "Normal credit checks restored",
       variant: enabled ? "default" : "default"
     });
   };
-  
+
   // Reset the lab (admin feature)
   const handleResetLab = () => {
     resetLab();
     setSelections({});
     setShowOptions(false);
     setShowResults(false);
-    
+
     toast({
       title: "Lab Reset",
       description: "Product Image Lab has been reset",
     });
   };
-  
+
   // File upload handler
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const files = e.target.files;
       if (!files || files.length === 0) return;
-      
+
       // Limit number of uploads
       if (uploadedImages.length + files.length > 5) {
         toast({
@@ -172,15 +200,15 @@ export default function FixedProductImageLab({
         });
         return;
       }
-      
+
       setStatusType('loading');
       setStatus('Uploading images...');
-      
+
       const uploaded = await handleImageUpload(files);
-      
+
       setStatus(`Successfully uploaded ${uploaded.length} image${uploaded.length !== 1 ? 's' : ''}`);
       setStatusType('success');
-      
+
       if (uploaded.length > 0) {
         setShowOptions(true);
       }
@@ -190,12 +218,12 @@ export default function FixedProductImageLab({
       setStatusType('error');
     }
   };
-  
+
   // Handle industry selection
   const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setIndustry(e.target.value);
   };
-  
+
   // Toggle transformation selection
   const toggleTransformation = (imageId: string, transformationType: string) => {
     setSelections(prev => {
@@ -203,18 +231,18 @@ export default function FixedProductImageLab({
       const updatedSelections = currentSelections.includes(transformationType)
         ? currentSelections.filter(t => t !== transformationType)
         : [...currentSelections, transformationType];
-      
+
       return {
         ...prev,
         [imageId]: updatedSelections
       };
     });
   };
-  
+
   // Calculate required credits based on selections
   useEffect(() => {
     let total = 0;
-    
+
     Object.values(selections).forEach(transformationTypes => {
       transformationTypes.forEach(type => {
         const option = ENHANCEMENT_OPTIONS.find(o => o.id === type);
@@ -223,10 +251,10 @@ export default function FixedProductImageLab({
         }
       });
     });
-    
+
     setCreditsRequired(total);
   }, [selections]);
-  
+
   // Apply selected transformations
   const applyTransformations = async () => {
     if (Object.keys(selections).length === 0) {
@@ -237,11 +265,11 @@ export default function FixedProductImageLab({
       });
       return;
     }
-    
+
     try {
       // Create transformation requests from selections
       const requests: Array<{ imageId: string, transformationType: TransformationType, customPrompt?: string }> = [];
-      
+
       Object.entries(selections).forEach(([imageId, transformationTypes]) => {
         transformationTypes.forEach(type => {
           requests.push({
@@ -254,31 +282,31 @@ export default function FixedProductImageLab({
           });
         });
       });
-      
+
       setProcessing(true);
       setStatusType('loading');
       setStatus('Processing transformations. This may take a moment...');
-      
+
       // Process all transformations in sequence
       for (const request of requests) {
         await transformImage(request);
       }
-      
+
       setProcessing(false);
       setShowResults(true);
       setStatusType('success');
       setStatus('All transformations completed successfully!');
-      
+
       // Reset selections after processing
       setSelections({});
-      
+
     } catch (error) {
       console.error('Error applying transformations:', error);
-      
+
       setProcessing(false);
       setStatusType('error');
       setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred during transformation'}`);
-      
+
       toast({
         title: "Transformation Error",
         description: error instanceof Error ? error.message : 'An error occurred during transformation',
@@ -286,13 +314,13 @@ export default function FixedProductImageLab({
       });
     }
   };
-  
+
   return (
     <div className="product-lab-container">
       <div className="product-lab-header">
         <h1 className="product-lab-title">Product Image Lab</h1>
         <p className="product-lab-subtitle">Transform your product images with AI-powered enhancements</p>
-        
+
         {/* Double-click to show admin panel (developer feature) */}
         <div 
           onDoubleClick={toggleAdminPanel}
@@ -318,18 +346,18 @@ export default function FixedProductImageLab({
             </div>
           )}
         </div>
-        
+
         {/* Credits display */}
         <div className="product-lab-credits">
           Available Credits: <span className="product-lab-credits-value">{availableCredits}</span>
         </div>
       </div>
-      
+
       {/* Admin Panel (hidden by default) */}
       {showAdminPanel && (
         <div className="product-lab-card" style={{ marginBottom: '1rem', background: '#f8f8f8', borderLeft: '4px solid #ddd' }}>
           <h3 style={{ margin: '0 0 0.5rem' }}>Admin Controls</h3>
-          
+
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             {/* Test Mode Toggle */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -346,7 +374,7 @@ export default function FixedProductImageLab({
                 (Credit checks will be bypassed)
               </span>
             </div>
-            
+
             {/* Webhook Tester */}
             <div style={{ width: '100%', margin: '1rem 0' }}>
               <WebhookTester 
@@ -374,7 +402,7 @@ export default function FixedProductImageLab({
                 }}
               />
             </div>
-            
+
             {/* Debug Info Section */}
             {showDebugInfo && (
               <div style={{ width: '100%', marginTop: '1rem' }}>
@@ -386,7 +414,7 @@ export default function FixedProductImageLab({
                   <div><strong>Results Endpoint:</strong> https://www.n8nemma.live/webhook-results-dbf2c53a</div>
                   <div><strong>Generate Endpoint:</strong> https://www.n8nemma.live/webhook-generate-dbf2c53a</div>
                 </div>
-                
+
                 <h4 style={{ margin: '0.5rem 0', borderBottom: '1px solid #ddd', paddingBottom: '0.5rem' }}>Debug Information</h4>
                 <div style={{ 
                   background: '#f0f0f0', 
@@ -402,7 +430,7 @@ export default function FixedProductImageLab({
                 </div>
               </div>
             )}
-            
+
             {/* Reset Lab Button */}
             <button 
               className="product-lab-button product-lab-button-default"
@@ -411,17 +439,17 @@ export default function FixedProductImageLab({
             >
               Reset Lab
             </button>
-            
+
             {/* Test N8N Connection Button */}
             <button 
               className="product-lab-button product-lab-button-default"
               onClick={() => {
                 setStatusType('loading');
                 setStatus('Testing connection to N8N webhook...');
-                
+
                 // For debugging
                 console.log('Testing N8N webhook connection to:', 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test');
-                
+
                 // Test the N8N webhook connection
                 fetch('https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/test', {
                   method: 'POST',
@@ -435,7 +463,7 @@ export default function FixedProductImageLab({
                 })
                 .then(response => {
                   console.log('N8N webhook test response status:', response.status);
-                  
+
                   if (response.ok) {
                     setStatusType('success');
                     setStatus('Successfully connected to N8N webhook!');
@@ -452,7 +480,7 @@ export default function FixedProductImageLab({
                       variant: "destructive"
                     });
                   }
-                  
+
                   // Store results in debug info
                   setDebugInfo(prev => ({
                     ...prev,
@@ -473,7 +501,7 @@ export default function FixedProductImageLab({
                     description: "Failed to connect to N8N webhook. This could be due to CORS restrictions.",
                     variant: "destructive"
                   });
-                  
+
                   // Store error in debug info
                   setDebugInfo(prev => ({
                     ...prev,
@@ -489,7 +517,7 @@ export default function FixedProductImageLab({
             >
               Test N8N Connection
             </button>
-            
+
             {/* Toggle Debug Info Button */}
             <button 
               className="product-lab-button product-lab-button-default"
@@ -501,7 +529,7 @@ export default function FixedProductImageLab({
           </div>
         </div>
       )}
-      
+
       {/* Tab Navigation */}
       <div className="product-lab-tabs">
         <button 
@@ -518,7 +546,7 @@ export default function FixedProductImageLab({
           Generate Images
         </button>
       </div>
-      
+
       {/* Main Content Area */}
       <div className="product-lab-content">
         {/* Upload Tab */}
@@ -526,7 +554,7 @@ export default function FixedProductImageLab({
           <div className="product-lab-card">
             <h2>Upload Product Images</h2>
             <p>Upload product images to enhance with AI transformations.</p>
-            
+
             {/* Upload Form */}
             <form ref={uploadFormRef} className="product-lab-form">
               <div className="product-lab-form-group">
@@ -544,7 +572,7 @@ export default function FixedProductImageLab({
                   Upload up to 5 images (PNG, JPG)
                 </div>
               </div>
-              
+
               <div className="product-lab-form-group">
                 <label htmlFor="industry">Industry (Optional):</label>
                 <select 
@@ -566,7 +594,7 @@ export default function FixedProductImageLab({
                   <option value="other">Other</option>
                 </select>
               </div>
-              
+
               <div className="product-lab-form-group">
                 <label htmlFor="additional-info">Additional Information (Optional):</label>
                 <textarea 
@@ -579,14 +607,14 @@ export default function FixedProductImageLab({
                 />
               </div>
             </form>
-            
+
             {/* Status Message */}
             {status && (
               <div className={`product-lab-status product-lab-status-${statusType}`}>
                 {status}
               </div>
             )}
-            
+
             {/* Uploaded Images Display */}
             {uploadedImages.length > 0 && (
               <div className="product-lab-uploaded-images">
@@ -607,13 +635,13 @@ export default function FixedProductImageLab({
                 </div>
               </div>
             )}
-            
+
             {/* Enhancement Options */}
             {showOptions && uploadedImages.length > 0 && (
               <div className="product-lab-enhancement-options">
                 <h3>Enhancement Options</h3>
                 <p>Select enhancements to apply to your images:</p>
-                
+
                 {/* Image selection tabs */}
                 <div className="product-lab-image-tabs">
                   {uploadedImages.map((image, index) => (
@@ -626,7 +654,7 @@ export default function FixedProductImageLab({
                     </button>
                   ))}
                 </div>
-                
+
                 {/* Show only the selected image with its enhancement options */}
                 {uploadedImages[selectedImageIndex] && (
                   <div className="product-lab-image-enhancements" style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
@@ -641,7 +669,7 @@ export default function FixedProductImageLab({
                         {uploadedImages[selectedImageIndex].file.name}
                       </div>
                     </div>
-                    
+
                     <div className="product-lab-enhancement-list" style={{ flex: '1', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '10px' }}>
                       {ENHANCEMENT_OPTIONS.map(option => (
                         <div 
@@ -678,7 +706,7 @@ export default function FixedProductImageLab({
                     </div>
                   </div>
                 )}
-                
+
                 {/* Credit Summary and Submit */}
                 <div className="product-lab-credit-summary">
                   <div className="product-lab-credits-required">
@@ -687,7 +715,7 @@ export default function FixedProductImageLab({
                   <div className="product-lab-credits-available">
                     Credits Available: <span>{availableCredits}</span>
                   </div>
-                  
+
                   <button 
                     className="product-lab-button product-lab-button-primary"
                     onClick={applyTransformations}
@@ -695,7 +723,7 @@ export default function FixedProductImageLab({
                   >
                     {isProcessing ? 'Processing...' : 'Apply Enhancements'}
                   </button>
-                  
+
                   {!isTestModeEnabled && creditsRequired > availableCredits && (
                     <div className="product-lab-credit-warning">
                       You don't have enough credits for the selected enhancements.
@@ -704,7 +732,7 @@ export default function FixedProductImageLab({
                 </div>
               </div>
             )}
-            
+
             {/* Transformation Results */}
             {showResults && transformedImages.length > 0 && (
               <div className="product-lab-results">
@@ -721,7 +749,7 @@ export default function FixedProductImageLab({
                             className="product-lab-image"
                           />
                         </div>
-                        
+
                         <div className="product-lab-image-after">
                           <div className="product-lab-image-label">After</div>
                           <img 
@@ -731,7 +759,7 @@ export default function FixedProductImageLab({
                           />
                         </div>
                       </div>
-                      
+
                       <div className="product-lab-result-info">
                         <h4>{result.transformationName}</h4>
                         <p>Applied: {new Date(result.completedAt).toLocaleString()}</p>
@@ -750,7 +778,7 @@ export default function FixedProductImageLab({
             )}
           </div>
         )}
-        
+
         {/* Generate Tab (Placeholder, to be implemented later) */}
         {tabState.activeTab === 'generate' && (
           <div className="product-lab-card">

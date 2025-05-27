@@ -12,7 +12,7 @@ export function useCredits(): UseQueryResult<UserCredits, Error> {
   const { user } = useAuth();
   
   return useQuery<UserCredits, Error, UserCredits>({
-    queryKey: ['/api/user/credits'],
+    queryKey: user ? [`/api/credits/${user.id}`] : ['/api/credits/guest'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
     enabled: !!user, // Only fetch if user is logged in
     retry: false, // Don't retry on errors
