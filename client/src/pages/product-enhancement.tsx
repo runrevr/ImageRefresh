@@ -18,6 +18,7 @@ import sweatshirtDynamic from "../assets/sweatshirt-dynamic.png";
 
 // Define UserCredits type
 type UserCredits = {
+  totalCredits: number;
   freeCreditsUsed: boolean;
   paidCredits: number;
   id: number;

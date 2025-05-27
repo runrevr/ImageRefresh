@@ -14,30 +14,20 @@ type UserCredits = {
 };
 
 export default function AboutPage() {
-  const authContext = useAuth();
-  const authUser = authContext?.user || null;
-  // Initialize local user state with data from auth
-  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
-  
-  // Update local user state when auth user changes
-  useEffect(() => {
-    if (authUser) {
-      setUserCredits({
-        id: authUser.id,
-        freeCreditsUsed: authUser.freeCreditsUsed,
-        paidCredits: authUser.paidCredits
-      });
-    }
-  }, [authUser]);
-  
+  const { user } = useAuth();
+  const { data: userCredits } = useCredits();
+
   // Default to 0 if userCredits is not available
   const freeCredits = userCredits && !userCredits.freeCreditsUsed ? 1 : 0;
   const paidCredits = userCredits?.paidCredits || 0;
-  
+
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-      
+      <Navbar 
+        freeCredits={userCredits && !userCredits.freeCreditsUsed ? 1 : 0} 
+        paidCredits={userCredits?.paidCredits || 0} 
+      />
+
       <main className="flex-grow">
         {/* Hero section */}
         <div className="bg-gradient-to-b from-[#A3E4D7] to-white py-16 px-4 sm:px-6 lg:px-8">
@@ -50,25 +40,25 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-        
+
         {/* My Story section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-[#333333] mb-8 text-center">My Story</h2>
-            
+
             <div className="prose prose-lg max-w-4xl mx-auto text-[#333333]">
               <p>
                 ImageRefresh began as a family project. I started using AI image transformations with my daughter, turning her drawings 
                 into incredible artwork that amazed her and sparked her imagination. What began as a fun family activity quickly grew 
                 into something more meaningful.
               </p>
-              
+
               <p>
                 After sharing these transformations with friends and family, I noticed how much joy and wonder they brought to everyone. 
                 The ability to see a child's drawing turn into a vibrant, realistic image or transform an ordinary photo into something extraordinary 
                 created magical moments that strengthened connections and inspired creativity.
               </p>
-              
+
               <p>
                 Founded in 2025, ImageRefresh aims to bring this magic to everyone. Whether you're a parent wanting to transform your child's 
                 drawing into a masterpiece, a product photographer in need of professional-quality images, or simply someone looking 
@@ -77,12 +67,12 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        
+
         {/* My Values section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-[#f2f2f2]">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-[#333333] mb-12 text-center">My Values</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="border-none shadow-lg bg-[#2A7B9B]">
                 <CardContent className="pt-6">
@@ -99,7 +89,7 @@ export default function AboutPage() {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="border-none shadow-lg bg-[#2A7B9B]">
                 <CardContent className="pt-6">
                   <div className="text-center mb-4">
@@ -115,7 +105,7 @@ export default function AboutPage() {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card className="border-none shadow-lg bg-[#2A7B9B]">
                 <CardContent className="pt-6">
                   <div className="text-center mb-4">
@@ -136,12 +126,12 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Founder section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-[#333333] mb-12 text-center">Meet The Founder</h2>
-            
+
             <div className="max-w-2xl mx-auto">
               {/* Founder card */}
               <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row">
@@ -165,7 +155,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-        
+
         {/* CTA section */}
         <div className="bg-[#2A7B9B] py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
@@ -181,7 +171,7 @@ export default function AboutPage() {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

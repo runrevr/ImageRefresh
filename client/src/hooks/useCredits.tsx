@@ -3,7 +3,7 @@ import { getQueryFn } from '@/lib/queryClient';
 import { useAuth } from './useAuth';
 
 export type UserCredits = {
-  credits: number;
+  totalCredits: number;
   paidCredits: number;
   freeCreditsUsed: boolean;
 };
@@ -18,7 +18,7 @@ export function useCredits(): UseQueryResult<UserCredits, Error> {
     retry: false, // Don't retry on errors
     // Default values when data is not available
     placeholderData: {
-      credits: 0,
+      totalCredits: 0,
       paidCredits: 0,
       freeCreditsUsed: true
     }
