@@ -14,13 +14,13 @@ import { useLocation } from "wouter";
 export default function UploadEnhancePage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [showStepHighlight, setShowStepHighlight] = useState(false);
-  
+
   // Ensure page loads at top
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>> = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
@@ -34,7 +34,7 @@ export default function UploadEnhancePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [, navigate] = useLocation();
 
-  const MAX_FILES = 5;
+  const MAX_FILES = 1;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
@@ -140,7 +140,7 @@ export default function UploadEnhancePage() {
     }
 
     if (validFiles.length > 0) {
-      setSelectedFiles(prev => [...prev, ...validFiles]);
+      setSelectedFiles(prev => [...validFiles]);
       setUploadError("");
     }
   };
@@ -148,11 +148,11 @@ export default function UploadEnhancePage() {
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (selectedFiles.length >= MAX_FILES) {
       return; // Don't allow drag if max files reached
     }
-    
+
     if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
     } else if (e.type === "dragleave") {
@@ -214,17 +214,17 @@ export default function UploadEnhancePage() {
       setProcessingError("");
       setShowRetry(false);
       setUploadError("");
-      
+
       setIsLoading(true);
       setProcessingStep(1);
-      setProcessingStatus("Uploading images to server...");
+      setProcessingStatus("Uploading image to server...");
 
       // Prepare FormData for upload
       const formData = new FormData();
       selectedFiles.forEach((file, index) => {
         formData.append(`images`, file); // Changed to match backend expectation
       });
-      
+
       // Add metadata
       formData.append('industries', JSON.stringify(selectedIndustries));
       formData.append('productType', productType);
@@ -234,7 +234,7 @@ export default function UploadEnhancePage() {
       // Step 1: Upload Images with real API call
       try {
         console.log('Step 1: Starting image upload...');
-        
+
         const uploadResponse = await fetch('/api/upload-images', {
           method: 'POST',
           body: formData,
@@ -253,7 +253,7 @@ export default function UploadEnhancePage() {
         }
 
         const imageUrls = uploadResult.urls;
-        
+
         // Wait for step timing
         await new Promise(resolve => setTimeout(resolve, 1500));
         setProcessingStep(2);
@@ -262,7 +262,7 @@ export default function UploadEnhancePage() {
         // Step 2: AI Product Analysis with real API call
         try {
           console.log('Step 2: Starting AI analysis...');
-          
+
           const analysisResponse = await fetch('/api/analyze-products', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -294,7 +294,7 @@ export default function UploadEnhancePage() {
           // Step 3: Generate Enhancement Ideas with real API call
           try {
             console.log('Step 3: Starting idea generation...');
-            
+
             const ideasResponse = await fetch('/api/generate-ideas', {
               method: 'POST',
               headers: {
@@ -329,11 +329,11 @@ export default function UploadEnhancePage() {
 
             // Step 4: Finalize and Store Results
             console.log('Step 4: Finalizing results...');
-            
+
             // Store authentic Claude ideas and image data using consistent keys
             sessionStorage.setItem('enhancement_ideas', JSON.stringify(ideasResult));
             sessionStorage.setItem('original_images', JSON.stringify(imageUrls));
-            
+
             // Also store complete session data for reference
             const sessionData = {
               timestamp: new Date().toISOString(),
@@ -360,13 +360,13 @@ export default function UploadEnhancePage() {
                 processingDuration: 8000
               }
             };
-            
+
             sessionStorage.setItem('uploadEnhanceResults', JSON.stringify(sessionData));
             sessionStorage.setItem('currentStep', 'select-ideas');
 
             await new Promise(resolve => setTimeout(resolve, 1000));
             setProcessingStatus("Complete! Redirecting to idea selection...");
-            
+
             // Small delay to show completion
             setTimeout(() => {
               setIsLoading(false);
@@ -387,18 +387,18 @@ export default function UploadEnhancePage() {
         console.error('Upload error:', uploadError);
         throw new Error(`Failed to upload images: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
       }
-      
+
     } catch (error) {
       console.error('Processing error:', error);
-      
+
       // Hide loading overlay
       setIsLoading(false);
       setProcessingStep(0);
-      
+
       // Show user-friendly error message
       setProcessingError("An error occurred during processing. Please try again.");
       setShowRetry(true);
-      
+
       // Log detailed error for debugging
       console.error('Detailed error information:', {
         error: error,
@@ -423,24 +423,24 @@ export default function UploadEnhancePage() {
   const startOver = () => {
     // Clear all uploaded images
     setSelectedFiles([]);
-    
+
     // Reset industry selections
     setSelectedIndustries([]);
-    
+
     // Clear form fields
     setProductType("");
     setSelectedPurposes([]);
-    
+
     // Clear any errors
     setUploadError("");
     setProcessingError("");
     setShowRetry(false);
-    
+
     // Reset processing state
     setProcessingStep(0);
     setProcessingStatus("");
     setIsLoading(false);
-    
+
     console.log('Form reset - all fields cleared');
   };
 
@@ -457,7 +457,7 @@ export default function UploadEnhancePage() {
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;800&family=Montserrat:wght@400;500&display=swap" 
         rel="stylesheet" 
       />
-      
+
       <style>{`
         :root {
           --primary: #0D7877;
@@ -466,134 +466,134 @@ export default function UploadEnhancePage() {
           --neutral: #333333;
           --light: #F2F4F6;
         }
-        
+
         .brand-font-heading {
           font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        
+
         .brand-font-body {
           font-family: 'Montserrat', sans-serif;
         }
-        
+
         .brand-bg-primary { background-color: var(--primary); }
         .brand-bg-secondary { background-color: var(--secondary); }
         .brand-bg-accent { background-color: var(--accent); }
         .brand-bg-light { background-color: var(--light); }
-        
+
         .brand-text-primary { color: var(--primary); }
         .brand-text-secondary { color: var(--secondary); }
         .brand-text-accent { color: var(--accent); }
         .brand-text-neutral { color: var(--neutral); }
-        
+
         .brand-border-primary { border-color: var(--primary); }
         .brand-border-secondary { border-color: var(--secondary); }
         .brand-border-accent { border-color: var(--accent); }
-        
+
         .brand-gradient-primary {
           background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         }
-        
+
         .brand-gradient-accent {
           background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
         }
-        
+
         .brand-button-primary {
           background: var(--primary);
           color: white;
           transition: all 0.3s ease;
         }
-        
+
         .brand-button-primary:hover {
           background: var(--secondary);
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(13, 120, 119, 0.3);
         }
-        
+
         .brand-button-accent {
           background: var(--accent);
           color: var(--neutral);
           font-weight: 500;
           transition: all 0.3s ease;
         }
-        
+
         .brand-button-accent:hover {
           background: #A8D209;
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(193, 245, 10, 0.3);
         }
-        
+
         .brand-card {
           background: white;
           border: 2px solid var(--light);
           transition: all 0.3s ease;
         }
-        
+
         .brand-card:hover {
           border-color: var(--secondary);
           box-shadow: 0 8px 25px rgba(61, 165, 217, 0.15);
         }
-        
+
         .progress-step-active {
           background: var(--primary);
           color: white;
         }
-        
+
         .progress-step-completed {
           background: var(--accent);
           color: var(--neutral);
         }
-        
+
         .progress-step-inactive {
           background: var(--light);
           color: var(--neutral);
         }
-        
+
         .upload-zone {
           border: 2px dashed var(--light);
           transition: all 0.3s ease;
         }
-        
+
         .upload-zone:hover {
           border-color: var(--secondary);
           background-color: rgba(61, 165, 217, 0.05);
         }
-        
+
         .upload-zone.active {
           border-color: var(--primary);
           background-color: rgba(13, 120, 119, 0.05);
         }
-        
+
         /* Mobile optimizations */
         @media (max-width: 768px) {
           .mobile-stack {
             grid-template-columns: 1fr !important;
           }
-          
+
           .mobile-full-width {
             width: 100% !important;
           }
-          
+
           .mobile-text-sm {
             font-size: 0.875rem !important;
           }
-          
+
           .mobile-px-2 {
             padding-left: 0.5rem !important;
             padding-right: 0.5rem !important;
           }
-          
+
           .mobile-py-3 {
             padding-top: 0.75rem !important;
             padding-bottom: 0.75rem !important;
           }
         }
-        
+
         .step-highlight {
           animation: pulse-highlight 2s ease-in-out 3;
           border: 3px solid var(--secondary) !important;
           box-shadow: 0 0 20px rgba(61, 165, 217, 0.3) !important;
         }
-        
+
         @keyframes pulse-highlight {
           0%, 100% { 
             border-color: var(--secondary);
@@ -604,7 +604,7 @@ export default function UploadEnhancePage() {
             box-shadow: 0 0 30px rgba(13, 120, 119, 0.4);
           }
         }
-        
+
         .scroll-arrow {
           animation: bounce-down 2s infinite;
           position: absolute;
@@ -613,7 +613,7 @@ export default function UploadEnhancePage() {
           transform: translateX(-50%);
           z-index: 10;
         }
-        
+
         @keyframes bounce-down {
           0%, 20%, 50%, 80%, 100% {
             transform: translateX(-50%) translateY(0);
@@ -626,10 +626,10 @@ export default function UploadEnhancePage() {
           }
         }
       `}</style>
-      
+
       <div className="min-h-screen brand-bg-light">
         <Navbar freeCredits={0} paidCredits={0} />
-      
+
       {/* Fixed Progress Bar */}
       <div className="fixed top-16 left-0 right-0 z-30 bg-white shadow-sm border-b">
         <div className="max-w-screen-xl mx-auto px-4 py-4">
@@ -684,10 +684,10 @@ export default function UploadEnhancePage() {
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold brand-text-neutral text-2xl">
                 <Camera className="h-6 w-6 brand-text-secondary" />
-                Upload Your Product Images
+                Upload Your Product Image
               </CardTitle>
               <CardDescription className="brand-font-body text-gray-600 text-lg">
-                Select up to 5 high-quality product images to get started
+                Select a high-quality product image to get started
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -705,22 +705,21 @@ export default function UploadEnhancePage() {
                 >
                   <Upload className="mx-auto h-16 w-16 text-gray-400 mb-6" />
                   <h3 className="text-2xl brand-font-heading font-semibold brand-text-neutral mb-3">
-                    Drop images here or click to browse
+                    Drop image here or click to browse
                   </h3>
                   <p className="text-gray-500 brand-font-body mb-6 text-lg">
                     {selectedFiles.length > 0 
-                      ? `Add ${MAX_FILES - selectedFiles.length} more images (JPEG, PNG, WebP - up to 10MB each)`
-                      : `Maximum ${MAX_FILES} images, JPEG, PNG, WebP format, up to 10MB each`
+                      ? `Replace image (JPEG, PNG, WebP - up to 10MB each)`
+                      : `Maximum 1 image, JPEG, PNG, WebP format, up to 10MB each`
                     }
                   </p>
                   <Button variant="outline" type="button" className="brand-button-primary border-none text-lg px-8 py-3">
-                    Choose Files
+                    Choose File
                   </Button>
-                  
+
                   <input
                     ref={fileInputRef}
                     type="file"
-                    multiple
                     accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={handleFileSelect}
                     className="hidden"
@@ -731,10 +730,10 @@ export default function UploadEnhancePage() {
                 <div className="upload-zone rounded-xl p-12 text-center bg-gray-50 border-2 border-dashed border-gray-300">
                   <Check className="mx-auto h-16 w-16 brand-text-accent mb-6" />
                   <h3 className="text-2xl brand-font-heading font-semibold brand-text-neutral mb-3">
-                    Maximum images reached
+                    Image selected
                   </h3>
                   <p className="text-gray-500 brand-font-body mb-6 text-lg">
-                    You've selected {MAX_FILES} images. Remove some to add different ones.
+                    You've selected an image. Remove it to add a different one.
                   </p>
                   <Button 
                     variant="outline" 
@@ -742,7 +741,7 @@ export default function UploadEnhancePage() {
                     onClick={clearAllFiles}
                     className="brand-button-primary border-none text-lg px-8 py-3"
                   >
-                    Clear All Images
+                    Clear Image
                   </Button>
                 </div>
               )}
@@ -771,7 +770,7 @@ export default function UploadEnhancePage() {
                 <CardDescription className="brand-font-body text-gray-600">
                   {hasImages 
                     ? "Help us understand your brand and products for better AI enhancement"
-                    : "Upload images first to continue with business details"
+                    : "Upload image first to continue with business details"
                   }
                 </CardDescription>
               </CardHeader>
@@ -786,7 +785,7 @@ export default function UploadEnhancePage() {
                       Choose one or more industries that best describe your business
                     </p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
                     {industryPills.map((industryName) => (
                       <button
@@ -832,13 +831,12 @@ export default function UploadEnhancePage() {
                 <div className="space-y-4">
                   <div className="text-center">
                     <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
-                      How will you use these images?
+                      How will you use this image?
                     </Label>
                     <p className="text-sm text-gray-600 brand-font-body mt-2">
                       This helps our AI create scroll-stopping visuals optimized for your needs
-                    </p>
-                  </div>
-                  
+                    </p</div>
+
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
                     {purposeOptions.map((purpose) => (
                       <button
@@ -866,11 +864,11 @@ export default function UploadEnhancePage() {
                       </button>
                     ))}
                   </div>
-                  
+
                   {selectedPurposes.length > 0 && hasImages && (
                     <div className="p-3 bg-green-50 rounded-lg border border-green-200 max-w-2xl mx-auto">
                       <p className="text-sm brand-text-primary font-medium brand-font-body text-center">
-                        ✨ Perfect! Our AI will optimize your images for {selectedPurposes.length} specific use case{selectedPurposes.length > 1 ? 's' : ''}
+                        ✨ Perfect! Our AI will optimize your image for {selectedPurposes.length} specific use case{selectedPurposes.length > 1 ? 's' : ''}
                       </p>
                     </div>
                   )}
@@ -885,7 +883,7 @@ export default function UploadEnhancePage() {
           <Card className="mb-8 brand-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="brand-font-heading font-semibold brand-text-neutral">
-                Selected Images ({selectedFiles.length}/{MAX_FILES})
+                Selected Image (1/1)
               </CardTitle>
               <Button 
                 variant="outline" 
@@ -893,11 +891,11 @@ export default function UploadEnhancePage() {
                 onClick={clearAllFiles}
                 className="text-red-600 border-red-200 hover:bg-red-50"
               >
-                Clear All
+                Clear Image
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1">
                 {selectedFiles.map((file, index) => (
                   <div key={`${file.name}-${index}`} className="relative group">
                     <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-secondary transition-all duration-200">
@@ -918,13 +916,13 @@ export default function UploadEnhancePage() {
                       >
                         <X className="h-4 w-4" />
                       </button>
-                      
+
                       {/* File size indicator */}
                       <div className="absolute bottom-2 left-2 px-2 py-1 bg-black bg-opacity-60 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
                         {(file.size / (1024 * 1024)).toFixed(1)}MB
                       </div>
                     </div>
-                    
+
                     {/* File info */}
                     <div className="mt-2">
                       <p className="text-xs brand-font-body brand-text-neutral truncate font-medium">
@@ -936,7 +934,7 @@ export default function UploadEnhancePage() {
                     </div>
                   </div>
                 ))}
-                
+
                 {/* Add more button if less than max */}
                 {selectedFiles.length < MAX_FILES && (
                   <div 
@@ -945,18 +943,17 @@ export default function UploadEnhancePage() {
                   >
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <p className="text-xs text-gray-500 brand-font-body text-center">
-                      Add More<br />
-                      ({MAX_FILES - selectedFiles.length} left)
+                      Replace Image
                     </p>
                   </div>
                 )}
               </div>
-              
+
               {/* Summary info */}
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center text-sm brand-font-body">
                   <span className="brand-text-neutral">
-                    Total: {selectedFiles.length} image{selectedFiles.length !== 1 ? 's' : ''}
+                    Total: {selectedFiles.length} image
                   </span>
                   <span className="text-gray-500">
                     Total size: {(selectedFiles.reduce((acc, file) => acc + file.size, 0) / (1024 * 1024)).toFixed(1)}MB
@@ -979,7 +976,7 @@ export default function UploadEnhancePage() {
               >
                 Previous Step
               </Button>
-              
+
               <Button 
                 variant="outline"
                 onClick={startOver}
@@ -988,11 +985,11 @@ export default function UploadEnhancePage() {
                 Start Over
               </Button>
             </div>
-            
+
             <div className="text-sm text-gray-500 brand-font-body order-first md:order-none">
               Step {currentStep} of {steps.length}
             </div>
-            
+
             <RainbowButton 
               onClick={handleSubmit}
               disabled={!canSubmit}
@@ -1027,7 +1024,7 @@ export default function UploadEnhancePage() {
               <h3 className="text-xl brand-font-heading font-bold brand-text-neutral mb-4">
                 Complete Requirements to Continue
               </h3>
-              
+
               <div className="mb-4 max-w-2xl mx-auto">
                 {/* Validation Checklist */}
                 <div className="text-left space-y-2">
@@ -1038,10 +1035,10 @@ export default function UploadEnhancePage() {
                       <X className="h-5 w-5 text-red-500" />
                     )}
                     <span className={`brand-font-body text-sm ${hasImages ? 'text-green-700' : 'text-red-600'}`}>
-                      Upload at least one image ({selectedFiles.length}/5 uploaded)
+                      Upload an image (1/1 uploaded)
                     </span>
                   </div>
-                  
+
                   <div className={`flex items-center gap-3 p-2 rounded ${hasIndustryInfo ? 'bg-green-50' : 'bg-red-50'}`}>
                     {hasIndustryInfo ? (
                       <Check className="h-5 w-5 text-green-600" />
@@ -1066,7 +1063,7 @@ export default function UploadEnhancePage() {
             <div className="mb-6">
               <Loader2 className="mx-auto h-16 w-16 brand-text-primary animate-spin mb-4" />
               <h3 className="text-2xl brand-font-heading font-bold brand-text-neutral mb-2">
-                Processing Your Images
+                Processing Your Image
               </h3>
               <p className="brand-text-neutral brand-font-body mb-4">
                 {processingStatus}
@@ -1115,13 +1112,14 @@ export default function UploadEnhancePage() {
             </div>
 
             {/* Processing Stats */}
-            <div className="text-xs text-gray-500 brand-font-body space-y-1">
-              <p>Processing {selectedFiles.length} image{selectedFiles.length !== 1 ? 's' : ''}</p>
-              <p>Industries: {selectedIndustries.join(', ')}</p>
-              <p className="brand-text-primary font-medium">
-                ✨ Generating 5 enhancement ideas per image
-              </p>
-            </div>
+            
+ <div className="text-xs text-gray-500 brand-font-body space-y-1">
+                  <p>Processing your image</p>
+                  <p>Industries: {selectedIndustries.join(', ')}</p>
+                  <p className="brand-text-primary font-medium">
+                    ✨ Generating 5 enhancement ideas
+                  </p>
+                </div>
           </div>
         </div>
       )}
@@ -1149,7 +1147,7 @@ export default function UploadEnhancePage() {
                 <Sparkles className="mr-2 h-4 w-4" />
                 Try Again
               </Button>
-              
+
               <Button 
                 variant="outline"
                 onClick={() => {
