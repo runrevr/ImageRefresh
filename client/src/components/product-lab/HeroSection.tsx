@@ -87,131 +87,227 @@ export function HeroSection() {
                                     </div>
                                 </form>
 
-                                {/* Three horizontal cards section */}
-                                <div 
-                                    aria-hidden
-                                    className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* See What's Possible section */}
+                                <div className="mt-32">
+                                    <div className="text-center mb-12">
+                                        <h2 className="text-2xl md:text-3xl font-semibold text-[#333333] mb-4">See What's Possible</h2>
+                                        <p className="text-lg text-[#333333]/70 max-w-2xl mx-auto">Discover how our AI transforms ordinary product photos into stunning, professional-quality images</p>
+                                    </div>
                                     
-                                    {/* Card 1: Upload for Enhancement */}
-                                    <div className="bg-[#F2F2F2] rounded-[1.25rem] border border-gray-200 p-5 shadow-lg transition-all duration-300 hover:shadow-xl">
-                                        <div className="flex flex-col space-y-4">
-                                            {/* Card Header with Icon */}
-                                            <div className="flex items-center justify-center">
-                                                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#2A7B9B]/10">
-                                                    <div className="relative">
-                                                        <Upload className="size-8 text-[#2A7B9B]" />
-                                                        <Sparkles className="absolute -right-2 -top-2 size-4 text-[#FF7B54]" />
+                                    <div 
+                                        aria-hidden
+                                        className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                                        
+                                        {/* Card 1: Upload for Enhancement */}
+                                        <div className="group bg-white rounded-xl border border-gray-200 p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:scale-102 cursor-pointer overflow-hidden">
+                                            <div className="flex flex-col space-y-5 h-full">
+                                                {/* Category Label */}
+                                                <div className="inline-flex items-center justify-center">
+                                                    <span className="px-3 py-1 text-xs font-medium bg-[#2A7B9B]/10 text-[#2A7B9B] rounded-full">
+                                                        PRODUCT ENHANCEMENT
+                                                    </span>
+                                                </div>
+                                                
+                                                {/* Card Header with Icon */}
+                                                <div className="flex items-center justify-center">
+                                                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#2A7B9B]/10 group-hover:bg-[#2A7B9B]/20 transition-colors duration-300">
+                                                        <div className="relative">
+                                                            <Upload className="size-8 text-[#2A7B9B] group-hover:scale-110 transition-transform duration-300" />
+                                                            <Sparkles className="absolute -right-2 -top-2 size-4 text-[#FF7B54] group-hover:animate-pulse" />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            
-                                            {/* Heading and Description */}
-                                            <div className="text-center">
-                                                <h3 className="text-xl font-semibold text-gray-900">Enhance your product photos</h3>
-                                                <p className="mt-2 text-[#333333]/80">Upload up to 5 images and our AI will suggest professional improvements</p>
-                                            </div>
-                                            
-                                            {/* Example Before/After */}
-                                            <div className="mt-4 rounded-lg bg-white p-3 shadow-sm">
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    <div className="overflow-hidden rounded-md">
+                                                
+                                                {/* Heading and Description */}
+                                                <div className="text-center flex-grow">
+                                                    <h3 className="text-xl font-semibold text-gray-900 mb-3">Professional Enhancement</h3>
+                                                    <p className="text-[#333333]/70 text-sm leading-relaxed">Transform basic product shots into professional commercial photography with ideal lighting and composition</p>
+                                                </div>
+                                                
+                                                {/* Interactive Before/After Example */}
+                                                <div className="relative mt-6 rounded-xl bg-gray-50 p-4 shadow-inner">
+                                                    <div className="relative h-32 rounded-lg overflow-hidden bg-white shadow-sm">
+                                                        {/* Before Image */}
                                                         <img 
                                                             src="/src/assets/mexican-food-original.png" 
                                                             alt="Before enhancement" 
-                                                            className="h-24 w-full object-cover"
+                                                            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
                                                         />
-                                                    </div>
-                                                    <div className="overflow-hidden rounded-md">
+                                                        {/* After Image */}
                                                         <img 
                                                             src="/src/assets/mexican-food-enhanced.png" 
                                                             alt="After enhancement" 
-                                                            className="h-24 w-full object-cover"
+                                                            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                                                         />
+                                                        
+                                                        {/* Hover Instructions */}
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                                                            <div className="text-white text-xs font-medium bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">
+                                                                <span className="hidden md:block">Hover to see magic ✨</span>
+                                                                <span className="md:hidden">Tap to see magic ✨</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {/* Before/After Labels */}
+                                                        <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                            <span className="text-xs font-medium bg-white/90 text-gray-800 px-2 py-1 rounded">After</span>
+                                                        </div>
+                                                        <div className="absolute top-2 left-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                                                            <span className="text-xs font-medium bg-white/90 text-gray-800 px-2 py-1 rounded">Before</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                
+                                                {/* Enhanced CTA Button */}
+                                                <div className="mt-auto pt-4">
+                                                    <Button className="w-full bg-white border-2 border-[#2A7B9B] text-[#2A7B9B] hover:bg-[#2A7B9B] hover:text-white transition-all duration-300 group-hover:shadow-lg font-medium">
+                                                        <span>Try This Style</span>
+                                                        <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
+                                                    </Button>
+                                                </div>
                                             </div>
-                                            
-                                            {/* CTA Button */}
-                                            <Button className="mt-4 w-full bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white">
-                                                Upload Photos
-                                            </Button>
                                         </div>
-                                    </div>
 
-                                    {/* Card 2: Prebuilt Prompts */}
-                                    <div className="bg-[#F2F2F2] rounded-[1.25rem] border border-gray-200 p-5 shadow-lg transition-all duration-300 hover:shadow-xl">
-                                        <div className="flex flex-col space-y-4">
-                                            {/* Card Header with Icon */}
-                                            <div className="flex items-center justify-center">
-                                                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#2A7B9B]/10">
-                                                    <PanelTop className="size-8 text-[#2A7B9B]" />
+                                        {/* Card 2: Prebuilt Prompts */}
+                                        <div className="group bg-white rounded-xl border border-gray-200 p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:scale-102 cursor-pointer overflow-hidden">
+                                            <div className="flex flex-col space-y-5 h-full">
+                                                {/* Category Label */}
+                                                <div className="inline-flex items-center justify-center">
+                                                    <span className="px-3 py-1 text-xs font-medium bg-[#FF7B54]/10 text-[#FF7B54] rounded-full">
+                                                        QUICK TOOLS
+                                                    </span>
                                                 </div>
-                                            </div>
-                                            
-                                            {/* Heading and Description */}
-                                            <div className="text-center">
-                                                <h3 className="text-xl font-semibold text-gray-900">Quick fixes with prebuilt tools</h3>
-                                                <p className="mt-2 text-[#333333]/80">Choose from expert-designed enhancements for your product images</p>
-                                            </div>
-                                            
-                                            {/* Example Templates */}
-                                            <div className="mt-4 grid grid-cols-3 gap-2">
-                                                <div className="rounded-md bg-white p-2 text-center shadow-sm">
-                                                    <div className="mb-1 h-12 rounded bg-[#FF7B54]/10 flex items-center justify-center">
-                                                        <span className="text-xs text-[#FF7B54]">Remove BG</span>
+                                                
+                                                {/* Card Header with Icon */}
+                                                <div className="flex items-center justify-center">
+                                                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#2A7B9B]/10 group-hover:bg-[#2A7B9B]/20 transition-colors duration-300">
+                                                        <PanelTop className="size-8 text-[#2A7B9B] group-hover:scale-110 transition-transform duration-300" />
                                                     </div>
                                                 </div>
-                                                <div className="rounded-md bg-white p-2 text-center shadow-sm">
-                                                    <div className="mb-1 h-12 rounded bg-[#2A7B9B]/10 flex items-center justify-center">
-                                                        <span className="text-xs text-[#2A7B9B]">Lighting</span>
+                                                
+                                                {/* Heading and Description */}
+                                                <div className="text-center flex-grow">
+                                                    <h3 className="text-xl font-semibold text-gray-900 mb-3">One-Click Fixes</h3>
+                                                    <p className="text-[#333333]/70 text-sm leading-relaxed">Apply professional edits instantly with our curated collection of enhancement presets</p>
+                                                </div>
+                                                
+                                                {/* Interactive Tools Preview */}
+                                                <div className="relative mt-6 rounded-xl bg-gray-50 p-4 shadow-inner">
+                                                    <div className="grid grid-cols-3 gap-3">
+                                                        <div className="group/tool rounded-lg bg-white p-3 text-center shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+                                                            <div className="h-10 rounded bg-[#FF7B54]/10 flex items-center justify-center mb-2 group-hover/tool:bg-[#FF7B54]/20 transition-colors">
+                                                                <span className="text-xs font-medium text-[#FF7B54]">Remove BG</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="group/tool rounded-lg bg-white p-3 text-center shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+                                                            <div className="h-10 rounded bg-[#2A7B9B]/10 flex items-center justify-center mb-2 group-hover/tool:bg-[#2A7B9B]/20 transition-colors">
+                                                                <span className="text-xs font-medium text-[#2A7B9B]">Lighting</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="group/tool rounded-lg bg-white p-3 text-center shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+                                                            <div className="h-10 rounded bg-[#A3E4D7]/20 flex items-center justify-center mb-2 group-hover/tool:bg-[#A3E4D7]/30 transition-colors">
+                                                                <span className="text-xs font-medium text-[#2A7B9B]">Shadows</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Hover instruction */}
+                                                    <div className="text-center mt-3 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <span className="text-xs text-gray-600">
+                                                            <span className="hidden md:inline">Hover tools above</span>
+                                                            <span className="md:hidden">Tap tools above</span>
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                <div className="rounded-md bg-white p-2 text-center shadow-sm">
-                                                    <div className="mb-1 h-12 rounded bg-[#A3E4D7]/20 flex items-center justify-center">
-                                                        <span className="text-xs text-[#2A7B9B]">Shadows</span>
-                                                    </div>
+                                                
+                                                {/* Enhanced CTA Button */}
+                                                <div className="mt-auto pt-4">
+                                                    <Button className="w-full bg-white border-2 border-[#FF7B54] text-[#FF7B54] hover:bg-[#FF7B54] hover:text-white transition-all duration-300 group-hover:shadow-lg font-medium">
+                                                        <span>Explore Tools</span>
+                                                        <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
+                                                    </Button>
                                                 </div>
                                             </div>
-                                            
-                                            {/* CTA Button */}
-                                            <Button className="mt-4 w-full bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white">
-                                                Explore Prebuilt Tools
-                                            </Button>
                                         </div>
-                                    </div>
 
-                                    {/* Card 3: Text-to-Image */}
-                                    <div className="bg-[#F2F2F2] rounded-[1.25rem] border border-gray-200 p-5 shadow-lg transition-all duration-300 hover:shadow-xl">
-                                        <div className="flex flex-col space-y-4">
-                                            {/* Card Header with Icon */}
-                                            <div className="flex items-center justify-center">
-                                                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#2A7B9B]/10">
-                                                    <div className="relative">
-                                                        <Image className="size-8 text-[#2A7B9B]" />
-                                                        <Wand2 className="absolute -right-3 -top-2 size-4 text-[#FF7B54]" />
+                                        {/* Card 3: Creative Variations */}
+                                        <div className="group bg-white rounded-xl border border-gray-200 p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:scale-102 cursor-pointer overflow-hidden">
+                                            <div className="flex flex-col space-y-5 h-full">
+                                                {/* Category Label */}
+                                                <div className="inline-flex items-center justify-center">
+                                                    <span className="px-3 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                                                        CREATIVE VARIATIONS
+                                                    </span>
+                                                </div>
+                                                
+                                                {/* Card Header with Icon */}
+                                                <div className="flex items-center justify-center">
+                                                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#2A7B9B]/10 group-hover:bg-[#2A7B9B]/20 transition-colors duration-300">
+                                                        <div className="relative">
+                                                            <Image className="size-8 text-[#2A7B9B] group-hover:scale-110 transition-transform duration-300" />
+                                                            <Wand2 className="absolute -right-3 -top-2 size-4 text-[#FF7B54] group-hover:animate-pulse" />
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                
+                                                {/* Heading and Description */}
+                                                <div className="text-center flex-grow">
+                                                    <h3 className="text-xl font-semibold text-[#333333] mb-3">Style Variations</h3>
+                                                    <p className="text-[#333333]/70 text-sm leading-relaxed">Generate multiple creative versions of your product in different colors, styles, and contexts</p>
+                                                </div>
+                                                
+                                                {/* Interactive Color Variations */}
+                                                <div className="relative mt-6 rounded-xl bg-gray-50 p-4 shadow-inner">
+                                                    <div className="flex flex-wrap justify-center gap-3">
+                                                        <div className="group/color relative">
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-md transition-all duration-200 group-hover/color:scale-110 group-hover/color:shadow-lg cursor-pointer"></div>
+                                                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/color:opacity-100 transition-opacity">
+                                                                <span className="text-xs bg-black text-white px-2 py-1 rounded whitespace-nowrap">Crimson</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="group/color relative">
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-md transition-all duration-200 group-hover/color:scale-110 group-hover/color:shadow-lg cursor-pointer"></div>
+                                                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/color:opacity-100 transition-opacity">
+                                                                <span className="text-xs bg-black text-white px-2 py-1 rounded whitespace-nowrap">Ocean</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="group/color relative">
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-md transition-all duration-200 group-hover/color:scale-110 group-hover/color:shadow-lg cursor-pointer"></div>
+                                                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/color:opacity-100 transition-opacity">
+                                                                <span className="text-xs bg-black text-white px-2 py-1 rounded whitespace-nowrap">Forest</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="group/color relative">
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-md transition-all duration-200 group-hover/color:scale-110 group-hover/color:shadow-lg cursor-pointer"></div>
+                                                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/color:opacity-100 transition-opacity">
+                                                                <span className="text-xs bg-black text-white px-2 py-1 rounded whitespace-nowrap">Sunset</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="group/color relative">
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 shadow-md transition-all duration-200 group-hover/color:scale-110 group-hover/color:shadow-lg cursor-pointer"></div>
+                                                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover/color:opacity-100 transition-opacity">
+                                                                <span className="text-xs bg-black text-white px-2 py-1 rounded whitespace-nowrap">Royal</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Hover instruction */}
+                                                    <div className="text-center mt-4 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <span className="text-xs text-gray-600">
+                                                            <span className="hidden md:inline">Hover colors to see names</span>
+                                                            <span className="md:hidden">Tap colors to see names</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Enhanced CTA Button */}
+                                                <div className="mt-auto pt-4">
+                                                    <Button className="w-full bg-white border-2 border-purple-500 text-purple-700 hover:bg-purple-500 hover:text-white transition-all duration-300 group-hover:shadow-lg font-medium">
+                                                        <span>Create Variations</span>
+                                                        <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
+                                                    </Button>
+                                                </div>
                                             </div>
-                                            
-                                            {/* Heading and Description */}
-                                            <div className="text-center">
-                                                <h3 className="text-xl font-semibold text-[#333333]">Generate product variations</h3>
-                                                <p className="mt-2 text-[#333333]/80">Create different colors, styles, and contexts for your product</p>
-                                            </div>
-                                            
-                                            {/* Example Color Variations */}
-                                            <div className="mt-4 flex flex-wrap justify-center gap-2">
-                                                <div className="h-12 w-12 rounded-full bg-red-500 shadow-sm"></div>
-                                                <div className="h-12 w-12 rounded-full bg-blue-500 shadow-sm"></div>
-                                                <div className="h-12 w-12 rounded-full bg-green-500 shadow-sm"></div>
-                                                <div className="h-12 w-12 rounded-full bg-yellow-500 shadow-sm"></div>
-                                                <div className="h-12 w-12 rounded-full bg-purple-500 shadow-sm"></div>
-                                            </div>
-                                            
-                                            {/* CTA Button */}
-                                            <Button className="mt-4 w-full bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white">
-                                                Create Variations
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>
