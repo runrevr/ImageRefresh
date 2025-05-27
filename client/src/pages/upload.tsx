@@ -833,33 +833,32 @@ export default function UploadPage() {
                 <div className="mt-16">
                   <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">See What's Possible</h3>
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
-                    {/* Cartoon Transformation */}
+                    {/* 1980's Style */}
                     <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
                       <div className="relative h-48 md:h-56 overflow-hidden">
                         <img 
-                          src="/src/assets/bear-real.png" 
-                          alt="Original bear photo" 
+                          src="/src/assets/woman-real.png" 
+                          alt="Original couple photo" 
                           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
                         />
                         <img 
-                          src="/src/assets/bear-after.png" 
-                          alt="Cartoon bear transformation" 
+                          src="/src/assets/80s.png" 
+                          alt="1980s style transformation" 
                           className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                         />
                         {/* Transformation Type Label */}
                         <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          Cartoon Style
+                          1980's Style
                         </div>
                         {/* Try This Style Button */}
                         <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
                           <button 
                             className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
                             onClick={() => {
-                              // Save cartoon style and redirect to upload
                               localStorage.setItem('selectedStyle', JSON.stringify({
-                                prompt: "Transform this into a vibrant cartoon character with bold colors, simplified features, and playful animation-style details",
-                                title: "Cartoon Style",
-                                category: "cartoon"
+                                prompt: "Transform this into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the subject's identity",
+                                title: "80's Style",
+                                category: "pop-culture"
                               }));
                               handleNewImage();
                             }}
