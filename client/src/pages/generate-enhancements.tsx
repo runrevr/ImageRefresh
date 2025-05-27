@@ -729,314 +729,143 @@ export default function GenerateEnhancementsPage() {
             )}
           </div>
 
-          {/* Overall Progress - Only show while processing */}
+          {/* Overall Progress Circle - Only show while processing */}
           {isProcessing && (
-            <Card className="brand-card mb-8">
-              <CardContent className="p-8">
-                <div className="text-center">
-                  {/* Circular Progress Indicator */}
-                  <div className="relative mx-auto mb-6">
-                    <div className="w-[120px] h-[120px] mx-auto">
-                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        {/* Background circle */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="45"
-                          stroke="#e5e7eb"
-                          strokeWidth="6"
-                          fill="none"
-                        />
-                        {/* Progress circle */}
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="45"
-                          stroke="#0D7877"
-                          strokeWidth="6"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeDasharray={`${overallProgress * 2.83} 283`}
-                          className="transition-all duration-500 ease-out"
-                          style={{
-                            filter: 'drop-shadow(0 0 6px rgba(13, 120, 119, 0.3))'
-                          }}
-                        />
-                      </svg>
-                      {/* Percentage in center */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl font-bold text-[#0D7877] brand-font-heading">
-                          {Math.round(overallProgress)}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Currently Processing Section */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 brand-font-heading">
-                      Currently Processing
-                    </h3>
-
-                    {/* Current Job Display */}
-                    {jobs[currentJobIndex] && (
-                      <div className="flex items-center justify-center gap-6 mb-4">
-                        {/* Original Image Thumbnail */}
-                        <div className="text-center">
-                          <img
-                            src={jobs[currentJobIndex].originalImageUrl}
-                            alt="Original"
-                            className="w-[150px] h-[150px] object-cover rounded-lg border-2 border-gray-200 shadow-md"
-                          />
-                          <p className="text-sm text-gray-600 mt-2 brand-font-body">Original</p>
-                        </div>
-
-                        {/* Animated Arrow */}
-                        <div className="flex flex-col items-center">
-                          <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center animate-pulse">
-                            <span className="text-white text-xl">↓</span>
-                          </div>
-                        </div>
-
-                        {/* Loading Spinner with Preview */}
-                        <div className="text-center">
-                          <div className="w-[150px] h-[150px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center relative overflow-hidden">
-                            {/* Animated Background */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-
-                            {/* Loading Spinner */}
-                            <div className="relative z-10">
-                              <RefreshCw className="w-8 h-8 text-[#0D7877] animate-spin mb-2" />
-                              <div className="text-xs text-gray-600 brand-font-body">Processing...</div>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600 mt-2 brand-font-body">Enhanced</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Enhancement Details */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                      <p className="text-blue-800 brand-font-body font-medium mb-2">
-                        Creating "{jobs[currentJobIndex]?.enhancementTitle}"
-                      </p>
-                      <p className="text-blue-700 brand-font-body text-sm">
-                        {jobs[currentJobIndex]?.status === 'creating_prompt' 
-                          ? 'Step 1 of 2: Analyzing requirements with Claude...'
-                          : 'Step 2 of 2: Applying effects with GPT-Image-01...'
-                        }
-                      </p>
-                    </div>
-
-                    {/* Time Estimation */}
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <Clock className="w-5 h-5 text-gray-600" />
-                        <span className="text-gray-800 brand-font-body font-medium">
-                          Completes in ~{60 - currentJobTimer} seconds
-                        </span>
-                      </div>
-
-                      {/* Live Countdown Bar */}
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-[#0D7877] h-2 rounded-full transition-all duration-1000 ease-linear"
-                          style={{ width: `${(currentJobTimer / 60) * 100}%` }}
-                        ></div>
-                      </div>
-
-                      <div className="flex justify-between text-xs text-gray-500 mt-2 brand-font-body">
-                        <span>Processing enhancement {currentJobIndex + 1} of {jobs.length}</span>
-                        <span>{completedCount} completed, {jobs.length - completedCount - failedCount - 1} waiting</span>
-                      </div>
-                    </div>
+            <div className="text-center mb-8">
+              {/* Bigger Circular Progress Indicator */}
+              <div className="relative mx-auto mb-6">
+                <div className="w-[150px] h-[150px] mx-auto">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    {/* Background circle */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    {/* Progress circle */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      stroke="#0D7877"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(completedCount / jobs.length) * 100 * 2.83} 283`}
+                      className="transition-all duration-500 ease-out"
+                      style={{
+                        filter: 'drop-shadow(0 0 6px rgba(13, 120, 119, 0.3))'
+                      }}
+                    />
+                  </svg>
+                  {/* Percentage in center */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-3xl font-bold text-[#0D7877] brand-font-heading">
+                      {Math.round((completedCount / jobs.length) * 100)}%
+                    </span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Individual Job Cards */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {jobs.map((job) => (
               <Card key={job.id} className={`brand-card transition-all duration-500 ${job.status === 'complete' ? 'animate-fade-in' : ''}`}>
                 <CardContent className="p-6">
                   {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      {getStatusIcon(job.status)}
-                      <h3 className="text-xl font-semibold brand-text-neutral brand-font-heading">
-                        {job.enhancementTitle}
-                      </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-semibold brand-text-neutral brand-font-heading">
+                      {job.enhancementTitle}
+                    </h3>
+                    
+                    {/* Status */}
+                    <div className="flex items-center gap-2">
+                      {job.status === 'complete' && job.resultImageUrl && (
+                        <Check className="w-5 h-5 text-green-500" />
+                      )}
                       <Badge className={`text-sm ${getStatusColor(job.status)}`}>
                         {job.status === 'queued' && 'Waiting...'}
-                        {job.status === 'creating_prompt' && 'Creating Prompt...'}
+                        {job.status === 'creating_prompt' && 'Generating...'}
                         {job.status === 'generating_image' && 'Generating...'}
                         {job.status === 'complete' && 'Complete!'}
                         {job.status === 'failed' && 'Failed'}
                       </Badge>
                     </div>
-
-                    {/* Favorite Button */}
-                    {job.status === 'complete' && job.resultImageUrl && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleFavorite(job.id)}
-                      >
-                        {job.isFavorite ? (
-                          <Star className="w-5 h-5 text-yellow-500 fill-current" />
-                        ) : (
-                          <StarOff className="w-5 h-5 text-gray-400" />
-                        )}
-                      </Button>
-                    )}
                   </div>
 
-                  {/* Progress Bar for Processing */}
-                  {(job.status === 'creating_prompt' || job.status === 'generating_image') && (
-                    <div className="mb-6">
-                      <Progress 
-                        value={job.progress} 
-                        className="h-3 processing-gradient"
-                      />
-                      <p className="text-sm text-center text-gray-600 mt-2 brand-font-body">
-                        {job.status === 'creating_prompt' ? 'Claude is analyzing your request...' : 'GPT-Image-01 is creating your enhancement...'}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Image Container - Centered */}
-          <div className="flex items-center justify-center gap-8 mb-6">
-            {job.status === 'complete' && job.resultImageUrl ? (
-              /* Enhanced Image with Hover Comparison */
-              <div className="text-center">
-                <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Enhanced Result</p>
-                <div className="image-comparison-container relative w-[400px] h-[400px] rounded-lg overflow-hidden border-2 border-green-200 cursor-pointer group">
-                  {/* Before Image (hidden by default, shown on hover) */}
-                  <img
-                    src={job.originalImageUrl}
-                    alt="Original product"
-                    className="before-image absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
-                  />
-
-                  {/* After Image (visible by default, faded on hover) */}
-                  <img
-                    src={job.resultImageUrl}
-                    alt="Enhanced result"
-                    className="after-image relative w-full h-full object-cover opacity-100 transition-opacity duration-300 ease-in-out group-hover:opacity-0"
-                    onClick={() => window.open(job.resultImageUrl, '_blank')}
-                  />
-
-                  {/* Hover Indicator */}
-                  <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 brand-font-body">
-                    Original Image
-                  </div>
-
-                  {/* Hint Text */}
-                  <div className="absolute bottom-3 right-3 bg-[#0D7877] bg-opacity-90 text-white text-xs px-3 py-1 rounded-full opacity-60 group-hover:opacity-0 transition-opacity duration-300 brand-font-body">
-                    Hover to compare
-                  </div>
-
-                  {/* Corner Icon */}
-                  <div className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-gray-700 text-sm">↔️</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Processing State - Show Before/Processing side by side */
-              <>
-                {/* Before Image */}
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Before</p>
-                  <img
-                    src={job.originalImageUrl}
-                    alt="Original product"
-                    className="w-[250px] h-[250px] object-cover rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#0D7877] transition-colors"
-                    onClick={() => window.open(job.originalImageUrl, '_blank')}
-                  />
-                </div>
-
-                {/* Arrow */}
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center">
-                    <span className="text-white text-xl">→</span>
-                  </div>
-                </div>
-
-                {/* After Image */}
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">After</p>
-                  <div className="w-[250px] h-[250px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center">
+                  {/* Before/After Images */}
+                  <div className="flex items-center justify-center gap-6 mb-4">
+                    {/* Before Image */}
                     <div className="text-center">
-                      {job.status === 'failed' ? (
-                        <div className="text-red-500">
-                          <AlertCircle className="w-8 h-8 mx-auto mb-2" />
-                          <p className="text-sm">Enhancement Failed</p>
+                      <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Before</p>
+                      <img
+                        src={job.originalImageUrl}
+                        alt="Original product"
+                        className="w-[200px] h-[200px] object-cover rounded-lg border-2 border-gray-200"
+                      />
+                    </div>
+
+                    {/* Arrow */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-8 h-8 rounded-full bg-[#0D7877] flex items-center justify-center">
+                        <span className="text-white text-lg">→</span>
+                      </div>
+                    </div>
+
+                    {/* After Image */}
+                    <div className="text-center">
+                      <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">After</p>
+                      {job.status === 'complete' && job.resultImageUrl ? (
+                        <div className="relative">
+                          <img
+                            src={job.resultImageUrl}
+                            alt="Enhanced result"
+                            className="w-[200px] h-[200px] object-cover rounded-lg border-2 border-green-200"
+                          />
+                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
                         </div>
                       ) : (
-                        <div className="text-gray-400">
-                          <RefreshCw className={`w-8 h-8 mx-auto mb-2 ${job.status !== 'queued' ? 'animate-spin' : ''}`} />
-                          <p className="text-sm">
-                            {job.status === 'queued' ? 'Waiting...' : 'Processing...'}
-                          </p>
+                        <div className="w-[200px] h-[200px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center">
+                          <div className="text-center">
+                            {job.status === 'failed' ? (
+                              <div className="text-red-500">
+                                <AlertCircle className="w-8 h-8 mx-auto mb-2" />
+                                <p className="text-sm">Failed</p>
+                              </div>
+                            ) : (
+                              <div className="text-gray-400">
+                                <RefreshCw className={`w-8 h-8 mx-auto mb-2 ${job.status !== 'queued' ? 'animate-spin' : ''}`} />
+                                <p className="text-sm">
+                                  {job.status === 'queued' ? 'Waiting...' : 'Processing...'}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
-                </div>
-              </>
-            )}
-          </div>
 
-                  {/* Action Buttons - Centered */}
-                  {job.status === 'complete' && job.resultImageUrl && (
-                    <div className="flex items-center justify-center gap-4">
-                      {/* Download with Format Selector */}
-                      <div className="flex items-center gap-2">
-                        <Button
-                          onClick={() => downloadImage(job.resultImageUrl!, job.enhancementTitle, selectedFormat)}
-                          className="brand-button-primary brand-font-body"
-                        >
-                          <Download className="w-4 h-4 mr-2" />
-                          Download {selectedFormat}
-                        </Button>
-
-                        <Select value={selectedFormat} onValueChange={(value: 'PNG' | 'JPG') => setSelectedFormat(value)}>
-                          <SelectTrigger className="w-20">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="PNG">PNG</SelectItem>
-                            <SelectItem value="JPG">JPG</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(job.resultImageUrl, '_blank')}
-                        className="brand-button-secondary brand-font-body"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View Full Size
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        onClick={() => shareResult(job)}
-                        className="brand-button-secondary brand-font-body"
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Share
-                      </Button>
+                  {/* Progress Bar */}
+                  {(job.status === 'creating_prompt' || job.status === 'generating_image') && (
+                    <div className="mt-4">
+                      <Progress 
+                        value={job.progress} 
+                        className="h-2 bg-blue-100"
+                      />
                     </div>
                   )}
 
                   {/* Error Handling */}
                   {job.status === 'failed' && (
-                    <div className="text-center">
+                    <div className="text-center mt-4">
                       {job.errorMessage && (
                         <p className="text-sm text-red-600 mb-4 brand-font-body">
                           {job.errorMessage}
@@ -1051,7 +880,7 @@ export default function GenerateEnhancementsPage() {
                             className="brand-font-body"
                           >
                             <RefreshCw className="w-4 h-4 mr-2" />
-                            Retry Enhancement
+                            Retry
                           </Button>
                         )}
                         <Button
@@ -1060,7 +889,7 @@ export default function GenerateEnhancementsPage() {
                           onClick={() => skipJob(job.id)}
                           className="brand-font-body text-gray-600"
                         >
-                          Skip This Enhancement
+                          Skip
                         </Button>
                       </div>
                     </div>
