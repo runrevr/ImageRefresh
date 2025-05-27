@@ -433,7 +433,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       // --- SIZE SANITIZATION END ---
 
-      const result = await transformImage(sourceImagePath, prompt, apiSize);
+      // Enhance edit prompts with face preservation instructions
+      let enhancedPrompt = prompt;
+      if (isEdit) {
+        enhancedPrompt = `${prompt}
+
+IMPORTANT: Preserve the original face, facial features, skin tone, age, and identity from the image exactly as they appear. Only modify the requested elements (clothing, background, objects, etc.) while keeping all facial characteristics, expressions, and proportions completely unchanged. Do not alter the person's appearance, age, or any facial attributes.`;
+        console.log(`Enhanced edit prompt with face preservation: ${enhancedPrompt}`);
+      }
+
+      const result = await transformImage(sourceImagePath, enhancedPrompt, apiSize);
 
       // Create a server-relative path for the transformed image
       const baseUrl = req.protocol + "://" + req.get("host");
