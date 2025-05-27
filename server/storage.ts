@@ -14,7 +14,7 @@ import {
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and, not, isNull } from "drizzle-orm";
-import { Pool } from 'pg';
+import { Pool } from '@neondatabase/serverless';
 
 export interface IStorage {
   // User operations
