@@ -57,7 +57,7 @@ export default function UploadPage() {
   const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
   const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
-  
+
   // Update local user state when auth user changes
   useEffect(() => {
     if (authUser) {
@@ -158,10 +158,10 @@ export default function UploadPage() {
 
         // Move to the prompt step with the saved style
         setCurrentStep(Step.Prompt);
-        
+
         // Flag that we should auto-submit after loading
         setAutoSubmitStyle(true);
-        
+
         // Clear the saved style so it's not used again
         clearSavedStyle();
       }
@@ -244,22 +244,22 @@ export default function UploadPage() {
         try {
           // Try to parse as JSON first
           const data = await response.json();
-          
+
           // Check if the response contains what we need
           if (data.transformedImageUrl) {
             // Set the transformed image URL from the response
             setTransformedImage(data.transformedImageUrl);
-            
+
             // Store transformation data for potential later edits
             setCurrentTransformation({
               id: data.transformationId,
               prompt: promptText,
               transformedImageUrl: data.transformedImageUrl
             });
-            
+
             // Move to the result step
             setCurrentStep(Step.Result);
-            
+
             // If user had free credits available and used one, update the state
             if (userCredits && !userCredits.freeCreditsUsed) {
               setUserCredits(prev => {
@@ -272,27 +272,27 @@ export default function UploadPage() {
                 if (!prev) return null;
                 return { ...prev, paidCredits: prev.paidCredits - 1 };
               });
-              
+
               // Log the updated credit count
               console.log("Credits updated:", userCredits.paidCredits - 1);
             }
           } else if (data.status === "processing" && data.transformationId) {
             // Transformation is still processing, we need to poll for status
             console.log("Transformation is processing, ID:", data.transformationId);
-            
+
             // Store the transformation ID
             const transformationId = data.transformationId;
-            
+
             // Set up polling for the transformation status
             const maxAttempts = 30; // 90 seconds max wait time (30 attempts * 3 seconds)
-            
+
             const checkStatus = async () => {
               try {
                 const statusResponse = await apiRequest(
                   "GET",
                   `/api/transform/${transformationId}/status`
                 );
-                
+
                 if (!statusResponse.ok) {
                   console.error("Error checking transformation status");
                   toast({
@@ -303,25 +303,25 @@ export default function UploadPage() {
                   setCurrentStep(Step.Prompt);
                   return true; // stop polling on error
                 }
-                
+
                 const statusData = await statusResponse.json();
-                
+
                 if (statusData.status === "completed" && statusData.transformedImageUrl) {
                   console.log("Transformation completed:", statusData);
-                  
+
                   // Set the transformed image URL
                   setTransformedImage(statusData.transformedImageUrl);
-                  
+
                   // Store transformation data
                   setCurrentTransformation({
                     id: transformationId,
                     prompt: promptText,
                     transformedImageUrl: statusData.transformedImageUrl
                   });
-                  
+
                   // Move to result step
                   setCurrentStep(Step.Result);
-                  
+
                   // Update user credits
                   if (userCredits && !userCredits.freeCreditsUsed) {
                     setUserCredits(prev => {
@@ -333,13 +333,13 @@ export default function UploadPage() {
                       if (!prev) return null;
                       return { ...prev, paidCredits: prev.paidCredits - 1 };
                     });
-                    
+
                     console.log("Credits updated:", userCredits.paidCredits - 1);
                   }
-                  
+
                   return true; // stop polling
                 }
-                
+
                 if (statusData.status === "failed") {
                   console.error("Transformation failed:", statusData.message);
                   toast({
@@ -350,7 +350,7 @@ export default function UploadPage() {
                   setCurrentStep(Step.Prompt);
                   return true; // stop polling
                 }
-                
+
                 console.log("Transformation still processing...");
                 return false; // continue polling
               } catch (error) {
@@ -566,20 +566,20 @@ export default function UploadPage() {
           if (data.transformedImageUrl) {
             // Store the original transformed image before replacing it
             setSecondTransformedImage(transformedImage);
-            
+
             // Update the transformed image with the new edited version
             setTransformedImage(data.transformedImageUrl);
-            
+
             // Update current transformation data
             setCurrentTransformation({
               id: data.transformationId,
               prompt: editPrompt,
               transformedImageUrl: data.transformedImageUrl
             });
-            
+
             // Move to the result step
             setCurrentStep(Step.Result);
-            
+
             // If user had free credits available and used one, update the state
             if (userCredits && !userCredits.freeCreditsUsed) {
               setUserCredits(prev => {
@@ -592,7 +592,7 @@ export default function UploadPage() {
                 if (!prev) return null;
                 return { ...prev, paidCredits: prev.paidCredits - 1 };
               });
-              
+
               console.log("Credits updated:", userCredits.paidCredits - 1);
             }
           } else {
@@ -619,7 +619,7 @@ export default function UploadPage() {
         try {
           const data = await response.json();
           console.error("Server returned error response for edit:", data);
-          
+
           if (data.error === "content_safety") {
             toast({
               title: "Content Safety Alert",
@@ -646,14 +646,14 @@ export default function UploadPage() {
       }
     } catch (error: any) {
       console.error("Error during edit transformation:", error);
-      
+
       // More specific error messages
       let errorMessage = "An error occurred during editing. Please try again.";
-      
+
       if (error.message && error.message.includes("safety system")) {
         errorMessage = "Your edit request was rejected by our safety system. Please try a different prompt that is more appropriate for all audiences.";
       }
-      
+
       toast({
         title: "Edit Failed",
         description: errorMessage,
@@ -697,16 +697,16 @@ export default function UploadPage() {
 
         if (data.transformedImageUrl) {
           setTransformedImage(data.transformedImageUrl);
-          
+
           // Store transformation data
           setCurrentTransformation({
             id: data.transformationId,
             prompt: presetPrompt,
             transformedImageUrl: data.transformedImageUrl
           });
-          
+
           setCurrentStep(Step.Result);
-          
+
           // Update user credit status
           if (userCredits && !userCredits.freeCreditsUsed) {
             setUserCredits(prev => {
@@ -718,7 +718,7 @@ export default function UploadPage() {
               if (!prev) return null;
               return { ...prev, paidCredits: prev.paidCredits - 1 };
             });
-            
+
             console.log("Credits updated:", userCredits.paidCredits - 1);
           }
         } else {
@@ -733,7 +733,7 @@ export default function UploadPage() {
       } else {
         const data = await response.json();
         console.error("Server returned error for preset transformation:", data);
-        
+
         if (data.error === "content_safety") {
           toast({
             title: "Content Safety Alert",
@@ -775,14 +775,14 @@ export default function UploadPage() {
     if (autoSubmitStyle && savedStyle && currentStep === Step.Prompt) {
       // Reset the flag
       setAutoSubmitStyle(false);
-      
+
       // Auto-submit with the saved style prompt
       setTimeout(() => {
         handlePromptSubmit(savedStyle.prompt);
       }, 300);
     }
   }, [autoSubmitStyle, savedStyle, currentStep]);
-  
+
   // Reset scroll position when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -793,7 +793,7 @@ export default function UploadPage() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const uploadedImagePath = urlParams.get('image');
-    
+
     if (uploadedImagePath) {
       console.log("Found image path in URL params:", uploadedImagePath);
       // TODO: Handle this case if needed - fetch the image or set a flag
@@ -828,7 +828,7 @@ export default function UploadPage() {
                   </p>
                 </div>
                 <ImageUploader onImageUploaded={handleUpload} />
-                
+
                 {/* Interactive Inspiration Section */}
                 <div className="mt-16">
                   <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">See What's Possible</h3>
@@ -971,8 +971,42 @@ export default function UploadPage() {
                         </div>
                       </div>
                     </div>
+
+                    {/* 1980s Style */}
+                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
+                      <div className="relative h-48 md:h-56 overflow-hidden">
+                        <img
+                          src="/src/assets/woman-real.png"
+                          alt="Original woman photo"
+                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                        />
+                        <img
+                          src="/src/assets/woman-after.png"
+                          alt="80s style woman transformation"
+                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        />
+                        <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          1980s Style
+                        </div>
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                          <button
+                            className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+                            onClick={() => {
+                              localStorage.setItem('selectedStyle', JSON.stringify({
+                                prompt: "Transform this into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the subject's identity",
+                                title: "80's Style",
+                                category: "era"
+                              }));
+                              handleNewImage();
+                            }}
+                          >
+                            Try this style
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  
+
                   <div className="text-center mt-8">
                     <p className="text-gray-600 text-sm">
                       Hover over each example to see the transformation • Click "Try this style" to apply it to your photo
@@ -987,7 +1021,7 @@ export default function UploadPage() {
                 <h2 className="text-2xl font-bold mb-3 text-center">
                   Describe Your Transformation
                 </h2>
-                
+
                 <div className="flex flex-col md:flex-row gap-6 mb-6">
                   <div className="w-full md:w-1/3">
                     <h3 className="text-lg font-medium mb-2">Original Image</h3>
@@ -1004,7 +1038,7 @@ export default function UploadPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="mt-3">
                       <Button 
                         variant="outline" 
@@ -1016,7 +1050,7 @@ export default function UploadPage() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="w-full md:w-2/3">
                     <PromptInput
                       originalImage={originalImage || ""}
@@ -1058,7 +1092,7 @@ export default function UploadPage() {
                 <h2 className="text-2xl font-bold mb-3 text-center">
                   Edit Your Transformation
                 </h2>
-                
+
                 <div className="flex flex-col md:flex-row gap-6 mb-6">
                   <div className="w-full md:w-1/3">
                     <h3 className="text-lg font-medium mb-2">Current Image</h3>
@@ -1075,7 +1109,7 @@ export default function UploadPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="mt-3">
                       <RainbowButton 
                         variant="outline" 
@@ -1087,7 +1121,7 @@ export default function UploadPage() {
                       </RainbowButton>
                     </div>
                   </div>
-                  
+
                   <div className="w-full md:w-2/3">
                     <EditPrompt
                       originalImage={originalImage || ""}
