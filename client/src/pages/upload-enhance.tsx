@@ -676,147 +676,43 @@ export default function UploadEnhancePage() {
           </p>
         </div>
 
-        {/* Two-Column Grid Layout */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8 mobile-stack">
-          {/* Left Column: Industry Information Form */}
-          <Card className="brand-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 brand-font-heading font-semibold brand-text-neutral">
-                <Sparkles className="h-5 w-5 brand-text-primary" />
-                Product Information
+        {/* Single Column Layout */}
+        <div className="max-w-4xl mx-auto mb-8">
+          {/* Main Upload Section - Always Visible */}
+          <Card className="brand-card mb-8">
+            <CardHeader className="text-center">
+              <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold brand-text-neutral text-2xl">
+                <Camera className="h-6 w-6 brand-text-secondary" />
+                Upload Your Product Images
               </CardTitle>
-              <CardDescription className="brand-font-body text-gray-600">
-                Help us understand your brand and products for better AI enhancement
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Industry Pills Section */}
-              <div className="space-y-3">
-                <Label className="brand-font-heading font-medium brand-text-neutral">
-                  Select Your Industries
-                </Label>
-                <p className="text-sm text-gray-600 brand-font-body">
-                  Choose one or more industries that best describe your business
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {industryPills.map((industryName) => (
-                    <button
-                      key={industryName}
-                      type="button"
-                      onClick={() => toggleIndustryPill(industryName)}
-                      className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[70px] flex flex-col items-center justify-center gap-1 ${
-                        selectedIndustries.includes(industryName)
-                          ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
-                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
-                      }`}
-                    >
-                      <span className="text-xs font-medium brand-font-body leading-tight">
-                        {industryName}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Product Type */}
-              <div className="space-y-2">
-                <Label htmlFor="productType" className="brand-font-heading font-medium brand-text-neutral">
-                  Product Type
-                </Label>
-                <Input
-                  id="productType"
-                  placeholder="e.g., Sneakers, Smartphone, Coffee Mug, Office Chair"
-                  value={productType}
-                  onChange={(e) => setProductType(e.target.value)}
-                  className="brand-font-body"
-                />
-                <p className="text-xs text-gray-500 brand-font-body">
-                  Be specific about your main product category
-                </p>
-              </div>
-
-              {/* Purpose Selection */}
-              <div className="space-y-4">
-                <div>
-                  <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
-                    How will you use these images?
-                  </Label>
-                  <p className="text-sm text-gray-600 brand-font-body mt-1">
-                    This helps our AI create scroll-stopping visuals optimized for your needs
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {purposeOptions.map((purpose) => (
-                    <button
-                      key={purpose.id}
-                      type="button"
-                      onClick={() => togglePurpose(purpose.id)}
-                      className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[80px] flex flex-col items-center justify-center gap-2 ${
-                        selectedPurposes.includes(purpose.id)
-                          ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
-                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
-                      }`}
-                    >
-                      <span className="text-lg">{purpose.icon}</span>
-                      <div className="text-center">
-                        <div className="text-xs font-medium brand-font-body leading-tight">
-                          {purpose.label}
-                        </div>
-                        <div className="text-xs opacity-75 leading-tight mt-1">
-                          {purpose.subtitle.split(',')[0]}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                
-                {selectedPurposes.length > 0 && (
-                  <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                    <p className="text-sm brand-text-primary font-medium brand-font-body">
-                      ✨ Perfect! Our AI will optimize your images for {selectedPurposes.length} specific use case{selectedPurposes.length > 1 ? 's' : ''}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Right Column: Image Upload Area */}
-          <Card className="brand-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 brand-font-heading font-semibold brand-text-neutral">
-                <Camera className="h-5 w-5 brand-text-secondary" />
-                Upload Images
-              </CardTitle>
-              <CardDescription className="brand-font-body text-gray-600">
-                Select up to 5 high-quality product images (JPEG, PNG, WebP)
+              <CardDescription className="brand-font-body text-gray-600 text-lg">
+                Select up to 5 high-quality product images to get started
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Show upload area only if less than 5 images */}
+              {/* Large Upload Zone - Full Width */}
               {selectedFiles.length < MAX_FILES ? (
                 <div
-                  className={`upload-zone rounded-lg p-8 text-center cursor-pointer ${
-                    dragActive ? "active" : ""
-                  }`}
+                  className={`upload-zone rounded-xl p-12 text-center cursor-pointer border-2 ${
+                    dragActive ? "active border-[#0D7877] bg-[#0D7877]/5" : "border-dashed border-gray-300 hover:border-[#3DA5D9] hover:bg-[#3DA5D9]/5"
+                  } transition-all duration-200`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
                   onDragOver={handleDrag}
                   onDrop={handleDrop}
                   onClick={openFileDialog}
                 >
-                  <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
+                  <Upload className="mx-auto h-16 w-16 text-gray-400 mb-6" />
+                  <h3 className="text-2xl brand-font-heading font-semibold brand-text-neutral mb-3">
                     Drop images here or click to browse
                   </h3>
-                  <p className="text-gray-500 brand-font-body mb-4">
+                  <p className="text-gray-500 brand-font-body mb-6 text-lg">
                     {selectedFiles.length > 0 
-                      ? `Add ${MAX_FILES - selectedFiles.length} more images (up to 10MB each)`
-                      : `Maximum ${MAX_FILES} images, up to 10MB each`
+                      ? `Add ${MAX_FILES - selectedFiles.length} more images (JPEG, PNG, WebP - up to 10MB each)`
+                      : `Maximum ${MAX_FILES} images, JPEG, PNG, WebP format, up to 10MB each`
                     }
                   </p>
-                  <Button variant="outline" type="button" className="brand-button-primary border-none">
+                  <Button variant="outline" type="button" className="brand-button-primary border-none text-lg px-8 py-3">
                     Choose Files
                   </Button>
                   
@@ -831,19 +727,19 @@ export default function UploadEnhancePage() {
                 </div>
               ) : (
                 /* Show when max files reached */
-                <div className="upload-zone rounded-lg p-8 text-center bg-gray-50">
-                  <Check className="mx-auto h-12 w-12 brand-text-accent mb-4" />
-                  <h3 className="text-lg brand-font-heading font-semibold brand-text-neutral mb-2">
+                <div className="upload-zone rounded-xl p-12 text-center bg-gray-50 border-2 border-dashed border-gray-300">
+                  <Check className="mx-auto h-16 w-16 brand-text-accent mb-6" />
+                  <h3 className="text-2xl brand-font-heading font-semibold brand-text-neutral mb-3">
                     Maximum images reached
                   </h3>
-                  <p className="text-gray-500 brand-font-body mb-4">
+                  <p className="text-gray-500 brand-font-body mb-6 text-lg">
                     You've selected {MAX_FILES} images. Remove some to add different ones.
                   </p>
                   <Button 
                     variant="outline" 
                     type="button" 
                     onClick={clearAllFiles}
-                    className="brand-button-primary border-none"
+                    className="brand-button-primary border-none text-lg px-8 py-3"
                   >
                     Clear All Images
                   </Button>
@@ -852,12 +748,135 @@ export default function UploadEnhancePage() {
 
               {/* Error Display */}
               {uploadError && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-red-600 brand-font-body text-sm">{uploadError}</p>
                 </div>
               )}
             </CardContent>
           </Card>
+
+          {/* Product Information Section - Progressive Disclosure */}
+          <div className={`transition-all duration-500 ease-in-out ${
+            hasImages 
+              ? 'opacity-100 transform translate-y-0' 
+              : 'opacity-50 transform translate-y-4 pointer-events-none'
+          }`}>
+            <Card className={`brand-card ${hasImages ? '' : 'bg-gray-50'}`}>
+              <CardHeader className="text-center">
+                <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold brand-text-neutral text-xl">
+                  <Sparkles className="h-5 w-5 brand-text-primary" />
+                  Tell Us About Your Business
+                </CardTitle>
+                <CardDescription className="brand-font-body text-gray-600">
+                  {hasImages 
+                    ? "Help us understand your brand and products for better AI enhancement"
+                    : "Upload images first to continue with business details"
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                {/* Industry Pills Section */}
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
+                      Select Your Industries
+                    </Label>
+                    <p className="text-sm text-gray-600 brand-font-body mt-2">
+                      Choose one or more industries that best describe your business
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
+                    {industryPills.map((industryName) => (
+                      <button
+                        key={industryName}
+                        type="button"
+                        onClick={() => hasImages && toggleIndustryPill(industryName)}
+                        disabled={!hasImages}
+                        className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[70px] flex flex-col items-center justify-center gap-1 ${
+                          !hasImages
+                            ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
+                            : selectedIndustries.includes(industryName)
+                              ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
+                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
+                        }`}
+                      >
+                        <span className="text-xs font-medium brand-font-body leading-tight">
+                          {industryName}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Product Type */}
+                <div className="space-y-2 max-w-md mx-auto">
+                  <Label htmlFor="productType" className="brand-font-heading font-medium brand-text-neutral text-center block">
+                    Product Type (Optional)
+                  </Label>
+                  <Input
+                    id="productType"
+                    placeholder="e.g., Sneakers, Smartphone, Coffee Mug, Office Chair"
+                    value={productType}
+                    onChange={(e) => setProductType(e.target.value)}
+                    disabled={!hasImages}
+                    className={`brand-font-body text-center ${!hasImages ? 'bg-gray-100 text-gray-400' : ''}`}
+                  />
+                  <p className="text-xs text-gray-500 brand-font-body text-center">
+                    Be specific about your main product category
+                  </p>
+                </div>
+
+                {/* Purpose Selection */}
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
+                      How will you use these images?
+                    </Label>
+                    <p className="text-sm text-gray-600 brand-font-body mt-2">
+                      This helps our AI create scroll-stopping visuals optimized for your needs
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
+                    {purposeOptions.map((purpose) => (
+                      <button
+                        key={purpose.id}
+                        type="button"
+                        onClick={() => hasImages && togglePurpose(purpose.id)}
+                        disabled={!hasImages}
+                        className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[80px] flex flex-col items-center justify-center gap-2 ${
+                          !hasImages
+                            ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
+                            : selectedPurposes.includes(purpose.id)
+                              ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
+                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
+                        }`}
+                      >
+                        <span className="text-lg">{purpose.icon}</span>
+                        <div className="text-center">
+                          <div className="text-xs font-medium brand-font-body leading-tight">
+                            {purpose.label}
+                          </div>
+                          <div className="text-xs opacity-75 leading-tight mt-1">
+                            {purpose.subtitle.split(',')[0]}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {selectedPurposes.length > 0 && hasImages && (
+                    <div className="p-3 bg-green-50 rounded-lg border border-green-200 max-w-2xl mx-auto">
+                      <p className="text-sm brand-text-primary font-medium brand-font-body text-center">
+                        ✨ Perfect! Our AI will optimize your images for {selectedPurposes.length} specific use case{selectedPurposes.length > 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Image Preview Grid */}
