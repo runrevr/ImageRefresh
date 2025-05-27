@@ -6,7 +6,7 @@
  * 3. Test mode functionality
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   useProductImageLab, 
   ENHANCEMENT_OPTIONS, 
@@ -690,7 +690,7 @@ export default function FixedProductImageLab({
                             <input 
                               type="checkbox" 
                               checked={(selections[uploadedImages[selectedImageIndex].id] || []).includes(option.id)}
-                              onChange={() => toggleTransformation(uploadedImages[selectedImageIndex].id, option.id)}
+                              onChange={()={() => {toggleTransformation(uploadedImages[selectedImageIndex].id, option.id);}}
                               disabled={isProcessing}
                               style={{ marginRight: '8px' }}
                             />

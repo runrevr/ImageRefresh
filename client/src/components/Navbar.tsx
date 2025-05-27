@@ -22,7 +22,7 @@ interface NavbarProps {
 export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logoutMutation } = useAuth();
-  const { data: creditsData } = useCredits();
+  const { data: userCredits, isLoading: creditsLoading } = useCredits();
 
   const totalCredits = freeCredits + paidCredits;
 
@@ -73,7 +73,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <div className="hidden sm:block text-sm font-medium">
                 <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
                   <Bot className="h-4 w-4 mr-1 text-primary-600" />
-                  {totalCredits} credits
+                  {creditsLoading ? (
+                  "Loading..."
+                ) : userCredits ? (
+                  `${userCredits.totalCredits} credits`
+                ) : (
+                  user ? "0 credits" : "1 free credit"
+                )}
                 </span>
               </div>
               <Link href="/buy-credits">
@@ -214,7 +220,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                       <div className="text-sm font-medium mb-2">
                         <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
                           <Bot className="h-4 w-4 mr-1 text-primary-600" />
-                          {totalCredits} credits
+                          {creditsLoading ? (
+                  "Loading..."
+                ) : userCredits ? (
+                  `${userCredits.totalCredits} credits`
+                ) : (
+                  user ? "0 credits" : "1 free credit"
+                )}
                         </span>
                       </div>
                       <Link href="/buy-credits">
