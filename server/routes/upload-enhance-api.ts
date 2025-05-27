@@ -291,7 +291,7 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       edit_prompt: editPrompt.trim(),
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "claude-3-7-sonnet-20250219",
+        model_used: "claude-sonnet-4-20250514",
         chaos_mode: is_chaos_concept
       }
     });
@@ -331,7 +331,7 @@ router.post('/generate-edit-prompts', async (req, res) => {
     );
 
     const message = await anthropic.messages.create({
-      model: "claude-3-7-sonnet-20250219", // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+      model: "claude-sonnet-4-20250514", // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
       max_tokens: 1500,
       temperature: hasChaosConcept ? 1.0 : 0.8,
       messages: [{
@@ -396,7 +396,7 @@ For each selected concept, create one prompt that:
       edit_prompts: editPrompts,
       processing_metadata: {
         generation_time: new Date().toISOString(),
-        model_used: "claude-3-7-sonnet-20250219",
+        model_used: "claude-sonnet-4-20250514",
         has_chaos_concept: hasChaosConcept,
         concepts_processed: selectedIdeas.length
       }
