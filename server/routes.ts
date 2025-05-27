@@ -686,11 +686,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Check if user has monthly free credit available
+      const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+      
+      // Calculate total available credits
+      const freeCreditsAvailable = hasMonthlyFreeCredit ? 1 : 0;
+      const totalCredits = freeCreditsAvailable + user.paidCredits;
+
+      console.log(`User ${userId} credit check: Free credits used: ${user.freeCreditsUsed}, Has monthly free: ${hasMonthlyFreeCredit}, Paid credits: ${user.paidCredits}, Total available: ${totalCredits}`);
+
       // Return user credits in the format expected by the client
       return res.json({
         id: user.id,
-        freeCreditsUsed: user.freeCreditsUsed,
+        freeCreditsUsed: !hasMonthlyFreeCredit,
         paidCredits: user.paidCredits,
+        totalCredits: totalCredits,
+        credits: totalCredits, // For compatibility
       });
     } catch (error: any) {
       console.error("Error getting user credits by ID:", error);
@@ -719,10 +730,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Check if user has monthly free credit available
+      const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+      
+      // Calculate total available credits
+      const freeCreditsAvailable = hasMonthlyFreeCredit ? 1 : 0;
+      const totalCredits = freeCreditsAvailable + user.paidCredits;
+
+      console.log(`User ${userId} user-credits check: Free credits used: ${user.freeCreditsUsed}, Has monthly free: ${hasMonthlyFreeCredit}, Paid credits: ${user.paidCredits}, Total available: ${totalCredits}`);
+
       return res.json({
         id: user.id,
-        freeCreditsUsed: user.freeCreditsUsed,
+        freeCreditsUsed: !hasMonthlyFreeCredit,
         paidCredits: user.paidCredits,
+        totalCredits: totalCredits,
+        credits: totalCredits, // For compatibility
       });
     } catch (error: any) {
       console.error("Error getting user credits by ID:", error);
@@ -771,6 +793,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         productAiStudio: true, // Add feature flag for the new Product AI Studio feature
       },
     });
+  });
+
+  // Debug endpoint for credit troubleshooting
+  app.get("/api/debug/credits/:id", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Get detailed credit information
+      const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
+      const freeCreditsAvailable = hasMonthlyFreeCredit ? 1 : 0;
+      const totalCredits = freeCreditsAvailable + user.paidCredits;
+
+      return res.json({
+        userId: user.id,
+        rawUserData: {
+          freeCreditsUsed: user.freeCreditsUsed,
+          paidCredits: user.paidCredits,
+          lastFreeCredit: user.lastFreeCredit,
+        },
+        calculatedData: {
+          hasMonthlyFreeCredit,
+          freeCreditsAvailable,
+          totalCredits,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error: any) {
+      console.error("Error in debug credits endpoint:", error);
+      return res.status(500).json({
+        message: "Error fetching debug credit information",
+        error: error.message,
+      });
+    }
   });
 
   // Create HTTP server
