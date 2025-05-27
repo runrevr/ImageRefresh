@@ -962,8 +962,7 @@ export default function Home() {
       return;
     }
 
-    // If the user has previously used the email collection feature,```text
-       show account dialog
+    // If the user has previously used the email collection feature, show account dialog
     if (storedEmail) {
       setShowAccountNeededDialog(true);
     } else {
