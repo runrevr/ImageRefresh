@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'wouter'
 import Navbar from '@/components/Navbar'
@@ -68,7 +67,7 @@ export default function GenerateEnhancementsPage() {
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [creditStatus, setCreditStatus] = useState<any>(null)
   const [showCelebration, setShowCelebration] = useState(false)
-  
+
   // Download options
   const [selectedFormat, setSelectedFormat] = useState<'PNG' | 'JPG'>('PNG')
   const [selectedResolution, setSelectedResolution] = useState<'original' | 'hd' | '4k'>('original')
@@ -299,7 +298,7 @@ export default function GenerateEnhancementsPage() {
     // Re-run the actual processing for this job
     try {
       const job = updatedJobs[jobIndex];
-      
+
       // Step 1: Generate edit prompt with Claude
       const promptResponse = await fetch('/api/generate-edit-prompt', {
         method: 'POST',
@@ -316,7 +315,7 @@ export default function GenerateEnhancementsPage() {
       }
 
       const promptResult = await promptResponse.json();
-      
+
       // Update to generating image status
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
@@ -417,7 +416,7 @@ export default function GenerateEnhancementsPage() {
 
   const shareResult = (job: EnhancementJob) => {
     if (!job.resultImageUrl) return
-    
+
     if (navigator.share) {
       navigator.share({
         title: `${job.enhancementTitle} - Enhanced Image`,
@@ -606,6 +605,28 @@ export default function GenerateEnhancementsPage() {
         @keyframes celebration-pulse {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.05); }
+        }
+
+        /* Image Comparison Styles */
+        .image-comparison-container {
+          position: relative;
+          overflow: hidden;
+        }
+
+        .before-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .after-image {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
       `}</style>
 
@@ -855,7 +876,7 @@ export default function GenerateEnhancementsPage() {
                         {job.status === 'failed' && 'Failed'}
                       </Badge>
                     </div>
-                    
+
                     {/* Favorite Button */}
                     {job.status === 'complete' && job.resultImageUrl && (
                       <Button
@@ -886,56 +907,88 @@ export default function GenerateEnhancementsPage() {
                   )}
 
                   {/* Image Container - Centered */}
-                  <div className="flex items-center justify-center gap-8 mb-6">
-                    {/* Before Image */}
-                    <div className="text-center">
-                      <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Before</p>
-                      <img
-                        src={job.originalImageUrl}
-                        alt="Original product"
-                        className="w-[250px] h-[250px] object-cover rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#0D7877] transition-colors"
-                        onClick={() => window.open(job.originalImageUrl, '_blank')}
-                      />
-                    </div>
+          <div className="flex items-center justify-center gap-8 mb-6">
+            {job.status === 'complete' && job.resultImageUrl ? (
+              /* Enhanced Image with Hover Comparison */
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Enhanced Result</p>
+                <div className="image-comparison-container relative w-[400px] h-[400px] rounded-lg overflow-hidden border-2 border-green-200 cursor-pointer group">
+                  {/* Before Image (hidden by default, shown on hover) */}
+                  <img
+                    src={job.originalImageUrl}
+                    alt="Original product"
+                    className="before-image absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
+                  />
 
-                    {/* Arrow */}
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center">
-                        <span className="text-white text-xl">→</span>
-                      </div>
-                    </div>
+                  {/* After Image (visible by default, faded on hover) */}
+                  <img
+                    src={job.resultImageUrl}
+                    alt="Enhanced result"
+                    className="after-image relative w-full h-full object-cover opacity-100 transition-opacity duration-300 ease-in-out group-hover:opacity-0"
+                    onClick={() => window.open(job.resultImageUrl, '_blank')}
+                  />
 
-                    {/* After Image */}
+                  {/* Hover Indicator */}
+                  <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 brand-font-body">
+                    Original Image
+                  </div>
+
+                  {/* Hint Text */}
+                  <div className="absolute bottom-3 right-3 bg-[#0D7877] bg-opacity-90 text-white text-xs px-3 py-1 rounded-full opacity-60 group-hover:opacity-0 transition-opacity duration-300 brand-font-body">
+                    Hover to compare
+                  </div>
+
+                  {/* Corner Icon */}
+                  <div className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-gray-700 text-sm">↔️</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Processing State - Show Before/Processing side by side */
+              <>
+                {/* Before Image */}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Before</p>
+                  <img
+                    src={job.originalImageUrl}
+                    alt="Original product"
+                    className="w-[250px] h-[250px] object-cover rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#0D7877] transition-colors"
+                    onClick={() => window.open(job.originalImageUrl, '_blank')}
+                  />
+                </div>
+
+                {/* Arrow */}
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center">
+                    <span className="text-white text-xl">→</span>
+                  </div>
+                </div>
+
+                {/* After Image */}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">After</p>
+                  <div className="w-[250px] h-[250px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">After</p>
-                      {job.status === 'complete' && job.resultImageUrl ? (
-                        <img
-                          src={job.resultImageUrl}
-                          alt="Enhanced result"
-                          className="w-[250px] h-[250px] object-cover rounded-lg border-2 border-green-200 cursor-pointer hover:border-green-400 transition-colors"
-                          onClick={() => window.open(job.resultImageUrl, '_blank')}
-                        />
+                      {job.status === 'failed' ? (
+                        <div className="text-red-500">
+                          <AlertCircle className="w-8 h-8 mx-auto mb-2" />
+                          <p className="text-sm">Enhancement Failed</p>
+                        </div>
                       ) : (
-                        <div className="w-[250px] h-[250px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center">
-                          <div className="text-center">
-                            {job.status === 'failed' ? (
-                              <div className="text-red-500">
-                                <AlertCircle className="w-8 h-8 mx-auto mb-2" />
-                                <p className="text-sm">Enhancement Failed</p>
-                              </div>
-                            ) : (
-                              <div className="text-gray-400">
-                                <RefreshCw className={`w-8 h-8 mx-auto mb-2 ${job.status !== 'queued' ? 'animate-spin' : ''}`} />
-                                <p className="text-sm">
-                                  {job.status === 'queued' ? 'Waiting...' : 'Processing...'}
-                                </p>
-                              </div>
-                            )}
-                          </div>
+                        <div className="text-gray-400">
+                          <RefreshCw className={`w-8 h-8 mx-auto mb-2 ${job.status !== 'queued' ? 'animate-spin' : ''}`} />
+                          <p className="text-sm">
+                            {job.status === 'queued' ? 'Waiting...' : 'Processing...'}
+                          </p>
                         </div>
                       )}
                     </div>
                   </div>
+                </div>
+              </>
+            )}
+          </div>
 
                   {/* Action Buttons - Centered */}
                   {job.status === 'complete' && job.resultImageUrl && (
@@ -949,7 +1002,7 @@ export default function GenerateEnhancementsPage() {
                           <Download className="w-4 h-4 mr-2" />
                           Download {selectedFormat}
                         </Button>
-                        
+
                         <Select value={selectedFormat} onValueChange={(value: 'PNG' | 'JPG') => setSelectedFormat(value)}>
                           <SelectTrigger className="w-20">
                             <SelectValue />
@@ -1022,7 +1075,7 @@ export default function GenerateEnhancementsPage() {
             <>
               {/* Divider */}
               <div className="my-12 border-t-2 border-gray-300"></div>
-              
+
               {/* Download Options */}
               <Card className="brand-card">
                 <CardHeader>
@@ -1044,7 +1097,7 @@ export default function GenerateEnhancementsPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div>
                       <label className="text-sm font-medium brand-font-body mb-2 block">Resolution</label>
                       <Select value={selectedResolution} onValueChange={(value: 'original' | 'hd' | '4k') => setSelectedResolution(value)}>
@@ -1058,7 +1111,7 @@ export default function GenerateEnhancementsPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div>
                       <label className="text-sm font-medium brand-font-body mb-2 block">Email Results</label>
                       <Input
@@ -1068,7 +1121,7 @@ export default function GenerateEnhancementsPage() {
                         onChange={(e) => setEmailAddress(e.target.value)}
                       />
                     </div>
-                    
+
                     <div className="flex items-end">
                       <Button
                         onClick={emailResults}
@@ -1081,7 +1134,7 @@ export default function GenerateEnhancementsPage() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3">
                     <Button onClick={downloadAll} className="brand-button-primary brand-font-body">
                       <Archive className="w-4 h-4 mr-2" />
@@ -1137,7 +1190,7 @@ export default function GenerateEnhancementsPage() {
                       <Archive className="w-4 h-4 mr-2" />
                       Download All
                     </Button>
-                    
+
                     <Link href="/upload-enhance">
                       <Button
                         variant="outline"
