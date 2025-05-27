@@ -22,7 +22,8 @@ import {
   StarOff,
   Mail,
   Upload,
-  Archive
+  Archive,
+  X
 } from 'lucide-react'
 import { EmailCaptureModal } from '@/components/EmailCaptureModal'
 import { UpgradePrompt } from '@/components/UpgradePrompt'
@@ -67,6 +68,7 @@ export default function GenerateEnhancementsPage() {
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [creditStatus, setCreditStatus] = useState<any>(null)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null)
 
   // Download options
   const [selectedFormat, setSelectedFormat] = useState<'PNG' | 'JPG'>('PNG')
@@ -426,6 +428,87 @@ export default function GenerateEnhancementsPage() {
     } else {
       navigator.clipboard.writeText(job.resultImageUrl)
       // You could add a toast notification here
+    }
+  }
+
+  const regenerateImage = async (jobId: string) => {
+    const jobIndex = jobs.findIndex(j => j.id === jobId)
+    if (jobIndex === -1) return
+
+    const updatedJobs = [...jobs]
+    updatedJobs[jobIndex] = {
+      ...updatedJobs[jobIndex],
+      status: 'creating_prompt',
+      progress: 0,
+      retryCount: 0,
+      errorMessage: undefined,
+      resultImageUrl: undefined
+    }
+    setJobs(updatedJobs)
+
+    // Re-run the actual processing for this job
+    try {
+      const job = updatedJobs[jobIndex];
+
+      // Step 1: Generate edit prompt with Claude
+      const promptResponse = await fetch('/api/generate-edit-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea_title: job.enhancementTitle,
+          idea_description: job.ideaDescription,
+          is_chaos_concept: job.isChaosMode
+        })
+      });
+
+      if (!promptResponse.ok) {
+        throw new Error(`Prompt generation failed: ${promptResponse.statusText}`);
+      }
+
+      const promptResult = await promptResponse.json();
+
+      // Update to generating image status
+      updatedJobs[jobIndex] = {
+        ...updatedJobs[jobIndex],
+        status: 'generating_image',
+        progress: 60,
+        enhancementPrompt: promptResult.edit_prompt
+      };
+      setJobs([...updatedJobs]);
+
+      // Step 2: Generate image
+      const imageResponse = await fetch('/api/generate-enhancement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          original_image_url: job.originalImageUrl,
+          enhancement_prompt: promptResult.edit_prompt,
+          enhancement_title: job.enhancementTitle
+        })
+      });
+
+      if (!imageResponse.ok) {
+        throw new Error(`Image generation failed: ${imageResponse.statusText}`);
+      }
+
+      const imageResult = await imageResponse.json();
+
+      // Mark as complete
+      updatedJobs[jobIndex] = {
+        ...updatedJobs[jobIndex],
+        status: 'complete',
+        progress: 100,
+        resultImageUrl: imageResult.enhanced_image_url
+      };
+      setJobs([...updatedJobs]);
+
+    } catch (error) {
+      updatedJobs[jobIndex] = {
+        ...updatedJobs[jobIndex],
+        status: 'failed',
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      };
+      setJobs([...updatedJobs]);
     }
   }
 
@@ -825,7 +908,8 @@ export default function GenerateEnhancementsPage() {
                           <img
                             src={job.resultImageUrl}
                             alt="Enhanced result"
-                            className="w-[200px] h-[200px] object-cover rounded-lg border-2 border-green-200"
+                            className="w-[200px] h-[200px] object-cover rounded-lg border-2 border-green-200 cursor-pointer"
+                            onClick={() => setLightboxImage(job.resultImageUrl!)}
                           />
                           <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                             <Check className="w-4 h-4 text-white" />
@@ -855,11 +939,59 @@ export default function GenerateEnhancementsPage() {
 
                   {/* Progress Bar */}
                   {(job.status === 'creating_prompt' || job.status === 'generating_image') && (
-                    <div className="mt-4">
+                    <div className="mt-4 mb-4">
                       <Progress 
                         value={job.progress} 
                         className="h-2 bg-blue-100"
                       />
+                    </div>
+                  )}
+
+                  {/* Divider */}
+                  {job.status === 'complete' && job.resultImageUrl && (
+                    <div className="border-t border-gray-200 my-4"></div>
+                  )}
+
+                  {/* Action Buttons for Complete Images */}
+                  {job.status === 'complete' && job.resultImageUrl && (
+                    <div className="flex justify-end">
+                      <div className="flex flex-wrap gap-2 md:gap-3">
+                        <Button
+                          size="sm"
+                          onClick={() => downloadImage(job.resultImageUrl!, job.enhancementTitle, selectedFormat)}
+                          className="bg-green-600 hover:bg-green-700 text-white brand-font-body"
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          Download
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setLightboxImage(job.resultImageUrl!)}
+                          className="brand-font-body border-gray-300 hover:bg-gray-50"
+                        >
+                          <Zap className="w-4 h-4 mr-1" />
+                          View Full
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => shareResult(job)}
+                          className="brand-font-body border-gray-300 hover:bg-gray-50"
+                        >
+                          <ExternalLink className="w-4 h-4 mr-1" />
+                          Share
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => regenerateImage(job.id)}
+                          className="brand-font-body border-gray-300 hover:bg-gray-50"
+                        >
+                          <RefreshCw className="w-4 h-4 mr-1" />
+                          Regenerate
+                        </Button>
+                      </div>
                     </div>
                   )}
 
@@ -899,88 +1031,36 @@ export default function GenerateEnhancementsPage() {
             ))}
           </div>
 
-          {/* Download Options - Only show when complete */}
+          {/* Bulk Download Options - Only show when complete */}
           {!isProcessing && successfulJobs.length > 0 && (
             <>
               {/* Divider */}
               <div className="my-12 border-t-2 border-gray-300"></div>
 
-              {/* Download Options */}
+              {/* Minimal Download Section */}
               <Card className="brand-card">
-                <CardHeader>
-                  <CardTitle className="brand-font-heading brand-text-neutral">
-                    Download Options
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <label className="text-sm font-medium brand-font-body mb-2 block">Format</label>
-                      <Select value={selectedFormat} onValueChange={(value: 'PNG' | 'JPG') => setSelectedFormat(value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="PNG">PNG (High Quality)</SelectItem>
-                          <SelectItem value="JPG">JPG (Smaller Size)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <h3 className="text-lg font-semibold brand-text-neutral brand-font-heading mb-1">
+                        Bulk Download
+                      </h3>
+                      <p className="text-sm text-gray-600 brand-font-body">
+                        Download all {successfulJobs.length} enhanced images at once
+                      </p>
                     </div>
-
-                    <div>
-                      <label className="text-sm font-medium brand-font-body mb-2 block">Resolution</label>
-                      <Select value={selectedResolution} onValueChange={(value: 'original' | 'hd' | '4k') => setSelectedResolution(value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="original">Original (1024×1024)</SelectItem>
-                          <SelectItem value="hd">HD (1920×1920)</SelectItem>
-                          <SelectItem value="4k">4K (3840×3840)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium brand-font-body mb-2 block">Email Results</label>
-                      <Input
-                        type="email"
-                        placeholder="your@email.com"
-                        value={emailAddress}
-                        onChange={(e) => setEmailAddress(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="flex items-end">
-                      <Button
-                        onClick={emailResults}
-                        disabled={!emailAddress}
-                        variant="outline"
-                        className="w-full brand-font-body"
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Send Email
+                    <div className="flex gap-3">
+                      <Button onClick={downloadAll} className="brand-button-primary brand-font-body">
+                        <Archive className="w-4 h-4 mr-2" />
+                        Download All as ZIP
                       </Button>
+                      <Link href="/upload-enhance">
+                        <Button variant="outline" className="brand-button-secondary brand-font-body">
+                          <Upload className="w-4 h-4 mr-2" />
+                          Enhance Another Image
+                        </Button>
+                      </Link>
                     </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button onClick={downloadAll} className="brand-button-primary brand-font-body">
-                      <Archive className="w-4 h-4 mr-2" />
-                      Download All ({successfulJobs.length})
-                    </Button>
-                    {favoriteCount > 0 && (
-                      <Button onClick={downloadFavorites} variant="outline" className="brand-font-body">
-                        <Star className="w-4 h-4 mr-2" />
-                        Download Favorites ({favoriteCount})
-                      </Button>
-                    )}
-                    <Link href="/upload-enhance">
-                      <Button variant="outline" className="brand-button-secondary brand-font-body">
-                        <Upload className="w-4 h-4 mr-2" />
-                        Enhance Another Image
-                      </Button>
-                    </Link>
                   </div>
                 </CardContent>
               </Card>
@@ -1036,6 +1116,29 @@ export default function GenerateEnhancementsPage() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <img
+              src={lightboxImage}
+              alt="Full size preview"
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setLightboxImage(null)}
+              className="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Email Capture Modal */}
       <EmailCaptureModal
