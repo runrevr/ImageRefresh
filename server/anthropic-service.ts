@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 export class AnthropicService {
@@ -7,7 +6,7 @@ export class AnthropicService {
 
   constructor() {
     this.apiKey = process.env.ANTHROPIC_API_KEY || '';
-    
+
     if (!this.apiKey) {
       console.warn('ANTHROPIC_API_KEY is not set. Anthropic API calls will fail.');
     }
