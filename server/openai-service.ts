@@ -27,10 +27,30 @@ function ensureUploadDirExists() {
  * @param userId User ID (for organizing uploads)
  * @returns Path to the transformed image
  */
+// Extended size options available to users
+const extendedSizeOptions = [
+  "512x512", "768x768", "1024x1024", "1280x720", "1536x1024", 
+  "1024x1536", "1920x1080", "1080x1920", "2048x2048", "1600x900", "900x1600"
+];
+
+// Map user size to OpenAI-compatible size
+function mapToOpenAISize(requestedSize: string): string {
+  const openaiSizes = ["1024x1024", "1536x1024", "1024x1536"];
+  if (openaiSizes.includes(requestedSize)) return requestedSize;
+  
+  const [width, height] = requestedSize.split('x').map(Number);
+  const aspectRatio = width / height;
+  
+  if (aspectRatio > 1.4) return "1536x1024";
+  if (aspectRatio < 0.7) return "1024x1536";
+  return "1024x1024";
+}
+
 export async function transformImage(
   originalImagePath: string,
   prompt: string,
-  userId?: string
+  userId?: string,
+  requestedSize: string = "1024x1024"
 ): Promise<{ 
   transformedImagePath: string;
   transformation: any; 
@@ -51,9 +71,12 @@ export async function transformImage(
     const FormData = require('form-data');
     const form = new FormData();
     
+    const finalSize = mapToOpenAISize(requestedSize);
+    console.log(`[OpenAI Service] Requested: ${requestedSize}, using: ${finalSize}`);
+    
     form.append('model', 'gpt-image-01');
     form.append('prompt', prompt);
-    form.append('size', '1024x1024');
+    form.append('size', finalSize);
     form.append('n', '1');
     form.append('image', fs.createReadStream(originalImagePath));
 

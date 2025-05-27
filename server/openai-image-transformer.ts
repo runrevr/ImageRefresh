@@ -11,8 +11,45 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Allowed image sizes for the OpenAI API - only supporting these three sizes
-const allowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
+// OpenAI API allowed sizes - these are the only sizes OpenAI accepts
+const openaiAllowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
+
+// Extended size options that users can choose from - these will be mapped to OpenAI sizes
+const extendedSizeOptions = [
+  "512x512",
+  "768x768", 
+  "1024x1024",
+  "1280x720",    // 16:9 landscape
+  "1536x1024",   // 3:2 landscape
+  "1024x1536",   // 2:3 portrait
+  "1920x1080",   // Full HD landscape
+  "1080x1920",   // Full HD portrait
+  "2048x2048",   // Large square
+  "1600x900",    // 16:9 medium
+  "900x1600"     // 9:16 medium portrait
+];
+
+// Function to map user-selected size to closest OpenAI-allowed size
+function mapToOpenAISize(requestedSize: string): string {
+  if (openaiAllowedSizes.includes(requestedSize)) {
+    return requestedSize;
+  }
+  
+  const [width, height] = requestedSize.split('x').map(Number);
+  const aspectRatio = width / height;
+  
+  // Map based on aspect ratio
+  if (aspectRatio > 1.4) {
+    // Wide landscape - use 1536x1024
+    return "1536x1024";
+  } else if (aspectRatio < 0.7) {
+    // Tall portrait - use 1024x1536
+    return "1024x1536";
+  } else {
+    // Square or close to square - use 1024x1024
+    return "1024x1024";
+  }
+}
 
 /**
  * Transform an image using OpenAI's GPT-Image-01 model
@@ -33,10 +70,10 @@ export async function transformImage(
   try {
     console.log(`[OpenAI] Processing image transformation with prompt: ${prompt}`);
     
-    // Validate and set image size to one of the allowed sizes
+    // Map user-requested size to OpenAI-compatible size
     const userSize = size;
-    const finalSize = allowedSizes.includes(userSize) ? userSize : "1024x1024";
-    console.log(`[OpenAI] Using image size: ${finalSize}`);
+    const finalSize = mapToOpenAISize(userSize);
+    console.log(`[OpenAI] Requested size: ${userSize}, mapped to OpenAI size: ${finalSize}`);
     
     // Read the image file and convert to base64
     const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
