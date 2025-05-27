@@ -322,6 +322,19 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       app.use('/api/beta', customPromptsRoutes.default || customPromptsRoutes);
       console.log('Custom Prompts Beta feature enabled');
 
+      // Serve the rainbow HTML interface for /custom-prompts-beta
+      app.get('/custom-prompts-beta', (req, res) => {
+        const htmlPath = path.join(process.cwd(), 'beta-custom-prompts', 'components', 'customPromptUpload.html');
+        if (fs.existsSync(htmlPath)) {
+          res.sendFile(htmlPath);
+        } else {
+          res.status(404).send('Custom prompts beta page not found');
+        }
+      });
+
+      // Serve static files for the beta custom prompts
+      app.use('/beta-custom-prompts', express.static(path.join(process.cwd(), 'beta-custom-prompts')));
+
       // Add basic test endpoint to verify routes are working
       app.get('/api/beta/test', (req, res) => {
         res.json({ success: true, message: 'Custom prompts beta API is working' });
