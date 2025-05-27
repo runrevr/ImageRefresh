@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Link } from 'wouter'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
+import { useLocation } from 'wouter'
 
 // Import images
 import mexicanFoodOriginal from '../../assets/mexican-food-original.png'
@@ -34,6 +35,12 @@ const transitionVariants = {
 }
 
 export function HeroSection() {
+    const [, navigate] = useLocation();
+
+    const handleTextToImageClick = () => {
+        navigate('/custom-prompts-beta');
+    };
+
     return (
         <>
             <section>
@@ -206,11 +213,14 @@ export function HeroSection() {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <Link href="/upload?mode=variations">
-                                            <RainbowButton className="mt-4 w-full">
-                                                Create Variations
-                                            </RainbowButton>
-                                        </Link>
+                                        
+                                        <Button 
+                                            className="mt-4 w-full bg-black text-white hover:bg-gray-800 transition-colors"
+                                            size="lg"
+                                            onClick={handleTextToImageClick}
+                                        >
+                                            Create Variations
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
