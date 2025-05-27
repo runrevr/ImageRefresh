@@ -298,6 +298,16 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       app.get('/custom-prompts-beta', (req, res) => {
         res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptUpload.html'));
       });
+      
+      // Serve the JavaScript file
+      app.get('/beta-custom-prompts/components/customPromptScript.js', (req, res) => {
+        res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptScript.js'));
+      });
+      
+      // Serve the CSS file
+      app.get('/beta-custom-prompts/styles/customPromptStyles.css', (req, res) => {
+        res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/styles/customPromptStyles.css'));
+      });
 
       console.log('Custom Prompts Beta feature enabled');
     } catch (error) {
