@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Creator - Text Prompt Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-1: 0 100% 63%;
+            --color-2: 270 100% 63%;
+            --color-3: 210 100% 63%;
+            --color-4: 195 100% 63%;
+            --color-5: 90 100% 63%;
+            --primary: #0D7877;
+            --secondary: #3DA5D9;
+            --accent: #C1F50A;
+            --neutral: #333333;
+            --light: #F2F4F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 50px;
+            font-size: 1.1rem;
+        }
+
+        /* Rainbow Input Container */
+        .rainbow-input-container {
+            position: relative;
+            margin-bottom: 60px;
+        }
+
+        .rainbow-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* Rainbow glow effect underneath */
+        .rainbow-input-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(90deg, 
+                #ff0080,
+                #ff8c00,
+                #40e0d0,
+                #00ff00,
+                #ff0080
+            );
+            background-size: 200%;
+            animation: rainbow 3s infinite linear;
+            filter: blur(25px);
+            opacity: 0.8;
+            z-index: -1;
+            border-radius: 100px;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0%; }
+            100% { background-position: 200%; }
+        }
+
+        .rainbow-input {
+            width: 100%;
+            padding: 20px 24px;
+            padding-right: 140px; /* Space for button */
+            font-size: 1.125rem;
+            border: none;
+            border-radius: 50px;
+            background: #1a1a1a;
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .rainbow-input:focus {
+            background: #222;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+        }
+
+        .rainbow-input::placeholder {
+            color: #888;
+            font-style: normal;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            background: #1a1a1a;
+            color: #ffa500;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .generate-btn::before {
+            content: '⚡';
+            font-size: 1.1rem;
+            display: inline-block;
+        }
+
+        .generate-btn:hover {
+            background: #000;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Examples */
+        .examples {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .examples-label {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .example-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .example-chip {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .example-chip:hover {
+            border-color: #999;
+            background: #eeeeee;
+            color: #333;
+            transform: translateY(-2px);
+        }
+
+        /* Enhancement Options */
+        .enhancement-section {
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .enhancement-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .variation-cards {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .variation-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .variation-card:hover {
+            border-color: #999;
+            background: #fafafa;
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .variation-card.selected {
+            border-color: var(--primary);
+            background: rgba(13, 120, 119, 0.05);
+        }
+
+        .variation-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .variation-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .variation-prompt {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .variation-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            color: #777;
+        }
+
+        /* Context Section */
+        .context-section {
+            margin-bottom: 30px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .context-group {
+            margin-bottom: 20px;
+        }
+
+        .context-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .context-pill {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .context-pill:hover {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .context-pill.active {
+            border-color: var(--primary);
+            background: rgba(13, 120, 119, 0.1);
+            color: var(--primary);
+        }
+
+        /* Enhancement Controls */
+        .enhancement-controls {
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .radio-option:hover {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .radio-option input {
+            margin-bottom: 5px;
+        }
+
+        .radio-option small {
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-label {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .style-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        .style-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Confirmation Section */
+        .confirmation-section {
+            margin-bottom: 30px;
+        }
+
+        .confirmation-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .confirmation-card h3 {
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .confirmation-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .credits-remaining {
+            color: #28a745;
+        }
+
+        .pro-tip {
+            font-size: 0.875rem;
+            color: #666;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0a5d5f;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .rainbow-input {
+                font-size: 1rem;
+                padding: 16px 20px;
+            }
+
+            .generate-btn {
+                position: static;
+                width: 100%;
+                margin-top: 15px;
+                transform: none;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-option {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Initial State -->
+        <div id="initialView">
+            <h1 class="page-title">Create Any Scene You Can Imagine</h1>
+            <p class="subtitle">Describe what you need and let AI bring your vision to life</p>
+
+            <div class="rainbow-input-container">
+                <div class="rainbow-input-wrapper">
+                    <input 
+                        type="text" 
+                        class="rainbow-input" 
+                        id="promptInput"
+                        placeholder="Try: 'relaxing massage therapy session' or 'professional plumber fixing pipes' or 'beautiful lawn care results'"
+                    >
+                    <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
+                        Let's Make Some Magic
+                    </button>
+                </div>
+            </div>
+
+            <div class="examples">
+                <p class="examples-label">Popular ideas:</p>
+                <div class="example-chips">
+                    <span class="example-chip" onclick="setExample('relaxing spa massage with hot stones')">spa massage scene</span>
+                    <span class="example-chip" onclick="setExample('professional roofer installing shingles safely')">roofing in action</span>
+                    <span class="example-chip" onclick="setExample('beautiful landscaped garden with fountain')">landscaped yard</span>
+                    <span class="example-chip" onclick="setExample('fresh baked bread on rustic table')">bakery products</span>
+                    <span class="example-chip" onclick="setExample('mechanic working under car hood')">auto repair service</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhancement Options (Hidden Initially) -->
+        <div class="enhancement-section" id="enhancementSection">
+            <h2 class="section-title">Choose your style variations</h2>
+            <p style="color: #666; margin-bottom: 25px;">We've created 4 versions optimized for different marketing needs:</p>
+
+            <div class="variation-cards" id="variationCards">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+
+            <!-- Business Context Section -->
+            <div class="context-section">
+                <h3 class="section-subtitle">Help us optimize for your business</h3>
+                
+                <div class="context-group">
+                    <label>What's this for?</label>
+                    <div class="pill-group">
+                        <button class="context-pill active" onclick="selectContext('purpose', this)">Website Hero</button>
+                        <button class="context-pill" onclick="selectContext('purpose', this)">Social Media</button>
+                        <button class="context-pill" onclick="selectContext('purpose', this)">Print Ad</button>
+                        <button class="context-pill" onclick="selectContext('purpose', this)">Email Campaign</button>
+                    </div>
+                </div>
+
+                <div class="context-group">
+                    <label>Your industry</label>
+                    <div class="pill-group">
+                        <button class="context-pill" onclick="selectContext('industry', this)">Wellness</button>
+                        <button class="context-pill active" onclick="selectContext('industry', this)">Home Services</button>
+                        <button class="context-pill" onclick="selectContext('industry', this)">Food & Beverage</button>
+                        <button class="context-pill" onclick="selectContext('industry', this)">Professional</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhancement Controls -->
+            <div class="enhancement-controls">
+                <h3 class="section-subtitle">Fine-tune your images (optional)</h3>
+                
+                <div class="control-group">
+                    <label>Aspect Ratio</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="aspect" value="square" checked>
+                            <span>Square (1:1)</span>
+                            <small>Instagram posts</small>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="aspect" value="wide">
+                            <span>Wide (16:9)</span>
+                            <small>Website headers</small>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="aspect" value="portrait">
+                            <span>Portrait (9:16)</span>
+                            <small>Stories/Reels</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Style Intensity</label>
+                    <div class="slider-container">
+                        <span class="slider-label">Natural</span>
+                        <input type="range" class="style-slider" min="0" max="100" value="50">
+                        <span class="slider-label">Stylized</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="addText">
+                        <span>Add my business name/logo</span>
+                    </label>
+                    <input type="text" class="text-input" id="businessText" placeholder="Your business name" style="display: none;">
+                </div>
+            </div>
+
+            <!-- Generation Confirmation -->
+            <div class="confirmation-section">
+                <div class="confirmation-card">
+                    <h3>Ready to Generate</h3>
+                    <div class="confirmation-details">
+                        <div class="detail-row">
+                            <span>Selected variations:</span>
+                            <strong id="selectedCount">1</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Credits needed:</span>
+                            <strong id="creditsNeeded">1</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Your credits:</span>
+                            <strong class="credits-remaining">50 remaining</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Estimated time:</span>
+                            <strong>2-3 minutes</strong>
+                        </div>
+                    </div>
+                    <p class="pro-tip">💡 Pro tip: Generated images are yours to use forever</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="startOver()">← Start Over</button>
+                <button class="btn btn-primary" onclick="generateImages()">Generate My Images →</button>
+            </div>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner"></div>
+    </div>
+
+    <script>
+        let userPrompt = '';
+        let selectedVariations = new Set([0]); // Pre-select first variation
+        let businessContext = {
+            purpose: 'Website Hero',
+            industry: 'Home Services'
+        };
+
+        function setExample(text) {
+            document.getElementById('promptInput').value = text;
+        }
+
+        function selectContext(type, element) {
+            // Remove active class from siblings
+            const siblings = element.parentElement.querySelectorAll('.context-pill');
+            siblings.forEach(pill => pill.classList.remove('active'));
+            
+            // Add active class to clicked element
+            element.classList.add('active');
+            
+            // Store the selection
+            businessContext[type] = element.textContent;
+        }
+
+        // Toggle business name input
+        document.addEventListener('DOMContentLoaded', function() {
+            const addTextCheckbox = document.getElementById('addText');
+            const businessTextInput = document.getElementById('businessText');
+            
+            if (addTextCheckbox) {
+                addTextCheckbox.addEventListener('change', function() {
+                    businessTextInput.style.display = this.checked ? 'block' : 'none';
+                    if (this.checked) {
+                        businessTextInput.focus();
+                    }
+                });
+            }
+        });
+
+        function enhancePrompt() {
+            userPrompt = document.getElementById('promptInput').value.trim();
+            
+            if (!userPrompt) {
+                document.getElementById('promptInput').focus();
+                return;
+            }
+
+            // Hide initial view
+            document.getElementById('initialView').style.display = 'none';
+            
+            // Show loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+
+            // Simulate API call delay
+            setTimeout(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                showEnhancements();
+            }, 1000);
+        }
+
+        function showEnhancements() {
+            const variations = generateVariations(userPrompt);
+            const container = document.getElementById('variationCards');
+            
+            container.innerHTML = variations.map((v, index) => `
+                <div class="variation-card ${index === 0 ? 'selected' : ''}" onclick="toggleVariation(${index})">
+                    <div class="variation-title">${v.title}</div>
+                    <div class="variation-prompt">${v.prompt}</div>
+                    <span class="variation-tag">${v.tag}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('enhancementSection').classList.add('active');
+        }
+
+        function generateVariations(prompt) {
+            // This would be replaced with actual AI enhancement
+            return [
+                {
+                    title: "E-commerce Ready",
+                    prompt: `${prompt}, professional product photography, clean white background, soft shadows, high resolution, commercial quality`,
+                    tag: "Best for online stores"
+                },
+                {
+                    title: "Social Media Optimized",
+                    prompt: `${prompt}, eye-catching composition, vibrant colors, lifestyle photography, Instagram-worthy aesthetic, natural lighting`,
+                    tag: "Perfect for posts & stories"
+                },
+                {
+                    title: "Brand Storytelling",
+                    prompt: `${prompt}, authentic atmosphere, environmental context, warm inviting mood, documentary style, human connection`,
+                    tag: "Great for about pages"
+                },
+                {
+                    title: "Creative Campaign",
+                    prompt: `${prompt}, artistic interpretation, unique perspective, bold creative concept, memorable visual impact, advertising style`,
+                    tag: "Stand out from competitors"
+                }
+            ];
+        }
+
+        function toggleVariation(index) {
+            const cards = document.querySelectorAll('.variation-card');
+            
+            if (selectedVariations.has(index)) {
+                selectedVariations.delete(index);
+                cards[index].classList.remove('selected');
+            } else {
+                selectedVariations.add(index);
+                cards[index].classList.add('selected');
+            }
+
+            // Update counts
+            updateSelectionCount();
+
+            // Enable/disable generate button
+            document.querySelector('.btn-primary').disabled = selectedVariations.size === 0;
+        }
+
+        function updateSelectionCount() {
+            const count = selectedVariations.size;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('creditsNeeded').textContent = count;
+        }
+
+        function startOver() {
+            document.getElementById('enhancementSection').classList.remove('active');
+            document.getElementById('initialView').style.display = 'block';
+            document.getElementById('promptInput').value = '';
+            document.getElementById('promptInput').focus();
+            selectedVariations = new Set([0]);
+        }
+
+        function generateImages() {
+            const settings = {
+                prompt: userPrompt,
+                variations: Array.from(selectedVariations),
+                purpose: businessContext.purpose,
+                industry: businessContext.industry,
+                aspectRatio: document.querySelector('input[name="aspect"]:checked').value,
+                styleIntensity: document.querySelector('.style-slider').value,
+                addText: document.getElementById('addText').checked,
+                businessName: document.getElementById('businessText').value
+            };
+            
+            // Call your custom prompt API
+            fetch('/api/beta/custom-prompt-transform', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Generation started:', data.resultId);
+                    // You can redirect to a results page or show results inline
+                    alert('Images are being generated! Result ID: ' + data.resultId);
+                } else {
+                    alert('Error: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to generate images');
+            });
+        }
+
+        // Enter key support
+        document.getElementById('promptInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                enhancePrompt();
+            }
+        });
+    </script>
+</body>
+</html>
