@@ -81,7 +81,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
+
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
   } else {
@@ -93,8 +93,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// Serve uploaded files as static content
+// Serve uploaded files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+// Serve static files from public directory
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 // API key test endpoint
 app.get('/api/test', (req, res) => {
@@ -183,32 +186,32 @@ app.use((req, res, next) => {
 (async () => {
   // Register main routes
   const server = await registerRoutes(app);
-  
+
   // Register test routes
   app.use(setupTestRoutes());
-  
+
   // Register OpenAI test routes
   app.use(setupOpenAITestRoutes());
-  
+
   // Register simple compatibility routes
   app.use(setupSimpleRouter());
-  
+
   // Register static HTML routes
   app.use(setupStaticRoutes());
-  
+
   // Register Product Image Lab routes
   app.use(setupProductImageLabRoutes());
-  
+
   // Register Anthropic API test routes
   app.use('/api', setupAnthropicTestRoutes());
-  
+
   // CRITICAL: Direct route handlers to bypass Vite completely
   app.post('/api/generate-edit-prompt', async (req, res) => {
     console.log(`[DIRECT API] Edit prompt endpoint hit - bypassing Vite!`);
-    
+
     try {
       const { idea_title, idea_description, is_chaos_concept } = req.body;
-      
+
       if (!process.env.ANTHROPIC_API_KEY) {
         throw new Error('Anthropic API key not configured');
       }
@@ -216,7 +219,7 @@ app.use((req, res, next) => {
       const anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
       });
-      
+
       const message = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
@@ -224,7 +227,7 @@ app.use((req, res, next) => {
         messages: [{
           role: "user",
           content: `Create an edit prompt for GPT-image-01 based on this concept:
-          
+
 Title: ${idea_title}
 Description: ${idea_description}
 Type: ${is_chaos_concept ? 'CHAOS CONCEPT - GO WILD!' : 'Professional/Lifestyle'}
@@ -240,14 +243,14 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       });
 
       const editPrompt = (message.content[0] as any).text.trim();
-      
+
       console.log(`[DIRECT API] Generated edit prompt successfully`);
-      
+
       res.json({
         success: true,
         edit_prompt: editPrompt
       });
-      
+
     } catch (error) {
       console.error('[DIRECT API] Error:', error);
       res.status(500).json({
@@ -262,7 +265,7 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
     try {
       console.log('[API] Generate images endpoint called');
       const { prompt, variations, purpose, industry, aspectRatio, styleIntensity, addText, businessName } = req.body;
-      
+
       if (!prompt) {
         return res.status(400).json({
           success: false,
@@ -272,12 +275,12 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
 
       // Import the OpenAI transformation function
       const { transformImage } = await import('./openai-final.js');
-      
+
       // Create a temporary image for the generation (you might want to handle this differently)
       // For now, we'll generate based on the prompt alone using DALL-E
       const OpenAI = require('openai');
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      
+
       // Build enhanced prompt with context
       let enhancedPrompt = prompt;
       if (variations && variations.length > 0) {
@@ -292,9 +295,9 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       if (addText && businessName) {
         enhancedPrompt += ` Include text or branding for: ${businessName}.`;
       }
-      
+
       console.log('[API] Enhanced prompt:', enhancedPrompt);
-      
+
       // Generate image using DALL-E 3
       const response = await openai.images.generate({
         model: "dall-e-3",
@@ -312,28 +315,28 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       const imageUrl = response.data[0].url;
       const imageResponse = await fetch(imageUrl);
       const imageBuffer = await imageResponse.arrayBuffer();
-      
+
       // Save to uploads directory
       const fs = require('fs');
       const path = require('path');
       const timestamp = Date.now();
       const filename = `generated-${timestamp}.png`;
       const filepath = path.join(process.cwd(), 'uploads', filename);
-      
+
       fs.writeFileSync(filepath, Buffer.from(imageBuffer));
-      
+
       // Create job ID for consistency with existing flow
       const jobId = `job-${timestamp}`;
-      
+
       console.log('[API] Image generated successfully:', filename);
-      
+
       res.json({
         success: true,
         jobId: jobId,
         imageUrl: `/uploads/${filename}`,
         prompt: enhancedPrompt
       });
-      
+
     } catch (error) {
       console.error('[API] Error generating images:', error);
       res.status(500).json({
