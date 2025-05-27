@@ -268,7 +268,10 @@ export default function ProductImageFixedPage() {
                     <p className="text-center text-gray-600 mb-6">Explain what you want in detail and AI will produce the image for you. For example, " I need images of a serene massage room with a womans hands in image."</p>
                   </div>
 
-                  <RainbowButton className="w-full py-2 px-4 mt-auto">
+                  <RainbowButton 
+                    className="w-full py-2 px-4 mt-auto"
+                    onClick={() => window.location.href = '/text-to-image.html'}
+                  >
                     Create Variations
                   </RainbowButton>
                 </div>

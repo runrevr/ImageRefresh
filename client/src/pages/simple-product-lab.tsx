@@ -60,7 +60,10 @@ export default function SimpleProductLabPage() {
               </div>
               <h3 className="text-xl font-semibold text-center mb-2">Text-to-Image</h3>
               <p className="text-center mb-4">Generate product variations with simple text descriptions</p>
-              <button className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg">
+              <button 
+                className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg"
+                onClick={() => window.location.href = '/text-to-image.html'}
+              >
                 Create Variations
               </button>
             </div>
