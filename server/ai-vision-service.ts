@@ -202,69 +202,24 @@ Product info:
 - Business context: ${industryContext.join(", ")}
 - Product type: ${productType || "General Product"}
 
-Generate 5 visually distinct product photography concepts. Each must have COMPLETELY DIFFERENT lighting, mood, and setting.
+Based on the specific analysis above, generate exactly 5 unique enhancement concepts tailored to THIS image's needs:
 
-MANDATORY VARIETY CHECK: Reject and regenerate if any two concepts share similar times of day, color palettes, or moods.
+Concepts 1-3: ADDRESS THE SPECIFIC IMPROVEMENTS IDENTIFIED (focus on the areas that need work)
+Concepts 4-5: CREATIVE enhancements that build on the strengths while adding wow factor
 
-**Concepts 1-3: ACTUAL Commercial Photography**
-These must be realistic, achievable product shots that businesses actually use:
+For each concept, return a JSON object with:
+- id: unique identifier based on what this image specifically needs
+- title: descriptive 2-4 word title reflecting the specific enhancement
+- description: brief explanation (leave empty for now)  
+- impact: "high"
+- difficulty: "medium"
+- category: "AI Generated"
+- estimatedTime: "30-60 minutes"
+- toolsNeeded: ["Camera", "Lighting", "Props"]
+- industryRelevance: 9
+- editPrompt: detailed prompt for GPT-image-01 that addresses THIS image's specific needs
 
-- Concept 1: E-commerce Standard
- * Pure white or light gray background
- * Even, shadowless lighting or soft drop shadow
- * Product centered, multiple angles
- * Think: Amazon listings, online catalogs
-
-- Concept 2: Lifestyle Context  
- * Product in realistic use environment
- * Natural lighting, genuine settings
- * Simple props that make sense
- * Think: Instagram product posts, blog features
-
-- Concept 3: Premium Minimal
- * Colored paper backdrop (sage, blush, navy)
- * Single dramatic shadow or reflection
- * One elegant prop maximum
- * Think: Glossier, Everlane, high-end beauty
-
-AVOID for 1-3: Neon, sci-fi, dramatic theatrical lighting, fantasy elements, abstract concepts
-
-**Concept 4: Trending Aesthetic Mashup**
-Pick ONE specific visual trend from: Y2K chrome, cottagecore, dark academia, vaporwave, Wes Anderson symmetry, 70s retro, Memphis design, brutalist architecture
-
-Make it recognizable to that subculture but still product-focused
-
-**Concept 5: Reality-Breaking Art Piece**
-Format: "This [product type] [impossible scenario]..."
-Go absolutely unhinged - break physics, mix scales, time travel
-Must be visually spectacular and impossible to recreate
-
-FORBIDDEN ELEMENTS:
-- Golden hour, warm lighting, cozy atmospheres  
-- Coffee cups, desks, laptops, morning routines
-- Vague descriptions like "sits on," "professional setting"
-- Similar moods/colors across concepts
-
-OUTPUT FORMAT:
-Return as JSON array with BOTH short and full descriptions:
-[
- {
-   "id": "unique_id",
-   "title": "4 words maximum",
-   "short_description": "Visual outcome in 15 words max",
-   "full_description": "Complete 2-3 sentence scene description",
-   "edit_prompt": "Specific prompt for image generation"
- }
-]
-
-Examples of good short descriptions:
-- "White background with soft shadow underneath"
-- "Kitchen counter with cooking ingredients nearby"  
-- "Sage green backdrop with dramatic side lighting"
-- "Y2K chrome bubbles floating around product"
-- "Product exploding into tiny galaxies"
-
-Make concepts 1-3 BORING but EFFECTIVE. Save creativity for 4-5 only.
+CRITICAL: The editPrompt must be tailored to fix the specific issues and leverage the specific strengths identified in the analysis above. Don't use generic prompts - make them specific to what THIS image needs.
 
 Return as JSON array:
 ${`[
