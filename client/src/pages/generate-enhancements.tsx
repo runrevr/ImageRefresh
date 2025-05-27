@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Check, Clock, AlertCircle, RefreshCw, ChevronLeft, Sparkles, Zap } from 'lucide-react'
+import { Check, Clock, AlertCircle, RefreshCw, ChevronLeft, Sparkles, Zap, Download, ExternalLink, Share2 } from 'lucide-react'
 import { EmailCaptureModal } from '@/components/EmailCaptureModal'
 import { UpgradePrompt } from '@/components/UpgradePrompt'
 import { useFreeCredits } from '@/hooks/useFreeCredits'
@@ -626,6 +626,15 @@ export default function GenerateEnhancementsPage() {
           100% { background-position: 200% 0; }
         }
         
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-out;
+        }
+        
         .sticky-footer {
           position: sticky;
           bottom: 0;
@@ -754,92 +763,168 @@ export default function GenerateEnhancementsPage() {
           </Card>
 
           {/* Individual Job Cards */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {jobs.map((job) => (
-              <Card key={job.id} className="brand-card">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    {/* Original Image Thumbnail */}
-                    <div className="flex-shrink-0">
+              <Card key={job.id} className={`brand-card transition-all duration-500 ${job.status === 'complete' ? 'animate-fade-in' : ''}`}>
+                <CardContent className="p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-center gap-3 mb-6">
+                    {getStatusIcon(job.status)}
+                    <h3 className="text-xl font-semibold brand-text-neutral brand-font-heading">
+                      {job.enhancementTitle}
+                    </h3>
+                    <Badge className={`text-sm ${getStatusColor(job.status)}`}>
+                      {job.status === 'queued' && 'Waiting...'}
+                      {job.status === 'creating_prompt' && 'Creating Prompt...'}
+                      {job.status === 'generating_image' && 'Generating...'}
+                      {job.status === 'complete' && 'Complete!'}
+                      {job.status === 'failed' && 'Failed'}
+                    </Badge>
+                  </div>
+                  
+                  {/* Progress Bar for Processing */}
+                  {(job.status === 'creating_prompt' || job.status === 'generating_image') && (
+                    <div className="mb-6">
+                      <Progress 
+                        value={job.progress} 
+                        className="h-3 processing-gradient"
+                      />
+                      <p className="text-sm text-center text-gray-600 mt-2 brand-font-body">
+                        {job.status === 'creating_prompt' ? 'Claude is analyzing your request...' : 'GPT-Image-01 is creating your enhancement...'}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Image Container - Centered */}
+                  <div className="flex items-center justify-center gap-8 mb-6">
+                    {/* Before Image */}
+                    <div className="text-center">
+                      <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">Before</p>
                       <img
                         src={job.originalImageUrl}
                         alt="Original product"
-                        className="w-16 h-16 object-cover rounded-lg border-2 border-gray-200"
+                        className="w-[250px] h-[250px] object-cover rounded-lg border-2 border-gray-200 cursor-pointer hover:border-[#0D7877] transition-colors"
+                        onClick={() => window.open(job.originalImageUrl, '_blank')}
                       />
                     </div>
                     
-                    {/* Job Details */}
-                    <div className="flex-grow">
-                      <div className="flex items-center gap-2 mb-2">
-                        {getStatusIcon(job.status)}
-                        <h3 className="font-semibold brand-text-neutral brand-font-heading">
-                          {job.enhancementTitle}
-                        </h3>
-                        <Badge className={`text-xs ${getStatusColor(job.status)}`}>
-                          {job.status === 'queued' && 'Waiting...'}
-                          {job.status === 'processing' && 'Generating...'}
-                          {job.status === 'complete' && 'Complete!'}
-                          {job.status === 'failed' && 'Failed'}
-                        </Badge>
+                    {/* Arrow */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 rounded-full bg-[#0D7877] flex items-center justify-center">
+                        <span className="text-white text-xl">→</span>
                       </div>
-                      
-                      {/* Progress Bar */}
-                      <div className="mb-2">
-                        <Progress 
-                          value={job.progress} 
-                          className={`h-2 ${job.status === 'processing' ? 'processing-gradient' : ''}`}
-                        />
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 brand-font-body">
-                        {job.enhancementPrompt}
-                      </p>
-                      
-                      {/* Error Message */}
-                      {job.status === 'failed' && job.errorMessage && (
-                        <p className="text-sm text-red-600 mt-2 brand-font-body">
-                          {job.errorMessage}
-                        </p>
-                      )}
                     </div>
                     
-                    {/* Action Buttons */}
-                    <div className="flex-shrink-0">
-                      {job.status === 'failed' && (
-                        <div className="flex gap-2">
-                          {job.retryCount < 3 && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => retryJob(job.id)}
-                              className="text-xs brand-font-body"
-                            >
-                              <RefreshCw className="w-3 h-3 mr-1" />
-                              Retry
-                            </Button>
-                          )}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => skipJob(job.id)}
-                            className="text-xs brand-font-body text-gray-600"
-                          >
-                            Skip
-                          </Button>
-                        </div>
-                      )}
-                      
-                      {job.status === 'complete' && job.resultImageUrl && (
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={job.resultImageUrl}
-                            alt="Enhanced result"
-                            className="w-16 h-16 object-cover rounded-lg border-2 border-green-200"
-                          />
+                    {/* After Image */}
+                    <div className="text-center">
+                      <p className="text-sm font-medium text-gray-600 mb-2 brand-font-body">After</p>
+                      {job.status === 'complete' && job.resultImageUrl ? (
+                        <img
+                          src={job.resultImageUrl}
+                          alt="Enhanced result"
+                          className="w-[250px] h-[250px] object-cover rounded-lg border-2 border-green-200 cursor-pointer hover:border-green-400 transition-colors"
+                          onClick={() => window.open(job.resultImageUrl, '_blank')}
+                        />
+                      ) : (
+                        <div className="w-[250px] h-[250px] bg-gray-100 rounded-lg border-2 border-gray-200 flex items-center justify-center">
+                          <div className="text-center">
+                            {job.status === 'failed' ? (
+                              <div className="text-red-500">
+                                <AlertCircle className="w-8 h-8 mx-auto mb-2" />
+                                <p className="text-sm">Enhancement Failed</p>
+                              </div>
+                            ) : (
+                              <div className="text-gray-400">
+                                <RefreshCw className={`w-8 h-8 mx-auto mb-2 ${job.status !== 'queued' ? 'animate-spin' : ''}`} />
+                                <p className="text-sm">
+                                  {job.status === 'queued' ? 'Waiting...' : 'Processing...'}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
+                  
+                  {/* Action Buttons - Centered */}
+                  {job.status === 'complete' && job.resultImageUrl && (
+                    <div className="flex items-center justify-center gap-4">
+                      <Button
+                        onClick={() => {
+                          const link = document.createElement('a')
+                          link.href = job.resultImageUrl!
+                          link.download = `${job.enhancementTitle.replace(/\s+/g, '-')}-enhanced.png`
+                          link.click()
+                        }}
+                        className="brand-button-primary brand-font-body"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Enhanced
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        onClick={() => window.open(job.resultImageUrl, '_blank')}
+                        className="brand-button-secondary brand-font-body"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        View Full Size
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          if (navigator.share) {
+                            navigator.share({
+                              title: `${job.enhancementTitle} - Enhanced Image`,
+                              text: 'Check out this AI-enhanced product image!',
+                              url: job.resultImageUrl
+                            })
+                          } else {
+                            navigator.clipboard.writeText(job.resultImageUrl!)
+                            // You could add a toast notification here
+                          }
+                        }}
+                        className="brand-button-secondary brand-font-body"
+                      >
+                        <Share2 className="w-4 h-4 mr-2" />
+                        Share
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {/* Error Handling */}
+                  {job.status === 'failed' && (
+                    <div className="text-center">
+                      {job.errorMessage && (
+                        <p className="text-sm text-red-600 mb-4 brand-font-body">
+                          {job.errorMessage}
+                        </p>
+                      )}
+                      <div className="flex items-center justify-center gap-3">
+                        {job.retryCount < 3 && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => retryJob(job.id)}
+                            className="brand-font-body"
+                          >
+                            <RefreshCw className="w-4 h-4 mr-2" />
+                            Retry Enhancement
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => skipJob(job.id)}
+                          className="brand-font-body text-gray-600"
+                        >
+                          Skip This Enhancement
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
