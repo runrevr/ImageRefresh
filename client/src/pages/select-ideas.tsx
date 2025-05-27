@@ -43,6 +43,7 @@ export default function SelectIdeasPage() {
         
         console.log('Loading real ideas:', realIdeas);
         console.log('Session data structure:', sessionData);
+        console.log('First idea description:', realIdeas.ideas?.[0]?.description || realIdeas[0]?.description);
         console.log('Available properties:', Object.keys(sessionData));
         console.log('Server URLs:', sessionData.urls);
         
@@ -481,13 +482,14 @@ export default function SelectIdeasPage() {
                                   {/* Description with Read more/less functionality */}
                                   <div className="text-sm text-gray-600 brand-font-body">
                                     <p className="mb-2 leading-relaxed">
-                                      {expandedIdeas[idea.id] 
-                                        ? idea.description 
-                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
-                                      }
+                                      {idea.description && (
+                                        expandedIdeas[idea.id] 
+                                          ? idea.description 
+                                          : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
+                                      )}
                                     </p>
                                     
-                                    {idea.description.split(' ').length > 12 && (
+                                    {idea.description && idea.description.split(' ').length > 12 && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
@@ -566,13 +568,14 @@ export default function SelectIdeasPage() {
                                   {/* Description with Read more/less functionality */}
                                   <div className="text-sm text-gray-600 brand-font-body">
                                     <p className="mb-2 leading-relaxed">
-                                      {expandedIdeas[idea.id] 
-                                        ? idea.description 
-                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
-                                      }
+                                      {idea.description && (
+                                        expandedIdeas[idea.id] 
+                                          ? idea.description 
+                                          : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
+                                      )}
                                     </p>
                                     
-                                    {idea.description.split(' ').length > 12 && (
+                                    {idea.description && idea.description.split(' ').length > 12 && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
