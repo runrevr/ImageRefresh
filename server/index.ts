@@ -181,6 +181,32 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Beta Custom Prompts Feature (Must be before other routes)
+  if (process.env.ENABLE_CUSTOM_PROMPTS_BETA === 'true') {
+    try {
+      const customPromptsRoutes = require('../beta-custom-prompts/api/routes');
+      app.use('/api/beta', customPromptsRoutes.default || customPromptsRoutes);
+      console.log('Custom Prompts Beta API routes enabled');
+
+      // Serve the rainbow HTML interface for /custom-prompts-beta (PRIORITY ROUTE)
+      app.get('/custom-prompts-beta', (req, res) => {
+        const htmlPath = path.join(process.cwd(), 'beta-custom-prompts', 'components', 'customPromptUpload.html');
+        if (fs.existsSync(htmlPath)) {
+          res.sendFile(htmlPath);
+        } else {
+          res.status(404).send('Custom prompts beta page not found');
+        }
+      });
+
+      // Serve static files for the beta custom prompts
+      app.use('/beta-custom-prompts', express.static(path.join(process.cwd(), 'beta-custom-prompts')));
+
+      console.log('Custom Prompts Beta feature enabled with rainbow interface');
+    } catch (error) {
+      console.error('Failed to load custom prompts routes:', error.message);
+    }
+  }
+
   // Register main routes
   const server = await registerRoutes(app);
 
@@ -288,65 +314,7 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
   const altPorts = [3001, 8080, 8000]; // Alternative ports to try if main port is busy
 
-  // Beta Custom Prompts Feature (Safe Integration)
-  if (process.env.ENABLE_CUSTOM_PROMPTS === 'true') {
-    try {
-      const customPromptRoutes = await import('../beta-custom-prompts/api/routes.js');
-      app.use('/api/beta', customPromptRoutes.default);
-
-      // Serve the custom prompt page
-      app.get('/custom-prompts-beta', (req, res) => {
-        res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptUpload.html'));
-      });
-
-      // Serve the JavaScript file
-      app.get('/beta-custom-prompts/components/customPromptScript.js', (req, res) => {
-        res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/components/customPromptScript.js'));
-      });
-
-      // Serve the CSS file
-      app.get('/beta-custom-prompts/styles/customPromptStyles.css', (req, res) => {
-        res.sendFile(path.join(process.cwd(), 'beta-custom-prompts/styles/customPromptStyles.css'));
-      });
-
-      console.log('Custom Prompts Beta feature enabled');
-    } catch (error) {
-      console.error('Failed to load custom prompts routes:', error);
-    }
-  }
-
-  // Import custom prompts beta routes if enabled
-  if (process.env.ENABLE_CUSTOM_PROMPTS_BETA === 'true') {
-    try {
-      const customPromptsRoutes = require('../beta-custom-prompts/api/routes');
-      app.use('/api/beta', customPromptsRoutes.default || customPromptsRoutes);
-      console.log('Custom Prompts Beta feature enabled');
-
-      // Serve the rainbow HTML interface for /custom-prompts-beta
-      app.get('/custom-prompts-beta', (req, res) => {
-        const htmlPath = path.join(process.cwd(), 'beta-custom-prompts', 'components', 'customPromptUpload.html');
-        if (fs.existsSync(htmlPath)) {
-          res.sendFile(htmlPath);
-        } else {
-          res.status(404).send('Custom prompts beta page not found');
-        }
-      });
-
-      // Serve static files for the beta custom prompts
-      app.use('/beta-custom-prompts', express.static(path.join(process.cwd(), 'beta-custom-prompts')));
-
-      // Add basic test endpoint to verify routes are working
-      app.get('/api/beta/test', (req, res) => {
-        res.json({ success: true, message: 'Custom prompts beta API is working' });
-      });
-
-    } catch (error) {
-      console.error('Failed to load custom prompts routes:', error.message);
-      console.error('Error details:', error);
-    }
-  } else {
-    console.log('Custom Prompts Beta feature disabled');
-  }
+  
 
   // Function to start server with port fallback
   function startServer(port: number, altPorts: number[]) {
