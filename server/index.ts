@@ -123,13 +123,17 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   }
 });
 
-// Serve the main HTML files
-app.get('/', (req, res) => {
+// Serve the React client build files
+app.use(express.static(path.join(process.cwd(), 'client', 'dist')));
+
+// Serve specific HTML files
+app.get('/text-to-image', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'text-to-image.html'));
 });
 
-app.get('/text-to-image', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public', 'text-to-image.html'));
+// Serve the React app for all other routes (SPA routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'client', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
