@@ -331,7 +331,7 @@ router.post('/generate-edit-prompts', async (req, res) => {
     );
 
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514", // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+      model: "claude-sonnet-4-20250514", // Claude Sonnet 4 released May 14, 2025
       max_tokens: 1500,
       temperature: hasChaosConcept ? 1.0 : 0.8,
       messages: [{

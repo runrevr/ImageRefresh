@@ -162,7 +162,7 @@ export async function generateEnhancementIdeas(
   try {
     console.log('[Claude 4 Ideas] Generating enhancement ideas with latest model...');
 
-    // Use Claude 4 Sonnet with enhanced creative prompt for scroll-stopping concepts
+    // Use Claude Sonnet 4 with enhanced creative prompt for scroll-stopping concepts
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2000,
