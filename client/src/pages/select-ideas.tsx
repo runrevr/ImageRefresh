@@ -480,20 +480,20 @@ export default function SelectIdeasPage() {
                                   
                                   {/* Description with Read more/less functionality */}
                                   <div className="text-sm text-gray-600 brand-font-body">
-                                    <p className="mb-2">
+                                    <p className="mb-2 leading-relaxed">
                                       {expandedIdeas[idea.id] 
                                         ? idea.description 
-                                        : `${idea.description.split(' ').slice(0, 10).join(' ')}${idea.description.split(' ').length > 10 ? '...' : ''}`
+                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
                                       }
                                     </p>
                                     
-                                    {idea.description.split(' ').length > 10 && (
+                                    {idea.description.split(' ').length > 12 && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           toggleIdeaExpansion(idea.id)
                                         }}
-                                        className="text-blue-600 hover:text-blue-800 font-medium text-xs transition-colors"
+                                        className="text-blue-600 hover:text-blue-800 font-medium text-xs transition-colors underline"
                                       >
                                         {expandedIdeas[idea.id] ? 'Read less' : 'Read more'}
                                       </button>
@@ -565,20 +565,20 @@ export default function SelectIdeasPage() {
                                   
                                   {/* Description with Read more/less functionality */}
                                   <div className="text-sm text-gray-600 brand-font-body">
-                                    <p className="mb-2">
+                                    <p className="mb-2 leading-relaxed">
                                       {expandedIdeas[idea.id] 
                                         ? idea.description 
-                                        : `${idea.description.split(' ').slice(0, 10).join(' ')}${idea.description.split(' ').length > 10 ? '...' : ''}`
+                                        : `${idea.description.split(' ').slice(0, 12).join(' ')}${idea.description.split(' ').length > 12 ? '...' : ''}`
                                       }
                                     </p>
                                     
-                                    {idea.description.split(' ').length > 10 && (
+                                    {idea.description.split(' ').length > 12 && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           toggleIdeaExpansion(idea.id)
                                         }}
-                                        className={`font-medium text-xs transition-colors ${
+                                        className={`font-medium text-xs transition-colors underline ${
                                           colorScheme === 'purple'
                                             ? 'text-purple-600 hover:text-purple-800'
                                             : 'text-orange-600 hover:text-orange-800'
