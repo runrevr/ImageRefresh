@@ -20,7 +20,7 @@ export default function UploadEnhancePage() {
     window.scrollTo(0, 0);
   }, []);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFiles, setSelectedFiles: React.Dispatch<React.SetStateAction<File[]>> = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
@@ -835,7 +835,7 @@ export default function UploadEnhancePage() {
                     </Label>
                     <p className="text-sm text-gray-600 brand-font-body mt-2">
                       This helps our AI create scroll-stopping visuals optimized for your needs
-                    </p</div>
+                    </p></div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
                     {purposeOptions.map((purpose) => (

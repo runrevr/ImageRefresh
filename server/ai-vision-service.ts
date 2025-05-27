@@ -222,14 +222,14 @@ REQUIRED:
 - Make someone stop scrolling
 
 Return as JSON array:
-[
+${`[
   {
     "id": "unique_id",
     "title": "Short Catchy Title (max 5 words)",
     "description": "Full 2-3 sentence scene description with specific visual details",
     "edit_prompt": "Specific prompt for image generation"
   }
-]
+]`}`
       }]
     });
 
@@ -241,7 +241,21 @@ Return as JSON array:
       throw new Error('No valid JSON found in Claude 4 response');
     }
 
-    const ideas: EnhancementIdea[] = JSON.parse(jsonMatch[0]);
+    const rawIdeas = JSON.parse(jsonMatch[0]);
+
+    // Map the raw ideas to our EnhancementIdea interface
+    const ideas: EnhancementIdea[] = rawIdeas.map((idea: any, index: number) => ({
+      id: idea.id || `idea_${index + 1}`,
+      title: idea.title || 'Enhancement Concept',
+      description: idea.description || '',
+      impact: 'high' as const,  // All AI-generated ideas are high impact
+      difficulty: 'medium' as const,  // Default to medium difficulty
+      category: 'AI Generated',
+      estimatedTime: '30-60 minutes',
+      toolsNeeded: ['Camera', 'Lighting', 'Props'],
+      industryRelevance: 9,  // High relevance score for AI suggestions
+      editPrompt: idea.edit_prompt || idea.description
+    }));
 
     console.log(`[Claude 4 Ideas] Generated ${ideas.length} enhancement ideas`);
     return ideas;
