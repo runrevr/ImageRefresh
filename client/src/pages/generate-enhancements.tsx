@@ -40,7 +40,7 @@ export default function GenerateEnhancementsPage() {
   const [completedCount, setCompletedCount] = useState(0)
   const [failedCount, setFailedCount] = useState(0)
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState(0)
-  const [isProcessing, setIsProcessing] = useState(isProcessing)
+  const [isProcessing, setIsProcessing] = useState(true)
   const [currentJobIndex, setCurrentJobIndex] = useState(0)
   const [currentJobTimer, setCurrentJobTimer] = useState(0)
   const [currentJobMessage, setCurrentJobMessage] = useState('')
