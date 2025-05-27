@@ -40,7 +40,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Frontend Only"
+runButton = "Start Full App"
 
 [[workflows.workflow]]
 name = "Run"
@@ -81,3 +81,12 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
+
+[[workflows.workflow]]
+name = "Start Full App"
+author = 41870681
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node start-server.mjs"
