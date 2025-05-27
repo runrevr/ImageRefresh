@@ -209,18 +209,33 @@ export class DatabaseStorage implements IStorage {
       throw new Error("User not found");
     }
 
-    // No free credit used yet, nothing to reset
+    console.log(`Checking monthly free credit for user ${id}:`, {
+      freeCreditsUsed: user.freeCreditsUsed,
+      lastFreeCredit: user.lastFreeCredit
+    });
+
+    // No free credit used yet, user has free credit available
     if (!user.freeCreditsUsed) {
+      console.log(`User ${id} has unused free credit available`);
       return true;
     }
 
     // Check if the last free credit was used in a different month
     if (user.lastFreeCredit) {
       const lastMonth = user.lastFreeCredit.getMonth();
-      const currentMonth = new Date().getMonth();
+      const lastYear = user.lastFreeCredit.getFullYear();
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
 
-      if (lastMonth !== currentMonth) {
-        // Reset the free credit
+      console.log(`Credit date comparison:`, {
+        lastMonth, lastYear,
+        currentMonth, currentYear
+      });
+
+      if (lastYear !== currentYear || lastMonth !== currentMonth) {
+        // Reset the free credit for new month/year
+        console.log(`Resetting free credit for user ${id} - new month/year`);
         const [updatedUser] = await db
           .update(users)
           .set({
@@ -233,7 +248,8 @@ export class DatabaseStorage implements IStorage {
       }
     }
 
-    return !user.freeCreditsUsed;
+    console.log(`User ${id} has already used free credit this month`);
+    return false;
   }
 
   // Membership operations

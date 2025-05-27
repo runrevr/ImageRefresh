@@ -389,12 +389,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
 
+          // Simple credit check - user needs either free credit or paid credits
+          const totalCredits = (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits;
+          console.log(`Credit check for user ${userId}:`, {
+            hasMonthlyFreeCredit,
+            paidCredits: user.paidCredits,
+            totalCredits,
+            freeCreditsUsed: user.freeCreditsUsed
+          });
+
+          if (totalCredits < 1) {
+            console.log(`User ${userId} has insufficient credits`);
+            return res.status(403).json({
+              message: "Not enough credits",
+              error: "credit_required",
+              freeCreditsUsed: !hasMonthlyFreeCredit,
+              paidCredits: user.paidCredits,
+            });
+          }
+
           console.log(
-            `User ${userId} has credits - proceeding with transformation`,
+            `User ${userId} has ${totalCredits} total credits - proceeding with transformation`,
           );
         } catch (userError) {
           console.error("Error checking user credits:", userError);
-          // Continue with the transformation anyway
+          return res.status(500).json({
+            message: "Error checking user credits",
+            error: userError.message
+          });
         }
       }
 
@@ -478,20 +500,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
             (isEdit && prevTransform && (prevTransform.editsUsed || 0) > 0) ||
             !isEdit
           ) {
-            const useFreeCredit = !userCredits.freeCreditsUsed;
-            const paidCreditsRemaining = useFreeCredit
-              ? userCredits.paidCredits
-              : userCredits.paidCredits - 1;
+            // Update user credits - deduct after successful transformation
+            try {
+              const useFreeCredit = !userCredits.freeCreditsUsed;
+              const paidCreditsRemaining = useFreeCredit
+                ? userCredits.paidCredits
+                : Math.max(0, userCredits.paidCredits - 1);
 
-            await storage.updateUserCredits(
-              userId,
-              useFreeCredit,
-              paidCreditsRemaining,
-            );
+              console.log(`Deducting credit for user ${userId}:`, {
+                useFreeCredit,
+                currentPaidCredits: userCredits.paidCredits,
+                newPaidCredits: paidCreditsRemaining
+              });
 
-            console.log(
-              `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
-            );
+              await storage.updateUserCredits(
+                userId,
+                useFreeCredit,
+                paidCreditsRemaining,
+              );
+
+              console.log(
+                `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
+              );
+            } catch (creditError) {
+              console.error("Error updating user credits:", creditError);
+              // Don't fail the transformation if credit update fails
+            }
           }
         } catch (dbError) {
           console.error("Error saving transformation to database:", dbError);
@@ -594,17 +628,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // If user has no credits, return an error
           if (userCredits.freeCreditsUsed && user.paidCredits < 1) {
+
+            // Simple credit check - user needs either free credit or paid credits
+          const totalCredits = (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits;
+          console.log(`Credit check for user ${userId}:`, {
+            hasMonthlyFreeCredit,
+            paidCredits: user.paidCredits,
+            totalCredits,
+            freeCreditsUsed: user.freeCreditsUsed
+          });
+
+          if (totalCredits < 1) {
+            console.log(`User ${userId} has insufficient credits`);
             return res.status(403).json({
               message: "Not enough credits",
               error: "credit_required",
-              freeCreditsUsed: userCredits.freeCreditsUsed,
+              freeCreditsUsed: !hasMonthlyFreeCredit,
               paidCredits: user.paidCredits,
             });
           }
+
+          console.log(
+            `User ${userId} has ${totalCredits} total credits - proceeding with transformation`,
+          );
         } catch (userError) {
-          console.error("Error retrieving user credits:", userError);
-          // Continue with the transformation even if we couldn't verify credits
-          // The client should handle this case
+          console.error("Error checking user credits:", userError);
+          return res.status(500).json({
+            message: "Error checking user credits",
+            error: userError.message
+          });
         }
       }
 
@@ -630,21 +682,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           console.log(`Deducting credit for user ${userId}`);
 
-          // Check if we should use a free credit or paid credit
+          // Update user credits - always deduct for transformations
           const useFreeCredit = !userCredits.freeCreditsUsed;
           const paidCreditsRemaining = useFreeCredit
             ? userCredits.paidCredits
-            : userCredits.paidCredits - 1;
+            : Math.max(0, userCredits.paidCredits - 1);
 
-          // Update user credits
           await storage.updateUserCredits(
             userId,
-            useFreeCredit, // Set freeCreditsUsed to true if using free credit
+            useFreeCredit,
             paidCreditsRemaining,
           );
 
           console.log(
-            `Credits updated for user ${userId}: Free credit used: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
+            `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
           );
         } catch (creditError) {
           console.error("Error updating user credits:", creditError);
@@ -688,7 +739,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if user has monthly free credit available
       const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-      
+
       // Calculate total available credits
       const freeCreditsAvailable = hasMonthlyFreeCredit ? 1 : 0;
       const totalCredits = freeCreditsAvailable + user.paidCredits;
@@ -732,7 +783,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if user has monthly free credit available
       const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
-      
+
       // Calculate total available credits
       const freeCreditsAvailable = hasMonthlyFreeCredit ? 1 : 0;
       const totalCredits = freeCreditsAvailable + user.paidCredits;
@@ -799,13 +850,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/debug/credits/:id", async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
-      
+
       if (isNaN(userId)) {
         return res.status(400).json({ message: "Invalid user ID" });
       }
 
       const user = await storage.getUser(userId);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
