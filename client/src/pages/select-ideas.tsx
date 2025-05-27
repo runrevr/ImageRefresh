@@ -107,7 +107,7 @@ export default function SelectIdeasPage() {
         }
       } else {
         // Add the idea if under the limit
-        if (currentSelections.length < 3) {
+        if (currentSelections.length < 5) {
           return {
             ...prev,
             [productId]: [...currentSelections, ideaId]
@@ -123,7 +123,7 @@ export default function SelectIdeasPage() {
     if (!product) return
 
     const currentSelections = selectedIdeas[productId] || []
-    const allSelected = currentSelections.length === Math.min(3, product.ideas.length)
+    const allSelected = currentSelections.length === Math.min(5, product.ideas.length)
 
     if (allSelected) {
       // Deselect all
@@ -132,10 +132,10 @@ export default function SelectIdeasPage() {
         [productId]: []
       }))
     } else {
-      // Select first 3 ideas
+      // Select first 5 ideas
       setSelectedIdeas(prev => ({
         ...prev,
-        [productId]: product.ideas.slice(0, 3).map(idea => idea.id)
+        [productId]: product.ideas.slice(0, 5).map(idea => idea.id)
       }))
     }
   }
@@ -330,7 +330,7 @@ export default function SelectIdeasPage() {
           <div className="space-y-8">
             {productImages.map((product, index) => {
               const selectedCount = getSelectedCount(product.id)
-              const maxReached = false // Removed selection limit - users can select all they want!
+              const maxReached = selectedCount >= 5
 
               return (
                 <Card key={product.id} className="brand-card">
@@ -353,7 +353,7 @@ export default function SelectIdeasPage() {
                           </CardTitle>
                           <div className="flex items-center gap-4">
                             <span className="text-sm text-gray-600 brand-font-body">
-                              {selectedCount}/3 ideas selected
+                              {selectedCount}/5 ideas selected
                             </span>
                             <Button
                               variant="outline"
