@@ -206,12 +206,11 @@ export function HeroSection() {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <RainbowButton 
-                                            className="mt-4 w-full"
-                                            onClick={() => window.location.href = "/text-to-image.html"}
-                                        >
-                                            Create Variations
-                                        </RainbowButton>
+                                        <Link href="/text-to-image.html">
+                                            <RainbowButton className="mt-4 w-full">
+                                                Create Variations
+                                            </RainbowButton>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
