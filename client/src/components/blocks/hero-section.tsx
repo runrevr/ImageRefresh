@@ -213,7 +213,7 @@ export function HeroSection() {
                                         </div>
 
                                         {/* CTA Button */}
-                                        
+
                                         <Button 
                                             className="mt-4 w-full bg-black text-white hover:bg-gray-800 transition-colors"
                                             size="lg"
