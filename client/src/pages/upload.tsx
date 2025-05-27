@@ -807,7 +807,7 @@ export default function UploadPage() {
         paidCredits={userCredits?.paidCredits || 0}
       />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-8 mt-8">
         <div className="max-w-4xl mx-auto">
           {/* Main Wizard Flow */}
           <div
