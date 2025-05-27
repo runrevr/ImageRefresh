@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -992,18 +993,16 @@ export default function UploadEnhancePage() {
               Step {currentStep} of {steps.length}
             </div>
             
-            <Button 
+            <RainbowButton 
               onClick={handleSubmit}
               disabled={!canSubmit}
               className={`brand-font-body font-medium transition-all duration-200 w-full md:w-auto mobile-py-3 ${
-                canSubmit 
-                  ? 'brand-button-primary' 
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                !canSubmit ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
               <Sparkles className="mr-2 h-4 w-4" />
               Generate Enhancements
-            </Button>
+            </RainbowButton>
           </div>
         )}
 
