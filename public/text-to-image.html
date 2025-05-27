@@ -883,8 +883,12 @@
 
         function generateImages() {
             // Gather all settings
+            const variations = generateVariations(userPrompt);
+            const selectedVars = Array.from(selectedVariations).map(i => variations[i]);
+            
             const settings = {
-                variations: Array.from(selectedVariations),
+                prompt: userPrompt,
+                variations: selectedVars,
                 purpose: businessContext.purpose,
                 industry: businessContext.industry,
                 aspectRatio: document.querySelector('input[name="aspect"]:checked').value,
@@ -893,8 +897,32 @@
                 businessName: document.getElementById('businessText').value
             };
             
-            console.log('Generating with settings:', settings);
-            alert('Generating ' + selectedVariations.size + ' image variations with your custom settings!');
+            // Show loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Call your API
+            fetch('/api/generate-images', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                if (data.success) {
+                    // Handle success - maybe redirect to results page
+                    window.location.href = `/results?jobId=${data.jobId}`;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                console.error('Error:', error);
+                alert('Failed to generate images');
+            });
         }
 
         // Enter key support
