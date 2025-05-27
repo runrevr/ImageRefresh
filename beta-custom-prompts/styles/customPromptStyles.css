@@ -113,3 +113,82 @@ h1 {
     background: #a0aec0;
     cursor: not-allowed;
 }
+
+#selectBtn {
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+#selectBtn:hover {
+    background: #3182ce;
+}
+
+#changeImage {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 1rem;
+}
+
+#changeImage:hover {
+    background: #4b5563;
+}
+
+.result-section {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.loading {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.error {
+    color: #dc2626;
+    background: #fee2e2;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #fecaca;
+}
+
+.success {
+    color: #059669;
+    background: #d1fae5;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #a7f3d0;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .upload-area {
+        padding: 2rem;
+    }
+    
+    .prompt-helpers {
+        justify-content: center;
+    }
+    
+    .helper-btn {
+        font-size: 14px;
+        padding: 0.4rem 0.8rem;
+    }
+}
