@@ -24,7 +24,7 @@ export class AnthropicService {
     const { 
       maxTokens = 1000, 
       temperature = 0.7,
-      model = 'claude-3-opus-20240229'
+      model = 'claude-sonnet-4-20250514'
     } = options;
 
     try {
@@ -62,7 +62,7 @@ export class AnthropicService {
       const response = await axios.post(
         `${this.baseUrl}/messages`,
         {
-          model: 'claude-3-opus-20240229',
+          model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
           messages: [
             {
