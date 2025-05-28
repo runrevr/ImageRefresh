@@ -1,0 +1,167 @@
+function generateImages() {
+    // Gather all settings
+    const variations = generateVariations(userPrompt);
+    const selectedVars = Array.from(selectedVariations).map(i => variations[i]);
+    
+    // Show loading
+    document.getElementById('loadingSpinner').style.display = 'block';
+    
+    // Generate images for each selected variation
+    const imagePromises = selectedVars.map(variation => {
+        // Create a detailed prompt based on the variation
+        const enhancedPrompt = variation.prompt;
+        
+        // Call the API
+        return fetch('/api/generate-images', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prompt: enhancedPrompt,
+                model: 'dall-e-3',
+                size: getImageSize(), // Helper function for aspect ratio
+                quality: 'standard',
+                n: 1
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error || `HTTP error! status: ${response.status}`);
+                });
+            }
+            return response.json();
+        });
+    });
+    
+    // Wait for all images to generate
+    Promise.all(imagePromises)
+        .then(results => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            
+            // Extract all generated images
+            const allImages = results.flatMap(result => result.images || []);
+            
+            if (allImages.length > 0) {
+                // Display the images
+                displayGeneratedImages(allImages);
+            } else {
+                alert('No images were generated. Please try again.');
+            }
+        })
+        .catch(error => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            console.error('Error generating images:', error);
+            alert('Failed to generate images: ' + error.message);
+        });
+}
+
+// Helper function to get image size based on aspect ratio
+function getImageSize() {
+    const aspect = document.querySelector('input[name="aspect"]:checked').value;
+    switch(aspect) {
+        case 'wide':
+            return '1792x1024'; // 16:9 ratio
+        case 'portrait':
+            return '1024x1792'; // 9:16 ratio
+        default:
+            return '1024x1024'; // Square
+    }
+}
+
+// Function to display generated images
+function displayGeneratedImages(images) {
+    // Hide the enhancement section
+    document.getElementById('enhancementSection').style.display = 'none';
+    
+    // Create or show a results section
+    let resultsSection = document.getElementById('resultsSection');
+    if (!resultsSection) {
+        resultsSection = document.createElement('div');
+        resultsSection.id = 'resultsSection';
+        resultsSection.className = 'results-section';
+        resultsSection.innerHTML = `
+            <h2 class="section-title">Your Generated Images</h2>
+            <div class="images-grid" id="imagesGrid"></div>
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="btn btn-secondary" onclick="startOver()">Create More</button>
+                <button class="btn btn-primary" onclick="downloadAllImages()">Download All</button>
+            </div>
+        `;
+        document.querySelector('.container').appendChild(resultsSection);
+    }
+    
+    // Populate images grid
+    const imagesGrid = document.getElementById('imagesGrid');
+    imagesGrid.innerHTML = images.map((img, index) => `
+        <div class="image-card">
+            <img src="${img.url}" alt="Generated image ${index + 1}" />
+            <div class="image-actions">
+                <button onclick="downloadImage('${img.url}', ${index})">Download</button>
+                <button onclick="applyEnhancement('${img.url}')">Enhance</button>
+            </div>
+            ${img.revised_prompt ? `<p class="revised-prompt">${img.revised_prompt}</p>` : ''}
+        </div>
+    `).join('');
+    
+    resultsSection.style.display = 'block';
+}
+
+// Download individual image
+function downloadImage(url, index) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `generated-image-${index + 1}.png`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Apply enhancement to an image
+function applyEnhancement(imageUrl) {
+    // Show loading
+    document.getElementById('loadingSpinner').style.display = 'block';
+    
+    // Call the enhancement API
+    fetch('/api/gpt-image-01', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: userPrompt + ', enhanced contrast, professional quality'
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.error || `HTTP error! status: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        
+        if (data.imageUrl) {
+            // Add the enhanced image to the grid
+            const newImageCard = document.createElement('div');
+            newImageCard.className = 'image-card enhanced';
+            newImageCard.innerHTML = `
+                <img src="${data.imageUrl}" alt="Enhanced image" />
+                <div class="image-actions">
+                    <button onclick="downloadImage('${data.imageUrl}', 'enhanced')">Download Enhanced</button>
+                </div>
+                <p class="enhanced-label">Enhanced Version</p>
+            `;
+            document.getElementById('imagesGrid').appendChild(newImageCard);
+        }
+    })
+    .catch(error => {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        console.error('Error enhancing image:', error);
+        alert('Failed to enhance image: ' + error.message);
+    });
+}
