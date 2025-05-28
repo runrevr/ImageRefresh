@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "wouter";
 import logoImage from "../assets/logo-new.png";
-import { useAuth } from "@/hooks/useAuth";
+// REMOVED: import { useAuth } from "@/hooks/useAuth";
 import { useCredits } from "@/hooks/useCredits";
 import { Bot } from "lucide-react";
 import {
@@ -17,11 +17,18 @@ import {
 interface NavbarProps {
   freeCredits: number;
   paidCredits: number;
+  user?: any; // Added user prop
+  logoutMutation?: any; // Added logoutMutation prop
 }
 
-export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
+export default function Navbar({
+  freeCredits,
+  paidCredits,
+  user,
+  logoutMutation,
+}: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logoutMutation } = useAuth();
+  // REMOVED: const { user, logoutMutation } = useAuth();
   const { data: userCredits, isLoading: creditsLoading } = useCredits();
 
   const totalCredits = freeCredits + paidCredits;
@@ -73,13 +80,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <div className="hidden sm:block text-sm font-medium">
                 <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
                   <Bot className="h-4 w-4 mr-1 text-primary-600" />
-                  {creditsLoading ? (
-                  "Loading..."
-                ) : userCredits ? (
-                  `${userCredits.totalCredits} credits`
-                ) : (
-                  user ? "0 credits" : "1 free credit"
-                )}
+                  {creditsLoading
+                    ? "Loading..."
+                    : userCredits
+                      ? `${userCredits.totalCredits} credits`
+                      : user
+                        ? "0 credits"
+                        : "1 free credit"}
                 </span>
               </div>
               <Link href="/buy-credits">
@@ -120,8 +127,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   <Link href="/transformations">My Images</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
-                  {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                <DropdownMenuItem onClick={() => logoutMutation?.mutate()}>
+                  {logoutMutation?.isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -145,17 +152,17 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
 
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon" 
+              <Button
+                variant="outline"
+                size="icon"
                 className="md:hidden z-50 flex items-center justify-center hover:bg-opacity-90 relative"
                 style={{
-                  backgroundColor: 'rgba(255, 123, 84, 0.95)', // Using #FF7B54 (secondary color) with high opacity
-                  color: 'white',
-                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(8px)',
-                  border: '2px solid white',
-                  position: 'relative'
+                  backgroundColor: "rgba(255, 123, 84, 0.95)", // Using #FF7B54 (secondary color) with high opacity
+                  color: "white",
+                  boxShadow: "0 2px 10px rgba(0, 0, 0, 0.4)",
+                  backdropFilter: "blur(8px)",
+                  border: "2px solid white",
+                  position: "relative",
                 }}
               >
                 <svg
@@ -220,13 +227,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                       <div className="text-sm font-medium mb-2">
                         <span className="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
                           <Bot className="h-4 w-4 mr-1 text-primary-600" />
-                          {creditsLoading ? (
-                  "Loading..."
-                ) : userCredits ? (
-                  `${userCredits.totalCredits} credits`
-                ) : (
-                  user ? "0 credits" : "1 free credit"
-                )}
+                          {creditsLoading
+                            ? "Loading..."
+                            : userCredits
+                              ? `${userCredits.totalCredits} credits`
+                              : user
+                                ? "0 credits"
+                                : "1 free credit"}
                         </span>
                       </div>
                       <Link href="/buy-credits">
@@ -268,11 +275,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                         variant="ghost"
                         className="w-full text-white hover:text-[#FF7B54]"
                         onClick={() => {
-                          logoutMutation.mutate();
+                          logoutMutation?.mutate();
                           setIsMenuOpen(false);
                         }}
                       >
-                        {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                        {logoutMutation?.isPending
+                          ? "Logging out..."
+                          : "Logout"}
                       </Button>
                     </>
                   ) : (
