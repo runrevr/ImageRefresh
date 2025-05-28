@@ -715,9 +715,7 @@ router.post('/generate-images', async (req, res) => {
       model: "gpt-image-1",
       prompt: enhancedPrompt,
       n: variations?.length || 1,
-      size: size as any,
-      quality: "standard",
-      response_format: "url"
+      size: size as any
     });
 
     console.log('[OpenAI] Text-to-image generation completed successfully');
