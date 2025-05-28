@@ -10,13 +10,21 @@ export default function TextToImageInputPage() {
 
   const handleSubmit = () => {
     if (inputValue.trim()) {
+      console.log('Current location before navigation:', location);
       console.log('Storing prompt:', inputValue);
       // Store the prompt in session storage
       sessionStorage.setItem('imagePrompt', inputValue);
       
-      console.log('Navigating to /create-image');
+      console.log('About to navigate to /create-image');
       // Navigate to the configuration page
       navigate('/create-image');
+      
+      // Check if navigation worked
+      setTimeout(() => {
+        console.log('Location after navigation attempt:', window.location.pathname);
+      }, 100);
+    } else {
+      console.log('Input is empty, not navigating');
     }
   };
 
