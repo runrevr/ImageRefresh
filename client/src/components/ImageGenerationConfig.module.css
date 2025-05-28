@@ -1,0 +1,288 @@
+
+.container {
+  min-height: 100vh;
+  background: #fafafa;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  padding: 20px;
+}
+
+.container.visible {
+  opacity: 1;
+}
+
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.backButton:hover {
+  background: rgba(0,0,0,0.05);
+  color: #333;
+}
+
+.header h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  font-size: 20px;
+  color: #666;
+}
+
+.progressBar {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 40px 0;
+  padding: 0 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.progressStep {
+  color: #999;
+  font-size: 14px;
+  position: relative;
+  padding-bottom: 8px;
+  font-weight: 500;
+}
+
+.progressStep.active {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.progressStep.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #667eea;
+  border-radius: 3px;
+}
+
+.mainCard {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+}
+
+.promptSection {
+  margin-bottom: 40px;
+}
+
+.promptHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.promptHeader h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.promptLength {
+  font-size: 14px;
+  color: #999;
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.promptTextarea {
+  width: 100%;
+  padding: 20px;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  font-size: 18px;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  min-height: 120px;
+}
+
+.promptTextarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+}
+
+.optionSection {
+  margin-bottom: 32px;
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.optionHeader h3 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+  font-weight: 600;
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.optionCard {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  background: white;
+}
+
+.optionCard:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.optionCard.selected {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.optionContent {
+  padding: 16px;
+  text-align: center;
+}
+
+.optionLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.optionDescription {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.optionBadge {
+  margin-top: 8px;
+}
+
+.generateSection {
+  text-align: center;
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+}
+
+.generateButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.generateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.generateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.generateNote {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .header {
+    padding: 20px 10px 10px;
+  }
+  
+  .header h1 {
+    font-size: 32px;
+  }
+  
+  .header p {
+    font-size: 16px;
+  }
+  
+  .progressBar {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .mainCard {
+    padding: 24px;
+    border-radius: 16px;
+  }
+  
+  .backButton {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .optionGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .promptTextarea {
+    font-size: 16px;
+    padding: 16px;
+  }
+}
