@@ -18,7 +18,9 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files
 app.use('/uploads', express.static('uploads'));
+app.use('/assets', express.static('attached_assets'));
 app.use(express.static('public'));
+app.use(express.static('client/public'));
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -126,6 +128,10 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
 // Serve static files from the built frontend
 const buildPath = path.join(process.cwd(), 'dist', 'public');
 app.use(express.static(buildPath));
+
+// Also serve assets from the client public directory for development
+app.use('/images', express.static(path.join(process.cwd(), 'client', 'public', 'images')));
+app.use('/examples', express.static(path.join(process.cwd(), 'client', 'public', 'examples')));
 
 // Serve specific HTML files
 app.get('/text-to-image', (req, res) => {
