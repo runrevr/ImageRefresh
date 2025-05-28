@@ -30,7 +30,7 @@ import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
 import ScrollToTop from "@/components/ScrollToTop";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
