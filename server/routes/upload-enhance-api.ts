@@ -660,8 +660,10 @@ export default router;
 // POST /api/generate-images
 // Generate images from text prompts using GPT-image-1 (no input image required)
 router.post('/generate-images', async (req, res) => {
+  console.log('=== GPT-Image-01 Text-to-Image Generation ===');
+  console.log('Request received at:', new Date().toISOString());
+  
   try {
-    console.log('=== GPT-Image-01 Text-to-Image Generation ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
     const { prompt, variations, purpose, industry, aspectRatio, styleIntensity, addText, businessName } = req.body;
@@ -774,8 +776,12 @@ router.post('/generate-images', async (req, res) => {
 
     const jobId = `text-to-image-${Date.now()}`;
     
+    console.log(`[Text-to-Image] Successfully generated ${generatedImages.length} images`);
+    console.log(`[Text-to-Image] Job ID: ${jobId}`);
+    console.log(`[Text-to-Image] Returning success response`);
+
     // Return success response matching expected format
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       images: generatedImages,
       jobId: jobId,
@@ -791,7 +797,10 @@ router.post('/generate-images', async (req, res) => {
 
   } catch (error) {
     console.error('Text-to-image generation error:', error);
-    console.error('Error stack:', error.stack);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     
     // Log the full error details for debugging
     if (error.response) {
@@ -800,6 +809,9 @@ router.post('/generate-images', async (req, res) => {
         data: error.response.data,
         headers: error.response.headers
       });
+    } else {
+      console.error('Error type:', typeof error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
     }
 
     // Check for specific OpenAI error types
@@ -830,11 +842,11 @@ router.post('/generate-images', async (req, res) => {
     }
 
     // Generic error response
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to generate images',
       message: error instanceof Error ? error.message : 'Unknown error occurred',
-      details: error.response?.data || error.stack
+      details: error.response?.data || (error instanceof Error ? error.stack : String(error))
     });
   }
 });
