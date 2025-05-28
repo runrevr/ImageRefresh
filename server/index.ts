@@ -123,16 +123,9 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   }
 });
 
-// Serve the React client build files from the correct path
-const clientDistPath = path.join(process.cwd(), 'client', 'dist', 'public');
-const clientDistFallback = path.join(process.cwd(), 'client', 'dist');
-
-// Try the built assets first
-if (fs.existsSync(clientDistPath)) {
-  app.use(express.static(clientDistPath));
-} else if (fs.existsSync(clientDistFallback)) {
-  app.use(express.static(clientDistFallback));
-}
+// Serve static files from the built frontend
+const buildPath = path.join(process.cwd(), 'dist', 'public');
+app.use(express.static(buildPath));
 
 // Serve specific HTML files
 app.get('/text-to-image', (req, res) => {
@@ -141,31 +134,12 @@ app.get('/text-to-image', (req, res) => {
 
 // Handle all other routes - serve the React app
 app.get('*', (req, res) => {
-  // First try the public folder structure
-  let indexPath = path.join(process.cwd(), 'client', 'dist', 'public', 'index.html');
-  
-  // Fallback to regular dist folder
-  if (!fs.existsSync(indexPath)) {
-    indexPath = path.join(process.cwd(), 'client', 'dist', 'index.html');
-  }
+  const indexPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
   
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.send(`
-      <html>
-        <body>
-          <h1>ImageRefresh - AI Image Enhancement</h1>
-          <p>Backend server is running on port ${port}</p>
-          <p>Building frontend assets...</p>
-          <script>
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-          </script>
-        </body>
-      </html>
-    `);
+    res.status(404).send('Application not built. Please run the build process.');
   }
 });
 
