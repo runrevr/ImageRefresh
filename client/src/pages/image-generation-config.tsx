@@ -1,36 +1,21 @@
 import React from 'react';
-import { useLocation, useRoute } from 'wouter';
-import ImageGenerationConfig from '../components/ImageGenerationConfig';
 
+// Simple component without any auth dependencies
 const ImageGenerationConfigPage: React.FC = () => {
-  const [, setLocation] = useLocation();
-  const [, params] = useRoute('/create-image');
-
-  // Get the prompt from session storage
-  const initialPrompt = sessionStorage.getItem('imagePrompt') || "";
-  
-  console.log('=== ImageGenerationConfigPage LOADED ===');
-  console.log('Current URL:', window.location.pathname);
-  console.log('Route params:', params);
-  console.log('Initial prompt:', initialPrompt);
-
-  const handleGenerate = (config: any) => {
-    console.log('Generating with config:', config);
-    // Add your generation logic here
-    // Then navigate to results page
-    // setLocation('/generation-results');
-  };
-
-  const handleBack = () => {
-    setLocation('/text-to-image');
-  };
-
   return (
-    <ImageGenerationConfig
-      initialPrompt={initialPrompt}
-      onGenerate={handleGenerate}
-      onBack={handleBack}
-    />
+    <div style={{ 
+      padding: '50px', 
+      textAlign: 'center',
+      fontFamily: 'Arial, sans-serif',
+      minHeight: '100vh',
+      backgroundColor: '#f0f0f0'
+    }}>
+      <h1>Image Config Page (No Auth)</h1>
+      <p>This is a test page without authentication.</p>
+      <a href="/" style={{ color: '#007bff', textDecoration: 'none' }}>
+        Go to Home
+      </a>
+    </div>
   );
 };
 
