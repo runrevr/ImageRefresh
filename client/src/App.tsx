@@ -142,15 +142,6 @@ function Router() {
 function AppContent() {
   // Set dark mode based on user's preference
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const { user, isLoading } = useAuth();
-  const [location, navigate] = useLocation();
-
-  // Debug logging
-  useEffect(() => {
-    console.log('🚀 App rendered with location:', location);
-    console.log('🚀 Current pathname:', window.location.pathname);
-    console.log('🚀 User:', user ? 'logged in' : 'not logged in');
-  }, [location, user]);
 
   useEffect(() => {
     // Check for user preference
@@ -160,23 +151,6 @@ function AppContent() {
       document.documentElement.classList.add("dark");
     }
   }, []);
-
-  if (isLoading) {
-    console.log('🚀 Auth loading...');
-    return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100vh',
-        fontSize: '18px'
-      }}>
-        Loading...
-      </div>
-    );
-  }
-
-  console.log('🚀 AppContent rendering with user:', user);
 
   return (
     <TooltipProvider>
