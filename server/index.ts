@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
@@ -88,7 +87,7 @@ app.post('/api/generate-images', async (req, res) => {
     if (!base64ImageData) {
       return res.status(500).json({ error: "Failed to generate image" });
     }
-    
+
     // Convert base64 to buffer and send as image
     const buffer = Buffer.from(base64ImageData, "base64");
 
@@ -141,13 +140,31 @@ app.get('/text-to-image', (req, res) => {
 // Handle all other routes - serve the React app
 app.get('*', (req, res) => {
   const indexPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
-  
+
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
     res.status(404).send('Application not built. Please run the build process.');
   }
 });
+
+// Import upload-enhance API routes
+import uploadEnhanceRoutes from './routes/upload-enhance-api.js';
+
+// Import and use routes
+// Assuming 'routes', 'testRoutes', 'productImageLabRoutes', 'staticRoutes', and 'webhookTestRoutes' are defined elsewhere
+import routes from './routes/index.js'; // Replace with the actual path if different
+import testRoutes from './routes/test-routes.js'; // Replace with the actual path if different
+import productImageLabRoutes from './routes/product-image-lab.js'; // Replace with the actual path if different
+import staticRoutes from './routes/static-routes.js'; // Replace with the actual path if different
+import webhookTestRoutes from './routes/webhook-test-routes.js'; // Replace with the actual path if different
+
+app.use(routes);
+app.use('/api', testRoutes);
+app.use('/api/product-image-lab', productImageLabRoutes());
+app.use('/api', staticRoutes);
+app.use('/api', webhookTestRoutes);
+app.use('/api', uploadEnhanceRoutes);
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
