@@ -17,20 +17,6 @@
             --accent: #C1F50A;
             --neutral: #333333;
             --light: #F2F4F6;
-            --primary-50: rgba(13, 120, 119, 0.05);
-            --primary-100: rgba(13, 120, 119, 0.1);
-            --primary-600: #0D7877;
-            --secondary-600: #FF7B54;
-        }
-
-        /* Navbar specific styles */
-        .header-menu {
-            position: relative;
-            text-decoration: none;
-        }
-
-        .header-menu:hover {
-            color: #FF7B54;
         }
 
         * {
@@ -695,113 +681,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar Header -->
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
-        <div class="container mx-auto px-3 sm:px-4 py-2 flex justify-between items-center">
-            <a href="/">
-                <div class="flex items-center cursor-pointer">
-                    <img
-                        src="/client/src/assets/logo-new.png"
-                        alt="ImageRefresh Logo"
-                        class="h-12 md:h-14"
-                        style="max-width: 280px;"
-                        onerror="this.src='/images/logo.png'"
-                    >
-                </div>
-            </a>
-
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="/ideas.html" class="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">
-                    Ideas
-                </a>
-                <a href="/product-image-lab.html" class="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">
-                    Product Image Lab
-                </a>
-                <a href="/pricing.html" class="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">
-                    Pricing
-                </a>
-                <a href="/help.html" class="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold">
-                    Help
-                </a>
-            </div>
-
-            <div class="flex items-center space-x-4">
-                <div class="hidden sm:block text-sm font-medium">
-                    <span class="px-2 py-1 bg-primary-100 text-primary-600 rounded-full flex items-center">
-                        <svg class="h-4 w-4 mr-1 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                        1 free credit
-                    </span>
-                </div>
-                
-                <a href="/buy-credits.html">
-                    <button class="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none px-4 py-2 rounded font-medium">
-                        Buy Credits
-                    </button>
-                </a>
-
-                <div class="hidden md:flex items-center space-x-2">
-                    <a href="/auth?tab=login">
-                        <button class="bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2] px-4 py-2 rounded font-medium">
-                            Log in
-                        </button>
-                    </a>
-                    <a href="/auth">
-                        <button class="bg-[#FF7B54] hover:bg-secondary-600 text-white border-none px-4 py-2 rounded font-medium">
-                            Sign up
-                        </button>
-                    </a>
-                </div>
-
-                <!-- Mobile menu button -->
-                <button class="md:hidden bg-[#FF7B54] text-white p-2 rounded border-2 border-white shadow-lg" onclick="toggleMobileMenu()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="4" x2="20" y1="12" y2="12" />
-                        <line x1="4" x2="20" y1="6" y2="6" />
-                        <line x1="4" x2="20" y1="18" y2="18" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="md:hidden bg-[#333333] hidden">
-            <div class="px-4 py-6 space-y-4">
-                <a href="/ideas.html" class="block text-white hover:text-[#FF7B54] transition py-2">Ideas</a>
-                <a href="/product-image-lab.html" class="block text-white hover:text-[#FF7B54] transition py-2">Product Image Lab</a>
-                <a href="/pricing.html" class="block text-white hover:text-[#FF7B54] transition py-2">Pricing</a>
-                <a href="/help.html" class="block text-white hover:text-[#FF7B54] transition py-2">Help</a>
-                <div class="pt-4 border-t border-gray-600">
-                    <div class="text-sm font-medium mb-2">
-                        <span class="px-2 py-1 bg-primary-100 text-primary-600 rounded-full inline-flex items-center">
-                            <svg class="h-4 w-4 mr-1 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                            1 free credit
-                        </span>
-                    </div>
-                    <a href="/buy-credits.html">
-                        <button class="w-full mb-3 bg-[#FF7B54] hover:bg-secondary-600 text-white border-none px-4 py-2 rounded font-medium">
-                            Buy Credits
-                        </button>
-                    </a>
-                    <a href="/auth?tab=login">
-                        <button class="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2] px-4 py-2 rounded font-medium">
-                            Log in
-                        </button>
-                    </a>
-                    <a href="/auth">
-                        <button class="w-full bg-[#FF7B54] hover:bg-secondary-600 text-white border-none px-4 py-2 rounded font-medium">
-                            Sign up
-                        </button>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="container" style="padding-top: 80px;">
+    <div class="container">
         <!-- Initial State -->
         <div id="initialView">
             <h1 class="page-title">Create Any Scene You Can Imagine</h1>
@@ -1252,12 +1132,6 @@
                 enhancePrompt();
             }
         });
-
-        // Mobile menu toggle
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('hidden');
-        }
     </script>
 </body>
 </html>
