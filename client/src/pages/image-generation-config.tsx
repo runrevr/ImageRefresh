@@ -1,48 +1,33 @@
 
 import React from 'react';
 import { useLocation, useRoute } from 'wouter';
-import ImageGenerationConfig from '@/components/ImageGenerationConfig';
-import { GenerationConfig } from '@/components/ImageGenerationConfig';
+import ImageGenerationConfig from '../components/ImageGenerationConfig';
 
-interface LocationState {
-  prompt?: string;
-}
-
-export default function ImageGenerationConfigPage() {
-  const [location, navigate] = useLocation();
-  const [match, params] = useRoute('/create-image');
+const ImageGenerationConfigPage: React.FC = () => {
+  const [, setLocation] = useLocation();
+  const [, params] = useRoute('/create-image');
   
-  // Get the initial prompt from navigation state or URL params
-  const state = (history?.state as LocationState) || {};
-  const initialPrompt = state.prompt || new URLSearchParams(window.location.search).get('prompt') || '';
+  // Get the prompt from navigation state or URL params
+  const initialPrompt = "Your image prompt here"; // You can pass this via navigation state
 
-  const handleGenerate = (config: GenerationConfig) => {
+  const handleGenerate = (config: any) => {
     console.log('Generating with config:', config);
-    
-    // Here you can handle the generation logic
-    // For example, navigate to a generation/processing page
-    // or trigger your existing image generation flow
-    
-    // Example: Navigate to processing page with config
-    navigate('/processing', { 
-      state: { 
-        generationConfig: config 
-      } 
-    });
+    // Add your generation logic here
+    // Then navigate to results page
+    // setLocation('/generation-results');
   };
 
   const handleBack = () => {
-    // Navigate back to the previous page or home
-    navigate('/');
+    setLocation('/text-to-image');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ImageGenerationConfig
-        initialPrompt={initialPrompt}
-        onGenerate={handleGenerate}
-        onBack={handleBack}
-      />
-    </div>
+    <ImageGenerationConfig
+      initialPrompt={initialPrompt}
+      onGenerate={handleGenerate}
+      onBack={handleBack}
+    />
   );
-}
+};
+
+export default ImageGenerationConfigPage;
