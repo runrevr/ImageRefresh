@@ -125,6 +125,15 @@ function Router() {
 function App() {
   // Set dark mode based on user's preference
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { user, loading } = useAuth();
+  const [location, navigate] = useLocation();
+
+  // Debug logging
+  useEffect(() => {
+    console.log('🚀 App rendered with location:', location);
+    console.log('🚀 Current pathname:', window.location.pathname);
+    console.log('🚀 User:', user ? 'logged in' : 'not logged in');
+  }, [location, user]);
 
   useEffect(() => {
     // Check for user preference
@@ -134,6 +143,10 @@ function App() {
       document.documentElement.classList.add("dark");
     }
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
