@@ -136,7 +136,7 @@ function Router() {
   );
 }
 
-function App() {
+function AppContent() {
   // Set dark mode based on user's preference
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const { user, loading } = useAuth();
@@ -163,14 +163,20 @@ function App() {
   }
 
   return (
+    <TooltipProvider>
+      {/* Generate and store device fingerprint */}
+      <DeviceFingerprint />
+      <Toaster />
+      <Router />
+    </TooltipProvider>
+  );
+}
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          {/* Generate and store device fingerprint */}
-          <DeviceFingerprint />
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <AppContent />
       </AuthProvider>
     </QueryClientProvider>
   );
