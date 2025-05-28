@@ -37,6 +37,9 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showFormatMenu, setShowFormatMenu] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState('png');
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [shareLink, setShareLink] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const handleDownload = async (format = selectedFormat) => {
     setIsLoading(true);
@@ -214,7 +217,7 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
           
           <Button
             variant="outline"
-            onClick={handleShare}
+            onClick={() => setShowShareMenu(true)}
             className={styles.actionButton}
           >
             <Share2 className="h-4 w-4 mr-2" />
@@ -229,6 +232,70 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
+
+        {/* Share Menu Modal */}
+        {showShareMenu && (
+          <>
+            <div className={styles.shareOverlay} onClick={() => setShowShareMenu(false)} />
+            <div className={styles.shareMenu}>
+              <h3>Share Image</h3>
+              
+              <div className={styles.shareOptions}>
+                <button 
+                  className={styles.shareOption}
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    setLinkCopied(true);
+                    setTimeout(() => setLinkCopied(false), 2000);
+                  }}
+                >
+                  <span>🔗</span>
+                  {linkCopied ? 'Copied!' : 'Copy Link'}
+                </button>
+                
+                <button 
+                  className={styles.shareOption}
+                  onClick={() => {
+                    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Check out this amazing generated image!')}`);
+                  }}
+                >
+                  <span>🐦</span> Twitter
+                </button>
+                
+                <button 
+                  className={styles.shareOption}
+                  onClick={() => {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`);
+                  }}
+                >
+                  <span>📘</span> Facebook
+                </button>
+
+                <button 
+                  className={styles.shareOption}
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: 'Generated Image',
+                        text: prompt,
+                        url: window.location.href
+                      });
+                    }
+                  }}
+                >
+                  <span>📱</span> Native Share
+                </button>
+              </div>
+              
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowShareMenu(false)}
+              >
+                ✕
+              </button>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
