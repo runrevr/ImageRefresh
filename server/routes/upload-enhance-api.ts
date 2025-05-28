@@ -724,16 +724,29 @@ router.post('/generate-images', async (req, res) => {
       throw new Error('No image data returned from OpenAI generation endpoint');
     }
 
+    // Log the actual response structure for debugging
+    console.log('[OpenAI] Response structure:', JSON.stringify(response.data, null, 2));
+
     // Process the generated images
     const generatedImages = await Promise.all(
       response.data.map(async (imageData, index) => {
-        if (!imageData.url) {
+        console.log(`[OpenAI] Processing image ${index + 1}:`, imageData);
+        
+        // Check if the response has a URL or needs to be handled differently
+        let imageUrl = imageData.url;
+        if (!imageUrl && imageData.revised_prompt) {
+          // Sometimes the response structure is different
+          console.error(`[OpenAI] No direct URL found for image ${index + 1}. Full data:`, imageData);
+          throw new Error(`No URL returned for image ${index + 1}. Response: ${JSON.stringify(imageData)}`);
+        }
+
+        if (!imageUrl) {
           throw new Error(`No URL returned for image ${index + 1}`);
         }
 
         // Download and save the image
         const axios = (await import('axios')).default;
-        const imageResponse = await axios.get(imageData.url, { responseType: 'arraybuffer' });
+        const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
         
         const timestamp = Date.now();
         const filename = `generated-${timestamp}-${index + 1}.png`;
@@ -778,6 +791,16 @@ router.post('/generate-images', async (req, res) => {
 
   } catch (error) {
     console.error('Text-to-image generation error:', error);
+    console.error('Error stack:', error.stack);
+    
+    // Log the full error details for debugging
+    if (error.response) {
+      console.error('OpenAI API error response:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    }
 
     // Check for specific OpenAI error types
     if (
@@ -810,7 +833,8 @@ router.post('/generate-images', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to generate images',
-      message: error instanceof Error ? error.message : 'Unknown error occurred'
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
+      details: error.response?.data || error.stack
     });
   }
 });
