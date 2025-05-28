@@ -258,6 +258,77 @@ const ImageGenerationConfig: React.FC<ImageGenerationConfigProps> = ({
           </div>
         </div>
 
+        {/* Size Selection */}
+        <div className={styles.selectionSection}>
+          <h2>Choose Size</h2>
+          <div className={styles.sizeGrid}>
+            <div 
+              className={`${styles.sizeOption} ${selectedSize === '1024x1024' ? styles.selected : ''}`}
+              onClick={() => setSelectedSize('1024x1024')}
+            >
+              <div className={styles.sizePreview}>
+                <div className={styles.sizeSquare}></div>
+              </div>
+              <h4>Square</h4>
+              <p>1024 × 1024</p>
+              <span className={styles.sizeUse}>Instagram, Profile</span>
+            </div>
+            
+            <div 
+              className={`${styles.sizeOption} ${selectedSize === '1024x1792' ? styles.selected : ''}`}
+              onClick={() => setSelectedSize('1024x1792')}
+            >
+              <div className={styles.sizePreview}>
+                <div className={styles.sizePortrait}></div>
+              </div>
+              <h4>Portrait</h4>
+              <p>1024 × 1792</p>
+              <span className={styles.sizeUse}>Stories, Mobile</span>
+            </div>
+            
+            <div 
+              className={`${styles.sizeOption} ${selectedSize === '1792x1024' ? styles.selected : ''}`}
+              onClick={() => setSelectedSize('1792x1024')}
+            >
+              <div className={styles.sizePreview}>
+                <div className={styles.sizeLandscape}></div>
+              </div>
+              <h4>Landscape</h4>
+              <p>1792 × 1024</p>
+              <span className={styles.sizeUse}>Banners, Headers</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Style Selection */}
+        <div className={styles.selectionSection}>
+          <h2>Visual Style</h2>
+          <div className={styles.styleGrid}>
+            {[
+              { id: 'professional', name: 'Professional', icon: '💼', gradient: 'linear-gradient(135deg, #667eea, #764ba2)' },
+              { id: 'creative', name: 'Creative', icon: '🎨', gradient: 'linear-gradient(135deg, #f093fb, #f5576c)' },
+              { id: 'realistic', name: 'Realistic', icon: '📸', gradient: 'linear-gradient(135deg, #4facfe, #00f2fe)' },
+              { id: '3d', name: '3D Render', icon: '🎮', gradient: 'linear-gradient(135deg, #fa709a, #fee140)' },
+              { id: 'minimal', name: 'Minimal', icon: '⚪', gradient: 'linear-gradient(135deg, #e0e0e0, #eeeeee)' },
+              { id: 'cartoon', name: 'Cartoon', icon: '🎭', gradient: 'linear-gradient(135deg, #a8edea, #fed6e3)' }
+            ].map(style => (
+              <div 
+                key={style.id}
+                className={`${styles.styleOption} ${selectedStyle === style.id ? styles.selected : ''}`}
+                onClick={() => setSelectedStyle(style.id)}
+              >
+                <div 
+                  className={styles.stylePreview}
+                  style={{ background: style.gradient }}
+                >
+                  <span className={styles.styleIcon}>{style.icon}</span>
+                </div>
+                <span className={styles.styleName}>{style.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Generate Button */}
         <div className={styles.generateSection}>
           <Button

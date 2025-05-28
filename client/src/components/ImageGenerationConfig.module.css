@@ -425,3 +425,147 @@
   font-weight: 600;
   color: #667eea;
 }
+
+/* Selection Sections */
+.selectionSection {
+  margin-top: 48px;
+}
+
+.selectionSection h2 {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+/* Size Selection */
+.sizeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.sizeOption {
+  background: #fafafa;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sizeOption:hover {
+  border-color: #667eea;
+  background: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.sizeOption.selected {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.sizePreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+.sizeSquare {
+  width: 50px;
+  height: 50px;
+  background: #667eea;
+  border-radius: 8px;
+}
+
+.sizePortrait {
+  width: 35px;
+  height: 60px;
+  background: #667eea;
+  border-radius: 8px;
+}
+
+.sizeLandscape {
+  width: 60px;
+  height: 35px;
+  background: #667eea;
+  border-radius: 8px;
+}
+
+.sizeOption h4 {
+  font-size: 18px;
+  margin-bottom: 4px;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.sizeOption p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  margin: 0 0 8px 0;
+}
+
+.sizeUse {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Style Selection */
+.styleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.styleOption {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.styleOption:hover {
+  transform: translateY(-4px);
+}
+
+.stylePreview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.styleOption.selected .stylePreview::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  color: #667eea;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.styleIcon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.styleName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
