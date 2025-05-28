@@ -134,7 +134,7 @@ app.get('/text-to-image', (req, res) => {
 // Check if client dist exists, if not serve a simple message
 app.get('*', (req, res) => {
   const indexPath = path.join(process.cwd(), 'client', 'dist', 'index.html');
-  if (require('fs').existsSync(indexPath)) {
+  if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
     res.send(`
