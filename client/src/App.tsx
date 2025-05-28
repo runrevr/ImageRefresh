@@ -30,6 +30,7 @@ import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
 import ScrollToTop from "@/components/ScrollToTop";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -47,6 +48,8 @@ import GenerateEnhancementsPage from "@/pages/generate-enhancements";
 import ResultsPage from "@/pages/results";
 
 function Router() {
+  console.log('🚀 Router component rendering');
+  
   return (
     <>
       <ScrollToTop />
@@ -159,8 +162,21 @@ function AppContent() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    console.log('🚀 Auth loading...');
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
   }
+
+  console.log('🚀 AppContent rendering with user:', user);
 
   return (
     <TooltipProvider>
@@ -173,12 +189,17 @@ function AppContent() {
 }
 
 function App() {
+  // Add debug logging to see if App is rendering
+  console.log('🚀 App component is rendering');
+  
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
