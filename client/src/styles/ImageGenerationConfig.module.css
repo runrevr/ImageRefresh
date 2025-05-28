@@ -450,6 +450,14 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .header {
+    padding: 20px 10px 10px;
+  }
+  
   .header h1 {
     font-size: 36px;
   }
@@ -470,5 +478,19 @@
   
   .styleGrid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .backButton {
+    position: static;
+    margin-bottom: 16px;
+  }
+  
+  .promptTextarea {
+    min-height: 100px;
+  }
+  
+  .generateButton {
+    width: 100%;
+    padding: 14px 24px;
   }
 }

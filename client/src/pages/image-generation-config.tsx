@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation, useRoute } from 'wouter';
 import ImageGenerationConfig from '../components/ImageGenerationConfig';
@@ -6,7 +5,7 @@ import ImageGenerationConfig from '../components/ImageGenerationConfig';
 const ImageGenerationConfigPage: React.FC = () => {
   const [, setLocation] = useLocation();
   const [, params] = useRoute('/create-image');
-  
+
   // Get the prompt from session storage
   const initialPrompt = sessionStorage.getItem('imagePrompt') || "";
 
