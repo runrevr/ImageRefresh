@@ -124,9 +124,11 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   }
 });
 
-// Serve static files from the built frontend
-const buildPath = path.join(process.cwd(), 'dist', 'public');
-app.use(express.static(buildPath));
+// Serve static files from the client dist directory
+app.use(express.static(path.join(process.cwd(), 'dist', 'public')));
+
+// Serve uploaded images statically
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Also serve assets from the client public directory for development
 app.use('/images', express.static(path.join(process.cwd(), 'client', 'public', 'images')));
