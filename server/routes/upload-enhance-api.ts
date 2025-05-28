@@ -761,12 +761,12 @@ router.post('/generate-images', async (req, res) => {
         fs.writeFileSync(imagePath, Buffer.from(imageResponse.data));
         
         const baseUrl = req.protocol + "://" + req.get("host");
-        const imageUrl = `${baseUrl}/uploads/${filename}`;
+        const finalImageUrl = `${baseUrl}/uploads/${filename}`;
         
         console.log(`Generated image ${index + 1} saved to: ${imagePath}`);
         
         return {
-          url: imageUrl,
+          url: finalImageUrl,
           variation: variations?.[index] || { title: `Generated Image ${index + 1}` }
         };
       })
