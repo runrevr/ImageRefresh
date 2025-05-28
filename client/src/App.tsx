@@ -142,7 +142,7 @@ function Router() {
 function AppContent() {
   // Set dark mode based on user's preference
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
   const [location, navigate] = useLocation();
 
   // Debug logging
@@ -161,7 +161,7 @@ function AppContent() {
     }
   }, []);
 
-  if (loading) {
+  if (isLoading) {
     console.log('🚀 Auth loading...');
     return (
       <div style={{ 
