@@ -739,8 +739,14 @@ router.post('/generate-images', async (req, res) => {
         
         const timestamp = Date.now();
         const filename = `generated-${timestamp}-${index + 1}.png`;
-        const imagePath = path.join(process.cwd(), 'uploads', filename);
+        const uploadsDir = path.join(process.cwd(), 'uploads');
         
+        // Ensure uploads directory exists
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        
+        const imagePath = path.join(uploadsDir, filename);
         fs.writeFileSync(imagePath, Buffer.from(imageResponse.data));
         
         const baseUrl = req.protocol + "://" + req.get("host");
@@ -755,11 +761,14 @@ router.post('/generate-images', async (req, res) => {
       })
     );
 
+    const jobId = `text-to-image-${Date.now()}`;
+    
     // Return success response matching expected format
     res.status(200).json({
       success: true,
       images: generatedImages,
-      jobId: `text-to-image-${Date.now()}`,
+      jobId: jobId,
+      message: `Successfully generated ${generatedImages.length} images`,
       processing_metadata: {
         generation_time: new Date().toISOString(),
         model_used: "gpt-image-1",

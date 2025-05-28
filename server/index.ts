@@ -63,39 +63,7 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// Text-to-image generation endpoint
-app.post('/api/generate-images', async (req, res) => {
-  try {
-    const { prompt, width = 1024, height = 1024 } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required" });
-    }
-
-    console.log('Generating image with prompt:', prompt);
-
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: prompt,
-      n: 1,
-      size: `${width}x${height}`,
-      response_format: "b64_json",
-    });
-
-    const base64ImageData = response.data[0].b64_json;
-
-    if (!base64ImageData) {
-      return res.status(500).json({ error: "Failed to generate image" });
-    }
-
-    // Convert base64 to buffer and send as image
-    const buffer = Buffer.from(base64ImageData, "base64");
-
-    res.writeHead(200, {
-      'Content-Type': 'image/png',
-      'Content-Length': buffer.length
-    });
-    res.end(buffer);
+// Text-to-image generation endpoint is now handled by upload-enhance-api.ts
 
   } catch (error: any) {
     console.error("Image generation error:", error);
