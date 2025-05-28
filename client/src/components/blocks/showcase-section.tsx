@@ -19,7 +19,7 @@ export function ShowcaseSection() {
             <div className="mx-auto max-w-6xl px-6">
                 <h2 className="text-center text-3xl font-medium text-[#333333] mb-3">See what our AI can do</h2>
                 <p className="text-center text-lg text-[#333333]/70 mb-12">From basic enhancements to complete transformations</p>
-                
+
                 <div className="relative h-[320px] w-full overflow-hidden rounded-xl">
                     <ProgressiveBlur className="h-full w-full">
                         <div className="flex gap-4 h-full -rotate-3">
@@ -76,7 +76,7 @@ export function ShowcaseSection() {
                         </div>
                     </ProgressiveBlur>
                 </div>
-                
+
                 <div className="mt-12 text-center">
                     <Link href="/gallery">
                         <RainbowButton className="rounded-full">
