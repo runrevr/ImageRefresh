@@ -12,17 +12,24 @@ export default function TextToImageInputPage() {
     if (inputValue.trim()) {
       console.log('Current location before navigation:', location);
       console.log('Storing prompt:', inputValue);
-      // Store the prompt in session storage
-      sessionStorage.setItem('imagePrompt', inputValue);
       
-      console.log('About to navigate to /create-image');
-      // Navigate to the configuration page
-      navigate('/create-image');
-      
-      // Check if navigation worked
-      setTimeout(() => {
-        console.log('Location after navigation attempt:', window.location.pathname);
-      }, 100);
+      try {
+        // Store the prompt in session storage
+        sessionStorage.setItem('imagePrompt', inputValue);
+        console.log('Prompt stored successfully');
+        
+        console.log('About to navigate to /create-image');
+        // Navigate to the configuration page
+        navigate('/create-image');
+        
+        // Check if navigation worked
+        setTimeout(() => {
+          console.log('Location after navigation attempt:', window.location.pathname);
+          console.log('Current route in browser:', window.location.href);
+        }, 100);
+      } catch (error) {
+        console.error('Error during navigation:', error);
+      }
     } else {
       console.log('Input is empty, not navigating');
     }

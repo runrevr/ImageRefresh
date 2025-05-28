@@ -8,6 +8,8 @@ const ImageGenerationConfigPage: React.FC = () => {
 
   // Get the prompt from session storage
   const initialPrompt = sessionStorage.getItem('imagePrompt') || "";
+  
+  console.log('ImageGenerationConfigPage rendered with prompt:', initialPrompt);
 
   const handleGenerate = (config: any) => {
     console.log('Generating with config:', config);
