@@ -896,7 +896,7 @@
             // Show loading
             document.getElementById('loadingSpinner').style.display = 'block';
             
-            // Call your API
+            // Call the text-to-image API endpoint
             fetch('/api/generate-images', {
                 method: 'POST',
                 headers: {
@@ -904,20 +904,33 @@
                 },
                 body: JSON.stringify(settings)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 document.getElementById('loadingSpinner').style.display = 'none';
-                if (data.success) {
-                    // Handle success - maybe redirect to results page
-                    window.location.href = `/results?jobId=${data.jobId}`;
+                console.log('Generation response:', data);
+                
+                if (data.success && data.images) {
+                    // Handle success - display generated images or redirect
+                    if (data.images.length > 0) {
+                        // For now, redirect to a results page
+                        window.location.href = `/results?jobId=${data.jobId}`;
+                    } else {
+                        alert('No images were generated');
+                    }
                 } else {
-                    alert('Error: ' + data.error);
+                    console.error('Generation failed:', data);
+                    alert('Error: ' + (data.message || data.error || 'Unknown error'));
                 }
             })
             .catch(error => {
                 document.getElementById('loadingSpinner').style.display = 'none';
                 console.error('Error:', error);
-                alert('Failed to generate images');
+                alert('Failed to generate images: ' + error.message);
             });
         }
 
