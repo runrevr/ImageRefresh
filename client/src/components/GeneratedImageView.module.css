@@ -37,6 +37,39 @@
   background: #f0f0f0;
 }
 
+.downloadWrapper {
+  position: relative;
+}
+
+.formatMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+  min-width: 160px;
+}
+
+.formatOption {
+  padding: 10px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.formatOption:last-child {
+  border-bottom: none;
+}
+
+.formatOption:hover {
+  background: #f0f0f0;
+}
+
 /* Keep some essential existing styles for functionality */
 .content {
   padding: 0;

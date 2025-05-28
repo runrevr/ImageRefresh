@@ -35,17 +35,19 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showFormatMenu, setShowFormatMenu] = useState(false);
+  const [selectedFormat, setSelectedFormat] = useState('png');
 
-  const handleDownload = async () => {
+  const handleDownload = async (format = selectedFormat) => {
     setIsLoading(true);
     try {
       if (onDownload) {
         onDownload();
       } else {
-        // Default download behavior
+        // Default download behavior with format selection
         const link = document.createElement('a');
         link.href = imageUrl;
-        link.download = `generated-image-${Date.now()}.png`;
+        link.download = `generated-image-${Date.now()}.${format}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -165,14 +167,41 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
 
         {/* Primary Actions */}
         <div className={styles.primaryActions}>
-          <Button
-            onClick={handleDownload}
-            disabled={isLoading}
-            className={styles.actionButton}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            {isLoading ? 'Downloading...' : 'Download'}
-          </Button>
+          <div className={styles.downloadWrapper}>
+            <Button
+              onClick={() => setShowFormatMenu(!showFormatMenu)}
+              disabled={isLoading}
+              className={styles.actionButton}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {isLoading ? 'Downloading...' : 'Download'}
+            </Button>
+            
+            {showFormatMenu && (
+              <div className={styles.formatMenu}>
+                <div 
+                  className={styles.formatOption}
+                  onClick={() => {
+                    setSelectedFormat('png');
+                    handleDownload('png');
+                    setShowFormatMenu(false);
+                  }}
+                >
+                  PNG (High Quality)
+                </div>
+                <div 
+                  className={styles.formatOption}
+                  onClick={() => {
+                    setSelectedFormat('jpg');
+                    handleDownload('jpg');
+                    setShowFormatMenu(false);
+                  }}
+                >
+                  JPG (Smaller Size)
+                </div>
+              </div>
+            )}
+          </div>
           
           <Button
             variant="outline"
