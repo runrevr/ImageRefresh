@@ -5,14 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function TextToImageInputPage() {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const [inputValue, setInputValue] = useState('');
 
   const handleSubmit = () => {
     if (inputValue.trim()) {
+      console.log('Storing prompt:', inputValue);
       // Store the prompt in session storage
       sessionStorage.setItem('imagePrompt', inputValue);
       
+      console.log('Navigating to /create-image');
       // Navigate to the configuration page
       navigate('/create-image');
     }
