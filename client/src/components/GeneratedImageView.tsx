@@ -40,6 +40,7 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [shareLink, setShareLink] = useState('');
   const [linkCopied, setLinkCopied] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   const handleDownload = async (format = selectedFormat) => {
     setIsLoading(true);
@@ -60,6 +61,12 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownloadWithLoading = async () => {
+    setIsLoading(true);
+    await handleDownload();
+    setIsLoading(false);
   };
 
   const handleEdit = () => {
@@ -295,6 +302,56 @@ const GeneratedImageView: React.FC<GeneratedImageViewProps> = ({
               </button>
             </div>
           </>
+        )}
+
+        {/* Info Panel */}
+        <div className={styles.infoSection}>
+          <button 
+            className={styles.infoToggle}
+            onClick={() => setShowInfo(!showInfo)}
+          >
+            {showInfo ? '▼' : '▶'} Image Details
+          </button>
+          
+          {showInfo && (
+            <div className={styles.infoContent}>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Prompt:</span>
+                <span className={styles.infoValue}>{prompt}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Created:</span>
+                <span className={styles.infoValue}>{new Date().toLocaleString()}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Dimensions:</span>
+                <span className={styles.infoValue}>1024 x 1024</span>
+              </div>
+              {metadata && (
+                <>
+                  {metadata.model && (
+                    <div className={styles.infoRow}>
+                      <span className={styles.infoLabel}>Model:</span>
+                      <span className={styles.infoValue}>{metadata.model}</span>
+                    </div>
+                  )}
+                  {metadata.fileSize && (
+                    <div className={styles.infoRow}>
+                      <span className={styles.infoLabel}>File Size:</span>
+                      <span className={styles.infoValue}>{metadata.fileSize}</span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Loading Overlay */}
+        {isLoading && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </CardContent>
     </Card>

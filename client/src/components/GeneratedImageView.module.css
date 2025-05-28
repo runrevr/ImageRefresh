@@ -151,6 +151,83 @@
   background: #f1f5f9;
 }
 
+.infoSection {
+  margin-top: 30px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.infoToggle {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 500;
+  color: #1e293b;
+  transition: background-color 0.2s;
+}
+
+.infoToggle:hover {
+  background: #f0f0f0;
+}
+
+.infoContent {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+}
+
+.infoRow {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.infoRow:last-child {
+  margin-bottom: 0;
+}
+
+.infoLabel {
+  font-weight: 500;
+  margin-right: 12px;
+  min-width: 100px;
+  color: #64748b;
+}
+
+.infoValue {
+  color: #1e293b;
+  flex: 1;
+}
+
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0f0f0;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Keep some essential existing styles for functionality */
 .content {
   padding: 0;
@@ -262,10 +339,32 @@
   .primaryActions {
     flex-direction: column;
     gap: 8px;
+    width: 100%;
   }
 
   .actionButton {
     width: 100%;
+    justify-content: center;
+  }
+
+  .formatMenu {
+    left: 0;
+    right: 0;
+  }
+
+  .shareMenu {
+    margin: 20px;
+    min-width: auto;
+    max-width: calc(100vw - 40px);
+  }
+
+  .infoRow {
+    flex-direction: column;
+  }
+
+  .infoLabel {
+    margin-bottom: 4px;
+    margin-right: 0;
   }
 }
 
