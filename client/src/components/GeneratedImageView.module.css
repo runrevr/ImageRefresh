@@ -1,0 +1,277 @@
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.content {
+  padding: 0;
+}
+
+.imageSection {
+  position: relative;
+  width: 100%;
+  background: #f8fafc;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.generatedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.generatedImage.loading {
+  opacity: 0;
+}
+
+.generatedImage.loaded {
+  opacity: 1;
+}
+
+.generatedImage:hover {
+  transform: scale(1.02);
+}
+
+.imagePlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.imageContainer:hover .imageOverlay {
+  opacity: 1;
+}
+
+.overlayButton {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  min-width: 36px;
+  height: 36px;
+}
+
+.overlayButton:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+}
+
+.overlayButton.favorited {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+.overlayButton.favorited:hover {
+  background: rgba(239, 68, 68, 1);
+}
+
+.promptSection {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.promptTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.promptText {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metadataSection {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.metadataGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.metadataBadge {
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+.metadataItem {
+  font-size: 12px;
+  color: #64748b;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.primaryActions {
+  padding: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actionButton {
+  flex: 1;
+  min-height: 40px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  transform: translateY(-1px);
+}
+
+.moreButton {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 6px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 8px;
+  }
+
+  .imageContainer {
+    height: 250px;
+  }
+
+  .primaryActions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .actionButton {
+    width: 100%;
+  }
+
+  .moreButton {
+    width: 100%;
+  }
+
+  .promptText {
+    -webkit-line-clamp: 2;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .promptTitle {
+    color: #f1f5f9;
+  }
+
+  .promptText {
+    color: #94a3b8;
+  }
+
+  .metadataSection {
+    background: #0f172a;
+    border-color: #334155;
+  }
+
+  .metadataItem {
+    background: #334155;
+    color: #94a3b8;
+  }
+
+  .imagePlaceholder {
+    background: #0f172a;
+    color: #94a3b8;
+  }
+
+  .loadingSpinner {
+    border-color: #334155;
+    border-top-color: #3b82f6;
+  }
+}
+
+/* Animation for new images */
+.container {
+  animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
