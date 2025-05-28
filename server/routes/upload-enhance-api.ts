@@ -215,9 +215,9 @@ router.post('/analyze-products', async (req, res) => {
   }
 });
 
-// POST /api/generate-edit-prompt  
+// POST /generate-edit-prompt  
 // Generate optimized edit prompt for a single selected concept using Claude
-router.post('/api/generate-edit-prompt', async (req, res) => {
+router.post('/generate-edit-prompt', async (req, res) => {
   try {
     console.log('=== Single Claude Edit Prompt Generation ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
