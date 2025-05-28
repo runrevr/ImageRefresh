@@ -734,22 +734,6 @@ router.post('/generate-images', async (req, res) => {
       response.data.map(async (imageData, index) => {
         console.log(`[OpenAI] Processing image ${index + 1}:`, imageData);
         
-        // Check if the response has a URL or needs to be handled differently
-        let imageUrl = imageData.url;
-        if (!imageUrl && imageData.revised_prompt) {
-          // Sometimes the response structure is different
-          console.error(`[OpenAI] No direct URL found for image ${index + 1}. Full data:`, imageData);
-          throw new Error(`No URL returned for image ${index + 1}. Response: ${JSON.stringify(imageData)}`);
-        }
-
-        if (!imageUrl) {
-          throw new Error(`No URL returned for image ${index + 1}`);
-        }
-
-        // Download and save the image
-        const axios = (await import('axios')).default;
-        const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-        
         const timestamp = Date.now();
         const filename = `generated-${timestamp}-${index + 1}.png`;
         const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -760,7 +744,24 @@ router.post('/generate-images', async (req, res) => {
         }
         
         const imagePath = path.join(uploadsDir, filename);
-        fs.writeFileSync(imagePath, Buffer.from(imageResponse.data));
+        
+        // Handle both URL and base64 responses
+        if (imageData.url) {
+          // URL response - download the image
+          console.log(`[OpenAI] Downloading from URL: ${imageData.url}`);
+          const axios = (await import('axios')).default;
+          const imageResponse = await axios.get(imageData.url, { responseType: 'arraybuffer' });
+          fs.writeFileSync(imagePath, Buffer.from(imageResponse.data));
+        } else if (imageData.b64_json) {
+          // Base64 response - decode and save
+          console.log(`[OpenAI] Processing base64 data (${imageData.b64_json.length} chars)`);
+          const imageBuffer = Buffer.from(imageData.b64_json, 'base64');
+          fs.writeFileSync(imagePath, imageBuffer);
+        } else {
+          // Neither URL nor base64 found
+          console.error(`[OpenAI] No URL or base64 data found for image ${index + 1}. Full data:`, imageData);
+          throw new Error(`No URL or base64 data returned for image ${index + 1}`);
+        }
         
         const baseUrl = req.protocol + "://" + req.get("host");
         const finalImageUrl = `${baseUrl}/uploads/${filename}`;
