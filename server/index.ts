@@ -65,15 +65,6 @@ app.get('/api/config', (req, res) => {
 
 // Text-to-image generation endpoint is now handled by upload-enhance-api.ts
 
-  } catch (error: any) {
-    console.error("Image generation error:", error);
-    res.status(500).json({ 
-      error: error.message || "Failed to generate image",
-      details: error.response?.data || error
-    });
-  }
-});
-
 // Basic image upload endpoint
 app.post('/api/upload', upload.single('image'), (req, res) => {
   try {
