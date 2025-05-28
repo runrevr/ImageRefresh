@@ -486,7 +486,13 @@ router.post('/generate-enhancement', async (req, res) => {
 
     console.log('Image generated successfully with gpt-image-1');
 
-    res.json({
+    // Return the exact same response format as routes.ts
+    res.status(200).json({
+      transformedImageUrl: transformedImageUrl,
+      prompt: enhancement_prompt,
+      id: null,
+      editsUsed: 0,
+      // Keep the enhanced format for compatibility
       success: true,
       enhanced_image_url: transformedImageUrl,
       title: enhancement_title,
@@ -505,10 +511,37 @@ router.post('/generate-enhancement', async (req, res) => {
       headers: error.response?.headers
     });
 
-    // Return the actual error from OpenAI like routes.ts
+    // Check for specific OpenAI error types like routes.ts
+    if (
+      error.message &&
+      (error.message.includes("organization verification") ||
+        error.message.includes("invalid_api_key") ||
+        error.message.includes("rate limit") ||
+        error.message.includes("billing"))
+    ) {
+      return res.status(400).json({
+        message: error.message,
+        error: "openai_api_error",
+      });
+    }
+
+    // Check for content moderation errors like routes.ts
+    if (
+      error.message &&
+      error.message.toLowerCase().includes("content policy")
+    ) {
+      return res.status(400).json({
+        message:
+          "Your request was rejected by our content safety system. Please try a different prompt.",
+        error: "content_safety",
+      });
+    }
+
+    // Generic error format matching routes.ts
     res.status(500).json({
+      message: "Error processing image transformation",
+      error: error.message,
       success: false,
-      error: error.response?.data?.error?.message || error.message,
       details: error.response?.data
     });
   }
