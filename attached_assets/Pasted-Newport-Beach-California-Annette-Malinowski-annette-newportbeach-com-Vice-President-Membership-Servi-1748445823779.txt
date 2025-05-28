@@ -1,0 +1,35 @@
+Newport Beach	California	Annette Malinowski	annette@newportbeach.com	Vice President Membership Services &  Business Development	Newport Beach Chamber of Commerce
+Cincinnati	Ohio	Brendon Cull	bcull@cincinnatichamber.com	President & CEO	Cincinnati Regional Chamber
+Reno	Nevada	Bob Boisson	bob@renosparkschamber.org	Membership Development Director	Reno Sparks Chamber of Commerce
+Prosper	Texas	Bryan Bolton	bryan@leaguecitychamber.com	Chief Executive Officer	PROSPER CHAMBER OF COMMERCE
+Hattiesburg	Mississippi	Chad Newell	c.newell@theadp.com	President	Area Development Partnership
+North Charleston	South Carolina	Celeste Granger	cgranger@charlestonchamber.org	Senior Vice President of Programs & Initiatives	Charleston Metro Chamber of Commerce
+San Francisco	California	Cecilia Harry	charry@sizeup.com	VP of Economic Development	SizeUp
+Chattanooga	Tennessee	Charles Wood	cwood@chattanoogachamber.com	President and CEO	Chattanooga Area Chamber of Commerce
+The Woodlands	Texas	Cyndi Alvarado	cyndi.alvarado@woodlandschamber.org	Vice President, Membership	The Woodlands Area Chamber of Commerce
+Oceanside	California	David Nydegger	davidnydegger@oceansidechamber.com	President and  C.E.O.	Oceanside Chamber of Commerce
+Rancho Cordova	California	Diann Rogers	dhrogers@ranchocordova.org	President & CEO	Rancho Cordova Area Chamber of Commerce
+Indio	California	Dawn Mason	dmason@gcvcc.org	Events Coordinator	Greater Coachella Valley Chamber of Commerce
+Irving	Texas	Diana Velazquez	dvelazquez@irvingchamber.com	Vice President of Economic Development	Greater Irving - Las Colinas Chamber of Commerce
+Dallas	Texas	Dawn Spalding	dwspalding@ndcc.org	Vice President of Development	North Dallas Chamber of Commerce
+Fort Worth	Texas	Isabel Cable	isabel.cable@fwhcc.org	Vice President of Member Services & Strategic Growth	Fort Worth Hispanic Chamber of Commerce
+Santa Monica	California	Judy Kruger	judy.kruger@smchamber.com	President & CEO	Santa Monica Chamber of Commerce
+Odessa	Texas	Kenny Smith	kennys@odessachamber.com	membership development	Odessa Chamber of Commerce
+Tahoe City	California	Kirstin Guinn	kirstin@northtahoecommunityalliance.com	Marketing Director	North Tahoe Community Alliance
+Los Angeles	California	Larry Neuberg	larryneuberg@nnigroup.com	President | CEO	Hollywood Chamber of Commerce
+Galveston	Texas	Laura Blacksher	lblacksher@galvestonchamber.com	Vice President Of Finance And Human Resources	Galveston Regional Chamber of Commerce
+Henderson	Nevada	Lisa Chao	lchao@hendersonchamber.com	Vice President of Membership	Henderson Chamber of Commerce
+Houston	Texas	Lou Duvall	lduvall@houston.org	Vice President, Marketing & Communications 	Greater Houston Partnership
+Temecula	California	Elizabeth Schuch	liz@temecula.org	Special Events Manager	Temecula Valley Chamber of Commerce
+Grapevine	Texas	Michael Miori	michael@grapevinechamber.org	Vice President of Operations	Grapevine Chamber of Commerce
+Los Angeles	California	Maria Salinas	msalinas@lachamber.com	President & CEO	Los Angeles Area Chamber of Commerce
+Abilene	Texas	Nathaniel Ellsworth	nathaniel@abilenechamber.com	Office and Events Coordinator	The Abilene Chamber of Commerce
+Valdosta	Georgia	Tara Nichols	nichols@valdostachamber.com	Vice President of Business Development & Expansion	Valdosta-Lowndes County Chamber of Commerce
+Tempe	Arizona	Paulette Pacioni	paulette@tempechamber.org	VP Operations & Communications Tempe Chamber of Commerce	Tempe Chamber of Commerce
+Riverside	California	Quirina Ramirez	qramirez@riverside-chamber.com	Vice President of Programs & Special Events	Greater Riverside Chambers of Commerce
+Plano	Texas	Rich Healy	richh@planochamber.org	President	Plano Chamber of Commerce
+El Cajon	California	Rick Wilson	rickw@eastcountychamber.org	President & CEO	San Diego Regional East County Chamber of Commerce
+Washington	District of Columbia	Suzanne Clark	sclark@uschamber.com	President and CEO	U.S. Chamber of Commerce
+Santa Maria	California	Terri Oneschuck	terrio@santamaria.com	VP Chamber Operations	Santa Maria Valley Chamber
+Newport Beach	California	Todd Smith	todd@kyg.ai	Founder CEO	KYG Trade™
+San Angelo	Texas	Tricia Peterson	tricia@sanangelo.org	Vice President of Events & Fundraising	San Angelo Chamber of Commerce
