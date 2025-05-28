@@ -1,0 +1,131 @@
+Update ImageGenerationConfig.module.css with matching aesthetics:
+
+css.container {
+  min-height: 100vh;
+  background: #fafafa;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.container.visible {
+  opacity: 1;
+}
+
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+}
+
+.backButton {
+  position: absolute;
+  left: 20px;
+  top: 40px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background: rgba(0,0,0,0.05);
+  color: #333;
+}
+
+.header h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header p {
+  font-size: 20px;
+  color: #666;
+}
+
+.progressBar {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 40px 0;
+  padding: 0 20px;
+}
+
+.progressStep {
+  color: #999;
+  font-size: 14px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.progressStep.active {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.progressStep.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #667eea;
+  border-radius: 3px;
+}
+
+.mainCard {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+}
+
+.promptSection {
+  margin-bottom: 40px;
+}
+
+.promptHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.promptHeader h2 {
+  font-size: 24px;
+  color: #333;
+}
+
+.promptLength {
+  font-size: 14px;
+  color: #999;
+}
+
+.promptTextarea {
+  width: 100%;
+  padding: 20px;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  font-size: 18px;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.promptTextarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+}
