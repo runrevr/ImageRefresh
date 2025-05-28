@@ -1,0 +1,90 @@
+---
+
+## Part 2: Add Download Functionality
+Add download functionality to the GeneratedImageView component.
+
+In GeneratedImageView.jsx, add a download handler function after the state declarations:
+
+jsxconst handleDownload = () => {
+  const link = document.createElement('a');
+  link.href = imageUrl;
+  link.download = `generated-image-${Date.now()}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+Update the Download button to use this handler:
+
+jsx<button className={styles.actionButton} onClick={handleDownload}>
+  <span>⬇</span> Download
+</button>
+
+Add a dropdown for format selection. First add new state:
+
+jsxconst [showFormatMenu, setShowFormatMenu] = useState(false);
+const [selectedFormat, setSelectedFormat] = useState('png');
+
+Replace the simple download button with this enhanced version:
+
+jsx<div className={styles.downloadWrapper}>
+  <button 
+    className={styles.actionButton} 
+    onClick={() => setShowFormatMenu(!showFormatMenu)}
+  >
+    <span>⬇</span> Download
+  </button>
+  
+  {showFormatMenu && (
+    <div className={styles.formatMenu}>
+      <div 
+        className={styles.formatOption}
+        onClick={() => {
+          setSelectedFormat('png');
+          handleDownload();
+          setShowFormatMenu(false);
+        }}
+      >
+        PNG (High Quality)
+      </div>
+      <div 
+        className={styles.formatOption}
+        onClick={() => {
+          setSelectedFormat('jpg');
+          handleDownload();
+          setShowFormatMenu(false);
+        }}
+      >
+        JPG (Smaller Size)
+      </div>
+    </div>
+  )}
+</div>
+
+Add CSS for the dropdown in GeneratedImageView.module.css:
+
+css.downloadWrapper {
+  position: relative;
+}
+
+.formatMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.formatOption {
+  padding: 10px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.formatOption:hover {
+  background: #f0f0f0;
+}
