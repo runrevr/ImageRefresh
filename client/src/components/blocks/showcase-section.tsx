@@ -6,12 +6,7 @@ import { Link } from 'wouter'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
-// Import showcase images
-import shampooOriginal from '../../assets/shampoo-original.jpg'
-import shampooBottle from '../../assets/shampoo-bottle.jpg'
-import sunsetShampoo from '../../assets/sunset-shampoo.jpg'
-import sweatshirtBasic from '../../assets/sweatshirt-basic.png'
-import sweatshirtLifestyle from '../../assets/sweatshirt-lifestyle.png'
+// Use public directory paths for images
 
 export function ShowcaseSection() {
     return (
@@ -31,45 +26,60 @@ export function ShowcaseSection() {
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src={shampooOriginal} 
+                                        src="/images/shampoo-original.jpg" 
                                         alt="Original product" 
                                         className="h-full w-full object-cover rounded-lg"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/images/placeholder.svg";
+                                        }}
                                     />
                                 </div>
                                 <div 
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src={shampooBottle} 
+                                        src="/images/nounou-shampoo.jpg" 
                                         alt="Enhanced product" 
                                         className="h-full w-full object-cover rounded-lg"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/images/placeholder.svg";
+                                        }}
                                     />
                                 </div>
                                 <div 
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src={sunsetShampoo} 
+                                        src="/80s.png" 
                                         alt="Product with background" 
                                         className="h-full w-full object-cover rounded-lg"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/images/placeholder.svg";
+                                        }}
                                     />
                                 </div>
                                 <div 
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src={sweatshirtBasic} 
+                                        src="/Western.png" 
                                         alt="Basic apparel" 
                                         className="h-full w-full object-cover rounded-lg"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/images/placeholder.svg";
+                                        }}
                                     />
                                 </div>
                                 <div 
                                     className="h-[300px] w-[200px] shrink-0 rounded-xl bg-white p-3 mx-2 shadow-md"
                                 >
                                     <img 
-                                        src={sweatshirtLifestyle} 
+                                        src="/Disco.png" 
                                         alt="Lifestyle apparel" 
                                         className="h-full w-full object-cover rounded-lg"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/images/placeholder.svg";
+                                        }}
                                     />
                                 </div>
                             </InfiniteSlider>
