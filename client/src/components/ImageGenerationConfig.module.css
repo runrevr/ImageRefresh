@@ -1,4 +1,3 @@
-
 .container {
   min-height: 100vh;
   background: #fafafa;
@@ -239,50 +238,224 @@
 }
 
 .generateNote {
-  margin-top: 12px;
   font-size: 14px;
-  color: #666;
+  color: #999;
+  text-align: center;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .container {
-    padding: 10px;
+/* AI Enhancement Section */
+.aiSection {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.aiButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.aiButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.aiButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.aiButton.loading {
+  animation: pulse 2s infinite;
+}
+
+.aiButtonIcon {
+  font-size: 18px;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.aiButtonText {
+  position: relative;
+}
+
+.aiLoader {
+  position: absolute;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Suggestions Container */
+.suggestionsContainer {
+  margin-top: 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .header {
-    padding: 20px 10px 10px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .header h1 {
-    font-size: 32px;
-  }
-  
-  .header p {
-    font-size: 16px;
-  }
-  
-  .progressBar {
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .mainCard {
-    padding: 24px;
-    border-radius: 16px;
-  }
-  
-  .backButton {
-    position: relative;
-    margin-bottom: 20px;
-  }
-  
-  .optionGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .promptTextarea {
-    font-size: 16px;
-    padding: 16px;
-  }
+}
+
+.suggestionsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+}
+
+.suggestionsHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.closeSuggestions {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.closeSuggestions:hover {
+  background: rgba(0,0,0,0.1);
+  color: #333;
+}
+
+.suggestionsGrid {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.suggestionCard {
+  background: #fafafa;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.suggestionCard:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.suggestionCard.selected {
+  border-color: #667eea;
+  background: #f0f4ff;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+}
+
+.suggestionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.suggestionIcon {
+  font-size: 20px;
+}
+
+.suggestionType {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.suggestionText {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 12px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.suggestionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.tag {
+  background: #667eea;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.useButton {
+  background: #667eea;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+}
+
+.suggestionCard.selected .useButton {
+  background: #4CAF50;
+}
+
+.suggestionCard:hover .useButton {
+  transform: scale(1.05);
 }

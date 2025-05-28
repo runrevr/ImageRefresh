@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Sparkles, Zap, Palette, Image as ImageIcon } from 'lucide-react';
 import { Button } from './ui/button';
@@ -29,7 +28,33 @@ const ImageGenerationConfig: React.FC<ImageGenerationConfigProps> = ({
   const [selectedStyle, setSelectedStyle] = useState('professional');
   const [selectedQuality, setSelectedQuality] = useState('high');
   const [isVisible, setIsVisible] = useState(false);
-  
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState([
+    {
+      id: 'ai-suggestion-1',
+      text: 'A futuristic cityscape with towering skyscrapers and flying vehicles, bathed in neon lights.',
+      icon: '🏙️',
+      type: 'Futuristic',
+      tags: ['cityscape', 'futuristic', 'neon', 'skyscrapers', 'vehicles']
+    },
+    {
+      id: 'ai-suggestion-2',
+      text: 'A serene beach at sunset with gentle waves, palm trees, and vibrant colors.',
+      icon: '🌅',
+      type: 'Serene',
+      tags: ['beach', 'sunset', 'waves', 'palm trees', 'vibrant']
+    },
+    {
+      id: 'ai-suggestion-3',
+      text: 'A majestic lion in the African savanna with golden fur and intense eyes.',
+      icon: '🦁',
+      type: 'Majestic',
+      tags: ['lion', 'savanna', 'africa', 'golden fur', 'intense eyes']
+    }
+  ]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+
   useEffect(() => {
     // Trigger fade-in animation
     setTimeout(() => setIsVisible(true), 50);
@@ -62,6 +87,15 @@ const ImageGenerationConfig: React.FC<ImageGenerationConfigProps> = ({
     });
   };
 
+  const enhanceWithAI = async () => {
+    setLoadingAI(true);
+    // Simulate AI processing with a timeout
+    setTimeout(() => {
+      setLoadingAI(false);
+      setShowAISuggestions(true);
+    }, 1500);
+  };
+
   return (
     <div className={`${styles.container} ${isVisible ? styles.visible : ''}`}>
       {/* Header matching input page style */}
@@ -73,14 +107,14 @@ const ImageGenerationConfig: React.FC<ImageGenerationConfigProps> = ({
         <h1>Perfect Your Vision</h1>
         <p>Fine-tune your idea with AI assistance and professional options</p>
       </div>
-      
+
       {/* Progress indicator */}
       <div className={styles.progressBar}>
         <div className={styles.progressStep}>1. Describe</div>
         <div className={`${styles.progressStep} ${styles.active}`}>2. Customize</div>
         <div className={styles.progressStep}>3. Generate</div>
       </div>
-      
+
       <div className={styles.mainCard}>
         {/* Your Prompt Section with similar styling to input */}
         <div className={styles.promptSection}>
@@ -95,6 +129,62 @@ const ImageGenerationConfig: React.FC<ImageGenerationConfigProps> = ({
             placeholder="Describe what you need..."
             rows={3}
           />
+        </div>
+
+        {/* AI Enhancement Section */}
+        <div className={styles.aiSection}>
+          <button 
+            className={`${styles.aiButton} ${loadingAI ? styles.loading : ''}`}
+            onClick={enhanceWithAI}
+            disabled={loadingAI || !prompt}
+          >
+            <span className={styles.aiButtonIcon}>✨</span>
+            <span className={styles.aiButtonText}>
+              {loadingAI ? 'AI is thinking...' : 'Enhance with AI Magic'}
+            </span>
+            {loadingAI && <span className={styles.aiLoader}></span>}
+          </button>
+
+          {showAISuggestions && (
+            <div className={styles.suggestionsContainer}>
+              <div className={styles.suggestionsHeader}>
+                <h3>AI-Enhanced Versions</h3>
+                <button 
+                  className={styles.closeSuggestions}
+                  onClick={() => setShowAISuggestions(false)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className={styles.suggestionsGrid}>
+                {aiSuggestions.map(suggestion => (
+                  <div 
+                    key={suggestion.id}
+                    className={`${styles.suggestionCard} ${selectedSuggestion === suggestion.id ? styles.selected : ''}`}
+                    onClick={() => {
+                      setSelectedSuggestion(suggestion.id);
+                      setPrompt(suggestion.text);
+                    }}
+                  >
+                    <div className={styles.suggestionHeader}>
+                      <span className={styles.suggestionIcon}>{suggestion.icon}</span>
+                      <span className={styles.suggestionType}>{suggestion.type}</span>
+                    </div>
+                    <p className={styles.suggestionText}>{suggestion.text}</p>
+                    <div className={styles.suggestionTags}>
+                      {suggestion.tags.map(tag => (
+                        <span key={tag} className={styles.tag}>{tag}</span>
+                      ))}
+                    </div>
+                    <div className={styles.useButton}>
+                      {selectedSuggestion === suggestion.id ? '✓ Selected' : 'Use This'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Size Selection */}
