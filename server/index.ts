@@ -148,22 +148,9 @@ app.get('*', (req, res) => {
   }
 });
 
-// Import upload-enhance API routes
+// Import only the route files that actually exist
 import uploadEnhanceRoutes from './routes/upload-enhance-api.js';
 
-// Import and use routes
-// Assuming 'routes', 'testRoutes', 'productImageLabRoutes', 'staticRoutes', and 'webhookTestRoutes' are defined elsewhere
-import routes from './routes/index.js'; // Replace with the actual path if different
-import testRoutes from './routes/test-routes.js'; // Replace with the actual path if different
-import productImageLabRoutes from './routes/product-image-lab.js'; // Replace with the actual path if different
-import staticRoutes from './routes/static-routes.js'; // Replace with the actual path if different
-import webhookTestRoutes from './routes/webhook-test-routes.js'; // Replace with the actual path if different
-
-app.use(routes);
-app.use('/api', testRoutes);
-app.use('/api/product-image-lab', productImageLabRoutes());
-app.use('/api', staticRoutes);
-app.use('/api', webhookTestRoutes);
 app.use('/api', uploadEnhanceRoutes);
 
 app.listen(port, '0.0.0.0', () => {
