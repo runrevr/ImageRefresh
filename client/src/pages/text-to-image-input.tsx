@@ -10,12 +10,11 @@ export default function TextToImageInputPage() {
 
   const handleSubmit = () => {
     if (inputValue.trim()) {
-      // Navigate to the configuration page with the prompt
-      navigate('/create-image', { 
-        state: { 
-          prompt: inputValue 
-        } 
-      });
+      // Store the prompt in session storage
+      sessionStorage.setItem('imagePrompt', inputValue);
+      
+      // Navigate to the configuration page
+      navigate('/create-image');
     }
   };
 

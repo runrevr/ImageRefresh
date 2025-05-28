@@ -1,0 +1,474 @@
+
+.container {
+  min-height: 100vh;
+  background: #fafafa;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  padding: 20px;
+}
+
+.container.visible {
+  opacity: 1;
+}
+
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.backButton:hover {
+  background: rgba(0,0,0,0.05);
+  color: #333;
+}
+
+.header h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  font-size: 20px;
+  color: #666;
+}
+
+.progressBar {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 40px 0;
+  padding: 0 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.progressStep {
+  color: #999;
+  font-size: 14px;
+  position: relative;
+  padding-bottom: 8px;
+  font-weight: 500;
+}
+
+.progressStep.active {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.progressStep.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #667eea;
+  border-radius: 3px;
+}
+
+.mainCard {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+}
+
+.promptSection {
+  margin-bottom: 40px;
+}
+
+.promptHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.promptHeader h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.promptLength {
+  font-size: 14px;
+  color: #999;
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.promptTextarea {
+  width: 100%;
+  padding: 20px;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  font-size: 18px;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  min-height: 120px;
+}
+
+.promptTextarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+}
+
+.optionSection {
+  margin-bottom: 32px;
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.optionHeader h3 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+  font-weight: 600;
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.optionCard {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  background: white;
+}
+
+.optionCard:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.optionCard.selected {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.optionContent {
+  padding: 16px;
+  text-align: center;
+}
+
+.optionLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.optionDescription {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.optionBadge {
+  margin-top: 8px;
+}
+
+.generateSection {
+  text-align: center;
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+}
+
+.generateButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.generateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.generateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.generateNote {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* AI Enhancement Section */
+.aiSection {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.aiButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.aiButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+}
+
+.aiButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.aiButton.loading {
+  padding-right: 48px;
+}
+
+.aiButtonIcon {
+  font-size: 20px;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.aiButtonText {
+  position: relative;
+}
+
+.aiLoader {
+  position: absolute;
+  right: 16px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Size Selection */
+.sizeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.sizeOption {
+  background: #fafafa;
+  border: 2px solid #eee;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sizeOption:hover {
+  border-color: #667eea;
+  background: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.sizeOption.selected {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.sizePreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  margin-bottom: 16px;
+}
+
+.sizeSquare {
+  width: 50px;
+  height: 50px;
+  background: #667eea;
+  border-radius: 8px;
+}
+
+.sizePortrait {
+  width: 35px;
+  height: 60px;
+  background: #667eea;
+  border-radius: 8px;
+}
+
+.sizeLandscape {
+  width: 60px;
+  height: 35px;
+  background: #667eea;
+  border-radius: 8px;
+}
+
+.sizeOption h4 {
+  font-size: 18px;
+  margin-bottom: 4px;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.sizeOption p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  margin: 0 0 8px 0;
+}
+
+.sizeUse {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Style Selection */
+.styleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.styleOption {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.styleOption:hover {
+  transform: translateY(-4px);
+}
+
+.stylePreview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.styleOption.selected .stylePreview::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  color: #667eea;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.styleIcon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.styleName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 36px;
+  }
+  
+  .mainCard {
+    padding: 24px;
+    margin: 0 16px;
+  }
+  
+  .progressBar {
+    gap: 20px;
+    font-size: 12px;
+  }
+  
+  .sizeGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .styleGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

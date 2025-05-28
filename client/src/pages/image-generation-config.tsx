@@ -7,8 +7,8 @@ const ImageGenerationConfigPage: React.FC = () => {
   const [, setLocation] = useLocation();
   const [, params] = useRoute('/create-image');
   
-  // Get the prompt from navigation state or URL params
-  const initialPrompt = "Your image prompt here"; // You can pass this via navigation state
+  // Get the prompt from session storage
+  const initialPrompt = sessionStorage.getItem('imagePrompt') || "";
 
   const handleGenerate = (config: any) => {
     console.log('Generating with config:', config);
