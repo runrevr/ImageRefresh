@@ -73,8 +73,8 @@ function Router() {
         <Route path="/product-image-lab-complex" component={ProductImageLabPage} />
         <Route path="/fixed-product-lab" component={FixedProductLabPage} />
         <Route path="/features-demo" component={FeaturesDemoPage} />
-        <Route path="/text-to-image" component={TextToImageInputPage} />
         <Route path="/create-image" component={ImageGenerationConfigPage} />
+        <Route path="/text-to-image" component={TextToImageInputPage} />
         <Route path="/webhook-test" component={() => {
           // This is a simpler way to import the component without TypeScript errors
           const WebhookTest = require("../pages/webhook-test").default;
@@ -100,6 +100,22 @@ function Router() {
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
+        <Route path="/debug-routes" component={() => (
+          <div style={{ padding: '20px', fontFamily: 'monospace' }}>
+            <h1>Route Debug Info</h1>
+            <p><strong>Current URL:</strong> {window.location.pathname}</p>
+            <p><strong>Available Routes:</strong></p>
+            <ul>
+              <li>/text-to-image - Text input page</li>
+              <li>/create-image - Image generation config page</li>
+              <li>/debug-routes - This debug page</li>
+            </ul>
+            <div style={{ marginTop: '20px' }}>
+              <a href="/text-to-image" style={{ marginRight: '10px', padding: '5px 10px', background: '#blue', color: 'white', textDecoration: 'none' }}>Test /text-to-image</a>
+              <a href="/create-image" style={{ marginRight: '10px', padding: '5px 10px', background: '#green', color: 'white', textDecoration: 'none' }}>Test /create-image</a>
+            </div>
+          </div>
+        )} />
         <Route component={NotFound} />
       </Switch>
     </>
