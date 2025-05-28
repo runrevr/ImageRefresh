@@ -569,3 +569,114 @@
   font-weight: 500;
   color: #444;
 }
+
+/* Quick Options */
+.quickOptions {
+  display: flex;
+  gap: 24px;
+  margin-top: 48px;
+  padding: 24px;
+  background: #fafafa;
+  border-radius: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quickOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #444;
+}
+
+.quickOption input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Final Generate Section */
+.generateSection {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.generateButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  color: white;
+  border: none;
+  padding: 20px 48px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+}
+
+.generateButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4);
+}
+
+.generateButton:active {
+  transform: translateY(0);
+}
+
+.generateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
+}
+
+.generateIcon {
+  font-size: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.generateHint {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #999;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 36px;
+  }
+  
+  .mainCard {
+    padding: 24px;
+    margin: 0 16px;
+  }
+  
+  .progressBar {
+    gap: 20px;
+    font-size: 12px;
+  }
+  
+  .sizeGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .styleGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .quickOptions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

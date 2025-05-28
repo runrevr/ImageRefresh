@@ -329,20 +329,38 @@ const ImageGenerationConfig: React.FC<ImageGenerationConfigProps> = ({
           </div>
         </div>
 
+        {/* Quick Options */}
+        <div className={styles.quickOptions}>
+          <label className={styles.quickOption}>
+            <input type="checkbox" />
+            <span>Remove Background</span>
+          </label>
+          <label className={styles.quickOption}>
+            <input type="checkbox" />
+            <span>High Resolution (4K)</span>
+          </label>
+          <label className={styles.quickOption}>
+            <input type="checkbox" />
+            <span>Commercial License</span>
+          </label>
+        </div>
+
         {/* Generate Button */}
         <div className={styles.generateSection}>
-          <Button
-            onClick={handleGenerate}
+          <button 
             className={styles.generateButton}
-            size="lg"
+            onClick={() => onGenerate({
+              prompt,
+              selectedSize,
+              selectedStyle,
+              selectedQuality
+            })}
             disabled={!prompt.trim()}
           >
-            <Sparkles className="w-5 h-5 mr-2" />
-            Generate Image
-          </Button>
-          <p className={styles.generateNote}>
-            This will create your enhanced image based on the selected options
-          </p>
+            <span className={styles.generateIcon}>⚡</span>
+            <span>Generate My Image</span>
+          </button>
+          <p className={styles.generateHint}>Takes about 10-15 seconds</p>
         </div>
       </div>
     </div>
