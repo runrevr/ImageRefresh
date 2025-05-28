@@ -1,4 +1,4 @@
-import { Switch, Route, Redirect } from "wouter";
+import { Switch, Route, Redirect, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -27,7 +27,7 @@ import FeaturesDemoPage from "@/pages/features-demo";
 import ImageGenerationConfigPage from "@/pages/image-generation-config";
 import TextToImageInputPage from "@/pages/text-to-image-input";
 import { useState, useEffect } from "react";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
 import ScrollToTop from "@/components/ScrollToTop";
 
@@ -100,6 +100,18 @@ function Router() {
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
+        <Route path="/test-simple" component={() => (
+          <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+            <h1>✅ Simple Test Route Works!</h1>
+            <p><strong>Current URL:</strong> {window.location.pathname}</p>
+            <p><strong>Status:</strong> Wouter routing is working correctly</p>
+            <div style={{ marginTop: '20px' }}>
+              <a href="/debug-routes" style={{ marginRight: '10px', padding: '10px 15px', background: '#0066cc', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>Try Debug Routes</a>
+              <a href="/text-to-image" style={{ marginRight: '10px', padding: '10px 15px', background: '#00aa00', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>Try Text to Image</a>
+              <a href="/create-image" style={{ padding: '10px 15px', background: '#aa0000', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>Try Create Image</a>
+            </div>
+          </div>
+        )} />
         <Route path="/debug-routes" component={() => (
           <div style={{ padding: '20px', fontFamily: 'monospace' }}>
             <h1>Route Debug Info</h1>
@@ -109,10 +121,12 @@ function Router() {
               <li>/text-to-image - Text input page</li>
               <li>/create-image - Image generation config page</li>
               <li>/debug-routes - This debug page</li>
+              <li>/test-simple - Simple test route</li>
             </ul>
             <div style={{ marginTop: '20px' }}>
-              <a href="/text-to-image" style={{ marginRight: '10px', padding: '5px 10px', background: '#blue', color: 'white', textDecoration: 'none' }}>Test /text-to-image</a>
-              <a href="/create-image" style={{ marginRight: '10px', padding: '5px 10px', background: '#green', color: 'white', textDecoration: 'none' }}>Test /create-image</a>
+              <a href="/text-to-image" style={{ marginRight: '10px', padding: '5px 10px', background: '#0066cc', color: 'white', textDecoration: 'none' }}>Test /text-to-image</a>
+              <a href="/create-image" style={{ marginRight: '10px', padding: '5px 10px', background: '#00aa00', color: 'white', textDecoration: 'none' }}>Test /create-image</a>
+              <a href="/test-simple" style={{ padding: '5px 10px', background: '#aa0000', color: 'white', textDecoration: 'none' }}>Test /test-simple</a>
             </div>
           </div>
         )} />
