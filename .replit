@@ -40,7 +40,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Build and Start"
+runButton = "Clean Start"
 
 [[workflows.workflow]]
 name = "Run"
@@ -120,3 +120,16 @@ args = "cd client && npm run build"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "PORT=5000 NODE_ENV=development tsx server/index.ts"
+
+[[workflows.workflow]]
+name = "Clean Start"
+author = 41870681
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=3001 NODE_ENV=development tsx server/index.ts"
