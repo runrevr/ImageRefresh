@@ -137,7 +137,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
         image: imageFile,
         prompt: prompt,
         size: size,
-        n: 1
+        n: 1,
+        moderation: "low"
       });
 
       console.log(`[OpenAI] API Response received successfully`);
