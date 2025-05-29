@@ -270,36 +270,20 @@ function Router() {
 }
 
 function App() {
-  // Add debug logging to see if App is rendering
   console.log("🚀 App component is rendering");
 
-  // Set dark mode based on user's preference
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    // Check for user preference
-    const isDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (isDark) {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            {/* Generate and store device fingerprint */}
-            <DeviceFingerprint />
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <div style={{
+      padding: '50px',
+      backgroundColor: 'red',
+      color: 'white',
+      fontSize: '24px',
+      minHeight: '100vh'
+    }}>
+      <h1>MINIMAL TEST - App Working</h1>
+      <p>If you see this, React is working</p>
+      <p>Time: {new Date().toLocaleTimeString()}</p>
+    </div>
   );
 }
 
