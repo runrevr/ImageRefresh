@@ -590,7 +590,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
   });
 
   // Add a new endpoint for coloring book transformations
-  app.post("/api/coloring-book", async (req, res) => {
+  app.post("/api/product-enhancement/coloring-book", async (req, res) => {
     try {
       console.log(
         "\n\n====================== COLORING BOOK TRANSFORMATION ======================",
