@@ -6,11 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
 
-// Initialize OpenAI client with API key
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 // OpenAI API allowed sizes - these are the only sizes OpenAI accepts
 const openaiAllowedSizes = ["1024x1024", "1536x1024", "1024x1536"];
 
@@ -69,6 +64,11 @@ export async function transformImage(
 }> {
   try {
     console.log(`[OpenAI] Processing image transformation with prompt: ${prompt}`);
+    
+    // Initialize OpenAI client with API key
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
     
     // Map user-requested size to OpenAI-compatible size
     const userSize = size;
