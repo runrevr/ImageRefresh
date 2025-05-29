@@ -44,7 +44,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Full Stack Dev"
+runButton = "Frontend Dev Only"
 
 [[workflows.workflow]]
 name = "Run"
@@ -149,6 +149,15 @@ args = "PORT=5000 NODE_ENV=development tsx server/index.ts"
 
 [[workflows.workflow]]
 name = "Frontend Only Debug"
+author = 41870681
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
+
+[[workflows.workflow]]
+name = "Frontend Dev Only"
 author = 41870681
 mode = "sequential"
 
