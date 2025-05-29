@@ -47,6 +47,9 @@ import ViewTransformation from "@/pages/view-transformation";
 import TextToImageResults from "@/pages/text-to-image-results";
 import CheckoutDemo from "@/pages/checkout-demo";
 import CheckoutFlowDemo from "@/pages/checkout-flow-demo";
+import PrebuiltPrompts from "./pages/prebuilt-prompts";
+import PrebuiltUpload from "./pages/prebuilt-upload";
+import PrebuiltResults from "./pages/prebuilt-results";
 
 function Router() {
   return (
@@ -104,6 +107,9 @@ function Router() {
         <Route path="/text-to-image-results" component={TextToImageResults} />
         <Route path="/checkout-demo" component={CheckoutDemo} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemo} />
+        <Route path="/prebuilt-prompts" component={PrebuiltPrompts} />
+        <Route path="/prebuilt-upload" component={PrebuiltUpload} />
+        <Route path="/prebuilt-results" component={PrebuiltResults} />
         <Route component={NotFound} />
       </Switch>
     </>

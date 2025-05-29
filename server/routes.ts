@@ -944,8 +944,27 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
     }
   });
 
+  // Prebuilt prompts endpoints
+  const uploadsDir = path.join(process.cwd(), "uploads");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  const expressApp = express();
+  expressApp.use(express.json({ limit: '10mb' }));
+  expressApp.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // Serve uploaded files
+  expressApp.use('/uploads', express.static(uploadsDir));
+
+  // Prebuilt prompts endpoints
+  expressApp.get('/api/prebuilt-prompts', getPrebuiltPrompts);
+  expressApp.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
+
+  // Serve uploaded files
+  expressApp.use('/uploads', express.static(uploadsDir));
+
   // Create HTTP server
-  const httpServer = createServer(app);
+  const httpServer = createServer(expressApp);
   console.log("Server created and routes registered successfully");
   return httpServer;
 }

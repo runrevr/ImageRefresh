@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useNavigate } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import ImageUploader from "@/components/ImageUploader";
@@ -104,6 +104,7 @@ export default function Home() {
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] =
     useState<boolean>(false); // Track if user has already tried another prompt
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Fetch user credits and OpenAI configuration on component mount
   useEffect(() => {
@@ -389,7 +390,7 @@ export default function Home() {
             return {
               totalCredits: creditsData.totalCredits || creditsData.credits || 0,
               paidCredits: creditsData.paidCredits || 0,
-              freeCreditsUsed: creditsData.freeCreditsUsed || false
+              freeCreditsUsed: data.freeCreditsUsed || false
             };
           });
 
@@ -488,7 +489,7 @@ export default function Home() {
                       return {
                         totalCredits: creditsData.totalCredits || creditsData.credits || 0,
                         paidCredits: creditsData.paidCredits || 0,
-                        freeCreditsUsed: creditsData.freeCreditsUsed || false
+                        freeCreditsUsed: data.freeCreditsUsed || false
                       };
                     });
 
@@ -767,12 +768,12 @@ export default function Home() {
         );
         const creditsData = await creditsResponse.json();
         setUserCredits((prevUser) => {
-            return {
-              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
-              paidCredits: creditsData.paidCredits || 0,
-              freeCreditsUsed: creditsData.freeCreditsUsed || false
-            };
-          });
+          return {
+            totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+            paidCredits: creditsData.paidCredits || 0,
+            freeCreditsUsed: data.freeCreditsUsed || false
+          };
+        });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -895,12 +896,12 @@ export default function Home() {
         );
         const creditsData = await creditsResponse.json();
         setUserCredits((prevUser) => {
-            return {
-              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
-              paidCredits: creditsData.paidCredits || 0,
-              freeCreditsUsed: creditsData.freeCreditsUsed || false
-            };
-          });
+          return {
+            totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+            paidCredits: creditsData.paidCredits || 0,
+            freeCreditsUsed: data.freeCreditsUsed || false
+          };
+        });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -962,7 +963,7 @@ export default function Home() {
       return;
     }
 
-    // If the user has previously used the email collection feature, show account dialog
+    // If the user has previouslyused the email collection feature, show account dialog
     if (storedEmail) {
       setShowAccountNeededDialog(true);
     } else {
