@@ -15,7 +15,7 @@ export default function ProductImageLabPage() {
   const [, setLocation] = useLocation();
 
   const handleExplorePrompts = () => {
-    setLocation('/prebuilt-prompts');
+    window.location.href = '/prebuilt-prompts';
   };
 
   return (
