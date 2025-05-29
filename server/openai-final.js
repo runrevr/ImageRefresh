@@ -107,32 +107,20 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     // Ensure PNG image
     const optimizedImagePath = await optimizeImage(finalImagePath);
 
-    // Create the form
-    const form = new FormData();
-    form.append("model", "gpt-image-1");
-    form.append("prompt", prompt);
-    form.append("size", size);
-    form.append("n", "2"); // Request 2 images
-    form.append("image", fs.createReadStream(optimizedImagePath), {
-      filename: "image.png",
-      contentType: "image/png",
-    });
+    // Read image and convert to base64 for generations endpoint
+    const imageBuffer = fs.readFileSync(optimizedImagePath);
+    const base64Image = imageBuffer.toString('base64');
 
     try {
       console.log("[OpenAI] Sending request to OpenAI API");
 
-      const response = await axios.post(
-        "https://api.openai.com/v1/images/edits",
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-            ...form.getHeaders(),
-          },
-          maxContentLength: Infinity,
-          maxBodyLength: Infinity,
-        },
-      );
+      const response = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: prompt,
+        size: size,
+        n: 2, // Request 2 images
+        image: base64Image,
+      });
 
       console.log(`[OpenAI] API Response received successfully`);
 
@@ -148,11 +136,10 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
 
       if (
         response.data &&
-        response.data.data &&
-        Array.isArray(response.data.data)
+        Array.isArray(response.data)
       ) {
         console.log(
-          `[OpenAI] Received ${response.data.data.length} images from the API`,
+          `[OpenAI] Received ${response.data.length} images from the API`,
         );
 
         // Process each image in the response

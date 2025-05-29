@@ -67,43 +67,33 @@ export async function transformImage(
       throw new Error(`Original image not found: ${originalImagePath}`);
     }
 
-    // Use form data for the edit endpoint (required for GPT-image-01)
-    const FormData = require('form-data');
-    const form = new FormData();
-    
+    // Use OpenAI SDK for the generations endpoint with GPT-image-1
     const finalSize = mapToOpenAISize(requestedSize);
     console.log(`[OpenAI Service] Requested: ${requestedSize}, using: ${finalSize}`);
     
-    form.append('model', 'gpt-image-01');
-    form.append('prompt', prompt);
-    form.append('size', finalSize);
-    form.append('n', '1');
-    form.append('image', fs.createReadStream(originalImagePath));
-
-    // Make direct API call to OpenAI edit endpoint
-    const axios = require('axios');
-    const response = await axios.post(
-      'https://api.openai.com/v1/images/edits',
-      form,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          ...form.getHeaders(),
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-      }
-    );
+    // Read the original image and convert to base64
+    const imageBuffer = fs.readFileSync(originalImagePath);
+    const base64Image = imageBuffer.toString('base64');
+    
+    // Use the generations endpoint with GPT-image-1
+    const response = await openai.images.generate({
+      model: 'gpt-image-1',
+      prompt: prompt,
+      size: finalSize as "1024x1024" | "1536x1024" | "1024x1536",
+      n: 1,
+      // Include the reference image as base64
+      image: base64Image,
+    });
 
     // Process the API response
     console.log(`[OpenAI Service] API response received`);
     
-    if (!response.data || !response.data.data || response.data.data.length === 0) {
-      throw new Error("No image data returned from OpenAI edit endpoint");
+    if (!response.data || response.data.length === 0) {
+      throw new Error("No image data returned from OpenAI generations endpoint");
     }
 
     // Get the URL of the first transformed image
-    const transformedImageUrl = response.data.data[0]?.url;
+    const transformedImageUrl = response.data[0]?.url;
     
     if (!transformedImageUrl) {
       throw new Error("No transformed image URL returned from OpenAI");
