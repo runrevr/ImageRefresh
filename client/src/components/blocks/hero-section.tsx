@@ -64,7 +64,7 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps = {}) {
                                 Professional-quality product images in minutes, no design skills needed. Perfect for small business owners and entrepreneurs.
                             </p>
 
-                            <form action="" className="mt-12 mx-auto max-w-sm">
+                            <div className="mt-12 mx-auto max-w-sm">
                                 <div className="bg-background has-[input:focus]:ring-muted relative grid grid-cols-[1fr_auto] pr-1.5 items-center rounded-[1rem] border shadow shadow-zinc-950/5 has-[input:focus]:ring-2 lg:pr-0">
                                     <Mail className="pointer-events-none absolute inset-y-0 left-4 my-auto size-4" />
 
@@ -84,7 +84,7 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps = {}) {
                                         </RainbowButton>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
 
                             {/* Three horizontal cards section */}
                             <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-6">
