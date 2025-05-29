@@ -2,11 +2,17 @@
  * Final OpenAI GPT-Image-01 transformation implementation
  * Uses GPT-Image-1 model with the /v1/images/edits endpoint and multipart/form-data
  */
+import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import FormData from "form-data";
 import axios from "axios";
 import sharp from "sharp";
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Define allowed sizes for the OpenAI API
 const allowedSizes = ["1024x1024", "1536x1024", "1024x1536", "auto"];
@@ -114,12 +120,15 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
     try {
       console.log("[OpenAI] Sending request to OpenAI API");
 
-      const response = await openai.images.generate({
-        model: "gpt-image-1",
+        if (!openai) {
+          throw new Error("OpenAI client not initialized");
+        }
+
+        const response = await openai.images.edit({
+        image: fs.createReadStream(optimizedImagePath),
         prompt: prompt,
-        size: size,
-        n: 2, // Request 2 images
-        image: base64Image,
+        n: 2,
+        size: size
       });
 
       console.log(`[OpenAI] API Response received successfully`);
