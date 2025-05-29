@@ -528,9 +528,10 @@ export default function ResultView({
           </div>
         )}
 
-        {/* Coloring Book Option */}
-        {!coloringBookImage && (
-          <div className="mb-6">
+        {/* Navigation Buttons */}
+        <div className="flex flex-col space-y-4 mb-8">
+          {/* Coloring Book Option */}
+          {!coloringBookImage && (
             <RainbowButton
               className="w-full"
               onClick={handleColoringBookTransform}
@@ -551,27 +552,27 @@ export default function ResultView({
                 </>
               )}
             </RainbowButton>
+          )}
+          
+          {/* Back to Ideas and Start Fresh buttons */}
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <RainbowButton 
+              variant="outline" 
+              onClick={onTryAgain}
+              className="flex-1"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Ideas
+            </RainbowButton>
+            <RainbowButton 
+              variant="outline"
+              className="flex-1"
+              onClick={onNewImage}
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Start Fresh
+            </RainbowButton>
           </div>
-        )}
-
-        {/* Navigation Buttons */}
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-          <RainbowButton 
-            variant="outline" 
-            onClick={onTryAgain}
-            className="flex-1"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Ideas
-          </RainbowButton>
-          <RainbowButton 
-            variant="outline"
-            className="flex-1"
-            onClick={onNewImage}
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Start Fresh
-          </RainbowButton>
         </div>
 
         {/* Credits Display */}
