@@ -330,23 +330,9 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
         }
       }
 
-      // Create a fallback image (copy of original)
-      console.log("[OpenAI] Using fallback: copying original image");
-      const timestamp = Date.now();
-      const uploadsDir = path.join(process.cwd(), "uploads");
-
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-
-      const outputPath = path.join(uploadsDir, `transformed-${timestamp}.png`);
-      fs.copyFileSync(finalImagePath, outputPath);
-
-      return {
-        url: "fallback://local-image",
-        transformedPath: outputPath,
-        secondTransformedPath: null,
-      };
+      // Don't use fallback - throw the actual error so user knows what happened
+      console.error("[OpenAI] All transformation attempts failed");
+      throw new Error(`OpenAI API connection failed. Please try again in a moment. If the problem persists, OpenAI's service may be temporarily unavailable.`);
     }
   } catch (error) {
     console.error("[OpenAI] Error in transformation:", error.message);

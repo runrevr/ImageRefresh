@@ -505,10 +505,28 @@ router.post('/generate-enhancement', async (req, res) => {
       headers: error.response?.headers
     });
 
-    // Return the actual error from OpenAI like routes.ts
+    // Provide clear error messages for different failure types
+    let errorMessage = error.message;
+    let errorType = 'unknown';
+
+    if (error.message.includes('Connection error') || error.message.includes('connection failed')) {
+      errorMessage = 'Unable to connect to OpenAI. Please check your internet connection and try again.';
+      errorType = 'connection';
+    } else if (error.message.includes('safety system') || error.message.includes('content policy')) {
+      errorMessage = 'Your request was rejected by OpenAI\'s safety system. Please try a different prompt or image.';
+      errorType = 'safety';
+    } else if (error.response?.status === 429) {
+      errorMessage = 'OpenAI API rate limit exceeded. Please wait a moment and try again.';
+      errorType = 'rate_limit';
+    } else if (error.response?.status === 401) {
+      errorMessage = 'OpenAI API authentication failed. Please contact support.';
+      errorType = 'auth';
+    }
+
     res.status(500).json({
       success: false,
-      error: error.response?.data?.error?.message || error.message,
+      error: errorMessage,
+      error_type: errorType,
       details: error.response?.data
     });
   }
