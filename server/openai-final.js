@@ -10,9 +10,11 @@ import axios from "axios";
 import sharp from "sharp";
 import { toFile } from "openai";
 
-// Initialize OpenAI client
+// Initialize OpenAI client with timeout
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  timeout: 120000, // 2 minutes timeout
+  maxRetries: 2
 });
 
 // Define allowed sizes for the OpenAI API
