@@ -153,12 +153,16 @@ app.use("/api", uploadEnhanceRoutes);
 const server = createServer(app);
 
 // Setup Vite in development mode
-if (process.env.NODE_ENV !== "production") {
-  await setupVite(app, server);
+async function startServer() {
+  if (process.env.NODE_ENV !== "production") {
+    await setupVite(app, server);
+  }
+
+  server.listen(port, "0.0.0.0", () => {
+    console.log(`Server running at http://0.0.0.0:${port}`);
+    console.log(`OpenAI configured: ${!!process.env.OPENAI_API_KEY}`);
+    console.log(`Vite development server configured: ${process.env.NODE_ENV !== "production"}`);
+  });
 }
 
-server.listen(port, "0.0.0.0", () => {
-  console.log(`Server running at http://0.0.0.0:${port}`);
-  console.log(`OpenAI configured: ${!!process.env.OPENAI_API_KEY}`);
-  console.log(`Vite development server configured: ${process.env.NODE_ENV !== "production"}`);
-});
+startServer().catch(console.error);
