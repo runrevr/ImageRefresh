@@ -236,7 +236,7 @@ const StyleCard = ({
         saveStyle(savedStyle);
         onSelect(style);
         // Navigate to upload page
-        window.location.href = "/?showUpload=true";
+        window.location.href = "/upload";
       }}
     >
       <div className="relative w-full h-64 overflow-hidden">
@@ -276,7 +276,7 @@ const StyleCard = ({
       </CardHeader>
 
       <CardFooter className="flex justify-center p-3">
-        <Link href="/?showUpload=true" className="w-full" onClick={(e) => e.stopPropagation()}>
+        <Link href="/upload" className="w-full" onClick={(e) => e.stopPropagation()}>
           <Button
             className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
             onClick={(e) => {
