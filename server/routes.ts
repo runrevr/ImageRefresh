@@ -604,18 +604,38 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         return res.status(400).json({ message: "Image path is required" });
       }
 
-      // Determine full path to image
-      const fullImagePath = path.isAbsolute(imagePath)
-        ? imagePath
-        : path.join(process.cwd(), imagePath);
+      // Handle URL vs file path
+      let sourceImagePath;
+      const isUrl = imagePath.startsWith('http');
 
-      console.log(
-        `Processing coloring book transformation for image: ${fullImagePath}`,
-      );
+      if (isUrl) {
+        console.log(`Image is a URL, downloading first`);
+        // Download the image from the URL
+        try {
+          const tempFile = path.join(process.cwd(), 'temp', `coloring-downloaded-${Date.now()}.png`);
+          const tempDir = path.dirname(tempFile);
+          if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+          }
+
+          const imgResponse = await axios.get(imagePath, { responseType: 'arraybuffer' });
+          fs.writeFileSync(tempFile, Buffer.from(imgResponse.data));
+          sourceImagePath = tempFile;
+          console.log(`Downloaded image to ${sourceImagePath}`);
+        } catch (downloadError) {
+          console.error(`Error downloading image from URL: ${downloadError.message}`);
+          return res.status(404).json({ message: "Failed to download image from URL" });
+        }
+      } else {
+        // It's a regular file path
+        sourceImagePath = path.isAbsolute(imagePath) ? imagePath : path.join(process.cwd(), imagePath);
+      }
+
+      console.log(`Processing coloring book transformation for image: ${sourceImagePath}`);
       console.log(`User ID: ${userId || "Guest"}`);
 
       // Check if the image exists
-      if (!fs.existsSync(fullImagePath)) {
+      if (!fs.existsSync(sourceImagePath)) {
         return res.status(404).json({ message: "Image file not found" });
       }
 
@@ -668,19 +688,19 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         }
       }
 
-      // Import the OpenAI transformation function
-      const { transformToColoringBook } = await import("./openai");
+      // Use the updated coloring book service
+      const { createColoringBookImage } = await import("./coloring-book");
 
       // Transform the image to coloring book style
-      console.log("Calling OpenAI for coloring book transformation...");
-      const result = await transformToColoringBook(fullImagePath);
+      console.log("Calling GPT-image-01 for coloring book transformation...");
+      const result = await createColoringBookImage(sourceImagePath);
       console.log("Coloring book transformation completed successfully");
 
       // Get the server URL to construct full URLs for the images
       const baseUrl = req.protocol + "://" + req.get("host");
 
       // Create the transformed image URL - removing leading slash and prepending the server URL
-      const transformedImagePath = result.transformedPath
+      const transformedImagePath = result.outputPath
         .replace(process.cwd(), "")
         .replace(/^\//, "");
       const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
