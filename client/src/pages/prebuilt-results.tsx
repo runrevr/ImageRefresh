@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { Layout } from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -27,7 +27,7 @@ interface PrebuiltResults {
 }
 
 export default function PrebuiltResults() {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const [results, setResults] = useState<PrebuiltResults | null>(null);
   const [selectedVariation, setSelectedVariation] = useState<string | null>(null);
@@ -45,9 +45,9 @@ export default function PrebuiltResults() {
       }
     } else {
       // If no results, redirect back to prompts
-      navigate('/prebuilt-prompts');
+      setLocation('/prebuilt-prompts');
     }
-  }, [navigate]);
+  }, [setLocation]);
 
   const handleDownload = async (imageUrl: string, index?: number) => {
     try {
@@ -172,7 +172,7 @@ export default function PrebuiltResults() {
           <div className="flex items-center justify-between mb-8">
             <Button
               variant="ghost"
-              onClick={() => navigate('/prebuilt-upload')}
+              onClick={() => setLocation('/prebuilt-upload')}
               className="flex items-center"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -319,7 +319,7 @@ export default function PrebuiltResults() {
             
             <Button
               variant="outline"
-              onClick={() => navigate('/prebuilt-prompts')}
+              onClick={() => setLocation('/prebuilt-prompts')}
               className="px-6 py-3"
             >
               Try Another Prompt
@@ -327,7 +327,7 @@ export default function PrebuiltResults() {
             
             <Button
               variant="outline"
-              onClick={() => navigate('/')}
+              onClick={() => setLocation('/')}
               className="px-6 py-3"
             >
               <Home className="h-4 w-4 mr-2" />

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { Layout } from '../components/Layout';
 import ImageUploader from '../components/ImageUploader';
 import { Button } from '../components/ui/button';
@@ -20,7 +20,7 @@ interface PrebuiltPrompt {
 }
 
 export default function PrebuiltUpload() {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const [selectedPrompt, setSelectedPrompt] = useState<PrebuiltPrompt | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -34,9 +34,9 @@ export default function PrebuiltUpload() {
       setSelectedPrompt(JSON.parse(storedPrompt));
     } else {
       // If no prompt selected, redirect back to prompts page
-      navigate('/prebuilt-prompts');
+      setLocation('/prebuilt-prompts');
     }
-  }, [navigate]);
+  }, [setLocation]);
 
   const handleImageUploaded = (imagePath: string, imageUrl: string) => {
     console.log('Image uploaded for prebuilt prompt:', imagePath, imageUrl);
@@ -82,7 +82,7 @@ export default function PrebuiltUpload() {
           processingTime: data.processingTime
         }));
         
-        navigate('/prebuilt-results');
+        setLocation('/prebuilt-results');
       } else {
         throw new Error(data.message || 'Failed to generate variations');
       }
@@ -119,7 +119,7 @@ export default function PrebuiltUpload() {
           <div className="flex items-center mb-8">
             <Button
               variant="ghost"
-              onClick={() => navigate('/prebuilt-prompts')}
+              onClick={() => setLocation('/prebuilt-prompts')}
               className="mr-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

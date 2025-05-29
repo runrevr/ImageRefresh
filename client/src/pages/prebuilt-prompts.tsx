@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { Layout } from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -57,13 +57,13 @@ const PREBUILT_PROMPTS: PrebuiltPrompt[] = [
 ];
 
 export default function PrebuiltPrompts() {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const [selectedPrompt, setSelectedPrompt] = useState<PrebuiltPrompt | null>(null);
 
   const handleUsePrompt = (prompt: PrebuiltPrompt) => {
     // Store the selected prompt in sessionStorage to pass to the next step
     sessionStorage.setItem('selectedPrebuiltPrompt', JSON.stringify(prompt));
-    navigate('/prebuilt-upload');
+    setLocation('/prebuilt-upload');
   };
 
   const groupedPrompts = PREBUILT_PROMPTS.reduce((acc, prompt) => {
@@ -135,7 +135,7 @@ export default function PrebuiltPrompts() {
           <div className="text-center mt-16">
             <Button
               variant="outline"
-              onClick={() => navigate('/')}
+              onClick={() => setLocation('/')}
               className="px-8 py-3"
             >
               ← Back to Home
