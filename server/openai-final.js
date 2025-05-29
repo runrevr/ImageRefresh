@@ -8,6 +8,7 @@ import path from "path";
 import FormData from "form-data";
 import axios from "axios";
 import sharp from "sharp";
+import { toFile } from "openai";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -124,10 +125,16 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
           throw new Error("OpenAI client not initialized");
         }
 
-        // ✅ CORRECT - Create a read stream for the OpenAI SDK
+        // ✅ CORRECT - Use OpenAI's toFile helper to properly format the file
+        const imageFile = await toFile(
+          fs.createReadStream(optimizedImagePath),
+          'image.png',  // Provide a filename with extension
+          { type: 'image/png' }  // Explicitly set MIME type
+        );
+
         const response = await openai.images.edit({
         model: "gpt-image-1",
-        image: fs.createReadStream(optimizedImagePath),  // This sends the actual file data
+        image: imageFile,
         prompt: prompt,
         size: size,
         n: 1
