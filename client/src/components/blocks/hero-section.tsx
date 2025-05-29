@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { RainbowButton } from '@/components/ui/rainbow-button'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import { cn } from '@/lib/utils'
-import { Link } from 'wouter'
+import { Link, useLocation } from 'wouter'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
@@ -38,6 +38,12 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
+    const [, setLocation] = useLocation();
+
+    const handleExplorePrompts = () => {
+        setLocation('/prebuilt-prompts');
+    };
+
     return (
         <>
             <section>
@@ -175,7 +181,7 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                         {/* CTA Button */}
                                         <RainbowButton 
                                             className="mt-4 w-full"
-                                            onClick={() => window.location.href = '/prebuilt-prompts'}
+                                            onClick={handleExplorePrompts}
                                         >
                                             Explore Prompts
                                         </RainbowButton>
