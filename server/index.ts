@@ -278,29 +278,24 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      // Convert aspect ratio to image size
+      // Convert aspect ratio to image size (GPT-image-1 format)
       let size = '1024x1024'; // default square
       if (aspectRatio === 'wide') {
-        size = '1792x1024';
+        size = '1536x1024';
       } else if (aspectRatio === 'portrait') {
-        size = '1024x1792';
+        size = '1024x1536';
       }
 
-      // Generate the image
+      // Generate the image using GPT-image-1
       const response = await openai.images.generate({
-        model: "dall-e-3",
+        model: "gpt-image-1",
         prompt: prompt,
-        n: 1,
-        size: size as "1024x1024" | "1792x1024" | "1024x1792",
-        quality: "standard",
+        size: size as "1024x1024" | "1536x1024" | "1024x1536",
       });
 
-      const imageUrl = response.data[0].url;
-
-      // Download and save the image for persistent access
-      const imageResponse = await fetch(imageUrl);
-      const arrayBuffer = await imageResponse.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      // Get the base64 image data directly
+      const image_base64 = response.data[0].b64_json;
+      const buffer = Buffer.from(image_base64, "base64");
 
       // Save to uploads directory with timestamp
       const timestamp = Date.now();
