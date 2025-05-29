@@ -43,7 +43,7 @@ enum Step {
 }
 
 // Import transformation types from PromptInput
-import {
+import { 
   TransformationType,
   CartoonSubcategory,
   ProductSubcategory,
@@ -60,7 +60,7 @@ type UserCredits = {
 
 export default function Home() {
   // ALL HOOKS MUST BE AT THE TOP - This is the fix!
-  const { user: authUser, user } = useAuth();
+  const { user: authUser, user, logoutMutation } = useAuth();
   const { toast } = useToast();
 
   // All state declarations
@@ -70,9 +70,7 @@ export default function Home() {
     null,
   );
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
-  const [secondTransformedImage, setSecondTransformedImage] = useState<
-    string | null
-  >(null);
+  const [secondTransformedImage, setSecondTransformedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
 
   // Initialize local user state with data from auth
@@ -107,16 +105,16 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       fetch(`/api/credits/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           setUserCredits({
             totalCredits: data.totalCredits || data.credits || 0,
             paidCredits: data.paidCredits || 0,
-            freeCreditsUsed: data.freeCreditsUsed || false,
+            freeCreditsUsed: data.freeCreditsUsed || false
           });
         })
-        .catch((error) => {
-          console.error("Error fetching credits:", error);
+        .catch(error => {
+          console.error('Error fetching credits:', error);
         });
     }
   }, [user]);
@@ -129,11 +127,11 @@ export default function Home() {
       try {
         const response = await apiRequest("GET", `/api/credits/${authUser.id}`);
         const data = await response.json();
-        setUserCredits((prevState) => {
+        setUserCredits(prevState => {
           return {
             totalCredits: data.totalCredits || data.credits || 0,
             paidCredits: data.paidCredits || 0,
-            freeCreditsUsed: data.freeCreditsUsed || false,
+            freeCreditsUsed: data.freeCreditsUsed || false
           };
         });
       } catch (error) {
@@ -250,8 +248,7 @@ export default function Home() {
     if (!originalImagePath) {
       toast({
         title: "Image Upload Error",
-        description:
-          "No image path found. Please try uploading your image again.",
+        description: "No image path found. Please try uploading your image again.",
         variant: "destructive",
       });
       setCurrentStep(Step.Upload);
@@ -260,9 +257,7 @@ export default function Home() {
 
     // Log the full prompt for debugging
     const promptLength = promptText?.length || 0;
-    const promptPreview = promptText
-      ? promptText.substring(0, 50) + "..."
-      : "empty";
+    const promptPreview = promptText ? promptText.substring(0, 50) + "..." : "empty";
     console.log("Full prompt being sent:", promptText);
 
     setPrompt(promptText);
@@ -285,17 +280,13 @@ export default function Home() {
       });
 
       if (!originalImagePath) {
-        console.error(
-          "Missing originalImagePath. Upload may not have completed properly.",
-        );
+        console.error("Missing originalImagePath. Upload may not have completed properly.");
         throw new Error("Missing image path. Please upload an image again.");
       }
 
       if (!promptText || promptText.trim().length === 0) {
         console.error("Empty prompt text");
-        throw new Error(
-          "Missing prompt text. Please provide a description for the transformation.",
-        );
+        throw new Error("Missing prompt text. Please provide a description for the transformation.");
       }
 
       console.log("Processing image transformation...");
@@ -333,22 +324,19 @@ export default function Home() {
                 editsUsed: data.editsUsed || 0,
                 transformedImageUrl: data.transformedImageUrl,
                 secondTransformedImageUrl: data.secondTransformedImageUrl,
-                prompt: data.prompt,
+                prompt: data.prompt
               });
 
               setPrompt(data.prompt || promptText);
-            }
+
+            } 
             // Handle legacy response formats for backward compatibility
             else if (typeof data === "string") {
               img1 = data;
             } else if (data && typeof data.transformedImagePath === "string") {
-              img1 = data.transformedImagePath.startsWith("/")
-                ? data.transformedImagePath
-                : "/" + data.transformedImagePath;
+              img1 = data.transformedImagePath.startsWith("/") ? data.transformedImagePath : "/" + data.transformedImagePath;
               if (data.secondTransformedImagePath) {
-                img2 = data.secondTransformedImagePath.startsWith("/")
-                  ? data.secondTransformedImagePath
-                  : "/" + data.secondTransformedImagePath;
+                img2 = data.secondTransformedImagePath.startsWith("/") ? data.secondTransformedImagePath : "/" + data.secondTransformedImagePath;
               }
             } else if (data && Array.isArray(data.images)) {
               img1 = data.images[0]?.url || "";
@@ -369,14 +357,13 @@ export default function Home() {
                 editsUsed: data.editsUsed || 0,
                 transformedImageUrl: data.transformedImageUrl,
                 secondTransformedImageUrl: data.secondTransformedImageUrl,
-                prompt: data.prompt || promptText,
+                prompt: data.prompt || promptText
               });
             } else {
               console.error("Unable to extract image URLs from response");
               toast({
                 title: "Processing Issue",
-                description:
-                  "Unable to display the transformed image. Please try again.",
+                description: "Unable to display the transformed image. Please try again.",
                 variant: "destructive",
               });
             }
@@ -384,8 +371,7 @@ export default function Home() {
             console.error("Error extracting image URLs:", e, data);
             toast({
               title: "Processing Error",
-              description:
-                "There was an error processing the transformation result. Please try again.",
+              description: "There was an error processing the transformation result. Please try again.",
               variant: "destructive",
             });
           }
@@ -405,19 +391,15 @@ export default function Home() {
           const creditsData = await creditsResponse.json();
           setUserCredits((prevUser) => {
             return {
-              totalCredits:
-                creditsData.totalCredits || creditsData.credits || 0,
+              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
               paidCredits: creditsData.paidCredits || 0,
-              freeCreditsUsed: creditsData.freeCreditsUsed || false,
+              freeCreditsUsed: creditsData.freeCreditsUsed || false
             };
           });
 
           if (data.transformationId) {
             // Asynchronous response - we need to poll for the result
-            console.log(
-              "Transformation started, polling for status...",
-              data.transformationId,
-            );
+            console.log("Transformation started, polling for status...", data.transformationId);
 
             // Store the transformation ID for polling
             setCurrentTransformation({ id: data.transformationId });
@@ -434,20 +416,14 @@ export default function Home() {
               statusCheckAttempts++; // Track the number of status checks
 
               try {
-                console.log(
-                  "Checking transformation status...",
-                  data.transformationId,
-                );
+                console.log("Checking transformation status...", data.transformationId);
                 const statusResponse = await apiRequest(
-                  "GET",
-                  `/api/transformation/${data.transformationId}`,
+                  "GET", 
+                  `/api/transformation/${data.transformationId}`
                 );
 
                 if (!statusResponse.ok) {
-                  console.error(
-                    "Error checking transformation status:",
-                    statusResponse.status,
-                  );
+                  console.error("Error checking transformation status:", statusResponse.status);
                   throw new Error("Failed to check transformation status");
                 }
 
@@ -456,32 +432,23 @@ export default function Home() {
 
                 // Check for completion or available image paths
                 const hasCompletedStatus = statusData.status === "completed";
-                const hasTransformedImagePath =
-                  !!statusData.transformedImagePath;
+                const hasTransformedImagePath = !!statusData.transformedImagePath;
                 const hasTransformedImageUrl = !!statusData.transformedImageUrl;
 
-                if (
-                  (hasCompletedStatus || hasTransformedImagePath) &&
-                  (hasTransformedImageUrl || hasTransformedImagePath)
-                ) {
+                if ((hasCompletedStatus || hasTransformedImagePath) && 
+                    (hasTransformedImageUrl || hasTransformedImagePath)) {
                   console.log("Transformation completed:", statusData);
 
                   // Handle different API response formats
-                  const transformedUrl =
-                    statusData.transformedImageUrl ||
-                    (statusData.transformedImagePath
-                      ? `/${statusData.transformedImagePath}`
-                      : null);
+                  const transformedUrl = statusData.transformedImageUrl || 
+                    (statusData.transformedImagePath ? `/${statusData.transformedImagePath}` : null);
 
                   if (transformedUrl) {
                     setTransformedImage(transformedUrl);
 
                     // Set the second transformed image if it exists
-                    const secondUrl =
-                      statusData.secondTransformedImageUrl ||
-                      (statusData.secondTransformedImagePath
-                        ? `/${statusData.secondTransformedImagePath}`
-                        : null);
+                    const secondUrl = statusData.secondTransformedImageUrl || 
+                      (statusData.secondTransformedImagePath ? `/${statusData.secondTransformedImagePath}` : null);
 
                     if (secondUrl) {
                       console.log("Found second transformed image:", secondUrl);
@@ -498,29 +465,17 @@ export default function Home() {
                   }
 
                   // If we have a completed status but no URL, continue polling a few more times
-                  if (
-                    hasCompletedStatus &&
-                    !transformedUrl &&
-                    statusCheckAttempts < maxAttempts - 5
-                  ) {
-                    console.log(
-                      "Status is completed but no image URL yet, continuing to poll",
-                    );
+                  if (hasCompletedStatus && !transformedUrl && statusCheckAttempts < maxAttempts - 5) {
+                    console.log("Status is completed but no image URL yet, continuing to poll");
                     return false;
                   }
 
                   // If we're near the max attempts and still no URL, treat as failure
-                  if (
-                    !transformedUrl &&
-                    statusCheckAttempts >= maxAttempts - 5
-                  ) {
-                    console.error(
-                      "Transformation status is completed but no image URL available",
-                    );
+                  if (!transformedUrl && statusCheckAttempts >= maxAttempts - 5) {
+                    console.error("Transformation status is completed but no image URL available");
                     toast({
                       title: "Transformation error",
-                      description:
-                        "Unable to retrieve the transformed image. Please try again.",
+                      description: "Unable to retrieve the transformed image. Please try again.",
                       variant: "destructive",
                     });
                     setCurrentStep(Step.Prompt);
@@ -534,22 +489,19 @@ export default function Home() {
                   );
                   const creditsData = await creditsResponse.json();
                   setUserCredits((prevUser) => {
-                    return {
-                      totalCredits:
-                        creditsData.totalCredits || creditsData.credits || 0,
-                      paidCredits: creditsData.paidCredits || 0,
-                      freeCreditsUsed: creditsData.freeCreditsUsed || false,
-                    };
-                  });
+                      return {
+                        totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+                        paidCredits: creditsData.paidCredits || 0,
+                        freeCreditsUsed: creditsData.freeCreditsUsed || false
+                      };
+                    });
 
                   return true; // polling complete
                 } else if (statusData.status === "failed") {
                   console.error("Transformation failed:", statusData);
                   toast({
                     title: "Transformation failed",
-                    description:
-                      statusData.message ||
-                      "The image transformation failed. Please try again.",
+                    description: statusData.message || "The image transformation failed. Please try again.",
                     variant: "destructive",
                   });
                   setCurrentStep(Step.Prompt);
@@ -561,8 +513,7 @@ export default function Home() {
                 console.error("Error polling transformation status:", error);
                 toast({
                   title: "Error checking status",
-                  description:
-                    "There was a problem checking your transformation status. Please try again.",
+                  description: "There was a problem checking your transformation status. Please try again.",
                   variant: "destructive",
                 });
                 setCurrentStep(Step.Prompt);
@@ -587,31 +538,21 @@ export default function Home() {
                     if (data.transformationId) {
                       // Save to localStorage for retrieval later
                       try {
-                        const pendingTransformations = JSON.parse(
-                          localStorage.getItem("pendingTransformations") ||
-                            "[]",
-                        );
+                        const pendingTransformations = JSON.parse(localStorage.getItem('pendingTransformations') || '[]');
                         pendingTransformations.push({
                           id: data.transformationId,
                           timestamp: new Date().toISOString(),
-                          prompt: promptText?.substring(0, 100) + "...",
+                          prompt: promptText?.substring(0, 100) + '...'
                         });
-                        localStorage.setItem(
-                          "pendingTransformations",
-                          JSON.stringify(pendingTransformations),
-                        );
+                        localStorage.setItem('pendingTransformations', JSON.stringify(pendingTransformations));
                       } catch (e) {
-                        console.error(
-                          "Error storing pending transformation",
-                          e,
-                        );
+                        console.error("Error storing pending transformation", e);
                       }
                     }
 
                     toast({
                       title: "Transformation in progress",
-                      description:
-                        "Your transformation is still processing. You can check your account page later to see the results.",
+                      description: "Your transformation is still processing. You can check your account page later to see the results.",
                     });
                     setCurrentStep(Step.Prompt);
                   }
@@ -624,7 +565,7 @@ export default function Home() {
             }, pollInterval);
 
             // Initial check (don't wait for first interval)
-            checkStatus().catch((error) => {
+            checkStatus().catch(error => {
               console.error("Error in initial status check:", error);
             });
           } else if (data.transformedImageUrl) {
@@ -642,7 +583,7 @@ export default function Home() {
               editsUsed: data.editsUsed || 0,
               transformedImageUrl: data.transformedImageUrl,
               secondTransformedImageUrl: data.secondTransformedImageUrl,
-              prompt: data.prompt,
+              prompt: data.prompt
             });
 
             setCurrentStep(Step.Result);
@@ -651,17 +592,14 @@ export default function Home() {
             console.error("Missing required data in server response");
             toast({
               title: "Missing Data",
-              description:
-                "The server response is missing required information. Please try again.",
+              description: "The server response is missing required information. Please try again.",
               variant: "destructive",
             });
             setCurrentStep(Step.Prompt);
           }
         } catch (jsonError) {
           // If JSON parsing fails, it might be an image
-          console.warn(
-            "Failed to parse response as JSON, attempting to use as image URL",
-          );
+          console.warn("Failed to parse response as JSON, attempting to use as image URL");
           // Assuming the response is the image URL
           setTransformedImage(response.url); // Use the URL directly
           setCurrentStep(Step.Result);
@@ -682,9 +620,7 @@ export default function Home() {
           } else {
             toast({
               title: "Transformation failed",
-              description:
-                data.message ||
-                "An unknown error occurred during transformation",
+              description: data.message || "An unknown error occurred during transformation",
               variant: "destructive",
             });
           }
@@ -835,12 +771,12 @@ export default function Home() {
         );
         const creditsData = await creditsResponse.json();
         setUserCredits((prevUser) => {
-          return {
-            totalCredits: creditsData.totalCredits || creditsData.credits || 0,
-            paidCredits: creditsData.paidCredits || 0,
-            freeCreditsUsed: creditsData.freeCreditsUsed || false,
-          };
-        });
+            return {
+              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+              paidCredits: creditsData.paidCredits || 0,
+              freeCreditsUsed: creditsData.freeCreditsUsed || false
+            };
+          });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -920,9 +856,7 @@ export default function Home() {
 
       // Validate image path is not empty
       if (!originalImagePath) {
-        throw new Error(
-          "Image path is missing. Please try uploading the image again.",
-        );
+        throw new Error("Image path is missing. Please try uploading the image again.");
       }
 
       const requestData = {
@@ -943,9 +877,7 @@ export default function Home() {
           setTransformedImage(data.transformedImageUrl);
         } else {
           console.error("Missing transformedImageUrl in server response");
-          throw new Error(
-            "Failed to get transformed image URL from server response",
-          );
+          throw new Error("Failed to get transformed image URL from server response");
         }
 
         // Handle the second transformed image if it exists
@@ -967,12 +899,12 @@ export default function Home() {
         );
         const creditsData = await creditsResponse.json();
         setUserCredits((prevUser) => {
-          return {
-            totalCredits: creditsData.totalCredits || creditsData.credits || 0,
-            paidCredits: creditsData.paidCredits || 0,
-            freeCreditsUsed: creditsData.freeCreditsUsed || false,
-          };
-        });
+            return {
+              totalCredits: creditsData.totalCredits || creditsData.credits || 0,
+              paidCredits: creditsData.paidCredits || 0,
+              freeCreditsUsed: creditsData.freeCreditsUsed || false
+            };
+          });
       } else {
         // Check for specific error types
         if (data.error === "content_safety") {
@@ -1063,7 +995,7 @@ export default function Home() {
         remainingCredits={userCredits?.paidCredits || 0}
       />
 
-      <main className="relative w-full" style={{ paddingTop: "4rem" }}>
+      <main className="relative w-full" style={{ paddingTop: '4rem' }}>
         {/* Hero Section - Carousel Style */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>
@@ -1084,9 +1016,8 @@ export default function Home() {
                 {/* Left side image (30%) */}
                 <div className="w-full md:w-[30%] mb-8 md:mb-0">
                   <div className="relative rounded-xl overflow-hidden shadow-lg">
-                    <img
-                      src={trumpMulletImage}
-                      alt="Mullet Transformation Example"
+                    <img                      src={trumpMulletImage} 
+                      alt="Mullet Transformation Example" 
                       className="w-full h-auto"
                     />
                     <div className="absolute top-3 right-3 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -1104,12 +1035,7 @@ export default function Home() {
                     Transform Anyone Into a Mullet Legend - Free & New!
                   </h3>
                   <p className="text-gray-700 mb-6 leading-relaxed">
-                    Wonder how you or your friends would rock the iconic mullet?
-                    Upload any photo to instantly see magnificent "business in
-                    front, party in back" transformations! Our free new feature
-                    preserves natural hair color while adding perfect
-                    rock-and-roll attitude. Try it now and discover the mullet
-                    you were born to wear!
+                    Wonder how you or your friends would rock the iconic mullet? Upload any photo to instantly see magnificent "business in front, party in back" transformations! Our free new feature preserves natural hair color while adding perfect rock-and-roll attitude. Try it now and discover the mullet you were born to wear!
                   </p>
                   <Button
                     className="bg-[#2A7B99B] hover:bg-[#1d5a73] text-white font-bold text-base px-6 py-3"
@@ -1117,12 +1043,10 @@ export default function Home() {
                       // If user is logged in, skip email check
                       if (userCredits?.totalCredits) {
                         setShowUploadForm(true);
-                        scrollToUploader(); // Set transformation to mullet
+                        scrollToUploader();                        // Set transformation to mullet
                         setSelectedTransformation("other");
                         // Set prompt for mullets
-                        setPrompt(
-                          "Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.",
-                        );
+                        setPrompt("Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.");
                       } else if (storedEmail) {
                         setShowAccountNeededDialog(true);
                       } else {
@@ -1131,9 +1055,7 @@ export default function Home() {
                         // Set transformation to mullet
                         setSelectedTransformation("other");
                         // Set prompt for mullets
-                        setPrompt(
-                          "Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.",
-                        );
+                        setPrompt("Transform this person's hairstyle into an iconic mullet while preserving their natural hair color, facial features, and identity.");
                       }
                     }}
                   >
@@ -1155,11 +1077,7 @@ export default function Home() {
                     No 80's Pics? No Problem - Turn Back The Clock
                   </h3>
                   <p className="text-gray-200 mb-6 leading-relaxed">
-                    Did you crush it in the 80's but don't have a picture to
-                    prove to your kids you were hip? Well now you do! Upload any
-                    photo and watch as we transform you with big hair, neon
-                    colors, and all that awesome 80's style. Time to relive the
-                    glory days – totally free!
+                    Did you crush it in the 80's but don't have a picture to prove to your kids you were hip? Well now you do! Upload any photo and watch as we transform you with big hair, neon colors, and all that awesome 80's style. Time to relive the glory days – totally free!
                   </p>
                   <Button
                     className="bg-[#FF7B54] hover:bg-[#e56c49] text-white font-bold text-base px-6 py-3"
@@ -1171,9 +1089,7 @@ export default function Home() {
                         // Set transformation to 80s style
                         setSelectedTransformation("historical");
                         // Set prompt for 80s style
-                        setPrompt(
-                          "Transform this photo into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the person's identity.",
-                        );
+                        setPrompt("Transform this photo into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the person's identity.");
                       } else if (storedEmail) {
                         setShowAccountNeededDialog(true);
                       } else {
@@ -1182,9 +1098,7 @@ export default function Home() {
                         // Set transformation to 80s style
                         setSelectedTransformation("historical");
                         // Set prompt for 80s style
-                        setPrompt(
-                          "Transform this photo into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the person's identity.",
-                        );
+                        setPrompt("Transform this photo into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the person's identity.");
                       }
                     }}
                   >
@@ -1195,9 +1109,9 @@ export default function Home() {
                 {/* Right side image (30%) */}
                 <div className="w-full md:w-[30%] mb-8 md:mb-0 order-1 md:order-2">
                   <div className="relative rounded-xl overflow-hidden shadow-lg">
-                    <img
-                      src={eightyStyleImage}
-                      alt="80s Style Transformation Example"
+                    <img 
+                      src={eightyStyleImage} 
+                      alt="80s Style Transformation Example" 
                       className="w-full h-auto"
                     />
                     <div className="absolute top-3 right-3 bg-[#FF7B54] text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -1217,13 +1131,11 @@ export default function Home() {
                     Turn Children's Drawings Into Magical Reality
                   </h2>
                   <h3 className="text-xl text-[#2A7B9B] font-semibold mb-4">
-                    Watch Kids' Imaginations Come to Life - Makes a Perfect
-                    Gift!
+                    Watch Kids' Imaginations Come to Life - Makes a Perfect Gift!
                   </h3>
                   <p className="text-gray-700 mb-6 max-w-3xl mx-auto">
-                    Transform your child's artwork into stunning, realistic
-                    images they'll treasure forever. Our AI brings imagination
-                    to life - from beloved pets to magical creatures.
+                    Transform your child's artwork into stunning, realistic images they'll treasure forever. 
+                    Our AI brings imagination to life - from beloved pets to magical creatures.
                   </p>
                 </div>
 
@@ -1232,16 +1144,16 @@ export default function Home() {
                   {/* Column 1: Bear */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={bearDrawingImage}
-                        alt="Child's Drawing of a Bear"
+                      <img 
+                        src={bearDrawingImage} 
+                        alt="Child's Drawing of a Bear" 
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={bearRealImage}
-                        alt="AI Transformed Bear Drawing"
+                      <img 
+                        src={bearRealImage} 
+                        alt="AI Transformed Bear Drawing" 
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -1250,16 +1162,16 @@ export default function Home() {
                   {/* Column 2: Giraffe */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={giraffeDrawingImage}
-                        alt="Child's Drawing of a Giraffe"
+                      <img 
+                        src={giraffeDrawingImage} 
+                        alt="Child's Drawing of a Giraffe" 
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={giraffeRealImage}
-                        alt="AI Transformed Giraffe Drawing"
+                      <img 
+                        src={giraffeRealImage} 
+                        alt="AI Transformed Giraffe Drawing" 
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -1268,16 +1180,16 @@ export default function Home() {
                   {/* Column 3: Dog and Cat */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={dogCatDrawingImage}
-                        alt="Child's Drawing of a Dog and Cat"
+                      <img 
+                        src={dogCatDrawingImage} 
+                        alt="Child's Drawing of a Dog and Cat" 
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={dogCatRealImage}
-                        alt="AI Transformed Dog and Cat Drawing"
+                      <img 
+                        src={dogCatRealImage} 
+                        alt="AI Transformed Dog and Cat Drawing" 
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -1286,16 +1198,16 @@ export default function Home() {
                   {/* Column 4: Alicorn */}
                   <div className="flex flex-col space-y-2">
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={alicornDrawingImage}
-                        alt="Child's Drawing of an Alicorn"
+                      <img 
+                        src={alicornDrawingImage} 
+                        alt="Child's Drawing of an Alicorn" 
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="relative rounded-lg overflow-hidden aspect-square bg-gray-100">
-                      <img
-                        src={alicornRealImage}
-                        alt="AI Transformed Alicorn Drawing"
+                      <img 
+                        src={alicornRealImage} 
+                        alt="AI Transformed Alicorn Drawing" 
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -1313,8 +1225,7 @@ export default function Home() {
                     EXPLORE KIDS DRAWING TRANSFORMATIONS
                   </Button>
                   <p className="text-sm text-gray-500 mt-3">
-                    Perfect for gifts, keepsakes, and fostering children's
-                    creativity!
+                    Perfect for gifts, keepsakes, and fostering children's creativity!
                   </p>
                 </div>
               </div>
@@ -1506,9 +1417,7 @@ export default function Home() {
                   Upload Your Photo
                 </h2>
                 <p className="text-red-500 font-medium mb-4 text-center">
-                  Not all images with children in them will work with all
-                  prompts. AI is very strict about editing kids images (for good
-                  reason).
+                  Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
                 </p>
                 <ImageUploader onImageUploaded={handleUpload} />
                 <div className="mt-4 text-center">
@@ -1528,9 +1437,7 @@ export default function Home() {
                 originalImage={originalImage}
                 onSubmit={handlePromptSubmit}
                 onBack={handleNewImage}
-                selectedTransformation={
-                  selectedTransformation as TransformationType | null
-                }
+                selectedTransformation={selectedTransformation as TransformationType | null}
                 defaultPrompt={prompt} // Pass the prompt (which may contain savedStyle.prompt)
                 savedStyle={savedStyle} // Pass the saved style with category and title
               />

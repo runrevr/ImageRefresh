@@ -176,15 +176,3 @@ export function useAuth() {
   }
   return context;
 }
-export function useAuth() {
-  console.log("🔴 useAuth hook called at:", new Error().stack);
-
-  const context = useContext(AuthContext);
-  if (!context) {
-    console.error("❌ AuthContext is null!");
-    console.error("Stack trace:", new Error().stack);
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  console.log("✅ useAuth context found");
-  return context;
-}
