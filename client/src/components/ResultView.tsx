@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { Badge } from '@/components/ui/badge';
-import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, Check, BookOpen, Loader2 } from 'lucide-react';
+import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, Check, BookOpen, Loader2, RefreshCw, Share2, ZoomIn, ArrowLeft, RotateCcw } from 'lucide-react';
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
 import EmailCollectionDialog from './EmailCollectionDialog';
@@ -50,6 +51,17 @@ export default function ResultView({
   // State for coloring book transformation
   const [isColoringBookLoading, setIsColoringBookLoading] = useState(false);
   const [coloringBookImage, setColoringBookImage] = useState<string | null>(null);
+  
+  // State for regeneration
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  
+  // State for edit prompt
+  const [showEditPrompt, setShowEditPrompt] = useState(false);
+  const [editPromptText, setEditPromptText] = useState('');
+  
+  // State for full view
+  const [fullViewImage, setFullViewImage] = useState<string | null>(null);
+  
   const { toast } = useToast();
 
   // Set initial selected image when component loads or when images change
@@ -88,7 +100,9 @@ export default function ResultView({
   };
 
   // Function to handle downloading the selected image
-  const handleDownload = () => {
+  const handleDownload = (imageUrl?: string) => {
+    const imageToDownload = imageUrl || selectedImage;
+    
     // If user is not logged in and email hasn't been collected, show email dialog
     if (isGuest && !emailAlreadyCollected) {
       setActionRequiringEmail('download');
@@ -97,7 +111,96 @@ export default function ResultView({
     }
 
     // Otherwise proceed with download of the selected image
-    downloadImage(selectedImage, getFilenameFromPath(selectedImage));
+    downloadImage(imageToDownload, getFilenameFromPath(imageToDownload));
+  };
+
+  // Function to handle regeneration (same prompt, no credit)
+  const handleRegenerate = async (imageUrl: string) => {
+    setIsRegenerating(true);
+    try {
+      // Call the transform API with the same prompt
+      const response = await apiRequest("POST", "/api/transform", {
+        originalImagePath: originalImage,
+        prompt: prompt,
+        userId: effectiveUserId,
+        isRegeneration: true // Flag to indicate this is a regeneration
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to regenerate image");
+      }
+
+      const data = await response.json();
+      // Update the transformed image with the new result
+      setSelectedImage(data.transformedImageUrl);
+      
+      toast({
+        title: "Image Regenerated!",
+        description: "Your image has been regenerated with the same prompt.",
+      });
+    } catch (error: any) {
+      console.error("Error regenerating image:", error);
+      toast({
+        title: "Regeneration Failed",
+        description: error.message || "Failed to regenerate image. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
+  // Function to handle sharing
+  const handleShare = async (imageUrl: string) => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Check out my transformed image!',
+          url: imageUrl
+        });
+      } else {
+        // Fallback: copy URL to clipboard
+        await navigator.clipboard.writeText(imageUrl);
+        toast({
+          title: "Link Copied!",
+          description: "Image link has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast({
+        title: "Share Failed",
+        description: "Failed to share image. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Function to handle edit prompt submission
+  const handleEditPromptSubmit = async () => {
+    if (!editPromptText.trim()) {
+      toast({
+        title: "Edit Prompt Required",
+        description: "Please enter a description of the changes you want to make.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // If user is not logged in and email hasn't been collected, show email dialog
+    if (isGuest && !emailAlreadyCollected) {
+      setActionRequiringEmail('edit');
+      setShowEmailDialog(true);
+      return;
+    }
+
+    if (onEditImage) {
+      // Pass the edit prompt to the parent component
+      onEditImage(selectedImage);
+    }
+    
+    setShowEditPrompt(false);
+    setEditPromptText('');
   };
 
   // Function to handle coloring book transformation
@@ -185,6 +288,37 @@ export default function ResultView({
     }
   };
 
+  // Icon button component
+  const IconButton = ({ 
+    icon: Icon, 
+    label, 
+    onClick, 
+    disabled = false,
+    loading = false 
+  }: { 
+    icon: any, 
+    label: string, 
+    onClick: () => void, 
+    disabled?: boolean,
+    loading?: boolean 
+  }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled || loading}
+      className="group flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      title={label}
+    >
+      {loading ? (
+        <Loader2 className="h-5 w-5 text-gray-600 animate-spin" />
+      ) : (
+        <Icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+      )}
+      <span className="text-xs text-gray-600 group-hover:text-blue-600 transition-colors mt-1">
+        {label}
+      </span>
+    </button>
+  );
+
   return (
     <div className="p-8">
       {/* Email collection dialog */}
@@ -195,12 +329,28 @@ export default function ResultView({
         userId={effectiveUserId}
       />
 
-      <div className="w-full max-w-3xl mx-auto">
+      {/* Full view modal */}
+      {fullViewImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+          onClick={() => setFullViewImage(null)}
+        >
+          <div className="max-w-full max-h-full p-4">
+            <img 
+              src={fullViewImage} 
+              alt="Full view" 
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="w-full max-w-6xl mx-auto">
         {/* Transformation Complete Message */}
         <div className="text-center mb-6">
           <p className="text-xl font-medium mb-2">Transformation Complete!</p>
           <p className="text-gray-600">
-            Select one of the images below for download or editing.
+            Click on an image to select it, then use the action buttons below.
           </p>
           {editsUsed > 0 && (
             <div className="mt-1 text-sm">
@@ -211,193 +361,176 @@ export default function ResultView({
           )}
         </div>
 
-        {/* Side-by-side image display */}
-        <div className={`grid grid-cols-1 gap-4 mb-6 ${secondTransformedImage ? (coloringBookImage ? 'md:grid-cols-3' : 'md:grid-cols-2') : (coloringBookImage ? 'md:grid-cols-2' : 'md:grid-cols-1')}`}>
-          {/* First transformed image */}
-          <div 
-            className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === transformedImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
-            onClick={() => {
-              setSelectedImage(transformedImage);
-              saveImageSelection(transformedImage);
-            }}
-          >
-            <div className="aspect-w-1 aspect-h-1 relative">
-              {transformedImage && typeof transformedImage === 'string' ? (
-                <img 
-                  src={transformedImage} 
-                  alt="Transformed image option 1" 
-                  className="object-cover w-full h-full"
-                  onError={(e) => {
-                    console.error('Error loading transformed image:', transformedImage);
-                    // Log detailed error information to help debug path issues
-                    console.error('Image path format:', {
-                      path: transformedImage,
-                      containsApiTransform: transformedImage.includes('/api/transform'),
-                      startsWithUploads: transformedImage.startsWith('/uploads/'),
-                      startsWithSlash: transformedImage.startsWith('/')
-                    });
-                    e.currentTarget.src = originalImage; // Fallback to original image
-                  }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                  <p className="text-gray-500">Loading transformed image...</p>
-                </div>
-              )}
-              {selectedImage === transformedImage && (
-                <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
-                  <Check className="h-4 w-4" />
-                </div>
-              )}
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
-              <p className="text-sm font-medium">Option 1</p>
-            </div>
-          </div>
-
-          {/* Second transformed image (if available) */}
-          {secondTransformedImage && (
-            <div 
-              className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === secondTransformedImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
-              onClick={() => {
-                setSelectedImage(secondTransformedImage);
-                saveImageSelection(secondTransformedImage);
-              }}
-            >
-              <div className="aspect-w-1 aspect-h-1 relative">
-                {typeof secondTransformedImage === 'string' && (
-                  <img 
-                    src={secondTransformedImage} 
-                    alt="Transformed image option 2" 
-                    className="object-cover w-full h-full" 
-                  />
-                )}
-                {selectedImage === secondTransformedImage && (
-                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
-                    <Check className="h-4 w-4" />
-                  </div>
-                )}
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
-                <p className="text-sm font-medium">Option 2</p>
-              </div>
-            </div>
-          )}
-
-          {/* Coloring book image (if available) */}
-          {coloringBookImage && (
-            <div 
-              className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === coloringBookImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
-              onClick={() => {
-                setSelectedImage(coloringBookImage);
-                saveImageSelection(coloringBookImage);
-              }}
-            >
-              <div className="aspect-w-1 aspect-h-1 relative">
-                <img 
-                  src={coloringBookImage} 
-                  alt="Coloring book style" 
-                  className="object-cover w-full h-full" 
-                />
-                {selectedImage === coloringBookImage && (
-                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
-                    <Check className="h-4 w-4" />
-                  </div>
-                )}
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
-                <p className="text-sm font-medium">{secondTransformedImage ? 'Option 3' : 'Option 2'}</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <p className="text-center text-gray-500 text-sm mb-6">
-          <span className="inline-flex items-center">
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            Click on an image to select it for download or editing
-          </span>
-        </p>
-
-        {/* Transformation completed message - replaced the original prompt display */}
-        <div className="p-4 rounded-lg mb-8 border border-gray-200">
-          <div className="flex items-start">
-            <ImageIcon className="text-gray-700 h-5 w-5 mt-1 mr-3 flex-shrink-0" />
-            <div className="w-full">
-              <div className="flex justify-between items-center mb-1">
-                <h3 className="text-gray-700 font-medium">Ready for edits:</h3>
-              </div>
-              <div>
-                <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  Your image has been transformed successfully. Click the "Edit This Image" button below to make changes.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* First row: Edit and Download */}
-        <div className="flex flex-col space-y-4">
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            {canEdit && onEditImage && (
-              <RainbowButton
-                className="flex-1"
+        {/* Image Grid - Above the Fold */}
+        <div className="mb-8">
+          <div className={`grid gap-6 ${secondTransformedImage || coloringBookImage ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+            {/* First transformed image */}
+            <div className="space-y-4">
+              <div 
+                className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === transformedImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
                 onClick={() => {
-                  // If user is not logged in and email hasn't been collected, show email dialog
-                  if (isGuest && !emailAlreadyCollected) {
-                    setActionRequiringEmail('edit');
-                    setShowEmailDialog(true);
-                    return;
-                  }
-
-                  // Otherwise, proceed with edit passing the selected image
-                  if (onEditImage) {
-                    onEditImage(selectedImage);
-                  }
+                  setSelectedImage(transformedImage);
+                  saveImageSelection(transformedImage);
                 }}
-                title={editsUsed > 0 ? "Additional edits will use credits" : "You have 1 free edit available"}
               >
-                <Edit className="h-4 w-4 mr-2" />
-                {editsUsed > 0 ? "Edit Again (Uses Credit)" : "Edit This Image"}
-                {editsUsed > 0 && (
-                  <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
-                    1 Credit
-                  </span>
-                )}
-              </RainbowButton>
+                <div className="aspect-square relative">
+                  {transformedImage && typeof transformedImage === 'string' ? (
+                    <img 
+                      src={transformedImage} 
+                      alt="Transformed image option 1" 
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        console.error('Error loading transformed image:', transformedImage);
+                        e.currentTarget.src = originalImage; // Fallback to original image
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <p className="text-gray-500">Loading transformed image...</p>
+                    </div>
+                  )}
+                  {selectedImage === transformedImage && (
+                    <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                      <Check className="h-4 w-4" />
+                    </div>
+                  )}
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
+                  <p className="text-sm font-medium">Option 1</p>
+                </div>
+              </div>
+              
+              {/* Icon buttons for first image */}
+              <div className="flex justify-center space-x-1">
+                <IconButton 
+                  icon={RefreshCw} 
+                  label="Regenerate" 
+                  onClick={() => handleRegenerate(transformedImage)}
+                  loading={isRegenerating}
+                />
+                <IconButton 
+                  icon={Download} 
+                  label="Download" 
+                  onClick={() => handleDownload(transformedImage)} 
+                />
+                <IconButton 
+                  icon={Share2} 
+                  label="Share" 
+                  onClick={() => handleShare(transformedImage)} 
+                />
+                <IconButton 
+                  icon={Edit} 
+                  label="Edit Prompt" 
+                  onClick={() => setShowEditPrompt(true)} 
+                />
+                <IconButton 
+                  icon={ZoomIn} 
+                  label="View Full" 
+                  onClick={() => setFullViewImage(transformedImage)} 
+                />
+              </div>
+            </div>
+
+            {/* Second transformed image (if available) */}
+            {(secondTransformedImage || coloringBookImage) && (
+              <div className="space-y-4">
+                <div 
+                  className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === (secondTransformedImage || coloringBookImage) ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
+                  onClick={() => {
+                    const imageToSelect = secondTransformedImage || coloringBookImage;
+                    if (imageToSelect) {
+                      setSelectedImage(imageToSelect);
+                      saveImageSelection(imageToSelect);
+                    }
+                  }}
+                >
+                  <div className="aspect-square relative">
+                    {(secondTransformedImage || coloringBookImage) && (
+                      <img 
+                        src={secondTransformedImage || coloringBookImage || ''} 
+                        alt="Transformed image option 2" 
+                        className="object-cover w-full h-full" 
+                      />
+                    )}
+                    {selectedImage === (secondTransformedImage || coloringBookImage) && (
+                      <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                        <Check className="h-4 w-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
+                    <p className="text-sm font-medium">
+                      {coloringBookImage && !secondTransformedImage ? 'Coloring Book' : 'Option 2'}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Icon buttons for second image */}
+                <div className="flex justify-center space-x-1">
+                  <IconButton 
+                    icon={RefreshCw} 
+                    label="Regenerate" 
+                    onClick={() => handleRegenerate(secondTransformedImage || coloringBookImage || '')}
+                    loading={isRegenerating}
+                  />
+                  <IconButton 
+                    icon={Download} 
+                    label="Download" 
+                    onClick={() => handleDownload(secondTransformedImage || coloringBookImage || '')} 
+                  />
+                  <IconButton 
+                    icon={Share2} 
+                    label="Share" 
+                    onClick={() => handleShare(secondTransformedImage || coloringBookImage || '')} 
+                  />
+                  <IconButton 
+                    icon={Edit} 
+                    label="Edit Prompt" 
+                    onClick={() => setShowEditPrompt(true)} 
+                  />
+                  <IconButton 
+                    icon={ZoomIn} 
+                    label="View Full" 
+                    onClick={() => setFullViewImage(secondTransformedImage || coloringBookImage || '')} 
+                  />
+                </div>
+              </div>
             )}
-            <RainbowButton 
-              className="flex-1"
-              onClick={handleDownload}
-            >
-              <Download className="h-4 w-4 mr-2" /> Download Image
-            </RainbowButton>
           </div>
+        </div>
 
-          {/* Second row: Coloring Book Style, Try Another Prompt and Upload New Image */}
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <RainbowButton 
-              variant="outline" 
-              onClick={onTryAgain}
-              className="flex-1"
-            >
-              <ArrowLeftRight className="h-4 w-4 mr-2" />
-              Try Another Prompt
-            </RainbowButton>
-            <RainbowButton 
-              variant="outline"
-              className="flex-1"
-              onClick={onNewImage}
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              Upload New Image
-            </RainbowButton>
+        {/* Edit Prompt Dialog */}
+        {showEditPrompt && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold mb-4">Edit Image Prompt</h3>
+              <textarea
+                value={editPromptText}
+                onChange={(e) => setEditPromptText(e.target.value)}
+                placeholder="Describe the changes you want to make..."
+                className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div className="flex justify-end space-x-3 mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowEditPrompt(false);
+                    setEditPromptText('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleEditPromptSubmit}>
+                  Apply Changes {editsUsed > 0 && <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">1 Credit</span>}
+                </Button>
+              </div>
+            </div>
           </div>
+        )}
 
-          {/* Third row: Coloring Book button */}
-          <div className="mt-4">
+        {/* Coloring Book Option */}
+        {!coloringBookImage && (
+          <div className="mb-6">
             <RainbowButton
               className="w-full"
               onClick={handleColoringBookTransform}
@@ -411,18 +544,37 @@ export default function ResultView({
               ) : (
                 <>
                   <BookOpen className="h-4 w-4 mr-2" />
-                  {coloringBookImage ? 'View Coloring Book Style' : 'Convert to Coloring Book Style'}
-                  {!coloringBookImage && (
-                    <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
-                      1 Credit
-                    </span>
-                  )}
+                  Convert to Coloring Book Style
+                  <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
+                    1 Credit
+                  </span>
                 </>
               )}
             </RainbowButton>
           </div>
+        )}
+
+        {/* Navigation Buttons */}
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+          <RainbowButton 
+            variant="outline" 
+            onClick={onTryAgain}
+            className="flex-1"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Ideas
+          </RainbowButton>
+          <RainbowButton 
+            variant="outline"
+            className="flex-1"
+            onClick={onNewImage}
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Start Fresh
+          </RainbowButton>
         </div>
 
+        {/* Credits Display */}
         <div className="mt-8 p-4 bg-blue-50 rounded-lg text-center">
           <p className="text-blue-700">
             <span className="mr-1">⭐</span> 
