@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 
 interface TextToImageResult {
   jobId: string
-  imageUrl: string
+  imageUrls: string[]
   metadata: {
     prompt: string
     variations?: any[]
@@ -45,16 +45,24 @@ export default function TextToImageResults() {
 
       // Get data from URL parameters or localStorage
       const urlParams = new URLSearchParams(window.location.search)
-      const imageUrl = urlParams.get('imageUrl')
+      const imageUrl1 = urlParams.get('imageUrl1')
+      const imageUrl2 = urlParams.get('imageUrl2')
+      const imageUrl = urlParams.get('imageUrl') // Fallback for single image
       const prompt = urlParams.get('prompt')
       const purpose = urlParams.get('purpose')
       const industry = urlParams.get('industry')
       const aspectRatio = urlParams.get('aspectRatio')
 
-      if (imageUrl && prompt) {
+      // Handle multiple images or fallback to single image
+      const imageUrls = []
+      if (imageUrl1) imageUrls.push(decodeURIComponent(imageUrl1))
+      if (imageUrl2) imageUrls.push(decodeURIComponent(imageUrl2))
+      if (imageUrls.length === 0 && imageUrl) imageUrls.push(decodeURIComponent(imageUrl))
+
+      if (imageUrls.length > 0 && prompt) {
         const result: TextToImageResult = {
           jobId,
-          imageUrl: decodeURIComponent(imageUrl),
+          imageUrls,
           metadata: {
             prompt: decodeURIComponent(prompt),
             purpose: purpose ? decodeURIComponent(purpose) : undefined,
@@ -76,9 +84,9 @@ export default function TextToImageResults() {
     loadResult()
   }, [jobId])
 
-  const handleDownload = () => {
+  const handleDownload = (imageUrl: string, index: number = 0) => {
     if (result) {
-      downloadImage(result.imageUrl, `generated-image-${result.jobId}.png`)
+      downloadImage(imageUrl, `generated-image-${result.jobId}-${index + 1}.png`)
       toast({
         title: "Download Started",
         description: "Your image is being downloaded.",
@@ -156,50 +164,57 @@ export default function TextToImageResults() {
 
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Generated Image */}
+            {/* Generated Images */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ImageIcon className="w-5 h-5" />
-                  Generated Image
+                  Generated Images ({result.imageUrls.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="relative rounded-lg overflow-hidden bg-gray-100">
-                  <img 
-                    src={result.imageUrl} 
-                    alt="Generated image" 
-                    className="w-full h-auto object-cover"
-                  />
+                <div className="space-y-4">
+                  {result.imageUrls.map((imageUrl, index) => (
+                    <div key={index} className="space-y-3">
+                      <div className="relative rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src={imageUrl} 
+                          alt={`Generated image ${index + 1}`} 
+                          className="w-full h-auto object-cover"
+                        />
+                        <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                          Variation {index + 1}
+                        </div>
+                      </div>
+                      
+                      <RainbowButton 
+                        onClick={() => handleDownload(imageUrl, index)}
+                        className="w-full"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Variation {index + 1}
+                      </RainbowButton>
+                    </div>
+                  ))}
                 </div>
                 
-                <div className="mt-4 space-y-3">
-                  <RainbowButton 
-                    onClick={handleDownload}
-                    className="w-full"
+                <div className="mt-4 flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleShare}
+                    className="flex-1"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Image
-                  </RainbowButton>
-                  
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      onClick={handleShare}
-                      className="flex-1"
-                    >
-                      <Share2 className="w-4 h-4 mr-2" />
-                      Share
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setLocation('/text-to-image')}
-                      className="flex-1"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Create Another
-                    </Button>
-                  </div>
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Share
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setLocation('/text-to-image')}
+                    className="flex-1"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Create Another
+                  </Button>
                 </div>
               </CardContent>
             </Card>
