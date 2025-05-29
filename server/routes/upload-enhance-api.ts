@@ -325,58 +325,80 @@ router.post('/generate-edit-prompts', async (req, res) => {
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
-    // Identify which concepts were selected (especially if #5 is included)
+    // Identify which concepts were selected
     const hasChaosConcept = selectedIdeas.some((idea, index) => 
-      idea.originalIndex === 4 || idea.title.includes('CHAOS') || idea.description.includes('surreal')
+      idea.originalIndex === 4 || idea.title.includes('MULTIVERSE') || idea.title.includes('MADNESS')
     );
 
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514", // Claude Sonnet 4 released May 14, 2025
+      model: "claude-sonnet-4-20250514",
       max_tokens: 1500,
-      temperature: hasChaosConcept ? 1.0 : 0.8,
+      temperature: hasChaosConcept ? 0.9 : 0.7,
       messages: [{
         role: "user",
-        content: `Transform the selected photography concepts into detailed image generation prompts optimized for GPT Image 01:
+        content: `Transform these SPECIFIC concepts into GPT-Image-01 prompts for THIS EXACT PRODUCT:
 
-Selected concepts: ${JSON.stringify(selectedIdeas.map(i => ({ title: i.title, description: i.description })))}
-Original product: ${productAnalysis.product_identification}
+    PRODUCT ANALYSIS: ${JSON.stringify(productAnalysis)}
+    SELECTED CONCEPTS TO TRANSFORM: ${JSON.stringify(selectedIdeas.map(i => ({ 
+      title: i.title, 
+      description: i.description,
+      original_index: i.originalIndex 
+    })))}
 
-FIRST: Identify which concepts were selected and adapt your approach:
-- If Concepts 1-4: Create polished, professional prompts
-- If Concept 5: UNLEASH ABSOLUTE CREATIVE CHAOS
-- If multiple selected: Generate separate prompts for each
+    YOUR TASK: Create prompts ONLY for the ${selectedIdeas.length} concept(s) selected above. Each prompt must:
+    1. Reference THIS SPECIFIC PRODUCT: "${productAnalysis.product_identification}"
+    2. Implement THE EXACT CONCEPT DESCRIPTION provided
+    3. Start with: "The ${productAnalysis.product_identification} remains perfectly intact with all original colors, labels, branding, and details unchanged as the central focus"
 
-**FOR CONCEPTS 1-4 (Professional/Lifestyle):**
-Create concise 80-100 word prompts focusing on:
-- Realistic product placement
-- Authentic environments
-- Natural lighting
-- Lifestyle storytelling
-- Professional photography terminology
+    **ANALYZE THE PRODUCT FIRST:**
+    - What are its key visual features? (from productAnalysis)
+    - What technical issues need fixing? (if Idea 1 selected)
+    - What's its natural context? (if Idea 2 selected)
+    - How can it be elevated? (if Idea 3 selected)
 
-**FOR CONCEPT 5 (The Unhinged One):**
-GO ABSOLUTELY WILD - 100-120 words of pure creative insanity:
-- Start with product accuracy THEN EXPLODE INTO MADNESS
-- Layer impossible elements
-- Defy physics, logic, and reason
-- Mix artistic movements, pop culture, and fever dreams
-- Use words like: "surreal," "impossible," "gravity-defying," "metamorphosing," "transcendent"
-- Reference art styles: "Dalí meets Banksy meets Studio Ghibli"
-- Push every boundary while keeping product as hero
+    **THEN CREATE PROMPTS BASED ON WHICH IDEAS WERE SELECTED:**
 
-**OUTPUT FORMAT:**
-Return a JSON array with one edit_prompt for each selected concept:
-[
-  {
-    "concept_title": "original concept title",
-    "edit_prompt": "the detailed prompt for GPT-image-01"
-  }
-]
+    IF "TECHNICAL PERFECTION" SELECTED: 75-90 words
+    - Fix the SPECIFIC issues identified in productAnalysis
+    - Mention exact product features that need highlighting
 
-For each selected concept, create one prompt that:
-1. Maintains exact product appearance
-2. Matches the ambition level of the original idea
-3. For #5: Goes even harder than the original concept suggested`
+    IF "LIFESTYLE STORYTELLING" SELECTED: 80-100 words
+    - Use context relevant to THIS product's actual use
+    - Props that make sense for THIS product category
+
+    IF "MODERN ARTISTRY" SELECTED: 80-100 words
+    - Artistic treatment that suits THIS product's aesthetic
+    - Style that enhances THIS product's appeal
+
+    IF "PATTERN INTERRUPT" SELECTED: 90-110 words
+    - Surreal concept that works with THIS product's nature
+    - Impossible scenario specific to what THIS product is
+
+    IF "MULTIVERSE MADNESS" SELECTED: 100-130 words
+    CRITICAL: The PRODUCT stays as hero - create INSANE ENVIRONMENTS AROUND IT
+    - Product remains central, prominent, and completely unchanged
+    - Focus on creating EXTRAORDINARY BACKGROUNDS AND ENVIRONMENTS
+    - NO characters, aliens, or creatures - pure environmental/atmospheric chaos
+    - BE WILDLY CREATIVE - these are just examples to inspire, NOT a limited list:
+      * Cosmic/space themes (nebulas, galaxies, stellar explosions)
+      * Abstract art explosions (paint splatters, color storms, living graffiti)
+      * Impossible physics (gravity wells, time distortions, dimensional rifts)
+      * Natural phenomena gone wild (aurora tornadoes, crystal forests, lava waterfalls)
+      * Surreal landscapes (floating islands, inverted cities, fractal mountains)
+      * Energy manifestations (lightning symphonies, plasma rivers, light sculptures)
+    - Mix and match concepts freely - the wilder the combination, the better
+    - Think: "What's the most visually insane environment possible?"
+
+    **OUTPUT FORMAT:**
+    Create ${selectedIdeas.length} prompt(s) - ONE for each selected concept:
+    [
+      {
+        "concept_title": "[exact title from selected concept]",
+        "edit_prompt": "[prompt specifically crafted for this product and concept]"
+      }
+    ]
+
+    DO NOT create prompts for unselected concepts. ONLY transform the concepts that were actually chosen.`
       }]
     });
 
@@ -391,6 +413,7 @@ For each selected concept, create one prompt that:
     const editPrompts = JSON.parse(jsonMatch[0]);
 
     console.log(`[Claude Edit Prompts] Generated ${editPrompts.length} optimized prompts`);
+
     res.json({
       success: true,
       edit_prompts: editPrompts,
