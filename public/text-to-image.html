@@ -912,12 +912,24 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('loadingSpinner').style.display = 'none';
+                console.log('Generation response:', data);
                 if (data.success) {
-                    // Handle success - maybe redirect to results page
-                    window.location.href = `/results?jobId=${data.jobId}`;
+                    // Redirect to text-to-image results page with all data
+                    const params = new URLSearchParams({
+                      jobId: data.jobId,
+                      imageUrl: encodeURIComponent(data.imageUrl),
+                      prompt: encodeURIComponent(data.metadata.prompt),
+                      ...(data.metadata.purpose && { purpose: encodeURIComponent(data.metadata.purpose) }),
+                      ...(data.metadata.industry && { industry: encodeURIComponent(data.metadata.industry) }),
+                      ...(data.metadata.aspectRatio && { aspectRatio: encodeURIComponent(data.metadata.aspectRatio) }),
+                      ...(data.metadata.styleIntensity && { styleIntensity: data.metadata.styleIntensity }),
+                      ...(data.metadata.addText !== undefined && { addText: data.metadata.addText }),
+                      ...(data.metadata.businessName && { businessName: encodeURIComponent(data.metadata.businessName) })
+                    });
+
+                    window.location.href = `/text-to-image-results?${params.toString()}`;
                 } else {
-                    alert('Error: ' + data.error);
+                    throw new Error(data.error || 'Generation failed');
                 }
             })
             .catch(error => {

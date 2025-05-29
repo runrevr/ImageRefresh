@@ -297,10 +297,33 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
 
       const imageUrl = response.data[0].url;
 
+      // Download and save the image for persistent access
+      const imageResponse = await fetch(imageUrl);
+      const arrayBuffer = await imageResponse.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Save to uploads directory with timestamp
+      const timestamp = Date.now();
+      const filename = `text-to-image-${timestamp}.png`;
+      const fs = await import('fs');
+      const path = await import('path');
+      const uploadsDir = path.join(process.cwd(), 'uploads');
+      
+      // Ensure uploads directory exists
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      
+      const filepath = path.join(uploadsDir, filename);
+      fs.writeFileSync(filepath, buffer);
+
+      // Return the local URL that can be accessed by the frontend
+      const localImageUrl = `/uploads/${filename}`;
+
       res.json({
         success: true,
-        jobId: `job_${Date.now()}`,
-        imageUrl: imageUrl,
+        jobId: `job_${timestamp}`,
+        imageUrl: localImageUrl,
         metadata: {
           prompt,
           variations,

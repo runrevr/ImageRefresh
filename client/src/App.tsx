@@ -43,6 +43,10 @@ import UploadEnhancePage from "@/pages/upload-enhance";
 import SelectIdeasPage from "@/pages/select-ideas";
 import GenerateEnhancementsPage from "@/pages/generate-enhancements";
 import ResultsPage from "@/pages/results";
+import ViewTransformation from "@/pages/view-transformation";
+import TextToImageResults from "@/pages/text-to-image-results";
+import CheckoutDemo from "@/pages/checkout-demo";
+import CheckoutFlowDemo from "@/pages/checkout-flow-demo";
 
 function Router() {
   return (
@@ -96,6 +100,10 @@ function Router() {
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
+        <Route path="/view-transformation" component={ViewTransformation} />
+        <Route path="/text-to-image-results" component={TextToImageResults} />
+        <Route path="/checkout-demo" component={CheckoutDemo} />
+        <Route path="/checkout-flow-demo" component={CheckoutFlowDemo} />
         <Route component={NotFound} />
       </Switch>
     </>
