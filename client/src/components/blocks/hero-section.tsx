@@ -33,7 +33,11 @@ const transitionVariants = {
     },
 }
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onExplorePrompts?: () => void;
+}
+
+export function HeroSection({ onExplorePrompts }: HeroSectionProps = {}) {
     return (
         <>
             <section>
