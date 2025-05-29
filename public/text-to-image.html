@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,6 +102,7 @@
         .rainbow-input {
             width: 100%;
             padding: 20px 24px;
+            padding-right: 200px; /* Space for button */
             font-size: 1.125rem;
             border: none;
             border-radius: 50px;
@@ -109,7 +111,6 @@
             outline: none;
             transition: all 0.3s;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
         }
 
         .rainbow-input:focus {
@@ -124,34 +125,36 @@
 
         /* Generate Button */
         .generate-btn {
-            width: 50%;
-            margin: 0 auto;
-            padding: 16px 24px;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
             background: #1a1a1a;
             color: #ffa500;
             border: none;
-            border-radius: 50px;
+            border-radius: 40px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
             opacity: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             white-space: nowrap;
         }
 
         .generate-btn::before {
             content: '⚡';
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             display: inline-block;
         }
 
         .generate-btn:hover {
             background: #000;
-            transform: scale(1.02);
+            transform: translateY(-50%) scale(1.05);
         }
 
         .generate-btn:disabled {
@@ -572,83 +575,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Results Section Styles */
-        .results-section {
-            display: none;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .image-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .image-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        }
-
-        .image-card.enhanced {
-            border-color: var(--primary);
-        }
-
-        .image-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .image-actions {
-            padding: 15px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .image-actions button {
-            padding: 8px 16px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .image-actions button:hover {
-            background: #e0e0e0;
-            transform: scale(1.05);
-        }
-
-        .revised-prompt {
-            padding: 15px;
-            font-size: 0.85rem;
-            color: #666;
-            line-height: 1.4;
-            border-top: 1px solid #f0f0f0;
-            margin: 0;
-        }
-
-        .enhanced-label {
-            padding: 10px 15px;
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            margin: 0;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .page-title {
@@ -661,8 +587,10 @@
             }
 
             .generate-btn {
-                font-size: 1rem;
-                padding: 14px 20px;
+                position: static;
+                width: 100%;
+                margin-top: 15px;
+                transform: none;
             }
 
             .action-buttons {
@@ -671,11 +599,6 @@
 
             .btn {
                 width: 100%;
-            }
-
-            .images-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
             }
         }
     </style>
@@ -695,10 +618,10 @@
                         id="promptInput"
                         placeholder="Try: 'relaxing massage therapy session' or 'professional plumber fixing pipes' or 'beautiful lawn care results'"
                     >
+                    <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
+                        Let's Make Some Magic
+                    </button>
                 </div>
-                <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
-                    Let's Make Some Magic
-                </button>
             </div>
 
             <div class="examples">
@@ -725,7 +648,7 @@
             <!-- Business Context Section -->
             <div class="context-section">
                 <h3 class="section-subtitle">Help us optimize for your business</h3>
-
+                
                 <div class="context-group">
                     <label>What's this for?</label>
                     <div class="pill-group">
@@ -750,7 +673,7 @@
             <!-- Enhancement Controls -->
             <div class="enhancement-controls">
                 <h3 class="section-subtitle">Fine-tune your images (optional)</h3>
-
+                
                 <div class="control-group">
                     <label>Aspect Ratio</label>
                     <div class="radio-group">
@@ -841,10 +764,10 @@
             // Remove active class from siblings
             const siblings = element.parentElement.querySelectorAll('.context-pill');
             siblings.forEach(pill => pill.classList.remove('active'));
-
+            
             // Add active class to clicked element
             element.classList.add('active');
-
+            
             // Store the selection
             businessContext[type] = element.textContent;
         }
@@ -853,7 +776,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const addTextCheckbox = document.getElementById('addText');
             const businessTextInput = document.getElementById('businessText');
-
+            
             if (addTextCheckbox) {
                 addTextCheckbox.addEventListener('change', function() {
                     businessTextInput.style.display = this.checked ? 'block' : 'none';
@@ -866,7 +789,7 @@
 
         function enhancePrompt() {
             userPrompt = document.getElementById('promptInput').value.trim();
-
+            
             if (!userPrompt) {
                 document.getElementById('promptInput').focus();
                 return;
@@ -874,7 +797,7 @@
 
             // Hide initial view
             document.getElementById('initialView').style.display = 'none';
-
+            
             // Show loading
             document.getElementById('loadingSpinner').style.display = 'block';
 
@@ -888,7 +811,7 @@
         function showEnhancements() {
             const variations = generateVariations(userPrompt);
             const container = document.getElementById('variationCards');
-
+            
             container.innerHTML = variations.map((v, index) => `
                 <div class="variation-card ${index === 0 ? 'selected' : ''}" onclick="toggleVariation(${index})">
                     <div class="variation-title">${v.title}</div>
@@ -928,7 +851,7 @@
 
         function toggleVariation(index) {
             const cards = document.querySelectorAll('.variation-card');
-
+            
             if (selectedVariations.has(index)) {
                 selectedVariations.delete(index);
                 cards[index].classList.remove('selected');
@@ -962,167 +885,43 @@
             // Gather all settings
             const variations = generateVariations(userPrompt);
             const selectedVars = Array.from(selectedVariations).map(i => variations[i]);
-
+            
+            const settings = {
+                prompt: userPrompt,
+                variations: selectedVars,
+                purpose: businessContext.purpose,
+                industry: businessContext.industry,
+                aspectRatio: document.querySelector('input[name="aspect"]:checked').value,
+                styleIntensity: document.querySelector('.style-slider').value,
+                addText: document.getElementById('addText').checked,
+                businessName: document.getElementById('businessText').value
+            };
+            
             // Show loading
             document.getElementById('loadingSpinner').style.display = 'block';
-
-            // Generate images for each selected variation
-            const imagePromises = selectedVars.map(variation => {
-                // Create a detailed prompt based on the variation
-                const enhancedPrompt = variation.prompt;
-
-                // Call the API
-                return fetch('/api/generate-images', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        prompt: enhancedPrompt,
-                        model: 'dall-e-3',
-                        size: getImageSize(), // Helper function for aspect ratio
-                        quality: 'standard',
-                        n: 1
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.error || `HTTP error! status: ${response.status}`);
-                        });
-                    }
-                    return response.json();
-                });
-            });
-
-            // Wait for all images to generate
-            Promise.all(imagePromises)
-                .then(results => {
-                    document.getElementById('loadingSpinner').style.display = 'none';
-
-                    // Extract all generated images
-                    const allImages = results.flatMap(result => result.images || []);
-
-                    if (allImages.length > 0) {
-                        // Display the images
-                        displayGeneratedImages(allImages);
-                    } else {
-                        alert('No images were generated. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('loadingSpinner').style.display = 'none';
-                    console.error('Error generating images:', error);
-                    alert('Failed to generate images: ' + error.message);
-                });
-        }
-
-        // Helper function to get image size based on aspect ratio
-        function getImageSize() {
-            const aspect = document.querySelector('input[name="aspect"]:checked').value;
-            switch(aspect) {
-                case 'wide':
-                    return '1792x1024'; // 16:9 ratio
-                case 'portrait':
-                    return '1024x1792'; // 9:16 ratio
-                default:
-                    return '1024x1024'; // Square
-            }
-        }
-
-        // Function to display generated images
-        function displayGeneratedImages(images) {
-            // Hide the enhancement section
-            document.getElementById('enhancementSection').style.display = 'none';
-
-            // Create or show a results section
-            let resultsSection = document.getElementById('resultsSection');
-            if (!resultsSection) {
-                resultsSection = document.createElement('div');
-                resultsSection.id = 'resultsSection';
-                resultsSection.className = 'results-section';
-                resultsSection.innerHTML = `
-                    <h2 class="section-title">Your Generated Images</h2>
-                    <div class="images-grid" id="imagesGrid"></div>
-                    <div class="action-buttons" style="margin-top: 30px;">
-                        <button class="btn btn-secondary" onclick="startOver()">Create More</button>
-                        <button class="btn btn-primary" onclick="downloadAllImages()">Download All</button>
-                    </div>
-                `;
-                document.querySelector('.container').appendChild(resultsSection);
-            }
-
-            // Populate images grid
-            const imagesGrid = document.getElementById('imagesGrid');
-            imagesGrid.innerHTML = images.map((img, index) => `
-                <div class="image-card">
-                    <img src="${img.url}" alt="Generated image ${index + 1}" />
-                    <div class="image-actions">
-                        <button onclick="downloadImage('${img.url}', ${index})">Download</button>
-                        <button onclick="applyEnhancement('${img.url}')">Enhance</button>
-                    </div>
-                    ${img.revised_prompt ? `<p class="revised-prompt">${img.revised_prompt}</p>` : ''}
-                </div>
-            `).join('');
-
-            resultsSection.style.display = 'block';
-        }
-
-        // Download individual image
-        function downloadImage(url, index) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `generated-image-${index + 1}.png`;
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Apply enhancement to an image
-        function applyEnhancement(imageUrl) {
-            // Show loading
-            document.getElementById('loadingSpinner').style.display = 'block';
-
-            // Call the enhancement API
-            fetch('/api/gpt-image-01', {
+            
+            // Call your API
+            fetch('/api/generate-images', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    prompt: userPrompt + ', enhanced contrast, professional quality'
-                })
+                body: JSON.stringify(settings)
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.error || `HTTP error! status: ${response.status}`);
-                    });
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 document.getElementById('loadingSpinner').style.display = 'none';
-
-                if (data.imageUrl) {
-                    // Add the enhanced image to the grid
-                    const newImageCard = document.createElement('div');
-                    newImageCard.className = 'image-card enhanced';
-                    newImageCard.innerHTML = `
-                        <img src="${data.imageUrl}" alt="Enhanced image" />
-                        <div class="image-actions">
-                            <button onclick="downloadImage('${data.imageUrl}', 'enhanced')">Download Enhanced</button>
-                        </div>
-                        <p class="enhanced-label">Enhanced Version</p>
-                    `;
-                    document.getElementById('imagesGrid').appendChild(newImageCard);
+                if (data.success) {
+                    // Handle success - maybe redirect to results page
+                    window.location.href = `/results?jobId=${data.jobId}`;
+                } else {
+                    alert('Error: ' + data.error);
                 }
             })
             .catch(error => {
                 document.getElementById('loadingSpinner').style.display = 'none';
-                console.error('Error enhancing image:', error);
-                alert('Failed to enhance image: ' + error.message);
+                console.error('Error:', error);
+                alert('Failed to generate images');
             });
         }
 

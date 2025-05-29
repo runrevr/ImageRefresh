@@ -1,4 +1,3 @@
-console.log("🔵 useAuth.tsx - File loaded");
 import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
 import { useAuth } from "@/hooks/useAuth";

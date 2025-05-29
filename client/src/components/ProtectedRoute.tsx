@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Redirect } from "wouter";
+import { Route, useLocation } from "wouter";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
@@ -7,26 +8,32 @@ interface ProtectedRouteProps {
   component: React.ComponentType;
 }
 
-// This component will only be rendered when the route matches
-function ProtectedComponent({ component: Component }: { component: React.ComponentType }) {
+export function ProtectedRoute({ path, component: Component }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Redirect to="/auth" />;
-  }
-
-  return <Component />;
-}
-
-// Export this as a regular component, not using Route
-export function ProtectedRoute({ component }: { component: React.ComponentType }) {
-  return <ProtectedComponent component={component} />;
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, isLoading, navigate]);
+  
+  return (
+    <Route
+      path={path}
+      component={() => {
+        if (isLoading) {
+          return (
+            <div className="min-h-screen flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          );
+        }
+        
+        if (!user) return null; // Will redirect via useEffect
+        
+        return <Component />;
+      }}
+    />
+  );
 }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import ImageUploader from "@/components/ImageUploader";
 import PromptInput from "@/components/PromptInput";
@@ -26,6 +25,7 @@ import dogCatRealImage from "../assets/dog-and-cat-real.png";
 import alicornDrawingImage from "../assets/alicorn-drawing.jpg";
 import alicornRealImage from "../assets/alicorn-real.png";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   getSavedStyle,
@@ -59,11 +59,6 @@ type UserCredits = {
 };
 
 export default function Home() {
-  // ALL HOOKS MUST BE AT THE TOP - This is the fix!
-  const { user: authUser, user, logoutMutation } = useAuth();
-  const { toast } = useToast();
-
-  // All state declarations
   const [currentStep, setCurrentStep] = useState<Step>(Step.Upload);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [originalImagePath, setOriginalImagePath] = useState<string | null>(
@@ -72,34 +67,13 @@ export default function Home() {
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
   const [secondTransformedImage, setSecondTransformedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
-
+  const { user: authUser, user } = useAuth();
   // Initialize local user state with data from auth
   const [userCredits, setUserCredits] = useState<{
     totalCredits: number;
     paidCredits: number;
     freeCreditsUsed: boolean;
   }>({ totalCredits: 0, paidCredits: 0, freeCreditsUsed: true });
-
-  const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  const [selectedTransformation, setSelectedTransformation] =
-    useState<TransformationType | null>(null);
-  const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
-  const [showAccountNeededDialog, setShowAccountNeededDialog] =
-    useState<boolean>(false);
-  const [storedEmail, setStoredEmail] = useState<string | null>(null);
-  const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
-  const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] =
-    useState<boolean>(false); // Track if user has already tried another prompt
-
-  // Check for saved style from Ideas page
-  const [savedStyle, setSavedStyle] = useState<{
-    prompt: string;
-    title: string;
-    category: string;
-  } | null>(null);
-
-  // Flag to trigger auto-submission after uploading image with a selected style
-  const [autoSubmitStyle, setAutoSubmitStyle] = useState<boolean>(false);
 
   // Fetch user credits when user changes
   useEffect(() => {
@@ -118,6 +92,18 @@ export default function Home() {
         });
     }
   }, [user]);
+  const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
+
+  const [selectedTransformation, setSelectedTransformation] =
+    useState<TransformationType | null>(null);
+  const [showUploadForm, setShowUploadForm] = useState<boolean>(false);
+  const [showAccountNeededDialog, setShowAccountNeededDialog] =
+    useState<boolean>(false);
+  const [storedEmail, setStoredEmail] = useState<string | null>(null);
+  const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
+  const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] =
+    useState<boolean>(false); // Track if user has already tried another prompt
+  const { toast } = useToast();
 
   // Fetch user credits and OpenAI configuration on component mount
   useEffect(() => {
@@ -184,6 +170,16 @@ export default function Home() {
       }, 500);
     }
   }, []);
+
+  // Check for saved style from Ideas page
+  const [savedStyle, setSavedStyle] = useState<{
+    prompt: string;
+    title: string;
+    category: string;
+  } | null>(null);
+
+  // Flag to trigger auto-submission after uploading image with a selected style
+  const [autoSubmitStyle, setAutoSubmitStyle] = useState<boolean>(false);
 
   // When a user uploads an image, check if they previously selected a style from the Ideas page
   const handleUpload = (imagePath: string, imageUrl: string) => {
@@ -982,8 +978,6 @@ export default function Home() {
       <Navbar
         freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
         paidCredits={userCredits?.paidCredits || 0}
-        user={user}
-        logoutMutation={logoutMutation}
       />
 
       {/* Account Needed Dialog */}

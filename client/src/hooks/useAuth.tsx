@@ -47,19 +47,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const res = await fetch(queryKey[0] as string, {
           credentials: "include",
         });
-
+        
         if (res.status === 401) {
           console.log("Not authenticated, trying fingerprint-based lookup");
           // Fall back to fingerprint-based lookup
-          const fingerprint = localStorage.getItem("device_fingerprint");
+          const fingerprint = localStorage.getItem('device_fingerprint');
           if (fingerprint) {
-            const fingerprintRes = await fetch(
-              `/api/user-by-fingerprint?fingerprint=${encodeURIComponent(fingerprint)}`,
-              {
-                credentials: "include",
-              },
-            );
-
+            const fingerprintRes = await fetch(`/api/user-by-fingerprint?fingerprint=${encodeURIComponent(fingerprint)}`, {
+              credentials: "include",
+            });
+            
             if (fingerprintRes.ok) {
               return fingerprintRes.json();
             }
@@ -67,11 +64,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // If fingerprint lookup fails, return null
           return null;
         }
-
+        
         if (!res.ok) {
           throw new Error(`Failed to fetch user: ${res.status}`);
         }
-
+        
         return res.json();
       } catch (error) {
         console.error("Error fetching user:", error);

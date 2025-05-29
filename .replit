@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["unixtools.ping", "psmisc"]
+packages = ["unixtools.ping"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -24,10 +24,6 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5001
-externalPort = 4200
-
-[[ports]]
 localPort = 5002
 externalPort = 3002
 
@@ -44,7 +40,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Frontend Dev Only"
+runButton = "Start Server"
 
 [[workflows.workflow]]
 name = "Run"
@@ -63,104 +59,3 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "NODE_ENV=development PORT=5000 tsx server/index.ts"
-
-[[workflows.workflow]]
-name = "Full Stack Dev"
-author = 41870681
-mode = "parallel"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development PORT=5000 tsx server/index.ts"
-
-[[workflows.workflow]]
-name = "Frontend Only"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
-
-[[workflows.workflow]]
-name = "Start Full App"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node start-server.mjs"
-
-[[workflows.workflow]]
-name = "Start App"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development PORT=5000 tsx server/index.ts"
-
-[[workflows.workflow]]
-name = "Build and Start"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "PORT=5000 NODE_ENV=development tsx server/index.ts"
-
-[[workflows.workflow]]
-name = "Clean Start"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "PORT=3001 NODE_ENV=development tsx server/index.ts"
-
-[[workflows.workflow]]
-name = "Production Server"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "PORT=5000 NODE_ENV=development tsx server/index.ts"
-
-[[workflows.workflow]]
-name = "Frontend Only Debug"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
-
-[[workflows.workflow]]
-name = "Frontend Dev Only"
-author = 41870681
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"

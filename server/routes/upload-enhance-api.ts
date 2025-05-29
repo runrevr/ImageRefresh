@@ -215,9 +215,9 @@ router.post('/analyze-products', async (req, res) => {
   }
 });
 
-// POST /generate-edit-prompt  
+// POST /api/generate-edit-prompt  
 // Generate optimized edit prompt for a single selected concept using Claude
-router.post('/generate-edit-prompt', async (req, res) => {
+router.post('/api/generate-edit-prompt', async (req, res) => {
   try {
     console.log('=== Single Claude Edit Prompt Generation ===');
     console.log('Request body:', JSON.stringify(req.body, null, 2));
@@ -486,13 +486,7 @@ router.post('/generate-enhancement', async (req, res) => {
 
     console.log('Image generated successfully with gpt-image-1');
 
-    // Return the exact same response format as routes.ts
-    res.status(200).json({
-      transformedImageUrl: transformedImageUrl,
-      prompt: enhancement_prompt,
-      id: null,
-      editsUsed: 0,
-      // Keep the enhanced format for compatibility
+    res.json({
       success: true,
       enhanced_image_url: transformedImageUrl,
       title: enhancement_title,
@@ -511,37 +505,10 @@ router.post('/generate-enhancement', async (req, res) => {
       headers: error.response?.headers
     });
 
-    // Check for specific OpenAI error types like routes.ts
-    if (
-      error.message &&
-      (error.message.includes("organization verification") ||
-        error.message.includes("invalid_api_key") ||
-        error.message.includes("rate limit") ||
-        error.message.includes("billing"))
-    ) {
-      return res.status(400).json({
-        message: error.message,
-        error: "openai_api_error",
-      });
-    }
-
-    // Check for content moderation errors like routes.ts
-    if (
-      error.message &&
-      error.message.toLowerCase().includes("content policy")
-    ) {
-      return res.status(400).json({
-        message:
-          "Your request was rejected by our content safety system. Please try a different prompt.",
-        error: "content_safety",
-      });
-    }
-
-    // Generic error format matching routes.ts
+    // Return the actual error from OpenAI like routes.ts
     res.status(500).json({
-      message: "Error processing image transformation",
-      error: error.message,
       success: false,
+      error: error.response?.data?.error?.message || error.message,
       details: error.response?.data
     });
   }
@@ -655,199 +622,3 @@ router.post('/generate-ideas', async (req, res) => {
 });
 
 export default router;
-
-
-// POST /api/generate-images
-// Generate images from text prompts using GPT-image-1 (no input image required)
-router.post('/generate-images', async (req, res) => {
-  console.log('=== GPT-Image-01 Text-to-Image Generation ===');
-  console.log('Request received at:', new Date().toISOString());
-  
-  try {
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
-
-    const { prompt, variations, purpose, industry, aspectRatio, styleIntensity, addText, businessName } = req.body;
-
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY environment variable not set.');
-    }
-
-    if (!prompt) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing prompt for image generation'
-      });
-    }
-
-    // Map aspect ratio to OpenAI size format
-    let size = "1024x1024"; // default square
-    if (aspectRatio === "wide") {
-      size = "1792x1024";
-    } else if (aspectRatio === "portrait") {
-      size = "1024x1792";
-    }
-
-    console.log(`Using GPT-image-1 for text-to-image generation with size: ${size}`);
-
-    // Import OpenAI SDK
-    const OpenAI = (await import('openai')).default;
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    // Create enhanced prompt based on business context
-    let enhancedPrompt = prompt;
-    if (styleIntensity && styleIntensity !== "50") {
-      const intensity = parseInt(styleIntensity);
-      if (intensity > 50) {
-        enhancedPrompt += `, stylized and artistic rendering`;
-      } else {
-        enhancedPrompt += `, natural and realistic style`;
-      }
-    }
-
-    if (addText && businessName) {
-      enhancedPrompt += `, include "${businessName}" text in the image`;
-    }
-
-    console.log(`Enhanced prompt: ${enhancedPrompt}`);
-
-    // Use GPT-image-1 for text-to-image generation (no input image)
-    const response = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: enhancedPrompt,
-      n: variations?.length || 1,
-      size: size as any
-    });
-
-    console.log('[OpenAI] Text-to-image generation completed successfully');
-
-    if (!response.data || response.data.length === 0) {
-      throw new Error('No image data returned from OpenAI generation endpoint');
-    }
-
-    // Log the actual response structure for debugging
-    console.log('[OpenAI] Response structure:', JSON.stringify(response.data, null, 2));
-
-    // Process the generated images
-    const generatedImages = await Promise.all(
-      response.data.map(async (imageData, index) => {
-        console.log(`[OpenAI] Processing image ${index + 1}:`, imageData);
-        
-        const timestamp = Date.now();
-        const filename = `generated-${timestamp}-${index + 1}.png`;
-        const uploadsDir = path.join(process.cwd(), 'uploads');
-        
-        // Ensure uploads directory exists
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-        
-        const imagePath = path.join(uploadsDir, filename);
-        
-        // Handle both URL and base64 responses
-        if (imageData.url) {
-          // URL response - download the image
-          console.log(`[OpenAI] Downloading from URL: ${imageData.url}`);
-          const axios = (await import('axios')).default;
-          const imageResponse = await axios.get(imageData.url, { responseType: 'arraybuffer' });
-          fs.writeFileSync(imagePath, Buffer.from(imageResponse.data));
-        } else if (imageData.b64_json) {
-          // Base64 response - decode and save
-          console.log(`[OpenAI] Processing base64 data (${imageData.b64_json.length} chars)`);
-          const imageBuffer = Buffer.from(imageData.b64_json, 'base64');
-          fs.writeFileSync(imagePath, imageBuffer);
-        } else {
-          // Neither URL nor base64 found
-          console.error(`[OpenAI] No URL or base64 data found for image ${index + 1}. Full data:`, imageData);
-          throw new Error(`No URL or base64 data returned for image ${index + 1}`);
-        }
-        
-        const baseUrl = req.protocol + "://" + req.get("host");
-        const finalImageUrl = `${baseUrl}/uploads/${filename}`;
-        
-        console.log(`Generated image ${index + 1} saved to: ${imagePath}`);
-        
-        return {
-          url: finalImageUrl,
-          variation: variations?.[index] || { title: `Generated Image ${index + 1}` }
-        };
-      })
-    );
-
-    const jobId = `text-to-image-${Date.now()}`;
-    
-    console.log(`[Text-to-Image] Successfully generated ${generatedImages.length} images`);
-    console.log(`[Text-to-Image] Job ID: ${jobId}`);
-    console.log(`[Text-to-Image] Returning success response`);
-
-    // Return success response matching expected format
-    return res.status(200).json({
-      success: true,
-      images: generatedImages,
-      jobId: jobId,
-      message: `Successfully generated ${generatedImages.length} images`,
-      processing_metadata: {
-        generation_time: new Date().toISOString(),
-        model_used: "gpt-image-1",
-        prompt_used: enhancedPrompt,
-        size_used: size,
-        images_generated: generatedImages.length
-      }
-    });
-
-  } catch (error) {
-    console.error('Text-to-image generation error:', error);
-    if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-    }
-    
-    // Log the full error details for debugging
-    if (error.response) {
-      console.error('OpenAI API error response:', {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
-      });
-    } else {
-      console.error('Error type:', typeof error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
-    }
-
-    // Check for specific OpenAI error types
-    if (
-      error.message &&
-      (error.message.includes("organization verification") ||
-        error.message.includes("invalid_api_key") ||
-        error.message.includes("rate limit") ||
-        error.message.includes("billing"))
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "openai_api_error",
-        message: error.message
-      });
-    }
-
-    // Check for content moderation errors
-    if (
-      error.message &&
-      error.message.toLowerCase().includes("content policy")
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "content_safety",
-        message: "Your request was rejected by our content safety system. Please try a different prompt."
-      });
-    }
-
-    // Generic error response
-    return res.status(500).json({
-      success: false,
-      error: 'Failed to generate images',
-      message: error instanceof Error ? error.message : 'Unknown error occurred',
-      details: error.response?.data || (error instanceof Error ? error.stack : String(error))
-    });
-  }
-});
