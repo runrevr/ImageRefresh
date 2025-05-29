@@ -20,8 +20,8 @@ export async function createColoringBookImage(imagePath: string): Promise<{ outp
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Simple coloring book transformation prompt
-    const coloringBookPrompt = "Transform this into a black and white coloring book page with thick outlines, no colors, no shading, simple line art suitable for children to color";
+    // Professional coloring book transformation prompt
+    const coloringBookPrompt = "Transform this image into a clean coloring book page with pure black outlines on a white background. Convert all elements into simple line art with clear defined borders suitable for coloring. Remove all shading colors and textures leaving only the outline contours of every shape object and detail. Use consistent line weight throughout with slightly thicker lines for main subjects and thinner lines for fine details. Simplify complex textures into basic patterns or leave them as empty spaces. Ensure all areas are fully enclosed with no gaps in the lines creating distinct sections that can be colored in. Convert any text to outline form. Remove all backgrounds and replace with pure white. The final image should look like a professional coloring book page with crisp black lines ready for coloring with no gray areas or partial shading just pure black and white line art.";
 
     console.log("Transforming image with GPT-image-01...");
 
