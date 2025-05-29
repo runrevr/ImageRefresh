@@ -263,85 +263,61 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
   // Add /api/generate-images endpoint for text-to-image functionality
   app.post('/api/generate-images', async (req, res) => {
     try {
+      console.log('Request Body:', req.body);
       console.log('[API] Generate images endpoint called');
+
       const { prompt, variations, purpose, industry, aspectRatio, styleIntensity, addText, businessName } = req.body;
 
       if (!prompt) {
-        return res.status(400).json({
-          success: false,
-          error: 'Prompt is required'
-        });
+        return res.status(400).json({ success: false, error: 'Prompt is required' });
       }
 
-      // Import the OpenAI transformation function
-      const { transformImage } = await import('./openai-final.js');
-
-      // Create a temporary image for the generation (you might want to handle this differently)
-      // For now, we'll generate based on the prompt alone using DALL-E
-      const OpenAI = require('openai');
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-      // Build enhanced prompt with context
-      let enhancedPrompt = prompt;
-      if (variations && variations.length > 0) {
-        enhancedPrompt += ` Variations: ${variations.join(', ')}.`;
-      }
-      if (purpose) {
-        enhancedPrompt += ` Purpose: ${purpose}.`;
-      }
-      if (industry) {
-        enhancedPrompt += ` Industry context: ${industry}.`;
-      }
-      if (addText && businessName) {
-        enhancedPrompt += ` Include text or branding for: ${businessName}.`;
-      }
-
-      console.log('[API] Enhanced prompt:', enhancedPrompt);
-
-      // Generate image using DALL-E 3
-      const response = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: enhancedPrompt,
-        n: 1,
-        size: aspectRatio === "16:9" ? "1792x1024" : aspectRatio === "9:16" ? "1024x1792" : "1024x1024",
-        quality: "hd",
+      // For now, simulate image generation
+      const { default: OpenAI } = await import('openai');
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
       });
 
-      if (!response.data || response.data.length === 0 || !response.data[0].url) {
-        throw new Error('No image URL returned from OpenAI');
+      // Convert aspect ratio to image size
+      let size = '1024x1024'; // default square
+      if (aspectRatio === 'wide') {
+        size = '1792x1024';
+      } else if (aspectRatio === 'portrait') {
+        size = '1024x1792';
       }
 
-      // Download and save the generated image
+      // Generate the image
+      const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: size as "1024x1024" | "1792x1024" | "1024x1792",
+        quality: "standard",
+      });
+
       const imageUrl = response.data[0].url;
-      const imageResponse = await fetch(imageUrl);
-      const imageBuffer = await imageResponse.arrayBuffer();
-
-      // Save to uploads directory
-      const fs = require('fs');
-      const path = require('path');
-      const timestamp = Date.now();
-      const filename = `generated-${timestamp}.png`;
-      const filepath = path.join(process.cwd(), 'uploads', filename);
-
-      fs.writeFileSync(filepath, Buffer.from(imageBuffer));
-
-      // Create job ID for consistency with existing flow
-      const jobId = `job-${timestamp}`;
-
-      console.log('[API] Image generated successfully:', filename);
 
       res.json({
         success: true,
-        jobId: jobId,
-        imageUrl: `/uploads/${filename}`,
-        prompt: enhancedPrompt
+        jobId: `job_${Date.now()}`,
+        imageUrl: imageUrl,
+        metadata: {
+          prompt,
+          variations,
+          purpose,
+          industry,
+          aspectRatio,
+          styleIntensity,
+          addText,
+          businessName
+        }
       });
 
     } catch (error) {
       console.error('[API] Error generating images:', error);
       res.status(500).json({
         success: false,
-        error: error.message || 'Failed to generate images'
+        error: error instanceof Error ? error.message : 'Failed to generate images'
       });
     }
   });
