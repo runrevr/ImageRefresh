@@ -150,7 +150,7 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps = {}) {
                                         {/* Heading and Description */}
                                         <div className="text-center">
                                             <h3 className="text-xl font-semibold text-[#333333]">Quick fixes with prebuilt tools</h3>
-                                            text-xl font-bold text-red-500 bg-yellow-200 p-4 border-4 border-black
+                                            <p className="mt-2 text-[#333333]/80">Use our expert-designed prompts to quickly transform your images. Choose from things like background removal, enhanced lighting, real world uses, etc</p>
                                         </div>
 
                                         {/* Example Templates */}
@@ -173,7 +173,7 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps = {}) {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <Link href="/product-enhancement">
+                                        <Link href="/prebuilt-prompts">
                                             <RainbowButton className="mt-4 w-full">
                                                 Explore Prebuilt Tools
                                             </RainbowButton>
