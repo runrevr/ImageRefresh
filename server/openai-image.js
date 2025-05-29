@@ -27,9 +27,10 @@ if (!fs.existsSync(uploadsDir)) {
  * Transforms an image using OpenAI's image generation capabilities
  * @param imagePath Path to the original image
  * @param prompt The prompt describing the transformation
+ * @param size The size of the generated image (1024x1024, 1792x1024, or 1024x1792)
  * @returns Path to the transformed image
  */
-export async function transformImageWithOpenAI(imagePath, prompt) {
+export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1024") {
   // Generate a unique ID for this transformation
   const transformationId = uuid().substring(0, 8);
 
@@ -97,12 +98,19 @@ export async function transformImageWithOpenAI(imagePath, prompt) {
     console.log(`[OpenAI] [${transformationId}] Prompt preview: ${prompt.substring(0, 100)}...`);
 
     // Use GPT-image-1 for text-to-image generation with n: 2
-    console.log(`[OpenAI] [${transformationId}] Using GPT-image-1 model for text-to-image generation`);
+    // Validate the size parameter
+    const validSizes = ["1024x1024", "1792x1024", "1024x1792"];
+    
+    if (!validSizes.includes(size)) {
+      throw new Error(`Invalid size. Must be one of: ${validSizes.join(", ")}`);
+    }
+    
+    console.log(`[OpenAI] [${transformationId}] Using GPT-image-1 model for text-to-image generation with size: ${size}`);
     const response = await openai.images.generate({
       model: "gpt-image-1",
       prompt: prompt,
       n: 2,
-      size: "1024x1024",
+      size: size,
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);

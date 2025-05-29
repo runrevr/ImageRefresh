@@ -419,18 +419,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Import the transformImage function
-      const { transformImage } = await import("./openai-final.js");
-
       // Perform the image transformation with proper MIME type handling
       console.log(
         `Starting transformation with MIME type checking for ${sourceImagePath}`,
       );
       // --- SIZE SANITIZATION START ---
       let apiSize = imageSize;
-      if (!["1024x1024", "1536x1024", "1024x1536", "auto"].includes(apiSize)) {
+      // Update size validation to include the three valid GPT-image-1 sizes
+      if (!["1024x1024", "1792x1024", "1024x1792", "1536x1024", "1024x1536", "auto"].includes(apiSize)) {
         apiSize = "1024x1024";
       }
+      // Map legacy sizes to new valid sizes for GPT-image-1
+      if (apiSize === "1536x1024") apiSize = "1792x1024";
+      if (apiSize === "1024x1536") apiSize = "1024x1792";
       // --- SIZE SANITIZATION END ---
 
       // Enhance edit prompts with face preservation instructions
@@ -442,6 +443,8 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         console.log(`Enhanced edit prompt with face preservation: ${enhancedPrompt}`);
       }
 
+      // Import the transformImage function
+      const { transformImage } = await import("./openai-final.js");
       const result = await transformImage(sourceImagePath, enhancedPrompt, apiSize);
 
       // Create a server-relative path for the transformed image
