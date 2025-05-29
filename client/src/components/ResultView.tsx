@@ -212,7 +212,7 @@ export default function ResultView({
         </div>
 
         {/* Side-by-side image display */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className={`grid grid-cols-1 gap-4 mb-6 ${secondTransformedImage ? (coloringBookImage ? 'md:grid-cols-3' : 'md:grid-cols-2') : (coloringBookImage ? 'md:grid-cols-2' : 'md:grid-cols-1')}`}>
           {/* First transformed image */}
           <div 
             className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === transformedImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
@@ -280,6 +280,33 @@ export default function ResultView({
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
                 <p className="text-sm font-medium">Option 2</p>
+              </div>
+            </div>
+          )}
+
+          {/* Coloring book image (if available) */}
+          {coloringBookImage && (
+            <div 
+              className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === coloringBookImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
+              onClick={() => {
+                setSelectedImage(coloringBookImage);
+                saveImageSelection(coloringBookImage);
+              }}
+            >
+              <div className="aspect-w-1 aspect-h-1 relative">
+                <img 
+                  src={coloringBookImage} 
+                  alt="Coloring book style" 
+                  className="object-cover w-full h-full" 
+                />
+                {selectedImage === coloringBookImage && (
+                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                    <Check className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
+                <p className="text-sm font-medium">{secondTransformedImage ? 'Option 3' : 'Option 2'}</p>
               </div>
             </div>
           )}
