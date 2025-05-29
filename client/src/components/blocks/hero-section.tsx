@@ -173,9 +173,12 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <Link href="/prebuilt-prompts" className="mt-4 w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white font-medium py-3 px-6 rounded-xl transition-colors inline-block text-center">
+                                        <RainbowButton 
+                                            className="mt-4 w-full"
+                                            onClick={() => window.location.href = '/prebuilt-prompts'}
+                                        >
                                             Explore Prompts
-                                        </Link>
+                                        </RainbowButton>
                                     </div>
                                 </div>
 
