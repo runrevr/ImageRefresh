@@ -204,11 +204,15 @@ Product info:
 
 Based on the specific analysis above, generate exactly 5 unique enhancement concepts tailored to THIS image's needs:
 
-IDEA 1: TECHNICAL IMPROVEMENT - Focus on the #1 technical issue identified in the analysis (lighting, shadows, background, etc.)
-IDEA 2: COMPOSITION ENHANCEMENT - Address composition, angle, or framing improvements needed
-IDEA 3: BACKGROUND TRANSFORMATION - Create a background that better serves the product and brand
-IDEA 4: LIFESTYLE CONTEXT - Place the product in a realistic use scenario that tells a story
-IDEA 5: CREATIVE/CHAOS CONCEPT - Bold, artistic, or surreal transformation that breaks conventional rules
+IDEA 1: TECHNICAL PERFECTION - Analyze the original image's weaknesses and create a technically flawless version. Address specific issues: harsh shadows → soft diffused lighting, cluttered background → clean minimalist backdrop, poor angles → hero angle showcasing best features, bad color → color-accurate reproduction
+
+IDEA 2: LIFESTYLE STORYTELLING - Build a complete scene showing the product in its moment of peak value. Consider: who uses this, when do they need it most, what problem does it solve? Create authentic environmental context with supporting elements that tell that story
+
+IDEA 3: MODERN ARTISTRY - Elevate the product through sophisticated visual treatment. Consider: dramatic black & white photography with rich tonal range, ultra-minimalist composition with bold negative space, high-contrast monochrome, sleek contemporary styling with geometric elements, museum-quality presentation, or editorial elegance if appropriate for the product
+
+IDEA 4: PATTERN INTERRUPT - Create cognitive dissonance that forces a double-take. Consider: impossible physics (floating, melting upward), surreal scale relationships, product doing something it shouldn't, environments that don't match but somehow work
+
+IDEA 5: MULTIVERSE MADNESS - Transport the product through impossible realities. Randomly select from: product surfing on lava waves, commanding an army of miniatures in epic battle, as the crown jewel of an alien civilization, replacing the sun in a solar system, emerging from a black hole, frozen in time while the world spins around it, conducting a symphony of northern lights
 
 For each concept, return a JSON object with:
 - id: unique identifier based on what this image specifically needs
@@ -222,12 +226,12 @@ For each concept, return a JSON object with:
 - industryRelevance: 9
 - editPrompt: detailed prompt for GPT-image-01 that addresses THIS image's specific needs
 
-CRITICAL: The editPrompt must be tailored to fix the specific issues and leverage the specific strengths identified in the analysis above. Each idea should have a very different approach:
-- Idea 1: Technical/professional fix
-- Idea 2: Composition/framing improvement  
-- Idea 3: Background replacement/enhancement
-- Idea 4: Lifestyle/contextual scene creation
-- Idea 5: Creative/artistic/surreal transformation
+CRITICAL: The editPrompt must be tailored to the specific product and analysis above. Each idea should follow its designated concept type:
+- Idea 1: Technical perfection addressing specific image flaws
+- Idea 2: Authentic lifestyle storytelling with environmental context
+- Idea 3: Modern artistic treatment with sophisticated visual style
+- Idea 4: Pattern interrupt with impossible/surreal elements
+- Idea 5: Multiverse madness with fantastical scenarios
 
 Return as JSON array:
 ${`[
