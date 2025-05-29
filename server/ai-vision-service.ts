@@ -212,7 +212,7 @@ IDEA 3: MODERN ARTISTRY - Elevate the product through sophisticated visual treat
 
 IDEA 4: PATTERN INTERRUPT - Create cognitive dissonance that forces a double-take. Consider: impossible physics (floating, melting upward), surreal scale relationships, product doing something it shouldn't, environments that don't match but somehow work
 
-IDEA 5: MULTIVERSE MADNESS - Transport the product through impossible realities. Randomly select from: product surfing on lava waves, commanding an army of miniatures in epic battle, as the crown jewel of an alien civilization, replacing the sun in a solar system, emerging from a black hole, frozen in time while the world spins around it, conducting a symphony of northern lights
+IDEA 5: MULTIVERSE MADNESS - Product as hero in impossible realities. Focus on INSANE ENVIRONMENTS around the unchanged product: cosmic explosions, abstract art storms, gravity-defying landscapes, dimensional rifts, liquid light oceans, fractal forests, time distortions, aurora tornadoes, floating in void with reality glitching, paint splatter universes, crystalline dimensions. NO characters/creatures - pure environmental chaos making viewers say "how is this even possible?!"
 
 For each concept, return a JSON object with:
 - id: unique identifier based on what this image specifically needs
