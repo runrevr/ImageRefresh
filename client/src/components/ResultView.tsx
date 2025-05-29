@@ -17,7 +17,7 @@ interface ResultViewProps {
   secondTransformedImage?: string | null;
   onTryAgain: () => void;
   onNewImage: () => void;
-  onEditImage?: (imageToEdit?: string) => void;
+  onEditImage?: (imageToEdit?: string, editPrompt?: string) => void;
   freeCredits: number;
   paidCredits: number;
   prompt?: string;
@@ -58,6 +58,7 @@ export default function ResultView({
   // State for edit prompt
   const [showEditPrompt, setShowEditPrompt] = useState(false);
   const [editPromptText, setEditPromptText] = useState('');
+  const [editImageUrl, setEditImageUrl] = useState<string>('');
   
   // State for full view
   const [fullViewImage, setFullViewImage] = useState<string | null>(null);
@@ -89,7 +90,7 @@ export default function ResultView({
     if (actionRequiringEmail === 'download') {
       handleDownload();
     } else if (actionRequiringEmail === 'edit' && onEditImage) {
-      onEditImage(selectedImage);
+      onEditImage(editImageUrl, editPromptText);
     } else if (actionRequiringEmail === 'coloring') {
       handleColoringBookTransform();
     }
@@ -195,12 +196,13 @@ export default function ResultView({
     }
 
     if (onEditImage) {
-      // Pass the edit prompt to the parent component
-      onEditImage(selectedImage);
+      // Pass the selected image URL and edit prompt to the parent component
+      onEditImage(editImageUrl, editPromptText);
     }
     
     setShowEditPrompt(false);
     setEditPromptText('');
+    setEditImageUrl('');
   };
 
   // Function to handle coloring book transformation
@@ -421,7 +423,10 @@ export default function ResultView({
                 <IconButton 
                   icon={Edit} 
                   label="Edit Prompt" 
-                  onClick={() => setShowEditPrompt(true)} 
+                  onClick={() => {
+                    setEditImageUrl(transformedImage);
+                    setShowEditPrompt(true);
+                  }} 
                 />
                 <IconButton 
                   icon={ZoomIn} 
@@ -486,7 +491,10 @@ export default function ResultView({
                   <IconButton 
                     icon={Edit} 
                     label="Edit Prompt" 
-                    onClick={() => setShowEditPrompt(true)} 
+                    onClick={() => {
+                      setEditImageUrl(secondTransformedImage || coloringBookImage || '');
+                      setShowEditPrompt(true);
+                    }} 
                   />
                   <IconButton 
                     icon={ZoomIn} 
