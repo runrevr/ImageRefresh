@@ -734,7 +734,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
       // Return the transformed image URL
       res.status(200).json({
         message: "Coloring book transformation completed successfully",
-        coloringBookImageUrl: transformedImageUrl,
+        transformedImageUrl: transformedImageUrl,
         originalImagePath: imagePath,
       });
     } catch (error: any) {
