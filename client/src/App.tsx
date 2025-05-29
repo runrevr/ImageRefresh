@@ -54,7 +54,18 @@ function Router() {
     <>
       <ScrollToTop />
       <Switch>
-        <Route path="/" component={DemoPage} />
+        <Route path="/" component={() => (
+          <div style={{ padding: '20px', backgroundColor: 'lightblue', minHeight: '100vh' }}>
+            <h1>🎉 App is Working!</h1>
+            <p>Router is functioning correctly</p>
+            <p>Current path: {window.location.pathname}</p>
+            <div style={{ marginTop: '20px' }}>
+              <a href="/test-simple" style={{ padding: '10px', background: 'blue', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>
+                Test Simple Route
+              </a>
+            </div>
+          </div>
+        )} />
         <Route path="/old-home" component={Home} />
         <Route path="/pricing" component={PricingPage} />
         <Route path="/ideas" component={IdeasPage} />
