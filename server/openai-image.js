@@ -100,17 +100,18 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
     // Use GPT-image-1 for text-to-image generation with n: 2
     // Validate the size parameter
     const validSizes = ["1024x1024", "1792x1024", "1024x1792"];
-    
+
     if (!validSizes.includes(size)) {
       throw new Error(`Invalid size. Must be one of: ${validSizes.join(", ")}`);
     }
-    
+
     console.log(`[OpenAI] [${transformationId}] Using GPT-image-1 model for text-to-image generation with size: ${size}`);
     const response = await openai.images.generate({
       model: "gpt-image-1",
       prompt: prompt,
       n: 2,
       size: size,
+      moderation: "low"
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);
@@ -121,10 +122,10 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
     }
 
     console.log(`[OpenAI] [${transformationId}] Received ${response.data.length} images from OpenAI`);
-    
+
     // Process multiple images (n: 2)
     const savedImagePaths = [];
-    
+
     for (let i = 0; i < response.data.length; i++) {
       const imageData = response.data[i];
       if (!imageData.url) {
@@ -141,23 +142,23 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
           responseType: 'arraybuffer',
           timeout: 30000 // 30 second timeout
         });
-        
+
         console.log(`[OpenAI] [${transformationId}] Download ${i + 1} successful, received ${imageResponse.data.length} bytes`);
-        
+
         // Save the image to the uploads directory
         const imageExt = '.png'; // OpenAI returns PNG images
         const uniqueId = `${Date.now()}-${uuid()}`;
         const transformedFileName = `text-to-image-${uniqueId}${i > 0 ? `-${i + 1}` : ''}${imageExt}`;
         const transformedImagePath = path.join(uploadsDir, transformedFileName);
-        
+
         console.log(`[OpenAI] [${transformationId}] Saving image ${i + 1} to: ${transformedImagePath}`);
         fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
-        
+
         // Store the relative path
         const relativePath = `uploads/${transformedFileName}`;
         savedImagePaths.push(relativePath);
         console.log(`[OpenAI] [${transformationId}] Successfully saved image ${i + 1} to: ${relativePath}`);
-        
+
       } catch (downloadError) {
         console.error(`[OpenAI] [${transformationId}] Error downloading image ${i + 1}:`, downloadError);
       }
@@ -167,10 +168,10 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
     if (savedImagePaths.length === 0) {
       throw new Error("Failed to download any images from OpenAI");
     }
-    
+
     console.log(`[OpenAI] [${transformationId}] Successfully processed ${savedImagePaths.length} images`);
     console.log(`[OpenAI] [${transformationId}] All image paths:`, savedImagePaths);
-    
+
     // Return the first image path for backward compatibility
     return savedImagePaths[0];
     } catch (downloadError) {
