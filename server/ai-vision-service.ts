@@ -204,8 +204,11 @@ Product info:
 
 Based on the specific analysis above, generate exactly 5 unique enhancement concepts tailored to THIS image's needs:
 
-Concepts 1-3: ADDRESS THE SPECIFIC IMPROVEMENTS IDENTIFIED (focus on the areas that need work)
-Concepts 4-5: CREATIVE enhancements that build on the strengths while adding wow factor
+IDEA 1: TECHNICAL IMPROVEMENT - Focus on the #1 technical issue identified in the analysis (lighting, shadows, background, etc.)
+IDEA 2: COMPOSITION ENHANCEMENT - Address composition, angle, or framing improvements needed
+IDEA 3: BACKGROUND TRANSFORMATION - Create a background that better serves the product and brand
+IDEA 4: LIFESTYLE CONTEXT - Place the product in a realistic use scenario that tells a story
+IDEA 5: CREATIVE/CHAOS CONCEPT - Bold, artistic, or surreal transformation that breaks conventional rules
 
 For each concept, return a JSON object with:
 - id: unique identifier based on what this image specifically needs
@@ -219,7 +222,12 @@ For each concept, return a JSON object with:
 - industryRelevance: 9
 - editPrompt: detailed prompt for GPT-image-01 that addresses THIS image's specific needs
 
-CRITICAL: The editPrompt must be tailored to fix the specific issues and leverage the specific strengths identified in the analysis above. Don't use generic prompts - make them specific to what THIS image needs.
+CRITICAL: The editPrompt must be tailored to fix the specific issues and leverage the specific strengths identified in the analysis above. Each idea should have a very different approach:
+- Idea 1: Technical/professional fix
+- Idea 2: Composition/framing improvement  
+- Idea 3: Background replacement/enhancement
+- Idea 4: Lifestyle/contextual scene creation
+- Idea 5: Creative/artistic/surreal transformation
 
 Return as JSON array:
 ${`[
