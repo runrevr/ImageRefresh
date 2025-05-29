@@ -7,8 +7,3 @@ import "./index.css";
 console.log("🟢 main.tsx - About to render");
 createRoot(document.getElementById("root")!).render(<App />);
 console.log("🟢 main.tsx - Render called");
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-
-createRoot(document.getElementById("root")!).render(<App />);
