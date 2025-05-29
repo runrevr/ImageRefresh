@@ -104,7 +104,7 @@ export default function Home() {
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] =
     useState<boolean>(false); // Track if user has already tried another prompt
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   // Fetch user credits and OpenAI configuration on component mount
   useEffect(() => {
