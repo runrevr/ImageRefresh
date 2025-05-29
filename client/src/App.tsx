@@ -271,18 +271,30 @@ function Router() {
 
 function App() {
   console.log("🚀 App component is rendering");
+  
+  // Add console log to confirm this function executes
+  console.log("🚀 About to return JSX");
 
   return (
-    <div style={{
+    <div id="test-div" style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       padding: '50px',
       backgroundColor: 'red',
       color: 'white',
       fontSize: '24px',
-      minHeight: '100vh'
+      zIndex: 9999,
+      display: 'block'
     }}>
       <h1>MINIMAL TEST - App Working</h1>
       <p>If you see this, React is working</p>
       <p>Time: {new Date().toLocaleTimeString()}</p>
+      <div style={{ marginTop: '20px', backgroundColor: 'blue', padding: '10px' }}>
+        This should be visible
+      </div>
     </div>
   );
 }
