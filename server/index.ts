@@ -5,11 +5,13 @@ import OpenAI from "openai";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { createServer } from "http";
+import { setupVite } from "./vite.js";
 
 config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = parseInt(process.env.PORT || "5000");
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
@@ -148,7 +150,15 @@ import uploadEnhanceRoutes from "./routes/upload-enhance-api.js";
 
 app.use("/api", uploadEnhanceRoutes);
 
-app.listen(port, "0.0.0.0", () => {
+const server = createServer(app);
+
+// Setup Vite in development mode
+if (process.env.NODE_ENV !== "production") {
+  await setupVite(app, server);
+}
+
+server.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
   console.log(`OpenAI configured: ${!!process.env.OPENAI_API_KEY}`);
+  console.log(`Vite development server configured: ${process.env.NODE_ENV !== "production"}`);
 });
