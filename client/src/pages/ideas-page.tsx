@@ -308,23 +308,23 @@ export default function IdeasPage() {
   const [selectedStyle, setSelectedStyle] = useState<Style | null>(null);
 
   // Get all categories from our data structure
-  const categories = getCategories();
-  
+  const categories = getCategories().filter(category => category.id !== "product");
+
   // Check for existing saved style on component mount
   useEffect(() => {
     if (hasSavedStyle()) {
       const savedStyle = getSavedStyle();
-      
+
       // Find the style in our styles data
       const allStyles = categories.flatMap(cat => cat.styles);
       const matchingStyle = allStyles.find(s => 
         s.id === savedStyle?.id || 
         (s.name === savedStyle?.title && s.category === savedStyle?.category)
       );
-      
+
       if (matchingStyle) {
         setSelectedStyle(matchingStyle);
-        
+
         // If we have a matching style, select its category too
         if (matchingStyle.category) {
           setSelectedCategory(matchingStyle.category);
@@ -463,7 +463,7 @@ export default function IdeasPage() {
       id: style.id
     };
     saveStyle(savedStyle);
-    
+
     // Update the selected style
     setSelectedStyle(style);
 
@@ -472,12 +472,12 @@ export default function IdeasPage() {
       description: `The "${style.name}" style will be applied to your next image.`,
     });
   };
-  
+
   // Function to cancel the selected style
   const cancelSelectedStyle = () => {
     setSelectedStyle(null);
     clearSavedStyle();
-    
+
     toast({
       title: "Style canceled",
       description: "You can select another style or continue without a preset style.",
@@ -533,7 +533,7 @@ export default function IdeasPage() {
               <ChevronLeft className="h-4 w-4 mr-1" />
               Back to Categories
             </Button>
-            
+
             {/* Show selected style info and cancel button if a style is selected */}
             {selectedStyle && (
               <div className="flex items-center space-x-3">

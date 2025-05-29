@@ -14,7 +14,6 @@ import {
   Wand2,
   ChevronRight,
   ImageIcon,
-  BoxIcon,
   PaintBucket,
   Paintbrush,
   Sparkles,
@@ -37,7 +36,6 @@ interface PromptInputProps {
 // Main transformation categories
 export type TransformationType =
   | "cartoon"
-  | "product"
   | "painting"
   | "era"
   | "historical"
@@ -56,13 +54,7 @@ export type CartoonSubcategory =
   | "superhero"
   | "lego"
   | "custom-cartoon";
-export type ProductSubcategory =
-  | "remove-background"
-  | "enhanced-lighting"
-  | "natural-scene"
-  | "product-mockup"
-  | "social-media-ready"
-  | "custom-product";
+
 export type PaintingSubcategory =
   | "oil-painting"
   | "watercolor"
@@ -185,55 +177,7 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
   },
 };
 
-// Product subcategories
-const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
-  "remove-background": {
-    title: "Remove Background",
-    description:
-      "Isolate the product with a clean, solid or transparent background.",
-    placeholder: "E.g., Place on a pure white background with subtle shadow",
-    suggestedPrompt:
-      "Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.",
-  },
-  "enhanced-lighting": {
-    title: "Enhanced Lighting & Colors",
-    description:
-      "Improve product appearance with professional studio lighting and color enhancement.",
-    placeholder: "E.g., Add dramatic side lighting to highlight texture",
-    suggestedPrompt:
-      "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
-  },
-  "natural-scene": {
-    title: "Lifestyle Integration",
-    description:
-      "Place the product in a realistic outdoor or natural environment.",
-    placeholder:
-      "E.g., Indoor or outdoor, which environment [modern/rustic/minimalist]",
-    suggestedPrompt:
-      "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
-  },
-  "product-mockup": {
-    title: "Product Mockup",
-    description: "Show the product in context of use in realistic scenarios.",
-    placeholder: "E.g., Show being used by a model in a living room",
-    suggestedPrompt:
-      "Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.",
-  },
-  "social-media-ready": {
-    title: "Social Media Ready",
-    description: "Optimize product presentation for social media platforms.",
-    placeholder: "Color Style: vibrant, pastel or contrasting",
-    suggestedPrompt:
-      "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with [vibrant/pastel/contrasting] colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay, incorporate trending visual elements, and ensure the product pops against a carefully designed background that suggests lifestyle without overwhelming.",
-  },
-  "custom-product": {
-    title: "Create Your Own Product Image",
-    description: "Describe your own custom product transformation.",
-    placeholder:
-      "E.g., Place product on a marble countertop with morning light",
-    suggestedPrompt: "",
-  },
-};
+
 
 // Painting subcategories
 const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
@@ -512,8 +456,6 @@ export default function PromptInput({
   // Subcategory selections
   const [cartoonSubcategory, setCartoonSubcategory] =
     useState<CartoonSubcategory | null>(null);
-  const [productSubcategory, setProductSubcategory] =
-    useState<ProductSubcategory | null>(null);
   const [paintingSubcategory, setPaintingSubcategory] =
     useState<PaintingSubcategory | null>(null);
   const [eraSubcategory, setEraSubcategory] = useState<EraSubcategory | null>(
@@ -528,8 +470,6 @@ export default function PromptInput({
     switch (primaryCategory) {
       case "cartoon":
         return Object.keys(CARTOON_STYLES) as CartoonSubcategory[];
-      case "product":
-        return Object.keys(PRODUCT_STYLES) as ProductSubcategory[];
       case "painting":
         return Object.keys(PAINTING_STYLES) as PaintingSubcategory[];
       case "era":
@@ -621,7 +561,6 @@ export default function PromptInput({
     setPrimaryCategory(category);
     // Reset all subcategories when changing the main category
     setCartoonSubcategory(null);
-    setProductSubcategory(null);
     setPaintingSubcategory(null);
     setEraSubcategory(null);
     setOtherSubcategory(null);
@@ -643,12 +582,7 @@ export default function PromptInput({
     }
   };
 
-  const handleProductSelect = (subcategory: ProductSubcategory) => {
-    setProductSubcategory(subcategory);
-    if (subcategory !== "custom-product") {
-      setPromptText(PRODUCT_STYLES[subcategory].suggestedPrompt);
-    }
-  };
+  
 
   const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
     setPaintingSubcategory(subcategory);
@@ -677,8 +611,6 @@ export default function PromptInput({
   const getCurrentSubcategoryInfo = () => {
     if (primaryCategory === "cartoon" && cartoonSubcategory) {
       return CARTOON_STYLES[cartoonSubcategory];
-    } else if (primaryCategory === "product" && productSubcategory) {
-      return PRODUCT_STYLES[productSubcategory];
     } else if (primaryCategory === "painting" && paintingSubcategory) {
       return PAINTING_STYLES[paintingSubcategory];
     } else if (primaryCategory === "era" && eraSubcategory) {
@@ -706,8 +638,6 @@ export default function PromptInput({
     switch (category) {
       case "cartoon":
         return <ImageIcon className="h-5 w-5 mr-2" />;
-      case "product":
-        return <BoxIcon className="h-5 w-5 mr-2" />;
       case "painting":
         return <Paintbrush className="h-5 w-5 mr-2" />;
       case "era":
@@ -727,8 +657,6 @@ export default function PromptInput({
     switch (category) {
       case "cartoon":
         return cartoonSubcategory === subcategory;
-      case "product":
-        return productSubcategory === subcategory;
       case "painting":
         return paintingSubcategory === subcategory;
       case "era":
@@ -748,11 +676,6 @@ export default function PromptInput({
       cartoonSubcategory === "custom-cartoon"
     ) {
       return "Describe your custom cartoon transformation...";
-    } else if (
-      primaryCategory === "product" &&
-      productSubcategory === "custom-product"
-    ) {
-      return "Describe your custom product transformation...";
     } else if (
       primaryCategory === "painting" &&
       paintingSubcategory === "custom-painting"
@@ -909,18 +832,6 @@ export default function PromptInput({
             <span className="text-xs text-center">Sketch to Reality</span>
           </Button>
           <Button
-            variant={primaryCategory === "product" ? "default" : "outline"}
-            className={`flex flex-col items-center justify-center h-16 ${
-              primaryCategory === "product"
-                ? "bg-secondary text-white"
-                : "text-white bg-black"
-            }`}
-            onClick={() => handleCategorySelect("product")}
-          >
-            <BoxIcon className="h-5 w-5 mb-1" />
-            <span className="text-xs text-center">Product</span>
-          </Button>
-          <Button
             variant={primaryCategory === "painting" ? "default" : "outline"}
             className={`flex flex-col items-center justify-center h-16 ${
               primaryCategory === "painting"
@@ -953,9 +864,6 @@ export default function PromptInput({
                 case "cartoon":
                   title = CARTOON_STYLES[key as CartoonSubcategory].title;
                   break;
-                case "product":
-                  title = PRODUCT_STYLES[key as ProductSubcategory].title;
-                  break;
                 case "painting":
                   title = PAINTING_STYLES[key as PaintingSubcategory].title;
                   break;
@@ -985,9 +893,6 @@ export default function PromptInput({
                     switch (primaryCategory) {
                       case "cartoon":
                         handleCartoonSelect(key as CartoonSubcategory);
-                        break;
-                      case "product":
-                        handleProductSelect(key as ProductSubcategory);
                         break;
                       case "painting":
                         handlePaintingSelect(key as PaintingSubcategory);
