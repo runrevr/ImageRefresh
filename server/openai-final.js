@@ -161,8 +161,8 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
         );
 
         // Process each image in the response
-        for (let i = 0; i < response.data.data.length; i++) {
-          const item = response.data.data[i];
+        for (let i = 0; i < response.data.length; i++) {
+          const item = response.data[i];
           const outputPath = path.join(
             uploadsDir,
             `transformed-${timestamp}${i > 0 ? "-" + (i + 1) : ""}.png`,
