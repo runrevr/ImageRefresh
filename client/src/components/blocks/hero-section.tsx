@@ -179,8 +179,8 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                                 alert('Button clicked - navigating to prebuilt prompts');
                                                 window.location.href = '/prebuilt-prompts';
                                             }}
-                                            className="mt-4 w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white font-medium py-3 px-6 rounded-xl transition-colors"
-                                            style={{ pointerEvents: 'auto', cursor: 'pointer' }}
+                                            className="mt-4 w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white font-medium py-3 px-6 rounded-xl transition-colors relative z-50"
+                                            style={{ pointerEvents: 'auto', cursor: 'pointer', position: 'relative', zIndex: 9999 }}
                                         >
                                             Explore Prompts
                                         </button>
