@@ -44,7 +44,7 @@ localPort = 8080
 externalPort = 8080
 
 [workflows]
-runButton = "Run"
+runButton = "Frontend Only Debug"
 
 [[workflows.workflow]]
 name = "Run"
