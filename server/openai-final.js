@@ -124,11 +124,11 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
           throw new Error("OpenAI client not initialized");
         }
 
-        // Read the image as buffer for proper formatting
-        const imageBuffer = fs.readFileSync(optimizedImagePath);
+        // Create a file stream for the OpenAI API
+        const imageStream = fs.createReadStream(optimizedImagePath);
         
         const response = await openai.images.edit({
-        image: imageBuffer,
+        image: imageStream,
         prompt: prompt,
         n: 2,
         size: size
