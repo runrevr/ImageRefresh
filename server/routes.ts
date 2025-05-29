@@ -944,27 +944,15 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
     }
   });
 
-  // Prebuilt prompts endpoints
-  const uploadsDir = path.join(process.cwd(), "uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-  const expressApp = express();
-  expressApp.use(express.json({ limit: '10mb' }));
-  expressApp.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-  // Serve uploaded files
-  expressApp.use('/uploads', express.static(uploadsDir));
+  // Import prebuilt prompts functions
+  const { getPrebuiltPrompts, transformWithPrebuiltPrompt } = await import('./routes/prebuilt-prompts');
 
   // Prebuilt prompts endpoints
-  expressApp.get('/api/prebuilt-prompts', getPrebuiltPrompts);
-  expressApp.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
-
-  // Serve uploaded files
-  expressApp.use('/uploads', express.static(uploadsDir));
+  app.get('/api/prebuilt-prompts', getPrebuiltPrompts);
+  app.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
 
   // Create HTTP server
-  const httpServer = createServer(expressApp);
+  const httpServer = createServer(app);
   console.log("Server created and routes registered successfully");
   return httpServer;
 }
