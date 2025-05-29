@@ -168,7 +168,7 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     description: "Convert to a dynamic comic book superhero style.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
     suggestedPrompt:
-      "Create a dynamic comic book-style superhero character inspired by classic superhero adventures. Design an original hero with a confident, determined expression wearing a vibrant costume with bold primary colors and a distinctive emblem centered on the chest. For the costume, include a well-fitted superhero suit with textured panels, decorative seams, and complementary color blocking. Add distinctive identity-concealing elements like a sleek mask, advanced visor system, or specialized glasses that enhance the heroic appearance while maintaining the character's expressive eyes.The character should have a powerful stance with shoulders back and chin up, suggesting readiness for action. Include superhero accessories like a flowing cape with dramatic movement, specialized gauntlets, or a utility belt with gadgets. Surround the hero with dynamic energy effects, motion lines, or power signatures that match their color scheme.     Set the scene in a stylized city environment with dramatic perspective, featuring tall buildings, a setting sun creating dramatic lighting, and subtle hints of action or danger in the background. The overall style should feel empowering, bold, and reminiscent of beloved comic book art.Use the uploaded AI-generated reference image as the direct basis for the character's pose, proportions, and general appearance, transforming it into this superhero version while preserving its essential character.",
+      "Transform the person in the uploaded AI-generated reference image into a cartoon superhero using the image as the direct basis for the character's pose proportions and general appearance while preserving their exact facial features hair color and style eye color skin tone facial structure and any distinctive features like freckles dimples or tooth gap. The person wears a vibrant superhero costume with cape and emblem standing in a heroic pose with dynamic lighting rendered in one of these randomly selected styles Marvel Comics animation style with dramatic shadows muscular heroic proportions and cinematic lighting or Pixar 3D animation style with expressive features warm lighting and family-friendly appeal or anime manga superhero style with dynamic action lines and large expressive eyes scaled to match original or DC animated series style like Justice League Unlimited with bold geometric shapes and strong jaw lines or Spider-Verse animation style with comic book halftone effects and multiple art styles blended or comic book illustration style with Ben Day dots and bold ink outlines or Cartoon Network action show style with angular designs and vibrant colors. Place the superhero in one of these randomly selected backgrounds city skyline at sunset or action scene mid-flight or hero landing pose with impact effects or standing atop building with cape flowing or power effects surrounding them or cosmic space background or training facility. The superhero version must be immediately recognizable as the same person from the reference image just illustrated and empowered with superhero elements maintaining authentic appearance while adding heroic costume and setting.",
   },
   lego: {
     title: "Lego",
@@ -357,7 +357,7 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
       "Vibrant neon aesthetics, distinctive fashion, and visual style of the 1980s era.",
     placeholder: "E.g., Add 80s fashion, hairstyle, and background",
     suggestedPrompt:
-      "Transform into an authentic 1980's portrait with vibrant neon aesthetics. Apply high-saturation, high-contrast photography with slight airbrushing effect. Convert hairstyles to characteristic 80's looks including big permed hair, mullets, side ponytails, or feathered styles. Update clothing to iconic 80's fashion with shoulder pads, Members Only jackets, leg warmers, acid-wash jeans, neon colors, or power suits. Add period accessories like large plastic earrings, Ray-Ban Wayfarers, scrunchies, sweatbands, or chunky digital watches. Set against 80's backdrops featuring laser grids, chrome effects, geometric patterns, or airbrushed gradients. Include 80's technology like boomboxes, Walkmans, early video game systems, or brick phones. The final image should capture the maximalist, energetic spirit of the 1980's while maintaining clear likeness to the original subject.",
+      "Transform this image into an authentic 1980s version while keeping the exact same environment and setting from the original photo. Preserve all facial features hair texture eye color skin tone and facial structure completely unchanged ensuring the people remain instantly recognizable as themselves. Apply 80s photography characteristics including high saturation film grain slight soft focus and that distinctive 80s flash photography look with warm tones. Update only the clothing to period appropriate 80s fashion like Members Only jackets shoulder pads acid wash denim neon windbreakers leg warmers or power suits while maintaining the original pose and body position. Add subtle 80s styling elements like feathered hair edges teased volume scrunchies headbands or styling gel effects without changing the actual hair color or length. Include period accessories naturally integrated into the scene such as Walkman headphones chunky watches plastic jewelry or wayfarers. Apply an 80s photo filter that mimics the color processing and slight overexposure common in 80s photography. The original background and environment must remain exactly the same just with the vintage photo quality applied. The final result should look like an authentic photo taken in the 1980s in the same location with the same people just dressed and styled for that era.",
   },
   renaissance: {
     title: "Renaissance",
@@ -557,7 +557,7 @@ export default function PromptInput({
   useEffect(() => {
     if (savedStyle && savedStyle.prompt) {
       console.log("Setting prompt from saved style:", savedStyle.prompt);
-      // Make sure we're using the EXACT prompt from the saved style 
+      // Make sure we're using the EXACT prompt from the saved style
       // without any modifications or truncation
       setPromptText(savedStyle.prompt);
 
@@ -578,7 +578,7 @@ export default function PromptInput({
         );
         setPrimaryCategory("other");
         setOtherSubcategory("mullets");
-        
+
         // Ensure we're using the full mullet prompt
         const mulletPrompt = OTHER_STYLES.mullets.suggestedPrompt;
         console.log("Setting full mullet prompt:", mulletPrompt);
@@ -602,16 +602,16 @@ export default function PromptInput({
     // Log the exact prompt being submitted for debugging
     console.log("Submitting prompt from PromptInput:", promptText);
     console.log("Prompt length:", promptText.length);
-    
+
     // Special handling for category-specific prompts
     let finalPrompt = promptText;
-    
+
     // If we're using a mullet transformation, make sure we're sending the full prompt
     if (primaryCategory === "other" && otherSubcategory === "mullets") {
       finalPrompt = OTHER_STYLES.mullets.suggestedPrompt;
       console.log("Using full mullet prompt:", finalPrompt);
     }
-    
+
     setIsLoading(true);
     onSubmit(finalPrompt, imageSize);
   };
@@ -824,11 +824,7 @@ export default function PromptInput({
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       {/* Back button */}
       <div>
-        <RainbowButton
-          variant="outline"
-          className="pl-2"
-          onClick={onBack}
-        >
+        <RainbowButton variant="outline" className="pl-2" onClick={onBack}>
           <ChevronLeft className="mr-2 h-4 w-4" />
           Back to Image Upload
         </RainbowButton>
@@ -845,7 +841,8 @@ export default function PromptInput({
               className="w-full h-auto object-contain max-h-[400px]"
               onError={(e) => {
                 console.error("Image failed to load:", originalImage);
-                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'%3E%3C/circle%3E%3Cpolyline points='21 15 16 10 5 21'%3E%3C/polyline%3E%3C/svg%3E";
+                e.currentTarget.src =
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'%3E%3C/circle%3E%3Cpolyline points='21 15 16 10 5 21'%3E%3C/polyline%3E%3C/svg%3E";
                 e.currentTarget.alt = "Image failed to load";
               }}
             />
