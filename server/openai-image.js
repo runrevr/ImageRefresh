@@ -96,51 +96,75 @@ export async function transformImageWithOpenAI(imagePath, prompt) {
     console.log(`[OpenAI] [${transformationId}] Using prompt directly (length: ${prompt.length})`);
     console.log(`[OpenAI] [${transformationId}] Prompt preview: ${prompt.substring(0, 100)}...`);
 
-    // Before we make the API call, ensure we haven't truncated or modified the prompt in any way
-    // For DALL-E 3, longer, more detailed prompts tend to give better results
+    // Use GPT-image-1 for text-to-image generation with n: 2
+    console.log(`[OpenAI] [${transformationId}] Using GPT-image-1 model for text-to-image generation`);
     const response = await openai.images.generate({
-      model: "dall-e-3",
+      model: "gpt-image-1",
       prompt: prompt,
-      n: 1,
+      n: 2,
       size: "1024x1024",
-      quality: "hd",
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);
 
     // Check response
-    if (!response.data || response.data.length === 0 || !response.data[0].url) {
-      throw new Error("No image URL returned from OpenAI");
+    if (!response.data || response.data.length === 0) {
+      throw new Error("No images returned from OpenAI");
     }
 
-    // Get the URL of the generated image
-    const generatedImageUrl = response.data[0].url;
-    console.log(`[OpenAI] [${transformationId}] Received image URL from OpenAI`);
+    console.log(`[OpenAI] [${transformationId}] Received ${response.data.length} images from OpenAI`);
+    
+    // Process multiple images (n: 2)
+    const savedImagePaths = [];
+    
+    for (let i = 0; i < response.data.length; i++) {
+      const imageData = response.data[i];
+      if (!imageData.url) {
+        console.error(`[OpenAI] [${transformationId}] No URL for image ${i + 1}`);
+        continue;
+      }
 
-    // Download the image
-    console.log(`[OpenAI] [${transformationId}] Downloading generated image...`);
-    try {
-      const imageResponse = await axios.get(generatedImageUrl, { 
-        responseType: 'arraybuffer',
-        timeout: 30000 // 30 second timeout
-      });
-      
-      console.log(`[OpenAI] [${transformationId}] Download successful, received ${imageResponse.data.length} bytes`);
-      
-      // Save the image to the uploads directory
-      const imageExt = '.png'; // OpenAI returns PNG images
-      const uniqueId = `${Date.now()}-${uuid()}`;
-      const transformedFileName = `transformed-${uniqueId}${imageExt}`;
-      const transformedImagePath = path.join(uploadsDir, transformedFileName);
-      
-      console.log(`[OpenAI] [${transformationId}] Saving image to: ${transformedImagePath}`);
-      fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
-      
-      // Return the path as uploads/filename for consistency
-      const relativePath = `uploads/${transformedFileName}`;
-      console.log(`[OpenAI] [${transformationId}] Successfully saved transformed image to: ${relativePath}`);
-      
-      return relativePath;
+      console.log(`[OpenAI] [${transformationId}] Processing image ${i + 1} from OpenAI`);
+
+    // Download each image
+      console.log(`[OpenAI] [${transformationId}] Downloading image ${i + 1}...`);
+      try {
+        const imageResponse = await axios.get(imageData.url, { 
+          responseType: 'arraybuffer',
+          timeout: 30000 // 30 second timeout
+        });
+        
+        console.log(`[OpenAI] [${transformationId}] Download ${i + 1} successful, received ${imageResponse.data.length} bytes`);
+        
+        // Save the image to the uploads directory
+        const imageExt = '.png'; // OpenAI returns PNG images
+        const uniqueId = `${Date.now()}-${uuid()}`;
+        const transformedFileName = `text-to-image-${uniqueId}${i > 0 ? `-${i + 1}` : ''}${imageExt}`;
+        const transformedImagePath = path.join(uploadsDir, transformedFileName);
+        
+        console.log(`[OpenAI] [${transformationId}] Saving image ${i + 1} to: ${transformedImagePath}`);
+        fs.writeFileSync(transformedImagePath, Buffer.from(imageResponse.data));
+        
+        // Store the relative path
+        const relativePath = `uploads/${transformedFileName}`;
+        savedImagePaths.push(relativePath);
+        console.log(`[OpenAI] [${transformationId}] Successfully saved image ${i + 1} to: ${relativePath}`);
+        
+      } catch (downloadError) {
+        console.error(`[OpenAI] [${transformationId}] Error downloading image ${i + 1}:`, downloadError);
+      }
+    }
+
+    // Return the first image path for backward compatibility, but log all paths
+    if (savedImagePaths.length === 0) {
+      throw new Error("Failed to download any images from OpenAI");
+    }
+    
+    console.log(`[OpenAI] [${transformationId}] Successfully processed ${savedImagePaths.length} images`);
+    console.log(`[OpenAI] [${transformationId}] All image paths:`, savedImagePaths);
+    
+    // Return the first image path for backward compatibility
+    return savedImagePaths[0];
     } catch (downloadError) {
       console.error(`[OpenAI] [${transformationId}] Error downloading or saving the image:`, downloadError);
       let errorMessage = "Unknown error";

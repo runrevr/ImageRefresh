@@ -723,7 +723,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
     }
   });
 
-  
+
 
   // Get guest credits endpoint
   app.get('/api/credits/guest', async (req: Request, res: Response) => {
@@ -748,7 +748,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
   app.get('/api/credits/:userIdOrGuest', async (req: Request, res: Response) => {
     try {
       const userIdOrGuest = req.params.userIdOrGuest;
-      
+
       // If it's 'guest', return guest credits
       if (userIdOrGuest === 'guest') {
         const response = {
@@ -793,7 +793,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
     }
   });
 
-  
+
 
   // Fix for "user credits" 404. Add a new route for /api/user-credits/:id
   app.get("/api/user-credits/:id", async (req, res) => {

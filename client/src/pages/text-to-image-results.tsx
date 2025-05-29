@@ -48,21 +48,34 @@ export default function TextToImageResults() {
       const imageUrl1 = urlParams.get('imageUrl1')
       const imageUrl2 = urlParams.get('imageUrl2')
       const imageUrl = urlParams.get('imageUrl') // Fallback for single image
+      const imageUrls = urlParams.get('imageUrls') // New parameter for multiple URLs
       const prompt = urlParams.get('prompt')
       const purpose = urlParams.get('purpose')
       const industry = urlParams.get('industry')
       const aspectRatio = urlParams.get('aspectRatio')
 
-      // Handle multiple images or fallback to single image
-      const imageUrls = []
-      if (imageUrl1) imageUrls.push(decodeURIComponent(imageUrl1))
-      if (imageUrl2) imageUrls.push(decodeURIComponent(imageUrl2))
-      if (imageUrls.length === 0 && imageUrl) imageUrls.push(decodeURIComponent(imageUrl))
+      // Handle multiple images with priority for new imageUrls parameter
+      let finalImageUrls = []
+      
+      if (imageUrls) {
+        // Parse the imageUrls if it's a JSON string
+        try {
+          finalImageUrls = JSON.parse(decodeURIComponent(imageUrls))
+        } catch (e) {
+          // If parsing fails, treat as single URL
+          finalImageUrls = [decodeURIComponent(imageUrls)]
+        }
+      } else {
+        // Fallback to individual URL parameters
+        if (imageUrl1) finalImageUrls.push(decodeURIComponent(imageUrl1))
+        if (imageUrl2) finalImageUrls.push(decodeURIComponent(imageUrl2))
+        if (finalImageUrls.length === 0 && imageUrl) finalImageUrls.push(decodeURIComponent(imageUrl))
+      }
 
-      if (imageUrls.length > 0 && prompt) {
+      if (finalImageUrls.length > 0 && prompt) {
         const result: TextToImageResult = {
           jobId,
-          imageUrls,
+          imageUrls: finalImageUrls,
           metadata: {
             prompt: decodeURIComponent(prompt),
             purpose: purpose ? decodeURIComponent(purpose) : undefined,
