@@ -146,6 +146,7 @@ function DemoPage() {
             exit={{ y: "-50%", opacity: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
             mainClassName="text-[#06B6D4] font-bold inline-block text-6xl sm:text-7xl md:text-8xl font-audiowide leading-[1.1] tracking-tight"
+            elementLevelClassName="font-audiowide text-6xl sm:text-7xl md:text-8xl"
           />
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-8">
