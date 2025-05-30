@@ -148,7 +148,7 @@ function DemoPage() {
               mainClassName="text-[#06B6D4] font-bold inline-block"
             />
           </h1>
-          <p className="text-xl md:text-2xl font-montserrat text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-6xl md:text-2xl font-montserrat text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">
