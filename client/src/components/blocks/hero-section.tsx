@@ -44,11 +44,11 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
         console.log('Explore Prompts button clicked');
         console.log('Current location:', location);
         console.log('About to navigate to /prebuilt-prompts');
-        
+
         try {
             setLocation('/prebuilt-prompts');
             console.log('setLocation called successfully');
-            
+
             // Add a small delay and check if navigation worked
             setTimeout(() => {
                 console.log('Navigation check - current location:', window.location.pathname);
@@ -199,12 +199,11 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <RainbowButton 
-                                            className="mt-4 w-full"
-                                            onClick={handleExplorePrompts}
-                                        >
-                                            Explore Prompts
-                                        </RainbowButton>
+                                        <Link href="/prebuilt-prompts">
+                                            <RainbowButton className="mt-4 w-full">
+                                                Explore Prompts
+                                            </RainbowButton>
+                                        </Link>
                                     </div>
                                 </div>
 
