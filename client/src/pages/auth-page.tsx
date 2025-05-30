@@ -167,6 +167,7 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full" 
+                    style={{ backgroundColor: '#06B6D4', color: '#ffffff' }}
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? (
@@ -242,6 +243,7 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full" 
+                    style={{ backgroundColor: '#06B6D4', color: '#ffffff' }}
                     disabled={registerMutation.isPending}
                   >
                     {registerMutation.isPending ? (
