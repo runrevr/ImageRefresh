@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import Navbar from "@/components/Navbar";
 import { useCredits } from "@/hooks/useCredits";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserImage {
   id: number;
@@ -22,9 +23,9 @@ export default function MyImages() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: userCredits } = useCredits();
+  const { user } = useAuth();
 
-  // Get user ID from localStorage (this should match your auth system)
-  const userId = localStorage.getItem('userId');
+  const userId = user?.id;
 
   const { data: images = [], isLoading } = useQuery<UserImage[]>({
     queryKey: ['/api/user-images', userId],
