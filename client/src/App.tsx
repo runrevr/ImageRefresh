@@ -15,10 +15,8 @@ import ProductEnhancementPage from "@/pages/product-enhancement";
 import ProductEnhancementWebhookPage from "@/pages/product-enhancement-webhook";
 import ProductEnhancementDebugPage from "@/pages/product-enhancement-debug";
 import ProductEnhancementWebhookSimplePage from "@/pages/product-enhancement-webhook-simple";
-import ProductImageLabPage from "@/pages/product-image-lab";
 import SimpleProductLabPage from "@/pages/simple-product-lab";
 import ProductImageLabStaticPage from "@/pages/product-image-lab-static";
-import ProductImageLabEnhancedPage from "@/pages/product-image-lab-enhanced";
 import ProductImageFixedPage from "@/pages/product-image-fixed";
 import FixedProductLabPage from "@/pages/fixed-product-lab";
 import RouterDebugPage from "@/pages/router-debug";
@@ -28,6 +26,7 @@ import { useState, useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
 import ScrollToTop from "@/components/ScrollToTop";
+import ProductImageLabPage from './pages/product-image-lab';
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
