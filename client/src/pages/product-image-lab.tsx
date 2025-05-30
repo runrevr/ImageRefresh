@@ -102,7 +102,7 @@ export default function ProductImageLabPage() {
               </h3>
               <div className="relative bg-white rounded-xl shadow-lg overflow-hidden h-96">
                 <ComparisonSlider
-                  beforeImage={nounouShampoo}
+                  beforeImage={shampooOriginal}
                   afterImage={shampooEnhanced}
                 />
               </div>
