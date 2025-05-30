@@ -38,10 +38,14 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
-    const [, setLocation] = useLocation();
+    const [location, setLocation] = useLocation();
 
     const handleExplorePrompts = () => {
+        console.log('Explore Prompts button clicked');
+        console.log('Current location:', location);
+        console.log('About to navigate to /prebuilt-prompts');
         setLocation('/prebuilt-prompts');
+        console.log('setLocation called');
     };
 
     return (
