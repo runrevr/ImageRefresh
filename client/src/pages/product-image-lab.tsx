@@ -100,18 +100,11 @@ export default function ProductImageLabPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 See the Transformation
               </h3>
-              <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="relative bg-white rounded-xl shadow-lg overflow-hidden h-96">
                 <ComparisonSlider
                   beforeImage={nounouShampoo}
                   afterImage={sunsetShampoo}
                 />
-                {/* Before/After Labels */}
-                <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg text-sm font-medium">
-                  Before
-                </div>
-                <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg text-sm font-medium">
-                  After
-                </div>
               </div>
             </div>
           </div>
