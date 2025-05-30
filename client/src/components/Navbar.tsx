@@ -48,39 +48,12 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             Ideas
           </Link>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="header-menu text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold p-0 h-auto">
-                Product Image Lab
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4 ml-1"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-white border border-gray-200 shadow-lg">
-              <DropdownMenuItem asChild>
-                <Link href="/product-image-lab" className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10 w-full block px-3 py-2">
-                  Product Image Lab
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/prebuilt-prompts" className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10 w-full block px-3 py-2">
-                  Prebuilt Prompts
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link
+            href="/product-image-lab"
+            className="header-menu text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold"
+          >
+            Product Image Lab
+          </Link>
           <Link
             href="/pricing"
             className="header-menu text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold"
@@ -221,25 +194,13 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 >
                   Ideas
                 </Link>
-                <div className="py-2">
-                  <div className="text-white font-medium mb-2">Product Image Lab</div>
-                  <div className="ml-4 space-y-2">
-                    <Link
-                      href="/product-image-lab"
-                      className="header-menu block text-gray-300 hover:text-[#06B6D4] transition"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Product Image Lab
-                    </Link>
-                    <Link
-                      href="/prebuilt-prompts"
-                      className="header-menu block text-gray-300 hover:text-[#06B6D4] transition"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Prebuilt Prompts
-                    </Link>
-                  </div>
-                </div>
+                <Link
+                  href="/product-image-lab"
+                  className="header-menu py-2 text-white hover:text-[#06B6D4] transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Product Image Lab
+                </Link>
                 <Link
                   href="/pricing"
                   className="header-menu py-2 block text-white hover:text-[#06B6D4] transition"
