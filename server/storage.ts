@@ -3,6 +3,7 @@ import {
   users,
   memberships,
   payments,
+  userImages,
   type User,
   type InsertUser,
   type Transformation,
@@ -11,6 +12,8 @@ import {
   type InsertMembership,
   type Payment,
   type InsertPayment,
+  type UserImage,
+  type InsertUserImage,
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and, not, isNull } from "drizzle-orm";
@@ -60,6 +63,12 @@ export interface IStorage {
   createPayment(payment: InsertPayment): Promise<Payment>;
   getPayment(id: number): Promise<Payment | undefined>;
   getUserPayments(userId: number): Promise<Payment[]>;
+
+  // User Images operations
+  saveUserImage(userImage: InsertUserImage): Promise<UserImage>;
+  getUserImages(userId: number): Promise<UserImage[]>;
+  deleteExpiredImages(): Promise<number>;
+  deleteUserImage(imageId: number, userId: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {

@@ -56,6 +56,20 @@ export const payments = pgTable("payments", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const userImages = pgTable("user_images", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  imagePath: text("image_path").notNull(), // Path to the transformed/enhanced image
+  imageUrl: text("image_url").notNull(), // Full URL to access the image
+  originalPrompt: text("original_prompt"), // The prompt used to create this image
+  imageType: text("image_type").notNull(), // 'enhancement', 'transformation', 'text-to-image'
+  transformationId: integer("transformation_id").references(() => transformations.id), // Link to transformation if applicable
+  fileSize: integer("file_size"), // File size in bytes
+  dimensions: text("dimensions"), // Image dimensions like "1024x1024"
+  expiresAt: timestamp("expires_at").notNull(), // When this image should be deleted (45 days from creation)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations are defined through foreign keys in the tables above
 // userId in memberships references users.id
 // userId in transformations references users.id
@@ -88,6 +102,18 @@ export const insertPaymentSchema = createInsertSchema(payments).pick({
   metadata: true,
 });
 
+export const insertUserImageSchema = createInsertSchema(userImages).pick({
+  userId: true,
+  imagePath: true,
+  imageUrl: true,
+  originalPrompt: true,
+  imageType: true,
+  transformationId: true,
+  fileSize: true,
+  dimensions: true,
+  expiresAt: true,
+});
+
 // Create the schema and extend it to increase prompt length limit
 const baseInsertTransformationSchema = createInsertSchema(transformations).pick({
   userId: true,
@@ -112,6 +138,8 @@ export type InsertTransformation = z.infer<typeof insertTransformationSchema>;
 export type Transformation = typeof transformations.$inferSelect;
 export type InsertPayment = z.infer<typeof insertPaymentSchema>;
 export type Payment = typeof payments.$inferSelect;
+export type InsertUserImage = z.infer<typeof insertUserImageSchema>;
+export type UserImage = typeof userImages.$inferSelect;
 
 // Custom types for frontend
 export type ImageUploadResponse = {
