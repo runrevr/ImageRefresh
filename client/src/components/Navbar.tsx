@@ -130,7 +130,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <Link href="/auth?tab=login">
                 <Button
                   variant="outline"
-                  className="bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border-[#f2f2f2]"
+                  className="bg-[#333333] text-[#f2f2f2] hover:bg-[#FF7B54] border-[#f2f2f2]"
                 >
                   Log in
                 </Button>
