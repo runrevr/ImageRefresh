@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Image Lab - ImageRefresh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <style>
+    :root {
+      --deep-teal: #0D7877;
+      --cool-cerulean: #30A5D9;
+      --electric-lime: #C1F50A;
+      --charcoal-gray: #333333;
+      --soft-slate: #F2F4F6;
+      --error-red: #FF4136;
+      --white: #FFFFFF;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--charcoal-gray);
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.3;
+    }
+    
+    h1 {
+      font-weight: 800; /* ExtraBold */
+      font-size: 36px;
+    }
+    
+    h2 {
+      font-weight: 700; /* Bold */
+      font-size: 28px;
+      margin-bottom: 1rem;
+    }
+    
+    h3 {
+      font-weight: 500; /* Medium */
+      font-size: 22px;
+      margin-bottom: 0.75rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Hero Section */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 0;
+      background: linear-gradient(135deg, var(--white), var(--soft-slate));
+    }
+    
+    .hero h1 {
+      margin-bottom: 1rem;
+    }
+    
+    .hero h3 {
+      margin-bottom: 2rem;
+      color: #555;
+      max-width: 600px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .btn:hover {
+      transform: scale(1.02);
+      filter: brightness(110%);
+    }
+    
+    .btn-primary {
+      background-color: var(--deep-teal);
+      color: var(--white);
+    }
+    
+    .btn-secondary {
+      background-color: var(--cool-cerulean);
+      color: var(--white);
+    }
+    
+    .btn-accent {
+      background-color: var(--electric-lime);
+      color: var(--charcoal-gray);
+    }
+    
+    .btn-neutral {
+      background-color: var(--soft-slate);
+      color: var(--charcoal-gray);
+    }
+    
+    .btn-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .image-slider {
+      position: relative;
+      width: 80%;
+      max-width: 800px;
+      margin: 2rem auto;
+      height: 400px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .image-slider .before,
+    .image-slider .after {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .image-slider .before {
+      left: 0;
+      background-image: url('/api/placeholder/800/400');
+      z-index: 1;
+    }
+    
+    .image-slider .after {
+      right: 0;
+      background-image: url('/api/placeholder/800/400');
+      z-index: 2;
+      width: 50%;
+    }
+    
+    .image-slider .slider-handle {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--white);
+      z-index: 3;
+      cursor: ew-resize;
+    }
+    
+    .image-slider .slider-handle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: var(--white);
+      border: 3px solid var(--deep-teal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* How It Works Section */
+    .how-it-works {
+      padding: 4rem 0;
+      background-color: var(--white);
+    }
+    
+    .how-it-works h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+    }
+    
+    .step {
+      flex: 1;
+      text-align: center;
+      padding: 0 20px;
+    }
+    
+    .step-icon {
+      font-size: 48px;
+      color: var(--cool-cerulean);
+      margin-bottom: 1rem;
+    }
+    
+    .step p {
+      margin-bottom: 1rem;
+    }
+    
+    .how-it-works .btn-container {
+      text-align: center;
+    }
+    
+    /* Main Tool Interface */
+    .tool-interface {
+      padding: 2rem 0 4rem;
+      background-color: var(--soft-slate);
+    }
+    
+    .tab-navigation {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 2rem;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .tab.active {
+      color: var(--deep-teal);
+      border-bottom-color: var(--deep-teal);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Upload Section */
+    .upload-section {
+      padding: 2rem;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+    
+    .upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      background-color: var(--soft-slate);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .upload-area:hover {
+      border-color: var(--cool-cerulean);
+    }
+    
+    .upload-area i {
+      font-size: 48px;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+    
+    .upload-area.dragover {
+      border-color: var(--cool-cerulean);
+      background-color: rgba(48, 165, 217, 0.05);
+    }
+    
+    .upload-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .examples {
+      margin-top: 2rem;
+    }
+    
+    .examples-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+    
+    .example-thumb {
+      position: relative;
+      width: 180px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .example-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .example-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+      transform: translateY(100%);
+      transition: transform 0.2s ease;
+    }
+    
+    .example-thumb:hover .example-label {
+      transform: translateY(0);
+    }
+    
+    /* Ideas Section */
+    .ideas-section {
+      padding: 2rem;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+      display: none;
+    }
+    
+    .image-navigator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .navigator-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-left: 1rem;
+    }
+    
+    .nav-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--soft-slate);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-btn:hover {
+      background-color: var(--cool-cerulean);
+      color: var(--white);
+    }
+    
+    .ideas-display {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .original-image {
+      width: 300px;
+      height: 300px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .original-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .original-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    
+    .ideas-grid {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      flex-grow: 1;
+    }
+    
+    .idea-card {
+      width: 220px;
+      border-radius: 8px;
+      background-color: var(--soft-slate);
+      overflow: hidden;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+    }
+    
+    .idea-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .idea-card.selected {
+      border-color: var(--electric-lime);
+    }
+    
+    .idea-preview {
+      height: 150px;
+      background-color: #ddd;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .idea-info {
+      padding: 1rem;
+    }
+    
+    .idea-info h3 {
+      font-size: 16px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .idea-info p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .idea-select {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #aaa;
+      border-radius: 4px;
+      display: inline-block;
+      position: relative;
+    }
+    
+    .idea-card.selected .checkbox {
+      background-color: var(--electric-lime);
+      border-color: var(--electric-lime);
+    }
+    
+    .idea-card.selected .checkbox::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--charcoal-gray);
+      font-size: 12px;
+    }
+    
+    .ideas-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+    
+    /* Options Section */
+    .options-section {
+      padding: 2rem;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+      display: none;
+    }
+    
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .options-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    /* Results Section */
+    .results-section {
+      padding: 2rem;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+      display: none;
+    }
+    
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .results-info {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .result-card {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .result-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+    
+    .result-image {
+      height: 220px;
+      background-color: #ddd;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .result-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .result-card:hover .result-image img {
+      transform: scale(1.05);
+    }
+    
+    .result-card .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    
+    .result-card:hover .overlay {
+      opacity: 1;
+    }
+    
+    .overlay-btn {
+      width: 40px;
+      height: 40px;
+      background-color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--charcoal-gray);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .overlay-btn:hover {
+      background-color: var(--electric-lime);
+    }
+    
+    .result-info {
+      padding: 1rem;
+    }
+    
+    .result-info h3 {
+      font-size: 18px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-info p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-meta {
+      display: flex;
+      justify-content: space-between;
+      color: #888;
+      font-size: 12px;
+    }
+    
+    .results-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Credits Display */
+    .credits-display {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--white);
+      padding: 10px 15px;
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 100;
+    }
+    
+    .credits-display i {
+      color: var(--cool-cerulean);
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-container {
+      background-color: var(--white);
+      border-radius: 12px;
+      max-width: 90%;
+      width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal-container {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.2s ease;
+    }
+    
+    .modal-close:hover {
+      color: var(--charcoal-gray);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    /* Status Messages */
+    .status-message {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 12px 20px;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+    
+    .status-normal {
+      background-color: var(--soft-slate);
+      color: #666;
+    }
+    
+    .status-success {
+      background-color: rgba(38, 203, 124, 0.1);
+      color: #26cb7c;
+    }
+    
+    .status-error {
+      background-color: rgba(255, 65, 54, 0.1);
+      color: var(--error-red);
+    }
+    
+    .status-loading {
+      background-color: rgba(48, 165, 217, 0.1);
+      color: var(--cool-cerulean);
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      border-right-color: transparent;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .steps {
+        flex-direction: column;
+        gap: 2rem;
+      }
+      
+      .step {
+        padding: 0;
+      }
+      
+      .ideas-display {
+        flex-direction: column;
+      }
+      
+      .original-image {
+        width: 100%;
+        height: 250px;
+      }
+      
+      .image-slider {
+        width: 95%;
+        height: 300px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 28px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      .tab {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+      
+      .image-slider {
+        height: 200px;
+      }
+      
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="credits-display">
+    <i class="fas fa-coins"></i>
+    <span id="credits-count">10 credits</span>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Product Image Lab</h1>
+      <h3>Transform your product photos with AI-powered editing and enhancements</h3>
+      
+      <div class="image-slider">
+        <div class="before" style="background-image: url('/examples/nounou-shampoo.png');"></div>
+        <div class="after" style="background-image: url('/examples/nounou-shampoo.png'); filter: brightness(1.2) contrast(1.1) saturate(1.3);"></div>
+        <div class="slider-handle"></div>
+      </div>
+      
+      <a href="#tool-interface" class="btn btn-primary">Get Started</a>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2>How It Works</h2>
+      
+      <div class="steps">
+        <div class="step">
+          <div class="step-icon">
+            <i class="fas fa-upload"></i>
+          </div>
+          <h3>1. Upload</h3>
+          <p>Upload your product photos or choose from our example images</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <h3>2. Transform</h3>
+          <p>Select enhancements and transformations for your product</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-icon">
+            <i class="fas fa-download"></i>
+          </div>
+          <h3>3. Download</h3>
+          <p>Download your enhanced product images ready for use</p>
+        </div>
+      </div>
+      
+      <div class="btn-container">
+        <a href="#tool-interface" class="btn btn-secondary">Try It Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Tool Interface -->
+  <section id="tool-interface" class="tool-interface">
+    <div class="container">
+      <div class="tab-navigation">
+        <div class="tab active" data-tab="upload">1. Upload</div>
+        <div class="tab" data-tab="ideas">2. Ideas</div>
+        <div class="tab" data-tab="options">3. Options</div>
+        <div class="tab" data-tab="results">4. Results</div>
+      </div>
+      
+      <!-- Upload Tab -->
+      <div id="upload-tab" class="tab-content active">
+        <div class="upload-section">
+          <h2>Upload Your Product Image</h2>
+          <p>Upload a high-quality image of your product that you would like to enhance or transform</p>
+          
+          <div class="upload-area" id="upload-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Drop your image here</h3>
+            <p>or click to browse files</p>
+            <input type="file" id="file-input" style="display: none;" accept="image/*">
+          </div>
+          
+          <div class="upload-info">
+            <span>
+              <i class="fas fa-info-circle"></i>
+              Accepted formats: JPG, PNG, WEBP (Max 10MB)
+            </span>
+            <span id="upload-status"></span>
+          </div>
+          
+          <div class="examples">
+            <h3>Or choose from example products</h3>
+            <div class="examples-row">
+              <div class="example-thumb">
+                <img src="/examples/nounou-shampoo.png" alt="Shampoo Bottle">
+                <div class="example-label">Shampoo Bottle</div>
+              </div>
+              <div class="example-thumb">
+                <img src="/examples/example-product-2.svg" alt="Example Product 2">
+                <div class="example-label">Coffee Mug</div>
+              </div>
+              <div class="example-thumb">
+                <img src="/examples/example-product-3.svg" alt="Example Product 3">
+                <div class="example-label">Headphones</div>
+              </div>
+              <div class="example-thumb">
+                <img src="/examples/example-product-4.svg" alt="Example Product 4">
+                <div class="example-label">Sneakers</div>
+              </div>
+              <div class="example-thumb">
+                <img src="/examples/example-product-5.svg" alt="Example Product 5">
+                <div class="example-label">Watch</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-message status-normal">
+            <i class="fas fa-info-circle"></i>
+            <span>Upload a product image to get started with the transformations</span>
+          </div>
+          
+          <div class="upload-actions" style="text-align: right; margin-top: 1.5rem;">
+            <button class="btn btn-primary" id="next-to-ideas">Continue to Ideas</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ideas Tab -->
+      <div id="ideas-tab" class="tab-content">
+        <div class="ideas-section" style="display: block;">
+          <div class="image-navigator">
+            <h2>Choose Enhancement Ideas</h2>
+            <div class="navigator-controls">
+              <div class="nav-btn" id="prev-image">
+                <i class="fas fa-chevron-left"></i>
+              </div>
+              <div class="nav-btn" id="next-image">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ideas-display">
+            <div class="original-image">
+              <img src="/examples/nounou-shampoo.png" alt="Original Product">
+              <div class="original-label">Original</div>
+            </div>
+            
+            <div class="ideas-grid">
+              <div class="idea-card">
+                <div class="idea-preview" style="background-image: url('/examples/enhancement-1.svg');"></div>
+                <div class="idea-info">
+                  <h3>Background Removal</h3>
+                  <p>Remove background for clean product display</p>
+                  <div class="idea-select">
+                    <div class="checkbox"></div>
+                    <span>Select this enhancement</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="idea-card">
+                <div class="idea-preview" style="background-image: url('/examples/enhancement-2.svg');"></div>
+                <div class="idea-info">
+                  <h3>Shadow Addition</h3>
+                  <p>Add realistic shadow for dimension</p>
+                  <div class="idea-select">
+                    <div class="checkbox"></div>
+                    <span>Select this enhancement</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="idea-card">
+                <div class="idea-preview" style="background-image: url('/examples/enhancement-3.svg');"></div>
+                <div class="idea-info">
+                  <h3>Enhanced Lighting</h3>
+                  <p>Improve product appearance with better lighting</p>
+                  <div class="idea-select">
+                    <div class="checkbox"></div>
+                    <span>Select this enhancement</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="idea-card">
+                <div class="idea-preview" style="background-image: url('/examples/enhancement-4.svg');"></div>
+                <div class="idea-info">
+                  <h3>Color Correction</h3>
+                  <p>Fix colors for accurate representation</p>
+                  <div class="idea-select">
+                    <div class="checkbox"></div>
+                    <span>Select this enhancement</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-message status-normal">
+            <i class="fas fa-info-circle"></i>
+            <span>Select one or more enhancements to apply to your product image</span>
+          </div>
+          
+          <div class="ideas-actions">
+            <button class="btn btn-neutral" id="back-to-upload">Back to Upload</button>
+            <button class="btn btn-primary" id="next-to-options">Continue to Options</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Options Tab -->
+      <div id="options-tab" class="tab-content">
+        <div class="options-section" style="display: block;">
+          <h2>Customize Your Transformations</h2>
+          <p>Fine-tune the enhancements for your product image</p>
+          
+          <div class="options-row">
+            <div class="form-group">
+              <label for="industry-select">Product Industry</label>
+              <select id="industry-select">
+                <option value="">Select industry</option>
+                <option value="cosmetics">Cosmetics & Beauty</option>
+                <option value="electronics">Electronics & Gadgets</option>
+                <option value="fashion">Fashion & Apparel</option>
+                <option value="food">Food & Beverages</option>
+                <option value="home">Home & Furniture</option>
+                <option value="jewelry">Jewelry & Accessories</option>
+                <option value="sports">Sports & Fitness</option>
+                <option value="toys">Toys & Games</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="num-images">Number of Variations</label>
+              <input type="number" id="num-images" min="1" max="5" value="3">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="additional-info">Additional Information (optional)</label>
+            <textarea id="additional-info" placeholder="Provide any specific details about your product or desired outcome..."></textarea>
+          </div>
+          
+          <div class="status-message status-normal">
+            <i class="fas fa-info-circle"></i>
+            <span>This transformation will use 1 credit per variation</span>
+          </div>
+          
+          <div class="options-actions">
+            <button class="btn btn-neutral" id="back-to-ideas">Back to Ideas</button>
+            <button class="btn btn-primary" id="generate-results">Generate Results</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Results Tab -->
+      <div id="results-tab" class="tab-content">
+        <div class="results-section" style="display: block;">
+          <div class="results-header">
+            <h2>Generated Results</h2>
+            <div class="results-info">
+              <span>3 images generated • 3 credits used</span>
+            </div>
+          </div>
+          
+          <div class="results-grid">
+            <div class="result-card">
+              <div class="result-image">
+                <img src="/examples/result-1.svg" alt="Result 1">
+                <div class="overlay">
+                  <div class="overlay-btn" title="Download">
+                    <i class="fas fa-download"></i>
+                  </div>
+                  <div class="overlay-btn" title="View Full Size">
+                    <i class="fas fa-search-plus"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="result-info">
+                <h3>Enhanced Lighting</h3>
+                <p>Product with improved lighting conditions</p>
+                <div class="result-meta">
+                  <span>1 credit used</span>
+                  <span>30 seconds ago</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="result-card">
+              <div class="result-image">
+                <img src="/examples/result-2.svg" alt="Result 2">
+                <div class="overlay">
+                  <div class="overlay-btn" title="Download">
+                    <i class="fas fa-download"></i>
+                  </div>
+                  <div class="overlay-btn" title="View Full Size">
+                    <i class="fas fa-search-plus"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="result-info">
+                <h3>Background Removed</h3>
+                <p>Clean isolated product on transparent background</p>
+                <div class="result-meta">
+                  <span>1 credit used</span>
+                  <span>30 seconds ago</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="result-card">
+              <div class="result-image">
+                <img src="/examples/result-3.svg" alt="Result 3">
+                <div class="overlay">
+                  <div class="overlay-btn" title="Download">
+                    <i class="fas fa-download"></i>
+                  </div>
+                  <div class="overlay-btn" title="View Full Size">
+                    <i class="fas fa-search-plus"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="result-info">
+                <h3>Color Enhanced</h3>
+                <p>Vibrant colors with improved contrast</p>
+                <div class="result-meta">
+                  <span>1 credit used</span>
+                  <span>30 seconds ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-message status-success">
+            <i class="fas fa-check-circle"></i>
+            <span>All images have been successfully generated!</span>
+          </div>
+          
+          <div class="results-actions">
+            <button class="btn btn-neutral" id="back-to-options">Back to Options</button>
+            <button class="btn btn-primary" id="start-new">Start New Transformation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Template -->
+  <div class="modal-overlay" id="image-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Preview Image</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-image" src="" alt="Full size preview" style="width: 100%;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-neutral modal-close-btn">Close</button>
+        <a href="#" class="btn btn-primary" id="download-image">Download</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables to store state
+    let uploadedImage = null;
+    let selectedEnhancements = [];
+    let currentCredits = 10;
+
+    // API endpoints
+    const API = {
+      upload: '/api/product-image-lab/upload',
+      transform: '/api/product-image-lab/transform',
+      credits: '/api/product-image-lab/credits'
+    };
+
+    // Utility functions
+    function updateCreditsDisplay(credits) {
+      const creditsDisplay = document.getElementById('credits-count');
+      if (creditsDisplay) {
+        creditsDisplay.textContent = `${credits} credits`;
+      }
+      currentCredits = credits;
+    }
+
+    function showStatus(message, type = 'normal') {
+      const statusTypes = ['normal', 'loading', 'success', 'error'];
+      const uploadTab = document.getElementById('upload-tab');
+      const ideasTab = document.getElementById('ideas-tab');
+      const optionsTab = document.getElementById('options-tab');
+      
+      let statusMessage;
+      
+      if (uploadTab.classList.contains('active')) {
+        statusMessage = uploadTab.querySelector('.status-message');
+      } else if (ideasTab.classList.contains('active')) {
+        statusMessage = ideasTab.querySelector('.status-message');
+      } else if (optionsTab.classList.contains('active')) {
+        statusMessage = optionsTab.querySelector('.status-message');
+      }
+      
+      if (statusMessage) {
+        // Remove all status types
+        statusTypes.forEach(t => statusMessage.classList.remove(`status-${t}`));
+        
+        // Add the current status type
+        statusMessage.classList.add(`status-${type}`);
+        
+        // Update the message
+        if (type === 'loading') {
+          statusMessage.innerHTML = '<div class="spinner"></div><span>' + message + '</span>';
+        } else {
+          const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+          statusMessage.innerHTML = '<i class="fas fa-' + icon + '"></i><span>' + message + '</span>';
+        }
+      }
+    }
+
+    // Initialize the app
+    async function initApp() {
+      try {
+        // Fetch user credits
+        const response = await fetch(API.credits);
+        const data = await response.json();
+        
+        if (data && data.credits) {
+          updateCreditsDisplay(data.credits.total);
+        }
+      } catch (error) {
+        console.error('Error initializing app:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the app
+      initApp();
+      
+      // Handle tab navigation
+      const tabs = document.querySelectorAll('.tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs and contents
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          // Add active class to clicked tab and corresponding content
+          tab.classList.add('active');
+          const tabName = tab.getAttribute('data-tab');
+          document.getElementById(`${tabName}-tab`).classList.add('active');
+        });
+      });
+      
+      // Image slider functionality
+      const sliderHandle = document.querySelector('.slider-handle');
+      const afterImage = document.querySelector('.image-slider .after');
+      
+      if (sliderHandle && afterImage) {
+        let isDragging = false;
+        
+        const moveSlider = (e) => {
+          if (!isDragging) return;
+          
+          const sliderRect = sliderHandle.parentElement.getBoundingClientRect();
+          const x = e.type.includes('touch') ? 
+            e.touches[0].clientX - sliderRect.left : 
+            e.clientX - sliderRect.left;
+          
+          const percent = Math.min(Math.max(x / sliderRect.width, 0), 1) * 100;
+          
+          sliderHandle.style.left = `${percent}%`;
+          afterImage.style.width = `${percent}%`;
+        };
+        
+        sliderHandle.addEventListener('mousedown', () => {
+          isDragging = true;
+        });
+        
+        sliderHandle.addEventListener('touchstart', () => {
+          isDragging = true;
+        });
+        
+        window.addEventListener('mousemove', moveSlider);
+        window.addEventListener('touchmove', moveSlider);
+        
+        window.addEventListener('mouseup', () => {
+          isDragging = false;
+        });
+        
+        window.addEventListener('touchend', () => {
+          isDragging = false;
+        });
+      }
+      
+      // Upload area functionality
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('file-input');
+      
+      if (uploadArea && fileInput) {
+        uploadArea.addEventListener('click', () => {
+          fileInput.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+          uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove('dragover');
+          
+          if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileChange();
+          }
+        });
+        
+        fileInput.addEventListener('change', handleFileChange);
+        
+        async function handleFileChange() {
+          if (fileInput.files.length) {
+            const file = fileInput.files[0];
+            const status = document.getElementById('upload-status');
+            
+            // Check file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+              status.textContent = 'Invalid file type';
+              showStatus('Invalid file type. Only JPG, PNG and WEBP are allowed.', 'error');
+              return;
+            }
+            
+            // Check file size (10MB max)
+            if (file.size > 10 * 1024 * 1024) {
+              status.textContent = 'File too large (max 10MB)';
+              showStatus('File too large. Maximum size is 10MB.', 'error');
+              return;
+            }
+            
+            status.textContent = 'Uploading: ' + file.name;
+            showStatus('Uploading image...', 'loading');
+            
+            try {
+              // Create a FormData object to send the file
+              const formData = new FormData();
+              formData.append('image', file);
+              
+              // Upload the file to the server
+              const response = await fetch(API.upload, {
+                method: 'POST',
+                body: formData
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                status.textContent = 'File uploaded: ' + file.name;
+                showStatus('Image uploaded successfully!', 'success');
+                
+                // Store the uploaded image information
+                uploadedImage = data.file;
+                
+                // Show the original image in the ideas tab
+                const originalImage = document.querySelector('.original-image img');
+                if (originalImage) {
+                  originalImage.src = uploadedImage.url;
+                }
+                
+                // Enable the next button
+                document.getElementById('next-to-ideas').classList.remove('btn-disabled');
+              } else {
+                status.textContent = 'Upload failed: ' + (data.message || 'Unknown error');
+                showStatus('Upload failed: ' + (data.message || 'Unknown error'), 'error');
+              }
+            } catch (error) {
+              console.error('Error uploading file:', error);
+              status.textContent = 'Upload failed: Network error';
+              showStatus('Upload failed: Network error. Please try again.', 'error');
+            }
+          }
+        }
+      }
+      
+      // Idea selection functionality
+      const ideaCards = document.querySelectorAll('.idea-card');
+      
+      ideaCards.forEach(card => {
+        card.addEventListener('click', () => {
+          card.classList.toggle('selected');
+          
+          // Get the enhancement type from the card
+          const enhancementTitle = card.querySelector('h3').textContent;
+          
+          // Check if the card is now selected
+          if (card.classList.contains('selected')) {
+            // Add the enhancement type to the selectedEnhancements array if it's not already there
+            if (!selectedEnhancements.includes(enhancementTitle)) {
+              selectedEnhancements.push(enhancementTitle);
+            }
+          } else {
+            // Remove the enhancement type from the selectedEnhancements array
+            const index = selectedEnhancements.indexOf(enhancementTitle);
+            if (index !== -1) {
+              selectedEnhancements.splice(index, 1);
+            }
+          }
+          
+          // Update the status message with the number of selected enhancements
+          const message = selectedEnhancements.length > 0 ? 
+            `Selected ${selectedEnhancements.length} enhancement${selectedEnhancements.length > 1 ? 's' : ''}` : 
+            'Select one or more enhancements to apply to your product image';
+          
+          showStatus(message, 'normal');
+          
+          // Enable the next button if at least one enhancement is selected
+          const nextBtn = document.getElementById('next-to-options');
+          if (selectedEnhancements.length > 0) {
+            nextBtn.classList.remove('btn-disabled');
+          } else {
+            nextBtn.classList.add('btn-disabled');
+          }
+        });
+      });
+      
+      // Tab navigation buttons
+      const nextToIdeas = document.getElementById('next-to-ideas');
+      const backToUpload = document.getElementById('back-to-upload');
+      const nextToOptions = document.getElementById('next-to-options');
+      const backToIdeas = document.getElementById('back-to-ideas');
+      const generateResults = document.getElementById('generate-results');
+      const backToOptions = document.getElementById('back-to-options');
+      const startNew = document.getElementById('start-new');
+      
+      if (nextToIdeas) {
+        nextToIdeas.addEventListener('click', () => {
+          // Activate ideas tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          document.querySelector('[data-tab="ideas"]').classList.add('active');
+          document.getElementById('ideas-tab').classList.add('active');
+        });
+      }
+      
+      if (backToUpload) {
+        backToUpload.addEventListener('click', () => {
+          // Activate upload tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          document.querySelector('[data-tab="upload"]').classList.add('active');
+          document.getElementById('upload-tab').classList.add('active');
+        });
+      }
+      
+      if (nextToOptions) {
+        nextToOptions.addEventListener('click', () => {
+          // Activate options tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          document.querySelector('[data-tab="options"]').classList.add('active');
+          document.getElementById('options-tab').classList.add('active');
+        });
+      }
+      
+      if (backToIdeas) {
+        backToIdeas.addEventListener('click', () => {
+          // Activate ideas tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          document.querySelector('[data-tab="ideas"]').classList.add('active');
+          document.getElementById('ideas-tab').classList.add('active');
+        });
+      }
+      
+      if (generateResults) {
+        generateResults.addEventListener('click', async () => {
+          // Check if we have an uploaded image
+          if (!uploadedImage) {
+            showStatus('No image has been uploaded. Please go back and upload an image first.', 'error');
+            return;
+          }
+          
+          // Check if we have selected enhancements
+          if (selectedEnhancements.length === 0) {
+            showStatus('No enhancements selected. Please go back and select at least one enhancement.', 'error');
+            return;
+          }
+          
+          // Get the number of variations from the form
+          const numImages = parseInt(document.getElementById('num-images').value) || 1;
+          
+          // Check if we have enough credits
+          if (currentCredits < numImages) {
+            showStatus(`Not enough credits. You need ${numImages} credits but have ${currentCredits}.`, 'error');
+            return;
+          }
+          
+          // Show loading state
+          showStatus(`Generating ${numImages} variations with ${selectedEnhancements.join(', ')}...`, 'loading');
+          
+          try {
+            // Get additional information from form
+            const industry = document.getElementById('industry-select').value;
+            const additionalInfo = document.getElementById('additional-info').value;
+            
+            // Prepare the transformation request
+            const transformationRequest = {
+              imageId: uploadedImage.id,
+              transformationType: selectedEnhancements[0], // Use the first enhancement as the main type
+              options: {
+                enhancements: selectedEnhancements,
+                industry: industry,
+                additionalInfo: additionalInfo,
+                numVariations: numImages
+              }
+            };
+            
+            // Call the API to transform the image
+            const response = await fetch(API.transform, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(transformationRequest)
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              // Activate results tab
+              tabs.forEach(t => t.classList.remove('active'));
+              tabContents.forEach(c => c.classList.remove('active'));
+              
+              document.querySelector('[data-tab="results"]').classList.add('active');
+              document.getElementById('results-tab').classList.add('active');
+              
+              // Update the result cards with the transformed image
+              const resultCards = document.querySelectorAll('.result-card');
+              if (resultCards.length > 0 && data.transformation) {
+                // Update the first result card with the transformation
+                const resultImage = resultCards[0].querySelector('img');
+                const resultTitle = resultCards[0].querySelector('h3');
+                const resultTime = resultCards[0].querySelector('.result-meta span:last-child');
+                
+                if (resultImage) {
+                  resultImage.src = data.transformation.transformedUrl;
+                }
+                
+                if (resultTitle) {
+                  resultTitle.textContent = data.transformation.type;
+                }
+                
+                if (resultTime) {
+                  resultTime.textContent = 'Just now';
+                }
+              }
+              
+              // Update credits (simulate credit deduction for now)
+              updateCreditsDisplay(Math.max(0, currentCredits - numImages));
+              
+              // Show success message
+              const resultsStatusMessage = document.querySelector('#results-tab .status-message');
+              if (resultsStatusMessage) {
+                resultsStatusMessage.className = 'status-message status-success';
+                resultsStatusMessage.innerHTML = '<i class="fas fa-check-circle"></i><span>All images have been successfully generated!</span>';
+              }
+              
+              // Reset status message in options tab
+              showStatus('This transformation will use 1 credit per variation', 'normal');
+            } else {
+              showStatus(`Error: ${data.message || 'Unknown error during transformation'}`, 'error');
+            }
+          } catch (error) {
+            console.error('Error transforming image:', error);
+            showStatus('Network error during transformation. Please try again.', 'error');
+          }
+        });
+      }
+      
+      if (backToOptions) {
+        backToOptions.addEventListener('click', () => {
+          // Activate options tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          document.querySelector('[data-tab="options"]').classList.add('active');
+          document.getElementById('options-tab').classList.add('active');
+        });
+      }
+      
+      if (startNew) {
+        startNew.addEventListener('click', () => {
+          // Reset and go back to upload tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          document.querySelector('[data-tab="upload"]').classList.add('active');
+          document.getElementById('upload-tab').classList.add('active');
+          
+          // Reset form fields
+          if (fileInput) fileInput.value = '';
+          document.getElementById('upload-status').textContent = '';
+          
+          document.querySelectorAll('.idea-card').forEach(card => {
+            card.classList.remove('selected');
+          });
+          
+          document.getElementById('industry-select').value = '';
+          document.getElementById('num-images').value = '3';
+          document.getElementById('additional-info').value = '';
+          
+          // Reset status messages
+          document.querySelector('#upload-tab .status-message').className = 'status-message status-normal';
+          document.querySelector('#upload-tab .status-message span').textContent = 'Upload a product image to get started with the transformations';
+        });
+      }
+      
+      // Modal functionality
+      const imageModal = document.getElementById('image-modal');
+      const modalCloseButtons = document.querySelectorAll('.modal-close, .modal-close-btn');
+      const modalImage = document.getElementById('modal-image');
+      const downloadImageBtn = document.getElementById('download-image');
+      
+      // Function to open the modal with an image
+      function openImageModal(imgSrc) {
+        modalImage.src = imgSrc;
+        downloadImageBtn.href = imgSrc;
+        
+        // Extract filename from URL for the download attribute
+        const filename = imgSrc.split('/').pop();
+        downloadImageBtn.setAttribute('download', filename);
+        
+        // Show the modal
+        imageModal.classList.add('active');
+      }
+      
+      // View full size buttons - use event delegation for dynamically added elements
+      document.addEventListener('click', (e) => {
+        // Check if the clicked element is a view full size button or its child
+        const viewButton = e.target.closest('.overlay-btn:nth-child(2)');
+        if (viewButton) {
+          // Find the closest result card
+          const resultCard = viewButton.closest('.result-card');
+          if (resultCard) {
+            // Get the image source
+            const imgElement = resultCard.querySelector('.result-image img');
+            if (imgElement && imgElement.src) {
+              openImageModal(imgElement.src);
+            }
+          }
+        }
+        
+        // Check if the clicked element is a download button
+        const downloadButton = e.target.closest('.overlay-btn:nth-child(1)');
+        if (downloadButton) {
+          // Find the closest result card
+          const resultCard = downloadButton.closest('.result-card');
+          if (resultCard) {
+            // Get the image source
+            const imgElement = resultCard.querySelector('.result-image img');
+            if (imgElement && imgElement.src) {
+              // Create a temporary link to download the image
+              const tempLink = document.createElement('a');
+              tempLink.href = imgElement.src;
+              
+              // Extract filename from URL
+              const filename = imgElement.src.split('/').pop();
+              tempLink.setAttribute('download', filename);
+              
+              // Simulate click to start download
+              document.body.appendChild(tempLink);
+              tempLink.click();
+              document.body.removeChild(tempLink);
+            }
+          }
+        }
+      });
+      
+      modalCloseButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          imageModal.classList.remove('active');
+        });
+      });
+      
+      // Close modal when clicking outside
+      imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) {
+          imageModal.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

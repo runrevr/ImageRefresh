@@ -82,7 +82,6 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         <h2 className="text-3xl font-bold mb-2">Simple, Transparent Pricing</h2>
         <p className="text-xl text-gray-600">Choose a plan that works for you</p>
       </div>
-      
       <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 max-w-5xl mx-auto">
         {pricingTiers.map((tier, index) => (
           <Card 
@@ -117,7 +116,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
               </div>
               <div className="mt-auto pt-8">
                 <Button 
-                  className={`w-full ${tier.buttonClass}`}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 w-full text-white hover:bg-[#e56c49] bg-[#84CC16]"
                   onClick={() => handlePurchase(tier)}
                   disabled={isPurchasing}
                 >
@@ -128,7 +127,6 @@ export default function PricingSection({ userId }: PricingSectionProps) {
           </Card>
         ))}
       </div>
-      
       <div className="bg-gray-50 rounded-xl p-6 max-w-5xl mx-auto mt-8">
         <h3 className="text-lg font-bold mb-3">Need additional credits?</h3>
         <p className="text-gray-600 mb-4">You can purchase additional credits anytime at $1 each, with volume discounts available.</p>
