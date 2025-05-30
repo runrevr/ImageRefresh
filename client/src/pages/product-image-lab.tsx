@@ -86,7 +86,7 @@ export default function ProductImageLabPage() {
               Upload your product image, AI-enhanced enhancement ideas, download professional results. No design experience required.
             </p>
             <Link to="/upload-enhance">
-              <Button size="lg" className="bg-black text-white hover:bg-gray-800">
+              <Button size="lg" className="bg-gradient-to-r from-[#06B6D4] via-[#84CC16] to-[#F97316] text-white hover:scale-105 transition-transform duration-200 border-0">
                 Transform Your Product Photos Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
