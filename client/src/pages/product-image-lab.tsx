@@ -100,8 +100,8 @@ export default function ProductImageLabPage() {
               </h3>
               <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
                 <ComparisonSlider
-                  beforeImage="/src/assets/mexican-food-original.png"
-                  afterImage="/src/assets/mexican-food-enhanced.png"
+                  beforeImage="/src/assets/nounou-shampoo.jpg"
+                  afterImage="/src/assets/sunset-shampoo.jpg"
                 />
                 {/* Before/After Labels */}
                 <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg text-sm font-medium">
