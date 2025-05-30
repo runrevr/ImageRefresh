@@ -136,7 +136,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 </Button>
               </Link>
               <Link href="/auth">
-                <Button className="bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
+                <Button className="bg-primary hover:bg-secondary text-white border-none">
                   Sign up
                 </Button>
               </Link>
