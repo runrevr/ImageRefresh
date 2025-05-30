@@ -112,15 +112,15 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   </svg>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" style={{ color: '#ffffff' }}>
                 <DropdownMenuItem asChild>
-                  <Link href="/account">My Account</Link>
+                  <Link href="/account" style={{ color: '#ffffff' }}>My Account</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/transformations">My Images</Link>
+                  <Link href="/transformations" style={{ color: '#ffffff' }}>My Images</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+                <DropdownMenuItem onClick={() => logoutMutation.mutate()} style={{ color: '#ffffff' }}>
                   {logoutMutation.isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
