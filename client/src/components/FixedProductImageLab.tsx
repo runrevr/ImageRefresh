@@ -796,3 +796,5 @@ export default function FixedProductImageLab({
     </div>
   );
 }
+
+export { FixedProductImageLab as FixedProductImageLab };
