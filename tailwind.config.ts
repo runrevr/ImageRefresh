@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        bungee: ["Bungee", "cursive"],
+        audiowide: ["Audiowide", "cursive"],
         montserrat: ["Montserrat", "sans-serif"],
         rubik: ["Rubik", "sans-serif"],
       },

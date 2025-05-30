@@ -127,7 +127,7 @@ function DemoPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight text-[#1F2937]">
+          <h1 className="text-6xl sm:text-7xl md:text-8xl font-audiowide mb-8 leading-[1.1] tracking-tight text-[#1F2937]">
             Make your{" "}
             <br className="hidden sm:block" />
             pictures{" "}
@@ -148,7 +148,7 @@ function DemoPage() {
               mainClassName="text-[#06B6D4] font-bold inline-block"
             />
           </h1>
-          <p className="text-xl md:text-2xl text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl font-montserrat text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
             Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
           </p>
           <div className="flex justify-center mt-4">

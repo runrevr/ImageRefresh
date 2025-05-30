@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -140,7 +139,10 @@
   }
 
   body {
-    @apply font-rubik font-normal antialiased text-foreground;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    @apply antialiased text-foreground;
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -161,24 +163,61 @@
     height: 100%;
   }
 
-  h4, .h4 {
-    @apply font-rubik font-semibold text-base leading-snug;
+  /* Headlines - Audiowide */
+  h1 {
+    font-family: 'Audiowide', cursive;
+    font-size: 48px;
+    line-height: 1.2;
   }
 
-  p {
-    @apply font-rubik font-normal text-base leading-relaxed;
+  h2 {
+    font-family: 'Audiowide', cursive;
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: 'Audiowide', cursive;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  h4, .h4 {
+    font-family: 'Audiowide', cursive;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  /* Body Text - Montserrat */
+  p, body, span, div {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
   }
 
   button, .button {
-    @apply font-rubik font-[500] text-base;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
   }
 
-  .small, small, .caption {
-    @apply font-rubik font-light text-sm;
+  .small, small {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+  }
+
+  .caption {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
   }
 
   .header-menu {
-    @apply font-rubik font-medium text-base;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
   }
 }
 
