@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight, Upload, Wand2, Download, Star, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
+import ComparisonSlider from "@/components/ComparisonSlider";
 
 export default function ProductImageLabPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -91,6 +92,26 @@ export default function ProductImageLabPage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
+
+            {/* Before/After Slider */}
+            <div className="mt-12 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                See the Transformation
+              </h3>
+              <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
+                <ComparisonSlider
+                  beforeImage="/src/assets/mexican-food-original.png"
+                  afterImage="/src/assets/mexican-food-enhanced.png"
+                />
+                {/* Before/After Labels */}
+                <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                  Before
+                </div>
+                <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                  After
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
