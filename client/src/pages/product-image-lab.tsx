@@ -96,11 +96,11 @@ export default function ProductImageLabPage() {
             </Link>
 
             {/* Before/After Slider */}
-            <div className="mt-12 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            <div className="mt-8 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                 See the Transformation
               </h3>
-              <div className="relative bg-white rounded-xl shadow-lg overflow-hidden h-96">
+              <div className="relative bg-white rounded-xl shadow-lg overflow-hidden h-80">
                 <ComparisonSlider
                   beforeImage={shampooOriginal}
                   afterImage={shampooEnhanced}
@@ -113,12 +113,12 @@ export default function ProductImageLabPage() {
         
 
         {/* Main Product Lab Component */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-6">
           <FixedProductImageLab />
         </div>
 
         {/* See the AI Magic in Action */}
-        <section className="py-16 bg-white">
+        <section className="py-12 bg-white">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -194,7 +194,7 @@ export default function ProductImageLabPage() {
         </section>
 
         {/* How It Works */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-12 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -237,7 +237,7 @@ export default function ProductImageLabPage() {
         </section>
 
         {/* Customer Testimonials */}
-        <section className="py-16 bg-[#FAFAFA]">
+        <section className="py-12 bg-[#FAFAFA]">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-[#1F2937] mb-4">
@@ -269,7 +269,7 @@ export default function ProductImageLabPage() {
         </section>
 
         {/* Call to Action */}
-        <div className="bg-[#06B6D4] py-16">
+        <div className="bg-[#06B6D4] py-12">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold text-white mb-6">
               Ready to Transform Your Product Photos?
