@@ -1,4 +1,4 @@
-import { Wand2, Twitter, Instagram, Facebook } from 'lucide-react';
+import { Twitter, Instagram, Facebook } from 'lucide-react';
 import { Link } from 'wouter';
 
 export default function Footer() {
@@ -8,7 +8,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <Wand2 className="h-6 w-6 text-white" />
+              <img 
+                src="/attached_assets/Image%20Refresh%203.png" 
+                alt="ImageRefresh Logo" 
+                className="h-8 w-auto"
+              />
               <span className="font-bold text-xl text-white">ImageRefresh.com</span>
             </div>
             <p className="text-gray-400 mb-4">
