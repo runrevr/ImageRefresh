@@ -6,7 +6,7 @@
  * 3. Test mode functionality
  */
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   useProductImageLab, 
   ENHANCEMENT_OPTIONS, 
