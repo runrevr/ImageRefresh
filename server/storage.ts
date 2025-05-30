@@ -16,7 +16,7 @@ import {
   type InsertUserImage,
 } from "../shared/schema.js";
 import { db } from "./db.js";
-import { eq, desc, and, not, isNull } from "drizzle-orm";
+import { eq, desc, and, not, isNull, lt } from "drizzle-orm";
 import { Pool } from '@neondatabase/serverless';
 
 export interface IStorage {
@@ -476,6 +476,43 @@ export class DatabaseStorage implements IStorage {
       .from(payments)
       .where(eq(payments.userId, userId))
       .orderBy(desc(payments.id));
+  }
+
+  // User Images operations
+  async saveUserImage(insertUserImage: InsertUserImage): Promise<UserImage> {
+    const [userImage] = await db
+      .insert(userImages)
+      .values(insertUserImage)
+      .returning();
+
+    return userImage;
+  }
+
+  async getUserImages(userId: number): Promise<UserImage[]> {
+    return await db
+      .select()
+      .from(userImages)
+      .where(eq(userImages.userId, userId))
+      .orderBy(desc(userImages.createdAt));
+  }
+
+  async deleteExpiredImages(): Promise<number> {
+    const result = await db
+      .delete(userImages)
+      .where(lt(userImages.expiresAt, new Date()));
+    
+    return result.rowCount || 0;
+  }
+
+  async deleteUserImage(imageId: number, userId: number): Promise<boolean> {
+    const result = await db
+      .delete(userImages)
+      .where(and(
+        eq(userImages.id, imageId),
+        eq(userImages.userId, userId)
+      ));
+
+    return (result.rowCount || 0) > 0;
   }
 }
 

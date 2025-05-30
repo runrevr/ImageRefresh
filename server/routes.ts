@@ -951,6 +951,72 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
   app.get('/api/prebuilt-prompts', getPrebuiltPrompts);
   app.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
 
+  // User Images endpoints
+  app.get('/api/user-images/:userId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId, 10);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+      }
+
+      const images = await storage.getUserImages(userId);
+      res.json(images);
+    } catch (error) {
+      console.error('Error fetching user images:', error);
+      res.status(500).json({ error: 'Failed to fetch user images' });
+    }
+  });
+
+  app.post('/api/user-images', async (req, res) => {
+    try {
+      const { userId, imagePath, imageUrl, prompt, transformationType } = req.body;
+
+      if (!userId || !imagePath || !imageUrl) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Calculate expiry date (45 days from now)
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 45);
+
+      const userImage = await storage.saveUserImage({
+        userId: parseInt(userId, 10),
+        imagePath,
+        imageUrl,
+        imageType: transformationType || 'enhancement',
+        originalPrompt: prompt || null,
+        expiresAt
+      });
+
+      res.status(201).json(userImage);
+    } catch (error) {
+      console.error('Error saving user image:', error);
+      res.status(500).json({ error: 'Failed to save user image' });
+    }
+  });
+
+  app.delete('/api/user-images/:imageId/:userId', async (req, res) => {
+    try {
+      const imageId = parseInt(req.params.imageId, 10);
+      const userId = parseInt(req.params.userId, 10);
+
+      if (isNaN(imageId) || isNaN(userId)) {
+        return res.status(400).json({ error: 'Invalid image or user ID' });
+      }
+
+      const deleted = await storage.deleteUserImage(imageId, userId);
+
+      if (deleted) {
+        res.json({ success: true });
+      } else {
+        res.status(404).json({ error: 'Image not found or not authorized' });
+      }
+    } catch (error) {
+      console.error('Error deleting user image:', error);
+      res.status(500).json({ error: 'Failed to delete user image' });
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
   console.log("Server created and routes registered successfully");
