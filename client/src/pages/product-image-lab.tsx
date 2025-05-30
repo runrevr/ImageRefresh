@@ -21,6 +21,29 @@ export default function ProductImageLabPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+      
+      {/* Emergency Test Button */}
+      <div style={{ position: 'fixed', top: '100px', right: '20px', zIndex: 99999 }}>
+        <button 
+          onClick={() => {
+            alert('Button clicked! Navigating...');
+            window.location.href = '/prebuilt-prompts';
+          }}
+          style={{
+            backgroundColor: '#FF0000',
+            color: 'white',
+            padding: '15px 20px',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          EMERGENCY TEST BUTTON
+        </button>
+      </div>
+      
       <main className="flex-grow overflow-hidden pt-16"> {/* Add padding-top for fixed header */}
         <HeroSection onExplorePrompts={handleExplorePrompts} />
         <SocialProofSection />
