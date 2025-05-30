@@ -124,8 +124,8 @@ export default function ProductImageLabPage() {
 
             <div className="grid md:grid-cols-3 gap-8">
               {/* AI Enhancement Card */}
-              <Card className="text-center">
-                <CardHeader>
+              <Card className="text-center flex flex-col h-full">
+                <CardHeader className="flex-grow">
                   <div className="mx-auto w-16 h-16 bg-[#06B6D4] rounded-full flex items-center justify-center mb-4">
                     <Wand2 className="h-8 w-8 text-white" />
                   </div>
@@ -134,7 +134,7 @@ export default function ProductImageLabPage() {
                     Upload your product image, our smart AI analyzes the image and suggest multiple enhancement ideas.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="mt-auto">
                   <Link to="/upload-enhance">
                     <Button className="w-full bg-[#06B6D4] hover:bg-[#0891B2] text-white border-0">
                       Upload Photos
@@ -144,8 +144,8 @@ export default function ProductImageLabPage() {
               </Card>
 
               {/* Prebuilt Prompts Card */}
-              <Card className="text-center">
-                <CardHeader>
+              <Card className="text-center flex flex-col h-full">
+                <CardHeader className="flex-grow">
                   <div className="mx-auto w-16 h-16 bg-[#84CC16] rounded-full flex items-center justify-center mb-4">
                     <CheckCircle2 className="h-8 w-8 text-white" />
                   </div>
@@ -154,7 +154,7 @@ export default function ProductImageLabPage() {
                     Use our expert-designed prompts to quickly transform your product's history. Choose from lifestyle, minimalist, luxury and more.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="mt-auto">
                   <Link to="/prebuilt-prompts">
                     <Button className="w-full bg-[#84CC16] hover:bg-[#65A30D] text-white border-0">
                       Explore Prompts
@@ -164,8 +164,8 @@ export default function ProductImageLabPage() {
               </Card>
 
               {/* Text-to-Image Card */}
-              <Card className="text-center">
-                <CardHeader>
+              <Card className="text-center flex flex-col h-full">
+                <CardHeader className="flex-grow">
                   <div className="mx-auto w-16 h-16 bg-[#F97316] rounded-full flex items-center justify-center mb-4">
                     <Upload className="h-8 w-8 text-white" />
                   </div>
@@ -174,7 +174,7 @@ export default function ProductImageLabPage() {
                     Create what you want in detail, and our AI will bring it to life with you text descriptions. Perfect for concept designs.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="mt-auto">
                   <Link to="/upload">
                     <Button className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white border-0">
                       Create Variations
