@@ -54,6 +54,12 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             Product Image Lab
           </Link>
           <Link
+            href="/prebuilt-prompts"
+            className="header-menu text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold"
+          >
+            Prebuilt Prompts
+          </Link>
+          <Link
             href="/pricing"
             className="header-menu text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold"
           >
