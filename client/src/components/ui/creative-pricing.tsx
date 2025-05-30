@@ -150,7 +150,12 @@ function CreativePricing({
                                     "w-full h-12 font-montserrat text-lg relative",
                                     "border border-dark dark:border-light rounded-md",
                                     "transition-all duration-300",
-                                    tier.popular
+                                    tier.name === "Free" 
+                                        ? [
+                                              "bg-white text-[#1F2937]",
+                                              "hover:bg-gray-50",
+                                          ]
+                                        : tier.popular
                                         ? [
                                               "bg-brand-secondary text-white",
                                               "hover:bg-brand-secondary/90",
