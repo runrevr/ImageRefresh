@@ -102,7 +102,8 @@ function CreativePricing({
                                         "flex items-center justify-center",
                                         "border-2 border-zinc-900 dark:border-white",
                                         tier.name === "Pro Marketer" ? "text-[#84CC16]" : 
-                                        tier.name === "Starter" ? "text-[#06B6D4]" : `text-${tier.color}-500`
+                                        tier.name === "Starter" ? "text-[#06B6D4]" : 
+                                        tier.name === "Free" ? "text-white" : `text-${tier.color}-500`
                                     )}
                                 >
                                     {tier.icon}
