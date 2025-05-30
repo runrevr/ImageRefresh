@@ -131,6 +131,7 @@ function DemoPage() {
           Make your{" "}
           <br className="hidden sm:block" />
           pictures{" "}
+          <br />
           <TextRotate
             texts={[
               "amazing",
