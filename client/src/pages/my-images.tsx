@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, Download, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import Navbar from "@/components/Navbar";
+import { useCredits } from "@/hooks/useCredits";
 
 interface UserImage {
   id: number;
@@ -19,6 +21,7 @@ interface UserImage {
 export default function MyImages() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { data: userCredits } = useCredits();
 
   // Get user ID from localStorage (this should match your auth system)
   const userId = localStorage.getItem('userId');
@@ -96,19 +99,27 @@ export default function MyImages() {
     return diffDays;
   };
 
+  const freeCredits = userCredits?.hasMonthlyFreeCredit ? 1 : 0;
+  const paidCredits = userCredits?.paidCredits || 0;
+
   if (!userId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
-        <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Please log in to view your images</h1>
-          <p className="text-gray-600">You need to be logged in to access your saved images.</p>
+      <>
+        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
+          <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Please log in to view your images</h1>
+            <p className="text-gray-600">You need to be logged in to access your saved images.</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
+    <>
+      <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">My Images</h1>
@@ -211,6 +222,7 @@ export default function MyImages() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
