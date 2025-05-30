@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FixedProductImageLab } from "@/components/FixedProductImageLab";
+import FixedProductImageLab from '../components/FixedProductImageLab';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

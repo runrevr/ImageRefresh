@@ -58,7 +58,7 @@ export default function FixedProductImageLab({
   const [creditsRequired, setCreditsRequired] = useState<number>(0);
   const [processing, setProcessing] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
-  const [showResults, setShowResults] = useState<boolean>(false);
+  const [showResults, setShowResults] = useState<boolean>(showResults);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   // Admin panel states
@@ -555,62 +555,6 @@ export default function FixedProductImageLab({
         {/* Upload Tab */}
         {tabState.activeTab === 'upload' && (
           <div className="product-lab-card">
-            <h2>Upload Product Images</h2>
-            <p>Upload product images to enhance with AI transformations.</p>
-
-            {/* Upload Form */}
-            <form ref={uploadFormRef} className="product-lab-form">
-              <div className="product-lab-form-group">
-                <label htmlFor="product-images">Product Images:</label>
-                <input 
-                  ref={fileInputRef}
-                  type="file" 
-                  id="product-images" 
-                  accept="image/*" 
-                  multiple 
-                  onChange={handleFileUpload}
-                  disabled={isProcessing}
-                />
-                <div className="product-lab-form-help">
-                  Upload up to 5 images (PNG, JPG)
-                </div>
-              </div>
-
-              <div className="product-lab-form-group">
-                <label htmlFor="industry">Industry (Optional):</label>
-                <select 
-                  id="industry" 
-                  value={industry} 
-                  onChange={handleIndustryChange}
-                  disabled={isProcessing}
-                >
-                  <option value="">Select Industry</option>
-                  <option value="fashion">Fashion & Apparel</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="home_decor">Home Decor</option>
-                  <option value="beauty">Beauty & Cosmetics</option>
-                  <option value="food">Food & Beverage</option>
-                  <option value="sports">Sports & Fitness</option>
-                  <option value="jewelry">Jewelry & Accessories</option>
-                  <option value="toys">Toys & Games</option>
-                  <option value="automotive">Automotive</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div className="product-lab-form-group">
-                <label htmlFor="additional-info">Additional Information (Optional):</label>
-                <textarea 
-                  id="additional-info" 
-                  value={additionalInfo} 
-                  onChange={(e) => setAdditionalInfo(e.target.value)}
-                  placeholder="Add any specific details about your products..."
-                  rows={3}
-                  disabled={isProcessing}
-                />
-              </div>
-            </form>
-
             {/* Status Message */}
             {status && (
               <div className={`product-lab-status product-lab-status-${statusType}`}>
@@ -797,4 +741,4 @@ export default function FixedProductImageLab({
   );
 }
 
-export { FixedProductImageLab as FixedProductImageLab };
+export default FixedProductImageLab;
