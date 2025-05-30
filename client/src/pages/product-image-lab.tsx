@@ -133,9 +133,11 @@ export default function ProductImageLabPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="outline" className="w-full">
-                    Upload Photos
-                  </Button>
+                  <Link to="/upload-enhance">
+                    <Button variant="outline" className="w-full">
+                      Upload Photos
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
 
