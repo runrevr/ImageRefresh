@@ -127,7 +127,7 @@ export default function AuthPage() {
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-username">Username</Label>
+                    <Label htmlFor="login-username" style={{ color: '#ffffff' }}>Username</Label>
                     <Input 
                       id="login-username" 
                       type="text" 
@@ -139,7 +139,7 @@ export default function AuthPage() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="login-password">Password</Label>
+                      <Label htmlFor="login-password" style={{ color: '#ffffff' }}>Password</Label>
                       <a 
                         href="#" 
                         className="text-sm text-blue-600 hover:text-blue-800"
@@ -180,7 +180,7 @@ export default function AuthPage() {
               <TabsContent value="register">
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="register-name">Full Name</Label>
+                    <Label htmlFor="register-name" style={{ color: '#ffffff' }}>Full Name</Label>
                     <Input 
                       id="register-name" 
                       type="text" 
@@ -191,7 +191,7 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-username">Username</Label>
+                    <Label htmlFor="register-username" style={{ color: '#ffffff' }}>Username</Label>
                     <Input 
                       id="register-username" 
                       type="text" 
@@ -202,7 +202,7 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-email">Email</Label>
+                    <Label htmlFor="register-email" style={{ color: '#ffffff' }}>Email</Label>
                     <Input 
                       id="register-email" 
                       type="email" 
@@ -213,7 +213,7 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-password">Password</Label>
+                    <Label htmlFor="register-password" style={{ color: '#ffffff' }}>Password</Label>
                     <PasswordInput 
                       id="register-password" 
                       placeholder="Create a password" 
@@ -223,7 +223,7 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-confirm-password">Confirm Password</Label>
+                    <Label htmlFor="register-confirm-password" style={{ color: '#ffffff' }}>Confirm Password</Label>
                     <PasswordInput 
                       id="register-confirm-password" 
                       placeholder="Confirm your password" 
