@@ -320,40 +320,30 @@ export default function FixedProductImageLab({
 
   return (
     <div className="product-lab-container">
-      <div className="product-lab-header">
-        <h1 className="product-lab-title">Product Image Lab</h1>
-        <p className="product-lab-subtitle">Transform your product images with AI-powered enhancements</p>
-
-        {/* Double-click to show admin panel (developer feature) */}
-        <div 
-          onDoubleClick={toggleAdminPanel}
-          style={{ 
-            position: 'absolute', 
-            top: '10px', 
-            right: '10px',
-            padding: '5px',
-            cursor: 'default'
-          }}
-        >
-          {/* Test mode indicator */}
-          {isTestModeEnabled && (
-            <div style={{ 
-              background: '#ff9800', 
-              color: 'white', 
-              padding: '2px 8px', 
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            }}>
-              TEST MODE
-            </div>
-          )}
-        </div>
-
-        {/* Credits display */}
-        <div className="product-lab-credits">
-          Available Credits: <span className="product-lab-credits-value">{availableCredits}</span>
-        </div>
+      {/* Double-click to show admin panel (developer feature) */}
+      <div 
+        onDoubleClick={toggleAdminPanel}
+        style={{ 
+          position: 'absolute', 
+          top: '10px', 
+          right: '10px',
+          padding: '5px',
+          cursor: 'default'
+        }}
+      >
+        {/* Test mode indicator */}
+        {isTestModeEnabled && (
+          <div style={{ 
+            background: '#ff9800', 
+            color: 'white', 
+            padding: '2px 8px', 
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }}>
+            TEST MODE
+          </div>
+        )}
       </div>
 
       {/* Admin Panel (hidden by default) */}
