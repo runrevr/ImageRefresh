@@ -24,47 +24,56 @@ export default function PrebuiltPrompts() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {/* Background Removal */}
-            <div className="bg-white rounded-xl border p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🖼️</span>
+            <div className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer bg-white rounded-lg">
+              <div className="relative">
+                <div className="h-64 overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                  <span className="text-6xl">🖼️</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800">Background Removal</h3>
-                <p className="text-gray-600 mt-2">Remove backgrounds for clean, professional product photos</p>
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
               </div>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                Use This Prompt
-              </button>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 text-[#2A7B9B]">Background Removal</h3>
+                <p className="text-gray-600 mb-4 text-sm">Remove backgrounds for clean, professional product photos</p>
+                <button className="w-full bg-[#FF7B54] hover:bg-[#ff6a3c] text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                  Use This Prompt
+                </button>
+              </div>
             </div>
 
             {/* Enhanced Lighting */}
-            <div className="bg-white rounded-xl border p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">💡</span>
+            <div className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer bg-white rounded-lg">
+              <div className="relative">
+                <div className="h-64 overflow-hidden bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center">
+                  <span className="text-6xl">💡</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800">Enhanced Lighting</h3>
-                <p className="text-gray-600 mt-2">Improve lighting and shadows for better product visibility</p>
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
               </div>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                Use This Prompt
-              </button>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 text-[#2A7B9B]">Enhanced Lighting</h3>
+                <p className="text-gray-600 mb-4 text-sm">Improve lighting and shadows for better product visibility</p>
+                <button className="w-full bg-[#FF7B54] hover:bg-[#ff6a3c] text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                  Use This Prompt
+                </button>
+              </div>
             </div>
 
             {/* Add Shadows */}
-            <div className="bg-white rounded-xl border p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🌟</span>
+            <div className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer bg-white rounded-lg">
+              <div className="relative">
+                <div className="h-64 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                  <span className="text-6xl">🌟</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800">Add Natural Shadows</h3>
-                <p className="text-gray-600 mt-2">Add realistic shadows to make products look more natural</p>
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
               </div>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                Use This Prompt
-              </button>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 text-[#2A7B9B]">Add Natural Shadows</h3>
+                <p className="text-gray-600 mb-4 text-sm">Add realistic shadows to make products look more natural</p>
+                <button className="w-full bg-[#FF7B54] hover:bg-[#ff6a3c] text-white py-2 px-4 rounded-lg transition-colors font-medium">
+                  Use This Prompt
+                </button>
+              </div>
             </div>
           </div>
 
