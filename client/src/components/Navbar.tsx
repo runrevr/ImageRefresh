@@ -70,12 +70,12 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="bg-white border border-gray-200 shadow-lg">
               <DropdownMenuItem asChild>
-                <Link href="/product-image-lab" className="text-[#333333] hover:text-[#06B6D4] hover:bg-gray-50 w-full block px-3 py-2">
+                <Link href="/product-image-lab" className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10 w-full block px-3 py-2">
                   Product Image Lab
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/prebuilt-prompts" className="text-[#333333] hover:text-[#06B6D4] hover:bg-gray-50 w-full block px-3 py-2">
+                <Link href="/prebuilt-prompts" className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10 w-full block px-3 py-2">
                   Prebuilt Prompts
                 </Link>
               </DropdownMenuItem>
@@ -140,15 +140,15 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   </svg>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" style={{ color: '#ffffff' }}>
+              <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg">
                 <DropdownMenuItem asChild>
-                  <Link href="/account" style={{ color: '#ffffff' }}>My Account</Link>
+                  <Link href="/account" className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10">My Account</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/my-images" style={{ color: '#ffffff' }}>My Images</Link>
+                  <Link href="/my-images" className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10">My Images</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => logoutMutation.mutate()} style={{ color: '#ffffff' }}>
+                <DropdownMenuItem onClick={() => logoutMutation.mutate()} className="text-[#333333] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10">
                   {logoutMutation.isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
