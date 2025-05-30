@@ -13,7 +13,6 @@ export default function Footer() {
                 alt="ImageRefresh Logo" 
                 className="h-8 w-auto"
               />
-              <span className="font-bold text-xl text-white">ImageRefresh.com</span>
             </div>
             <p className="text-gray-400 mb-4">
               Transform your photos with the power of AI. 
