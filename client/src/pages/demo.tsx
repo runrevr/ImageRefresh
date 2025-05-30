@@ -127,7 +127,7 @@ function DemoPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight text-[#333333]">
+          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-8 leading-[1.1] tracking-tight text-[#1F2937]">
             Make your{" "}
             <br className="hidden sm:block" />
             pictures{" "}
@@ -145,7 +145,7 @@ function DemoPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "-50%", opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              mainClassName="text-[#FF7B54] font-bold inline-block"
+              mainClassName="text-[#06B6D4] font-bold inline-block"
             />
           </h1>
           <p className="text-xl md:text-2xl text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
