@@ -101,7 +101,7 @@ function CreativePricing({
                                         "w-12 h-12 rounded-full mb-4",
                                         "flex items-center justify-center",
                                         "border-2 border-zinc-900 dark:border-white",
-                                        `text-${tier.color}-500`
+                                        tier.name === "Pro Marketer" ? "text-[#84CC16]" : `text-${tier.color}-500`
                                     )}
                                 >
                                     {tier.icon}
