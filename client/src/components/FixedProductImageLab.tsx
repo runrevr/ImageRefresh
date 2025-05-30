@@ -657,6 +657,7 @@ export default function FixedProductImageLab({
                     className="product-lab-button product-lab-button-primary"
                     onClick={applyTransformations}
                     disabled={isProcessing || creditsRequired === 0 || (!isTestModeEnabled && creditsRequired > availableCredits)}
+                    style={{ backgroundColor: '#06B6D4', borderColor: '#06B6D4' }}
                   >
                     {isProcessing ? 'Processing...' : 'Apply Enhancements'}
                   </button>

@@ -224,21 +224,21 @@ export default function ProductImageLabPage() {
         </section>
 
         {/* Customer Testimonials */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-[#FAFAFA]">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-[#1F2937] mb-4">
                 What Our Customers Say
               </h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
-                <Card key={index} className="text-center">
+                <Card key={index} className="text-center border-[#E5E7EB]">
                   <CardHeader>
                     <div className="flex justify-center mb-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                        <Star key={i} className="h-5 w-5 text-[#F97316] fill-current" />
                       ))}
                     </div>
                     <CardDescription className="text-lg italic">
@@ -254,6 +254,24 @@ export default function ProductImageLabPage() {
             </div>
           </div>
         </section>
+
+        {/* Call to Action */}
+        <div className="bg-[#06B6D4] py-16">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold text-white mb-6">
+              Ready to Transform Your Product Photos?
+            </h2>
+            <p className="text-xl text-white/80 mb-8">
+              Join thousands of businesses creating stunning product images with AI
+            </p>
+            <Link to="/product-image-lab">
+              <Button size="lg" variant="secondary" className="bg-white text-[#06B6D4] hover:bg-[#E5E7EB]">
+                Start Creating Now
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
       </main>
 
       <Footer />
