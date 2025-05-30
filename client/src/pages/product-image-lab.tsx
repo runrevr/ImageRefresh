@@ -110,8 +110,6 @@ export default function ProductImageLabPage() {
           </div>
         </div>
 
-        
-
         {/* Main Product Lab Component */}
         <div className="max-w-6xl mx-auto px-4 py-6">
           <FixedProductImageLab />
