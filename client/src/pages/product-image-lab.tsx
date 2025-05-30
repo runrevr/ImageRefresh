@@ -110,16 +110,7 @@ export default function ProductImageLabPage() {
           </div>
         </div>
 
-        {/* Feature Pills */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="flex flex-wrap justify-center gap-3">
-            {features.map((feature, index) => (
-              <Badge key={index} variant="secondary" className="px-4 py-2 text-sm">
-                {feature.icon} {feature.title}
-              </Badge>
-            ))}
-          </div>
-        </div>
+        
 
         {/* Main Product Lab Component */}
         <div className="max-w-6xl mx-auto px-4 py-8">
