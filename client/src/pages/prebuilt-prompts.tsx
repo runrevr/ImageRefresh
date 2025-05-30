@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
@@ -14,22 +13,22 @@ const resultImages = {
   'prompt-006': new URL('@assets/prompt-result-006.png', import.meta.url).href, // Heritage Charm (humidifier)
   'prompt-007': new URL('@assets/prompt-result-007.png', import.meta.url).href, // Metropolitan Pulse (turntable)
   'prompt-008': new URL('@assets/prompt-result-008.png', import.meta.url).href, // Curated Collection (water bottle)
-  'prompt-009': new URL('@assets/prompt-result-009.png', import.meta.url).href, // Gravity Defying (coffee bag)
-  'prompt-010': new URL('@assets/prompt-result-010.png', import.meta.url).href, // Story Grid (whiskey bottle)
-  'prompt-011': new URL('@assets/prompt-result-011.png', import.meta.url).href, // Monochrome Masterpiece (keyboard)
-  'prompt-012': new URL('@assets/prompt-result-012.png', import.meta.url).href, // Instant Memories (candle)
-  'prompt-013': new URL('@assets/prompt-result-013.png', import.meta.url).href, // Electric Nights (watch)
-  'prompt-014': new URL('@assets/prompt-result-014.png', import.meta.url).href, // Cinema Shadows (instant pot)
-  'prompt-015': new URL('@assets/prompt-result-015.png', import.meta.url).href, // Sunset Magic (running shoes)
-  'prompt-016': new URL('@assets/prompt-result-016.png', import.meta.url).href, // Nordic Fresh (jewelry)
-  'prompt-017': new URL('@assets/prompt-result-017.png', import.meta.url).href, // Analog Soul (earbuds)
-  'prompt-018': new URL('@assets/prompt-result-018.png', import.meta.url).href, // Morning Mist (mason jar mug)
-  'prompt-019': new URL('@assets/prompt-result-019.png', import.meta.url).href, // Aurora Dreams (vintage TV scene)
+  'prompt-009': new URL('@assets/prompt-result-009.png', import.meta.url).href, // Artisan Crafted (ceramic mug variant)
+  'prompt-010': new URL('@assets/prompt-result-010.png', import.meta.url).href, // Festive Gathering (honey jars variant)
+  'prompt-011': new URL('@assets/prompt-result-011.png', import.meta.url).href, // Wellness Journey (witch hazel variant)
+  'prompt-012': new URL('@assets/prompt-result-012.png', import.meta.url).href, // Executive Excellence (black wallet variant)
+  'prompt-013': new URL('@assets/prompt-result-013.png', import.meta.url).href, // Beach Day Essential (sunscreen variant)
+  'prompt-014': new URL('@assets/prompt-result-014.png', import.meta.url).href, // Home Sanctuary (humidifier variant)
+  'prompt-015': new URL('@assets/prompt-result-015.png', import.meta.url).href, // Audio Experience (turntable variant)
+  'prompt-016': new URL('@assets/prompt-result-016.png', import.meta.url).href, // Active Lifestyle (water bottle variant)
+  'prompt-017': new URL('@assets/prompt-result-017.png', import.meta.url).href, // Professional Edge (ceramic mug business)
+  'prompt-018': new URL('@assets/prompt-result-018.png', import.meta.url).href, // Gourmet Experience (honey jars premium)
+  'prompt-019': new URL('@assets/prompt-result-019.png', import.meta.url).href, // Zen Moment (witch hazel spa)
 };
 
 export default function PrebuiltPrompts() {
   const [, setLocation] = useLocation();
-  
+
   // Mock credits for development
   const freeCredits = 1;
   const paidCredits = 10;
@@ -293,7 +292,7 @@ export default function PrebuiltPrompts() {
                           {prompt.difficulty}
                         </span>
                       </div>
-                      
+
                       <h3 className="text-lg font-bold mb-2 text-white">
                         {prompt.title}
                       </h3>
