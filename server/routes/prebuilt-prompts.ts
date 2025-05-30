@@ -72,32 +72,31 @@ export async function transformWithPrebuiltPrompt(req: Request, res: Response) {
     // Generate multiple variations using GPT-image-01
     const transformedUrls: string[] = [];
     
-    for (let i = 0; i < variations; i++) {
-      console.log(`[Prebuilt Transform] Generating variation ${i + 1}/${variations}`);
-      
-      try {
-        const response = await openai.images.edit({
-          model: "gpt-image-01",
-          image: fs.createReadStream(imagePath),
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024",
-          response_format: "url"
-        });
+    console.log(`[Prebuilt Transform] Generating ${variations} variations`);
+    
+    try {
+      const response = await openai.images.edit({
+        model: "gpt-image-01",
+        image: fs.createReadStream(imagePath),
+        prompt: prompt,
+        n: 2, // Generate 2 variations in single call
+        size: "1024x1024",
+        response_format: "url"
+      });
 
-        if (response.data && response.data.length > 0) {
-          const imageUrl = response.data[0].url;
+      if (response.data && response.data.length > 0) {
+        // Download and save each variation
+        for (let i = 0; i < response.data.length; i++) {
+          const imageUrl = response.data[i].url;
           if (imageUrl) {
-            // Download and save the transformed image
             const savedPath = await downloadAndSaveImage(imageUrl, `prebuilt-${promptId}-${i + 1}`);
             transformedUrls.push(savedPath);
             console.log(`[Prebuilt Transform] Variation ${i + 1} saved:`, savedPath);
           }
         }
-      } catch (variationError) {
-        console.error(`[Prebuilt Transform] Error generating variation ${i + 1}:`, variationError);
-        // Continue with other variations even if one fails
       }
+    } catch (error) {
+      console.error(`[Prebuilt Transform] Error generating variations:`, error);
     }
 
     const processingTime = Math.round((Date.now() - startTime) / 1000);
