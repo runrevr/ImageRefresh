@@ -9,6 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowRight, Upload, Wand2, Download, Star, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 import ComparisonSlider from "@/components/ComparisonSlider";
+import nounouShampoo from "@/assets/nounou-shampoo.jpg";
+import sunsetShampoo from "@/assets/sunset-shampoo.jpg";
 
 export default function ProductImageLabPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -100,8 +102,8 @@ export default function ProductImageLabPage() {
               </h3>
               <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
                 <ComparisonSlider
-                  beforeImage="/src/assets/nounou-shampoo.jpg"
-                  afterImage="/src/assets/sunset-shampoo.jpg"
+                  beforeImage={nounouShampoo}
+                  afterImage={sunsetShampoo}
                 />
                 {/* Before/After Labels */}
                 <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-lg text-sm font-medium">
