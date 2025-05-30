@@ -95,7 +95,10 @@ export default function PrebuiltPrompts() {
           {/* Back Button */}
           <div className="text-center mt-12">
             <button
-              onClick={() => setLocation('/product-image-lab')}
+              onClick={() => {
+                console.log('Back button clicked - going to product-image-lab');
+                window.location.href = '/product-image-lab';
+              }}
               className="px-8 py-3 border border-[#E5E7EB] text-[#6B7280] rounded-lg hover:bg-[#FAFAFA] hover:border-[#06B6D4] transition-colors"
             >
               ← Back to Product Lab

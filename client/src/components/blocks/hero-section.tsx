@@ -174,11 +174,16 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <Link href="/prebuilt-prompts">
-                                            <RainbowButton className="mt-4 w-full">
-                                                Explore Prompts
-                                            </RainbowButton>
-                                        </Link>
+                                        <button 
+                                            onClick={() => {
+                                                console.log('Explore Prompts clicked!');
+                                                window.location.href = '/prebuilt-prompts';
+                                            }}
+                                            className="mt-4 w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white font-medium py-3 px-6 rounded-xl transition-colors"
+                                            style={{ zIndex: 9999, position: 'relative' }}
+                                        >
+                                            Explore Prompts
+                                        </button>
                                     </div>
                                 </div>
 
