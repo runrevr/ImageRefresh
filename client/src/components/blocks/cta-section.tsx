@@ -10,7 +10,7 @@ export function CtaSection() {
             <div className="mx-auto max-w-6xl px-6 text-center">
                 <h2 className="text-3xl font-medium text-white mb-4">Ready to transform your product images?</h2>
                 <p className="text-xl text-white/80 mb-8">Start enhancing your visuals today</p>
-                
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link href="/upload">
                         <RainbowButton size="lg" className="rounded-full">
