@@ -258,7 +258,7 @@ export default function AuthPage() {
         {/* Hero section */}
         <div className="hidden lg:block space-y-6">
           <div className="text-center lg:text-left space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight">Transform your images with AI</h1>
+            <h1 className="text-4xl font-bold tracking-tight text-primary">Transform your images with AI</h1>
             <p className="text-lg text-gray-600 max-w-md mx-auto lg:mx-0">
               Create professional-quality visual content with our AI-powered transformation tools. 
               Perfect for marketers, designers, and content creators.
