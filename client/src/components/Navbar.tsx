@@ -94,7 +94,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="hidden md:flex items-center">
+                <Button variant="ghost" className="hidden md:flex items-center text-[#333333] hover:text-[#FF7B54]">
                   <span className="mr-1">{user.username}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
