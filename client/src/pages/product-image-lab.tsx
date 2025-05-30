@@ -171,9 +171,11 @@ export default function ProductImageLabPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="outline" className="w-full">
-                    Create Variations
-                  </Button>
+                  <Link to="/upload">
+                    <Button variant="outline" className="w-full">
+                      Create Variations
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>
