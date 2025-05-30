@@ -9,8 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowRight, Upload, Wand2, Download, Star, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 import ComparisonSlider from "@/components/ComparisonSlider";
-import nounouShampoo from "@/assets/nounou-shampoo.jpg";
-import sunsetShampoo from "@/assets/sunset-shampoo.jpg";
+import shampooOriginal from "@/assets/shampoo-original.jpg";
+import shampooEnhanced from "@/assets/shampoo space.png";
 
 export default function ProductImageLabPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -103,7 +103,7 @@ export default function ProductImageLabPage() {
               <div className="relative bg-white rounded-xl shadow-lg overflow-hidden h-96">
                 <ComparisonSlider
                   beforeImage={nounouShampoo}
-                  afterImage={sunsetShampoo}
+                  afterImage={shampooEnhanced}
                 />
               </div>
             </div>
