@@ -123,7 +123,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                   <Link href="/account" style={{ color: '#ffffff' }}>My Account</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/transformations" style={{ color: '#ffffff' }}>My Images</Link>
+                  <Link href="/my-images" style={{ color: '#ffffff' }}>My Images</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => logoutMutation.mutate()} style={{ color: '#ffffff' }}>

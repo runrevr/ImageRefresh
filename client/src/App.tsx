@@ -50,6 +50,7 @@ import CheckoutFlowDemo from "@/pages/checkout-flow-demo";
 import PrebuiltPrompts from "./pages/prebuilt-prompts";
 import PrebuiltUpload from "./pages/prebuilt-upload";
 import PrebuiltResults from "./pages/prebuilt-results";
+import MyImages from "./pages/my-images";
 
 function Router() {
   return (
@@ -110,6 +111,7 @@ function Router() {
         <Route path="/prebuilt-prompts" component={PrebuiltPrompts} />
         <Route path="/prebuilt-upload" component={PrebuiltUpload} />
         <Route path="/prebuilt-results" component={PrebuiltResults} />
+        <ProtectedRoute path="/my-images" component={MyImages} />
         <Route component={NotFound} />
       </Switch>
     </>

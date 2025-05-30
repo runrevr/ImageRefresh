@@ -61,7 +61,7 @@ export default function MyImages() {
     deleteImageMutation.mutate({ imageId, userId });
   };
 
-  const handleDownload = async (imageUrl: string, prompt: string | null) => {
+  const handleDownload = async (imageUrl: string, originalPrompt: string | null) => {
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
@@ -158,7 +158,7 @@ export default function MyImages() {
                   <div className="relative aspect-square">
                     <img
                       src={image.imageUrl}
-                      alt={image.prompt || "Enhanced image"}
+                      alt={image.originalPrompt || "Enhanced image"}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -166,7 +166,7 @@ export default function MyImages() {
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => handleDownload(image.imageUrl, image.prompt)}
+                          onClick={() => handleDownload(image.imageUrl, image.originalPrompt)}
                           className="bg-white hover:bg-gray-100"
                         >
                           <Download className="w-4 h-4" />
