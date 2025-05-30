@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "wouter";
-import logoImage from "@/assets/logo-imagerefresh-new.png";
+import logoImage from "@/assets/logo-imagerefresh-small.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useCredits } from "@/hooks/useCredits";
 import { Bot } from "lucide-react";
@@ -34,8 +34,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             <img
               src={logoImage}
               alt="ImageRefresh Logo"
-              className="h-12 md:h-14"
-              style={{ maxWidth: "280px" }}
+              className="h-10 md:h-12"
+              style={{ maxWidth: "200px" }}
             />
           </div>
         </Link>
@@ -181,8 +181,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 <img
                   src={logoImage}
                   alt="ImageRefresh Logo"
-                  className="h-10"
-                  style={{ maxWidth: "220px" }}
+                  className="h-8"
+                  style={{ maxWidth: "160px" }}
                 />
               </div>
               <div className="flex flex-col space-y-4">
