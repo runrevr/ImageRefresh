@@ -96,7 +96,7 @@ export default function ProductImageLabPage() {
             </Link>
 
             {/* Before/After Slider */}
-            <div className="mt-16 max-w-6xl mx-auto">
+            <div className="mt-24 max-w-6xl mx-auto">
               <ComparisonSlider
                 beforeImage={shampooOriginal}
                 afterImage={shampooEnhanced}
