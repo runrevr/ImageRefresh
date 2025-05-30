@@ -83,7 +83,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 </span>
               </div>
               <Link href="/buy-credits">
-                <Button className="hidden sm:block bg-[#FF7B54] hover:bg-secondary-600 text-white border-none">
+                <Button className="hidden sm:block bg-[#F97316] hover:bg-[#F97316]/90 text-white border-none">
                   Buy Credits
                 </Button>
               </Link>
