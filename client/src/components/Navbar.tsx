@@ -34,8 +34,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
             <img
               src={logoImage}
               alt="ImageRefresh Logo"
-              className="h-10 md:h-12"
-              style={{ maxWidth: "200px" }}
+              className="h-12 md:h-16"
+              style={{ maxWidth: "250px", minHeight: "48px" }}
             />
           </div>
         </Link>
@@ -181,8 +181,8 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                 <img
                   src={logoImage}
                   alt="ImageRefresh Logo"
-                  className="h-8"
-                  style={{ maxWidth: "160px" }}
+                  className="h-10"
+                  style={{ maxWidth: "200px", minHeight: "40px" }}
                 />
               </div>
               <div className="flex flex-col space-y-4">
