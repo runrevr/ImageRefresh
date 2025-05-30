@@ -120,48 +120,48 @@ function DemoPage() {
           </Floating>
         </div>
 
-        {/* Center Content */}
-        <motion.div 
-          className="z-20 w-full max-w-4xl mx-auto px-6 text-center relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <h1 className="text-6xl sm:text-7xl md:text-8xl font-audiowide mb-8 leading-[1.1] tracking-tight text-[#1F2937]">
-            Make your{" "}
-            <br className="hidden sm:block" />
-            pictures{" "}
-            <TextRotate
-              texts={[
-                "amazing",
-                "funny",
-                "sell better",
-                "exceptional",
-                "magical",
-              ]}
-              rotationInterval={2000}
-              staggerDuration={0.03}
-              initial={{ y: "50%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "-50%", opacity: 0 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              mainClassName="text-[#06B6D4] font-bold inline-block"
-            />
-          </h1>
-          <p className="text-6xl md:text-2xl font-montserrat text-[#333333] mb-12 max-w-3xl mx-auto leading-relaxed">
-            Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
-          </p>
-          <div className="flex justify-center mt-4">
-            <Link to="/upload">
-              <RainbowButton 
-                className="px-10 py-5 text-xl"
-              >
-                ⚡ Let's Make Some Magic
-              </RainbowButton>
-            </Link>
-          </div>
-        </motion.div>
-      </section>
+    {/* Center Content */}
+      <motion.div 
+        className="z-20 w-full max-w-4xl mx-auto px-6 text-center relative"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <h1 className="text-6xl sm:text-7xl md:text-8xl font-audiowide mb-8 leading-[1.1] tracking-tight text-[#1F2937]">
+          Make your{" "}
+          <br className="hidden sm:block" />
+          pictures{" "}
+          <TextRotate
+            texts={[
+              "amazing",
+              "funny",
+              "sell better",
+              "exceptional",
+              "magical",
+            ]}
+            rotationInterval={2000}
+            staggerDuration={0.03}
+            initial={{ y: "50%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "-50%", opacity: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            mainClassName="text-[#06B6D4] font-bold inline-block text-6xl sm:text-7xl md:text-8xl font-audiowide leading-[1.1] tracking-tight"
+          />
+        </h1>
+        <p className="text-lg sm:text-xl text-gray-600 mb-8">
+          Take your old photos and transform them into something magical in seconds with zero technical ability needed. First one's on us 🍻
+        </p>
+        <div className="flex justify-center mt-4">
+          <Link to="/upload">
+            <RainbowButton 
+              className="px-10 py-5 text-xl"
+            >
+              ⚡ Let's Make Some Magic
+            </RainbowButton>
+          </Link>
+        </div>
+      </motion.div>
+    </section>
 
       {/* Features Bento Grid Section */}
       <section className="bg-black text-white py-10">
