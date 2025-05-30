@@ -28,12 +28,12 @@ export default function MyImages() {
   const userId = user?.id;
 
   const { data: images = [], isLoading } = useQuery<UserImage[]>({
-    queryKey: ['/api/user-images', userId],
+    queryKey: ['/api/user-images', userId ? String(userId) : ''],
     enabled: !!userId,
   });
 
   const deleteImageMutation = useMutation({
-    mutationFn: async ({ imageId, userId }: { imageId: number; userId: string }) => {
+    mutationFn: async ({ imageId, userId }: { imageId: number; userId: number }) => {
       const response = await fetch(`/api/user-images/${imageId}/${userId}`, {
         method: 'DELETE',
       });
@@ -62,7 +62,7 @@ export default function MyImages() {
 
   const handleDelete = (imageId: number) => {
     if (!userId) return;
-    deleteImageMutation.mutate({ imageId, userId });
+    deleteImageMutation.mutate({ imageId, userId: userId });
   };
 
   const handleDownload = async (imageUrl: string, originalPrompt: string | null) => {

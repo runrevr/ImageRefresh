@@ -544,6 +544,54 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         }
       }
 
+      // Save the transformed image to user's collection
+      if (userId && transformedImageUrl) {
+        try {
+          // Calculate expiry date (45 days from now)
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 45);
+
+          // Determine the transformation type for categorization
+          let transformationType = 'enhancement';
+          if (isEdit) {
+            transformationType = 'edit';
+          } else if (prompt.toLowerCase().includes('background')) {
+            transformationType = 'background_change';
+          } else if (prompt.toLowerCase().includes('style')) {
+            transformationType = 'style_transfer';
+          }
+
+          // Save the primary transformed image
+          await storage.saveUserImage({
+            userId: userId,
+            imagePath: result.transformedPath,
+            imageUrl: transformedImageUrl,
+            imageType: transformationType,
+            originalPrompt: prompt,
+            transformationId: transformation ? transformation.id : null,
+            expiresAt
+          });
+
+          // Save the second transformed image if it exists
+          if (secondTransformedImageUrl && result.secondTransformedPath) {
+            await storage.saveUserImage({
+              userId: userId,
+              imagePath: result.secondTransformedPath,
+              imageUrl: secondTransformedImageUrl,
+              imageType: `${transformationType}_variant`,
+              originalPrompt: prompt,
+              transformationId: transformation ? transformation.id : null,
+              expiresAt
+            });
+          }
+
+          console.log(`Saved transformed image(s) to user ${userId}'s collection`);
+        } catch (saveError) {
+          console.error("Error saving image to user collection:", saveError);
+          // Don't fail the transformation if saving to collection fails
+        }
+      }
+
       // Return the transformed image URL
       res.status(200).json({
         transformedImageUrl,
@@ -728,6 +776,31 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         } catch (creditError) {
           console.error("Error updating user credits:", creditError);
           // Continue with the response even if credit update failed
+        }
+      }
+
+      // Save the transformed image to user's collection
+      if (userId && transformedImageUrl) {
+        try {
+          // Calculate expiry date (45 days from now)
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 45);
+
+          // Save the coloring book transformation
+          await storage.saveUserImage({
+            userId: userId,
+            imagePath: result.outputPath,
+            imageUrl: transformedImageUrl,
+            imageType: 'coloring_book',
+            originalPrompt: 'Convert to coloring book style',
+            transformationId: null,
+            expiresAt
+          });
+
+          console.log(`Saved coloring book image to user ${userId}'s collection`);
+        } catch (saveError) {
+          console.error("Error saving coloring book image to user collection:", saveError);
+          // Don't fail the transformation if saving to collection fails
         }
       }
 
