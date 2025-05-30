@@ -267,7 +267,7 @@ export default function AuthPage() {
           
           <div className="grid grid-cols-2 gap-4">
             <div className="border rounded-lg p-4 bg-white shadow-sm">
-              <h3 className="font-medium mb-2">AI Image Transformations</h3>
+              <h3 className="font-medium mb-2" style={{ color: '#84CC16' }}>AI Image Transformations</h3>
               <p className="text-sm text-gray-600">
                 Transform ordinary photos into extraordinary visuals with our AI
               </p>
