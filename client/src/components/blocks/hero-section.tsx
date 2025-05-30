@@ -44,8 +44,24 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
         console.log('Explore Prompts button clicked');
         console.log('Current location:', location);
         console.log('About to navigate to /prebuilt-prompts');
-        setLocation('/prebuilt-prompts');
-        console.log('setLocation called');
+        
+        try {
+            setLocation('/prebuilt-prompts');
+            console.log('setLocation called successfully');
+            
+            // Add a small delay and check if navigation worked
+            setTimeout(() => {
+                console.log('Navigation check - current location:', window.location.pathname);
+                if (window.location.pathname !== '/prebuilt-prompts') {
+                    console.warn('Navigation failed, trying window.location');
+                    window.location.href = '/prebuilt-prompts';
+                }
+            }, 100);
+        } catch (error) {
+            console.error('Error during navigation:', error);
+            // Fallback to window.location
+            window.location.href = '/prebuilt-prompts';
+        }
     };
 
     return (
