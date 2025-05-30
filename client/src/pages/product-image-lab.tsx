@@ -106,12 +106,12 @@ export default function ProductImageLabPage() {
         </div>
 
         {/* Main Product Lab Component */}
-        <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="max-w-6xl mx-auto px-6 py-8">
           <FixedProductImageLab />
         </div>
 
         {/* See the AI Magic in Action */}
-        <section className="py-20 bg-white">
+        <section className="py-12 bg-white">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
