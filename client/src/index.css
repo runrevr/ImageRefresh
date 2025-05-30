@@ -110,9 +110,9 @@
   --muted: 0 0% 25%;
   --muted-foreground: 0 0% 70%;
   --popover: 0 0% 15%;
-    --popover-foreground: 210 22% 22%; /* #1F2937 - Charcoal */
-  --card: 0 0% 20%; /* #333333 (neutral-dark) */
-  --card-foreground: 210 22% 22%; /* #1F2937 - Charcoal */
+  --popover-foreground: 0 0% 98%;
+  --card: 0 0% 20%;
+  --card-foreground: 0 0% 98%;
   --border: 0 0% 30%;
   --input: 0 0% 30%;
   --primary: 188 100% 42%; /* #06B6D4 - Cyan Blue */
