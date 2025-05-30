@@ -1,8 +1,8 @@
 .tabs-custom [data-state="active"] {
-  background-color: #FF7B54 !important;
+  background-color: #EC4899 !important;
   color: white !important;
 }
 
 .tabs-custom [data-state="active"]:hover {
-  background-color: #ff6a3e !important;
+  background-color: #db2777 !important;
 }
