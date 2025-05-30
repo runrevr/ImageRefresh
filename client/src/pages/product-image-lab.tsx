@@ -126,8 +126,8 @@ export default function ProductImageLabPage() {
               {/* AI Enhancement Card */}
               <Card className="text-center">
                 <CardHeader>
-                  <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                    <Wand2 className="h-8 w-8 text-blue-600" />
+                  <div className="mx-auto w-16 h-16 bg-[#06B6D4] rounded-full flex items-center justify-center mb-4">
+                    <Wand2 className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle>AI Enhancement</CardTitle>
                   <CardDescription>
@@ -146,8 +146,8 @@ export default function ProductImageLabPage() {
               {/* Prebuilt Prompts Card */}
               <Card className="text-center">
                 <CardHeader>
-                  <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                    <CheckCircle2 className="h-8 w-8 text-green-600" />
+                  <div className="mx-auto w-16 h-16 bg-[#84CC16] rounded-full flex items-center justify-center mb-4">
+                    <CheckCircle2 className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle>Prebuilt Prompts</CardTitle>
                   <CardDescription>
@@ -166,8 +166,8 @@ export default function ProductImageLabPage() {
               {/* Text-to-Image Card */}
               <Card className="text-center">
                 <CardHeader>
-                  <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <Upload className="h-8 w-8 text-purple-600" />
+                  <div className="mx-auto w-16 h-16 bg-[#F97316] rounded-full flex items-center justify-center mb-4">
+                    <Upload className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle>Text-to-Image</CardTitle>
                   <CardDescription>
