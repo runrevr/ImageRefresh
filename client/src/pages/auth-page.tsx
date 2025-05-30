@@ -273,7 +273,7 @@ export default function AuthPage() {
               </p>
             </div>
             <div className="border rounded-lg p-4 bg-white shadow-sm">
-              <h3 className="font-medium mb-2">Character Generation</h3>
+              <h3 className="font-medium mb-2" style={{ color: '#F97316' }}>Character Generation</h3>
               <p className="text-sm text-gray-600">
                 Create animated characters from your photos with just a few clicks
               </p>
