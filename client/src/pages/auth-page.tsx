@@ -135,6 +135,7 @@ export default function AuthPage() {
                       value={loginUsername} 
                       onChange={(e) => setLoginUsername(e.target.value)} 
                       required
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <div className="space-y-2">
@@ -160,6 +161,7 @@ export default function AuthPage() {
                       value={loginPassword} 
                       onChange={(e) => setLoginPassword(e.target.value)}
                       required 
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <Button 
@@ -188,6 +190,7 @@ export default function AuthPage() {
                       value={registerName} 
                       onChange={(e) => setRegisterName(e.target.value)}
                       required 
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <div className="space-y-2">
@@ -199,6 +202,7 @@ export default function AuthPage() {
                       value={registerUsername} 
                       onChange={(e) => setRegisterUsername(e.target.value)}
                       required 
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <div className="space-y-2">
@@ -210,6 +214,7 @@ export default function AuthPage() {
                       value={registerEmail} 
                       onChange={(e) => setRegisterEmail(e.target.value)}
                       required
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <div className="space-y-2">
@@ -220,6 +225,7 @@ export default function AuthPage() {
                       value={registerPassword} 
                       onChange={(e) => setRegisterPassword(e.target.value)}
                       required 
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <div className="space-y-2">
@@ -230,6 +236,7 @@ export default function AuthPage() {
                       value={registerConfirmPassword} 
                       onChange={(e) => setRegisterConfirmPassword(e.target.value)}
                       required 
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
                   <Button 
