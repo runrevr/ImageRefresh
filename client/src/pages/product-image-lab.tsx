@@ -136,7 +136,7 @@ export default function ProductImageLabPage() {
                 </CardHeader>
                 <CardContent>
                   <Link to="/upload-enhance">
-                    <Button variant="outline" className="w-full">
+                    <Button className="w-full bg-[#06B6D4] hover:bg-[#0891B2] text-white border-0">
                       Upload Photos
                     </Button>
                   </Link>
@@ -156,7 +156,7 @@ export default function ProductImageLabPage() {
                 </CardHeader>
                 <CardContent>
                   <Link to="/prebuilt-prompts">
-                    <Button variant="outline" className="w-full">
+                    <Button className="w-full bg-[#84CC16] hover:bg-[#65A30D] text-white border-0">
                       Explore Prompts
                     </Button>
                   </Link>
@@ -176,7 +176,7 @@ export default function ProductImageLabPage() {
                 </CardHeader>
                 <CardContent>
                   <Link to="/upload">
-                    <Button variant="outline" className="w-full">
+                    <Button className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white border-0">
                       Create Variations
                     </Button>
                   </Link>
