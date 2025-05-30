@@ -173,12 +173,12 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                             </div>
                                         </div>
 
-                                        <Button 
-                                            onClick={onExplorePrompts}
-                                            className="mt-4 w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300"
+                                        <a 
+                                            href="/prebuilt-prompts"
+                                            className="mt-4 w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 block text-center"
                                         >
                                             Explore Prompts →
-                                        </Button>
+                                        </a>
                                     </div>
                                 </div>
 
