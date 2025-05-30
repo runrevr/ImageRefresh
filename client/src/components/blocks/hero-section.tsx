@@ -173,16 +173,11 @@ export function HeroSection({ onExplorePrompts }: HeroSectionProps) {
                                             </div>
                                         </div>
 
-                                        {/* CTA Button */}
                                         <button 
-                                            onClick={() => {
-                                                console.log('Explore Prompts clicked!');
-                                                window.location.href = '/prebuilt-prompts';
-                                            }}
-                                            className="mt-4 w-full bg-[#FF7B54] hover:bg-[#FF7B54]/90 text-white font-medium py-3 px-6 rounded-xl transition-colors"
-                                            style={{ zIndex: 9999, position: 'relative' }}
+                                            onClick={() => window.location.href = '/prebuilt-prompts'}
+                                            className="mt-4 w-full bg-red-600 text-white font-bold py-4 px-6 rounded-xl"
                                         >
-                                            Explore Prompts
+                                            WORKING TEST - Explore Prompts
                                         </button>
                                     </div>
                                 </div>
