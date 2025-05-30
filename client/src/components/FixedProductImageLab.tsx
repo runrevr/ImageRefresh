@@ -740,5 +740,3 @@ export default function FixedProductImageLab({
     </div>
   );
 }
-
-export default FixedProductImageLab;
