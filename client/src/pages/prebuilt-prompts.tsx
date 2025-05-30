@@ -3,27 +3,48 @@ import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+// Direct imports for result images
+import promptResult001 from '@/assets/prompt-result-001.png';
+import promptResult002 from '@/assets/prompt-result-002.png';
+import promptResult003 from '@/assets/prompt-result-003.png';
+import promptResult004 from '@/assets/prompt-result-004.png';
+import promptResult005 from '@/assets/prompt-result-005.png';
+import promptResult006 from '@/assets/prompt-result-006.png';
+import promptResult007 from '@/assets/prompt-result-007.png';
+import promptResult008 from '@/assets/prompt-result-008.png';
+import promptResult009 from '@/assets/prompt-result-009.png';
+import promptResult010 from '@/assets/prompt-result-010.png';
+import promptResult011 from '@/assets/prompt-result-011.png';
+import promptResult012 from '@/assets/prompt-result-012.png';
+import promptResult013 from '@/assets/prompt-result-013.png';
+import promptResult014 from '@/assets/prompt-result-014.png';
+import promptResult015 from '@/assets/prompt-result-015.png';
+import promptResult016 from '@/assets/prompt-result-016.png';
+import promptResult017 from '@/assets/prompt-result-017.png';
+import promptResult018 from '@/assets/prompt-result-018.png';
+import promptResult019 from '@/assets/prompt-result-019.png';
+
 // Result images for all 19 prompts
 const resultImages = {
-  'prompt-001': new URL('@assets/prompt-result-001.png', import.meta.url).href, // Pure Catalog Ready (ceramic mug)
-  'prompt-002': new URL('@assets/prompt-result-002.png', import.meta.url).href, // Kitchen Lifestyle (honey jars)
-  'prompt-003': new URL('@assets/prompt-result-003.png', import.meta.url).href, // Nature's Embrace (witch hazel)
-  'prompt-004': new URL('@assets/prompt-result-004.png', import.meta.url).href, // Midnight Luxe (black wallet)
-  'prompt-005': new URL('@assets/prompt-result-005.png', import.meta.url).href, // Coastal Paradise (sunscreen)
-  'prompt-006': new URL('@assets/prompt-result-006.png', import.meta.url).href, // Heritage Charm (humidifier)
-  'prompt-007': new URL('@assets/prompt-result-007.png', import.meta.url).href, // Metropolitan Pulse (turntable)
-  'prompt-008': new URL('@assets/prompt-result-008.png', import.meta.url).href, // Curated Collection (water bottle)
-  'prompt-009': new URL('@assets/prompt-result-009.png', import.meta.url).href, // Artisan Crafted (ceramic mug variant)
-  'prompt-010': new URL('@assets/prompt-result-010.png', import.meta.url).href, // Festive Gathering (honey jars variant)
-  'prompt-011': new URL('@assets/prompt-result-011.png', import.meta.url).href, // Wellness Journey (witch hazel variant)
-  'prompt-012': new URL('@assets/prompt-result-012.png', import.meta.url).href, // Executive Excellence (black wallet variant)
-  'prompt-013': new URL('@assets/prompt-result-013.png', import.meta.url).href, // Beach Day Essential (sunscreen variant)
-  'prompt-014': new URL('@assets/prompt-result-014.png', import.meta.url).href, // Home Sanctuary (humidifier variant)
-  'prompt-015': new URL('@assets/prompt-result-015.png', import.meta.url).href, // Audio Experience (turntable variant)
-  'prompt-016': new URL('@assets/prompt-result-016.png', import.meta.url).href, // Active Lifestyle (water bottle variant)
-  'prompt-017': new URL('@assets/prompt-result-017.png', import.meta.url).href, // Professional Edge (ceramic mug business)
-  'prompt-018': new URL('@assets/prompt-result-018.png', import.meta.url).href, // Gourmet Experience (honey jars premium)
-  'prompt-019': new URL('@assets/prompt-result-019.png', import.meta.url).href, // Zen Moment (witch hazel spa)
+  'prompt-001': promptResult001, // Pure Catalog Ready (ceramic mug)
+  'prompt-002': promptResult002, // Kitchen Lifestyle (honey jars)
+  'prompt-003': promptResult003, // Nature's Embrace (witch hazel)
+  'prompt-004': promptResult004, // Midnight Luxe (black wallet)
+  'prompt-005': promptResult005, // Coastal Paradise (sunscreen)
+  'prompt-006': promptResult006, // Heritage Charm (humidifier)
+  'prompt-007': promptResult007, // Metropolitan Pulse (turntable)
+  'prompt-008': promptResult008, // Curated Collection (water bottle)
+  'prompt-009': promptResult009, // Artisan Crafted (ceramic mug variant)
+  'prompt-010': promptResult010, // Festive Gathering (honey jars variant)
+  'prompt-011': promptResult011, // Wellness Journey (witch hazel variant)
+  'prompt-012': promptResult012, // Executive Excellence (black wallet variant)
+  'prompt-013': promptResult013, // Beach Day Essential (sunscreen variant)
+  'prompt-014': promptResult014, // Home Sanctuary (humidifier variant)
+  'prompt-015': promptResult015, // Audio Experience (turntable variant)
+  'prompt-016': promptResult016, // Active Lifestyle (water bottle variant)
+  'prompt-017': promptResult017, // Professional Edge (ceramic mug business)
+  'prompt-018': promptResult018, // Gourmet Experience (honey jars premium)
+  'prompt-019': promptResult019, // Zen Moment (witch hazel spa)
 };
 
 export default function PrebuiltPrompts() {
