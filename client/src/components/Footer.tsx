@@ -9,7 +9,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <img 
-                src="/attached_assets/img%20logo%20small%20trans.png" 
+                src="/attached_assets/img logo small trans.png" 
                 alt="ImageRefresh Logo" 
                 className="h-8 w-auto"
               />
