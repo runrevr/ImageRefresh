@@ -4,13 +4,27 @@ import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-// Result images for the first 5 prompts (you'll need to save the uploaded images with these names)
+// Result images for all 19 prompts
 const resultImages = {
   'prompt-001': '/attached_assets/prompt-result-001.png', // Pure Catalog Ready (ceramic mug)
   'prompt-002': '/attached_assets/prompt-result-002.png', // Kitchen Lifestyle (honey jars)
   'prompt-003': '/attached_assets/prompt-result-003.png', // Nature's Embrace (witch hazel)
   'prompt-004': '/attached_assets/prompt-result-004.png', // Midnight Luxe (black wallet)
   'prompt-005': '/attached_assets/prompt-result-005.png', // Coastal Paradise (sunscreen)
+  'prompt-006': '/attached_assets/prompt-result-006.png', // Heritage Charm (humidifier)
+  'prompt-007': '/attached_assets/prompt-result-007.png', // Metropolitan Pulse (turntable)
+  'prompt-008': '/attached_assets/prompt-result-008.png', // Curated Collection (water bottle)
+  'prompt-009': '/attached_assets/prompt-result-009.png', // Gravity Defying (coffee bag)
+  'prompt-010': '/attached_assets/prompt-result-010.png', // Story Grid (whiskey bottle)
+  'prompt-011': '/attached_assets/prompt-result-011.png', // Monochrome Masterpiece (keyboard)
+  'prompt-012': '/attached_assets/prompt-result-012.png', // Instant Memories (candle)
+  'prompt-013': '/attached_assets/prompt-result-013.png', // Electric Nights (watch)
+  'prompt-014': '/attached_assets/prompt-result-014.png', // Cinema Shadows (instant pot)
+  'prompt-015': '/attached_assets/prompt-result-015.png', // Sunset Magic (running shoes)
+  'prompt-016': '/attached_assets/prompt-result-016.png', // Nordic Fresh (jewelry)
+  'prompt-017': '/attached_assets/prompt-result-017.png', // Analog Soul (earbuds)
+  'prompt-018': '/attached_assets/prompt-result-018.png', // Morning Mist (mason jar mug)
+  'prompt-019': '/attached_assets/prompt-result-019.png', // Aurora Dreams (vintage TV scene)
 };
 
 export default function PrebuiltPrompts() {
@@ -73,7 +87,8 @@ export default function PrebuiltPrompts() {
       description: 'Vintage nostalgic styling with distressed wood and warm lighting',
       category: 'Style',
       difficulty: 'Medium',
-      promptText: 'Vintage nostalgic styling. The uploaded product perfectly preserved. Distressed wood surface with warm window light. Old books and dried flowers as vintage props. Subtle vignetting for aged effect. Rustic blurred background. Nostalgic atmosphere while maintaining product clarity.'
+      promptText: 'Vintage nostalgic styling. The uploaded product perfectly preserved. Distressed wood surface with warm window light. Old books and dried flowers as vintage props. Subtle vignetting for aged effect. Rustic blurred background. Nostalgic atmosphere while maintaining product clarity.',
+      resultImage: resultImages['prompt-006']
     },
     {
       id: 'prompt-007',
@@ -81,7 +96,8 @@ export default function PrebuiltPrompts() {
       description: 'Urban energy backdrop with motion-blurred city streets',
       category: 'Background',
       difficulty: 'Advanced',
-      promptText: 'Urban energy backdrop. The uploaded product sharp in foreground. Motion-blurred city street behind with bokeh lights. Concrete surface placement. Evening lighting mixing street lights and neon. Dynamic urban lifestyle feeling with crystal-clear product focus.'
+      promptText: 'Urban energy backdrop. The uploaded product sharp in foreground. Motion-blurred city street behind with bokeh lights. Concrete surface placement. Evening lighting mixing street lights and neon. Dynamic urban lifestyle feeling with crystal-clear product focus.',
+      resultImage: resultImages['prompt-007']
     },
     {
       id: 'prompt-008',
@@ -89,7 +105,8 @@ export default function PrebuiltPrompts() {
       description: 'Minimalist flat lay with complementary items and clean composition',
       category: 'Style',
       difficulty: 'Medium',
-      promptText: 'Minimalist flat lay. The uploaded product as hero element. Top-down view with 3-4 complementary items arranged with breathing space. Clean marble or linen surface. Soft even lighting, no harsh shadows. Balanced composition following rule of thirds.'
+      promptText: 'Minimalist flat lay. The uploaded product as hero element. Top-down view with 3-4 complementary items arranged with breathing space. Clean marble or linen surface. Soft even lighting, no harsh shadows. Balanced composition following rule of thirds.',
+      resultImage: resultImages['prompt-008']
     },
     {
       id: 'prompt-009',
@@ -97,7 +114,8 @@ export default function PrebuiltPrompts() {
       description: 'Floating product effect with soft shadows and studio lighting',
       category: 'Creative',
       difficulty: 'Advanced',
-      promptText: 'Floating product effect. The uploaded product unchanged, appearing to levitate 12 inches above surface. Soft shadow showing height below. Light gradient background. Even studio lighting from multiple angles. Subtle motion blur at edges suggesting gentle movement.'
+      promptText: 'Floating product effect. The uploaded product unchanged, appearing to levitate 12 inches above surface. Soft shadow showing height below. Light gradient background. Even studio lighting from multiple angles. Subtle motion blur at edges suggesting gentle movement.',
+      resultImage: resultImages['prompt-009']
     },
     {
       id: 'prompt-010',
@@ -105,7 +123,8 @@ export default function PrebuiltPrompts() {
       description: 'Multiple angle showcase in 2x2 grid format',
       category: 'Enhancement',
       difficulty: 'Advanced',
-      promptText: 'Multiple angle showcase. The uploaded product preserved in each frame. Create 2x2 grid showing: product solo on white, in-use scenario, with accessories, and detail shot. Consistent lighting across frames with thin borders. Each cell tells product story.'
+      promptText: 'Multiple angle showcase. The uploaded product preserved in each frame. Create 2x2 grid showing: product solo on white, in-use scenario, with accessories, and detail shot. Consistent lighting across frames with thin borders. Each cell tells product story.',
+      resultImage: resultImages['prompt-010']
     },
     {
       id: 'prompt-011',
@@ -113,7 +132,8 @@ export default function PrebuiltPrompts() {
       description: 'High contrast black and white with dramatic lighting',
       category: 'Artistic',
       difficulty: 'Medium',
-      promptText: 'High contrast black and white. The uploaded product with all details preserved, converted to dramatic black and white. Strong directional lighting creating deep shadows and bright highlights. Rich tonal range emphasizing texture. All text remains legible through careful contrast.'
+      promptText: 'High contrast black and white. The uploaded product with all details preserved, converted to dramatic black and white. Strong directional lighting creating deep shadows and bright highlights. Rich tonal range emphasizing texture. All text remains legible through careful contrast.',
+      resultImage: resultImages['prompt-011']
     },
     {
       id: 'prompt-012',
@@ -121,7 +141,8 @@ export default function PrebuiltPrompts() {
       description: 'Classic polaroid style with vintage photo frame effect',
       category: 'Artistic',
       difficulty: 'Easy',
-      promptText: 'Classic polaroid style. The uploaded product unchanged within instant photo frame. Square format with characteristic white border, thicker at bottom. Slightly faded colors with soft edges. Gentle light leaks in corners. Nostalgic snapshot feeling.'
+      promptText: 'Classic polaroid style. The uploaded product unchanged within instant photo frame. Square format with characteristic white border, thicker at bottom. Slightly faded colors with soft edges. Gentle light leaks in corners. Nostalgic snapshot feeling.',
+      resultImage: resultImages['prompt-012']
     },
     {
       id: 'prompt-013',
@@ -129,7 +150,8 @@ export default function PrebuiltPrompts() {
       description: 'Neon glow aesthetic with vibrant cyberpunk lighting',
       category: 'Creative',
       difficulty: 'Advanced',
-      promptText: 'Neon glow aesthetic. The uploaded product intact with vibrant neon lighting. Pink, blue, and purple lights creating colorful reflections on product surface. Dark background enhancing neon contrast. Subtle lens flares from light sources. Cyberpunk energy.'
+      promptText: 'Neon glow aesthetic. The uploaded product intact with vibrant neon lighting. Pink, blue, and purple lights creating colorful reflections on product surface. Dark background enhancing neon contrast. Subtle lens flares from light sources. Cyberpunk energy.',
+      resultImage: resultImages['prompt-013']
     },
     {
       id: 'prompt-014',
@@ -137,7 +159,8 @@ export default function PrebuiltPrompts() {
       description: 'Film noir atmosphere with dramatic black and white treatment',
       category: 'Artistic',
       difficulty: 'Advanced',
-      promptText: 'Film noir atmosphere. The uploaded product visible with dramatic black and white treatment. Strong side lighting creating bold shadows. Film grain texture with slight vignetting. Mystery atmosphere while maintaining text legibility.'
+      promptText: 'Film noir atmosphere. The uploaded product visible with dramatic black and white treatment. Strong side lighting creating bold shadows. Film grain texture with slight vignetting. Mystery atmosphere while maintaining text legibility.',
+      resultImage: resultImages['prompt-014']
     },
     {
       id: 'prompt-015',
@@ -145,7 +168,8 @@ export default function PrebuiltPrompts() {
       description: 'Golden hour warmth with orange and amber tones',
       category: 'Lighting',
       difficulty: 'Medium',
-      promptText: 'Golden hour warmth. The uploaded product bathed in warm sunset light. Orange and amber tones with long shadows. Soft lens flare and atmospheric haze. Dreamy golden hour quality maintaining product colors.'
+      promptText: 'Golden hour warmth. The uploaded product bathed in warm sunset light. Orange and amber tones with long shadows. Soft lens flare and atmospheric haze. Dreamy golden hour quality maintaining product colors.',
+      resultImage: resultImages['prompt-015']
     },
     {
       id: 'prompt-016',
@@ -153,7 +177,8 @@ export default function PrebuiltPrompts() {
       description: 'Scandinavian aesthetic with bright, cool processing',
       category: 'Style',
       difficulty: 'Easy',
-      promptText: 'Scandinavian aesthetic. The uploaded product with bright, cool processing. Slightly overexposed with blue undertones. Soft diffused lighting like overcast Nordic day. Minimal shadows, crisp and clean feeling.'
+      promptText: 'Scandinavian aesthetic. The uploaded product with bright, cool processing. Slightly overexposed with blue undertones. Soft diffused lighting like overcast Nordic day. Minimal shadows, crisp and clean feeling.',
+      resultImage: resultImages['prompt-016']
     },
     {
       id: 'prompt-017',
@@ -161,7 +186,8 @@ export default function PrebuiltPrompts() {
       description: 'Film photography look with vintage 35mm aesthetic',
       category: 'Artistic',
       difficulty: 'Medium',
-      promptText: 'Film photography look. The uploaded product with vintage 35mm aesthetic. Characteristic film colors and organic grain. Natural halation around highlights. Authentic analog feeling preserving product accuracy.'
+      promptText: 'Film photography look. The uploaded product with vintage 35mm aesthetic. Characteristic film colors and organic grain. Natural halation around highlights. Authentic analog feeling preserving product accuracy.',
+      resultImage: resultImages['prompt-017']
     },
     {
       id: 'prompt-018',
@@ -169,7 +195,8 @@ export default function PrebuiltPrompts() {
       description: 'Ethereal fog atmosphere with soft layers and light rays',
       category: 'Lighting',
       difficulty: 'Advanced',
-      promptText: 'Ethereal fog atmosphere. The uploaded product emerging from soft morning fog. Multiple fog layers with product in sharp focus. Delicate light rays through haze. Moisture droplets on surface. Mystical, fresh atmosphere.'
+      promptText: 'Ethereal fog atmosphere. The uploaded product emerging from soft morning fog. Multiple fog layers with product in sharp focus. Delicate light rays through haze. Moisture droplets on surface. Mystical, fresh atmosphere.',
+      resultImage: resultImages['prompt-018']
     },
     {
       id: 'prompt-019',
@@ -177,7 +204,8 @@ export default function PrebuiltPrompts() {
       description: 'Arctic wonderland scene with cinematic staging and pastel colors',
       category: 'Special',
       difficulty: 'Advanced',
-      promptText: 'Arctic wonderland scene. The uploaded product remains perfectly intact with all original colors, labels, text, branding, and details unchanged as the absolute focal point of the composition. Create a meticulously staged cinematic scene with rigid symmetry and frontal, low-angle framing, emphasizing a diagonal composition (45-degree tilt) where all elements align along a single dynamic axis. Color Grading: 60% Dominant: Soft, powdery pastel pinks (Pantone 12-1109 TPX "Marshmallow") saturating the sky, snow, and TV casing. 30% Secondary: Frosted teal blues (HEX #6ECEDA) in the glacial lake, aurora, and TV screen static. 10% Accent: Mustard-yellow (Pantone 15-0950 TPX "Golden Glow") in the aurora streaks, wool tufts, and corroded metal knobs. TV Design: A 1950s Bakelite TV (matte eggshell plastic with hairline cracks) tilted diagonally (top-left corner at 10 o\'clock, bottom-right submerged at 4 o\'clock). Crack: A jagged diagonal fissure (2cm wide) splits the screen from top-left to bottom-right, leaking viscous, neon-bright color bar pigment (RGB values: pink #FF9EB5, teal #5FDAC3, gold #FFD700) that pools into the water below. Materials: Body: Faux-weathered plastic with chipped edges revealing rusted steel underlayers. Details: Three rotary knobs (tarnished brass, 4cm diameter) labeled "VOL," "TUNE," "POWER." Cables: Braided wool cords (undyed cream yarn, 3cm thickness) coiled around the TV\'s base, fraying at the ends. Screen Imagery: Static Overlay: A 1953 RCA-style color bar test pattern (8 vertical bands) glitching every 2 seconds, causing the teal and pink bars to "melt" downward into liquid. Underlying Image: A faint, glowing topographical map (golden-yellow lines on indigo) labeled "DREAM ARCHIPELAGO" dissolves into water that cascades from the screen\'s crack, merging with the glacial lake. Environment: Glacial Lake: Semi-frozen water (translucent teal, 70% opacity) with jagged ice shards (20cm height) encircling the TV. Snowfall: Heavy, dense snowflakes (1cm diameter) falling at 45 degrees, accumulating on the TV\'s top-left corner. Aurora Borealis: Three parallel bands (pink #FFB3D1, teal #7FE5E5, gold #FFE44D) in smooth sine waves, 15° tilt, 80% opacity. Sky: Ultra-high-contrast starfield (ISO 51200 noise pattern) with 2,000 visible stars (randomized 2-4px white dots). Lighting & Effects: Key Light: A frontal, low-orange sodium vapor lamp (3200K) casting sharp diagonal shadows (20° angle) from the TV onto the ice. Bloom: Halation around the aurora and screen, radius 15px, intensity 70%. Textures: Film Grain: 35mm Kodak Vision3 250D overlay (gritty, high-detail). Lens Defects: Two hairline scratches (1px width) at 15° and 75° angles, plus hexagonal lens flare (60% opacity) from the aurora. Physics & Motion: Water: Viscous fluid dynamics—the leaking color bars swirl in 5cm eddies, blending with the glacial lake. Wool: Submerged yarn floats upward in 10cm tufts, swaying at 0.5Hz frequency. Result: A hyper-detailed, reference-free scene that implicitly channels Wes Anderson\'s aesthetic through obsessive symmetry, retro-kitsch materials, and a strict 60/30/10 pastel hierarchy—no director named, all style embedded in granular technical specs. The uploaded product maintains complete visual integrity throughout this elaborate scene, serving as the primary subject despite the artistic environment.'
+      promptText: 'Arctic wonderland scene. The uploaded product remains perfectly intact with all original colors, labels, text, branding, and details unchanged as the absolute focal point of the composition. Create a meticulously staged cinematic scene with rigid symmetry and frontal, low-angle framing, emphasizing a diagonal composition (45-degree tilt) where all elements align along a single dynamic axis. Color Grading: 60% Dominant: Soft, powdery pastel pinks (Pantone 12-1109 TPX "Marshmallow") saturating the sky, snow, and TV casing. 30% Secondary: Frosted teal blues (HEX #6ECEDA) in the glacial lake, aurora, and TV screen static. 10% Accent: Mustard-yellow (Pantone 15-0950 TPX "Golden Glow") in the aurora streaks, wool tufts, and corroded metal knobs. TV Design: A 1950s Bakelite TV (matte eggshell plastic with hairline cracks) tilted diagonally (top-left corner at 10 o\'clock, bottom-right submerged at 4 o\'clock). Crack: A jagged diagonal fissure (2cm wide) splits the screen from top-left to bottom-right, leaking viscous, neon-bright color bar pigment (RGB values: pink #FF9EB5, teal #5FDAC3, gold #FFD700) that pools into the water below. Materials: Body: Faux-weathered plastic with chipped edges revealing rusted steel underlayers. Details: Three rotary knobs (tarnished brass, 4cm diameter) labeled "VOL," "TUNE," "POWER." Cables: Braided wool cords (undyed cream yarn, 3cm thickness) coiled around the TV\'s base, fraying at the ends. Screen Imagery: Static Overlay: A 1953 RCA-style color bar test pattern (8 vertical bands) glitching every 2 seconds, causing the teal and pink bars to "melt" downward into liquid. Underlying Image: A faint, glowing topographical map (golden-yellow lines on indigo) labeled "DREAM ARCHIPELAGO" dissolves into water that cascades from the screen\'s crack, merging with the glacial lake. Environment: Glacial Lake: Semi-frozen water (translucent teal, 70% opacity) with jagged ice shards (20cm height) encircling the TV. Snowfall: Heavy, dense snowflakes (1cm diameter) falling at 45 degrees, accumulating on the TV\'s top-left corner. Aurora Borealis: Three parallel bands (pink #FFB3D1, teal #7FE5E5, gold #FFE44D) in smooth sine waves, 15° tilt, 80% opacity. Sky: Ultra-high-contrast starfield (ISO 51200 noise pattern) with 2,000 visible stars (randomized 2-4px white dots). Lighting & Effects: Key Light: A frontal, low-orange sodium vapor lamp (3200K) casting sharp diagonal shadows (20° angle) from the TV onto the ice. Bloom: Halation around the aurora and screen, radius 15px, intensity 70%. Textures: Film Grain: 35mm Kodak Vision3 250D overlay (gritty, high-detail). Lens Defects: Two hairline scratches (1px width) at 15° and 75° angles, plus hexagonal lens flare (60% opacity) from the aurora. Physics & Motion: Water: Viscous fluid dynamics—the leaking color bars swirl in 5cm eddies, blending with the glacial lake. Wool: Submerged yarn floats upward in 10cm tufts, swaying at 0.5Hz frequency. Result: A hyper-detailed, reference-free scene that implicitly channels Wes Anderson\'s aesthetic through obsessive symmetry, retro-kitsch materials, and a strict 60/30/10 pastel hierarchy—no director named, all style embedded in granular technical specs. The uploaded product maintains complete visual integrity throughout this elaborate scene, serving as the primary subject despite the artistic environment.',
+      resultImage: resultImages['prompt-019']
     }
   ];
 
