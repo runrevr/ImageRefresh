@@ -9,17 +9,17 @@
   .scale-102 {
     transform: scale(1.02);
   }
-  
+
   .hover\:scale-102:hover {
     transform: scale(1.02);
   }
-  
+
   /* Custom shimmer effect for buttons */
   .btn-shimmer {
     position: relative;
     overflow: hidden;
   }
-  
+
   .btn-shimmer::before {
     content: '';
     position: absolute;
@@ -35,31 +35,31 @@
     );
     transition: left 0.5s;
   }
-  
+
   .btn-shimmer:hover::before {
     left: 100%;
   }
-  
+
   /* Smooth transitions for all interactive elements */
   .transition-all {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   /* Mobile touch states */
   @media (hover: none) {
     .group:active .group-hover\:opacity-0 {
       opacity: 0;
     }
-    
+
     .group:active .group-hover\:opacity-100 {
       opacity: 1;
     }
-    
+
     .group:active .group-hover\:scale-110 {
       transform: scale(1.1);
     }
-    
+
     .group:active .group-hover\:bg-\[#2A7B9B\]\/20 {
       background-color: rgb(42 123 155 / 0.2);
     }
@@ -83,26 +83,26 @@
   --color-3: 210 100% 63%;
   --color-4: 195 100% 63%;
   --color-5: 90 100% 63%;
-  
+
   --background: 0 0% 100%;
   --foreground: 0 0% 20%; /* #333333 (neutral-dark) */
   --muted: 0 0% 95%; /* #F2F2F2 (neutral-light) */
   --muted-foreground: 0 0% 45%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 20%; /* #333333 (neutral-dark) */
+  --popover-foreground: 210 22% 22%; /* #1F2937 - Charcoal */
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 20%; /* #333333 (neutral-dark) */
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --primary: 196 50% 39%; /* #2A7B9B */
+  --card-foreground: 210 22% 22%; /* #1F2937 - Charcoal */
+  --border: 210 16% 93%; /* #E5E7EB - Very Light Gray */
+  --input: 210 16% 93%; /* #E5E7EB - Very Light Gray */
+  --primary: 188 100% 42%; /* #06B6D4 - Cyan Blue */
   --primary-foreground: 0 0% 100%;
-  --secondary: 17 100% 66%; /* #FF7B54 */
-  --secondary-foreground: 0 0% 100%;
-  --accent: 166 53% 76%; /* #A3E4D7 */
-  --accent-foreground: 0 0% 20%; /* #333333 (neutral-dark) */
+  --secondary: 84 81% 44%; /* #84CC16 - Lime Green */
+  --secondary-foreground: 0 0% 0%;
+  --accent: 258 90% 66%; /* #8B5CF6 - Electric Purple */
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --ring: 196 50% 39%; /* #2A7B9B (primary) */
+  --ring: 188 100% 42%; /* #06B6D4 - Cyan Blue (primary) */
   --radius: 0.5rem;
   }
   .dark {
@@ -111,20 +111,20 @@
   --muted: 0 0% 25%;
   --muted-foreground: 0 0% 70%;
   --popover: 0 0% 15%;
-  --popover-foreground: 0 0% 98%;
+    --popover-foreground: 210 22% 22%; /* #1F2937 - Charcoal */
   --card: 0 0% 20%; /* #333333 (neutral-dark) */
-  --card-foreground: 0 0% 98%;
+  --card-foreground: 210 22% 22%; /* #1F2937 - Charcoal */
   --border: 0 0% 30%;
   --input: 0 0% 30%;
-  --primary: 196 50% 39%; /* #2A7B9B */
+  --primary: 188 100% 42%; /* #06B6D4 - Cyan Blue */
   --primary-foreground: 0 0% 100%;
-  --secondary: 17 100% 66%; /* #FF7B54 */
-  --secondary-foreground: 0 0% 100%;
-  --accent: 166 53% 76%; /* #A3E4D7 */
-  --accent-foreground: 0 0% 20%; /* #333333 (neutral-dark) */
+  --secondary: 84 81% 44%; /* #84CC16 - Lime Green */
+  --secondary-foreground: 0 0% 0%;
+  --accent: 258 90% 66%; /* #8B5CF6 - Electric Purple */
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --ring: 196 50% 39%; /* #2A7B9B (primary) */
+  --ring: 188 100% 42%; /* #06B6D4 - Cyan Blue (primary) */
   --radius: 0.5rem;
   }
 
@@ -145,13 +145,13 @@
     display: flex;
     flex-direction: column;
   }
-  
+
   /* Add padding for fixed navbar */
   .page-container {
     @apply pt-16 sm:pt-20;
     /* Padding to account for the fixed navbar height */
   }
-  
+
   #root {
     @apply flex flex-col;
     flex: 1;

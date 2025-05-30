@@ -23,19 +23,32 @@ export default {
         "color-4": "hsl(var(--color-4))",
         "color-5": "hsl(var(--color-5))",
         // Custom theme colors for product enhancement page
-        alt: "#A3E4D7",
-        dark: "#333333",
-        light: "#F2F2F2",
-        body: "#666666",
+        alt: "#8B5CF6",
+        dark: "#1F2937",
+        light: "#FAFAFA",
+        body: "#6B7280",
+        // Additional brand colors
+        tertiary: "#F97316", // Bright Orange
+        magenta: "#EC4899", // Hot Magenta
+        charcoal: "#1F2937",
+        "medium-gray": "#6B7280",
+        "light-gray": "#9CA3AF",
+        "border-gray": "#E5E7EB",
         // Brand colors
         brand: {
-          primary: "#2A7B9B",
-          secondary: "#FF7B54",
+          primary: "#06B6D4",
+          secondary: "#84CC16",
+          tertiary: "#F97316",
+          accent: "#8B5CF6",
+          magenta: "#EC4899",
           neutral: {
-            light: "#F2F2F2",
-            dark: "#333333",
+            charcoal: "#1F2937",
+            white: "#FFFFFF",
+            medium: "#6B7280",
+            light: "#9CA3AF",
+            border: "#E5E7EB",
+            background: "#FAFAFA",
           },
-          accent: "#A3E4D7",
         },
         // ShadCN Colors
         background: "hsl(var(--background))",
@@ -51,28 +64,30 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          100: "#e7f3f7", // Lighter version of primary
-          200: "#cfe8ef",
-          300: "#a0d1e0",
-          400: "#71bbd1",
-          500: "#42a4c3",
-          600: "#2A7B9B", // Primary color
-          700: "#236283",
-          800: "#1c4b6b",
-          900: "#153453",
+          50: "#ecfeff",
+          100: "#cffafe",
+          200: "#a5f3fc",
+          300: "#67e8f9",
+          400: "#22d3ee",
+          500: "#06b6d4", // Primary color - Cyan Blue
+          600: "#0891b2",
+          700: "#0e7490",
+          800: "#155e75",
+          900: "#164e63",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
-          100: "#ffefe8", // Lighter version of secondary
-          200: "#ffd9c7",
-          300: "#ffc0a6",
-          400: "#ffa785",
-          500: "#FF7B54", // Secondary color
-          600: "#e66542",
-          700: "#cc5036",
-          800: "#b33c2a",
-          900: "#99291e",
+          50: "#f7fee7",
+          100: "#ecfccb",
+          200: "#d9f99d",
+          300: "#bef264",
+          400: "#a3e635",
+          500: "#84cc16", // Secondary color - Lime Green
+          600: "#65a30d",
+          700: "#4d7c0f",
+          800: "#365314",
+          900: "#1a2e05",
         },
         success: {
           DEFAULT: "#28a745",
@@ -94,15 +109,16 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
-          100: "#f0fbf8", // Lighter version of accent
-          200: "#e0f7f1",
-          300: "#c1f0e3",
-          400: "#A3E4D7", // Accent color
-          500: "#75d6c4",
-          600: "#4bc8b1",
-          700: "#29b09a",
-          800: "#208e7c",
-          900: "#176d5f",
+          50: "#f5f3ff",
+          100: "#ede9fe",
+          200: "#ddd6fe",
+          300: "#c4b5fd",
+          400: "#a78bfa",
+          500: "#8b5cf6", // Accent color - Electric Purple
+          600: "#7c3aed",
+          700: "#6d28d9",
+          800: "#5b21b6",
+          900: "#4c1d95",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
