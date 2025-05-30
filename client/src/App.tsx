@@ -72,10 +72,10 @@ function Router() {
         <Route path="/product-enhancement-webhook" component={ProductEnhancementWebhookPage} />
         <Route path="/product-enhancement-webhook-simple" component={ProductEnhancementWebhookSimplePage} />
         <Route path="/product-enhancement-debug" component={ProductEnhancementDebugPage} />
-        <Route path="/product-image-lab" component={ProductImageFixedPage} />
+        <Route path="/product-image-lab" component={ProductImageLabPage} />
         <Route path="/product-image-lab-simple" component={SimpleProductLabPage} />
         <Route path="/product-image-lab-static" component={ProductImageLabStaticPage} />
-        <Route path="/product-image-lab-complex" component={ProductImageLabPage} />
+        <Route path="/product-image-lab-fixed" component={ProductImageFixedPage} />
         <Route path="/fixed-product-lab" component={FixedProductLabPage} />
         <Route path="/features-demo" component={FeaturesDemoPage} />
         <Route path="/webhook-test" component={() => {
