@@ -108,7 +108,7 @@ export default function AuthPage() {
         {/* Auth form */}
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Welcome to ImageRefresh</CardTitle>
+            <CardTitle className="text-xl font-semibold text-gray-600">Welcome to ImageRefresh</CardTitle>
             <CardDescription>
               Sign in to your account or create a new one to start transforming your images
             </CardDescription>
