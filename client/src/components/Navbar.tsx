@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "wouter";
-import logoImage from "@/../../attached_assets/new-logo-imagerefresh.png";
+import logoImage from "@/../../attached_assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useCredits } from "@/hooks/useCredits";
 import { Bot } from "lucide-react";
