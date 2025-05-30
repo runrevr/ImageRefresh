@@ -229,7 +229,13 @@ const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
                         ),
                       }}
                       className={cn("inline-block", elementLevelClassName)}
-                      style={{ fontSize: 'inherit', fontFamily: 'inherit', fontWeight: 'inherit' }}
+                      style={{ 
+                        fontSize: 'inherit', 
+                        fontFamily: 'inherit', 
+                        fontWeight: 'inherit',
+                        lineHeight: 'inherit',
+                        letterSpacing: 'inherit'
+                      }}
                     >
                       {char}
                     </motion.span>
