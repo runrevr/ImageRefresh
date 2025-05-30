@@ -58,7 +58,7 @@ export default function FixedProductImageLab({
   const [creditsRequired, setCreditsRequired] = useState<number>(0);
   const [processing, setProcessing] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
-  const [showResults, setShowResults] = useState<boolean>(showResults);
+  const [showResults, setShowResults] = useState<boolean>(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   // Admin panel states
