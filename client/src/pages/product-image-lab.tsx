@@ -207,7 +207,7 @@ export default function ProductImageLabPage() {
               </div>
 
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mb-4 text-2xl font-bold">
+                <div className="mx-auto w-16 h-16 bg-[#84CC16] text-white rounded-full flex items-center justify-center mb-4 text-2xl font-bold">
                   2
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Transform</h3>
