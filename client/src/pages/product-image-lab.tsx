@@ -217,7 +217,7 @@ export default function ProductImageLabPage() {
               </div>
 
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 bg-purple-500 text-white rounded-full flex items-center justify-center mb-4 text-2xl font-bold">
+                <div className="mx-auto w-16 h-16 bg-[#F97316] text-white rounded-full flex items-center justify-center mb-4 text-2xl font-bold">
                   3
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Download</h3>
