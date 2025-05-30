@@ -4,6 +4,15 @@ import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+// Result images for the first 5 prompts (you'll need to save the uploaded images with these names)
+const resultImages = {
+  'prompt-001': '/attached_assets/prompt-result-001.png', // Pure Catalog Ready (ceramic mug)
+  'prompt-002': '/attached_assets/prompt-result-002.png', // Kitchen Lifestyle (honey jars)
+  'prompt-003': '/attached_assets/prompt-result-003.png', // Nature's Embrace (witch hazel)
+  'prompt-004': '/attached_assets/prompt-result-004.png', // Midnight Luxe (black wallet)
+  'prompt-005': '/attached_assets/prompt-result-005.png', // Coastal Paradise (sunscreen)
+};
+
 export default function PrebuiltPrompts() {
   const [, setLocation] = useLocation();
   
@@ -19,7 +28,8 @@ export default function PrebuiltPrompts() {
       description: 'Professional e-commerce presentation with seamless white background and studio lighting',
       category: 'Professional',
       difficulty: 'Easy',
-      promptText: 'Professional e-commerce presentation. The uploaded product stays perfectly intact as the hero element. Place on seamless white background with soft studio lighting from above and sides. Add gentle shadow beneath for depth. Even illumination eliminates harsh contrasts. Pure white backdrop, no distractions. Product fills 70% of frame. Clean, professional product photography style.'
+      promptText: 'Professional e-commerce presentation. The uploaded product stays perfectly intact as the hero element. Place on seamless white background with soft studio lighting from above and sides. Add gentle shadow beneath for depth. Even illumination eliminates harsh contrasts. Pure white backdrop, no distractions. Product fills 70% of frame. Clean, professional product photography style.',
+      resultImage: resultImages['prompt-001']
     },
     {
       id: 'prompt-002', 
@@ -27,7 +37,8 @@ export default function PrebuiltPrompts() {
       description: 'Warm culinary scene with marble counter and morning sunlight',
       category: 'Lifestyle',
       difficulty: 'Medium',
-      promptText: 'Warm culinary scene. The uploaded product remains unchanged as the central focus. Place on marble kitchen counter with morning sunlight through window. Include fresh herbs and coffee cup as subtle props. Blurred kitchen background with shallow depth of field. Warm, inviting atmosphere with natural light creating soft shadows.'
+      promptText: 'Warm culinary scene. The uploaded product remains unchanged as the central focus. Place on marble kitchen counter with morning sunlight through window. Include fresh herbs and coffee cup as subtle props. Blurred kitchen background with shallow depth of field. Warm, inviting atmosphere with natural light creating soft shadows.',
+      resultImage: resultImages['prompt-002']
     },
     {
       id: 'prompt-003',
@@ -35,7 +46,8 @@ export default function PrebuiltPrompts() {
       description: 'Organic outdoor setting with weathered wood and golden hour lighting',
       category: 'Background', 
       difficulty: 'Medium',
-      promptText: 'Organic outdoor setting. The uploaded product stays perfectly preserved. Position on weathered wood with golden hour sunlight. Blurred forest background with bokeh effect. Include leaves or smooth stones as natural accents. Warm outdoor lighting with authentic atmosphere. Product sharp, background soft.'
+      promptText: 'Organic outdoor setting. The uploaded product stays perfectly preserved. Position on weathered wood with golden hour sunlight. Blurred forest background with bokeh effect. Include leaves or smooth stones as natural accents. Warm outdoor lighting with authentic atmosphere. Product sharp, background soft.',
+      resultImage: resultImages['prompt-003']
     },
     {
       id: 'prompt-004',
@@ -43,7 +55,8 @@ export default function PrebuiltPrompts() {
       description: 'Premium black backdrop with dramatic spotlight and rim lighting',
       category: 'Professional',
       difficulty: 'Advanced',
-      promptText: 'Premium black backdrop. The uploaded product remains intact. Place on glossy black surface with dramatic spotlight from above creating rim lighting. Pure black background with elegant reflection below. Sophisticated studio lighting emphasizes quality. Moody, luxurious presentation.'
+      promptText: 'Premium black backdrop. The uploaded product remains intact. Place on glossy black surface with dramatic spotlight from above creating rim lighting. Pure black background with elegant reflection below. Sophisticated studio lighting emphasizes quality. Moody, luxurious presentation.',
+      resultImage: resultImages['prompt-004']
     },
     {
       id: 'prompt-005',
@@ -51,7 +64,8 @@ export default function PrebuiltPrompts() {
       description: 'Bright beach atmosphere with sandy setting and ocean waves',
       category: 'Lifestyle',
       difficulty: 'Medium',
-      promptText: 'Bright beach atmosphere. The uploaded product unchanged at center. Sandy beach setting with bright midday sun. Palm fronds and seashells as props. Blurred ocean waves in background. High-key lighting with warm color temperature. Summer vacation energy with clear product visibility.'
+      promptText: 'Bright beach atmosphere. The uploaded product unchanged at center. Sandy beach setting with bright midday sun. Palm fronds and seashells as props. Blurred ocean waves in background. High-key lighting with warm color temperature. Summer vacation energy with clear product visibility.',
+      resultImage: resultImages['prompt-005']
     },
     {
       id: 'prompt-006',
@@ -227,12 +241,20 @@ export default function PrebuiltPrompts() {
                 <div className="relative">
                   {/* Background image placeholder with overlay */}
                   <div className="h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                    {/* Placeholder for demo image */}
-                    <div className="w-full h-full bg-cover bg-center flex items-center justify-center">
-                      <div className="text-4xl font-bold text-gray-400">
-                        {String(index + 1).padStart(2, '0')}
+                    {/* Show result image if available, otherwise show number */}
+                    {prompt.resultImage ? (
+                      <img 
+                        src={prompt.resultImage} 
+                        alt={`${prompt.title} result example`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-cover bg-center flex items-center justify-center">
+                        <div className="text-4xl font-bold text-gray-400">
+                          {String(index + 1).padStart(2, '0')}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/80 flex flex-col items-center justify-end px-4 py-6 text-center">
                       {/* Category and Difficulty badges */}
                       <div className="flex gap-2 mb-3">
