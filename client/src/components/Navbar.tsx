@@ -43,25 +43,25 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
         <div className="hidden md:flex items-center space-x-8">
           <Link
             href="/ideas"
-            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
+            className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold"
           >
             Ideas
           </Link>
           <Link
             href="/product-image-lab"
-            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
+            className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold"
           >
             Product Image Lab
           </Link>
           <Link
             href="/pricing"
-            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
+            className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold"
           >
             Pricing
           </Link>
           <Link
             href="/help"
-            className="header-menu text-[#333333] hover:text-[#FF7B54] transition text-lg font-bold"
+            className="header-menu text-[#333333] hover:text-[#2A7B9B] transition text-lg font-bold"
           >
             Help
           </Link>
@@ -94,7 +94,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="hidden md:flex items-center text-[#333333] hover:text-[#FF7B54]">
+                <Button variant="ghost" className="hidden md:flex items-center text-[#333333] hover:text-[#2A7B9B]">
                   <span className="mr-1">{user.username}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -188,28 +188,28 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
               <div className="flex flex-col space-y-4">
                 <Link
                   href="/ideas"
-                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
+                  className="header-menu py-2 text-white hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Ideas
                 </Link>
                 <Link
                   href="/product-image-lab"
-                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
+                  className="header-menu py-2 text-white hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Product Image Lab
                 </Link>
                 <Link
                   href="/pricing"
-                  className="header-menu py-2 block text-white hover:text-[#FF7B54] transition"
+                  className="header-menu py-2 block text-white hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Pricing
                 </Link>
                 <Link
                   href="/help"
-                  className="header-menu py-2 text-white hover:text-[#FF7B54] transition"
+                  className="header-menu py-2 text-white hover:text-[#2A7B9B] transition"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Help
@@ -266,7 +266,7 @@ export default function Navbar({ freeCredits, paidCredits }: NavbarProps) {
                       </Link>
                       <Button
                         variant="ghost"
-                        className="w-full text-white hover:text-[#FF7B54]"
+                        className="w-full text-white hover:text-[#2A7B9B]"
                         onClick={() => {
                           logoutMutation.mutate();
                           setIsMenuOpen(false);
