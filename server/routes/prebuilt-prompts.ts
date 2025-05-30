@@ -1,73 +1,398 @@
 
 import { Request, Response } from 'express';
-import fs from 'fs';
+import multer from 'multer';
 import path from 'path';
-import OpenAI from 'openai';
+import fs from 'fs/promises';
+import { OpenAI } from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const projectRoot = path.resolve(process.cwd());
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'prebuilt-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
 
-interface PrebuiltTransformRequest {
-  originalImagePath: string;
-  promptId: string;
-  prompt: string;
-  variations: number;
+const upload = multer({ storage: storage });
+
+/**
+ * Get list of available prebuilt prompts
+ */
+export function getPrebuiltPrompts(req: Request, res: Response) {
+  // 19 prebuilt prompts - placeholders that will be filled with actual content
+  const prompts = [
+    {
+      id: 'prompt-001',
+      title: 'Prompt 1 - [Title Pending]',
+      description: 'Description for prompt 1 will be added',
+      prompt: 'Prompt text will be added for prompt 1',
+      category: 'Enhancement',
+      difficulty: 'Easy'
+    },
+    {
+      id: 'prompt-002',
+      title: 'Prompt 2 - [Title Pending]',
+      description: 'Description for prompt 2 will be added',
+      prompt: 'Prompt text will be added for prompt 2',
+      category: 'Enhancement',
+      difficulty: 'Easy'
+    },
+    {
+      id: 'prompt-003',
+      title: 'Prompt 3 - [Title Pending]',
+      description: 'Description for prompt 3 will be added',
+      prompt: 'Prompt text will be added for prompt 3',
+      category: 'Enhancement',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-004',
+      title: 'Prompt 4 - [Title Pending]',
+      description: 'Description for prompt 4 will be added',
+      prompt: 'Prompt text will be added for prompt 4',
+      category: 'Enhancement',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-005',
+      title: 'Prompt 5 - [Title Pending]',
+      description: 'Description for prompt 5 will be added',
+      prompt: 'Prompt text will be added for prompt 5',
+      category: 'Style',
+      difficulty: 'Easy'
+    },
+    {
+      id: 'prompt-006',
+      title: 'Prompt 6 - [Title Pending]',
+      description: 'Description for prompt 6 will be added',
+      prompt: 'Prompt text will be added for prompt 6',
+      category: 'Style',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-007',
+      title: 'Prompt 7 - [Title Pending]',
+      description: 'Description for prompt 7 will be added',
+      prompt: 'Prompt text will be added for prompt 7',
+      category: 'Background',
+      difficulty: 'Easy'
+    },
+    {
+      id: 'prompt-008',
+      title: 'Prompt 8 - [Title Pending]',
+      description: 'Description for prompt 8 will be added',
+      prompt: 'Prompt text will be added for prompt 8',
+      category: 'Background',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-009',
+      title: 'Prompt 9 - [Title Pending]',
+      description: 'Description for prompt 9 will be added',
+      prompt: 'Prompt text will be added for prompt 9',
+      category: 'Lighting',
+      difficulty: 'Easy'
+    },
+    {
+      id: 'prompt-010',
+      title: 'Prompt 10 - [Title Pending]',
+      description: 'Description for prompt 10 will be added',
+      prompt: 'Prompt text will be added for prompt 10',
+      category: 'Lighting',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-011',
+      title: 'Prompt 11 - [Title Pending]',
+      description: 'Description for prompt 11 will be added',
+      prompt: 'Prompt text will be added for prompt 11',
+      category: 'Professional',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-012',
+      title: 'Prompt 12 - [Title Pending]',
+      description: 'Description for prompt 12 will be added',
+      prompt: 'Prompt text will be added for prompt 12',
+      category: 'Professional',
+      difficulty: 'Advanced'
+    },
+    {
+      id: 'prompt-013',
+      title: 'Prompt 13 - [Title Pending]',
+      description: 'Description for prompt 13 will be added',
+      prompt: 'Prompt text will be added for prompt 13',
+      category: 'Creative',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-014',
+      title: 'Prompt 14 - [Title Pending]',
+      description: 'Description for prompt 14 will be added',
+      prompt: 'Prompt text will be added for prompt 14',
+      category: 'Creative',
+      difficulty: 'Advanced'
+    },
+    {
+      id: 'prompt-015',
+      title: 'Prompt 15 - [Title Pending]',
+      description: 'Description for prompt 15 will be added',
+      prompt: 'Prompt text will be added for prompt 15',
+      category: 'Artistic',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-016',
+      title: 'Prompt 16 - [Title Pending]',
+      description: 'Description for prompt 16 will be added',
+      prompt: 'Prompt text will be added for prompt 16',
+      category: 'Artistic',
+      difficulty: 'Advanced'
+    },
+    {
+      id: 'prompt-017',
+      title: 'Prompt 17 - [Title Pending]',
+      description: 'Description for prompt 17 will be added',
+      prompt: 'Prompt text will be added for prompt 17',
+      category: 'Lifestyle',
+      difficulty: 'Medium'
+    },
+    {
+      id: 'prompt-018',
+      title: 'Prompt 18 - [Title Pending]',
+      description: 'Description for prompt 18 will be added',
+      prompt: 'Prompt text will be added for prompt 18',
+      category: 'Lifestyle',
+      difficulty: 'Advanced'
+    },
+    {
+      id: 'prompt-019',
+      title: 'Prompt 19 - [Title Pending]',
+      description: 'Description for prompt 19 will be added',
+      prompt: 'Prompt text will be added for prompt 19',
+      category: 'Special',
+      difficulty: 'Advanced'
+    }
+  ];
+
+  res.json(prompts);
 }
 
 /**
- * Transform image using prebuilt prompts with multiple variations
+ * Helper function to download and save image from URL
+ */
+async function downloadAndSaveImage(imageUrl: string, filename: string): Promise<string> {
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const buffer = await response.arrayBuffer();
+    const uint8Array = new Uint8Array(buffer);
+    
+    const savedPath = `uploads/prebuilt-${filename}-${Date.now()}.png`;
+    await fs.writeFile(savedPath, uint8Array);
+    
+    return savedPath;
+  } catch (error) {
+    console.error('[Prebuilt Transform] Error downloading image:', error);
+    throw error;
+  }
+}
+
+/**
+ * Transform image using prebuilt prompt
  */
 export async function transformWithPrebuiltPrompt(req: Request, res: Response) {
+  const startTime = Date.now();
+  
   try {
-    console.log('[Prebuilt Transform] Request received:', req.body);
+    const { promptId, imagePath } = req.body;
     
-    const { originalImagePath, promptId, prompt, variations = 2 }: PrebuiltTransformRequest = req.body;
+    console.log(`[Prebuilt Transform] Starting transformation with prompt: ${promptId}`);
+    console.log(`[Prebuilt Transform] Image path: ${imagePath}`);
 
-    // Validate inputs
-    if (!originalImagePath) {
-      return res.status(400).json({
-        error: 'Missing image path',
-        message: 'Original image path is required'
+    if (!promptId || !imagePath) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing promptId or imagePath' 
       });
     }
 
-    if (!prompt) {
-      return res.status(400).json({
-        error: 'Missing prompt',
-        message: 'Transformation prompt is required'
-      });
-    }
-
-    // Resolve image path
-    let imagePath = originalImagePath;
-    if (!path.isAbsolute(imagePath)) {
-      if (!imagePath.startsWith('uploads/')) {
-        imagePath = path.join('uploads', imagePath);
+    // Get the prompt details
+    const prompts = [
+      {
+        id: 'prompt-001',
+        title: 'Prompt 1 - [Title Pending]',
+        description: 'Description for prompt 1 will be added',
+        prompt: 'Prompt text will be added for prompt 1',
+        category: 'Enhancement',
+        difficulty: 'Easy'
+      },
+      {
+        id: 'prompt-002',
+        title: 'Prompt 2 - [Title Pending]',
+        description: 'Description for prompt 2 will be added',
+        prompt: 'Prompt text will be added for prompt 2',
+        category: 'Enhancement',
+        difficulty: 'Easy'
+      },
+      {
+        id: 'prompt-003',
+        title: 'Prompt 3 - [Title Pending]',
+        description: 'Description for prompt 3 will be added',
+        prompt: 'Prompt text will be added for prompt 3',
+        category: 'Enhancement',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-004',
+        title: 'Prompt 4 - [Title Pending]',
+        description: 'Description for prompt 4 will be added',
+        prompt: 'Prompt text will be added for prompt 4',
+        category: 'Enhancement',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-005',
+        title: 'Prompt 5 - [Title Pending]',
+        description: 'Description for prompt 5 will be added',
+        prompt: 'Prompt text will be added for prompt 5',
+        category: 'Style',
+        difficulty: 'Easy'
+      },
+      {
+        id: 'prompt-006',
+        title: 'Prompt 6 - [Title Pending]',
+        description: 'Description for prompt 6 will be added',
+        prompt: 'Prompt text will be added for prompt 6',
+        category: 'Style',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-007',
+        title: 'Prompt 7 - [Title Pending]',
+        description: 'Description for prompt 7 will be added',
+        prompt: 'Prompt text will be added for prompt 7',
+        category: 'Background',
+        difficulty: 'Easy'
+      },
+      {
+        id: 'prompt-008',
+        title: 'Prompt 8 - [Title Pending]',
+        description: 'Description for prompt 8 will be added',
+        prompt: 'Prompt text will be added for prompt 8',
+        category: 'Background',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-009',
+        title: 'Prompt 9 - [Title Pending]',
+        description: 'Description for prompt 9 will be added',
+        prompt: 'Prompt text will be added for prompt 9',
+        category: 'Lighting',
+        difficulty: 'Easy'
+      },
+      {
+        id: 'prompt-010',
+        title: 'Prompt 10 - [Title Pending]',
+        description: 'Description for prompt 10 will be added',
+        prompt: 'Prompt text will be added for prompt 10',
+        category: 'Lighting',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-011',
+        title: 'Prompt 11 - [Title Pending]',
+        description: 'Description for prompt 11 will be added',
+        prompt: 'Prompt text will be added for prompt 11',
+        category: 'Professional',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-012',
+        title: 'Prompt 12 - [Title Pending]',
+        description: 'Description for prompt 12 will be added',
+        prompt: 'Prompt text will be added for prompt 12',
+        category: 'Professional',
+        difficulty: 'Advanced'
+      },
+      {
+        id: 'prompt-013',
+        title: 'Prompt 13 - [Title Pending]',
+        description: 'Description for prompt 13 will be added',
+        prompt: 'Prompt text will be added for prompt 13',
+        category: 'Creative',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-014',
+        title: 'Prompt 14 - [Title Pending]',
+        description: 'Description for prompt 14 will be added',
+        prompt: 'Prompt text will be added for prompt 14',
+        category: 'Creative',
+        difficulty: 'Advanced'
+      },
+      {
+        id: 'prompt-015',
+        title: 'Prompt 15 - [Title Pending]',
+        description: 'Description for prompt 15 will be added',
+        prompt: 'Prompt text will be added for prompt 15',
+        category: 'Artistic',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-016',
+        title: 'Prompt 16 - [Title Pending]',
+        description: 'Description for prompt 16 will be added',
+        prompt: 'Prompt text will be added for prompt 16',
+        category: 'Artistic',
+        difficulty: 'Advanced'
+      },
+      {
+        id: 'prompt-017',
+        title: 'Prompt 17 - [Title Pending]',
+        description: 'Description for prompt 17 will be added',
+        prompt: 'Prompt text will be added for prompt 17',
+        category: 'Lifestyle',
+        difficulty: 'Medium'
+      },
+      {
+        id: 'prompt-018',
+        title: 'Prompt 18 - [Title Pending]',
+        description: 'Description for prompt 18 will be added',
+        prompt: 'Prompt text will be added for prompt 18',
+        category: 'Lifestyle',
+        difficulty: 'Advanced'
+      },
+      {
+        id: 'prompt-019',
+        title: 'Prompt 19 - [Title Pending]',
+        description: 'Description for prompt 19 will be added',
+        prompt: 'Prompt text will be added for prompt 19',
+        category: 'Special',
+        difficulty: 'Advanced'
       }
-      imagePath = path.join(projectRoot, imagePath);
-    }
+    ];
 
-    // Check if the file exists
-    if (!fs.existsSync(imagePath)) {
-      return res.status(404).json({
-        error: 'Image not found',
-        message: `Image not found at path: ${originalImagePath}`
+    const selectedPrompt = prompts.find(p => p.id === promptId);
+    if (!selectedPrompt) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid prompt ID' 
       });
     }
 
-    console.log('[Prebuilt Transform] Processing image:', imagePath);
-    console.log('[Prebuilt Transform] Using prompt:', prompt);
-    console.log('[Prebuilt Transform] Generating variations:', variations);
-
-    const startTime = Date.now();
-
-    // Convert image to base64 for OpenAI
-    const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
-    const mimeType = getMimeType(imagePath);
+    const prompt = selectedPrompt.prompt;
+    const variations = 2; // Generate 2 variations as requested
 
     // Generate multiple variations using GPT-image-01
     const transformedUrls: string[] = [];
@@ -103,130 +428,31 @@ export async function transformWithPrebuiltPrompt(req: Request, res: Response) {
 
     if (transformedUrls.length === 0) {
       return res.status(500).json({
-        error: 'Transformation failed',
-        message: 'Failed to generate any variations'
+        success: false,
+        error: 'Failed to generate any variations'
       });
     }
 
-    console.log(`[Prebuilt Transform] Completed successfully. Generated ${transformedUrls.length} variations in ${processingTime}s`);
+    console.log(`[Prebuilt Transform] Successfully generated ${transformedUrls.length} variations in ${processingTime}s`);
 
     res.json({
       success: true,
-      variations: transformedUrls,
-      promptId,
-      processingTime,
-      generatedCount: transformedUrls.length,
-      requestedCount: variations
+      originalImage: imagePath,
+      transformedImages: transformedUrls,
+      promptUsed: selectedPrompt,
+      processingTime: processingTime,
+      variations: transformedUrls.length
     });
 
   } catch (error) {
     console.error('[Prebuilt Transform] Error:', error);
     res.status(500).json({
-      error: 'Transformation error',
-      message: error instanceof Error ? error.message : 'An unknown error occurred'
+      success: false,
+      error: 'Failed to transform image',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 }
 
-/**
- * Download image from URL and save to uploads directory
- */
-async function downloadAndSaveImage(imageUrl: string, prefix: string): Promise<string> {
-  try {
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.statusText}`);
-    }
-
-    const buffer = await response.arrayBuffer();
-    const uint8Array = new Uint8Array(buffer);
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const random = Math.floor(Math.random() * 1000000);
-    const filename = `${prefix}-${timestamp}-${random}.png`;
-    const uploadsDir = path.join(projectRoot, 'uploads');
-    
-    // Ensure uploads directory exists
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
-    const filepath = path.join(uploadsDir, filename);
-    
-    // Save the file
-    fs.writeFileSync(filepath, uint8Array);
-    
-    // Return the relative path for the frontend
-    return `/uploads/${filename}`;
-  } catch (error) {
-    console.error('Error downloading and saving image:', error);
-    throw error;
-  }
-}
-
-/**
- * Get MIME type from file extension
- */
-function getMimeType(filePath: string): string {
-  const ext = path.extname(filePath).toLowerCase();
-  switch (ext) {
-    case '.jpg':
-    case '.jpeg':
-      return 'image/jpeg';
-    case '.png':
-      return 'image/png';
-    case '.webp':
-      return 'image/webp';
-    case '.gif':
-      return 'image/gif';
-    default:
-      return 'image/jpeg';
-  }
-}
-
-/**
- * Get list of available prebuilt prompts
- */
-export function getPrebuiltPrompts(req: Request, res: Response) {
-  // This could be moved to a database or JSON file in the future
-  const prompts = [
-    {
-      id: 'background-removal',
-      title: 'Background Removal',
-      description: 'Remove the background and replace with a clean white backdrop for professional product photos.',
-      prompt: 'Remove the background completely and replace it with a pure white background. Keep the product exactly as it is, maintaining all details, shadows, and lighting. Create a clean, professional e-commerce style product photo with the item centered on a seamless white backdrop.',
-      category: 'Product Enhancement',
-      difficulty: 'Easy'
-    },
-    {
-      id: 'black-white',
-      title: 'Black & White Classic',
-      description: 'Convert your product image to an elegant black and white with enhanced contrast and detail.',
-      prompt: 'Transform this image into a striking black and white photograph with enhanced contrast and detail. Maintain all product features while creating dramatic lighting and shadow effects. Use professional black and white photography techniques to emphasize texture, form, and visual impact.',
-      category: 'Artistic',
-      difficulty: 'Easy'
-    },
-    {
-      id: 'lifestyle-natural',
-      title: 'Natural Lifestyle',
-      description: 'Place your product in a natural, everyday setting that shows real-world use.',
-      prompt: 'Place this product in a natural, authentic lifestyle setting that demonstrates real-world usage. Create a warm, inviting environment with natural lighting, complementary props, and a setting that appeals to your target audience. The scene should feel genuine and aspirational.',
-      category: 'Lifestyle',
-      difficulty: 'Medium'
-    },
-    {
-      id: 'premium-luxury',
-      title: 'Premium Luxury',
-      description: 'Elevate your product with luxury styling, premium materials, and sophisticated lighting.',
-      prompt: 'Transform this product into a luxury, premium presentation with sophisticated lighting, elegant materials, and high-end styling. Use dramatic shadows, rich textures, and premium backdrop elements that convey exclusivity and quality. Create an aspirational, high-value aesthetic.',
-      category: 'Premium',
-      difficulty: 'Advanced'
-    }
-  ];
-
-  res.json({
-    success: true,
-    prompts
-  });
-}
+// Export the upload middleware
+export const uploadMiddleware = upload.single('image');
