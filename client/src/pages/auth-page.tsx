@@ -279,7 +279,7 @@ export default function AuthPage() {
               </p>
             </div>
             <div className="border rounded-lg p-4 bg-white shadow-sm">
-              <h3 className="font-medium mb-2">Product Photography</h3>
+              <h3 className="font-medium mb-2" style={{ color: '#8B5CF6' }}>Product Photography</h3>
               <p className="text-sm text-gray-600">
                 Enhanced product images with background removal and scene settings
               </p>
