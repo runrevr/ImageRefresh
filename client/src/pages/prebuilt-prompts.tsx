@@ -6,11 +6,11 @@ import Footer from '@/components/Footer';
 
 // Result images for all 19 prompts
 const resultImages = {
-  'prompt-001': '/attached_assets/prompt-result-001.png', // Pure Catalog Ready (ceramic mug)
-  'prompt-002': '/attached_assets/prompt-result-002.png', // Kitchen Lifestyle (honey jars)
-  'prompt-003': '/attached_assets/prompt-result-003.png', // Nature's Embrace (witch hazel)
-  'prompt-004': '/attached_assets/prompt-result-004.png', // Midnight Luxe (black wallet)
-  'prompt-005': '/attached_assets/prompt-result-005.png', // Coastal Paradise (sunscreen)
+  'prompt-001': new URL('@assets/prompt-result-001.png', import.meta.url).href, // Pure Catalog Ready (ceramic mug)
+  'prompt-002': new URL('@assets/prompt-result-002.png', import.meta.url).href, // Kitchen Lifestyle (honey jars)
+  'prompt-003': new URL('@assets/prompt-result-003.png', import.meta.url).href, // Nature's Embrace (witch hazel)
+  'prompt-004': new URL('@assets/prompt-result-004.png', import.meta.url).href, // Midnight Luxe (black wallet)
+  'prompt-005': new URL('@assets/prompt-result-005.png', import.meta.url).href, // Coastal Paradise (sunscreen)
   'prompt-006': '/attached_assets/prompt-result-006.png', // Heritage Charm (humidifier)
   'prompt-007': '/attached_assets/prompt-result-007.png', // Metropolitan Pulse (turntable)
   'prompt-008': '/attached_assets/prompt-result-008.png', // Curated Collection (water bottle)
