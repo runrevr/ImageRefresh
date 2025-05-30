@@ -197,7 +197,7 @@ export default function ProductImageLabPage() {
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center mb-4 text-2xl font-bold">
+                <div className="mx-auto w-16 h-16 bg-[#06B6D4] text-white rounded-full flex items-center justify-center mb-4 text-2xl font-bold">
                   1
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Upload</h3>
