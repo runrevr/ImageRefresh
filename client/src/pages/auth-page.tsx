@@ -285,7 +285,7 @@ export default function AuthPage() {
               </p>
             </div>
             <div className="border rounded-lg p-4 bg-white shadow-sm">
-              <h3 className="font-medium mb-2">Custom Styles</h3>
+              <h3 className="font-medium mb-2" style={{ color: '#EC4899' }}>Custom Styles</h3>
               <p className="text-sm text-gray-600">
                 Apply custom artistic styles to your images
               </p>
