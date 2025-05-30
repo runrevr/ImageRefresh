@@ -259,7 +259,7 @@ export default function PrebuiltPrompts() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {prebuiltPrompts.slice(0, 5).map((prompt, index) => (
+            {prebuiltPrompts.map((prompt, index) => (
               <div 
                 key={prompt.id}
                 onClick={() => handleSelectPrompt(prompt)}
