@@ -3,27 +3,27 @@ import { useLocation } from 'wouter';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-// Result images for all 19 prompts - using direct static file paths
+// Result images for all 19 prompts - using working /@fs/ paths based on console logs
 const resultImages = {
-  'prompt-001': '/attached_assets/prompt-result-001.png', // Pure Catalog Ready (ceramic mug)
-  'prompt-002': '/attached_assets/prompt-result-002.png', // Kitchen Lifestyle (honey jars)
-  'prompt-003': '/attached_assets/prompt-result-003.png', // Nature's Embrace (witch hazel)
-  'prompt-004': '/attached_assets/prompt-result-004.png', // Midnight Luxe (black wallet)
-  'prompt-005': '/attached_assets/prompt-result-005.png', // Coastal Paradise (sunscreen)
-  'prompt-006': '/attached_assets/prompt-result-006.png', // Heritage Charm (humidifier)
-  'prompt-007': '/attached_assets/prompt-result-007.png', // Metropolitan Pulse (turntable)
-  'prompt-008': '/attached_assets/prompt-result-008.png', // Curated Collection (water bottle)
-  'prompt-009': '/attached_assets/prompt-result-009.png', // Artisan Crafted (ceramic mug variant)
-  'prompt-010': '/attached_assets/prompt-result-010.png', // Festive Gathering (honey jars variant)
-  'prompt-011': '/attached_assets/prompt-result-011.png', // Wellness Journey (witch hazel variant)
-  'prompt-012': '/attached_assets/prompt-result-012.png', // Executive Excellence (black wallet variant)
-  'prompt-013': '/attached_assets/prompt-result-013.png', // Beach Day Essential (sunscreen variant)
-  'prompt-014': '/attached_assets/prompt-result-014.png', // Home Sanctuary (humidifier variant)
-  'prompt-015': '/attached_assets/prompt-result-015.png', // Audio Experience (turntable variant)
-  'prompt-016': '/attached_assets/prompt-result-016.png', // Active Lifestyle (water bottle variant)
-  'prompt-017': '/attached_assets/prompt-result-017.png', // Professional Edge (ceramic mug business)
-  'prompt-018': '/attached_assets/prompt-result-018.png', // Gourmet Experience (honey jars premium)
-  'prompt-019': '/attached_assets/prompt-result-019.png', // Zen Moment (witch hazel spa)
+  'prompt-001': '/@fs/home/runner/workspace/attached_assets/prompt-result-001.png', // Pure Catalog Ready (ceramic mug)
+  'prompt-002': '/@fs/home/runner/workspace/attached_assets/prompt-result-002.png', // Kitchen Lifestyle (honey jars)
+  'prompt-003': '/@fs/home/runner/workspace/attached_assets/prompt-result-003.png', // Nature's Embrace (witch hazel)
+  'prompt-004': '/@fs/home/runner/workspace/attached_assets/prompt-result-004.png', // Midnight Luxe (black wallet)
+  'prompt-005': '/@fs/home/runner/workspace/attached_assets/prompt-result-005.png', // Coastal Paradise (sunscreen)
+  'prompt-006': '/@fs/home/runner/workspace/attached_assets/prompt-result-006.png', // Heritage Charm (humidifier)
+  'prompt-007': '/@fs/home/runner/workspace/attached_assets/prompt-result-007.png', // Metropolitan Pulse (turntable)
+  'prompt-008': '/@fs/home/runner/workspace/attached_assets/prompt-result-008.png', // Curated Collection (water bottle)
+  'prompt-009': '/@fs/home/runner/workspace/attached_assets/prompt-result-009.png', // Artisan Crafted (ceramic mug variant)
+  'prompt-010': '/@fs/home/runner/workspace/attached_assets/prompt-result-010.png', // Festive Gathering (honey jars variant)
+  'prompt-011': '/@fs/home/runner/workspace/attached_assets/prompt-result-011.png', // Wellness Journey (witch hazel variant)
+  'prompt-012': '/@fs/home/runner/workspace/attached_assets/prompt-result-012.png', // Executive Excellence (black wallet variant)
+  'prompt-013': '/@fs/home/runner/workspace/attached_assets/prompt-result-013.png', // Beach Day Essential (sunscreen variant)
+  'prompt-014': '/@fs/home/runner/workspace/attached_assets/prompt-result-014.png', // Home Sanctuary (humidifier variant)
+  'prompt-015': '/@fs/home/runner/workspace/attached_assets/prompt-result-015.png', // Audio Experience (turntable variant)
+  'prompt-016': '/@fs/home/runner/workspace/attached_assets/prompt-result-016.png', // Active Lifestyle (water bottle variant)
+  'prompt-017': '/@fs/home/runner/workspace/attached_assets/prompt-result-017.png', // Professional Edge (ceramic mug business)
+  'prompt-018': '/@fs/home/runner/workspace/attached_assets/prompt-result-018.png', // Gourmet Experience (honey jars premium)
+  'prompt-019': '/@fs/home/runner/workspace/attached_assets/prompt-result-019.png', // Zen Moment (witch hazel spa)
 };
 
 export default function PrebuiltPrompts() {
