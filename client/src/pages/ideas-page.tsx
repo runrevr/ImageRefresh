@@ -36,6 +36,7 @@ import medievalImage from "../assets/medieval.png";
 import sunsetShampooImage from "../assets/sunset-shampoo.jpg";
 import trumpMulletImage from "../assets/trump-mullet.png";
 import trumpMulletNewImage from "../assets/trump-mullet-new.png";
+import hulkamaniaImage from "../assets/hulkamania.png";
 import babyImage from "../assets/tk-ts-baby.jpg";
 import agingImage from "../assets/aging.png";
 import twentyYearsImage from "../assets/20years.png";
@@ -211,6 +212,8 @@ const StyleCard = ({
     imageSrc = theKingImage;
   } else if (style.id === "mullets") {
     imageSrc = trumpMulletNewImage;
+  } else if (style.id === "hulkamania") {
+    imageSrc = hulkamaniaImage;
   } else if (style.id === "pet-as-human") {
     imageSrc = petToHumanImage;
   } else if (style.id === "custom-other") {
@@ -350,6 +353,17 @@ export default function IdeasPage() {
         beforeImage: "/assets/couple-field.png",
         popular: true,
         tags: ["hairstyle", "retro", "funny", "rock", "80s"],
+      },
+      {
+        id: "hulkamania",
+        name: "Hulkamania",
+        description: "Transform into the iconic Hulk Hogan look with blonde mustache, red bandana, and wrestling attitude.",
+        category: "other",
+        prompt: "Transform the uploaded photo into the iconic Hulk Hogan 'Hulkamania' style. Add a distinctive blonde handlebar mustache, a red bandana with 'HULKAMANIA' text, and dress in a bright yellow tank top with 'HULK RULES' text. Include Hulk Hogan's signature confident, charismatic expression and pose. Maintain the person's core facial features and skin tone while adding these iconic wrestling elements. Set against a casual outdoor background that suggests a laid-back, confident attitude. The transformation should capture the essence of 1980s wrestling entertainment culture.",
+        previewImage: hulkamaniaImage,
+        beforeImage: "/assets/couple-field.png",
+        new: true,
+        tags: ["wrestling", "80s", "mustache", "retro", "entertainment"],
       },
       {
         id: "baby-prediction",

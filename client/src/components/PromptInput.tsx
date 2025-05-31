@@ -82,6 +82,7 @@ export type EraSubcategory =
 
 export type OtherSubcategory =
   | "mullets"
+  | "hulkamania"
   | "baby-prediction"
   | "future-self"
   | "ghibli-style"
@@ -362,6 +363,14 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     suggestedPrompt:
       "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.\n1. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background.\n2. Match the original hair color, texture, and density exactly.\n3. Randomly choose one of these top-hair styles for each run:\n   - curly, teased volume\n   - short, textured spikes\n   - feathered, classic '80s layers\n   - sleek, modern taper\n4. In every variation, the back must be noticeably longer than the front (\"business in front, party in back\").\n5. Preserve **all** facial attributes exactly as in the original, including:\n   - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)\n   - Facial proportions and bone structure\n   - Eye color, eye shape, lips, and expression\n   - Age appearance (do **not** make the subject look older or younger)\n6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.\n\n**Negative constraints** (do **not**):\n- Alter any aspect of the face, skin texture, or age cues.\n- Introduce wrinkles, sagging, or any aging artifacts.\n- Change posture, clothing, background, or cropping.",
   },
+  hulkamania: {
+    title: "Hulkamania",
+    description:
+      "Transform into the iconic Hulk Hogan look with blonde mustache, red bandana, and wrestling attitude.",
+    placeholder: "E.g., Add more wrestling accessories or background elements",
+    suggestedPrompt:
+      "Transform the uploaded photo into the iconic Hulk Hogan 'Hulkamania' style. Add a distinctive blonde handlebar mustache, a red bandana with 'HULKAMANIA' text, and dress in a bright yellow tank top with 'HULK RULES' text. Include Hulk Hogan's signature confident, charismatic expression and pose. Maintain the person's core facial features and skin tone while adding these iconic wrestling elements. Set against a casual outdoor background that suggests a laid-back, confident attitude. The transformation should capture the essence of 1980s wrestling entertainment culture.",
+  },
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
     description:
@@ -524,6 +533,20 @@ export default function PromptInput({
         console.log("Setting full mullet prompt:", mulletPrompt);
         setPromptText(mulletPrompt);
       }
+
+      // Special handling for hulkamania saved style
+      if (savedStyle.title === "Hulkamania") {
+        console.log(
+          "Setting primary category to other and subcategory to hulkamania from saved style",
+        );
+        setPrimaryCategory("other");
+        setOtherSubcategory("hulkamania");
+
+        // Ensure we're using the full hulkamania prompt
+        const hulkamaniaPrompt = OTHER_STYLES.hulkamania.suggestedPrompt;
+        console.log("Setting full hulkamania prompt:", hulkamaniaPrompt);
+        setPromptText(hulkamaniaPrompt);
+      }
     }
   }, [savedStyle]);
 
@@ -550,6 +573,12 @@ export default function PromptInput({
     if (primaryCategory === "other" && otherSubcategory === "mullets") {
       finalPrompt = OTHER_STYLES.mullets.suggestedPrompt;
       console.log("Using full mullet prompt:", finalPrompt);
+    }
+
+    // If we're using a hulkamania transformation, make sure we're sending the full prompt
+    if (primaryCategory === "other" && otherSubcategory === "hulkamania") {
+      finalPrompt = OTHER_STYLES.hulkamania.suggestedPrompt;
+      console.log("Using full hulkamania prompt:", finalPrompt);
     }
 
     setIsLoading(true);
