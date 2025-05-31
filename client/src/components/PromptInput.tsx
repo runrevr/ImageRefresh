@@ -930,7 +930,6 @@ export default function PromptInput({
                       ? "default"
                       : "outline"
                   }
-                  size="sm"
                   onClick={() => {
                     switch (primaryCategory) {
                       case "cartoon":
@@ -948,14 +947,14 @@ export default function PromptInput({
                       // Pop culture case removed
                     }
                   }}
-                  className={`justify-start text-left h-auto py-2 px-3 text-xs leading-tight ${
+                  className={`justify-center text-center h-auto py-4 px-4 text-sm font-medium rounded-lg ${
                     isSubcategoryActive(primaryCategory, key)
-                      ? "bg-secondary text-white"
-                      : "text-white bg-black hover:bg-gray-800"
+                      ? "bg-cyan-500 text-white border-cyan-500 hover:bg-cyan-600"
+                      : "text-white bg-gray-800 border-gray-700 hover:bg-gray-700"
                   }`}
                   title={description}
                 >
-                  <span className="truncate text-white">{title}</span>
+                  <span className="text-white">{title}</span>
                 </Button>
               );
             })}
