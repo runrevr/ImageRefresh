@@ -158,14 +158,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Timestamp: ${new Date().toISOString()}`);
 
       // Validate request body
-      const {
-        originalImagePath,
-        prompt,
-        userId,
-        imageSize,
-        isEdit,
-        previousTransformation,
-      } = req.body;
+      const { originalImagePath, prompt, imageSize, isEdit, previousTransformation } = req.body;
+      let userId = req.body.userId;
 
       if (!originalImagePath) {
         return res
@@ -927,8 +921,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           paidCredits: 0,
           freeCreditsUsed: false,
           message: "User not found",
-        });
-      }
+        });      }
 
       // Check if user has monthly free credit available
       const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userId);
