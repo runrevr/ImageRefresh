@@ -181,8 +181,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Original image: ${originalImagePath}`);
       console.log(`Is edit: ${isEdit ? "Yes" : "No"}`);
 
-      let userId = req.body.userId || req.headers['x-user-id'] || req.user?.id;
-
       // Log user ID extraction for debugging
       console.log(`[TRANSFORM] User ID extraction:`, {
         bodyUserId: req.body.userId,
