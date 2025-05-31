@@ -87,6 +87,7 @@ export type EraSubcategory =
 
 export type OtherSubcategory =
   | "mullets"
+  | "hulkamania"
   | "baby-prediction"
   | "future-self"
   | "ghibli-style"
@@ -178,56 +179,6 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     title: "Create Your Own Cartoon",
     description: "Describe your own custom cartoon transformation.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
-    suggestedPrompt: "",
-  },
-};
-
-// Product subcategories
-const PRODUCT_STYLES: Record<ProductSubcategory, StyleOption> = {
-  "remove-background": {
-    title: "Remove Background",
-    description:
-      "Isolate the product with a clean, solid or transparent background.",
-    placeholder: "E.g., Place on a pure white background with subtle shadow",
-    suggestedPrompt:
-      "Remove the current background and replace it with a clean, pure white background. Add a subtle shadow beneath the product for depth. Ensure the product edges are crisp and well-defined with no background artifacts.",
-  },
-  "enhanced-lighting": {
-    title: "Enhanced Lighting & Colors",
-    description:
-      "Improve product appearance with professional studio lighting and color enhancement.",
-    placeholder: "E.g., Add dramatic side lighting to highlight texture",
-    suggestedPrompt:
-      "Apply enhanced professional studio lighting. Add soft key lights to highlight the product's best features, rim lighting to define edges, and fill lights to soften shadows. Enhance colors for better vibrancy and contrast while maintaining natural appearance.",
-  },
-  "natural-scene": {
-    title: "Lifestyle Integration",
-    description:
-      "Place the product in a realistic outdoor or natural environment.",
-    placeholder:
-      "E.g., Indoor or outdoor, which environment [modern/rustic/minimalist]",
-    suggestedPrompt:
-      "Place in a natural scene environment. Integrate seamlessly with realistic shadows and reflections that match the environment's lighting. Ensure the product remains the focal point while the natural setting provides context and atmosphere.",
-  },
-  "product-mockup": {
-    title: "Product Mockup",
-    description: "Show the product in context of use in realistic scenarios.",
-    placeholder: "E.g., Show being used by a model in a living room",
-    suggestedPrompt:
-      "Create a realistic mockup showing the product in context of use. Add human interaction if appropriate, and place in a realistic setting where the product would normally be used. Ensure proper scale, realistic shadows, and environmental reflections.",
-  },
-  "social-media-ready": {
-    title: "Social Media Ready",
-    description: "Optimize product presentation for social media platforms.",
-    placeholder: "Color Style: vibrant, pastel or contrasting",
-    suggestedPrompt:
-      "Transform this product into a highly shareable, scroll-stopping image optimized for social media. Create a visually striking composition with [vibrant/pastel/contrasting] colors, perfect for Instagram or Pinterest. Add stylish negative space for text overlay, incorporate trending visual elements, and ensure the product pops against a carefully designed background that suggests lifestyle without overwhelming.",
-  },
-  "custom-product": {
-    title: "Create Your Own Product Image",
-    description: "Describe your own custom product transformation.",
-    placeholder:
-      "E.g., Place product on a marble countertop with morning light",
     suggestedPrompt: "",
   },
 };
@@ -411,6 +362,12 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     description: "It's well known that everyone secretly wants to look like Joe Dirt.",
     placeholder: "E.g., Make my mullet more dramatic with volume",
     suggestedPrompt: "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle.\n1. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background.\n2. Match the original hair color, texture, and density exactly.\n3. Randomly choose one of these top-hair styles for each run:\n   - curly, teased volume\n   - short, textured spikes\n   - feathered, classic '80s layers\n   - sleek, modern taper\n4. In every variation, the back must be noticeably longer than the front (\"business in front, party in back\").\n5. Preserve **all** facial attributes exactly as in the original, including:\n   - Skin tone and smoothness (no new wrinkles, age spots, or blemishes)\n   - Facial proportions and bone structure\n   - Eye color, eye shape, lips, and expression\n   - Age appearance (do **not** make the subject look older or younger)\n6. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.\n\n**Negative constraints** (do **not**):\n- Alter any aspect of the face, skin texture, or age cues.\n- Introduce wrinkles, sagging, or any aging artifacts.\n- Change posture, clothing, background, or cropping.",
+  },
+  "hulkamania": {
+    title: "Hulkamania",
+    description: "Channel your inner wrestling legend with the ultimate showman transformation - complete with the iconic red bandana and yellow tank top from the golden era.",
+    placeholder: "E.g., Give me that classic Hulkamania look",
+    suggestedPrompt: "Transform the uploaded photo into a classic 1980s wrestling champion appearance while preserving the subject's exact facial features and identity.\n1. Hair transformation:\n   - Replace existing hair with long, flowing platinum blonde hair\n   - Style should be straight to slightly wavy, extending past shoulders\n   - Add natural volume and shine characteristic of 1980s wrestling style\n2. Add the iconic red bandana:\n   - Red bandana wrapped around the forehead\n   - Must display 'HULKAMANIA' text in bold yellow letters across the front\n   - Bandana should have realistic fabric texture with proper folds and shadows\n   - Position naturally on the forehead with hair flowing from underneath\n3. Facial hair additions:\n   - Add a thick, horseshoe-style blonde mustache\n   - Mustache should look natural with proper texture and shading\n   - Blend seamlessly with the subject's skin tone\n4. Attire transformation (if torso visible):\n   - Replace existing clothing with a bright yellow tank top\n   - Tank top displays 'HULK RULES' in bold red block letters across the chest\n   - Letters should have slight vintage distressing/worn effect\n   - Tank top should have classic athletic cut with wide arm openings\n   - Add realistic fabric texture and appropriate shadows/highlights\n5. Preserve ALL original facial features EXACTLY:\n   - Maintain precise facial structure, proportions, and bone structure\n   - Keep original eye color, shape, and expression unchanged\n   - Preserve exact age appearance (no aging or de-aging effects)\n   - Maintain original skin tone, texture, and any unique marks\n   - Keep all identifying features (moles, freckles, dimples, etc.)\n   - Do NOT alter nose shape, jaw line, or any facial contours\n6. Optional athletic enhancement (only if arms/shoulders visible):\n   - Slightly enhance muscle definition while maintaining proportions\n   - Add subtle tan/bronze tone typical of 1980s wrestling aesthetic\n7. Lighting and integration:\n   - Match all additions to original photo's lighting direction\n   - Ensure natural shadows and highlights on all elements\n   - Seamless blending with no obvious edits\n\n**Critical preservation requirements:**\n- The subject's face must remain 100% unchanged - only add mustache\n- All facial features, structure, and proportions must be exactly preserved\n- This is a costume/styling transformation, NOT a face swap\n\n**Negative constraints** (do NOT):\n- Alter any facial features, structure, or proportions\n- Change eye shape, nose, lips, or jaw line\n- Modify age appearance or add/remove wrinkles\n- Change ethnic features or natural skin tone\n- Add scars, tattoos, or other markings\n- Create an exact likeness of any specific real person",
   },
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
