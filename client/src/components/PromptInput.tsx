@@ -876,6 +876,23 @@ export default function PromptInput({
                 // Pop culture case removed
               }
 
+              let description = "";
+              switch (primaryCategory) {
+                case "cartoon":
+                  description = CARTOON_STYLES[key as CartoonSubcategory].description;
+                  break;
+                case "painting":
+                  description = PAINTING_STYLES[key as PaintingSubcategory].description;
+                  break;
+                case "era":
+                  description = ERA_STYLES[key as EraSubcategory].description;
+                  break;
+                case "other":
+                  description = OTHER_STYLES[key as OtherSubcategory].description;
+                  break;
+                // Pop culture case removed
+              }
+
               return (
                 <Button
                   key={key}
@@ -902,9 +919,14 @@ export default function PromptInput({
                       // Pop culture case removed
                     }
                   }}
-                  className="justify-start text-left h-auto py-2 px-3 text-xs leading-tight"
+                  className={`justify-start text-left h-auto py-2 px-3 text-xs leading-tight ${
+                    isSubcategoryActive(primaryCategory, key)
+                      ? "bg-secondary text-white"
+                      : "text-white bg-black hover:bg-gray-800"
+                  }`}
+                  title={description}
                 >
-                  <span className="truncate">{title}</span>
+                  <span className="truncate text-white">{title}</span>
                 </Button>
               );
             })}
