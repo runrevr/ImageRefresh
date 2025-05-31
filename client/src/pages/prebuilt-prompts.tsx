@@ -215,15 +215,6 @@ export default function PrebuiltPrompts() {
     setLocation('/prebuilt-upload');
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-green-100 text-green-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const getCategoryColor = (category: string) => {
     const colors = {
       'Enhancement': 'bg-blue-100 text-blue-800',
@@ -283,13 +274,10 @@ export default function PrebuiltPrompts() {
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/80 flex flex-col items-center justify-end px-4 py-6 text-center">
-                      {/* Category and Difficulty badges */}
+                      {/* Category badge */}
                       <div className="flex gap-2 mb-3">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(prompt.category)}`}>
                           {prompt.category}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(prompt.difficulty)}`}>
-                          {prompt.difficulty}
                         </span>
                       </div>
 
