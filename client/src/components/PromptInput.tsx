@@ -370,7 +370,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     suggestedPrompt:
       "Create a realistic image of a baby that would result from the genetics of the two people in the uploaded photos. The baby should have a balanced blend of facial features from both parents, including eye shape/color, nose, mouth, face shape, and skin tone. Show only the baby in the final image, centered in frame with good lighting against a neutral background. The baby should appear healthy, happy, and around 6-12 months old with a natural expression. Dress the baby in appropriate baby clothing - such as a simple onesie, cute baby outfit, or comfortable infant attire - not attempting to match or replicate the clothing style of the parents. Add subtle details that clearly connect to features from both parent photos without directly copying them.",
   },
-  "future-self": {
+"future-self": {
     title: "What Will I Look Like in 20 Years",
     description:
       "Age the subject in the image to show how they might look 20 years in the future.",
@@ -582,7 +582,7 @@ export default function PromptInput({
     }
   };
 
-  
+
 
   const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
     setPaintingSubcategory(subcategory);
@@ -884,11 +884,7 @@ export default function PromptInput({
                       ? "default"
                       : "outline"
                   }
-                  className={`flex items-center justify-start h-auto py-2 px-3 text-sm ${
-                    isSubcategoryActive(primaryCategory, key)
-                      ? "bg-secondary text-white"
-                      : "text-white bg-black"
-                  }`}
+                  size="sm"
                   onClick={() => {
                     switch (primaryCategory) {
                       case "cartoon":
@@ -906,6 +902,7 @@ export default function PromptInput({
                       // Pop culture case removed
                     }
                   }}
+                  className="justify-start text-left h-auto py-2 px-3 text-xs leading-tight"
                 >
                   <span className="truncate">{title}</span>
                 </Button>
