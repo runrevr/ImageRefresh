@@ -886,7 +886,7 @@ export default function PromptInput({
                 primaryCategory.slice(1)}{" "}
             Style
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {subcategoryOptions.map((key) => {
               let title = "";
               switch (primaryCategory) {
@@ -947,7 +947,7 @@ export default function PromptInput({
                       // Pop culture case removed
                     }
                   }}
-                  className={`justify-center text-center h-auto py-4 px-4 text-sm font-medium rounded-lg ${
+                  className={`justify-center text-center h-auto py-3 px-3 text-xs font-medium rounded-lg whitespace-normal break-words min-h-[60px] flex items-center ${
                     isSubcategoryActive(primaryCategory, key)
                       ? "bg-cyan-500 text-white border-cyan-500 hover:bg-cyan-600"
                       : "text-white bg-gray-800 border-gray-700 hover:bg-gray-700"
