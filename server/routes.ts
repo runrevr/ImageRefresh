@@ -180,6 +180,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Processing transformation with prompt: ${prompt}`);
       console.log(`Original image: ${originalImagePath}`);
       console.log(`Is edit: ${isEdit ? "Yes" : "No"}`);
+
+      let userId = req.body.userId || req.headers['x-user-id'] || req.user?.id;
+
+      // Log user ID extraction for debugging
+      console.log(`[TRANSFORM] User ID extraction:`, {
+        bodyUserId: req.body.userId,
+        headerUserId: req.headers['x-user-id'],
+        reqUserId: req.user?.id,
+        finalUserId: userId,
+        userIdType: typeof userId
+      });
+
+      // Convert string to number if needed
+      if (userId && typeof userId === 'string') {
+        const numericUserId = parseInt(userId, 10);
+        if (!isNaN(numericUserId) && numericUserId > 0) {
+          userId = numericUserId;
+          console.log(`[TRANSFORM] Converted string userId to number: ${userId}`);
+        } else {
+          console.error(`[TRANSFORM] Invalid string userId could not be converted: ${userId}`);
+          userId = null;
+        }
+      }
       console.log(`User ID: ${userId || "Guest"}`);
 
       // Handle URL vs file path
@@ -1024,18 +1047,24 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
   app.get('/api/prebuilt-prompts', getPrebuiltPrompts);
   app.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
 
-  // User Images endpoints
-  app.get('/api/user-images/:userId', async (req, res) => {
+  // Get user images endpoint
+  app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
     try {
       const userId = parseInt(req.params.userId, 10);
-      if (isNaN(userId)) {
+
+      console.log(`[USER-IMAGES API] Request for user ${userId} (original: ${req.params.userId})`);
+
+      if (isNaN(userId) || userId <= 0) {
+        console.error(`[USER-IMAGES API] Invalid user ID: ${req.params.userId} -> ${userId}`);
         return res.status(400).json({ error: 'Invalid user ID' });
       }
 
       const images = await storage.getUserImages(userId);
+      console.log(`[USER-IMAGES API] Found ${images.length} images for user ${userId}`);
+
       res.json(images);
     } catch (error) {
-      console.error('Error fetching user images:', error);
+      console.error('[USER-IMAGES API] Error fetching user images:', error);
       res.status(500).json({ error: 'Failed to fetch user images' });
     }
   });

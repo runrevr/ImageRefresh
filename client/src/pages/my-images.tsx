@@ -27,9 +27,17 @@ export default function MyImages() {
 
   const userId = user?.id;
 
-  const { data: images = [], isLoading } = useQuery<UserImage[]>({
+  const { data: images = [], isLoading, error } = useQuery<UserImage[]>({
     queryKey: ['/api/user-images', userId ? String(userId) : ''],
     enabled: !!userId,
+  });
+
+  // Log for debugging
+  console.log('[MY-IMAGES] Query state:', {
+    userId,
+    isLoading,
+    error: error?.message,
+    imageCount: images.length
   });
 
   const deleteImageMutation = useMutation({

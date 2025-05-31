@@ -480,12 +480,40 @@ export class DatabaseStorage implements IStorage {
 
   // User Images operations
   async saveUserImage(insertUserImage: InsertUserImage): Promise<UserImage> {
-    const [userImage] = await db
-      .insert(userImages)
-      .values(insertUserImage)
-      .returning();
+    console.log(`[STORAGE] saveUserImage called with:`, {
+      userId: insertUserImage.userId,
+      userIdType: typeof insertUserImage.userId,
+      imagePath: insertUserImage.imagePath,
+      imageUrl: insertUserImage.imageUrl,
+      imageType: insertUserImage.imageType
+    });
 
-    return userImage;
+    // Validate required fields
+    if (!insertUserImage.userId || insertUserImage.userId <= 0) {
+      throw new Error(`Invalid userId for saveUserImage: ${insertUserImage.userId}`);
+    }
+
+    if (!insertUserImage.imagePath) {
+      throw new Error(`Missing imagePath for saveUserImage`);
+    }
+
+    if (!insertUserImage.imageUrl) {
+      throw new Error(`Missing imageUrl for saveUserImage`);
+    }
+
+    try {
+      const [userImage] = await db
+        .insert(userImages)
+        .values(insertUserImage)
+        .returning();
+
+      console.log(`[STORAGE] Successfully saved userImage with ID: ${userImage.id} for user ${insertUserImage.userId}`);
+      return userImage;
+    } catch (error) {
+      console.error(`[STORAGE] Failed to save userImage:`, error);
+      console.error(`[STORAGE] Insert data was:`, insertUserImage);
+      throw error;
+    }
   }
 
   async getUserImages(userId: number): Promise<UserImage[]> {
