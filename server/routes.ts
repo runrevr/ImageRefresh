@@ -159,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate request body
       const { originalImagePath, prompt, imageSize, isEdit, previousTransformation } = req.body;
-      let userId = req.body.userId;
+      let { userId } = req.body;
 
       if (!originalImagePath) {
         return res
