@@ -258,7 +258,7 @@ export default function PrebuiltPrompts() {
               >
                 <div className="relative">
                   {/* Background image placeholder with overlay */}
-                  <div className="h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                     {/* Show result image if available, otherwise show number */}
                     {prompt.resultImage ? (
                       <img 
@@ -284,7 +284,7 @@ export default function PrebuiltPrompts() {
                       <h3 className="text-lg font-bold mb-2 text-white">
                         {prompt.title}
                       </h3>
-                      <p className="text-sm text-white/90 mb-4 line-clamp-2">
+                      <p className="text-sm text-white/90 mb-4 leading-relaxed h-10 overflow-hidden">
                         {prompt.description}
                       </p>
                       <button className="bg-[#F97316] hover:bg-[#F97316]/90 text-white py-2 px-4 rounded-lg transition-colors font-medium text-sm">
