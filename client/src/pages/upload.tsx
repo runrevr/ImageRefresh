@@ -157,14 +157,11 @@ export default function UploadPage() {
           setSelectedTransformation(style.category as TransformationType);
         }
 
-        // Move to the prompt step with the saved style
-        setCurrentStep(Step.Prompt);
-
         // Clear the saved style so it's not used again
         clearSavedStyle();
       }
-    } else {
-      // No saved style, just go to prompt step
+
+      // Always go to prompt step to show categories
       setCurrentStep(Step.Prompt);
     }
   };
@@ -942,7 +939,7 @@ export default function UploadPage() {
 
                       <div className="mb-8">
                         <textarea
-                          className="w-full h-32 p-4 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"                  placeholder="Example: A majestic dragon flying over a crystal city at sunset, photorealistic style, 8k quality..."
+                          className="w-full h-32 p-4 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"                  placeholder="Example: A majestic dragon flying over a crystal city at sunset, photorealistic style, 8kquality..."
                           value=""
                           onChange={() => {}}
                         />
@@ -1134,7 +1131,7 @@ export default function UploadPage() {
                     </div>
                   </>
                 )}
-                  
+
                 </div>
               )}
 
@@ -1147,7 +1144,7 @@ export default function UploadPage() {
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">Your Uploaded Image</h3>
                       <p className="text-gray-600">Great! Now choose a style category to transform your image.</p>
                     </div>
-                    
+
                     <div className="relative max-w-md mx-auto mb-4">
                       <img 
                         src={originalImage} 
@@ -1155,7 +1152,7 @@ export default function UploadPage() {
                         className="w-full h-auto rounded-lg shadow-lg border border-gray-200"
                       />
                     </div>
-                    
+
                     <div className="text-center">
                       <button 
                         onClick={handleNewImage}
