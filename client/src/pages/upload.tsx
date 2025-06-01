@@ -171,16 +171,10 @@ export default function UploadPage() {
 
   // Check if user has credits available
   const checkCreditsAndAuth = () => {
-    // Check if user is authenticated
+    // For non-authenticated users, we'll let the server determine credit status
+    // and handle the popup in the error handling
     if (!authUser) {
-      // Check if they've used their free credit as a guest
-      const guestCreditUsed = localStorage.getItem('guestFreeCreditsUsed') === 'true';
-      if (guestCreditUsed) {
-        setShowSignupModal(true);
-        return false;
-      }
-      // Mark guest credit as used
-      localStorage.setItem('guestFreeCreditsUsed', 'true');
+      return true; // Let server check credits
     } else {
       // For authenticated users, check their credit status
       if (userCredits && userCredits.freeCreditsUsed && userCredits.paidCredits <= 0) {
@@ -465,6 +459,11 @@ export default function UploadPage() {
                 "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
               variant: "destructive",
             });
+          } else if (data.error === "credit_required" && !authUser) {
+            // Show signup modal for non-authenticated users who need credits
+            setShowSignupModal(true);
+            setCurrentStep(Step.Prompt);
+            return; // Don't show additional error toast
           } else {
             toast({
               title: "Transformation failed",
