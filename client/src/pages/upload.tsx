@@ -55,7 +55,7 @@ export default function UploadPage() {
   const { toast } = useToast();
   const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>('animation');
+  const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
   const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
@@ -1190,11 +1190,11 @@ export default function UploadPage() {
                     {/* Pop Culture Category */}
                     <button
                       className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                        selectedTransformation === 'era' 
+                        selectedTransformation === 'historical' 
                           ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
                           : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
                       }`}
-                      onClick={() => setSelectedTransformation('era')}
+                      onClick={() => setSelectedTransformation('historical')}
                     >
                       <div className="text-3xl mb-2">🕰️</div>
                       <div className="text-sm font-semibold text-gray-900">Pop Culture</div>
