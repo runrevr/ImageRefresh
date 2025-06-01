@@ -27,7 +27,7 @@ export default function UploadEnhancePage() {
     window.scrollTo(0, 0);
   }, []);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFiles, setSelectedFiles<File[]>] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
