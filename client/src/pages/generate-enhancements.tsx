@@ -998,7 +998,7 @@ export default function GenerateEnhancementsPage() {
                         <Button
                           size="sm"
                           onClick={() => downloadImage(job.resultImageUrl!, job.enhancementTitle, selectedFormat)}
-                          className="bg-green-600 hover:bg-green-700 text-white brand-font-body"
+                          className="bg-[#84CC16] hover:bg-[#65A30D] text-white brand-font-body"
                         >
                           <Download className="w-4 h-4 mr-1" />
                           Download
