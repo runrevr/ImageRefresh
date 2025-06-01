@@ -459,11 +459,21 @@ export default function UploadPage() {
                 "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
               variant: "destructive",
             });
-          } else if (data.error === "credit_required" && !authUser) {
-            // Show signup modal for non-authenticated users who need credits
-            setShowSignupModal(true);
-            setCurrentStep(Step.Prompt);
-            return; // Don't show additional error toast
+          } else if (data.error === "credit_required") {
+            if (!authUser) {
+              // Show signup modal for non-authenticated users who need credits
+              console.log("Showing signup modal for guest user who needs credits");
+              setShowSignupModal(true);
+              setCurrentStep(Step.Prompt);
+              return; // Don't show additional error toast
+            } else {
+              // For authenticated users, show regular error message
+              toast({
+                title: "No Credits Available",
+                description: "You need to purchase credits to continue creating transformations.",
+                variant: "destructive",
+              });
+            }
           } else {
             toast({
               title: "Transformation failed",
