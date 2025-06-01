@@ -31,8 +31,8 @@ export default function UploadEnhancePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
-  const [selectedPurposes, setSelectedPurposes<string[]>] = useState([]);
-  const [selectedIndustries, setSelectedIndustries<string[]>] = useState([]);
+  const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [uploadError, setUploadError] = useState("");
   const [processingStep, setProcessingStep] = useState(0);
   const [processingStatus, setProcessingStatus] = useState("");
