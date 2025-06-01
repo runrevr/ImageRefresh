@@ -263,7 +263,7 @@ export default function UploadPage() {
       // Handle both success and error responses
       try {
         const data = await response.json();
-        
+
         // Check if the transformation was successful
         if (response.ok) {
           console.log("Image transformation completed successfully");
@@ -440,58 +440,48 @@ export default function UploadPage() {
             setCurrentStep(Step.Prompt);
           }
         } else {
-          // No transformation ID or image URL - something went wrong
-          console.error("Missing required data in server response");
-          toast({
-            title: "Missing Data",
-            description: "The server response is missing required information. Please try again.",
-            variant: "destructive",
-          });
-          setCurrentStep(Step.Prompt);
-        }
-      } else {
-        // Handle error responses
-        console.error("Server returned error response:", data);
-        if (data.error === "content_safety") {
-          toast({
-            title: "Content Safety Alert",
-            description:
-              "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
-            variant: "destructive",
-          });
-        } else if (data.error === "credit_required") {
-          if (!authUser) {
-            // Show signup modal for non-authenticated users who need credits
-            console.log("Showing signup modal for guest user who needs credits");
-            setShowSignupModal(true);
-            setCurrentStep(Step.Prompt);
-            return; // Don't show additional error toast
-          } else {
-            // For authenticated users, show regular error message
+          // Handle error responses
+          console.error("Server returned error response:", data);
+          if (data.error === "content_safety") {
             toast({
-              title: "No Credits Available",
-              description: "You need to purchase credits to continue creating transformations.",
+              title: "Content Safety Alert",
+              description:
+                "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
+              variant: "destructive",
+            });
+          } else if (data.error === "credit_required") {
+            if (!authUser) {
+              // Show signup modal for non-authenticated users who need credits
+              console.log("Showing signup modal for guest user who needs credits");
+              setShowSignupModal(true);
+              setCurrentStep(Step.Prompt);
+              return; // Don't show additional error toast
+            } else {
+              // For authenticated users, show regular error message
+              toast({
+                title: "No Credits Available",
+                description: "You need to purchase credits to continue creating transformations.",
+                variant: "destructive",
+              });
+            }
+          } else {
+            toast({
+              title: "Transformation failed",
+              description: data.message || "An unknown error occurred during transformation",
               variant: "destructive",
             });
           }
-        } else {
-          toast({
-            title: "Transformation failed",
-            description: data.message || "An unknown error occurred during transformation",
-            variant: "destructive",
-          });
+          setCurrentStep(Step.Prompt);
         }
+      } catch (jsonError) {
+        console.error("Failed to parse response as JSON:", jsonError);
+        toast({
+          title: "Transformation failed",
+          description: "An error occurred during transformation. Please try again.",
+          variant: "destructive",
+        });
         setCurrentStep(Step.Prompt);
       }
-    } catch (jsonError) {
-      console.error("Failed to parse response as JSON:", jsonError);
-      toast({
-        title: "Transformation failed",
-        description: "An error occurred during transformation. Please try again.",
-        variant: "destructive",
-      });
-      setCurrentStep(Step.Prompt);
-    }
     } catch (error: any) {
       console.error("Error transforming image:", error);
       let errorMessage = "An error occurred during transformation. Please try again.";
