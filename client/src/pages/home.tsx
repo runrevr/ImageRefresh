@@ -33,7 +33,6 @@ import {
   hasSavedStyle,
 } from "@/components/StyleIntegration";
 import { ComparisonSlider } from "../components/ComparisonSlider";
-import { FaqSection } from "../components/FaqSection";
 import { Layout } from "../components/Layout";
 import { TransformationExamples } from "../components/TransformationExamples";
 import { useFreeCredits } from "@/hooks/useFreeCredits";
