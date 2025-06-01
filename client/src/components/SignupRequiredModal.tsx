@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
@@ -57,7 +56,7 @@ export default function SignupRequiredModal({ isOpen, onClose }: SignupRequiredM
       <div className={`bg-white rounded-2xl overflow-hidden max-w-md w-full shadow-2xl transform transition-transform duration-300 ${
         isOpen ? 'scale-100' : 'scale-90'
       }`}>
-        
+
         {/* Close Button */}
         <button
           onClick={onClose}
