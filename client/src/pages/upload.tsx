@@ -1076,15 +1076,40 @@ export default function UploadPage() {
             )}
 
             {currentStep === Step.Prompt && (
-              <div className="max-w-3xl mx-auto">
-                <h2 className="text-2xl font-bold mb-3 text-center">
-                  Describe Your Transformation
-                </h2>
+              <div className="max-w-5xl mx-auto">
+                {/* Two-Tab Header */}
+                <div className="flex justify-center mb-8">
+                  <div className="flex bg-gray-100 rounded-full p-1 max-w-md mx-auto">
+                    <button
+                      className={`flex-1 px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+                        selectedTransformation !== 'custom' 
+                          ? 'bg-white text-blue-600 shadow-sm' 
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      onClick={() => setSelectedTransformation('animation')}
+                    >
+                      <span className="text-lg">🖼️</span>
+                      Transform Image
+                    </button>
+                    <button
+                      className={`flex-1 px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+                        selectedTransformation === 'custom' 
+                          ? 'bg-white text-blue-600 shadow-sm' 
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      onClick={() => setSelectedTransformation('custom')}
+                    >
+                      <span className="text-lg">✨</span>
+                      Custom Prompt
+                    </button>
+                  </div>
+                </div>
 
-                <div className="flex flex-col md:flex-row gap-6 mb-6">
-                  <div className="w-full md:w-1/3">
-                    <h3 className="text-lg font-medium mb-2">Original Image</h3>
-                    <div className="rounded-lg overflow-hidden border border-gray-200 h-48 md:h-64 flex items-center justify-center bg-gray-50">
+                <div className="flex flex-col lg:flex-row gap-8">
+                  {/* Left Side - Image Preview */}
+                  <div className="w-full lg:w-1/3">
+                    <h3 className="text-lg font-medium mb-3">Original Image</h3>
+                    <div className="rounded-xl overflow-hidden border border-gray-200 aspect-square flex items-center justify-center bg-gray-50">
                       {originalImage ? (
                         <img
                           src={originalImage}
@@ -1098,7 +1123,7 @@ export default function UploadPage() {
                       )}
                     </div>
 
-                    <div className="mt-3">
+                    <div className="mt-4">
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -1110,15 +1135,47 @@ export default function UploadPage() {
                     </div>
                   </div>
 
-                  <div className="w-full md:w-2/3">
-                    <PromptInput
-                      originalImage={originalImage || ""}
-                      onSubmit={handlePromptSubmit}
-                      onBack={handleNewImage}
-                      selectedTransformation={selectedTransformation}
-                      savedStyle={savedStyle}
-                      defaultPrompt={prompt}
-                    />
+                  {/* Right Side - Content based on selected tab */}
+                  <div className="w-full lg:w-2/3">
+                    {selectedTransformation === 'custom' ? (
+                      // Custom Prompt Tab Content
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-xl font-semibold mb-2">Custom Prompt</h3>
+                          <p className="text-gray-600 mb-4">
+                            Describe exactly how you want to transform your image. Be specific about style, mood, and details.
+                          </p>
+                        </div>
+                        
+                        <PromptInput
+                          originalImage={originalImage || ""}
+                          onSubmit={handlePromptSubmit}
+                          onBack={handleNewImage}
+                          selectedTransformation={selectedTransformation}
+                          savedStyle={savedStyle}
+                          defaultPrompt={prompt}
+                        />
+                      </div>
+                    ) : (
+                      // Transform Image Tab Content
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-xl font-semibold mb-2">Choose a Style</h3>
+                          <p className="text-gray-600 mb-4">
+                            Select from our curated collection of popular transformation styles.
+                          </p>
+                        </div>
+                        
+                        <PromptInput
+                          originalImage={originalImage || ""}
+                          onSubmit={handlePromptSubmit}
+                          onBack={handleNewImage}
+                          selectedTransformation={selectedTransformation}
+                          savedStyle={savedStyle}
+                          defaultPrompt={prompt}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
