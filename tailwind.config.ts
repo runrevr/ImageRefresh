@@ -36,11 +36,11 @@ export default {
         "border-gray": "#E5E7EB",
         // Brand colors
         brand: {
-          primary: "#06B6D4",
-          secondary: "#84CC16",
-          tertiary: "#F97316",
-          accent: "#8B5CF6",
-          magenta: "#EC4899",
+          primary: "#06B6D4", // Cyan Blue
+          secondary: "#84CC16", // Lime Green
+          tertiary: "#F97316", // Bright Orange
+          accent: "#8B5CF6", // Electric Purple
+          magenta: "#EC4899", // Hot Magenta
           neutral: {
             charcoal: "#1F2937",
             white: "#FFFFFF",

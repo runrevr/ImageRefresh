@@ -128,7 +128,7 @@ const CategoryCard = ({
 
   return (
     <Card 
-      className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer"
+      className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-primary hover:scale-[1.03] cursor-pointer"
       onClick={() => onClick(category.id)}
     >
       <div className="relative">
@@ -228,7 +228,7 @@ const StyleCard = ({
 
   return (
     <Card 
-      className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer h-full flex flex-col"
+      className="overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-primary hover:scale-[1.03] cursor-pointer h-full flex flex-col"
       onClick={() => {
         // Save style to local storage before navigation
         const savedStyle = {
@@ -580,7 +580,7 @@ export default function IdeasPage() {
 
             {/* Custom card in position 3 */}
             <Card 
-              className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-[#2A7B9B] hover:scale-[1.03] cursor-pointer"
+              className="h-full overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 hover:border-primary hover:scale-[1.03] cursor-pointer"
               onClick={() => setSelectedCategory("other")}
             >
               <div className="relative">

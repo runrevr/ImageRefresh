@@ -96,7 +96,7 @@
   --primary: 188 100% 42%; /* #06B6D4 - Cyan Blue */
   --primary-foreground: 0 0% 100%;
   --secondary: 84 81% 44%; /* #84CC16 - Lime Green */
-  --secondary-foreground: 0 0% 0%;
+  --secondary-foreground: 0 0% 100%;
   --accent: 188 100% 42%; /* #06B6D4 - Cyan Blue (same as primary) */
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
@@ -118,7 +118,7 @@
   --primary: 188 100% 42%; /* #06B6D4 - Cyan Blue */
   --primary-foreground: 0 0% 100%;
   --secondary: 84 81% 44%; /* #84CC16 - Lime Green */
-  --secondary-foreground: 0 0% 0%;
+  --secondary-foreground: 0 0% 100%;
   --accent: 188 100% 42%; /* #06B6D4 - Cyan Blue (same as primary) */
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
