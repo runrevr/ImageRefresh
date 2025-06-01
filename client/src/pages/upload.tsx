@@ -253,11 +253,17 @@ export default function UploadPage() {
 
       console.log("Processing image transformation...");
 
-      const response = await apiRequest("POST", "/api/transform", {
-        originalImagePath,
-        prompt: promptText,
-        userId: userCredits?.id,
-        imageSize: imageSize,
+      const response = await fetch("/api/transform", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          originalImagePath,
+          prompt: promptText,
+          userId: userCredits?.id,
+          imageSize: imageSize,
+        }),
       });
 
       // Handle both success and error responses
@@ -482,20 +488,57 @@ export default function UploadPage() {
         });
         setCurrentStep(Step.Prompt);
       }
-    } catch (error: any) {
-      console.error("Error transforming image:", error);
+    } catch (fetchError: any) {
+      console.error("Fetch error for /api/transform:", fetchError);
+      console.error("Error transforming image:", fetchError);
+      
+      // Check if this is a fetch response that we haven't handled yet
+      if (fetchError.response && !fetchError.response.ok) {
+        try {
+          const errorData = await fetchError.response.json();
+          console.error("Server returned error response:", errorData);
+          
+          if (errorData.error === "credit_required") {
+            if (!authUser) {
+              // Show signup modal for non-authenticated users who need credits
+              console.log("Showing signup modal for guest user who needs credits");
+              setShowSignupModal(true);
+              setCurrentStep(Step.Prompt);
+              return; // Don't show additional error toast
+            } else {
+              // For authenticated users, show regular error message
+              toast({
+                title: "No Credits Available",
+                description: "You need to purchase credits to continue creating transformations.",
+                variant: "destructive",
+              });
+            }
+          } else {
+            toast({
+              title: "Transformation failed",
+              description: errorData.message || "An unknown error occurred during transformation",
+              variant: "destructive",
+            });
+          }
+          setCurrentStep(Step.Prompt);
+          return;
+        } catch (parseError) {
+          console.error("Could not parse error response:", parseError);
+        }
+      }
+
       let errorMessage = "An error occurred during transformation. Please try again.";
 
       // Handle some common errors more specifically
-      if (error.message && error.message.includes("OpenAI") && error.message.includes("This model's maximum context length")) {
+      if (fetchError.message && fetchError.message.includes("OpenAI") && fetchError.message.includes("This model's maximum context length")) {
         errorMessage = "Your prompt is too long for the AI model. Please use a shorter description.";
-      } else if (error.message && error.message.includes("401")) {
+      } else if (fetchError.message && fetchError.message.includes("401")) {
         errorMessage = "Error connecting to the AI service. Please check your API key configuration.";
-      } else if (error.message && error.message.includes("gpt-4-vision")) {
+      } else if (fetchError.message && fetchError.message.includes("gpt-4-vision")) {
         errorMessage = "Your OpenAI account needs organization verification to use the gpt-image-1 model. This is a new model with limited access.";
-      } else if (error.message && error.message.includes("No image URL returned")) {
+      } else if (fetchError.message && fetchError.message.includes("No image URL returned")) {
         errorMessage = "The gpt-image-1 model is not available for your account. This model requires organization verification with OpenAI.";
-      } else if (error.message && error.message.includes("safety system")) {
+      } else if (fetchError.message && fetchError.message.includes("safety system")) {
         errorMessage = "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.";
       }
 
