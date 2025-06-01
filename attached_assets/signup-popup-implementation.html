@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Tool - Signup Required</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #FAFAFA;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(31, 41, 55, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Popup Container */
+        .popup-container {
+            background: #FFFFFF;
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .overlay.active .popup-container {
+            transform: scale(1);
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            color: #6B7280;
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: #FFFFFF;
+            color: #1F2937;
+            transform: rotate(90deg);
+        }
+
+        /* Header Section */
+        .header-section {
+            background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+            padding: 40px 32px 32px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-section h2 {
+            font-family: 'Audiowide', cursive;
+            font-size: 24px;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* Content Section */
+        .content-section {
+            padding: 32px;
+            text-align: center;
+        }
+
+        /* Credit Visual */
+        .credit-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .credit-dot {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Audiowide', cursive;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .credit-used {
+            background: #E5E7EB;
+            color: #9CA3AF;
+            transform: scale(0.9);
+        }
+
+        .credit-available {
+            background: #84CC16;
+            color: #FFFFFF;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 0 4px rgba(132, 204, 22, 0.2);
+        }
+
+        @keyframes pulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 4px rgba(132, 204, 22, 0.2);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 0 8px rgba(132, 204, 22, 0.1);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 4px rgba(132, 204, 22, 0.2);
+            }
+        }
+
+        .plus-sign {
+            font-size: 28px;
+            color: #6B7280;
+            font-weight: 400;
+        }
+
+        /* Urgency Text */
+        .urgency-text {
+            color: #F97316;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .primary-cta {
+            background: #06B6D4;
+            color: #FFFFFF;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            width: 100%;
+        }
+
+        .primary-cta:hover {
+            background: #0891B2;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(6, 182, 212, 0.2);
+        }
+
+        .primary-cta:active {
+            transform: translateY(0);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 16px 0;
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
+        }
+
+        /* Google Button */
+        .google-cta {
+            background: #FFFFFF;
+            color: #1F2937;
+            border: 2px solid #E5E7EB;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'Montserrat', sans-serif;
+            width: 100%;
+        }
+
+        .google-cta:hover {
+            border-color: #06B6D4;
+            background: #FAFAFA;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Login Link */
+        .login-link {
+            color: #6B7280;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #06B6D4;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .login-link a:hover {
+            color: #0891B2;
+            text-decoration: underline;
+        }
+
+        /* Demo Content (Remove in production) */
+        .demo-content {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .demo-button {
+            background: #06B6D4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .demo-button:hover {
+            background: #0891B2;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .header-section {
+                padding: 32px 24px 24px;
+            }
+
+            .header-section h2 {
+                font-size: 20px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .content-section {
+                padding: 24px;
+            }
+
+            .credit-dot {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .urgency-text {
+                font-size: 14px;
+            }
+
+            .primary-cta,
+            .google-cta {
+                font-size: 15px;
+                padding: 14px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo content - Remove this section in production -->
+    <div class="demo-content">
+        <h1 style="font-family: 'Audiowide', cursive; color: #1F2937; margin-bottom: 16px;">AI Image Tool Demo</h1>
+        <p style="color: #6B7280; margin-bottom: 24px;">Click the button below to see the signup popup</p>
+        <button class="demo-button" onclick="showPopup()">Try to Create Another Image</button>
+    </div>
+
+    <!-- Popup Overlay -->
+    <div class="overlay" id="signupOverlay">
+        <div class="popup-container">
+            <button class="close-btn" onclick="closePopup()">&times;</button>
+            
+            <div class="header-section">
+                <h2>Oops! You're Out of Free Credits</h2>
+                <p class="subtitle">But don't worry - sign up now and get a bonus credit!</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="credit-visual">
+                    <div class="credit-dot credit-used">1</div>
+                    <span class="plus-sign">+</span>
+                    <div class="credit-dot credit-available">1</div>
+                </div>
+                
+                <p class="urgency-text">
+                    <span>⏰</span>
+                    <span>Your uploaded image is ready to transform!</span>
+                </p>
+
+                <div class="cta-section">
+                    <button class="primary-cta" onclick="handleEmailSignup()">
+                        Create Account & Continue
+                    </button>
+                    
+                    <div class="divider">or</div>
+                    
+                    <button class="google-cta" onclick="handleGoogleSignup()">
+                        <svg class="google-icon" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Sign Up with Google
+                    </button>
+                </div>
+
+                <p class="login-link">
+                    Already have an account? <a href="#" onclick="handleLogin(event)">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show popup function
+        function showPopup() {
+            const overlay = document.getElementById('signupOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        // Close popup function
+        function closePopup() {
+            const overlay = document.getElementById('signupOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        }
+
+        // Handle email signup
+        function handleEmailSignup() {
+            console.log('Email signup clicked');
+            // Redirect to your email signup page
+            // window.location.href = '/signup';
+            alert('Redirect to email signup page');
+        }
+
+        // Handle Google signup
+        function handleGoogleSignup() {
+            console.log('Google signup clicked');
+            // Implement Google OAuth flow
+            // window.location.href = '/auth/google';
+            alert('Initiate Google OAuth flow');
+        }
+
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            console.log('Login clicked');
+            // Redirect to login page
+            // window.location.href = '/login';
+            alert('Redirect to login page');
+        }
+
+        // Close popup when clicking outside
+        document.getElementById('signupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Check if user has used free credit (for production)
+        function checkFreeCreditsUsed() {
+            // Check localStorage or cookie
+            const freeCreditsUsed = localStorage.getItem('freeCreditsUsed');
+            return freeCreditsUsed === 'true';
+        }
+
+        // Set free credits as used (for production)
+        function setFreeCreditsUsed() {
+            localStorage.setItem('freeCreditsUsed', 'true');
+        }
+
+        // Auto-show popup if trying to create without credits (for production)
+        // Uncomment this for production use
+        /*
+        document.addEventListener('DOMContentLoaded', function() {
+            // This would be triggered when user clicks "Create" button
+            if (checkFreeCreditsUsed() && !isUserLoggedIn()) {
+                showPopup();
+            }
+        });
+        */
+    </script>
+</body>
+</html>
