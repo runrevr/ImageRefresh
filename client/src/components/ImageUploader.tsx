@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { RainbowButton } from '@/components/ui/rainbow-button';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
-import { ArrowUpFromLine, Image, FileWarning, Copy, Download } from 'lucide-react';
+import { ArrowUpFromLine, Image, FileWarning, Copy, Download, Camera, Upload } from 'lucide-react';
 import { formatBytes } from '@/lib/utils';
 import { apiRequest } from '@/lib/queryClient';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageUploaderProps {
   onImageUploaded: (imagePath: string, imageUrl: string) => void;
@@ -44,6 +45,9 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     dimensions?: string;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
   const { toast } = useToast();
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -222,6 +226,32 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     }
   };
 
+  // Mobile camera functions
+  const takePhoto = () => {
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
+    }
+  };
+
+  const uploadPhoto = () => {
+    if (uploadInputRef.current) {
+      uploadInputRef.current.click();
+    }
+  };
+
+  // Handle camera and upload inputs
+  const handleCameraChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFileSelection(e.target.files[0]);
+    }
+  };
+
+  const handleUploadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFileSelection(e.target.files[0]);
+    }
+  };
+
   const handleSampleImageSelect = async (sampleImage: typeof SAMPLE_IMAGES[0]) => {
     try {
       setIsUploading(true);
@@ -271,39 +301,91 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
         {!selectedFile ? (
           // Initial upload state
           <div className="space-y-6">
-            <div
-              className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300 min-h-[400px] flex flex-col items-center justify-center ${
-                isDragging
-                  ? "border-blue-500 bg-blue-50 border-solid scale-[1.02]"
-                  : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-gray-100 hover:scale-[1.01]"
-              }`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={handleClickUpload}
-            >
-              <ArrowUpFromLine className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-medium mb-2">Drag & drop your image here</h3>
-              <p className="text-gray-500 mb-6">or click to browse files</p>
-              <Input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                onChange={handleFileInputChange}
-                accept="image/jpeg,image/png,image/webp"
-              />
+            {/* Mobile Interface */}
+            {isMobile ? (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-medium mb-2">Add Your Image</h3>
+                  <p className="text-gray-500">Take a photo or choose from your gallery</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    onClick={takePhoto}
+                    className="h-32 flex flex-col items-center justify-center space-y-2 bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    <Camera className="h-8 w-8" />
+                    <span className="text-sm font-medium">Take Photo</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={uploadPhoto}
+                    className="h-32 flex flex-col items-center justify-center space-y-2 bg-green-500 hover:bg-green-600 text-white"
+                  >
+                    <Upload className="h-8 w-8" />
+                    <span className="text-sm font-medium">Choose Photo</span>
+                  </Button>
+                </div>
 
-              <RainbowButton>
-                  Select Image
-                </RainbowButton>
+                <div className="text-center">
+                  <p className="text-sm text-gray-500">
+                    Accepted formats: JPG, PNG, WebP • Max size: 10MB
+                  </p>
+                </div>
 
-              <p className="text-sm text-gray-500 mt-4">
-                Accepted formats: JPG, PNG, WebP • Max size: 10MB
-              </p>
-              <p className="text-xs text-gray-400 mt-2">
-                💡 Tip: You can also paste images with Ctrl+V
-              </p>
-            </div>
+                {/* Hidden inputs for mobile */}
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  style={{ display: 'none' }}
+                  onChange={handleCameraChange}
+                />
+                <input
+                  ref={uploadInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleUploadChange}
+                />
+              </div>
+            ) : (
+              // Desktop Interface
+              <div
+                className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300 min-h-[400px] flex flex-col items-center justify-center ${
+                  isDragging
+                    ? "border-blue-500 bg-blue-50 border-solid scale-[1.02]"
+                    : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-gray-100 hover:scale-[1.01]"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={handleClickUpload}
+              >
+                <ArrowUpFromLine className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-medium mb-2">Drag & drop your image here</h3>
+                <p className="text-gray-500 mb-6">or click to browse files</p>
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileInputChange}
+                  accept="image/jpeg,image/png,image/webp"
+                />
+
+                <RainbowButton>
+                    Select Image
+                  </RainbowButton>
+
+                <p className="text-sm text-gray-500 mt-4">
+                  Accepted formats: JPG, PNG, WebP • Max size: 10MB
+                </p>
+                <p className="text-xs text-gray-400 mt-2">
+                  💡 Tip: You can also paste images with Ctrl+V
+                </p>
+              </div>
+            )}
           </div>
         ) : (
           // File selected state with preview
