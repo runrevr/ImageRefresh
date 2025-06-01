@@ -60,6 +60,7 @@ export default function FixedProductImageLab({
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showResults, setShowResults] = useState<boolean>(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [availableCredits, setAvailableCredits] = useState<number>(0);
 
   // Admin panel states
   const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
@@ -107,7 +108,6 @@ export default function FixedProductImageLab({
 
   // Initialize product image lab hook
   const {
-    availableCredits,
     isProcessing,
     error,
     uploadedImages,
@@ -135,6 +135,14 @@ export default function FixedProductImageLab({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadFormRef = useRef<HTMLFormElement>(null);
 
+  // Fetch credits using the useCredits hook
+  const credits = useCredits();
+
+  // Update available credits when credits change
+  useEffect(() => {
+    setAvailableCredits(credits.free + credits.paid);
+  }, [credits]);
+
   // Update status when lab is processing or encounters an error
   useEffect(() => {
     if (isProcessing) {
@@ -143,13 +151,6 @@ export default function FixedProductImageLab({
     } else if (error) {
       setStatus(`Error: ${error}`);
       setStatusType('error');
-
-      // Show toast for errors
-      toast({
-        title: "Error",
-        description: error,
-        variant: "destructive"
-      });
     } else {
       setStatus('');
       setStatusType('normal');

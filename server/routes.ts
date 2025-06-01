@@ -836,27 +836,106 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
 
 
 
-  // Get guest credits endpoint
-  app.get('/api/credits/guest', async (req: Request, res: Response) => {
-    try {
-      // For guest users, return default credits
-      const response = {
-        id: null,
-        freeCreditsUsed: false,
-        paidCredits: 0,
-        totalCredits: 1, // Guest users get 1 free credit
-        hasMonthlyFreeCredit: true
-      };
+  // Credit deduction endpoint
+app.post("/api/credits/deduct", async (req, res) => {
+  try {
+    const { userId, amount = 1, type = 'transformation' } = req.body;
 
-      res.json(response);
-    } catch (error) {
-      console.error('Error fetching guest credits:', error);
-      res.status(500).json({ error: 'Failed to fetch guest credits' });
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
     }
-  });
 
-  // Handle credits endpoint that accepts both user ID and 'guest'
-  app.get('/api/credits/:userIdOrGuest', async (req: Request, res: Response) => {
+    let user;
+    if (userId === 'guest') {
+      // Handle guest user credits (stored by fingerprint)
+      const fingerprint = req.query.fingerprint || req.headers['x-fingerprint'];
+      if (!fingerprint) {
+        return res.status(400).json({ error: "Fingerprint required for guest user" });
+      }
+
+      // Assuming 'db' is your database client instance
+      const guestUsers = await storage.getGuestUsers();
+      user = guestUsers.find(guest => guest.fingerprint === fingerprint);
+
+      if (!user) {
+        return res.status(404).json({ error: "Guest user not found" });
+      }
+    } else {
+      user = await storage.getUser(parseInt(userId));
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+    }
+
+    // Check if user has sufficient credits
+    let totalCredits;
+    let freeCredits;
+    let paidCredits;
+
+    // Check if user has monthly free credit available
+    const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(parseInt(userId));
+    if (userId === 'guest') {
+        totalCredits = 1; // Guest user total credits
+        freeCredits = 1;
+        paidCredits = 0;
+    }
+    else {
+        freeCredits = hasMonthlyFreeCredit ? 1 : 0;
+        paidCredits = user.paidCredits;
+        totalCredits = freeCredits + paidCredits;
+    }
+
+    if (totalCredits < amount) {
+      return res.status(400).json({ error: "Insufficient credits" });
+    }
+
+    // Deduct credits (prioritize free credits first)
+    let updatedFreeCredits = freeCredits;
+    let updatedPaidCredits = paidCredits;
+    let remainingToDeduct = amount;
+
+    if (updatedFreeCredits > 0) {
+      const deductFromFree = Math.min(updatedFreeCredits, remainingToDeduct);
+      updatedFreeCredits -= deductFromFree;
+      remainingToDeduct -= deductFromFree;
+    }
+
+    if (remainingToDeduct > 0) {
+      updatedPaidCredits -= remainingToDeduct;
+    }
+
+    // Update user in database
+      if (userId !== 'guest') {
+          await storage.updateUserCredits(
+              parseInt(userId),
+              updatedFreeCredits === 0,
+              updatedPaidCredits,
+          );
+      }
+
+
+    // Record the transaction
+    // Note: No direct transaction recording available in the provided storage interface
+
+    res.json({
+      success: true,
+      credits: {
+        free: updatedFreeCredits,
+        paid: updatedPaidCredits,
+        total: updatedFreeCredits + updatedPaidCredits
+      },
+      deducted: amount
+    });
+
+  } catch (error) {
+    console.error("Credit deduction error:", error);
+    res.status(500).json({ error: "Failed to deduct credits" });
+  }
+});
+
+  // Enhanced credits endpoint with guest support
+  app.get("/api/credits/:userIdOrGuest", async (req, res) => {
     try {
       const userIdOrGuest = req.params.userIdOrGuest;
 
