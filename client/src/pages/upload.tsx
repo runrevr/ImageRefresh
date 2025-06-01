@@ -55,7 +55,7 @@ export default function UploadPage() {
   const { toast } = useToast();
   const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
   const [isOpenAIConfigured, setIsOpenAIConfigured] = useState<boolean>(true);
-  const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
+  const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>('animation');
   const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
@@ -1077,30 +1077,40 @@ export default function UploadPage() {
 
             {currentStep === Step.Prompt && (
               <div className="max-w-5xl mx-auto">
-                {/* Two-Tab Header */}
+                {/* Enhanced Two-Tab Header */}
                 <div className="flex justify-center mb-8">
-                  <div className="flex bg-gray-100 rounded-full p-1 max-w-md mx-auto">
+                  <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
                     <button
-                      className={`flex-1 px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+                      className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
                         selectedTransformation !== 'custom' 
-                          ? 'bg-white text-blue-600 shadow-sm' 
-                          : 'text-gray-600 hover:text-gray-900'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       }`}
                       onClick={() => setSelectedTransformation('animation')}
                     >
-                      <span className="text-lg">🖼️</span>
-                      Transform Image
+                      <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
+                        🖼️
+                      </div>
+                      <div className="text-sm font-semibold">Transform Image</div>
+                      <div className="text-xs opacity-80 text-center leading-tight">
+                        Upload a photo and choose from preset styles
+                      </div>
                     </button>
                     <button
-                      className={`flex-1 px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+                      className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
                         selectedTransformation === 'custom' 
-                          ? 'bg-white text-blue-600 shadow-sm' 
-                          : 'text-gray-600 hover:text-gray-900'
+                          ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg transform scale-105' 
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       }`}
                       onClick={() => setSelectedTransformation('custom')}
                     >
-                      <span className="text-lg">✨</span>
-                      Custom Prompt
+                      <div className={`text-2xl mb-1 ${selectedTransformation === 'custom' ? 'animate-pulse' : ''}`}>
+                        ✨
+                      </div>
+                      <div className="text-sm font-semibold">Custom Prompt</div>
+                      <div className="text-xs opacity-80 text-center leading-tight">
+                        Describe your own unique transformation
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -1140,11 +1150,19 @@ export default function UploadPage() {
                     {selectedTransformation === 'custom' ? (
                       // Custom Prompt Tab Content
                       <div className="space-y-6">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-2">Custom Prompt</h3>
-                          <p className="text-gray-600 mb-4">
-                            Describe exactly how you want to transform your image. Be specific about style, mood, and details.
+                        <div className="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-xl border border-orange-200">
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="text-2xl">✨</span>
+                            <h3 className="text-xl font-semibold text-gray-900">Create From Your Imagination</h3>
+                          </div>
+                          <p className="text-gray-700 mb-4">
+                            Describe what you want to create and let AI bring it to life. Be as creative and detailed as you like!
                           </p>
+                          <div className="bg-white p-4 rounded-lg border border-orange-100">
+                            <p className="text-sm text-gray-600 italic">
+                              Example: "A majestic dragon flying over a crystal city at sunset, photorealistic style, 8k quality..."
+                            </p>
+                          </div>
                         </div>
                         
                         <PromptInput
@@ -1157,13 +1175,34 @@ export default function UploadPage() {
                         />
                       </div>
                     ) : (
-                      // Transform Image Tab Content
+                      // Transform Image Tab Content  
                       <div className="space-y-6">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-2">Choose a Style</h3>
-                          <p className="text-gray-600 mb-4">
-                            Select from our curated collection of popular transformation styles.
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="text-2xl">🖼️</span>
+                            <h3 className="text-xl font-semibold text-gray-900">Transform Your Photo</h3>
+                          </div>
+                          <p className="text-gray-700 mb-4">
+                            Upload your image and choose from our professionally crafted transformation styles. Perfect for quick, stunning results!
                           </p>
+                          <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                              Cartoon & Animation
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                              Artistic Paintings
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                              Historical Eras
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                              Fun & Viral Styles
+                            </div>
+                          </div>
                         </div>
                         
                         <PromptInput
