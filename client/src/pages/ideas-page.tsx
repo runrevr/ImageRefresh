@@ -156,7 +156,7 @@ const CategoryCard = ({
 
             {/* Explore Styles button with animated arrow */}
             <Button
-              className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1 group"
+              className="bg-tertiary hover:bg-tertiary/90 text-white mt-1 group"
               onClick={(e) => {
                 e.stopPropagation(); // Prevent double navigation
                 onClick(category.id);
@@ -281,7 +281,7 @@ const StyleCard = ({
       <CardFooter className="flex justify-center p-3">
         <Link href="/upload" className="w-full" onClick={(e) => e.stopPropagation()}>
           <Button
-            className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white w-full group"
+            className="bg-tertiary hover:bg-tertiary/90 text-white w-full group"
             onClick={(e) => {
               e.stopPropagation(); // Prevent double navigation/action
               // Save style to local storage before navigation
@@ -608,7 +608,7 @@ export default function IdeasPage() {
 
                     {/* Explore Styles button with animated arrow */}
                     <Button
-                      className="bg-[#FF7B54] hover:bg-[#ff6a3c] text-white mt-1 group"
+                      className="bg-tertiary hover:bg-tertiary/90 text-white mt-1 group"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent double navigation
                         setSelectedCategory("other");
