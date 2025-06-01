@@ -618,11 +618,14 @@ export default function GenerateEnhancementsPage() {
     <>
       <style>{`
         :root {
-          --primary: #0D7877;
-          --secondary: #3DA5D9;
-          --accent: #C1F50A;
-          --neutral: #333333;
-          --light: #F2F4F6;
+          --primary: #06B6D4;
+          --secondary: #84CC16;
+          --tertiary: #F97316;
+          --accent: #8B5CF6;
+          --accent-alt: #EC4899;
+          --neutral: #1F2937;
+          --light: #FFFFFF;
+          --gray: #6B7280;
         }
 
         .brand-bg-primary { background-color: var(--primary); }
@@ -642,7 +645,7 @@ export default function GenerateEnhancementsPage() {
           color: white;
         }
         .brand-button-primary:hover {
-          background-color: #0a5d5f;
+          background-color: #0891b2;
         }
 
         .brand-button-secondary {
@@ -670,7 +673,7 @@ export default function GenerateEnhancementsPage() {
         }
 
         .processing-gradient {
-          background: linear-gradient(90deg, #3DA5D9 0%, #0D7877 50%, #3DA5D9 100%);
+          background: linear-gradient(90deg, #06B6D4 0%, #8B5CF6 50%, #06B6D4 100%);
           background-size: 200% 100%;
           animation: shimmer 2s infinite;
         }
@@ -762,7 +765,7 @@ export default function GenerateEnhancementsPage() {
                 style={{
                   left: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 3}s`,
-                  backgroundColor: i % 3 === 0 ? '#C1F50A' : i % 3 === 1 ? '#3DA5D9' : '#0D7877'
+                  backgroundColor: i % 3 === 0 ? '#8B5CF6' : i % 3 === 1 ? '#06B6D4' : '#EC4899'
                 }}
               />
             ))}
@@ -775,30 +778,30 @@ export default function GenerateEnhancementsPage() {
             <div className="flex items-center justify-between max-w-4xl mx-auto">
               {/* Step 1: Upload */}
               <div className="flex items-center">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#06B6D4] text-white text-sm font-semibold">
                   <Check className="w-4 h-4" />
                 </div>
                 <span className="ml-2 text-sm font-medium text-gray-700 brand-font-body">Upload</span>
               </div>
 
-              <div className="flex-1 mx-4 h-1 bg-[#0D7877] rounded"></div>
+              <div className="flex-1 mx-4 h-1 bg-[#06B6D4] rounded"></div>
 
               {/* Step 2: Ideas Selection */}
               <div className="flex items-center">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#06B6D4] text-white text-sm font-semibold">
                   <Check className="w-4 h-4" />
                 </div>
                 <span className="ml-2 text-sm font-medium text-gray-700 brand-font-body">Ideas Selection</span>
               </div>
 
-              <div className="flex-1 mx-4 h-1 bg-[#0D7877] rounded"></div>
+              <div className="flex-1 mx-4 h-1 bg-[#06B6D4] rounded"></div>
 
               {/* Step 3: Generate & Download - ACTIVE */}
               <div className="flex items-center">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-[#0D7877] text-white text-sm font-semibold ${!isProcessing && showCelebration ? 'celebration-pulse' : ''}`}>
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-[#06B6D4] text-white text-sm font-semibold ${!isProcessing && showCelebration ? 'celebration-pulse' : ''}`}>
                   {isProcessing ? '3' : <Check className="w-4 h-4" />}
                 </div>
-                <span className="ml-2 text-sm font-medium text-[#0D7877] brand-font-body">
+                <span className="ml-2 text-sm font-medium text-[#06B6D4] brand-font-body">
                   {isProcessing ? 'Generate' : 'Complete!'}
                 </span>
               </div>
@@ -828,7 +831,7 @@ export default function GenerateEnhancementsPage() {
               <>
                 <div className={`mb-6 ${showCelebration ? 'celebration-pulse' : ''}`}>
                   <div className="w-[120px] h-[120px] mx-auto mb-4 flex items-center justify-center bg-green-100 rounded-full">
-                    <Sparkles className="w-12 h-12 text-[#C1F50A]" />
+                    <Sparkles className="w-12 h-12 text-[#8B5CF6]" />
                   </div>
                   <h1 className="text-4xl font-bold mb-4 brand-text-neutral brand-font-heading">
                     ✨ All Enhancements Complete!
@@ -838,7 +841,7 @@ export default function GenerateEnhancementsPage() {
                   </p>
                   <div className="flex items-center justify-center gap-2 mt-4">
                     <Check className="w-5 h-5 text-green-500" />
-                    <span className="font-semibold text-[#0D7877] brand-font-body">
+                    <span className="font-semibold text-[#06B6D4] brand-font-body">
                       {successfulJobs.length} of {jobs.length} enhancements generated successfully
                       {failedCount > 0 && ` (${failedCount} failed)`}
                     </span>
@@ -869,20 +872,20 @@ export default function GenerateEnhancementsPage() {
                       cx="50"
                       cy="50"
                       r="45"
-                      stroke="#0D7877"
+                      stroke="#06B6D4"
                       strokeWidth="6"
                       fill="none"
                       strokeLinecap="round"
                       strokeDasharray={`${(completedCount / jobs.length) * 100 * 2.83} 283`}
                       className="transition-all duration-500 ease-out"
                       style={{
-                        filter: 'drop-shadow(0 0 6px rgba(13, 120, 119, 0.3))'
+                        filter: 'drop-shadow(0 0 6px rgba(6, 182, 212, 0.3))'
                       }}
                     />
                   </svg>
                   {/* Percentage in center */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-3xl font-bold text-[#0D7877] brand-font-heading">
+                    <span className="text-3xl font-bold text-[#06B6D4] brand-font-heading">
                       {Math.round((completedCount / jobs.length) * 100)}%
                     </span>
                   </div>
@@ -1109,7 +1112,7 @@ export default function GenerateEnhancementsPage() {
           <div className="container mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[#0D7877]" />
+                <Sparkles className="w-5 h-5 text-[#06B6D4]" />
                 <span className="font-medium brand-text-neutral brand-font-body">
                   {isProcessing 
                     ? `Generation in progress... ${completedCount}/${jobs.length} complete`
