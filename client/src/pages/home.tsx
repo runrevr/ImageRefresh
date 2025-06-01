@@ -36,7 +36,6 @@ import { ComparisonSlider } from "../components/ComparisonSlider";
 import { Layout } from "../components/Layout";
 import { useFreeCredits } from "@/hooks/useFreeCredits";
 import { EmailCaptureModal } from "@/components/EmailCaptureModal";
-import { AccountNeededDialog } from "@/components/AccountNeededDialog";
 import { UpgradePrompt } from "@/components/UpgradePrompt";
 import { SignUpModal } from "@/components/SignUpModal";
 
