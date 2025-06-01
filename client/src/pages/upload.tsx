@@ -18,6 +18,7 @@ import {
   hasSavedStyle,
   type SavedStyle
 } from "@/components/StyleIntegration";
+import SignupRequiredModal from "@/components/SignupRequiredModal";
 
 // Enum for the different steps in the process
 enum Step {
@@ -57,6 +58,7 @@ export default function UploadPage() {
   const [selectedTransformation, setSelectedTransformation] = useState<TransformationType | null>(null);
   const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
+  const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
 
   // Update local user state when auth user changes
   useEffect(() => {
@@ -167,6 +169,32 @@ export default function UploadPage() {
     }
   };
 
+  // Check if user has credits available
+  const checkCreditsAndAuth = () => {
+    // Check if user is authenticated
+    if (!authUser) {
+      // Check if they've used their free credit as a guest
+      const guestCreditUsed = localStorage.getItem('guestFreeCreditsUsed') === 'true';
+      if (guestCreditUsed) {
+        setShowSignupModal(true);
+        return false;
+      }
+      // Mark guest credit as used
+      localStorage.setItem('guestFreeCreditsUsed', 'true');
+    } else {
+      // For authenticated users, check their credit status
+      if (userCredits && userCredits.freeCreditsUsed && userCredits.paidCredits <= 0) {
+        toast({
+          title: "No Credits Available",
+          description: "You need to purchase credits to continue creating transformations.",
+          variant: "destructive",
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
   // When prompt is submitted, transform the image
   const handlePromptSubmit = async (
     promptText: string,
@@ -187,6 +215,11 @@ export default function UploadPage() {
         description: "Please provide a prompt for the transformation.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Check credits and authentication before proceeding
+    if (!checkCreditsAndAuth()) {
       return;
     }
 
@@ -1126,6 +1159,12 @@ export default function UploadPage() {
       </main>
 
       <Footer />
+
+      {/* Signup Required Modal */}
+      <SignupRequiredModal 
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+      />
     </div>
   );
 }
