@@ -12,8 +12,6 @@ interface SignupRequiredModalProps {
 export default function SignupRequiredModal({ isOpen, onClose }: SignupRequiredModalProps) {
   const [_, navigate] = useLocation();
 
-  if (!isOpen) return null;
-
   const handleEmailSignup = () => {
     navigate('/auth');
   };
@@ -46,6 +44,8 @@ export default function SignupRequiredModal({ isOpen, onClose }: SignupRequiredM
       document.body.style.overflow = 'auto';
     };
   }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   return (
     <div 
