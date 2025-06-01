@@ -23,11 +23,16 @@ import {
   Mail,
   Upload,
   Archive,
-  X
+  X,
+  CheckCircle2,
+  Eye,
+  RotateCcw
 } from 'lucide-react'
 import { EmailCaptureModal } from '@/components/EmailCaptureModal'
 import { UpgradePrompt } from '@/components/UpgradePrompt'
 import { useFreeCredits } from '@/hooks/useFreeCredits'
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EnhancementJob {
   id: string
@@ -49,6 +54,8 @@ interface EnhancementJob {
 }
 
 export default function GenerateEnhancementsPage() {
+  const { toast } = useToast();
+  const { user } = useAuth();
   const [, setLocation] = useLocation()
   const [jobs, setJobs] = useState<EnhancementJob[]>([])
   const [overallProgress, setOverallProgress] = useState(0)
@@ -289,9 +296,9 @@ export default function GenerateEnhancementsPage() {
 
     const updatedJobs = [...jobs]
     const job = updatedJobs[jobIndex];
-    
+
     console.log(`🔄 Retrying job: ${job.enhancementTitle} (attempt ${job.retryCount + 1}/3)`);
-    
+
     // Update retry count and reset status
     updatedJobs[jobIndex] = {
       ...updatedJobs[jobIndex],
@@ -305,7 +312,7 @@ export default function GenerateEnhancementsPage() {
 
     try {
       console.log(`[Retry] Step 1: Generating prompt for "${job.enhancementTitle}"`);
-      
+
       // Step 1: Generate edit prompt with Claude (same as main workflow)
       const promptResponse = await fetch('/api/generate-edit-prompt', {
         method: 'POST',
@@ -336,7 +343,7 @@ export default function GenerateEnhancementsPage() {
       setJobs([...updatedJobs]);
 
       console.log(`[Retry] Step 2: Generating image with GPT-image-01`);
-      
+
       // Step 2: Generate image (same as main workflow)
       const imageResponse = await fetch('/api/generate-enhancement', {
         method: 'POST',
@@ -370,7 +377,7 @@ export default function GenerateEnhancementsPage() {
 
     } catch (error) {
       console.error(`[Retry] Error for "${job.enhancementTitle}":`, error);
-      
+
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'failed',
@@ -452,9 +459,9 @@ export default function GenerateEnhancementsPage() {
 
     const updatedJobs = [...jobs]
     const job = updatedJobs[jobIndex];
-    
+
     console.log(`🔄 Starting regeneration for: ${job.enhancementTitle}`);
-    
+
     // Reset job status for regeneration
     updatedJobs[jobIndex] = {
       ...updatedJobs[jobIndex],
@@ -468,7 +475,7 @@ export default function GenerateEnhancementsPage() {
 
     try {
       console.log(`[Regenerate] Step 1: Generating new prompt for "${job.enhancementTitle}"`);
-      
+
       // Step 1: Generate fresh edit prompt with Claude (same as main workflow)
       const promptResponse = await fetch('/api/generate-edit-prompt', {
         method: 'POST',
@@ -499,7 +506,7 @@ export default function GenerateEnhancementsPage() {
       setJobs([...updatedJobs]);
 
       console.log(`[Regenerate] Step 2: Generating new image with GPT-image-01`);
-      
+
       // Step 2: Generate new image with fresh prompt (same as main workflow)
       const imageResponse = await fetch('/api/generate-enhancement', {
         method: 'POST',
@@ -531,7 +538,7 @@ export default function GenerateEnhancementsPage() {
 
     } catch (error) {
       console.error(`[Regenerate] Error for "${job.enhancementTitle}":`, error);
-      
+
       updatedJobs[jobIndex] = {
         ...updatedJobs[jobIndex],
         status: 'failed',
@@ -894,7 +901,7 @@ export default function GenerateEnhancementsPage() {
                     <h3 className="text-xl font-semibold brand-text-neutral brand-font-heading">
                       {job.enhancementTitle}
                     </h3>
-                    
+
                     {/* Status */}
                     <div className="flex items-center gap-2">
                       {job.status === 'complete' && job.resultImageUrl && (
@@ -1121,6 +1128,37 @@ export default function GenerateEnhancementsPage() {
 
                 {!isProcessing && successfulJobs.length > 0 && (
                   <>
+                  {/* Guest user signup prompt */}
+                  {(!user || user === 'guest') && (
+                    <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                          🎉 Your enhancement is ready!
+                        </h3>
+                        <p className="text-gray-700 mb-4">
+                          Create a free account to save your results, get additional credits, and access your transformation history.
+                        </p>
+                        <div className="flex gap-3 justify-center">
+                          <Button 
+                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 font-semibold"
+                            onClick={() => window.location.href = '/auth'}
+                          >
+                            Sign Up Free
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={() => window.location.href = '/auth'}
+                          >
+                            Log In
+                          </Button>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-2">
+                          Free account includes 1 monthly credit + access to all features
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                     <Button
                       onClick={downloadAll}
                       className="brand-button-primary brand-font-body font-medium"
