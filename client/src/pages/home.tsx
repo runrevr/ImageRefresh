@@ -34,7 +34,6 @@ import {
 } from "@/components/StyleIntegration";
 import { ComparisonSlider } from "../components/ComparisonSlider";
 import { Layout } from "../components/Layout";
-import { TransformationExamples } from "../components/TransformationExamples";
 import { useFreeCredits } from "@/hooks/useFreeCredits";
 import { EmailCaptureModal } from "@/components/EmailCaptureModal";
 import { AccountNeededDialog } from "@/components/AccountNeededDialog";
