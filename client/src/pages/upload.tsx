@@ -121,8 +121,7 @@ export default function UploadPage() {
     category: string;
   } | null>(null);
 
-  // Flag to trigger auto-submission after uploading image with a selected style
-  const [autoSubmitStyle, setAutoSubmitStyle] = useState<boolean>(false);
+  // Auto-submit functionality removed - styles are now just pre-filled
 
   // When a user uploads an image, check if they previously selected a style from the Ideas page
   const handleUpload = (imagePath: string, imageUrl: string) => {
@@ -158,9 +157,6 @@ export default function UploadPage() {
 
         // Move to the prompt step with the saved style
         setCurrentStep(Step.Prompt);
-
-        // Flag that we should auto-submit after loading
-        setAutoSubmitStyle(true);
 
         // Clear the saved style so it's not used again
         clearSavedStyle();
@@ -770,18 +766,7 @@ export default function UploadPage() {
     }
   };
 
-  // Auto-submit when a style is pre-selected
-  useEffect(() => {
-    if (autoSubmitStyle && savedStyle && currentStep === Step.Prompt) {
-      // Reset the flag
-      setAutoSubmitStyle(false);
-
-      // Auto-submit with the saved style prompt
-      setTimeout(() => {
-        handlePromptSubmit(savedStyle.prompt);
-      }, 300);
-    }
-  }, [autoSubmitStyle, savedStyle, currentStep]);
+  // Auto-submit functionality removed - just pre-fill the form and let user click Transform
 
   // Reset scroll position when page loads
   useEffect(() => {
