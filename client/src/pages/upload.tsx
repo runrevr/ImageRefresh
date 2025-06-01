@@ -926,187 +926,281 @@ export default function UploadPage() {
                   </div>
                 </div>
 
-                <ImageUploader onImageUploaded={handleUpload} />
+                {/* Custom Prompt UI */}
+                {selectedTransformation === 'custom' && (
+                  <div className="max-w-4xl mx-auto">
+                    <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 border border-orange-200">
+                      <div className="text-center mb-8">
+                        <div className="text-4xl mb-4">✨</div>
+                        <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                          Create From Your Imagination
+                        </h2>
+                        <p className="text-lg text-gray-600">
+                          Describe what you want to create and let AI bring it to life
+                        </p>
+                      </div>
 
-                {/* Interactive Inspiration Section */}
-                <div className="mt-16">
-                  <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">See What's Possible</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
-                    {/* 1980's Style */}
-                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
-                      <div className="relative h-48 md:h-56 overflow-hidden">
-                        <img 
-                          src="/src/assets/woman-real.png" 
-                          alt="Original couple photo" 
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                      <div className="mb-8">
+                        <textarea
+                          className="w-full h-32 p-4 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"                  placeholder="Example: A majestic dragon flying over a crystal city at sunset, photorealistic style, 8k quality..."
+                          value=""
+                          onChange={() => {}}
                         />
-                        <img 
-                          src="/src/assets/80s.png" 
-                          alt="1980s style transformation" 
-                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                        />
-                        {/* Transformation Type Label */}
-                        <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          1980's Style
-                        </div>
-                        {/* Try This Style Button */}
-                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
-                          <button 
-                            className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
-                            onClick={() => {
-                              localStorage.setItem('selectedStyle', JSON.stringify({
-                                prompt: "Transform this into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the subject's identity",
-                                title: "80's Style",
-                                category: "pop-culture"
-                              }));
-                              handleNewImage();
-                            }}
-                          >
-                            Try this style
-                          </button>
+                      </div>
+
+                      <div className="mb-8">
+                        <h3 className="text-xl font-semibold mb-4 text-gray-900">Try these ideas:</h3>
+                        <div className="flex flex-wrap gap-3">
+                          {[
+                            { emoji: "🐱", text: "Cyberpunk Cat" },
+                            { emoji: "🧚", text: "Fantasy Scene" },
+                            { emoji: "🚀", text: "Space Adventure" },
+                            { emoji: "☕", text: "Steampunk Cafe" }
+                          ].map((idea, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
+                              onClick={() => {}}
+                            >
+                              <span>{idea.emoji}</span>
+                              <span className="text-sm font-medium">{idea.text}</span>
+                            </button>
+                          ))}
                         </div>
                       </div>
-                    </div>
 
-                    {/* Product Enhancement */}
-                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
-                      <div className="relative h-48 md:h-56 overflow-hidden">
-                        <img 
-                          src="/src/assets/shampoo-original.jpg" 
-                          alt="Original product photo" 
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-                        />
-                        <img 
-                          src="/src/assets/sunset-shampoo.jpg" 
-                          alt="Enhanced product photo" 
-                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                        />
-                        <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          Product Enhancement
-                        </div>
-                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
-                          <button 
-                            className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
-                            onClick={() => {
-                              localStorage.setItem('selectedStyle', JSON.stringify({
-                                prompt: "Transform this product photo into a professional commercial shot with dramatic lighting, elegant background, and premium aesthetic",
-                                title: "Product Enhancement",
-                                category: "product"
-                              }));
-                              handleNewImage();
-                            }}
-                          >
-                            Try this style
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Artistic Style */}
-                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
-                      <div className="relative h-48 md:h-56 overflow-hidden">
-                        <img 
-                          src="/src/assets/giraffe-real.png" 
-                          alt="Original giraffe photo" 
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-                        />
-                        <img 
-                          src="/src/assets/giraffe-drawing.png" 
-                          alt="Artistic giraffe drawing" 
-                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                        />
-                        <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          Artistic Drawing
-                        </div>
-                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
-                          <button 
-                            className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
-                            onClick={() => {
-                              localStorage.setItem('selectedStyle', JSON.stringify({
-                                prompt: "Transform this into an artistic pencil drawing with detailed shading, fine line work, and classical sketch aesthetics",
-                                title: "Artistic Drawing",
-                                category: "artistic"
-                              }));
-                              handleNewImage();
-                            }}
-                          >
-                            Try this style
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Fantasy Style */}
-                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
-                      <div className="relative h-48 md:h-56 overflow-hidden">
-                        <img 
-                          src="/src/assets/dog-and-cat-real.png" 
-                          alt="Original pets photo" 
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-                        />
-                        <img 
-                          src="/src/assets/dog-and-cat-drawing.png" 
-                          alt="Fantasy pets artwork" 
-                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                        />
-                        <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          Fantasy Art
-                        </div>
-                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
-                          <button 
-                            className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
-                            onClick={() => {
-                              localStorage.setItem('selectedStyle', JSON.stringify({
-                                prompt: "Transform this into a magical fantasy artwork with mystical elements, enchanted atmosphere, and fairytale aesthetics",
-                                title: "Fantasy Art",
-                                category: "fantasy"
-                              }));
-                              handleNewImage();
-                            }}
-                          >
-                            Try this style
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 1980s Style */}
-                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
-                      <div className="relative h-48 md:h-56 overflow-hidden">
-                        <img
-                          src="/src/assets/woman-real.png"
-                          alt="Original woman photo"
-                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-                        />
-                        <img
-                          src="/src/assets/woman-after.png"
-                          alt="80s style woman transformation"
-                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                        />
-                        <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          1980s Style
-                        </div>
-                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
-                          <button
-                            className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
-                            onClick={() => {
-                              localStorage.setItem('selectedStyle', JSON.stringify({
-                                prompt: "Transform this into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the subject's identity",
-                                title: "80's Style",
-                                category: "era"
-                              }));
-                              handleNewImage();
-                            }}
-                          >
-                            Try this style
-                          </button>
-                        </div>
+                      <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-4 rounded-lg">
+                        <span className="text-lg">💡</span>
+                        <p className="text-sm">
+                          Tip: You can also upload an image to use as reference for your custom prompt
+                        </p>
                       </div>
                     </div>
                   </div>
+                )}
 
-                  <div className="text-center mt-8">
-                    <p className="text-gray-600 text-sm">
-                      Hover over each example to see the transformation • Click "Try this style" to apply it to your photo
-                    </p>
-                  </div>
+                {selectedTransformation !== 'custom' && (
+                  <>
+                    <ImageUploader onImageUploaded={handleUpload} />
+
+                    {/* Interactive Inspiration Section */}
+                    <div className="mt-16">
+                      <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">See What's Possible</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+                        {/* 1980's Style */}
+                        <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
+                          <div className="relative h-48 md:h-56 overflow-hidden">
+                            <img 
+                              src="/src/assets/woman-real.png" 
+                              alt="Original couple photo" 
+                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            />
+                            <img 
+                              src="/src/assets/80s.png" 
+                              alt="1980s style transformation" 
+                              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            />
+                            {/* Transformation Type Label */}
+                            <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              1980's Style
+                            </div>
+                            {/* Try This Style Button */}
+                            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                              <button 
+                                className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+                                onClick={() => {
+                                  localStorage.setItem('selectedStyle', JSON.stringify({
+                                    prompt: "Transform this into a vibrant 1980s style with big hair, neon colors, and synth-wave aesthetics. Add 80s fashion elements, makeup, and styling while maintaining the subject's identity",
+                                    title: "80's Style",
+                                    category: "pop-culture"
+                                  }));
+                                  handleNewImage();
+                                }}
+                              >
+                                Try this style
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Product Enhancement */}
+                        <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
+                          <div className="relative h-48 md:h-56 overflow-hidden">
+                            <img 
+                              src="/src/assets/shampoo-original.jpg" 
+                              alt="Original product photo" 
+                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            />
+                            <img 
+                              src="/src/assets/sunset-shampoo.jpg" 
+                              alt="Enhanced product photo" 
+                              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            />
+                            <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              Product Enhancement
+                            </div>
+                            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                              <button 
+                                className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+                                onClick={() => {
+                                  localStorage.setItem('selectedStyle', JSON.stringify({
+                                    prompt: "Transform this product photo into a professional commercial shot with dramatic lighting, elegant background, and premium aesthetic",
+                                    title: "Product Enhancement",
+                                    category: "product"
+                                  }));
+                                  handleNewImage();
+                                }}
+                              >
+                                Try this style
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Artistic Style */}
+                        <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
+                          <div className="relative h-48 md:h-56 overflow-hidden">
+                            <img 
+                              src="/src/assets/giraffe-real.png" 
+                              alt="Original giraffe photo" 
+                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            />
+                            <img 
+                              src="/src/assets/giraffe-drawing.png" 
+                              alt="Artistic giraffe drawing" 
+                              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            />
+                            <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              Artistic Drawing
+                            </div>
+                            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                              <button 
+                                className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+                                onClick={() => {
+                                  localStorage.setItem('selectedStyle', JSON.stringify({
+                                    prompt: "Transform this into an artistic pencil drawing with detailed shading, fine line work, and classical sketch aesthetics",
+                                    title: "Artistic Drawing",
+                                    category: "artistic"
+                                  }));
+                                  handleNewImage();
+                                }}
+                              >
+                                Try this style
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Fantasy Style */}
+                        <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer">
+                          <div className="relative h-48 md:h-56 overflow-hidden">
+                            <img 
+                              src="/src/assets/dog-and-cat-real.png" 
+                              alt="Original pets photo" 
+                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                            />
+                            <img 
+                              src="/src/assets/dog-and-cat-drawing.png" 
+                              alt="Fantasy pets artwork" 
+                              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                            />
+                            <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              Fantasy Art
+                            </div>
+                            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 translate-y-8 group-hover:translate-y-0 transition-transform duration-300">
+                              <button 
+                                className="bg-[#2A7B9B] hover:bg-[#2A7B9B]/90 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+                                onClick={() => {
+                                  localStorage.setItem('selectedStyle', JSON.stringify({
+                                    prompt: "Transform this into a magical fantasy artwork with mystical elements, enchanted atmosphere, and fairytale aesthetics",
+                                    title: "Fantasy Art",
+                                    category: "fantasy"
+                                  }));
+                                  handleNewImage();
+                                }}
+                              >
+                                Try this style
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center mt-8">
+                        <p className="text-gray-600 text-sm">
+                          Hover over each example to see the transformation • Click "Try this style" to apply it to your photo
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+                  
+                </div>
+              )}
+
+            {currentStep === Step.Prompt && (
+              <PromptInput
+                originalImage={originalImage}
+                selectedTransformation={selectedTransformation}
+                savedStyle={savedStyle}
+                onPromptSubmit={handlePromptSubmit}
+                onNewImage={handleNewImage}
+              />
+            )}
+
+            {currentStep === Step.Processing && (
+              <ProcessingState originalImage={originalImage} prompt={prompt} />
+            )}
+
+            {currentStep === Step.Result && (
+              <ResultView
+                originalImage={originalImage}
+                transformedImage={transformedImage}
+                secondTransformedImage={secondTransformedImage}
+                prompt={prompt}
+                onTryAgain={handleTryAgain}
+                onNewImage={handleNewImage}
+                onStartEdit={handleStartEdit}
+              />
+            )}
+
+            {currentStep === Step.Edit && (
+              <EditPrompt
+                originalImage={originalImage}
+                transformedImage={transformedImage}
+                prompt={prompt}
+                onEditSubmit={handleEditSubmit}
+                onNewImage={handleNewImage}
+              />
+            )}
+          </div>
+
+          {/* Bottom Navigation & Credits */}
+          <div className="text-center mt-8">
+            <p className="text-gray-500 text-sm">
+              Powered by AI - Create stunning visuals in seconds
+            </p>
+            {/* Conditionally render the link based on authentication status */}
+            {authUser ? (
+              <a href="/account" className="text-blue-500 hover:underline text-sm">
+                Manage Account & Credits
+              </a>
+            ) : (
+              <Button variant="link" onClick={() => setShowSignupModal(true)}>
+                Signup to Save
+              </Button>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      {/* Signup Required Modal */}
+      <SignupRequiredModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+      />
+    </div>
+  );
+}
