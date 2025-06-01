@@ -981,104 +981,6 @@ export default function UploadPage() {
 
                 {selectedTransformation !== 'custom' && (
                   <>
-                    {/* Category Selection Section */}
-                    <div className="mb-12">
-                      <h3 className="text-xl font-semibold text-center mb-6 text-gray-900">Choose Your Style Category</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                        {/* Fun/Viral Category */}
-                        <button
-                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                            selectedTransformation === 'other' 
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                          }`}
-                          onClick={() => setSelectedTransformation('other')}
-                        >
-                          <div className="text-3xl mb-2">✨</div>
-                          <div className="text-sm font-semibold text-gray-900">Fun/Viral</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            Creative transformations for social sharing
-                          </div>
-                        </button>
-
-                        {/* Pop Culture Category */}
-                        <button
-                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                            selectedTransformation === 'era' 
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                          }`}
-                          onClick={() => setSelectedTransformation('era')}
-                        >
-                          <div className="text-3xl mb-2">🕰️</div>
-                          <div className="text-sm font-semibold text-gray-900">Pop Culture</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            Through the decades and eras
-                          </div>
-                        </button>
-
-                        {/* Animation Category */}
-                        <button
-                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                            selectedTransformation === 'animation' 
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                          }`}
-                          onClick={() => setSelectedTransformation('animation')}
-                        >
-                          <div className="text-3xl mb-2">🎬</div>
-                          <div className="text-sm font-semibold text-gray-900">Animation</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            Cartoon and animated styles
-                          </div>
-                        </button>
-
-                        {/* Artistic Category */}
-                        <button
-                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                            selectedTransformation === 'artistic' 
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                          }`}
-                          onClick={() => setSelectedTransformation('artistic')}
-                        >
-                          <div className="text-3xl mb-2">🎨</div>
-                          <div className="text-sm font-semibold text-gray-900">Artistic</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            Paintings and artistic styles
-                          </div>
-                        </button>
-
-                        {/* Kids Real Category */}
-                        <button
-                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                            selectedTransformation === 'kids-real' 
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                          }`}
-                          onClick={() => setSelectedTransformation('kids-real')}
-                        >
-                          <div className="text-3xl mb-2">👶</div>
-                          <div className="text-sm font-semibold text-gray-900">Kids Drawing</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            Turn into kids drawing style
-                          </div>
-                        </button>
-
-                        {/* Browse All Styles */}
-                        <button
-                          className="flex flex-col items-center p-6 rounded-xl border-2 border-dashed border-gray-300 hover:border-[#84CC16] hover:bg-[#84CC16]/5 transition-all duration-300"
-                          onClick={() => window.location.href = '/ideas'}
-                        >
-                          <div className="text-3xl mb-2">👀</div>
-                          <div className="text-sm font-semibold text-gray-900">Browse All</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            See all available styles
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-
                     <ImageUploader onImageUploaded={handleUpload} />
 
                     {/* Interactive Inspiration Section */}
@@ -1237,13 +1139,140 @@ export default function UploadPage() {
               )}
 
             {currentStep === Step.Prompt && (
-              <PromptInput
-                originalImage={originalImage}
-                selectedTransformation={selectedTransformation}
-                savedStyle={savedStyle}
-                onPromptSubmit={handlePromptSubmit}
-                onNewImage={handleNewImage}
-              />
+              <div className="max-w-3xl mx-auto">
+                {/* Uploaded Image Display */}
+                {originalImage && (
+                  <div className="mb-8">
+                    <div className="text-center mb-4">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Your Uploaded Image</h3>
+                      <p className="text-gray-600">Great! Now choose a style category to transform your image.</p>
+                    </div>
+                    
+                    <div className="relative max-w-md mx-auto mb-4">
+                      <img 
+                        src={originalImage} 
+                        alt="Uploaded image" 
+                        className="w-full h-auto rounded-lg shadow-lg border border-gray-200"
+                      />
+                    </div>
+                    
+                    <div className="text-center">
+                      <button 
+                        onClick={handleNewImage}
+                        className="text-[#06B6D4] hover:text-[#06B6D4]/80 text-sm font-medium underline"
+                      >
+                        Change Image
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Category Selection Section - Now appears after upload */}
+                <div className="mb-12">
+                  <h3 className="text-xl font-semibold text-center mb-6 text-gray-900">Choose Your Style Category</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                    {/* Fun/Viral Category */}
+                    <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'other' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('other')}
+                    >
+                      <div className="text-3xl mb-2">✨</div>
+                      <div className="text-sm font-semibold text-gray-900">Fun/Viral</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        Creative transformations for social sharing
+                      </div>
+                    </button>
+
+                    {/* Pop Culture Category */}
+                    <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'era' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('era')}
+                    >
+                      <div className="text-3xl mb-2">🕰️</div>
+                      <div className="text-sm font-semibold text-gray-900">Pop Culture</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        Through the decades and eras
+                      </div>
+                    </button>
+
+                    {/* Animation Category */}
+                    <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'animation' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('animation')}
+                    >
+                      <div className="text-3xl mb-2">🎬</div>
+                      <div className="text-sm font-semibold text-gray-900">Animation</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        Cartoon and animated styles
+                      </div>
+                    </button>
+
+                    {/* Artistic Category */}
+                    <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'artistic' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('artistic')}
+                    >
+                      <div className="text-3xl mb-2">🎨</div>
+                      <div className="text-sm font-semibold text-gray-900">Artistic</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        Paintings and artistic styles
+                      </div>
+                    </button>
+
+                    {/* Kids Real Category */}
+                    <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'kids-real' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('kids-real')}
+                    >
+                      <div className="text-3xl mb-2">👶</div>
+                      <div className="text-sm font-semibold text-gray-900">Kids Drawing</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        Turn into kids drawing style
+                      </div>
+                    </button>
+
+                    {/* Browse All Styles */}
+                    <button
+                      className="flex flex-col items-center p-6 rounded-xl border-2 border-dashed border-gray-300 hover:border-[#84CC16] hover:bg-[#84CC16]/5 transition-all duration-300"
+                      onClick={() => window.location.href = '/ideas'}
+                    >
+                      <div className="text-3xl mb-2">👀</div>
+                      <div className="text-sm font-semibold text-gray-900">Browse All</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        See all available styles
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <PromptInput
+                  originalImage={originalImage}
+                  selectedTransformation={selectedTransformation}
+                  savedStyle={savedStyle}
+                  onPromptSubmit={handlePromptSubmit}
+                  onNewImage={handleNewImage}
+                />
+              </div>
             )}
 
             {currentStep === Step.Processing && (
