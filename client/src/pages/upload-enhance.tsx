@@ -10,22 +10,29 @@ import { Upload, Camera, Sparkles, Check, Loader2, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
+import { useFreeCredits } from '@/hooks/useFreeCredits';
+import { EmailCaptureModal } from '@/components/EmailCaptureModal';
+import { UpgradePrompt } from '@/components/UpgradePrompt';
+import { SignUpModal } from '@/components/SignUpModal';
 
 export default function UploadEnhancePage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [showStepHighlight, setShowStepHighlight] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [showSignUpModal, setShowSignUpModal] = useState(false);
 
   // Ensure page loads at top
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles<File[]>] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [industry, setIndustry] = useState("");
   const [productType, setProductType] = useState("");
-  const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
-  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [selectedPurposes, setSelectedPurposes<string[]>] = useState([]);
+  const [selectedIndustries, setSelectedIndustries<string[]>] = useState([]);
   const [uploadError, setUploadError] = useState("");
   const [processingStep, setProcessingStep] = useState(0);
   const [processingStatus, setProcessingStatus] = useState("");
@@ -33,6 +40,7 @@ export default function UploadEnhancePage() {
   const [showRetry, setShowRetry] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [, navigate] = useLocation();
+  const [location, setLocation] = useLocation();
 
   const MAX_FILES = 1;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -62,6 +70,14 @@ export default function UploadEnhancePage() {
     { id: 3, name: "Generating Ideas", description: "Creating enhancement suggestions" },
     { id: 4, name: "Finalizing", description: "Preparing your results" }
   ];
+
+  const { 
+    creditStatus, 
+    checkUserCredits, 
+    useCredit, 
+    markModalShown,
+    isAuthenticated 
+  } = useFreeCredits();
 
   // Toggle industry pill selection
   const toggleIndustryPill = (industryName: string) => {
@@ -445,7 +461,21 @@ export default function UploadEnhancePage() {
   };
 
   const handleSubmit = async () => {
-    await submitForProcessing();
+    // Check credits before proceeding
+    if (creditStatus?.hasCredits || isAuthenticated) {
+      await submitForProcessing();
+    } else {
+       if (!isAuthenticated && creditStatus?.usedFreeCredits && !creditStatus?.shouldShowSignUpModal) {
+          setShowSignUpModal(true);
+          markModalShown();
+       } else if (!isAuthenticated && !creditStatus?.usedFreeCredits){
+          setShowSignUpModal(true);
+          markModalShown();
+       } else{
+        // Should not hit here
+        setShowUpgradePrompt(true);
+       }
+    }
   };
 
   const [isDragOver, setIsDragOver] = useState(false);
@@ -467,6 +497,37 @@ export default function UploadEnhancePage() {
       handleFileSelect({ target: { files: e.dataTransfer.files } } as any);
     }
   };
+
+  const handleSignUp = () => {
+    setShowEmailModal(true);
+  };
+
+  const handleViewPricing = () => {
+    window.open('https://www.sceneryai.com/pricing', '_blank');
+  };
+
+  const handleUpgradeClose = () => {
+    setShowUpgradePrompt(false);
+    setLocation('/upload-enhance');
+  };
+
+  const handleSignUpModalClose = () => {
+    setShowSignUpModal(false);
+    markModalShown();
+    sessionStorage.setItem('signUpModalDismissed', 'true');
+  };
+
+  // Check credits on mount
+  useEffect(() => {
+    checkUserCredits();
+  }, []);
+
+  // Show signup modal when user has used their free credit
+  useEffect(() => {
+    if (creditStatus?.shouldShowSignUpModal && !showSignUpModal && !sessionStorage.getItem('signUpModalDismissed')) {
+      setShowSignUpModal(true);
+    }
+  }, [creditStatus?.shouldShowSignUpModal]);
 
 
   return (
@@ -687,16 +748,16 @@ export default function UploadEnhancePage() {
 
       {/* Main Container */}
       <main className="max-w-screen-xl mx-auto px-4 py-8 mt-40">
-        
-        
-        
-        
+
+
+
+
 
         {/* Single Column Layout */}
         <div className="max-w-4xl mx-auto mb-8">
           {/* Main Upload Section - Always Visible */}
           <Card className="brand-card mb-8">
-            
+
             <CardHeader className="text-center">
             <div className="text-center mb-8">
             <h1 className="text-4xl brand-font-heading font-extrabold brand-text-neutral mb-4">
@@ -710,19 +771,19 @@ export default function UploadEnhancePage() {
             <CardContent>
               {/* Large Upload Zone - Full Width */}
               {selectedFiles.length < MAX_FILES ? (
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+
+
+
+
+
+
+
+
+
+
+
+
+
                  <div
                   className={`upload-zone rounded-xl p-12 text-center cursor-pointer border-2 ${
                     dragActive ? "active border-[#0D7877] bg-[#0D7877]/5" : "border-dashed border-gray-300 hover:border-[#3DA5D9] hover:bg-[#3DA5D9]/5"
@@ -1197,6 +1258,32 @@ export default function UploadEnhancePage() {
           </div>
         </div>
       )}
+
+{/* Upgrade Prompt Modal */}
+      <UpgradePrompt
+        isOpen={showUpgradePrompt}
+        onClose={handleUpgradeClose}
+        onSignUp={handleSignUp}
+        onViewPricing={handleViewPricing}
+      />
+
+      {/* Sign Up Modal for Second Image Attempt */}
+      <SignUpModal
+        isOpen={showSignUpModal}
+        onClose={handleSignUpModalClose}
+        onSignUpWithGoogle={() => {
+          setShowSignUpModal(false);
+          setLocation('/auth?provider=google');
+        }}
+        onSignUpWithEmail={() => {
+          setShowSignUpModal(false);
+          setLocation('/auth?mode=signup');
+        }}
+        onLogin={() => {
+          setShowSignUpModal(false);
+          setLocation('/auth?mode=login');
+        }}
+      />
 
       <Footer />
       </div>

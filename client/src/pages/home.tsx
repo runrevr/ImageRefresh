@@ -32,6 +32,15 @@ import {
   clearSavedStyle,
   hasSavedStyle,
 } from "@/components/StyleIntegration";
+import { ComparisonSlider } from "../components/ComparisonSlider";
+import { FaqSection } from "../components/FaqSection";
+import { Layout } from "../components/Layout";
+import { TransformationExamples } from "../components/TransformationExamples";
+import { useFreeCredits } from "@/hooks/useFreeCredits";
+import { EmailCaptureModal } from "@/components/EmailCaptureModal";
+import { AccountNeededDialog } from "@/components/AccountNeededDialog";
+import { UpgradePrompt } from "@/components/UpgradePrompt";
+import { SignUpModal } from "@/components/SignUpModal";
 
 // Enum for the different steps in the process
 enum Step {
@@ -74,6 +83,18 @@ export default function Home() {
     paidCredits: number;
     freeCreditsUsed: boolean;
   }>({ totalCredits: 0, paidCredits: 0, freeCreditsUsed: true });
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showAccountDialog, setShowAccountDialog] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [showSignUpModal, setShowSignUpModal] = useState(false);
+
+  const { 
+    creditStatus, 
+    checkUserCredits, 
+    useCredit, 
+    markModalShown,
+    isAuthenticated 
+  } = useFreeCredits();
 
   // Fetch user credits when user changes
   useEffect(() => {
@@ -971,6 +992,18 @@ export default function Home() {
     }
   };
 
+  const handleSignUpModalClose = () => {
+    setShowSignUpModal(false);
+    markModalShown();
+
+    // Store that user dismissed the modal to avoid showing it again this session
+    sessionStorage.setItem('signUpModalDismissed', 'true');
+  };
+
+  const handleUpgradeClose = () => {
+    setShowUpgradePrompt(false);
+  };
+
   return (
     <div
       className="text-gray-800 min-h-screen flex flex-col"
@@ -988,6 +1021,32 @@ export default function Home() {
         email={storedEmail}
         isLoggedIn={Boolean(userCredits?.totalCredits)}
         remainingCredits={userCredits?.paidCredits || 0}
+      />
+
+      {/* Upgrade Prompt Modal */}
+      <UpgradePrompt
+        isOpen={showUpgradePrompt}
+        onClose={handleUpgradeClose}
+        onSignUp={() => setLocation('/auth')}
+        onViewPricing={() => setLocation('/pricing')}
+      />
+
+      {/* Sign Up Modal for Second Image Attempt */}
+      <SignUpModal
+        isOpen={showSignUpModal}
+        onClose={handleSignUpModalClose}
+        onSignUpWithGoogle={() => {
+          setShowSignUpModal(false);
+          setLocation('/auth?provider=google');
+        }}
+        onSignUpWithEmail={() => {
+          setShowSignUpModal(false);
+          setLocation('/auth?mode=signup');
+        }}
+        onLogin={() => {
+          setShowSignUpModal(false);
+          setLocation('/auth?mode=login');
+        }}
       />
 
       <main className="relative w-full" style={{ paddingTop: '4rem' }}>
