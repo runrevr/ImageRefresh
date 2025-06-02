@@ -295,8 +295,10 @@ async function generateTextToImage(prompt, options = {}) {
   }
 }
 
+// Text-to-image generation function
+export { generateTextToImage };
+
 module.exports = {
-  transformImage,
-  generateEnhancement,
+  transformImageWithOpenAI,
   generateTextToImage
 };
