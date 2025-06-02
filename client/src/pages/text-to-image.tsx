@@ -64,17 +64,17 @@ export default function TextToImage() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.imageUrls && data.imageUrls.length > 0) {
         const params = new URLSearchParams({
-          jobId: data.jobId,
-          imageUrl: encodeURIComponent(data.imageUrl),
-          prompt: encodeURIComponent(data.metadata.prompt),
-          ...(data.metadata.purpose && { purpose: encodeURIComponent(data.metadata.purpose) }),
-          ...(data.metadata.industry && { industry: encodeURIComponent(data.metadata.industry) }),
-          ...(data.metadata.aspectRatio && { aspectRatio: encodeURIComponent(data.metadata.aspectRatio) }),
-          ...(data.metadata.styleIntensity && { styleIntensity: data.metadata.styleIntensity }),
-          ...(data.metadata.addText !== undefined && { addText: data.metadata.addText }),
-          ...(data.metadata.businessName && { businessName: encodeURIComponent(data.metadata.businessName) })
+          jobId: data.transformationId || data.jobId || `txt2img_${Date.now()}`,
+          imageUrls: encodeURIComponent(JSON.stringify(data.imageUrls)),
+          prompt: encodeURIComponent(prompt),
+          purpose: encodeURIComponent(purpose),
+          industry: encodeURIComponent(industry),
+          aspectRatio: encodeURIComponent(aspectRatio),
+          styleIntensity: encodeURIComponent(styleIntensity),
+          addText: addText.toString(),
+          businessName: encodeURIComponent(businessName)
         });
 
         window.location.href = `/text-to-image-results.html?${params.toString()}`;
