@@ -106,7 +106,7 @@ export default function TextToImage() {
               <Textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Try: 'relaxing massage therapy session' or 'professional plumber fixing pipes' or 'beautiful lawn care results'"
+                placeholder="Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
                 className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
                 onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && enhancePrompt()}
               />
