@@ -931,7 +931,7 @@ app.post("/api/credits/deduct", async (req, res) => {
   } catch (error) {
     console.error("Credit deduction error:", error);
     res.status(500).json({ error: "Failed to deduct credits" });
-  }
+}
 });
 
   // Enhanced credits endpoint with guest support
@@ -1192,18 +1192,10 @@ app.post("/api/credits/deduct", async (req, res) => {
   // Text-to-image generation endpoint
   app.post('/api/generate-images', async (req, res) => {
     try {
+      console.log('Request Body:', req.body);
       console.log('[API] Text-to-image generation request received');
 
-      const {
-        prompt,
-        variations,
-        purpose,
-        industry,
-        aspectRatio,
-        styleIntensity,
-        addText,
-        businessName
-      } = req.body;
+      const { prompt, aspectRatio } = req.body;
 
       if (!prompt) {
         return res.status(400).json({
@@ -1222,19 +1214,10 @@ app.post("/api/credits/deduct", async (req, res) => {
 
       // Enhance the prompt based on context
       let enhancedPrompt = prompt;
-      if (purpose) {
-        enhancedPrompt += `, optimized for ${purpose}`;
-      }
-      if (industry) {
-        enhancedPrompt += `, ${industry} industry style`;
-      }
-      if (addText && businessName) {
-        enhancedPrompt += `, include "${businessName}" text overlay`;
-      }
 
       // Use the dedicated OpenAI text-to-image generation service
       const { generateTextToImage } = await import('./openai-text-to-image.js');
-      
+
       console.log('[API] Successfully imported generateTextToImage function');
 
       const result = await generateTextToImage(enhancedPrompt, {
@@ -1254,12 +1237,7 @@ app.post("/api/credits/deduct", async (req, res) => {
         imageUrls: result.imageUrls, // All image URLs
         metadata: {
           prompt: enhancedPrompt,
-          purpose,
-          industry,
-          aspectRatio,
-          styleIntensity,
-          addText,
-          businessName
+          aspectRatio
         }
       });
 
@@ -1275,6 +1253,7 @@ app.post("/api/credits/deduct", async (req, res) => {
   return server;
 }
 
+// The generate-images endpoint was updated to handle a simplified request body, removing unnecessary parameters.
 // Handle product image lab routes
 //app.use('/api/product-image-lab', productImageLabRoutes);
 

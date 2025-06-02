@@ -693,21 +693,21 @@
         #mobile-menu-button {
           display: none !important;
         }
-        
+
         header > div > div:nth-child(2) {
           display: flex !important;
         }
-        
+
         header > div > div:last-child > div {
           display: flex !important;
         }
       }
-      
+
       /* Hover effects */
       header a:hover {
         color: #06B6D4 !important;
       }
-      
+
       button:hover {
         opacity: 0.9;
       }
@@ -1011,16 +1011,11 @@
             // Gather all settings
             const variations = generateVariations(userPrompt);
             const selectedVars = Array.from(selectedVariations).map(i => variations[i]);
+            const finalPrompt = userPrompt;
 
             const settings = {
-                prompt: userPrompt,
-                variations: selectedVars,
-                purpose: businessContext.purpose,
-                industry: businessContext.industry,
-                aspectRatio: document.querySelector('input[name="aspect"]:checked').value,
-                styleIntensity: document.querySelector('.style-slider').value,
-                addText: document.getElementById('addText').checked,
-                businessName: document.getElementById('businessText').value
+                prompt: finalPrompt,
+                aspectRatio: document.querySelector('input[name="aspect"]:checked').value
             };
 
             // Show loading
@@ -1043,12 +1038,7 @@
                       jobId: data.jobId,
                       imageUrl: encodeURIComponent(data.imageUrl),
                       prompt: encodeURIComponent(data.metadata.prompt),
-                      ...(data.metadata.purpose && { purpose: encodeURIComponent(data.metadata.purpose) }),
-                      ...(data.metadata.industry && { industry: encodeURIComponent(data.metadata.industry) }),
-                      ...(data.metadata.aspectRatio && { aspectRatio: encodeURIComponent(data.metadata.aspectRatio) }),
-                      ...(data.metadata.styleIntensity && { styleIntensity: data.metadata.styleIntensity }),
-                      ...(data.metadata.addText !== undefined && { addText: data.metadata.addText }),
-                      ...(data.metadata.businessName && { businessName: encodeURIComponent(data.metadata.businessName) })
+                      ...(data.metadata.aspectRatio && { aspectRatio: encodeURIComponent(data.metadata.aspectRatio) })
                     });
 
                     window.location.href = `/text-to-image-results.html?${params.toString()}`;

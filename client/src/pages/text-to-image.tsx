@@ -56,7 +56,10 @@ export default function TextToImage() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(settings)
+        body: JSON.stringify({
+          prompt,
+          aspectRatio
+        })
       });
 
       const data = await response.json();
@@ -117,7 +120,7 @@ export default function TextToImage() {
               />
               <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
             </div>
-            
+
             {/* Style Pills */}
             <div className="mt-12 max-w-4xl mx-auto">
               <h3 className="text-lg font-semibold mb-3 text-gray-800">Add Photography Style</h3>
@@ -179,7 +182,7 @@ export default function TextToImage() {
                 ))}
               </div>
             </div>
-            
+
             </div>
         </div>
 
