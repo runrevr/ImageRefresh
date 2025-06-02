@@ -1,0 +1,47 @@
+[API] Text-to-image generation request received
+[OpenAI Text-to-Image Module] Loaded successfully
+[API] Successfully imported generateTextToImage function
+[OpenAI] [txt2img_1748898536630] Starting text-to-image generation with prompt: "a duck on the water"
+[OpenAI] [txt2img_1748898536630] Using gpt-image-1 model for text-to-image generation with size: 1024x1024
+[OpenAI] [txt2img_1748898536630] Error in generateTextToImage: BadRequestError: 400 Unknown parameter: 'response_format'.
+    at Function.generate (/home/runner/workspace/node_modules/openai/src/error.ts:72:14)
+    at OpenAI.makeStatusError (/home/runner/workspace/node_modules/openai/src/core.ts:462:21)
+    at OpenAI.makeRequest (/home/runner/workspace/node_modules/openai/src/core.ts:526:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async generateTextToImage (file:///home/runner/workspace/server/openai-text-to-image.js:46:22)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1223:22) {
+  status: 400,
+  headers: {
+    'alt-svc': 'h3=":443"; ma=86400',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': '9499edce2acf45f7-SEA',
+    connection: 'keep-alive',
+    'content-length': '177',
+    'content-type': 'application/json',
+    date: 'Mon, 02 Jun 2025 21:08:56 GMT',
+    'openai-organization': 'collective-alchemy',
+    'openai-processing-ms': '8',
+    'openai-version': '2020-10-01',
+    server: 'cloudflare',
+    'set-cookie': '__cf_bm=kYuueG2earycFiUFSixN8JaeD6mCu7QioOen3A4MBTA-1748898536-1.0.1.1-aQccxRTMGhQjuG_ieDp6kxnaRj54tRXdiiVrWrk61VwNYCC3LCPQg0.hdmz0gMRdi1iA5Fkqre3ov6jcCVFmUYPX8s7bbf7n6FjAZYC6xg0; path=/; expires=Mon, 02-Jun-25 21:38:56 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None, _cfuvid=Pjrfaq1fBkh1xnBVu_SNs.H4RLH2Tf02Hzqeb4.7fbM-1748898536704-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    'x-content-type-options': 'nosniff',
+    'x-request-id': 'req_967e86ac9f6dc865130a1978ce2ce3a2'
+  },
+  request_id: 'req_967e86ac9f6dc865130a1978ce2ce3a2',
+  error: {
+    message: "Unknown parameter: 'response_format'.",
+    type: 'invalid_request_error',
+    param: 'response_format',
+    code: 'unknown_parameter'
+  },
+  code: 'unknown_parameter',
+  param: 'response_format',
+  type: 'invalid_request_error'
+}
+[API] Text-to-image generation error: Error: Text-to-image generation failed: 400 Unknown parameter: 'response_format'.
+    at generateTextToImage (file:///home/runner/workspace/server/openai-text-to-image.js:123:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1223:22)
+9:08:56 PM [express] POST /api/generate-images 500 in 129ms :: {"success":false,"error":"Text-to-ima…
+2025-06-02T21:08:56.744Z - POST /api/generate-images - 500 (129ms)
