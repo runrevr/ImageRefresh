@@ -143,13 +143,6 @@ export default function TextToImageResults() {
             <p className="text-gray-600 mb-2">
               Click on an image to select it, then use the action buttons below.
             </p>
-            {state.prompt && (
-              <div className="bg-gray-100 rounded-lg p-4 max-w-2xl mx-auto">
-                <p className="text-sm text-gray-700">
-                  <strong>Prompt:</strong> {state.prompt}
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Results Grid */}
@@ -196,6 +189,18 @@ export default function TextToImageResults() {
                           Share
                         </Button>
                       </div>
+                      {/* Generation Details */}
+                      {state.prompt && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="text-left">
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">Generation Details</h4>
+                            <div className="text-sm text-gray-600">
+                              <p><strong>Prompt:</strong></p>
+                              <p className="mt-1">{state.prompt}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
