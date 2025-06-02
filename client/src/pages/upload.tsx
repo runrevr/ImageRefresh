@@ -1001,18 +1001,18 @@ export default function UploadPage() {
                   </p>
                 </div>
 
-                {/* Two-Tab Header */}
-                <div className="flex justify-center mb-8">
-                  <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
-                    <button
-                      className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
-                        selectedTransformation !== 'custom' 
-                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
-                      onClick={() => setSelectedTransformation('animation')}
-                    >
-                      <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
+                        {/* Two-Tab Header */}
+                        <div className="'flex justify-center mb-8">
+                          <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
+                            <button
+                              className={flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
+                                selectedTransformation !== 'custom' 
+                                  ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
+                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                              }`}
+                              onClick={() => setSelectedTransformation('animation')}
+                            >
+                              <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
                         🖼️
                       </div>
                       <div className="text-sm font-semibold">Transform Image</div>
