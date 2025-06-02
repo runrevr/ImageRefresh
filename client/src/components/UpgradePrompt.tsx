@@ -18,12 +18,12 @@ export function UpgradePrompt({ isOpen, onClose, onSignUp, onViewPricing }: Upgr
       <Card className="w-full max-w-lg bg-white">
         <CardHeader className="text-center pb-4">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#0D7877] to-[#3DA5D9] rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#FF7B54] to-[#0D7877] rounded-full flex items-center justify-center">
               <Crown className="w-8 h-8 text-white" />
             </div>
           </div>
           
-          <CardTitle className="text-2xl font-bold text-[#0D7877] mb-2">
+          <CardTitle className="text-2xl font-bold text-[#FF7B54] mb-2">
             You've Used Your Free Enhancement!
           </CardTitle>
           <p className="text-gray-600">
@@ -60,7 +60,7 @@ export function UpgradePrompt({ isOpen, onClose, onSignUp, onViewPricing }: Upgr
           <div className="space-y-3">
             <Button
               onClick={onSignUp}
-              className="w-full bg-[#0D7877] hover:bg-[#0a5d5f] text-white py-3 text-lg"
+              className="w-full bg-[#FF7B54] hover:bg-[#e66942] text-white py-3 text-lg"
             >
               <Zap className="w-5 h-5 mr-2" />
               Start Free Trial
@@ -70,7 +70,7 @@ export function UpgradePrompt({ isOpen, onClose, onSignUp, onViewPricing }: Upgr
             <Button
               onClick={onViewPricing}
               variant="outline"
-              className="w-full border-[#0D7877] text-[#0D7877] hover:bg-[#0D7877] hover:text-white py-3"
+              className="w-full border-[#FF7B54] text-[#FF7B54] hover:bg-[#FF7B54] hover:text-white py-3"
             >
               View Pricing Plans
             </Button>
@@ -79,7 +79,7 @@ export function UpgradePrompt({ isOpen, onClose, onSignUp, onViewPricing }: Upgr
           {/* Footer */}
           <div className="text-center pt-4 border-t">
             <p className="text-sm text-gray-500">
-              ✨ Most popular: <span className="font-semibold text-[#0D7877]">Pro Plan</span> - $29/month
+              ✨ Most popular: <span className="font-semibold text-[#FF7B54]">Pro Plan</span> - $29/month
             </p>
             <button
               onClick={onClose}
