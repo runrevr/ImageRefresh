@@ -48,12 +48,10 @@ export async function generateTextToImage(prompt, options = {}) {
       prompt: prompt,
       n: 2,
       size: finalSize,
-      moderation: "low",
-      response_format: "b64_json"  // Request base64 format explicitly
+      moderation: "low"
     });
 
     console.log(`[OpenAI] [${transformationId}] API call completed successfully`);
-    console.log(`[OpenAI] [${transformationId}] Full response structure:`, JSON.stringify(response, null, 2));
 
     // Check response
     if (!response.data || response.data.length === 0) {
@@ -69,38 +67,26 @@ export async function generateTextToImage(prompt, options = {}) {
     for (let i = 0; i < response.data.length; i++) {
       const imageData = response.data[i];
       
-      console.log(`[OpenAI] [${transformationId}] Image ${i + 1} data keys:`, Object.keys(imageData));
-      console.log(`[OpenAI] [${transformationId}] Image ${i + 1} has url:`, !!imageData.url);
-      console.log(`[OpenAI] [${transformationId}] Image ${i + 1} has b64_json:`, !!imageData.b64_json);
-
-      let imageBuffer;
-      const filename = `txt2img-${transformationId}-${i + 1}.png`;
-      const filepath = path.join(uploadsDir, filename);
-
-      if (imageData.b64_json) {
-        // Handle base64 response (preferred for gpt-image-1)
-        console.log(`[OpenAI] [${transformationId}] Processing base64 data for image ${i + 1}`);
-        imageBuffer = Buffer.from(imageData.b64_json, 'base64');
-      } else if (imageData.url) {
-        // Handle URL response (fallback)
-        console.log(`[OpenAI] [${transformationId}] Downloading from URL for image ${i + 1}: ${imageData.url}`);
-        const imageResponse = await axios.get(imageData.url, { 
-          responseType: 'arraybuffer',
-          timeout: 30000 // 30 second timeout
-        });
-
-        if (imageResponse.status !== 200) {
-          throw new Error(`Failed to download image ${i + 1}: ${imageResponse.status}`);
-        }
-
-        imageBuffer = imageResponse.data;
-      } else {
-        console.error(`[OpenAI] [${transformationId}] No URL or base64 data for image ${i + 1}`);
-        console.error(`[OpenAI] [${transformationId}] Available keys:`, Object.keys(imageData));
+      if (!imageData.url) {
+        console.error(`[OpenAI] [${transformationId}] No URL for image ${i + 1}`);
         continue;
       }
 
       console.log(`[OpenAI] [${transformationId}] Processing image ${i + 1} from OpenAI`);
+
+      // Download the image from URL
+      const imageResponse = await axios.get(imageData.url, { 
+        responseType: 'arraybuffer',
+        timeout: 30000 // 30 second timeout
+      });
+
+      if (imageResponse.status !== 200) {
+        throw new Error(`Failed to download image ${i + 1}: ${imageResponse.status}`);
+      }
+
+      const imageBuffer = imageResponse.data;
+      const filename = `txt2img-${transformationId}-${i + 1}.png`;
+      const filepath = path.join(uploadsDir, filename);
 
       fs.writeFileSync(filepath, Buffer.from(imageBuffer));
 
