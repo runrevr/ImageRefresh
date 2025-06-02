@@ -728,7 +728,10 @@ export default function FixedProductImageLab({
             
             <Button 
               className="bg-tertiary hover:bg-tertiary/90 text-white"
-              onClick={() => window.location.href = '/text-to-image.html'}
+              onClick={() => {
+                console.log('Create Variations button clicked - navigating to text-to-image.html');
+                window.location.href = '/text-to-image.html';
+              }}
             >
               Create Variations
             </Button>
