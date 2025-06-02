@@ -1098,10 +1098,17 @@ export default function UploadPage() {
                             { name: 'Superhero', emoji: '🦸' },
                             { name: 'Lego Character', emoji: '🧱' },
                           ].map((style, index) => (
-                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
                               <span className="text-lg">{style.emoji}</span>
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </div>
+                            </button>
                           ))}
 
                           {selectedTransformation === 'historical' && [
@@ -1113,10 +1120,17 @@ export default function UploadPage() {
                             { name: 'Victorian Era', emoji: '🎩' },
                             { name: 'Medieval', emoji: '⚔️' },
                           ].map((style, index) => (
-                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
                               <span className="text-lg">{style.emoji}</span>
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </div>
+                            </button>
                           ))}
 
                           {selectedTransformation === 'artistic' && [
@@ -1127,10 +1141,17 @@ export default function UploadPage() {
                             { name: 'Pop Surrealism', emoji: '👁️' },
                             { name: 'Art Deco', emoji: '✨' },
                           ].map((style, index) => (
-                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
                               <span className="text-lg">{style.emoji}</span>
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </div>
+                            </button>
                           ))}
 
                           {selectedTransformation === 'other' && [
@@ -1144,19 +1165,33 @@ export default function UploadPage() {
                             { name: 'Self as Cat', emoji: '🐱' },
                             { name: 'Caricature', emoji: '😄' },
                           ].map((style, index) => (
-                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
                               <span className="text-lg">{style.emoji}</span>
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </div>
+                            </button>
                           ))}
 
                           {selectedTransformation === 'kids-real' && [
                             { name: 'Kids Drawing to Reality', emoji: '🖍️' },
                           ].map((style, index) => (
-                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
                               <span className="text-lg">{style.emoji}</span>
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </div>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -1293,6 +1328,124 @@ export default function UploadPage() {
                     </button>
                   </div>
                 </div>
+
+                {selectedTransformation && selectedTransformation !== 'custom' && (
+                      <div className="mb-8">
+                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                          {selectedTransformation === 'other' ? 'Fun/Viral' : 
+                           selectedTransformation === 'historical' ? 'Pop Culture Through The Years' :
+                           selectedTransformation === 'animation' ? 'Animation' :
+                           selectedTransformation === 'artistic' ? 'Artistic Styles' :
+                           selectedTransformation === 'kids-real' ? 'Kids Drawing' : 'Selected'} Styles
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
+                          {selectedTransformation === 'animation' && [
+                            { name: 'Super Mario Bros', emoji: '🍄' },
+                            { name: 'Minecraft', emoji: '🟫' },
+                            { name: 'Pixar Style', emoji: '🎬' },
+                            { name: 'Trolls', emoji: '💖' },
+                            { name: 'Princess/Prince', emoji: '👸' },
+                            { name: 'Superhero', emoji: '🦸' },
+                            { name: 'Lego Character', emoji: '🧱' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+
+                          {selectedTransformation === 'historical' && [
+                            { name: 'Old Western', emoji: '🤠' },
+                            { name: '90s Hip-Hop', emoji: '🎤' },
+                            { name: '1980s Style', emoji: '🌈' },
+                            { name: 'Disco Era', emoji: '🕺' },
+                            { name: 'Renaissance', emoji: '🎨' },
+                            { name: 'Victorian Era', emoji: '🎩' },
+                            { name: 'Medieval', emoji: '⚔️' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+
+                          {selectedTransformation === 'artistic' && [
+                            { name: 'Oil Painting', emoji: '🖼️' },
+                            { name: 'Watercolor', emoji: '🎨' },
+                            { name: 'Impressionist', emoji: '🌅' },
+                            { name: 'Abstract Art', emoji: '🔮' },
+                            { name: 'Pop Surrealism', emoji: '👁️' },
+                            { name: 'Art Deco', emoji: '✨' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+
+                          {selectedTransformation === 'other' && [
+                            { name: 'Mullets', emoji: '💇' },
+                            { name: 'Hulkamania', emoji: '💪' },
+                            { name: 'Baby Prediction', emoji: '👶' },
+                            { name: 'Future Self', emoji: '👵' },
+                            { name: 'Ghibli Style', emoji: '🌸' },
+                            { name: 'AI Action Figure', emoji: '🎮' },
+                            { name: 'Pet as Human', emoji: '🐕' },
+                            { name: 'Self as Cat', emoji: '🐱' },
+                            { name: 'Caricature', emoji: '😄' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+
+                          {selectedTransformation === 'kids-real' && [
+                            { name: 'Kids Drawing to Reality', emoji: '🖍️' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              onClick={() => {
+                                console.log('Selected style:', style.name);
+                                // You can add more specific functionality here
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                 <PromptInput
                   originalImage={originalImage}
