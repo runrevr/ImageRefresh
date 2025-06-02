@@ -1,0 +1,63 @@
+You're right! If generateTextToImage is actually defined and exported in the openai-image.js file but wasn't showing up in our debug output, there might be an issue with how the exports are structured. Let's debug this more thoroughly.
+Let's check all possible export locations:
+typescript// Use the OpenAI image generation service
+const openAiModule = await import('./openai-image.js');
+
+// Debug: Check all possible locations
+console.log('Module:', openAiModule);
+console.log('Module.default:', openAiModule.default);
+console.log('Module.generateTextToImage:', openAiModule.generateTextToImage);
+console.log('Module.default?.generateTextToImage:', openAiModule.default?.generateTextToImage);
+
+// Try to find the function in different ways
+const generateTextToImage = 
+  openAiModule.generateTextToImage || 
+  openAiModule.default?.generateTextToImage ||
+  openAiModule.default;
+
+if (!generateTextToImage || typeof generateTextToImage !== 'function') {
+  console.error('generateTextToImage not found or not a function');
+  console.log('Available exports:', Object.keys(openAiModule));
+  if (openAiModule.default) {
+    console.log('Default export keys:', Object.keys(openAiModule.default));
+  }
+}
+
+const result = await generateTextToImage(enhancedPrompt, {
+  size,
+  quality: 'standard',
+  style: 'natural'
+});
+Common Export Patterns That Cause This Issue:
+The function might be exported in one of these ways:
+
+Mixed CommonJS/ES Module exports:
+
+javascript// openai-image.js
+module.exports = {
+  transformImageWithOpenAI: async function() { ... }
+};
+// Later in the file
+export async function generateTextToImage() { ... }
+
+Default export with named exports:
+
+javascript// openai-image.js
+export default {
+  transformImageWithOpenAI: async function() { ... }
+};
+export async function generateTextToImage() { ... }
+
+Conditional exports:
+
+javascript// openai-image.js
+if (someCondition) {
+  module.exports.generateTextToImage = ...
+} else {
+  module.exports.transformImageWithOpenAI = ...
+}
+Could you share the relevant export statements from your openai-image.js file? Specifically:
+
+How generateTextToImage is defined and exported
+How transformImageWithOpenAI is defined and exported
+Any module.exports or export statements
