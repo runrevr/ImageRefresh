@@ -20,6 +20,7 @@ export default function TextToImage() {
   const [addText, setAddText] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [basePrompt, setBasePrompt] = useState(""); // Track user's original prompt separate from style
   const { toast } = useToast();
 
   const enhancePrompt = async () => {
@@ -154,9 +155,36 @@ export default function TextToImage() {
                     key={style.name}
                     type="button"
                     onClick={() => {
+                      // Update base prompt if user manually typed something
                       const currentPrompt = prompt.trim();
-                      const separator = currentPrompt ? ', ' : '';
-                      setPrompt(currentPrompt + separator + style.prompt);
+                      const photographyStyles = [
+                        "captured during golden hour with warm amber sunlight streaming through",
+                        "professional studio setting with multiple soft box lights creating even",
+                        "classic black and white photography with dramatic contrast between lights and darks",
+                        "shot on vintage 35mm film stock, warm orange and brown color grading",
+                        "documentary style candid moment captured naturally, unposed and authentic",
+                        "ultra high resolution 8K photography, extreme sharpness throughout",
+                        "dynamic motion captured with intentional blur, vibrant saturated colors",
+                        "urban street photography aesthetic, gritty city environment"
+                      ];
+                      
+                      // Remove any existing photography style from the prompt
+                      let cleanedPrompt = currentPrompt;
+                      photographyStyles.forEach(styleStart => {
+                        // Find and remove the style if it exists
+                        const styleRegex = new RegExp(`, ${styleStart}.*?(?=,|$)`, 'gi');
+                        cleanedPrompt = cleanedPrompt.replace(styleRegex, '');
+                        // Also check if it's at the beginning
+                        const beginStyleRegex = new RegExp(`^${styleStart}.*?(?=,|$)`, 'gi');
+                        cleanedPrompt = cleanedPrompt.replace(beginStyleRegex, '');
+                      });
+                      
+                      // Clean up any extra commas and spaces
+                      cleanedPrompt = cleanedPrompt.replace(/,\s*,/g, ',').replace(/^,\s*/, '').replace(/,\s*$/, '').trim();
+                      
+                      // Add the new style
+                      const separator = cleanedPrompt ? ', ' : '';
+                      setPrompt(cleanedPrompt + separator + style.prompt);
                     }}
                     className="p-3 rounded-lg border-2 border-gray-200 hover:border-[#06B6D4] bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-[#06B6D4] transition-all duration-200 min-h-[60px] flex items-center justify-center text-center"
                     title={style.prompt}
