@@ -926,8 +926,8 @@ export default function UploadEnhancePage() {
                 </div>
 
                 {/* Product Type */}
-                <div className="space-y-2 max-w-2xl mx-auto">
-                  <Label htmlFor="productType" className="brand-font-heading font-medium text-center block" style={{ color: '#8B5CF6' }}>
+                <div className="space-y-4 max-w-2xl mx-auto">
+                  <Label htmlFor="productType" className="brand-font-heading font-medium text-center block mb-6" style={{ color: '#8B5CF6' }}>
                     More Specific Information About Product (Optional)
                   </Label>
                   <Input
