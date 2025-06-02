@@ -102,6 +102,103 @@ export default function TextToImage() {
     }
   };
 
+  const generateImages = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a prompt first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      // First enhance the prompt if it's not already enhanced
+      let finalPrompt = prompt;
+
+      // Check if we should enhance the prompt (only if it's relatively short and basic)
+      if (prompt.length < 100 && !prompt.includes("detailed") && !prompt.includes("photorealistic")) {
+        try {
+          const enhanceResponse = await fetch("/api/enhance-prompt", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt }),
+          });
+
+          if (enhanceResponse.ok) {
+            const enhanceResult = await enhanceResponse.json();
+            if (enhanceResult.enhancedPrompt) {
+              finalPrompt = enhanceResult.enhancedPrompt;
+              console.log("Enhanced prompt:", finalPrompt);
+            }
+          }
+        } catch (enhanceError) {
+          console.warn("Failed to enhance prompt, using original:", enhanceError);
+        }
+      }
+
+      // Add style prompt if selected
+      if (selectedStylePrompt) {
+        finalPrompt = `${finalPrompt}. ${selectedStylePrompt}`;
+      }
+
+      const response = await fetch("/api/generate-images", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: finalPrompt,
+          variations: 2,
+          purpose,
+          industry,
+          aspectRatio,
+          styleIntensity: styleIntensity[0],
+          addText,
+          businessName,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success && result.imageUrls) {
+        // Navigate to results page with the generated images
+        window.location.href = `/text-to-image-results.html?${new URLSearchParams({
+          imageUrls: encodeURIComponent(JSON.stringify(result.imageUrls)),
+          prompt: finalPrompt, // Use the final enhanced prompt
+          metadata: encodeURIComponent(JSON.stringify({
+            variations: 2,
+            purpose,
+            industry,
+            aspectRatio,
+            styleIntensity: styleIntensity[0],
+            addText,
+            businessName,
+          }))
+        }).toString()}`;
+      } else {
+        throw new Error(result.error || "Failed to generate images");
+      }
+    } catch (error) {
+      console.error("Error generating images:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate images. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
@@ -121,7 +218,7 @@ export default function TextToImage() {
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
                 className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
-                onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && enhancePrompt()}
+                onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
               />
               <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
             </div>
@@ -227,7 +324,7 @@ export default function TextToImage() {
 
         <div className="text-center mt-8">
           <Button
-            onClick={enhancePrompt}
+            onClick={generateImages}
             disabled={isGenerating}
             className="px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[#06B6D4] to-[#84CC16] hover:from-[#0891B2] hover:to-[#65A30D] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
           >
