@@ -19,6 +19,8 @@ import '../product-image-lab.css';
 import { useToast } from '@/hooks/use-toast';
 import WebhookTester from './WebhookTester';
 import { useCredits } from '@/hooks/useCredits';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 // Types
 interface TabState {
@@ -124,7 +126,7 @@ export default function FixedProductImageLab({
     initialCredits,
     onCreditChange,
     testMode: adminTestMode,
-    webhookUrl: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9',
+    webhookUrl: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-893616d-4ba7-8934-38fa5e881ef9',
     optionsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options',
     selectionsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections',
     resultsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results',
@@ -723,9 +725,18 @@ export default function FixedProductImageLab({
           <div className="product-lab-card">
             <h2>Generate Product Images</h2>
             <p>Create AI-generated product images from descriptions.</p>
-            <div className="product-lab-coming-soon">
+            
+            
+               
+                  
+                    Create Variations
+                  
+                
+              
+            
+            
               This feature is coming soon!
-            </div>
+            
           </div>
         )}
       </div>
