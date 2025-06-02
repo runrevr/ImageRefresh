@@ -1,381 +1,245 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Layout } from "@/components/Layout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Download, Share2, RotateCcw, Sparkles } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-import React, { useState, useEffect } from 'react'
-import { useLocation } from 'wouter'
-import { Layout } from '../components/Layout'
-import { Button } from '@/components/ui/button'
-import { RainbowButton } from '@/components/ui/rainbow-button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Download, Share2, Upload, ImageIcon, Check, Sparkles, Copy, RefreshCw, Edit, ZoomIn } from 'lucide-react'
-import { downloadImage } from '@/lib/utils'
-import { useToast } from '@/hooks/use-toast'
-
-interface TextToImageResult {
-  jobId: string
-  imageUrls: string[]
-  metadata: {
-    prompt: string
-    variations?: any[]
-    purpose?: string
-    industry?: string
-    aspectRatio?: string
-    styleIntensity?: string
-    addText?: boolean
-    businessName?: string
-  }
+interface TextToImageResultsState {
+  imageUrls?: string[];
+  prompt?: string;
+  metadata?: {
+    variations?: number;
+    purpose?: string;
+    industry?: string;
+    aspectRatio?: string;
+    styleIntensity?: number;
+    addText?: boolean;
+    businessName?: string;
+  };
 }
 
 export default function TextToImageResults() {
-  const [, setLocation] = useLocation()
-  const [result, setResult] = useState<TextToImageResult | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedImage, setSelectedImage] = useState<string>('')
-  const [fullViewImage, setFullViewImage] = useState<string | null>(null)
-  const { toast } = useToast()
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Get jobId from URL params
-  const urlParams = new URLSearchParams(window.location.search)
-  const jobId = urlParams.get('jobId')
+  // Get state from navigation
+  const state = location.state as TextToImageResultsState;
 
   useEffect(() => {
-    const loadResult = () => {
-      if (!jobId) {
-        setError('No job ID provided')
-        setLoading(false)
-        return
-      }
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+  }, []);
 
-      // Get data from URL parameters or localStorage
-      const urlParams = new URLSearchParams(window.location.search)
-      const imageUrl1 = urlParams.get('imageUrl1')
-      const imageUrl2 = urlParams.get('imageUrl2')
-      const imageUrl = urlParams.get('imageUrl') // Fallback for single image
-      const imageUrls = urlParams.get('imageUrls') // New parameter for multiple URLs
-      const prompt = urlParams.get('prompt')
-      const purpose = urlParams.get('purpose')
-      const industry = urlParams.get('industry')
-      const aspectRatio = urlParams.get('aspectRatio')
-
-      // Handle multiple images with priority for new imageUrls parameter
-      let finalImageUrls = []
-      
-      if (imageUrls) {
-        // Parse the imageUrls if it's a JSON string
-        try {
-          finalImageUrls = JSON.parse(decodeURIComponent(imageUrls))
-        } catch (e) {
-          // If parsing fails, treat as single URL
-          finalImageUrls = [decodeURIComponent(imageUrls)]
-        }
-      } else {
-        // Fallback to individual URL parameters
-        if (imageUrl1) finalImageUrls.push(decodeURIComponent(imageUrl1))
-        if (imageUrl2) finalImageUrls.push(decodeURIComponent(imageUrl2))
-        if (finalImageUrls.length === 0 && imageUrl) finalImageUrls.push(decodeURIComponent(imageUrl))
-      }
-
-      if (finalImageUrls.length > 0 && prompt) {
-        const result: TextToImageResult = {
-          jobId,
-          imageUrls: finalImageUrls,
-          metadata: {
-            prompt: decodeURIComponent(prompt),
-            purpose: purpose ? decodeURIComponent(purpose) : undefined,
-            industry: industry ? decodeURIComponent(industry) : undefined,
-            aspectRatio: aspectRatio ? decodeURIComponent(aspectRatio) : undefined,
-            styleIntensity: urlParams.get('styleIntensity') || undefined,
-            addText: urlParams.get('addText') === 'true',
-            businessName: urlParams.get('businessName') || undefined
-          }
-        }
-        setResult(result)
-        setSelectedImage(finalImageUrls[0])
-      } else {
-        setError('Result data not found')
-      }
-      
-      setLoading(false)
-    }
-
-    loadResult()
-  }, [jobId])
-
-  const handleDownload = (imageUrl: string, index: number = 0) => {
-    if (result) {
-      downloadImage(imageUrl, `generated-image-${result.jobId}-${index + 1}.png`)
+  useEffect(() => {
+    if (!state?.imageUrls || state.imageUrls.length === 0) {
       toast({
-        title: "Download Started",
-        description: "Your image is being downloaded.",
-      })
+        title: "No Results Found",
+        description: "No generated images found. Please try again.",
+        variant: "destructive",
+      });
+      navigate("/text-to-image");
     }
-  }
+  }, [state, navigate, toast]);
 
-  const handleShare = async (imageUrl: string) => {
+  const handleDownload = async (imageUrl: string, index: number) => {
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Check out my generated image!',
-          url: imageUrl
-        });
-      } else {
-        // Fallback: copy URL to clipboard
-        await navigator.clipboard.writeText(imageUrl);
-        toast({
-          title: "Link Copied!",
-          description: "Image link has been copied to your clipboard.",
-        });
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `text-to-image-result-${index + 1}.png`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+
       toast({
-        title: "Share Failed",
-        description: "Failed to share image. Please try again.",
-        variant: "destructive"
+        title: "Downloaded",
+        description: `Image ${index + 1} downloaded successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Failed to download image. Please try again.",
+        variant: "destructive",
       });
     }
-  }
+  };
 
-  const copyPrompt = () => {
-    if (result?.metadata.prompt) {
-      navigator.clipboard.writeText(result.metadata.prompt)
+  const handleShare = async (imageUrl: string, index: number) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Text-to-Image Result',
+          text: `Check out this AI-generated image: ${state?.prompt}`,
+          url: window.location.href
+        });
+      } catch (error) {
+        // Fallback to copying URL
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link Copied",
+          description: "Result link copied to clipboard",
+        });
+      }
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      await navigator.clipboard.writeText(window.location.href);
       toast({
-        title: "Prompt Copied",
-        description: "Prompt copied to clipboard.",
-      })
+        title: "Link Copied",
+        description: "Result link copied to clipboard",
+      });
     }
-  }
+  };
 
-  
+  const handleGenerateMore = () => {
+    navigate("/text-to-image", { 
+      state: { 
+        previousPrompt: state?.prompt,
+        previousMetadata: state?.metadata 
+      } 
+    });
+  };
 
-  if (loading) {
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+  };
+
+  if (!state?.imageUrls || state.imageUrls.length === 0) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-8">
+        <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading your generated image...</p>
-          </div>
-        </div>
-      </Layout>
-    )
-  }
-
-  if (error || !result) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">{error || 'Result not found'}</p>
-            <Button onClick={() => setLocation('/text-to-image')}>
-              Back to Text-to-Image
+            <h1 className="text-2xl font-bold mb-4">No Results Found</h1>
+            <p className="text-gray-600 mb-6">No generated images found. Please try again.</p>
+            <Button onClick={() => navigate("/text-to-image")}>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate New Images
             </Button>
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
     <Layout>
-      {/* Full view modal */}
-      {fullViewImage && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
-          onClick={() => setFullViewImage(null)}
-        >
-          {/* Close button */}
-          <button
-            onClick={() => setFullViewImage(null)}
-            className="absolute top-4 right-4 z-60 bg-black bg-opacity-70 hover:bg-opacity-90 text-white rounded-full p-2 transition-all"
-            aria-label="Close full view"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          
-          <div className="max-w-full max-h-full p-4">
-            <img 
-              src={fullViewImage} 
-              alt="Full view" 
-              className="max-w-full max-h-full object-contain"
-            />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-4 py-8">
+          {/* Header Section */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Transformation Complete!
+            </h1>
+            <p className="text-gray-600 mb-2">
+              Click on an image to select it, then use the action buttons below.
+            </p>
+            {state.prompt && (
+              <div className="bg-gray-100 rounded-lg p-4 max-w-2xl mx-auto">
+                <p className="text-sm text-gray-700">
+                  <strong>Prompt:</strong> {state.prompt}
+                </p>
+              </div>
+            )}
           </div>
-        </div>
-      )}
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-[#333333]">
-            Your Images are Ready!
-          </h1>
-          <div className="flex items-center justify-center gap-2">
-            <Sparkles className="w-5 h-5 text-green-500" />
-            <span className="font-semibold text-green-600">
-              Successfully generated {result.imageUrls.length} image{result.imageUrls.length > 1 ? 's' : ''}
-            </span>
-            <Sparkles className="w-5 h-5 text-green-500" />
-          </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto">
-          {/* Image Grid */}
-          <div className="mb-8">
-            <div className={`grid gap-6 ${result.imageUrls.length > 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
-              {result.imageUrls.map((imageUrl, index) => (
-                <div key={index} className="space-y-4">
-                  <div 
-                    className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === imageUrl ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
-                    onClick={() => setSelectedImage(imageUrl)}
-                  >
-                    <div className="aspect-square relative">
-                      <img 
-                        src={imageUrl} 
-                        alt={`Generated image option ${index + 1}`} 
-                        className="object-cover w-full h-full"
-                        onError={(e) => {
-                          console.error('Error loading generated image:', imageUrl);
-                        }}
+          {/* Results Grid */}
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {state.imageUrls.map((imageUrl, index) => (
+                <Card key={index} className="overflow-hidden">
+                  <CardContent className="p-0">
+                    <div 
+                      className="relative cursor-pointer group"
+                      onClick={() => handleImageClick(imageUrl)}
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`Generated image ${index + 1}`}
+                        className="w-full h-auto object-cover transition-transform group-hover:scale-105"
+                        style={{ maxHeight: '400px' }}
                       />
-                      {selectedImage === imageUrl && (
-                        <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
-                          <Check className="h-4 w-4" />
-                        </div>
-                      )}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200" />
+                      <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-sm font-medium text-gray-700 shadow-md">
+                        Option {index + 1}
+                      </div>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
-                      <p className="text-sm font-medium">Variation {index + 1}</p>
+
+                    {/* Action Buttons */}
+                    <div className="p-4 space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownload(imageUrl, index)}
+                          className="w-full"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleShare(imageUrl, index)}
+                          className="w-full"
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Share
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Action buttons for each image */}
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => handleDownload(imageUrl, index)}
-                      className="flex-1"
-                    >
-                      <Download className="w-3 h-3 mr-1" />
-                      Download
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleShare(imageUrl)}
-                    >
-                      <Share2 className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setFullViewImage(imageUrl)}
-                    >
-                      <ZoomIn className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
-          </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            {/* Generation Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-[#333333]">Generation Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="font-medium text-sm text-gray-700">Prompt:</label>
-                  <div className="mt-1 p-3 bg-gray-50 rounded-lg border">
-                    <p className="text-sm text-gray-900">{result.metadata.prompt}</p>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={copyPrompt}
-                      className="mt-2 h-8 px-2 text-xs"
-                    >
-                      <Copy className="w-3 h-3 mr-1" />
-                      Copy Prompt
-                    </Button>
-                  </div>
-                </div>
-
-                {result.metadata.purpose && (
-                  <div>
-                    <label className="font-medium text-sm text-gray-700">Purpose:</label>
-                    <p className="text-sm text-gray-600 mt-1">{result.metadata.purpose}</p>
-                  </div>
-                )}
-
-                {result.metadata.industry && (
-                  <div>
-                    <label className="font-medium text-sm text-gray-700">Industry:</label>
-                    <p className="text-sm text-gray-600 mt-1">{result.metadata.industry}</p>
-                  </div>
-                )}
-
-                {result.metadata.aspectRatio && (
-                  <div>
-                    <label className="font-medium text-sm text-gray-700">Aspect Ratio:</label>
-                    <p className="text-sm text-gray-600 mt-1 capitalize">{result.metadata.aspectRatio}</p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="font-medium text-sm text-gray-700">Job ID:</label>
-                  <p className="text-xs text-gray-500 mt-1 font-mono">{result.jobId}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Actions Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-[#333333]">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Button 
-                  onClick={() => handleDownload(selectedImage)}
-                  className="w-full bg-[#0D7877] hover:bg-[#0a5d5f] text-white"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Selected Image
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={() => handleShare(selectedImage)}
-                  className="w-full"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share Selected Image
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={() => setLocation('/text-to-image')}
-                  className="w-full"
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Create Another Image
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Action Bar */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
-              <Check className="w-5 h-5 text-blue-600" />
-              <span className="text-blue-700 font-medium">
-                Images generated successfully!
-              </span>
+            {/* Generate More Button */}
+            <div className="text-center mt-8">
+              <Button 
+                onClick={handleGenerateMore}
+                size="lg"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              >
+                <RotateCcw className="w-5 h-5 mr-2" />
+                Generate More Images
+              </Button>
             </div>
           </div>
         </div>
+
+        {/* Full Screen Image Modal */}
+        {selectedImage && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+            onClick={closeModal}
+          >
+            <div className="relative max-w-full max-h-full">
+              <img
+                src={selectedImage}
+                alt="Full size preview"
+                className="max-w-full max-h-full object-contain"
+              />
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
-  )
+  );
 }
