@@ -307,5 +307,11 @@ module.exports = {
   generateTextToImage
 };
 
+// Set default export for ES6 compatibility
+module.exports.default = {
+  transformImageWithOpenAI,
+  generateTextToImage
+};
+
 // Also export as ES6 modules for compatibility  
 export { transformImageWithOpenAI, generateTextToImage };
