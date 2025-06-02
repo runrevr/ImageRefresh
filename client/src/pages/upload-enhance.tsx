@@ -913,8 +913,8 @@ export default function UploadEnhancePage() {
                           !hasImages
                             ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
                             : selectedIndustries.includes(industryName)
-                              ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
-                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
+                              ? 'bg-[#84CC16] border-[#84CC16] text-white shadow-md transform -translate-y-1'
+                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#84CC16] text-gray-700 hover:shadow-sm hover:-translate-y-1'
                         }`}
                       >
                         <span className="text-xs font-medium brand-font-body leading-tight">
