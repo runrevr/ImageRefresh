@@ -726,11 +726,12 @@ export default function FixedProductImageLab({
             <h2>Generate Product Images</h2>
             <p>Create AI-generated product images from descriptions.</p>
             
-            <Link href="/text-to-image.html">
-              <Button className="bg-tertiary hover:bg-tertiary/90 text-white">
-                Create Variations
-              </Button>
-            </Link>
+            <Button 
+              className="bg-tertiary hover:bg-tertiary/90 text-white"
+              onClick={() => window.location.href = '/text-to-image.html'}
+            >
+              Create Variations
+            </Button>
             
             <div className="product-lab-coming-soon">
               This feature is coming soon!
