@@ -838,23 +838,27 @@ export default function UploadEnhancePage() {
                 </div>
               ) : (
                 /* Show when max files reached - with image preview */
-                <div className="upload-zone rounded-xl p-8 text-center bg-green-50 border-2 border-dashed border-green-300">
+                <div className="upload-zone rounded-xl p-8 text-center border-2 border-dashed shadow-lg" style={{ 
+                  backgroundColor: 'rgba(132, 204, 22, 0.1)', 
+                  borderColor: '#84CC16' 
+                }}>
                   {/* Show thumbnail of uploaded image */}
                   <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                       <img
                         src={URL.createObjectURL(selectedFiles[0])}
                         alt="Uploaded preview"
-                        className="w-32 h-32 object-cover rounded-lg border-2 border-green-400 shadow-lg"
+                        className="w-32 h-32 object-cover rounded-lg shadow-lg"
+                        style={{ border: '2px solid #84CC16' }}
                       />
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: '#84CC16' }}>
                         <Check className="h-5 w-5 text-white" />
                       </div>
                     </div>
-                    <h3 className="text-xl brand-font-heading font-semibold text-green-800 mb-2">
+                    <h3 className="text-xl brand-font-heading font-semibold mb-2" style={{ color: '#65A30D' }}>
                       Image Selected Successfully!
                     </h3>
-                    <p className="text-green-700 brand-font-body mb-4 text-sm">
+                    <p className="brand-font-body mb-4 text-sm" style={{ color: '#84CC16' }}>
                       {selectedFiles[0]?.name} • {(selectedFiles[0]?.size / (1024 * 1024)).toFixed(1)}MB
                     </p>
                     <p className="text-gray-600 brand-font-body mb-4 text-sm">
@@ -864,7 +868,18 @@ export default function UploadEnhancePage() {
                       variant="outline" 
                       type="button" 
                       onClick={clearAllFiles}
-                      className="brand-font-body border-2 border-green-600 text-green-700 hover:bg-green-600 hover:text-white text-sm px-6 py-2 transition-all duration-200 flex items-center gap-2"
+                      className="brand-font-body text-sm px-6 py-2 transition-all duration-200 flex items-center gap-2 hover:text-white"
+                      style={{ 
+                        border: '2px solid #84CC16', 
+                        color: '#84CC16',
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#84CC16';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
                     >
                       <X className="h-4 w-4" />
                       Replace Image
