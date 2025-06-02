@@ -873,13 +873,13 @@ export default function UploadEnhancePage() {
               ? 'opacity-100 transform translate-y-0' 
               : 'opacity-50 transform translate-y-4 pointer-events-none'
           }`}>
-            <Card className={`brand-card ${hasImages ? '' : 'bg-gray-50'}`}>
+            <Card className={`brand-card ${hasImages ? '' : 'bg-gray-50'}`} style={{ backgroundColor: '#1F2937' }}>
               <CardHeader className="text-center">
-                <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold brand-text-neutral text-xl">
+                <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold text-white text-xl">
                   <Sparkles className="h-5 w-5 brand-text-primary" />
                   Tell Us About Your Business
                 </CardTitle>
-                <CardDescription className="brand-font-body text-gray-600">
+                <CardDescription className="brand-font-body text-gray-300">
                   {hasImages 
                     ? "Provide business details to get personalized enhancement suggestions"
                     : "Upload image first to continue with business details"
@@ -890,13 +890,13 @@ export default function UploadEnhancePage() {
                 {/* Industry Pills Section */}
                 <div className="space-y-4">
                   <div className="text-center">
-                    <h3 className="brand-font-heading font-bold brand-text-neutral text-2xl mb-3">
+                    <h3 className="brand-font-heading font-bold text-white text-2xl mb-3">
                       Choose Your Industry
                     </h3>
-                    <p className="text-lg text-gray-700 brand-font-body font-medium mb-4">
+                    <p className="text-lg text-gray-200 brand-font-body font-medium mb-4">
                       Select one or more industries that best describe your business
                     </p>
-                    <p className="text-base text-gray-600 brand-font-body">
+                    <p className="text-base text-gray-300 brand-font-body">
                       Help us understand your brand and products for better AI enhancement
                     </p>
                   </div>
@@ -926,7 +926,7 @@ export default function UploadEnhancePage() {
 
                 {/* Product Type */}
                 <div className="space-y-2 max-w-md mx-auto">
-                  <Label htmlFor="productType" className="brand-font-heading font-medium brand-text-neutral text-center block">
+                  <Label htmlFor="productType" className="brand-font-heading font-medium text-white text-center block">
                     Product Type (Optional)
                   </Label>
                   <Input
@@ -937,7 +937,7 @@ export default function UploadEnhancePage() {
                     disabled={!hasImages}
                     className={`brand-font-body text-center ${!hasImages ? 'bg-gray-100 text-gray-400' : ''}`}
                   />
-                  <p className="text-xs text-gray-500 brand-font-body text-center">
+                  <p className="text-xs text-gray-400 brand-font-body text-center">
                     Be specific about your main product category
                   </p>
                 </div>
@@ -945,10 +945,10 @@ export default function UploadEnhancePage() {
                 {/* Image Size Selection */}
                 <div className="space-y-4">
                   <div className="text-center">
-                    <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
+                    <Label className="brand-font-heading font-medium text-white text-lg">
                       Choose Output Size
                     </Label>
-                    <p className="text-sm text-gray-600 brand-font-body mt-2">
+                    <p className="text-sm text-gray-300 brand-font-body mt-2">
                       Select the desired size for your enhanced image
                     </p>
                   </div>
@@ -986,7 +986,9 @@ export default function UploadEnhancePage() {
                         </div>
 
                         {/* Size Label */}
-                        <div className="text-lg font-semibold text-gray-800 mb-2">{size.label}</div>
+                        <div className={`text-lg font-semibold mb-2 ${
+                          selectedImageSize === size.id ? 'text-gray-800' : 'text-white'
+                        }`}>{size.label}</div>
                         
                         {/* Best For */}
                         <div className="text-sm font-medium text-[#06B6D4] mb-2">
@@ -994,7 +996,9 @@ export default function UploadEnhancePage() {
                         </div>
                         
                         {/* Description */}
-                        <div className="text-xs text-gray-600 leading-relaxed">
+                        <div className={`text-xs leading-relaxed ${
+                          selectedImageSize === size.id ? 'text-gray-600' : 'text-gray-300'
+                        }`}>
                           {size.description}
                         </div>
 
