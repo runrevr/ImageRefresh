@@ -125,16 +125,22 @@ export default function GenerateEnhancementsPage() {
     console.log('Created enhancement jobs:', enhancementJobs);
     setJobs(enhancementJobs)
 
-    // Check credits before starting (async) - but only show upgrade if user is authenticated and has no credits
+    // Check credits before starting (async)
     checkUserCredits().then(credits => {
       setCreditStatus(credits)
       console.log('Credit status on generation page:', credits);
+      console.log('User auth status:', user ? 'authenticated' : 'guest');
       
-      // Only block if user is authenticated but has no credits, OR if they're a guest with no free credits
-      const shouldShowUpgrade = (user && !credits.hasCredits) || (!user && !credits.hasCredits && credits.hasUsedFreeCredit);
+      // For authenticated users, check if they have any credits (free or paid)
+      if (user) {
+        // User is authenticated - they should have credits if they made it this far
+        console.log('User is authenticated, proceeding with generation');
+        return; // Don't block authenticated users
+      }
       
-      if (shouldShowUpgrade) {
-        console.log('Showing upgrade prompt - no credits available');
+      // For guests, only block if they've used their free credit
+      if (!user && !credits.hasCredits && credits.hasUsedFreeCredit) {
+        console.log('Guest user has used free credit, showing upgrade prompt');
         setShowUpgradePrompt(true)
         setIsProcessing(false)
         return
