@@ -20,6 +20,7 @@ import { setupAnthropicTestRoutes } from "./routes/anthropic-test";
 import uploadEnhanceApiRoutes from "./routes/upload-enhance-api";
 import fs from 'fs';
 import path from 'path';
+import { createServer } from 'http'; // Import createServer
 
 // Create a debug logger that writes to stdout and a file
 const DEBUG_LOG_PATH = path.join(process.cwd(), 'logs', 'debug.log');
@@ -303,12 +304,12 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
       const fs = await import('fs');
       const path = await import('path');
       const uploadsDir = path.join(process.cwd(), 'uploads');
-      
+
       // Ensure uploads directory exists
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
       }
-      
+
       const filepath = path.join(uploadsDir, filename);
       fs.writeFileSync(filepath, buffer);
 

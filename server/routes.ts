@@ -17,7 +17,7 @@ import { createColoringBookImage } from "./coloring-book";
 // Import the Product AI Studio router
 import productAiStudioRouter from "./product-ai-studio";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export function registerRoutes(app: Express): Server {
   // Add detailed console logs for debugging
   app.use((req, res, next) => {
     const start = Date.now();
@@ -934,8 +934,7 @@ app.post("/api/credits/deduct", async (req, res) => {
   }
 });
 
-  // Enhanced credits endpoint with guest support
-  app.get("/api/credits/:userIdOrGuest", async (req, res) => {
+  // Enhanced credits endpoint with guest support  app.get("/api/credits/:userIdOrGuest", async (req, res) => {
     try {
       const userIdOrGuest = req.params.userIdOrGuest;
 
@@ -1269,6 +1268,8 @@ app.post("/api/credits/deduct", async (req, res) => {
       });
     }
   });
+  const server = createServer(app);
+  return server;
 }
 
 // Handle product image lab routes
