@@ -172,37 +172,9 @@ export default function TextToImage() {
 
         <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle className="text-2xl text-center">Advanced Options</CardTitle>
+            <CardTitle className="text-2xl text-center">Image Size</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <Label htmlFor="purpose" className="text-base font-semibold mb-3 block">
-                  What's this for?
-                </Label>
-                <Input
-                  id="purpose"
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                  placeholder="Website header, social media post, etc."
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="industry" className="text-base font-semibold mb-3 block">
-                  Industry/Business Type
-                </Label>
-                <Input
-                  id="industry"
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                  placeholder="Restaurant, fitness, tech, etc."
-                  className="w-full"
-                />
-              </div>
-            </div>
-
+          <CardContent>
             <div>
               <Label className="text-base font-semibold mb-4 block">Aspect Ratio</Label>
               <RadioGroup value={aspectRatio} onValueChange={setAspectRatio}>
@@ -230,50 +202,6 @@ export default function TextToImage() {
                   </div>
                 </div>
               </RadioGroup>
-            </div>
-
-            <div>
-              <Label className="text-base font-semibold mb-4 block">Style Intensity</Label>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-500">Natural</span>
-                <Slider
-                  value={styleIntensity}
-                  onValueChange={setStyleIntensity}
-                  max={100}
-                  step={1}
-                  className="flex-1"
-                />
-                <span className="text-sm text-gray-500">Stylized</span>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">Current: {styleIntensity[0]}%</p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="addText"
-                  checked={addText}
-                  onCheckedChange={(checked) => setAddText(checked === true)}
-                />
-                <Label htmlFor="addText" className="text-base font-semibold">
-                  Add business name to image
-                </Label>
-              </div>
-
-              {addText && (
-                <div>
-                  <Label htmlFor="businessName" className="text-base font-semibold mb-3 block">
-                    Business Name
-                  </Label>
-                  <Input
-                    id="businessName"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    placeholder="Your business name"
-                    className="max-w-md"
-                  />
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
