@@ -978,7 +978,9 @@ export default function UploadPage() {
 
                 {selectedTransformation !== 'custom' && (
                   <>
-                    {/* Category Selection Section - Show before upload */}
+                    <ImageUploader onImageUploaded={handleUpload} />
+
+                    {/* Category Selection Section - Show after upload */}
                     <div className="mb-12">
                       <h3 className="text-xl font-semibold text-center mb-6 text-gray-900">Choose Your Style Category</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
@@ -1159,8 +1161,6 @@ export default function UploadPage() {
                         </div>
                       </div>
                     )}
-
-                    <ImageUploader onImageUploaded={handleUpload} />
                   </>
                 )}
 
