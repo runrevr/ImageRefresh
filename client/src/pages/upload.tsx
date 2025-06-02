@@ -1014,21 +1014,21 @@ export default function UploadPage() {
                           </div>
                         </button>
 
-                        {/* Animation Category */}
-                        <button
-                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                            selectedTransformation === 'animation' 
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                          }`}
-                          onClick={() => setSelectedTransformation('animation')}
-                        >
-                          <div className="text-3xl mb-2">🎬</div>
-                          <div className="text-sm font-semibold text-gray-900">Animation</div>
-                          <div className="text-xs text-gray-600 text-center mt-1">
-                            Cartoon and animated styles
-                          </div>
-                        </button>
+                        {/* Kids/Cartoons Category */}
+                    <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'animation' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('animation')}
+                    >
+                      <div className="text-3xl mb-2">🎬</div>
+                      <div className="text-sm font-semibold text-gray-900">Kids/Cartoons</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                        Cartoon and animated styles
+                      </div>
+                    </button>
 
                         {/* Artistic Category */}
                         <button
@@ -1101,7 +1101,7 @@ export default function UploadPage() {
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
                             </div>
                           ))}
-                          
+
                           {selectedTransformation === 'historical' && [
                             { name: 'Old Western', emoji: '🤠' },
                             { name: '90s Hip-Hop', emoji: '🎤' },
@@ -1116,7 +1116,7 @@ export default function UploadPage() {
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
                             </div>
                           ))}
-                          
+
                           {selectedTransformation === 'artistic' && [
                             { name: 'Oil Painting', emoji: '🖼️' },
                             { name: 'Watercolor', emoji: '🎨' },
@@ -1130,7 +1130,7 @@ export default function UploadPage() {
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
                             </div>
                           ))}
-                          
+
                           {selectedTransformation === 'other' && [
                             { name: 'Mullets', emoji: '💇' },
                             { name: 'Hulkamania', emoji: '💪' },
@@ -1147,7 +1147,7 @@ export default function UploadPage() {
                               <span className="text-sm font-medium text-gray-700">{style.name}</span>
                             </div>
                           ))}
-                          
+
                           {selectedTransformation === 'kids-real' && [
                             { name: 'Kids Drawing to Reality', emoji: '🖍️' },
                           ].map((style, index) => (
@@ -1232,7 +1232,7 @@ export default function UploadPage() {
                       </div>
                     </button>
 
-                    {/* Animation Category */}
+                    {/* Kids/Cartoons Category */}
                     <button
                       className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
                         selectedTransformation === 'animation' 
@@ -1242,7 +1242,7 @@ export default function UploadPage() {
                       onClick={() => setSelectedTransformation('animation')}
                     >
                       <div className="text-3xl mb-2">🎬</div>
-                      <div className="text-sm font-semibold text-gray-900">Animation</div>
+                      <div className="text-sm font-semibold text-gray-900">Kids/Cartoons</div>
                       <div className="text-xs text-gray-600 text-center mt-1">
                         Cartoon and animated styles
                       </div>
