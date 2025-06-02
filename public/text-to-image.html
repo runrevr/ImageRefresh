@@ -603,38 +603,114 @@
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Initial State -->
-        <div id="initialView">
-            <h1 class="page-title">Create Any Scene You Can Imagine</h1>
-            <p class="subtitle">Describe what you need and let AI bring your vision to life</p>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm bg-gradient-to-r from-white via-primary-50 to-white">
+      <div class="container mx-auto px-3 sm:px-4 py-2 flex justify-between items-center">
+        <a href="/">
+          <div class="flex items-center cursor-pointer">
+            <img
+              src="/attached_assets/logo.png"
+              alt="ImageRefresh Logo"
+              class="h-12 md:h-16"
+              style="max-width: 250px; min-height: 48px;"
+            />
+          </div>
+        </a>
 
-            <div class="rainbow-input-container">
-                <div class="rainbow-input-wrapper">
-                    <input 
-                        type="text" 
-                        class="rainbow-input" 
-                        id="promptInput"
-                        placeholder="Try: 'relaxing massage therapy session' or 'professional plumber fixing pipes' or 'beautiful lawn care results'"
-                    >
-                    <!--  The button has been moved below the input  -->
-                    <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
-                        Let's Make Some Magic
-                    </button>
-                </div>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="/ideas" class="text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold">
+            Ideas
+          </a>
+          <a href="/product-image-lab" class="text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold">
+            Product Image Lab
+          </a>
+          <a href="/pricing" class="text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold">
+            Pricing
+          </a>
+          <a href="/help" class="text-[#333333] hover:text-[#06B6D4] transition text-lg font-bold">
+            Help
+          </a>
+        </div>
 
+        <div class="flex items-center space-x-4">
+          <div class="hidden md:flex items-center space-x-2">
+            <a href="/auth?tab=login">
+              <button class="bg-[#333333] text-[#f2f2f2] hover:bg-[#F97316] border border-[#f2f2f2] px-4 py-2 rounded transition">
+                Log in
+              </button>
+            </a>
+            <a href="/auth">
+              <button class="bg-[#06B6D4] hover:bg-[#FF7B54] text-white border-none px-4 py-2 rounded transition">
+                Sign up
+              </button>
+            </a>
+          </div>
+
+          <!-- Mobile menu button -->
+          <button id="mobile-menu-button" class="md:hidden flex items-center justify-center hover:bg-opacity-90 relative bg-[#FF7B54] text-white p-2 rounded border-2 border-white shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden bg-[#333333]">
+        <div class="flex flex-col space-y-4 p-6">
+          <a href="/ideas" class="py-2 text-white hover:text-[#06B6D4] transition">Ideas</a>
+          <a href="/product-image-lab" class="py-2 text-white hover:text-[#06B6D4] transition">Product Image Lab</a>
+          <a href="/pricing" class="py-2 text-white hover:text-[#06B6D4] transition">Pricing</a>
+          <a href="/help" class="py-2 text-white hover:text-[#06B6D4] transition">Help</a>
+          <div class="pt-4 border-t border-gray-600">
+            <a href="/auth?tab=login">
+              <button class="w-full mb-2 bg-[#333333] text-[#f2f2f2] hover:bg-neutral-800 border border-[#f2f2f2] px-4 py-2 rounded transition">
+                Log in
+              </button>
+            </a>
+            <a href="/auth">
+              <button class="w-full bg-[#06B6D4] hover:bg-[#FF7B54]/90 text-white border-none px-4 py-2 rounded transition">
+                Sign up
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content with top padding to account for fixed navbar -->
+    <div class="container mx-auto px-4 py-8 pt-24">
+      <div class="text-center mb-8">
+        <h1 class="page-title">Create Any Scene You Can Imagine</h1>
+        <p class="subtitle">Describe what you need and let AI bring your vision to life</p>
+
+        <div class="rainbow-input-container">
+            <div class="rainbow-input-wrapper">
+                <input 
+                    type="text" 
+                    class="rainbow-input" 
+                    id="promptInput"
+                    placeholder="Try: 'relaxing massage therapy session' or 'professional plumber fixing pipes' or 'beautiful lawn care results'"
+                >
+                <!--  The button has been moved below the input  -->
+                <button class="generate-btn" id="generateBtn" onclick="enhancePrompt()">
+                    Let's Make Some Magic
+                </button>
             </div>
 
-            <div class="examples">
-                <p class="examples-label">Popular ideas:</p>
-                <div class="example-chips">
-                    <span class="example-chip" onclick="setExample('relaxing spa massage with hot stones')">spa massage scene</span>
-                    <span class="example-chip" onclick="setExample('professional roofer installing shingles safely')">roofing in action</span>
-                    <span class="example-chip" onclick="setExample('beautiful landscaped garden with fountain')">landscaped yard</span>
-                    <span class="example-chip" onclick="setExample('fresh baked bread on rustic table')">bakery products</span>
-                    <span class="example-chip" onclick="setExample('mechanic working under car hood')">auto repair service</span>
-                </div>
+        </div>
+
+        <div class="examples">
+            <p class="examples-label">Popular ideas:</p>
+            <div class="example-chips">
+                <span class="example-chip" onclick="setExample('relaxing spa massage with hot stones')">spa massage scene</span>
+                <span class="example-chip" onclick="setExample('professional roofer installing shingles safely')">roofing in action</span>
+                <span class="example-chip" onclick="setExample('beautiful landscaped garden with fountain')">landscaped yard</span>
+                <span class="example-chip" onclick="setExample('fresh baked bread on rustic table')">bakery products</span>
+                <span class="example-chip" onclick="setExample('mechanic working under car hood')">auto repair service</span>
             </div>
         </div>
 
@@ -751,6 +827,30 @@
     </div>
 
     <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+          mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+          });
+        }
+
+        const addTextCheckbox = document.getElementById('addText');
+        const businessTextInput = document.getElementById('businessText');
+
+        if (addTextCheckbox) {
+            addTextCheckbox.addEventListener('change', function() {
+                businessTextInput.style.display = this.checked ? 'block' : 'none';
+                if (this.checked) {
+                    businessTextInput.focus();
+                }
+            });
+        }
+    });
+
         let userPrompt = '';
         let selectedVariations = new Set([0]); // Pre-select first variation
         let businessContext = {
@@ -775,19 +875,7 @@
         }
 
         // Toggle business name input
-        document.addEventListener('DOMContentLoaded', function() {
-            const addTextCheckbox = document.getElementById('addText');
-            const businessTextInput = document.getElementById('businessText');
 
-            if (addTextCheckbox) {
-                addTextCheckbox.addEventListener('change', function() {
-                    businessTextInput.style.display = this.checked ? 'block' : 'none';
-                    if (this.checked) {
-                        businessTextInput.focus();
-                    }
-                });
-            }
-        });
 
         function enhancePrompt() {
             userPrompt = document.getElementById('promptInput').value.trim();
