@@ -72,7 +72,7 @@ export default function TextToImage() {
           purpose: encodeURIComponent(purpose),
           industry: encodeURIComponent(industry),
           aspectRatio: encodeURIComponent(aspectRatio),
-          styleIntensity: encodeURIComponent(styleIntensity),
+          styleIntensity: encodeURIComponent(styleIntensity[0]),
           addText: addText.toString(),
           businessName: encodeURIComponent(businessName)
         });
