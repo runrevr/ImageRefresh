@@ -568,13 +568,6 @@ export default function UploadEnhancePage() {
       />
 
       <style>{`
-        :root {
-          --primary: #0D7877;
-          --secondary: #3DA5D9;
-          --accent: #C1F50A;
-          --neutral: #333333;
-          --light: #F2F4F6;
-        }
 
         .brand-font-heading {
           font-family: 'Plus Jakarta Sans', sans-serif;
@@ -831,7 +824,7 @@ export default function UploadEnhancePage() {
                       : `One image at a time, JPEG, PNG, WebP format, up to 10MB each`
                     }
                   </p>
-                  <Button variant="outline" type="button" className="brand-button-primary border-none text-lg px-8 py-3">
+                  <Button variant="outline" type="button" className="bg-brand-primary hover:bg-brand-secondary text-white border-none text-lg px-8 py-3 transition-all duration-200">
                     Choose File
                   </Button>
 
