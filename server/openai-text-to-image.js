@@ -1,3 +1,4 @@
+
 // openai-text-to-image.js
 import OpenAI from 'openai';
 import fs from 'fs';
@@ -110,4 +111,3 @@ export async function generateTextToImage(prompt, options = {}) {
 
 // Log that the module loaded successfully
 console.log('[OpenAI Text-to-Image Module] Loaded successfully');
-```
