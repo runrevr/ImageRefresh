@@ -873,10 +873,19 @@ export default function UploadEnhancePage() {
               ? 'opacity-100 transform translate-y-0' 
               : 'opacity-50 transform translate-y-4 pointer-events-none'
           }`}>
-            <Card className={`brand-card ${hasImages ? '' : 'bg-gray-50'}`} style={{ backgroundColor: '#1F2937' }}>
-              <CardHeader className="text-center">
+            <Card className={`brand-card ${hasImages ? '' : 'bg-gray-50'}`} style={{ 
+              backgroundColor: '#1F2937',
+              background: 'linear-gradient(135deg, #1F2937 0%, #374151 50%, #1F2937 100%)'
+            }}>
+              {/* Decorative accent elements */}
+              <div className="absolute top-4 left-4 w-3 h-3 rounded-full" style={{ backgroundColor: '#06B6D4' }}></div>
+              <div className="absolute top-8 right-6 w-2 h-2 rounded-full" style={{ backgroundColor: '#84CC16' }}></div>
+              <div className="absolute bottom-6 left-8 w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#F97316' }}></div>
+              <div className="absolute bottom-4 right-4 w-3 h-3 rounded-full" style={{ backgroundColor: '#8B5CF6' }}></div>
+              
+              <CardHeader className="text-center relative">
                 <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold text-white text-xl">
-                  <Sparkles className="h-5 w-5 brand-text-primary" />
+                  <Sparkles className="h-5 w-5" style={{ color: '#06B6D4' }} />
                   Tell Us About Your Business
                 </CardTitle>
                 <CardDescription className="brand-font-body text-gray-300">
@@ -942,92 +951,108 @@ export default function UploadEnhancePage() {
                   </p>
                 </div>
 
-                {/* Image Size Selection */}
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <Label className="brand-font-heading font-medium text-white text-lg">
-                      Choose Output Size
-                    </Label>
-                    <p className="text-sm text-gray-300 brand-font-body mt-2">
-                      Select the desired size for your enhanced image
-                    </p>
-                  </div>
+                
+              </CardContent>
+            </Card>
+          </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                    {imageSizeOptions.map((size) => (
-                      <button
-                        key={size.id}
-                        type="button"
-                        onClick={() => hasImages && setSelectedImageSize(size.id)}
-                        disabled={!hasImages}
-                        className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
-                          !hasImages
-                            ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
-                            : selectedImageSize === size.id
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg transform scale-105' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50 hover:shadow-md'
-                        }`}
-                      >
-                        {/* Visual Icon */}
-                        <div className="flex items-center justify-center mb-3">
-                          <div className={`relative ${
-                            size.id === 'square' ? 'w-12 h-12' : 
-                            size.id === 'landscape' ? 'w-16 h-10' : 'w-10 h-16'
-                          } border-2 rounded-sm ${
-                            selectedImageSize === size.id ? 'border-[#06B6D4]' : 'border-gray-400'
-                          } flex items-center justify-center`}>
-                            <div className={`${
-                              size.id === 'square' ? 'w-8 h-8' : 
-                              size.id === 'landscape' ? 'w-12 h-6' : 'w-6 h-12'
-                            } ${
-                              selectedImageSize === size.id ? 'bg-[#06B6D4]' : 'bg-gray-400'
-                            } rounded-sm opacity-70`}></div>
-                          </div>
+          {/* Image Size Selection Section - Outside Dark Card */}
+          <div className={`transition-all duration-500 ease-in-out mt-8 ${
+            hasImages && hasIndustryInfo
+              ? 'opacity-100 transform translate-y-0' 
+              : 'opacity-50 transform translate-y-4 pointer-events-none'
+          }`}>
+            <Card className="brand-card relative overflow-hidden">
+              {/* Colorful accent border */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#06B6D4] via-[#84CC16] via-[#F97316] to-[#8B5CF6]"></div>
+              
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="brand-font-heading font-bold text-gray-900 text-2xl mb-2">
+                  Choose Output Size
+                </CardTitle>
+                <CardDescription className="brand-font-body text-gray-600">
+                  {hasImages && hasIndustryInfo
+                    ? "Select the desired size for your enhanced image"
+                    : "Complete the steps above to choose your output size"
+                  }
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                  {imageSizeOptions.map((size) => (
+                    <button
+                      key={size.id}
+                      type="button"
+                      onClick={() => (hasImages && hasIndustryInfo) && setSelectedImageSize(size.id)}
+                      disabled={!(hasImages && hasIndustryInfo)}
+                      className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                        !(hasImages && hasIndustryInfo)
+                          ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
+                          : selectedImageSize === size.id
+                            ? 'border-[#06B6D4] bg-[#06B6D4]/5 shadow-lg transform scale-105' 
+                            : 'border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 hover:shadow-md'
+                      }`}
+                    >
+                      {/* Visual Icon */}
+                      <div className="flex items-center justify-center mb-3">
+                        <div className={`relative ${
+                          size.id === 'square' ? 'w-12 h-12' : 
+                          size.id === 'landscape' ? 'w-16 h-10' : 'w-10 h-16'
+                        } border-2 rounded-sm ${
+                          selectedImageSize === size.id ? 'border-[#06B6D4]' : 'border-gray-300'
+                        } flex items-center justify-center`}>
+                          <div className={`${
+                            size.id === 'square' ? 'w-8 h-8' : 
+                            size.id === 'landscape' ? 'w-12 h-6' : 'w-6 h-12'
+                          } ${
+                            selectedImageSize === size.id ? 'bg-[#06B6D4]' : 'bg-gray-300'
+                          } rounded-sm opacity-70`}></div>
                         </div>
-
-                        {/* Size Label */}
-                        <div className={`text-lg font-semibold mb-2 ${
-                          selectedImageSize === size.id ? 'text-gray-800' : 'text-white'
-                        }`}>{size.label}</div>
-                        
-                        {/* Best For */}
-                        <div className="text-sm font-medium text-[#06B6D4] mb-2">
-                          Best for: {size.bestFor}
-                        </div>
-                        
-                        {/* Description */}
-                        <div className={`text-xs leading-relaxed ${
-                          selectedImageSize === size.id ? 'text-gray-600' : 'text-gray-300'
-                        }`}>
-                          {size.description}
-                        </div>
-
-                        {/* Selected Indicator */}
-                        {selectedImageSize === size.id && (
-                          <div className="mt-3 flex items-center text-[#06B6D4] text-sm font-medium">
-                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            Selected
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-
-                  {selectedImageSize && hasImages && (
-                    <div className="p-4 bg-green-50 rounded-lg border border-green-200 max-w-2xl mx-auto">
-                      <div className="text-center">
-                        <p className="text-sm brand-text-primary font-medium brand-font-body mb-1">
-                          ✨ Perfect! Your image will be enhanced to {imageSizeOptions.find(size => size.id === selectedImageSize)?.label}
-                        </p>
-                        <p className="text-xs text-green-600 brand-font-body">
-                          {imageSizeOptions.find(size => size.id === selectedImageSize)?.description}
-                        </p>
                       </div>
-                    </div>
-                  )}
+
+                      {/* Size Label */}
+                      <div className={`text-lg font-semibold mb-2 ${
+                        selectedImageSize === size.id ? 'text-[#06B6D4]' : 'text-gray-700'
+                      }`}>{size.label}</div>
+                      
+                      {/* Best For */}
+                      <div className="text-sm font-medium text-[#F97316] mb-2">
+                        Best for: {size.bestFor}
+                      </div>
+                      
+                      {/* Description */}
+                      <div className={`text-xs leading-relaxed ${
+                        selectedImageSize === size.id ? 'text-gray-600' : 'text-gray-500'
+                      }`}>
+                        {size.description}
+                      </div>
+
+                      {/* Selected Indicator */}
+                      {selectedImageSize === size.id && (
+                        <div className="mt-3 flex items-center text-[#06B6D4] text-sm font-medium">
+                          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          Selected
+                        </div>
+                      )}
+                    </button>
+                  ))}
                 </div>
+
+                {selectedImageSize && hasImages && hasIndustryInfo && (
+                  <div className="p-4 mt-6 rounded-lg border-2 border-[#84CC16] bg-[#84CC16]/5 max-w-2xl mx-auto">
+                    <div className="text-center">
+                      <p className="text-sm font-medium brand-font-body mb-1" style={{ color: '#84CC16' }}>
+                        ✨ Perfect! Your image will be enhanced to {imageSizeOptions.find(size => size.id === selectedImageSize)?.label}
+                      </p>
+                      <p className="text-xs text-gray-600 brand-font-body">
+                        {imageSizeOptions.find(size => size.id === selectedImageSize)?.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
