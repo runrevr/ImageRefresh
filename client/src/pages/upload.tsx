@@ -1,10 +1,25 @@
+
 import React, { useState, useRef, useCallback } from 'react'
 import { useLocation } from 'wouter'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import ImageUploader from '@/components/ImageUploader'
+import PromptInput from '@/components/PromptInput'
+import ProcessingState from '@/components/ProcessingState'
+import ResultView from '@/components/ResultView'
 import { useAuth } from '@/hooks/useAuth'
 import { useCredits } from '@/hooks/useCredits'
 import { useToast } from '@/hooks/use-toast'
+import { apiRequest } from '@/lib/queryClient'
+import { getSavedStyle, clearSavedStyle, hasSavedStyle } from '@/components/StyleIntegration'
+
+// Enum for the different steps in the process
+enum Step {
+  Upload,
+  Prompt,
+  Processing,
+  Result,
+}
 
 export default function UploadPage() {
   const { user } = useAuth()
@@ -12,73 +27,168 @@ export default function UploadPage() {
   const { toast } = useToast()
   const [, setLocation] = useLocation()
   
-  const [selectedTransformation, setSelectedTransformation] = useState('animation')
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const [customPrompt, setCustomPrompt] = useState('')
-  
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [currentStep, setCurrentStep] = useState<Step>(Step.Upload)
+  const [originalImage, setOriginalImage] = useState<string | null>(null)
+  const [originalImagePath, setOriginalImagePath] = useState<string | null>(null)
+  const [transformedImage, setTransformedImage] = useState<string | null>(null)
+  const [secondTransformedImage, setSecondTransformedImage] = useState<string | null>(null)
+  const [prompt, setPrompt] = useState<string>('')
+  const [currentTransformation, setCurrentTransformation] = useState<any>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
-  const handleImageUpload = useCallback(async (file: File) => {
-    if (!file || !file.type.startsWith('image/')) {
+  // Check for saved style from Ideas page
+  const [savedStyle, setSavedStyle] = useState<{
+    prompt: string;
+    title: string;
+    category: string;
+  } | null>(null)
+
+  const handleImageUpload = useCallback(async (imagePath: string, imageUrl: string) => {
+    console.log("Image uploaded, path:", imagePath)
+    console.log("Image URL:", imageUrl)
+
+    // Validate inputs
+    if (!imagePath || !imageUrl) {
+      console.error("Invalid image path or URL received in handleUpload")
       toast({
-        title: "Invalid file",
-        description: "Please upload an image file",
-        variant: "destructive"
+        title: "Upload Error",
+        description: "Could not process the uploaded image. Please try again.",
+        variant: "destructive",
       })
       return
     }
 
-    setIsUploading(true)
-    
-    try {
-      const formData = new FormData()
-      formData.append('image', file)
-      
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      })
-      
-      if (!response.ok) {
-        throw new Error('Upload failed')
+    setOriginalImage(imageUrl)
+    setOriginalImagePath(imagePath)
+
+    // Check if there's a saved style from the Ideas page
+    if (hasSavedStyle()) {
+      const style = getSavedStyle()
+      console.log("Found saved style:", style)
+      if (style) {
+        // Set the prompt from the saved style
+        console.log("Setting prompt from saved style:", style.prompt)
+        setPrompt(style.prompt)
+        setSavedStyle(style)
+
+        // Notify the user that a style is being applied
+        toast({
+          title: `"${style.title}" style selected`,
+          description: `Your image has been uploaded. Click "Transform Image" to apply the transformation.`,
+        })
+
+        // Clear the saved style to avoid reapplying it
+        clearSavedStyle()
       }
-      
-      const data = await response.json()
-      setUploadedImage(data.imageUrl)
-      
-      toast({
-        title: "Image uploaded successfully",
-        description: "Ready to transform your image"
-      })
-    } catch (error) {
-      toast({
-        title: "Upload failed",
-        description: "Please try again",
-        variant: "destructive"
-      })
-    } finally {
-      setIsUploading(false)
     }
+
+    // Move to prompt step
+    setCurrentStep(Step.Prompt)
   }, [toast])
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      handleImageUpload(file)
+  const handlePromptSubmit = async (promptText: string, imageSize: string = "square") => {
+    console.log("Submitting prompt:", promptText)
+    console.log("Image size:", imageSize)
+    console.log("Original image path:", originalImagePath)
+
+    // Validate image path exists before proceeding
+    if (!originalImagePath) {
+      toast({
+        title: "Image Upload Error",
+        description: "No image path found. Please try uploading your image again.",
+        variant: "destructive",
+      })
+      setCurrentStep(Step.Upload)
+      return
+    }
+
+    setPrompt(promptText)
+    setCurrentStep(Step.Processing)
+    setIsProcessing(true)
+
+    try {
+      console.log("Sending transformation request with data:", {
+        originalImagePath,
+        prompt: promptText,
+        userId: user?.id,
+        imageSize: imageSize,
+      })
+
+      const response = await apiRequest("POST", "/api/transform", {
+        originalImagePath,
+        prompt: promptText,
+        userId: user?.id,
+        imageSize: imageSize,
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log("Image transformation completed successfully")
+
+        setTransformedImage(data.transformedImageUrl)
+        if (data.secondTransformedImageUrl) {
+          setSecondTransformedImage(data.secondTransformedImageUrl)
+        }
+
+        // Store transformation data
+        setCurrentTransformation(data)
+        setCurrentStep(Step.Result)
+      } else {
+        const data = await response.json()
+        console.error("Server returned error response:", data)
+        
+        if (data.error === "content_safety") {
+          toast({
+            title: "Content Safety Alert",
+            description: "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
+            variant: "destructive",
+          })
+        } else {
+          toast({
+            title: "Transformation failed",
+            description: data.message || "An unknown error occurred during transformation",
+            variant: "destructive",
+          })
+        }
+        setCurrentStep(Step.Prompt)
+      }
+    } catch (error: any) {
+      console.error("Error transforming image:", error)
+      toast({
+        title: "Transformation Failed",
+        description: "There was an error processing your image. Please try again.",
+        variant: "destructive",
+      })
+      setCurrentStep(Step.Prompt)
+    } finally {
+      setIsProcessing(false)
     }
   }
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    const file = e.dataTransfer.files[0]
-    if (file) {
-      handleImageUpload(file)
+  const handleBack = () => {
+    if (currentStep === Step.Prompt) {
+      setCurrentStep(Step.Upload)
+      setOriginalImage(null)
+      setOriginalImagePath(null)
+    } else if (currentStep === Step.Result) {
+      setCurrentStep(Step.Prompt)
     }
   }
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
+  const handleNewImage = () => {
+    setOriginalImage(null)
+    setOriginalImagePath(null)
+    setTransformedImage(null)
+    setSecondTransformedImage(null)
+    setPrompt("")
+    setCurrentTransformation(null)
+    setCurrentStep(Step.Upload)
+    setSavedStyle(null)
+  }
+
+  const handleCancel = () => {
+    setCurrentStep(Step.Prompt)
+    setIsProcessing(false)
   }
 
   return (
@@ -99,129 +209,55 @@ export default function UploadPage() {
             </p>
           </div>
 
-          {/* Transformation Type Selection */}
-          <div className="flex justify-center mb-8">
-            <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
-              <button
-                className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
-                  selectedTransformation !== 'custom' 
-                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                onClick={() => setSelectedTransformation('animation')}
-              >
-                <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
-                  🖼️
-                </div>
-                <div className="text-sm font-semibold">Transform Image</div>
-                <div className="text-xs opacity-80 text-center leading-tight">
-                  Upload a photo and choose from preset styles
-                </div>
-              </button>
-              <button
-                className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
-                  selectedTransformation === 'custom' 
-                    ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg transform scale-105' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                onClick={() => setSelectedTransformation('custom')}
-              >
-                <div className={`text-2xl mb-1 ${selectedTransformation === 'custom' ? 'animate-pulse' : ''}`}>
-                  ✨
-                </div>
-                <div className="text-sm font-semibold">Custom Prompt</div>
-                <div className="text-xs opacity-80 text-center leading-tight">
-                  Describe your own unique transformation
-                </div>
-              </button>
-            </div>
-          </div>
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden p-6">
+            {currentStep === Step.Upload && (
+              <div className="max-w-2xl mx-auto">
+                <h2 className="text-2xl font-bold mb-3 text-center">
+                  Upload Your Photo
+                </h2>
+                <p className="text-red-500 font-medium mb-4 text-center">
+                  Not all images with children in them will work with all prompts. AI is very strict about editing kids images (for good reason).
+                </p>
+                <ImageUploader onImageUploaded={handleImageUpload} />
+              </div>
+            )}
 
-          {/* Upload Area */}
-          <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
-            <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors cursor-pointer"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {uploadedImage ? (
-                <div className="space-y-4">
-                  <img
-                    src={uploadedImage}
-                    alt="Uploaded"
-                    className="max-w-full max-h-64 mx-auto rounded-lg"
-                  />
-                  <p className="text-green-600 font-medium">Image uploaded successfully!</p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setUploadedImage(null)
-                    }}
-                    className="text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    Upload a different image
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="text-6xl text-gray-400 mb-4">📁</div>
-                  <div>
-                    <p className="text-lg text-gray-600 mb-2">
-                      {isUploading ? 'Uploading...' : 'Drag and drop your image here, or click to select'}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Supports JPG, PNG • Max 10MB
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-          </div>
-
-          {/* Custom Prompt Section */}
-          {selectedTransformation === 'custom' && (
-            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 border border-orange-200 mb-8">
-              <h3 className="text-xl font-semibold mb-4">Describe Your Transformation</h3>
-              <textarea
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                placeholder="Describe how you want to transform your image..."
-                className="w-full p-4 border border-gray-300 rounded-lg resize-none h-32"
+            {currentStep === Step.Prompt && originalImage && (
+              <PromptInput
+                originalImage={originalImage}
+                onSubmit={handlePromptSubmit}
+                onBack={handleBack}
+                defaultPrompt={prompt}
+                savedStyle={savedStyle}
               />
-            </div>
-          )}
+            )}
 
-          {/* Action Buttons */}
-          {uploadedImage && (
-            <div className="text-center">
-              <button
-                onClick={() => {
-                  if (selectedTransformation === 'custom' && !customPrompt.trim()) {
-                    toast({
-                      title: "Custom prompt required",
-                      description: "Please describe your transformation",
-                      variant: "destructive"
-                    })
-                    return
-                  }
-                  // Navigate to ideas page with the uploaded image
-                  setLocation('/ideas')
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
-              >
-                {selectedTransformation === 'custom' ? 'Generate Custom Transformation' : 'Generate Ideas'}
-              </button>
-            </div>
-          )}
+            {currentStep === Step.Processing && originalImage && (
+              <ProcessingState
+                originalImage={originalImage}
+                onCancel={handleCancel}
+                transformationId={currentTransformation?.id}
+              />
+            )}
+
+            {currentStep === Step.Result && originalImage && transformedImage && (
+              <ResultView
+                originalImage={originalImage}
+                transformedImage={transformedImage}
+                secondTransformedImage={secondTransformedImage}
+                onTryAgain={() => setCurrentStep(Step.Prompt)}
+                onNewImage={handleNewImage}
+                onEditImage={() => {/* Edit functionality can be added later */}}
+                prompt={prompt}
+                freeCredits={userCredits?.freeCreditsUsed ? 0 : 1}
+                paidCredits={userCredits?.paidCredits || 0}
+                canEdit={false}
+                transformationId={currentTransformation?.id?.toString()}
+                editsUsed={0}
+                userId={user?.id}
+              />
+            )}
+          </div>
         </div>
       </main>
       
