@@ -533,9 +533,27 @@ export default function UploadEnhancePage() {
   }, [creditStatus?.shouldShowSignUpModal]);
 
       const imageSizeOptions = [
-        { id: "small", label: "Small (256x256)" },
-        { id: "medium", label: "Medium (512x512)" },
-        { id: "large", label: "Large (1024x1024)" },
+        { 
+          id: "small", 
+          label: "Small (256x256)", 
+          description: "Perfect for profile pictures, thumbnails, and small web icons",
+          bestFor: "Profile pics, Thumbnails, Icons",
+          icon: "256"
+        },
+        { 
+          id: "medium", 
+          label: "Medium (512x512)", 
+          description: "Great for Instagram posts, Facebook posts, and medium-sized web content",
+          bestFor: "Instagram posts, Facebook posts, Web content",
+          icon: "512"
+        },
+        { 
+          id: "large", 
+          label: "Large (1024x1024)", 
+          description: "Ideal for Google Ads, print materials, high-quality web banners, and detailed presentations",
+          bestFor: "Google Ads, Print materials, High-res banners",
+          icon: "1024"
+        },
       ];
 
 
@@ -938,31 +956,74 @@ export default function UploadEnhancePage() {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
                     {imageSizeOptions.map((size) => (
                       <button
                         key={size.id}
                         type="button"
                         onClick={() => hasImages && setSelectedImageSize(size.id)}
                         disabled={!hasImages}
-                        className={`px-6 py-3 rounded-lg border-2 transition-all duration-200 ${
+                        className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
                           !hasImages
                             ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
                             : selectedImageSize === size.id
-                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg transform scale-105' 
+                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50 hover:shadow-md'
                         }`}
                       >
-                        <div className="text-sm font-medium text-gray-700">{size.label}</div>
+                        {/* Visual Icon */}
+                        <div className="flex items-center justify-center mb-3">
+                          <div className={`relative ${
+                            size.id === 'small' ? 'w-8 h-8' : 
+                            size.id === 'medium' ? 'w-12 h-12' : 'w-16 h-16'
+                          } border-2 rounded-sm ${
+                            selectedImageSize === size.id ? 'border-[#06B6D4]' : 'border-gray-400'
+                          } flex items-center justify-center`}>
+                            <div className={`${
+                              size.id === 'small' ? 'w-6 h-6' : 
+                              size.id === 'medium' ? 'w-8 h-8' : 'w-12 h-12'
+                            } ${
+                              selectedImageSize === size.id ? 'bg-[#06B6D4]' : 'bg-gray-400'
+                            } rounded-sm opacity-70`}></div>
+                          </div>
+                        </div>
+
+                        {/* Size Label */}
+                        <div className="text-lg font-semibold text-gray-800 mb-2">{size.label}</div>
+                        
+                        {/* Best For */}
+                        <div className="text-sm font-medium text-[#06B6D4] mb-2">
+                          Best for: {size.bestFor}
+                        </div>
+                        
+                        {/* Description */}
+                        <div className="text-xs text-gray-600 leading-relaxed">
+                          {size.description}
+                        </div>
+
+                        {/* Selected Indicator */}
+                        {selectedImageSize === size.id && (
+                          <div className="mt-3 flex items-center text-[#06B6D4] text-sm font-medium">
+                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            Selected
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>
 
                   {selectedImageSize && hasImages && (
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200 max-w-2xl mx-auto">
-                      <p className="text-sm brand-text-primary font-medium brand-font-body text-center">
-                        ✨ Perfect! Your image will be enhanced to {imageSizeOptions.find(size => size.id === selectedImageSize)?.label}
-                      </p>
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200 max-w-2xl mx-auto">
+                      <div className="text-center">
+                        <p className="text-sm brand-text-primary font-medium brand-font-body mb-1">
+                          ✨ Perfect! Your image will be enhanced to {imageSizeOptions.find(size => size.id === selectedImageSize)?.label}
+                        </p>
+                        <p className="text-xs text-green-600 brand-font-body">
+                          {imageSizeOptions.find(size => size.id === selectedImageSize)?.description}
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
