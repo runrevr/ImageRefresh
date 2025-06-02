@@ -177,18 +177,7 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
 
     // Return the first image path for backward compatibility
     return savedImagePaths[0];
-    } catch (downloadError) {
-      console.error(`[OpenAI] [${transformationId}] Error downloading or saving the image:`, downloadError);
-      let errorMessage = "Unknown error";
-      if (downloadError instanceof Error) {
-        errorMessage = downloadError.message;
-      } else if (typeof downloadError === 'string') {
-        errorMessage = downloadError;
-      } else if (downloadError && typeof downloadError === 'object') {
-        errorMessage = JSON.stringify(downloadError);
-      }
-      throw new Error(`Failed to download or save the transformed image: ${errorMessage}`);
-    }
+
   } catch (error) {
     console.error(`[OpenAI] [${transformationId}] Error in image transformation:`, error);
 
