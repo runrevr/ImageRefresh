@@ -894,14 +894,11 @@ export default function UploadEnhancePage() {
                 {/* Industry Pills Section */}
                 <div className="space-y-4">
                   <div className="text-center">
-                    <h3 className="brand-font-heading font-bold text-white text-2xl mb-3">
+                    <h3 className="brand-font-heading font-bold text-2xl mb-3" style={{ color: '#F97316' }}>
                       Choose Your Industry
                     </h3>
                     <p className="text-lg text-gray-200 brand-font-body font-medium mb-4">
                       Select one or more industries that best describe your business
-                    </p>
-                    <p className="text-base text-gray-300 brand-font-body">
-                      Help us understand your brand and products for better AI enhancement
                     </p>
                   </div>
 
