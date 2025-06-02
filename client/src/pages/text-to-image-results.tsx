@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react'
 import { useLocation } from 'wouter'
-import Navbar from '@/components/Navbar'
+import { Layout } from '../components/Layout'
 import { Button } from '@/components/ui/button'
 import { RainbowButton } from '@/components/ui/rainbow-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Download, Share2, Upload, ImageIcon, Check, Sparkles, Copy } from 'lucide-react'
+import { Download, Share2, Upload, ImageIcon, Check, Sparkles, Copy, RefreshCw, Edit, ZoomIn } from 'lucide-react'
 import { downloadImage } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 
@@ -29,6 +29,8 @@ export default function TextToImageResults() {
   const [result, setResult] = useState<TextToImageResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string>('')
+  const [fullViewImage, setFullViewImage] = useState<string | null>(null)
   const { toast } = useToast()
 
   // Get jobId from URL params
@@ -87,6 +89,7 @@ export default function TextToImageResults() {
           }
         }
         setResult(result)
+        setSelectedImage(finalImageUrls[0])
       } else {
         setError('Result data not found')
       }
@@ -107,13 +110,29 @@ export default function TextToImageResults() {
     }
   }
 
-  const handleShare = () => {
-    const shareUrl = `${window.location.origin}/text-to-image-results?jobId=${result?.jobId}`
-    navigator.clipboard.writeText(shareUrl)
-    toast({
-      title: "Link Copied",
-      description: "Share link copied to clipboard.",
-    })
+  const handleShare = async (imageUrl: string) => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Check out my generated image!',
+          url: imageUrl
+        });
+      } else {
+        // Fallback: copy URL to clipboard
+        await navigator.clipboard.writeText(imageUrl);
+        toast({
+          title: "Link Copied!",
+          description: "Image link has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast({
+        title: "Share Failed",
+        description: "Failed to share image. Please try again.",
+        variant: "destructive"
+      });
+    }
   }
 
   const copyPrompt = () => {
@@ -126,24 +145,49 @@ export default function TextToImageResults() {
     }
   }
 
+  // Icon button component
+  const IconButton = ({ 
+    icon: Icon, 
+    label, 
+    onClick, 
+    disabled = false,
+    loading = false 
+  }: { 
+    icon: any, 
+    label: string, 
+    onClick: () => void, 
+    disabled?: boolean,
+    loading?: boolean 
+  }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled || loading}
+      className="group flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      title={label}
+    >
+      <Icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+      <span className="text-xs text-gray-600 group-hover:text-blue-600 transition-colors mt-1">
+        {label}
+      </span>
+    </button>
+  );
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar freeCredits={1} paidCredits={0} />
+      <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading your generated image...</p>
           </div>
         </div>
-      </div>
+      </Layout>
     )
   }
 
   if (error || !result) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar freeCredits={1} paidCredits={0} />
+      <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <p className="text-red-600 mb-4">{error || 'Result not found'}</p>
@@ -152,90 +196,112 @@ export default function TextToImageResults() {
             </Button>
           </div>
         </div>
-      </div>
+      </Layout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar freeCredits={1} paidCredits={0} />
-      
+    <Layout>
+      {/* Full view modal */}
+      {fullViewImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+          onClick={() => setFullViewImage(null)}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setFullViewImage(null)}
+            className="absolute top-4 right-4 z-60 bg-black bg-opacity-70 hover:bg-opacity-90 text-white rounded-full p-2 transition-all"
+            aria-label="Close full view"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          
+          <div className="max-w-full max-h-full p-4">
+            <img 
+              src={fullViewImage} 
+              alt="Full view" 
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-gray-900">
-            Your Image is Ready!
+          <h1 className="text-4xl font-bold mb-4 text-primary">
+            Your Images are Ready!
           </h1>
           <div className="flex items-center justify-center gap-2">
             <Sparkles className="w-5 h-5 text-green-500" />
             <span className="font-semibold text-green-600">
-              Successfully generated your image
+              Successfully generated your images
             </span>
             <Sparkles className="w-5 h-5 text-green-500" />
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Generated Images */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5" />
-                  Generated Images ({result.imageUrls.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {result.imageUrls.map((imageUrl, index) => (
-                    <div key={index} className="space-y-3">
-                      <div className="relative rounded-lg overflow-hidden bg-gray-100">
-                        <img 
-                          src={imageUrl} 
-                          alt={`Generated image ${index + 1}`} 
-                          className="w-full h-auto object-cover"
-                        />
-                        <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
-                          Variation {index + 1}
+        <div className="max-w-6xl mx-auto">
+          {/* Image Grid */}
+          <div className="mb-8">
+            <div className={`grid gap-6 ${result.imageUrls.length > 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
+              {result.imageUrls.map((imageUrl, index) => (
+                <div key={index} className="space-y-4">
+                  <div 
+                    className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === imageUrl ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
+                    onClick={() => setSelectedImage(imageUrl)}
+                  >
+                    <div className="aspect-square relative">
+                      <img 
+                        src={imageUrl} 
+                        alt={`Generated image option ${index + 1}`} 
+                        className="object-cover w-full h-full"
+                        onError={(e) => {
+                          console.error('Error loading generated image:', imageUrl);
+                        }}
+                      />
+                      {selectedImage === imageUrl && (
+                        <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                          <Check className="h-4 w-4" />
                         </div>
-                      </div>
-                      
-                      <RainbowButton 
-                        onClick={() => handleDownload(imageUrl, index)}
-                        className="w-full"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download Variation {index + 1}
-                      </RainbowButton>
+                      )}
                     </div>
-                  ))}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
+                      <p className="text-sm font-medium">Variation {index + 1}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Icon buttons for each image */}
+                  <div className="flex justify-center space-x-1">
+                    <IconButton 
+                      icon={Download} 
+                      label="Download" 
+                      onClick={() => handleDownload(imageUrl, index)} 
+                    />
+                    <IconButton 
+                      icon={Share2} 
+                      label="Share" 
+                      onClick={() => handleShare(imageUrl)} 
+                    />
+                    <IconButton 
+                      icon={ZoomIn} 
+                      label="View Full" 
+                      onClick={() => setFullViewImage(imageUrl)} 
+                    />
+                  </div>
                 </div>
-                
-                <div className="mt-4 flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleShare}
-                    className="flex-1"
-                  >
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setLocation('/text-to-image')}
-                    className="flex-1"
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    Create Another
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </div>
 
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
             {/* Generation Details */}
             <Card>
               <CardHeader>
-                <CardTitle>Generation Details</CardTitle>
+                <CardTitle className="text-tertiary">Generation Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -281,19 +347,53 @@ export default function TextToImageResults() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Actions Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-tertiary">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <RainbowButton 
+                  onClick={() => handleDownload(selectedImage)}
+                  className="w-full"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Selected Image
+                </RainbowButton>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={() => handleShare(selectedImage)}
+                  className="w-full"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share Selected Image
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={() => setLocation('/text-to-image')}
+                  className="w-full"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Create Another Image
+                </Button>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Action Bar */}
-          <div className="mt-8 text-center">
+          <div className="text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
               <Check className="w-5 h-5 text-blue-600" />
               <span className="text-blue-700 font-medium">
-                Image generated successfully!
+                Images generated successfully!
               </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   )
 }
