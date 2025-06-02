@@ -1267,11 +1267,11 @@ export default function UploadEnhancePage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-lg mx-4 text-center">
             <div className="mb-6">
-              <Loader2 className="mx-auto h-16 w-16 brand-text-primary animate-spin mb-4" />
-              <h3 className="text-2xl brand-font-heading font-bold brand-text-neutral mb-2">
+              <Loader2 className="mx-auto h-16 w-16 text-[#06B6D4] animate-spin mb-4" />
+              <h3 className="text-2xl brand-font-heading font-bold text-gray-900 mb-2">
                 Processing Your Image
               </h3>
-              <p className="brand-text-neutral brand-font-body mb-4">
+              <p className="text-gray-700 brand-font-body mb-4">
                 {processingStatus}
               </p>
             </div>
@@ -1282,9 +1282,9 @@ export default function UploadEnhancePage() {
                 <div key={step.id} className="flex items-center text-left">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
                     step.id < processingStep 
-                      ? "brand-bg-accent brand-text-neutral" 
+                      ? "bg-[#84CC16] text-white" 
                       : step.id === processingStep 
-                        ? "brand-bg-primary text-white" 
+                        ? "bg-[#06B6D4] text-white" 
                         : "bg-gray-200 text-gray-500"
                   }`}>
                     {step.id < processingStep ? (
@@ -1297,7 +1297,7 @@ export default function UploadEnhancePage() {
                   </div>
                   <div className="flex-1">
                     <p className={`font-medium brand-font-body text-sm ${
-                      step.id <= processingStep ? "brand-text-neutral" : "text-gray-500"
+                      step.id <= processingStep ? "text-gray-900" : "text-gray-500"
                     }`}>
                       {step.name}
                     </p>
@@ -1312,20 +1312,19 @@ export default function UploadEnhancePage() {
             {/* Progress Bar */}
             <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
               <div 
-                className="brand-bg-primary h-3 rounded-full transition-all duration-500 ease-out"
+                className="bg-[#06B6D4] h-3 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${(processingStep / processingSteps.length) * 100}%` }}
               />
             </div>
 
             {/* Processing Stats */}
-
- <div className="text-xs text-gray-500 brand-font-body space-y-1">
-                  <p>Processing your image</p>
-                  <p>Industries: {selectedIndustries.join(', ')}</p>
-                  <p className="brand-text-primary font-medium">
-                    ✨ Generating 5 enhancement ideas
-                  </p>
-                </div>
+            <div className="text-xs text-gray-600 brand-font-body space-y-1">
+              <p>Processing your image</p>
+              <p>Industries: {selectedIndustries.join(', ')}</p>
+              <p className="text-[#06B6D4] font-medium">
+                ✨ Generating 5 enhancement ideas
+              </p>
+            </div>
           </div>
         </div>
       )}
