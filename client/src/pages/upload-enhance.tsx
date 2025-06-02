@@ -14,6 +14,7 @@ import { useFreeCredits } from '@/hooks/useFreeCredits';
 import { EmailCaptureModal } from '@/components/EmailCaptureModal';
 import { UpgradePrompt } from '@/components/UpgradePrompt';
 import { SignUpModal } from '@/components/SignUpModal';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function UploadEnhancePage() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -73,6 +74,7 @@ export default function UploadEnhancePage() {
     { id: 4, name: "Finalizing", description: "Preparing your results" }
   ];
 
+  const { user } = useAuth();
   const { 
     creditStatus, 
     checkUserCredits, 
@@ -464,15 +466,18 @@ export default function UploadEnhancePage() {
   };
 
   const handleSubmit = async () => {
-    // Check if user is authenticated first
-    if (isAuthenticated) {
+    // Check if user is authenticated using the auth hook
+    if (user) {
       // User is logged in, proceed with processing
+      console.log('User is authenticated, proceeding with processing');
       await submitForProcessing();
     } else if (creditStatus?.hasCredits) {
       // User has credits but not authenticated (device fingerprint user)
+      console.log('Guest user with credits, proceeding with processing');
       await submitForProcessing();
     } else {
       // User needs to sign up
+      console.log('User needs to sign up, showing modal');
       setShowSignUpModal(true);
       markModalShown();
     }
