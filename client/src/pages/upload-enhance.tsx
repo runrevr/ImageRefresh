@@ -534,25 +534,25 @@ export default function UploadEnhancePage() {
 
       const imageSizeOptions = [
         { 
-          id: "small", 
-          label: "Small (256x256)", 
-          description: "Perfect for profile pictures, thumbnails, and small web icons",
-          bestFor: "Profile pics, Thumbnails, Icons",
-          icon: "256"
+          id: "square", 
+          label: "Square (1024x1024)", 
+          description: "Perfect for Instagram posts, profile pictures, and social media content",
+          bestFor: "Instagram posts, Profile pics, Social media",
+          icon: "⬜"
         },
         { 
-          id: "medium", 
-          label: "Medium (512x512)", 
-          description: "Great for Instagram posts, Facebook posts, and medium-sized web content",
-          bestFor: "Instagram posts, Facebook posts, Web content",
-          icon: "512"
+          id: "landscape", 
+          label: "Landscape (1536x1024)", 
+          description: "Great for Facebook ads, Google ads, web banners, and presentations",
+          bestFor: "Facebook ads, Google ads, Web banners",
+          icon: "🖼️"
         },
         { 
-          id: "large", 
-          label: "Large (1024x1024)", 
-          description: "Ideal for Google Ads, print materials, high-quality web banners, and detailed presentations",
-          bestFor: "Google Ads, Print materials, High-res banners",
-          icon: "1024"
+          id: "portrait", 
+          label: "Portrait (1024x1536)", 
+          description: "Ideal for Instagram Stories, mobile content, and vertical displays",
+          bestFor: "Instagram Stories, Mobile content, Vertical displays",
+          icon: "📱"
         },
       ];
 
@@ -974,14 +974,14 @@ export default function UploadEnhancePage() {
                         {/* Visual Icon */}
                         <div className="flex items-center justify-center mb-3">
                           <div className={`relative ${
-                            size.id === 'small' ? 'w-8 h-8' : 
-                            size.id === 'medium' ? 'w-12 h-12' : 'w-16 h-16'
+                            size.id === 'square' ? 'w-12 h-12' : 
+                            size.id === 'landscape' ? 'w-16 h-10' : 'w-10 h-16'
                           } border-2 rounded-sm ${
                             selectedImageSize === size.id ? 'border-[#06B6D4]' : 'border-gray-400'
                           } flex items-center justify-center`}>
                             <div className={`${
-                              size.id === 'small' ? 'w-6 h-6' : 
-                              size.id === 'medium' ? 'w-8 h-8' : 'w-12 h-12'
+                              size.id === 'square' ? 'w-8 h-8' : 
+                              size.id === 'landscape' ? 'w-12 h-6' : 'w-6 h-12'
                             } ${
                               selectedImageSize === size.id ? 'bg-[#06B6D4]' : 'bg-gray-400'
                             } rounded-sm opacity-70`}></div>
