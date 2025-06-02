@@ -60,6 +60,7 @@ export default function UploadPage() {
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [selectedImageSize, setSelectedImageSize] = useState<string>('square');
 
   // Update local user state when auth user changes
   useEffect(() => {
@@ -574,6 +575,8 @@ export default function UploadPage() {
     setSecondTransformedImage(null); // Clear second transformed image
     setPrompt("");
     setSelectedTransformation(null);
+    setSelectedSubcategory(null);
+    setSelectedImageSize('square');
     setHasTriedAnotherPrompt(false);
     setCurrentStep(Step.Upload);
   };
@@ -730,6 +733,75 @@ export default function UploadPage() {
       });
       setCurrentStep(Step.Edit);
     }
+  };
+
+  // Handle the "Let's Make Magic" button click
+  const handleMakeMagic = async () => {
+    if (!selectedSubcategory || !originalImagePath) {
+      toast({
+        title: "Missing Requirements",
+        description: "Please select a style and upload an image first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Map subcategory to prompt
+    const stylePrompts: Record<string, string> = {
+      // Animation styles
+      'mario': "Transform into Super Mario Bros style character with vibrant colors, blocky pixel art aesthetic, and classic Nintendo game appearance",
+      'minecraft': "Transform into Minecraft character style with cubic, blocky features and pixelated texture appearance",
+      'pixar': "Transform into Pixar animation style with smooth 3D rendered appearance, expressive features, and cartoon-like quality",
+      'trolls': "Transform into DreamWorks Trolls character style with colorful wild hair, bright colors, and whimsical cartoon appearance",
+      'princess': "Transform into Disney princess/prince style with elegant royal attire, refined features, and fairy tale aesthetic",
+      'superhero': "Transform into superhero character style with heroic costume, dynamic pose, and comic book appearance",
+      'lego': "Transform into LEGO minifigure character with plastic brick-like appearance, cylindrical head, and LEGO aesthetic",
+      
+      // Historical styles
+      'western': "Transform into Old Western cowboy/cowgirl style with period-appropriate clothing, rugged appearance, and frontier aesthetic",
+      'hiphop': "Transform into 90s Hip-Hop style with period-appropriate urban fashion, streetwear, and cultural elements",
+      '80s': "Transform into 1980s style with neon colors, retro fashion, and decade-appropriate aesthetic",
+      'disco': "Transform into Disco era style with flashy clothing, dance-ready appearance, and 70s nightlife aesthetic",
+      'renaissance': "Transform into Renaissance period style with classical art techniques, period clothing, and historical aesthetic",
+      'victorian': "Transform into Victorian era style with period-appropriate formal attire and historical fashion",
+      'medieval': "Transform into Medieval period style with armor, period clothing, and historical fantasy elements",
+      
+      // Artistic styles
+      'oil': "Transform into oil painting style with rich textures, painterly brushstrokes, and classical art techniques",
+      'watercolor': "Transform into watercolor painting style with soft washes, flowing colors, and artistic transparency",
+      'impressionist': "Transform into Impressionist painting style with loose brushwork, light effects, and artistic interpretation",
+      'abstract': "Transform into abstract art style with geometric shapes, bold colors, and non-representational elements",
+      'surrealism': "Transform into Pop Surrealism style with dreamlike elements, vibrant colors, and artistic fantasy",
+      'artdeco': "Transform into Art Deco style with geometric patterns, elegant lines, and 1920s aesthetic",
+      
+      // Fun/Viral styles
+      'mullets': "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background. Match the original hair color, texture, and density exactly. Randomly choose one of these top-hair styles for each run: curly, teased volume; short, textured spikes; feathered, classic '80s layers; sleek, modern taper. In every variation, the back must be noticeably longer than the front ('business in front, party in back'). Preserve all facial attributes exactly as in the original, including skin tone and smoothness, facial proportions and bone structure, eye color, eye shape, lips, and expression, age appearance. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.",
+      'hulkamania': "Transform into the iconic Hulk Hogan 'Hulkamania' style. Add a distinctive blonde handlebar mustache, a red bandana with 'HULKAMANIA' text, and dress in a bright yellow tank top with 'HULK RULES' text. Include Hulk Hogan's signature confident, charismatic expression and pose.",
+      'baby': "Create a realistic image of a baby that would result from the genetics of the two people in the uploaded photos.",
+      'future': "Show how the person might look 20 years in the future with natural aging effects.",
+      'ghibli': "Transform into the distinctive Studio Ghibli animation style with painterly, watercolor-like appearance.",
+      'action-figure': "Create a picture of an action figure toy in a blister package with realistic toy packaging.",
+      'pet-human': "Transform the pet into a human character while maintaining recognizable traits and personality.",
+      'self-cat': "Transform the person into a photorealistic cat wearing business attire including a suit, tie, and a purple bandana.",
+      'caricature': "Transform into a skillful caricature with exaggerated yet recognizable features, bold linework, and vibrant coloring.",
+      
+      // Kids Drawing
+      'kids-drawing': "Transform the kids drawing into a photorealistic version while maintaining the original character and style."
+    };
+
+    const stylePrompt = stylePrompts[selectedSubcategory] || "Transform the image in an artistic style";
+    const finalPrompt = prompt.trim() ? `${stylePrompt}. Additional details: ${prompt}` : stylePrompt;
+    
+    // Convert selectedImageSize to API format
+    const imageSizeMap: Record<string, string> = {
+      'square': '1024x1024',
+      'portrait': '1024x1536',
+      'landscape': '1536x1024'
+    };
+    
+    const apiImageSize = imageSizeMap[selectedImageSize] || '1024x1024';
+    
+    await handlePromptSubmit(finalPrompt, apiImageSize);
   };
 
   // Apply a preset transformation style
@@ -1215,6 +1287,83 @@ export default function UploadPage() {
                             </button>
                           ))}
                         </div>
+                      </div>
+                    )}
+
+                    {/* Prompt Input Section - Show when subcategory is selected */}
+                    {selectedSubcategory && (
+                      <div className="mb-8">
+                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                          Describe Your Transformation (Optional)
+                        </h4>
+                        <div className="max-w-2xl mx-auto">
+                          <textarea
+                            className="w-full h-24 p-4 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-[#06B6D4] focus:border-transparent"
+                            placeholder="Add any specific details or modifications you'd like..."
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                          />
+                          <p className="text-xs text-gray-500 mt-2 text-center">
+                            Leave blank to use the default style transformation
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Image Size Selection - Show when subcategory is selected */}
+                    {selectedSubcategory && (
+                      <div className="mb-8">
+                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                          Choose Image Size
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+                          <button
+                            className={`px-6 py-3 rounded-lg border-2 transition-all duration-200 ${
+                              selectedImageSize === 'square' 
+                                ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                            }`}
+                            onClick={() => setSelectedImageSize('square')}
+                          >
+                            <div className="text-sm font-medium text-gray-700">Square</div>
+                            <div className="text-xs text-gray-500">1024×1024</div>
+                          </button>
+                          <button
+                            className={`px-6 py-3 rounded-lg border-2 transition-all duration-200 ${
+                              selectedImageSize === 'portrait' 
+                                ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                            }`}
+                            onClick={() => setSelectedImageSize('portrait')}
+                          >
+                            <div className="text-sm font-medium text-gray-700">Portrait</div>
+                            <div className="text-xs text-gray-500">1024×1536</div>
+                          </button>
+                          <button
+                            className={`px-6 py-3 rounded-lg border-2 transition-all duration-200 ${
+                              selectedImageSize === 'landscape' 
+                                ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                            }`}
+                            onClick={() => setSelectedImageSize('landscape')}
+                          >
+                            <div className="text-sm font-medium text-gray-700">Landscape</div>
+                            <div className="text-xs text-gray-500">1536×1024</div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Let's Make Magic Button - Show when subcategory and size are selected */}
+                    {selectedSubcategory && selectedImageSize && (
+                      <div className="text-center">
+                        <RainbowButton
+                          onClick={handleMakeMagic}
+                          className="px-12 py-4 text-lg font-semibold"
+                          disabled={!originalImagePath}
+                        >
+                          ✨ Let's Make Magic ✨
+                        </RainbowButton>
                       </div>
                     )}
                   </>
