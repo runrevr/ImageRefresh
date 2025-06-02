@@ -857,8 +857,9 @@ export default function UploadEnhancePage() {
                     variant="outline" 
                     type="button" 
                     onClick={clearAllFiles}
-                    className="brand-button-primary border-none text-lg px-8 py-3"
+                    className="brand-font-body border-2 brand-border-secondary brand-text-secondary hover:brand-bg-secondary hover:text-white text-lg px-8 py-3 transition-all duration-200 flex items-center gap-2"
                   >
+                    <X className="h-4 w-4" />
                     Clear Image
                   </Button>
                 </div>
@@ -1043,8 +1044,9 @@ export default function UploadEnhancePage() {
                 variant="outline" 
                 size="sm" 
                 onClick={clearAllFiles}
-                className="text-red-600 border-red-200 hover:bg-red-50"
+                className="brand-font-body border-2 brand-border-secondary brand-text-secondary hover:brand-bg-secondary hover:text-white transition-all duration-200 flex items-center gap-2"
               >
+                <X className="h-4 w-4" />
                 Clear Image
               </Button>
             </CardHeader>
@@ -1124,17 +1126,8 @@ export default function UploadEnhancePage() {
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <Button 
                 variant="outline"
-                disabled={currentStep === 1}
-                onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-                className="brand-font-body border-2 brand-border-primary brand-text-primary hover:brand-bg-primary hover:text-white w-full sm:w-auto mobile-py-3"
-              >
-                Previous Step
-              </Button>
-
-              <Button 
-                variant="outline"
                 onClick={startOver}
-                className="brand-font-body border-2 border-red-200 text-red-600 hover:bg-red-50 w-full sm:w-auto mobile-py-3"
+                className="brand-font-body border-2 brand-border-secondary brand-text-secondary hover:brand-bg-secondary hover:text-white w-full sm:w-auto mobile-py-3 transition-all duration-200"
               >
                 Start Over
               </Button>
