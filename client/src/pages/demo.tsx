@@ -135,7 +135,6 @@ function DemoPage() {
           <TextRotate
             texts={[
               "amazing",
-              "scroll-stopping",
               "funny",
               "sell better",
               "exceptional",
