@@ -741,15 +741,15 @@ export default function UploadEnhancePage() {
                 <div className="flex items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium brand-font-body ${
                     step.id < currentStep 
-                      ? "progress-step-completed" 
+                      ? "bg-brand-tertiary text-white" 
                       : step.id === currentStep 
-                        ? "progress-step-active" 
-                        : "progress-step-inactive"
+                        ? "bg-brand-primary text-white" 
+                        : "bg-gray-200 text-gray-600"
                   }`}>
                     {step.id < currentStep ? <Check className="h-4 w-4" /> : step.id}
                   </div>
                   <div className="ml-3 text-sm brand-font-body">
-                    <p className={`font-medium ${step.id <= currentStep ? "brand-text-neutral" : "text-gray-500"}`}>
+                    <p className={`font-medium ${step.id <= currentStep ? "text-gray-800" : "text-gray-500"}`}>
                       {step.name}
                     </p>
                     <p className="text-gray-500">{step.description}</p>
@@ -757,7 +757,7 @@ export default function UploadEnhancePage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div className={`hidden sm:block w-20 h-0.5 mx-4 ${
-                    step.id < currentStep ? "brand-bg-accent" : "bg-gray-200"
+                    step.id < currentStep ? "bg-brand-tertiary" : "bg-gray-200"
                   }`} />
                 )}
               </div>
