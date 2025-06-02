@@ -1,0 +1,47 @@
+The test export is also undefined, which means the file isn't being parsed correctly after transformImageWithOpenAI. This indicates there's likely a syntax error in the file that's causing the JavaScript parser to stop processing exports after the first function.
+Let's find the issue:
+
+Check for syntax errors in the transformImageWithOpenAI function
+Looking at your file, I notice there's an extra closing brace at line 184:
+javascriptreturn savedImagePaths[0];
+} catch (downloadError) {  // This catch block seems misplaced
+The function has improper nesting of try-catch blocks. Let me help you fix the structure:
+
+Here's the corrected structure for the end of transformImageWithOpenAI:
+javascript    // Return the first image path for backward compatibility
+    return savedImagePaths[0];
+
+  } catch (error) {  // This should be the main catch block
+    console.error(`[OpenAI] [${transformationId}] Error in image transformation:`, error);
+
+    // Enhanced error reporting
+    if (error.response) {
+      console.error(`[OpenAI] [${transformationId}] API response error:`, JSON.stringify({
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      }, null, 2));
+    }
+
+    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+      console.error(`[OpenAI] [${transformationId}] Network connection error - unable to reach OpenAI API`);
+    }
+
+    if (error.message && error.message.includes('401')) {
+      console.error(`[OpenAI] [${transformationId}] Authentication error - invalid or expired API key`);
+    }
+
+    if (error.message && error.message.includes('429')) {
+      console.error(`[OpenAI] [${transformationId}] Rate limit exceeded - too many requests or quota exceeded`);
+    }
+
+    throw error;
+  }
+}
+Quick fix:
+
+Remove the extra } catch (downloadError) { block around line 184
+Make sure the function ends with just one closing brace }
+Ensure the main catch block is properly aligned with the main try block
+
+The syntax error is preventing the rest of the file from being parsed, which is why generateTextToImage and even the test export aren't available.
