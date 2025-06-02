@@ -48,7 +48,6 @@ export async function generateTextToImage(prompt, options = {}) {
       prompt: prompt,
       n: 2,
       size: finalSize,
-      response_format: "url", // Explicitly request URL format
       moderation: "low"
     });
 
