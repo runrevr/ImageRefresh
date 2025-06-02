@@ -41,6 +41,8 @@ export default function UploadEnhancePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [, navigate] = useLocation();
   const [location, setLocation] = useLocation();
+    const [selectedImageSize, setSelectedImageSize] = useState<string | null>(null);
+
 
   const MAX_FILES = 1;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -221,7 +223,8 @@ export default function UploadEnhancePage() {
   const hasIndustryInfo = selectedIndustries.length > 0;
   const hasPurposes = selectedPurposes.length > 0;
   const hasContent = hasImages || hasIndustryInfo || productType.trim() || hasPurposes;
-  const canSubmit = hasImages && hasIndustryInfo && hasPurposes;
+    const hasImageSize = !!selectedImageSize;
+  const canSubmit = hasImages && hasIndustryInfo && hasImageSize;
 
   // Multi-step loading indicator with comprehensive error handling
   const submitForProcessing = async () => {
@@ -528,6 +531,12 @@ export default function UploadEnhancePage() {
       setShowSignUpModal(true);
     }
   }, [creditStatus?.shouldShowSignUpModal]);
+
+      const imageSizeOptions = [
+        { id: "small", label: "Small (256x256)" },
+        { id: "medium", label: "Medium (512x512)" },
+        { id: "large", label: "Large (1024x1024)" },
+      ];
 
 
   return (
@@ -918,48 +927,43 @@ export default function UploadEnhancePage() {
                   </p>
                 </div>
 
-                {/* Purpose Selection */}
+                {/* Image Size Selection */}
                 <div className="space-y-4">
                   <div className="text-center">
                     <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
-                      How will you use this image?
+                      Choose Output Size
                     </Label>
                     <p className="text-sm text-gray-600 brand-font-body mt-2">
-                      This helps our AI create scroll-stopping visuals optimized for your needs
-                    </p></div>
+                      Select the desired size for your enhanced image
+                    </p>
+                  </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
-                    {purposeOptions.map((purpose) => (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-3xl mx-auto">
+                    {imageSizeOptions.map((size) => (
                       <button
-                        key={purpose.id}
+                        key={size.id}
                         type="button"
-                        onClick={() => hasImages && togglePurpose(purpose.id)}
+                        onClick={() => hasImages && setSelectedImageSize(size.id)}
                         disabled={!hasImages}
-                        className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[80px] flex flex-col items-center justify-center gap-2 ${
+                        className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[60px] flex flex-col items-center justify-center gap-1 ${
                           !hasImages
                             ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
-                            : selectedPurposes.includes(purpose.id)
+                            : selectedImageSize === size.id
                               ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
                               : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
                         }`}
                       >
-                        <span className="text-lg">{purpose.icon}</span>
-                        <div className="text-center">
-                          <div className="text-xs font-medium brand-font-body leading-tight">
-                            {purpose.label}
-                          </div>
-                          <div className="text-xs opacity-75 leading-tight mt-1">
-                            {purpose.subtitle.split(',')[0]}
-                          </div>
-                        </div>
+                        <span className="text-sm font-medium brand-font-body leading-tight">
+                          {size.label}
+                        </span>
                       </button>
                     ))}
                   </div>
 
-                  {selectedPurposes.length > 0 && hasImages && (
+                  {selectedImageSize && hasImages && (
                     <div className="p-3 bg-green-50 rounded-lg border border-green-200 max-w-2xl mx-auto">
                       <p className="text-sm brand-text-primary font-medium brand-font-body text-center">
-                        ✨ Perfect! Our AI will optimize your image for {selectedPurposes.length} specific use case{selectedPurposes.length > 1 ? 's' : ''}
+                        ✨ Perfect! Your image will be enhanced to {imageSizeOptions.find(size => size.id === selectedImageSize)?.label}
                       </p>
                     </div>
                   )}
@@ -1138,6 +1142,16 @@ export default function UploadEnhancePage() {
                     )}
                     <span className={`brand-font-body text-sm ${hasIndustryInfo ? 'text-green-700' : 'text-red-600'}`}>
                       Select your industry ({selectedIndustries.length} selected)
+                    </span>
+                  </div>
+                  <div className={`flex items-center gap-3 p-2 rounded ${hasImageSize ? 'bg-green-50' : 'bg-red-50'}`}>
+                    {hasImageSize ? (
+                      <Check className="h-5 w-5 text-green-600" />
+                    ) : (
+                      <X className="h-5 w-5 text-red-500" />
+                    )}
+                    <span className={`brand-font-body text-sm ${hasImageSize ? 'text-green-700' : 'text-red-600'}`}>
+                      Choose output size ({selectedImageSize || 'none selected'})
                     </span>
                   </div>
                 </div>
