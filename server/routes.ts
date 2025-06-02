@@ -934,7 +934,8 @@ app.post("/api/credits/deduct", async (req, res) => {
   }
 });
 
-  // Enhanced credits endpoint with guest support  app.get("/api/credits/:userIdOrGuest", async (req, res) => {
+  // Enhanced credits endpoint with guest support
+  app.get("/api/credits/:userIdOrGuest", async (req, res) => {
     try {
       const userIdOrGuest = req.params.userIdOrGuest;
 
