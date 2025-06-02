@@ -881,7 +881,7 @@ export default function UploadEnhancePage() {
                 </CardTitle>
                 <CardDescription className="brand-font-body text-gray-600">
                   {hasImages 
-                    ? "Help us understand your brand and products for better AI enhancement"
+                    ? "Provide business details to get personalized enhancement suggestions"
                     : "Upload image first to continue with business details"
                   }
                 </CardDescription>
@@ -890,11 +890,14 @@ export default function UploadEnhancePage() {
                 {/* Industry Pills Section */}
                 <div className="space-y-4">
                   <div className="text-center">
-                    <Label className="brand-font-heading font-medium brand-text-neutral text-lg">
-                      Select Your Industries
-                    </Label>
-                    <p className="text-sm text-gray-600 brand-font-body mt-2">
-                      Choose one or more industries that best describe your business
+                    <h3 className="brand-font-heading font-bold brand-text-neutral text-2xl mb-3">
+                      Choose Your Industry
+                    </h3>
+                    <p className="text-lg text-gray-700 brand-font-body font-medium mb-4">
+                      Select one or more industries that best describe your business
+                    </p>
+                    <p className="text-base text-gray-600 brand-font-body">
+                      Help us understand your brand and products for better AI enhancement
                     </p>
                   </div>
 
