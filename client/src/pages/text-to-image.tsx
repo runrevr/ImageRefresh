@@ -119,35 +119,35 @@ export default function TextToImage() {
                 {[
                   { 
                     name: "Golden Hour", 
-                    prompt: "shot during golden hour with warm, soft natural lighting, glowing backlighting, cinematic depth of field" 
+                    prompt: "captured during golden hour with warm amber sunlight streaming through, creating soft shadows and a dreamy atmosphere, gentle lens flare, honeyed tones throughout the scene, natural outdoor setting with diffused backlighting" 
                   },
                   { 
                     name: "Studio Lighting", 
-                    prompt: "professional studio lighting setup with softbox lighting, clean white background, high-end commercial photography style" 
+                    prompt: "professional studio setting with multiple soft box lights creating even, flattering illumination, clean seamless backdrop, controlled shadows, commercial quality lighting setup, crisp details with balanced exposure" 
                   },
                   { 
                     name: "Black & White", 
-                    prompt: "dramatic black and white photography with high contrast, deep shadows, and crisp highlights, artistic monochrome style" 
+                    prompt: "classic black and white photography with dramatic contrast between lights and darks, deep blacks and bright whites, no mid-tones, stark shadows creating bold visual impact, timeless monochrome aesthetic" 
                   },
                   { 
                     name: "Vintage Film", 
-                    prompt: "vintage film photography aesthetic with grain, slightly faded colors, retro film look, nostalgic atmosphere" 
+                    prompt: "shot on vintage 35mm film stock, warm orange and brown color grading, subtle film grain texture, slightly faded colors with nostalgic feel, soft focus edges, authentic analog photography aesthetic" 
                   },
                   { 
                     name: "Documentary", 
-                    prompt: "candid documentary photography style, natural lighting, authentic moments, photojournalistic approach" 
+                    prompt: "documentary style candid moment captured naturally, unposed and authentic, environmental context visible, photojournalistic approach, available light only, raw and genuine emotion, slice-of-life composition" 
                   },
                   { 
                     name: "8K Ultra HD", 
-                    prompt: "ultra high definition 8K quality, razor sharp details, professional camera equipment, crystal clear imagery" 
+                    prompt: "ultra high resolution 8K photography, extreme sharpness throughout, every texture and detail crystal clear, professional camera with premium lens, perfect focus from foreground to background, photorealistic quality" 
                   },
                   { 
                     name: "Motion Blur", 
-                    prompt: "dynamic motion blur effects, sense of movement and energy, action photography style" 
+                    prompt: "dynamic motion captured with intentional blur, vibrant saturated colors popping against the movement, shutter drag technique, energetic and kinetic feeling, streaks of color suggesting speed and action" 
                   },
                   { 
                     name: "Street Style", 
-                    prompt: "urban street photography style, natural lighting, authentic city atmosphere, documentary street aesthetic" 
+                    prompt: "urban street photography aesthetic, gritty city environment, mixed lighting from neon signs and streetlights, busy atmosphere with environmental context, raw authentic moment, handheld camera feel with slight tilt" 
                   }
                 ].map((style) => (
                   <button
