@@ -837,24 +837,39 @@ export default function UploadEnhancePage() {
                   />
                 </div>
               ) : (
-                /* Show when max files reached */
-                <div className="upload-zone rounded-xl p-12 text-center bg-gray-50 border-2 border-dashed border-gray-300">
-                  <Check className="mx-auto h-16 w-16 brand-text-accent mb-6" />
-                  <h3 className="text-2xl brand-font-heading font-semibold brand-text-neutral mb-3">
-                    Image selected
-                  </h3>
-                  <p className="text-gray-500 brand-font-body mb-6 text-lg">
-                    You've selected an image. Remove it to add a different one.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    type="button" 
-                    onClick={clearAllFiles}
-                    className="brand-font-body border-2 brand-border-secondary brand-text-secondary hover:brand-bg-secondary hover:text-white text-lg px-8 py-3 transition-all duration-200 flex items-center gap-2"
-                  >
-                    <X className="h-4 w-4" />
-                    Clear Image
-                  </Button>
+                /* Show when max files reached - with image preview */
+                <div className="upload-zone rounded-xl p-8 text-center bg-green-50 border-2 border-dashed border-green-300">
+                  {/* Show thumbnail of uploaded image */}
+                  <div className="flex flex-col items-center">
+                    <div className="relative mb-4">
+                      <img
+                        src={URL.createObjectURL(selectedFiles[0])}
+                        alt="Uploaded preview"
+                        className="w-32 h-32 object-cover rounded-lg border-2 border-green-400 shadow-lg"
+                      />
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <Check className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <h3 className="text-xl brand-font-heading font-semibold text-green-800 mb-2">
+                      Image Selected Successfully!
+                    </h3>
+                    <p className="text-green-700 brand-font-body mb-4 text-sm">
+                      {selectedFiles[0]?.name} • {(selectedFiles[0]?.size / (1024 * 1024)).toFixed(1)}MB
+                    </p>
+                    <p className="text-gray-600 brand-font-body mb-4 text-sm">
+                      Remove it to add a different image, or continue below.
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      type="button" 
+                      onClick={clearAllFiles}
+                      className="brand-font-body border-2 border-green-600 text-green-700 hover:bg-green-600 hover:text-white text-sm px-6 py-2 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <X className="h-4 w-4" />
+                      Replace Image
+                    </Button>
+                  </div>
                 </div>
               )}
 
