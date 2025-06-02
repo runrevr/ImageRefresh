@@ -1049,10 +1049,10 @@ export default function UploadEnhancePage() {
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1">
+              <div className="flex justify-center">
                 {selectedFiles.map((file, index) => (
-                  <div key={`${file.name}-${index}`} className="relative group">
-                    <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-secondary transition-all duration-200">
+                  <div key={`${file.name}-${index}`} className="relative group max-w-xs">
+                    <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-secondary transition-all duration-200 w-48 h-48">
                       <img
                         src={URL.createObjectURL(file)}
                         alt={file.name}
@@ -1092,7 +1092,7 @@ export default function UploadEnhancePage() {
                 {/* Add more button if less than max */}
                 {selectedFiles.length < MAX_FILES && (
                   <div 
-                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-secondary hover:bg-gray-50 transition-all duration-200"
+                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-secondary hover:bg-gray-50 transition-all duration-200 w-48 h-48"
                     onClick={openFileDialog}
                   >
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
