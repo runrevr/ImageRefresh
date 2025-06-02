@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Generated Images - ImageRefresh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0D7877;
+            --secondary: #3DA5D9;
+            --accent: #C1F50A;
+            --neutral: #333333;
+            --light: #F2F4F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .success-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #059669;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e5e7eb;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .generated-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0a5d5f;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .metadata-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .metadata-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metadata-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metadata-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">Your Images Are Ready!</h1>
+            <div class="success-indicator">
+                <span>✨</span>
+                <span>Successfully generated your images</span>
+                <span>✨</span>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading your generated images...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <h3>Oops! Something went wrong</h3>
+            <p id="error-message"></p>
+            <button class="btn btn-primary" onclick="goBack()">Try Again</button>
+        </div>
+
+        <div id="results" style="display: none;">
+            <div id="metadata" class="metadata-section">
+                <h3 class="metadata-title">Generation Details</h3>
+                <div class="metadata-grid" id="metadata-grid">
+                    <!-- Metadata will be populated here -->
+                </div>
+            </div>
+
+            <div id="image-grid" class="image-grid">
+                <!-- Images will be populated here -->
+            </div>
+
+            <div class="action-buttons">
+                <a href="/text-to-image.html" class="btn btn-secondary">← Generate More Images</a>
+                <a href="/" class="btn btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadResults();
+        });
+
+        function loadResults() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Get data from URL parameters
+                const jobId = urlParams.get('jobId');
+                const imageUrl = urlParams.get('imageUrl');
+                const imageUrls = urlParams.get('imageUrls');
+                const prompt = urlParams.get('prompt');
+                const purpose = urlParams.get('purpose');
+                const industry = urlParams.get('industry');
+                const aspectRatio = urlParams.get('aspectRatio');
+                const styleIntensity = urlParams.get('styleIntensity');
+                const addText = urlParams.get('addText');
+                const businessName = urlParams.get('businessName');
+
+                if (!imageUrl && !imageUrls) {
+                    throw new Error('No image data found in URL parameters');
+                }
+
+                // Parse image URLs
+                let images = [];
+                if (imageUrls) {
+                    try {
+                        images = JSON.parse(decodeURIComponent(imageUrls));
+                    } catch (e) {
+                        images = imageUrls.split(',').map(url => decodeURIComponent(url));
+                    }
+                } else if (imageUrl) {
+                    images = [decodeURIComponent(imageUrl)];
+                }
+
+                // Hide loading, show results
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+
+                // Populate metadata
+                populateMetadata({
+                    prompt: prompt ? decodeURIComponent(prompt) : 'N/A',
+                    purpose: purpose ? decodeURIComponent(purpose) : 'N/A',
+                    industry: industry ? decodeURIComponent(industry) : 'N/A',
+                    aspectRatio: aspectRatio ? decodeURIComponent(aspectRatio) : 'N/A',
+                    styleIntensity: styleIntensity || 'N/A',
+                    addText: addText === 'true' ? 'Yes' : 'No',
+                    businessName: businessName ? decodeURIComponent(businessName) : 'N/A'
+                });
+
+                // Populate images
+                populateImages(images);
+
+            } catch (error) {
+                console.error('Error loading results:', error);
+                showError(error.message);
+            }
+        }
+
+        function populateMetadata(data) {
+            const grid = document.getElementById('metadata-grid');
+            
+            Object.entries(data).forEach(([key, value]) => {
+                if (value && value !== 'N/A') {
+                    const item = document.createElement('div');
+                    item.className = 'metadata-item';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'metadata-label';
+                    label.textContent = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                    
+                    const valueDiv = document.createElement('div');
+                    valueDiv.className = 'metadata-value';
+                    valueDiv.textContent = value;
+                    
+                    item.appendChild(label);
+                    item.appendChild(valueDiv);
+                    grid.appendChild(item);
+                }
+            });
+        }
+
+        function populateImages(imageUrls) {
+            const grid = document.getElementById('image-grid');
+            
+            imageUrls.forEach((url, index) => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                
+                const container = document.createElement('div');
+                container.className = 'image-container';
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Generated image ${index + 1}`;
+                img.className = 'generated-image';
+                
+                const actions = document.createElement('div');
+                actions.className = 'image-actions';
+                
+                const downloadBtn = document.createElement('a');
+                downloadBtn.href = url;
+                downloadBtn.download = `generated-image-${index + 1}.png`;
+                downloadBtn.className = 'btn btn-primary';
+                downloadBtn.textContent = 'Download';
+                
+                const shareBtn = document.createElement('button');
+                shareBtn.className = 'btn btn-secondary';
+                shareBtn.textContent = 'Share';
+                shareBtn.onclick = () => shareImage(url);
+                
+                container.appendChild(img);
+                actions.appendChild(downloadBtn);
+                actions.appendChild(shareBtn);
+                card.appendChild(container);
+                card.appendChild(actions);
+                grid.appendChild(card);
+            });
+        }
+
+        function shareImage(imageUrl) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out my AI-generated image!',
+                    url: window.location.origin + imageUrl
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.origin + imageUrl).then(() => {
+                    alert('Image URL copied to clipboard!');
+                });
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        function goBack() {
+            window.location.href = '/text-to-image.html';
+        }
+    </script>
+</body>
+</html>

@@ -1051,7 +1051,7 @@
                       ...(data.metadata.businessName && { businessName: encodeURIComponent(data.metadata.businessName) })
                     });
 
-                    window.location.href = `/text-to-image-results?${params.toString()}`;
+                    window.location.href = `/text-to-image-results.html?${params.toString()}`;
                 } else {
                     throw new Error(data.error || 'Generation failed');
                 }
