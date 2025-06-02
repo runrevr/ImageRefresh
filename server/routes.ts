@@ -930,7 +930,6 @@ app.post("/api/credits/deduct", async (req, res) => {
 
   } catch (error) {
     console.error("Credit deduction error:", error);
-    ```text
     res.status(500).json({ error: "Failed to deduct credits" });
   }
 });
