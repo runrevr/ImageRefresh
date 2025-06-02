@@ -217,7 +217,7 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
 
 
 // Text-to-image generation function - moved up for proper export
-async function generateTextToImage(prompt, options = {}) {
+export async function generateTextToImage(prompt, options = {}) {
   const transformationId = `txt2img_${Date.now()}`;
 
   try {
@@ -302,4 +302,4 @@ async function generateTextToImage(prompt, options = {}) {
 }
 
 // ES6 exports only
-export { transformImageWithOpenAI, generateTextToImage };
+export { transformImageWithOpenAI };
