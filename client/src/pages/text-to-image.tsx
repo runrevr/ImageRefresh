@@ -112,6 +112,61 @@ export default function TextToImage() {
               <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
             </div>
             
+            {/* Style Pills */}
+            <div className="mt-6 max-w-4xl mx-auto">
+              <h3 className="text-lg font-semibold mb-3 text-gray-800">Add Photography Style</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { 
+                    name: "Golden Hour", 
+                    prompt: "shot during golden hour with warm, soft natural lighting, glowing backlighting, cinematic depth of field" 
+                  },
+                  { 
+                    name: "Studio Lighting", 
+                    prompt: "professional studio lighting setup with softbox lighting, clean white background, high-end commercial photography style" 
+                  },
+                  { 
+                    name: "Black & White", 
+                    prompt: "dramatic black and white photography with high contrast, deep shadows, and crisp highlights, artistic monochrome style" 
+                  },
+                  { 
+                    name: "Vintage Film", 
+                    prompt: "vintage film photography aesthetic with grain, slightly faded colors, retro film look, nostalgic atmosphere" 
+                  },
+                  { 
+                    name: "Documentary", 
+                    prompt: "candid documentary photography style, natural lighting, authentic moments, photojournalistic approach" 
+                  },
+                  { 
+                    name: "8K Ultra HD", 
+                    prompt: "ultra high definition 8K quality, razor sharp details, professional camera equipment, crystal clear imagery" 
+                  },
+                  { 
+                    name: "Motion Blur", 
+                    prompt: "dynamic motion blur effects, sense of movement and energy, action photography style" 
+                  },
+                  { 
+                    name: "Street Style", 
+                    prompt: "urban street photography style, natural lighting, authentic city atmosphere, documentary street aesthetic" 
+                  }
+                ].map((style) => (
+                  <button
+                    key={style.name}
+                    type="button"
+                    onClick={() => {
+                      const currentPrompt = prompt.trim();
+                      const separator = currentPrompt ? ', ' : '';
+                      setPrompt(currentPrompt + separator + style.prompt);
+                    }}
+                    className="p-3 rounded-lg border-2 border-gray-200 hover:border-[#06B6D4] bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-[#06B6D4] transition-all duration-200 min-h-[60px] flex items-center justify-center text-center"
+                    title={style.prompt}
+                  >
+                    {style.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
             </div>
         </div>
 
