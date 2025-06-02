@@ -145,32 +145,7 @@ export default function TextToImageResults() {
     }
   }
 
-  // Icon button component
-  const IconButton = ({ 
-    icon: Icon, 
-    label, 
-    onClick, 
-    disabled = false,
-    loading = false 
-  }: { 
-    icon: any, 
-    label: string, 
-    onClick: () => void, 
-    disabled?: boolean,
-    loading?: boolean 
-  }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled || loading}
-      className="group flex flex-col items-center p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      title={label}
-    >
-      <Icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
-      <span className="text-xs text-gray-600 group-hover:text-blue-600 transition-colors mt-1">
-        {label}
-      </span>
-    </button>
-  );
+  
 
   if (loading) {
     return (
@@ -232,13 +207,13 @@ export default function TextToImageResults() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-primary">
+          <h1 className="text-4xl font-bold mb-4 text-[#333333]">
             Your Images are Ready!
           </h1>
           <div className="flex items-center justify-center gap-2">
             <Sparkles className="w-5 h-5 text-green-500" />
             <span className="font-semibold text-green-600">
-              Successfully generated your images
+              Successfully generated {result.imageUrls.length} image{result.imageUrls.length > 1 ? 's' : ''}
             </span>
             <Sparkles className="w-5 h-5 text-green-500" />
           </div>
@@ -274,23 +249,30 @@ export default function TextToImageResults() {
                     </div>
                   </div>
                   
-                  {/* Icon buttons for each image */}
-                  <div className="flex justify-center space-x-1">
-                    <IconButton 
-                      icon={Download} 
-                      label="Download" 
-                      onClick={() => handleDownload(imageUrl, index)} 
-                    />
-                    <IconButton 
-                      icon={Share2} 
-                      label="Share" 
-                      onClick={() => handleShare(imageUrl)} 
-                    />
-                    <IconButton 
-                      icon={ZoomIn} 
-                      label="View Full" 
-                      onClick={() => setFullViewImage(imageUrl)} 
-                    />
+                  {/* Action buttons for each image */}
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleDownload(imageUrl, index)}
+                      className="flex-1"
+                    >
+                      <Download className="w-3 h-3 mr-1" />
+                      Download
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleShare(imageUrl)}
+                    >
+                      <Share2 className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setFullViewImage(imageUrl)}
+                    >
+                      <ZoomIn className="w-3 h-3" />
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -301,7 +283,7 @@ export default function TextToImageResults() {
             {/* Generation Details */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-tertiary">Generation Details</CardTitle>
+                <CardTitle className="text-[#333333]">Generation Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -351,16 +333,16 @@ export default function TextToImageResults() {
             {/* Actions Card */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-tertiary">Quick Actions</CardTitle>
+                <CardTitle className="text-[#333333]">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <RainbowButton 
+                <Button 
                   onClick={() => handleDownload(selectedImage)}
-                  className="w-full"
+                  className="w-full bg-[#0D7877] hover:bg-[#0a5d5f] text-white"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download Selected Image
-                </RainbowButton>
+                </Button>
                 
                 <Button 
                   variant="outline" 
@@ -376,7 +358,7 @@ export default function TextToImageResults() {
                   onClick={() => setLocation('/text-to-image')}
                   className="w-full"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
+                  <RefreshCw className="w-4 h-4 mr-2" />
                   Create Another Image
                 </Button>
               </CardContent>
