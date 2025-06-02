@@ -247,7 +247,7 @@ export default function TextToImageResults() {
         <div className="max-w-6xl mx-auto">
           {/* Image Grid */}
           <div className="mb-8">
-            <div className={`grid gap-6 ${result.imageUrls.length > 1 ? 'grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
+            <div className={`grid gap-6 ${result.imageUrls.length > 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
               {result.imageUrls.map((imageUrl, index) => (
                 <div key={index} className="space-y-4">
                   <div 
