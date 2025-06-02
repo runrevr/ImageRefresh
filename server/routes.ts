@@ -17,7 +17,7 @@ import { createColoringBookImage } from "./coloring-book";
 // Import the Product AI Studio router
 import productAiStudioRouter from "./product-ai-studio";
 
-export function registerRoutes(app: Express): Server {
+export async function registerRoutes(app: Express): Promise<Server> {
   // Add detailed console logs for debugging
   app.use((req, res, next) => {
     const start = Date.now();
