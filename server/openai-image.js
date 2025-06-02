@@ -301,17 +301,5 @@ async function generateTextToImage(prompt, options = {}) {
   }
 }
 
-// Export both functions for CommonJS
-module.exports = {
-  transformImageWithOpenAI,
-  generateTextToImage
-};
-
-// Set default export for ES6 compatibility
-module.exports.default = {
-  transformImageWithOpenAI,
-  generateTextToImage
-};
-
-// Also export as ES6 modules for compatibility  
+// ES6 exports only
 export { transformImageWithOpenAI, generateTextToImage };
