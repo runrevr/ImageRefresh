@@ -938,24 +938,22 @@ export default function UploadEnhancePage() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-3xl mx-auto">
+                  <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
                     {imageSizeOptions.map((size) => (
                       <button
                         key={size.id}
                         type="button"
                         onClick={() => hasImages && setSelectedImageSize(size.id)}
                         disabled={!hasImages}
-                        className={`p-3 rounded-lg border-2 text-center transition-all duration-200 min-h-[60px] flex flex-col items-center justify-center gap-1 ${
+                        className={`px-6 py-3 rounded-lg border-2 transition-all duration-200 ${
                           !hasImages
                             ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
                             : selectedImageSize === size.id
-                              ? 'bg-[#0D7877] border-[#0D7877] text-white shadow-md transform -translate-y-1'
-                              : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-[#0D7877] text-gray-700 hover:shadow-sm hover:-translate-y-1'
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
                         }`}
                       >
-                        <span className="text-sm font-medium brand-font-body leading-tight">
-                          {size.label}
-                        </span>
+                        <div className="text-sm font-medium text-gray-700">{size.label}</div>
                       </button>
                     ))}
                   </div>
