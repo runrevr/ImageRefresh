@@ -112,24 +112,7 @@ export default function TextToImage() {
               <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
             </div>
             
-            <Button
-              onClick={enhancePrompt}
-              disabled={isGenerating}
-              className="mt-8 px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[#06B6D4] to-[#84CC16] hover:from-[#0891B2] hover:to-[#65A30D] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Creating Magic...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  Let's Make Some Magic
-                </>
-              )}
-            </Button>
-          </div>
+            </div>
         </div>
 
         <Card className="max-w-4xl mx-auto">
@@ -239,6 +222,26 @@ export default function TextToImage() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="text-center mt-8">
+          <Button
+            onClick={enhancePrompt}
+            disabled={isGenerating}
+            className="px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[#06B6D4] to-[#84CC16] hover:from-[#0891B2] hover:to-[#65A30D] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Creating Magic...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-5 w-5" />
+                Let's Make Some Magic
+              </>
+            )}
+          </Button>
+        </div>
         </div>
       </div>
     </Layout>
