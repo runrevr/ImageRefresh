@@ -1235,6 +1235,10 @@ app.post("/api/credits/deduct", async (req, res) => {
       // Use the OpenAI image generation service with comprehensive debugging
       const openAiModule = await import('./openai-image.js');
 
+      // Test export verification
+      console.log('[API] Test export:', openAiModule.testExport);
+      console.log('[API] All exports:', Object.keys(openAiModule));
+
       // Debug: Check all possible locations
       console.log('[API] Module:', openAiModule);
       console.log('[API] Module.default:', openAiModule.default);

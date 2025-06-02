@@ -6,6 +6,9 @@ import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { fileURLToPath } from 'url';
 
+// Test export
+export const testExport = "This is a test";
+
 // Get the current directory
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
