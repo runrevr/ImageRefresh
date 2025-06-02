@@ -99,6 +99,10 @@
   --secondary-foreground: 0 0% 100%;
   --accent: 262 83% 58%; /* #8B5CF6 - Electric Purple */
   --accent-foreground: 0 0% 100%;
+  --tertiary: 18 97% 54%; /* #F97316 - Bright Orange */
+  --tertiary-foreground: 0 0% 100%;
+  --magenta: 327 73% 58%; /* #EC4899 - Hot Magenta */
+  --magenta-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --ring: 188 100% 42%; /* #06B6D4 - Cyan Blue (primary) */

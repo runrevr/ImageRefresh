@@ -521,7 +521,7 @@ export default function IdeasPage() {
     <Layout>
       <div className="max-w-screen-xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-3 text-[#2A7B9B]">
+          <h1 className="text-3xl font-bold mb-3 text-primary">
             {selectedCategory
               ? currentCategory?.name || "Transformation Styles"
               : "Transformation Ideas"}
@@ -541,7 +541,7 @@ export default function IdeasPage() {
           <div className="flex items-center justify-between mb-6">
             <Button
               variant="ghost"
-              className="flex items-center text-[#2A7B9B] hover:text-[#2A7B9B]/80 pl-0"
+              className="flex items-center text-primary hover:text-primary/80 pl-0"
               onClick={handleBackToCategories}
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
@@ -639,7 +639,7 @@ export default function IdeasPage() {
         {selectedCategory && (
           <>
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-3 text-[#FF7B54]">
+              <h2 className="text-2xl font-bold mb-3 text-tertiary">
                 Popular {currentCategory?.name} Styles
               </h2>
               <p className="text-gray-600">
