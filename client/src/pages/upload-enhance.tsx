@@ -783,7 +783,7 @@ export default function UploadEnhancePage() {
             <h1 className="text-4xl brand-font-heading font-extrabold text-gray-900 mb-4">
             Upload Your Product Image
             </h1>
-            <p className="text-xl brand-font-body text-gray-700 max-w-2xl mx-auto"></p>
+            <p className="text-xl brand-font-body text-gray-700 max-w-2xl mx-auto">
             Select a high-quality image to get AI-powered enhancements
             </p>
             </div>
