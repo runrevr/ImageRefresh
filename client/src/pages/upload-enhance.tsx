@@ -780,10 +780,10 @@ export default function UploadEnhancePage() {
 
             <CardHeader className="text-center">
             <div className="text-center mb-8">
-            <h1 className="text-4xl brand-font-heading font-extrabold brand-text-neutral mb-4">
+            <h1 className="text-4xl brand-font-heading font-extrabold text-gray-900 mb-4">
             Upload Your Product Image
             </h1>
-            <p className="text-xl brand-font-body brand-text-neutral max-w-2xl mx-auto">
+            <p className="text-xl brand-font-body text-gray-700 max-w-2xl mx-auto"></p>
             Select a high-quality image to get AI-powered enhancements
             </p>
             </div>
