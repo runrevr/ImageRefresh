@@ -113,7 +113,7 @@ export default function TextToImage() {
             </div>
             
             {/* Style Pills */}
-            <div className="mt-6 max-w-4xl mx-auto">
+            <div className="mt-12 max-w-4xl mx-auto">
               <h3 className="text-lg font-semibold mb-3 text-gray-800">Add Photography Style</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
