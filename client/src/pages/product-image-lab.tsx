@@ -175,12 +175,11 @@ export default function ProductImageLabPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="mt-auto pt-6">
-                  <Button 
-                    className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white border-0 py-3 text-base"
-                    onClick={() => window.location.href = '/text-to-image.html'}
-                  >
-                    Create Variations
-                  </Button>
+                  <Link to="/text-to-image">
+                    <Button className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white border-0 py-3 text-base">
+                      Create Variations
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>
