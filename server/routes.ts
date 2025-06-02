@@ -1234,7 +1234,12 @@ app.post("/api/credits/deduct", async (req, res) => {
 
       // Use the OpenAI image generation service
       const openAiImage = await import('./openai-image.js');
-      const { generateTextToImage } = openAiImage;
+      console.log('openAiImage contents:', openAiImage);
+      console.log('openAiImage type:', typeof openAiImage);
+      console.log('openAiImage keys:', Object.keys(openAiImage || {}));
+      
+      // Handle both CommonJS and ES module exports
+      const generateTextToImage = openAiImage.generateTextToImage || openAiImage.default?.generateTextToImage;
 
       const result = await generateTextToImage(enhancedPrompt, {
         size,
