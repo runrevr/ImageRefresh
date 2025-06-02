@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,11 @@ export default function TextToImage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedStylePrompt, setSelectedStylePrompt] = useState(""); // Track selected photography style prompt
   const { toast } = useToast();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const enhancePrompt = async () => {
     if (!prompt.trim()) {
