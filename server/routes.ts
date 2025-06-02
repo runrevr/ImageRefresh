@@ -930,6 +930,7 @@ app.post("/api/credits/deduct", async (req, res) => {
 
   } catch (error) {
     console.error("Credit deduction error:", error);
+    ```text
     res.status(500).json({ error: "Failed to deduct credits" });
   }
 });
@@ -1189,99 +1190,93 @@ app.post("/api/credits/deduct", async (req, res) => {
     }
   });
 
-  // Create HTTP server
-  const httpServer = createServer(app);
-  console.log("Server created and routes registered successfully");
-  return httpServer;
-}
+  // Text-to-image generation endpoint
+  app.post('/api/generate-images', async (req, res) => {
+    try {
+      console.log('[API] Text-to-image generation request received');
 
-// Handle product image lab routes
-//app.use('/api/product-image-lab', productImageLabRoutes);
-
-// Handle prebuilt prompts routes  
-//app.use('/api/prebuilt', prebuiltPromptsRoutes);
-
-// Handle webhook test routes
-//app.use('/api/webhook-test', webhookTestRoutes);
-
-// Text-to-image generation endpoint
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-app.post('/api/generate-images', async (req, res) => {
-  try {
-    console.log('[API] Text-to-image generation request received');
-
-    const {
-      prompt,
-      variations,
-      purpose,
-      industry,
-      aspectRatio,
-      styleIntensity,
-      addText,
-      businessName
-    } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({
-        success: false,
-        error: 'Prompt is required'
-      });
-    }
-
-    // Map aspect ratio to size
-    let size = "1024x1024"; // default
-    if (aspectRatio === "wide") {
-      size = "1792x1024";
-    } else if (aspectRatio === "portrait") {
-      size = "1024x1792";
-    }
-
-    // Enhance the prompt based on context
-    let enhancedPrompt = prompt;
-    if (purpose) {
-      enhancedPrompt += `, optimized for ${purpose}`;
-    }
-    if (industry) {
-      enhancedPrompt += `, ${industry} industry style`;
-    }
-    if (addText && businessName) {
-      enhancedPrompt += `, include "${businessName}" text overlay`;
-    }
-
-    // Use the OpenAI image generation service
-    const { generateTextToImage } = await import('./openai-image');
-
-    const result = await generateTextToImage(enhancedPrompt, {
-      size,
-      quality: 'standard',
-      style: 'natural'
-    });
-
-    // Generate a job ID for tracking
-    const jobId = `txt2img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    // Return the result with metadata
-    res.json({
-      success: true,
-      jobId,
-      imageUrl: result.imageUrls[0], // First image URL
-      imageUrls: result.imageUrls, // All image URLs
-      metadata: {
-        prompt: enhancedPrompt,
+      const {
+        prompt,
+        variations,
         purpose,
         industry,
         aspectRatio,
         styleIntensity,
         addText,
         businessName
-      }
-    });
+      } = req.body;
 
-  } catch (error: any) {
-    console.error('[API] Text-to-image generation error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to generate image'
-    });
-  }
-});
+      if (!prompt) {
+        return res.status(400).json({
+          success: false,
+          error: 'Prompt is required'
+        });
+      }
+
+      // Map aspect ratio to size
+      let size = "1024x1024"; // default
+      if (aspectRatio === "wide") {
+        size = "1792x1024";
+      } else if (aspectRatio === "portrait") {
+        size = "1024x1792";
+      }
+
+      // Enhance the prompt based on context
+      let enhancedPrompt = prompt;
+      if (purpose) {
+        enhancedPrompt += `, optimized for ${purpose}`;
+      }
+      if (industry) {
+        enhancedPrompt += `, ${industry} industry style`;
+      }
+      if (addText && businessName) {
+        enhancedPrompt += `, include "${businessName}" text overlay`;
+      }
+
+      // Use the OpenAI image generation service
+      const { generateTextToImage } = await import('./openai-image');
+
+      const result = await generateTextToImage(enhancedPrompt, {
+        size,
+        quality: 'standard',
+        style: 'natural'
+      });
+
+      // Generate a job ID for tracking
+      const jobId = `txt2img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      // Return the result with metadata
+      res.json({
+        success: true,
+        jobId,
+        imageUrl: result.imageUrls[0], // First image URL
+        imageUrls: result.imageUrls, // All image URLs
+        metadata: {
+          prompt: enhancedPrompt,
+          purpose,
+          industry,
+          aspectRatio,
+          styleIntensity,
+          addText,
+          businessName
+        }
+      });
+
+    } catch (error: any) {
+      console.error('[API] Text-to-image generation error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to generate image'
+      });
+    }
+  });
+}
+
+// Handle product image lab routes
+//app.use('/api/product-image-lab', productImageLabRoutes);
+
+// Handle prebuilt prompts routes
+//app.use('/api/prebuilt', prebuiltPromptsRoutes);
+
+// Handle webhook test routes
+//app.use('/api/webhook-test', webhookTestRoutes);
