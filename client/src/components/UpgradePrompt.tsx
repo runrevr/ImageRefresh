@@ -79,7 +79,7 @@ export function UpgradePrompt({ isOpen, onClose, onSignUp, onViewPricing }: Upgr
           {/* Footer */}
           <div className="text-center pt-4 border-t">
             <p className="text-sm text-gray-500">
-              ✨ Most popular: <span className="font-semibold text-[#FF7B54]">Pro Plan</span> - $29/month
+              ✨ Most popular: <span className="font-semibold text-[#FF7B54]">Premium Plan</span> - $20/month
             </p>
             <button
               onClick={onClose}
