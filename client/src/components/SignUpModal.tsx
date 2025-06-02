@@ -49,29 +49,29 @@ export function SignUpModal({
           <div className="mx-auto">
             <Sparkles className="h-8 w-8 text-[#06B6D4] mx-auto mb-2" />
           </div>
-          <DialogTitle className="text-xl font-bold text-gray-900">
+          <DialogTitle className="text-xl font-bold text-[#00ff00]">
             🎉 Love What You Created?
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div className="text-center">
-            <p className="text-gray-700 mb-4 font-medium">
+            <p className="text-white mb-4 font-medium">
               Create a free account and get:
             </p>
             
             <div className="space-y-3 text-left">
               <div className="flex items-center space-x-3">
                 <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-gray-700">1 bonus credit</span>
+                <span className="text-white">1 bonus credit</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-gray-700">Save all your creations</span>
+                <span className="text-white">Save all your creations</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-gray-700">Access to premium styles</span>
+                <span className="text-white">Access to premium styles</span>
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@ export function SignUpModal({
           <div className="text-center">
             <button
               onClick={handleLogin}
-              className="text-gray-600 hover:text-[#06B6D4] font-medium underline"
+              className="text-white hover:text-[#06B6D4] font-medium underline"
             >
               Already have an account? Log in
             </button>
