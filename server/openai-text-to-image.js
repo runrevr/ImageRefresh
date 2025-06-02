@@ -1,4 +1,3 @@
-
 // openai-text-to-image.js
 import OpenAI from 'openai';
 import fs from 'fs';
@@ -41,7 +40,7 @@ export async function generateTextToImage(prompt, options = {}) {
     const validSizes = ["1024x1024", "1792x1024", "1024x1792"];
     const finalSize = validSizes.includes(size) ? size : "1024x1024";
 
-    console.log(`[OpenAI] [${transformationId}] Using GPT-image-1 model for text-to-image generation with size: ${finalSize}`);
+    console.log(`[OpenAI] [${transformationId}] Using gpt-image-1 model for text-to-image generation with size: ${finalSize}`);
 
     const response = await openai.images.generate({
       model: "gpt-image-1",
@@ -111,3 +110,4 @@ export async function generateTextToImage(prompt, options = {}) {
 
 // Log that the module loaded successfully
 console.log('[OpenAI Text-to-Image Module] Loaded successfully');
+```
