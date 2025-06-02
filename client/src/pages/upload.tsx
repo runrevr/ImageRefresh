@@ -59,6 +59,7 @@ export default function UploadPage() {
   const [currentTransformation, setCurrentTransformation] = useState<any>(null); // Track current transformation data including DB ID
   const [hasTriedAnotherPrompt, setHasTriedAnotherPrompt] = useState<boolean>(false); // Track if user has already tried another prompt
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
 
   // Update local user state when auth user changes
   useEffect(() => {
@@ -1090,20 +1091,24 @@ export default function UploadPage() {
                         </h4>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
                           {selectedTransformation === 'animation' && [
-                            { name: 'Super Mario Bros', emoji: '🍄' },
-                            { name: 'Minecraft', emoji: '🟫' },
-                            { name: 'Pixar Style', emoji: '🎬' },
-                            { name: 'Trolls', emoji: '💖' },
-                            { name: 'Princess/Prince', emoji: '👸' },
-                            { name: 'Superhero', emoji: '🦸' },
-                            { name: 'Lego Character', emoji: '🧱' },
+                            { name: 'Super Mario Bros', emoji: '🍄', id: 'mario' },
+                            { name: 'Minecraft', emoji: '🟫', id: 'minecraft' },
+                            { name: 'Pixar Style', emoji: '🎬', id: 'pixar' },
+                            { name: 'Trolls', emoji: '💖', id: 'trolls' },
+                            { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
+                            { name: 'Superhero', emoji: '🦸', id: 'superhero' },
+                            { name: 'Lego Character', emoji: '🧱', id: 'lego' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1112,20 +1117,24 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'historical' && [
-                            { name: 'Old Western', emoji: '🤠' },
-                            { name: '90s Hip-Hop', emoji: '🎤' },
-                            { name: '1980s Style', emoji: '🌈' },
-                            { name: 'Disco Era', emoji: '🕺' },
-                            { name: 'Renaissance', emoji: '🎨' },
-                            { name: 'Victorian Era', emoji: '🎩' },
-                            { name: 'Medieval', emoji: '⚔️' },
+                            { name: 'Old Western', emoji: '🤠', id: 'western' },
+                            { name: '90s Hip-Hop', emoji: '🎤', id: 'hiphop' },
+                            { name: '1980s Style', emoji: '🌈', id: '80s' },
+                            { name: 'Disco Era', emoji: '🕺', id: 'disco' },
+                            { name: 'Renaissance', emoji: '🎨', id: 'renaissance' },
+                            { name: 'Victorian Era', emoji: '🎩', id: 'victorian' },
+                            { name: 'Medieval', emoji: '⚔️', id: 'medieval' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1134,19 +1143,23 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'artistic' && [
-                            { name: 'Oil Painting', emoji: '🖼️' },
-                            { name: 'Watercolor', emoji: '🎨' },
-                            { name: 'Impressionist', emoji: '🌅' },
-                            { name: 'Abstract Art', emoji: '🔮' },
-                            { name: 'Pop Surrealism', emoji: '👁️' },
-                            { name: 'Art Deco', emoji: '✨' },
+                            { name: 'Oil Painting', emoji: '🖼️', id: 'oil' },
+                            { name: 'Watercolor', emoji: '🎨', id: 'watercolor' },
+                            { name: 'Impressionist', emoji: '🌅', id: 'impressionist' },
+                            { name: 'Abstract Art', emoji: '🔮', id: 'abstract' },
+                            { name: 'Pop Surrealism', emoji: '👁️', id: 'surrealism' },
+                            { name: 'Art Deco', emoji: '✨', id: 'artdeco' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1155,22 +1168,26 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'other' && [
-                            { name: 'Mullets', emoji: '💇' },
-                            { name: 'Hulkamania', emoji: '💪' },
-                            { name: 'Baby Prediction', emoji: '👶' },
-                            { name: 'Future Self', emoji: '👵' },
-                            { name: 'Ghibli Style', emoji: '🌸' },
-                            { name: 'AI Action Figure', emoji: '🎮' },
-                            { name: 'Pet as Human', emoji: '🐕' },
-                            { name: 'Self as Cat', emoji: '🐱' },
-                            { name: 'Caricature', emoji: '😄' },
+                            { name: 'Mullets', emoji: '💇', id: 'mullets' },
+                            { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
+                            { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
+                            { name: 'Future Self', emoji: '👵', id: 'future' },
+                            { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
+                            { name: 'AI Action Figure', emoji: '🎮', id: 'action-figure' },
+                            { name: 'Pet as Human', emoji: '🐕', id: 'pet-human' },
+                            { name: 'Self as Cat', emoji: '🐱', id: 'self-cat' },
+                            { name: 'Caricature', emoji: '😄', id: 'caricature' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1179,14 +1196,18 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'kids-real' && [
-                            { name: 'Kids Drawing to Reality', emoji: '🖍️' },
+                            { name: 'Kids Drawing to Reality', emoji: '🖍️', id: 'kids-drawing' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1340,20 +1361,24 @@ export default function UploadPage() {
                         </h4>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
                           {selectedTransformation === 'animation' && [
-                            { name: 'Super Mario Bros', emoji: '🍄' },
-                            { name: 'Minecraft', emoji: '🟫' },
-                            { name: 'Pixar Style', emoji: '🎬' },
-                            { name: 'Trolls', emoji: '💖' },
-                            { name: 'Princess/Prince', emoji: '👸' },
-                            { name: 'Superhero', emoji: '🦸' },
-                            { name: 'Lego Character', emoji: '🧱' },
+                            { name: 'Super Mario Bros', emoji: '🍄', id: 'mario' },
+                            { name: 'Minecraft', emoji: '🟫', id: 'minecraft' },
+                            { name: 'Pixar Style', emoji: '🎬', id: 'pixar' },
+                            { name: 'Trolls', emoji: '💖', id: 'trolls' },
+                            { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
+                            { name: 'Superhero', emoji: '🦸', id: 'superhero' },
+                            { name: 'Lego Character', emoji: '🧱', id: 'lego' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1362,20 +1387,24 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'historical' && [
-                            { name: 'Old Western', emoji: '🤠' },
-                            { name: '90s Hip-Hop', emoji: '🎤' },
-                            { name: '1980s Style', emoji: '🌈' },
-                            { name: 'Disco Era', emoji: '🕺' },
-                            { name: 'Renaissance', emoji: '🎨' },
-                            { name: 'Victorian Era', emoji: '🎩' },
-                            { name: 'Medieval', emoji: '⚔️' },
+                            { name: 'Old Western', emoji: '🤠', id: 'western' },
+                            { name: '90s Hip-Hop', emoji: '🎤', id: 'hiphop' },
+                            { name: '1980s Style', emoji: '🌈', id: '80s' },
+                            { name: 'Disco Era', emoji: '🕺', id: 'disco' },
+                            { name: 'Renaissance', emoji: '🎨', id: 'renaissance' },
+                            { name: 'Victorian Era', emoji: '🎩', id: 'victorian' },
+                            { name: 'Medieval', emoji: '⚔️', id: 'medieval' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1384,19 +1413,23 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'artistic' && [
-                            { name: 'Oil Painting', emoji: '🖼️' },
-                            { name: 'Watercolor', emoji: '🎨' },
-                            { name: 'Impressionist', emoji: '🌅' },
-                            { name: 'Abstract Art', emoji: '🔮' },
-                            { name: 'Pop Surrealism', emoji: '👁️' },
-                            { name: 'Art Deco', emoji: '✨' },
+                            { name: 'Oil Painting', emoji: '🖼️', id: 'oil' },
+                            { name: 'Watercolor', emoji: '🎨', id: 'watercolor' },
+                            { name: 'Impressionist', emoji: '🌅', id: 'impressionist' },
+                            { name: 'Abstract Art', emoji: '🔮', id: 'abstract' },
+                            { name: 'Pop Surrealism', emoji: '👁️', id: 'surrealism' },
+                            { name: 'Art Deco', emoji: '✨', id: 'artdeco' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1405,22 +1438,26 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'other' && [
-                            { name: 'Mullets', emoji: '💇' },
-                            { name: 'Hulkamania', emoji: '💪' },
-                            { name: 'Baby Prediction', emoji: '👶' },
-                            { name: 'Future Self', emoji: '👵' },
-                            { name: 'Ghibli Style', emoji: '🌸' },
-                            { name: 'AI Action Figure', emoji: '🎮' },
-                            { name: 'Pet as Human', emoji: '🐕' },
-                            { name: 'Self as Cat', emoji: '🐱' },
-                            { name: 'Caricature', emoji: '😄' },
+                            { name: 'Mullets', emoji: '💇', id: 'mullets' },
+                            { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
+                            { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
+                            { name: 'Future Self', emoji: '👵', id: 'future' },
+                            { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
+                            { name: 'AI Action Figure', emoji: '🎮', id: 'action-figure' },
+                            { name: 'Pet as Human', emoji: '🐕', id: 'pet-human' },
+                            { name: 'Self as Cat', emoji: '🐱', id: 'self-cat' },
+                            { name: 'Caricature', emoji: '😄', id: 'caricature' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
@@ -1429,14 +1466,18 @@ export default function UploadPage() {
                           ))}
 
                           {selectedTransformation === 'kids-real' && [
-                            { name: 'Kids Drawing to Reality', emoji: '🖍️' },
+                            { name: 'Kids Drawing to Reality', emoji: '🖍️', id: 'kids-drawing' },
                           ].map((style, index) => (
                             <button
                               key={index}
-                              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer"
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
                               onClick={() => {
+                                setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
-                                // You can add more specific functionality here
                               }}
                             >
                               <span className="text-lg">{style.emoji}</span>
