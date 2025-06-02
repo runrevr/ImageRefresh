@@ -170,41 +170,39 @@ export default function TextToImage() {
             </div>
         </div>
 
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl text-center">Image Size</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <Label className="text-base font-semibold mb-4 block">Aspect Ratio</Label>
-              <RadioGroup value={aspectRatio} onValueChange={setAspectRatio}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-gray-50">
-                    <RadioGroupItem value="square" id="square" />
-                    <div>
-                      <Label htmlFor="square" className="font-medium">Square (1:1)</Label>
-                      <p className="text-sm text-gray-500">Instagram posts</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-gray-50">
-                    <RadioGroupItem value="wide" id="wide" />
-                    <div>
-                      <Label htmlFor="wide" className="font-medium">Wide (16:9)</Label>
-                      <p className="text-sm text-gray-500">Website headers</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-gray-50">
-                    <RadioGroupItem value="portrait" id="portrait" />
-                    <div>
-                      <Label htmlFor="portrait" className="font-medium">Portrait (9:16)</Label>
-                      <p className="text-sm text-gray-500">Stories/Reels</p>
-                    </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Image Size</h2>
+          </div>
+          <div>
+            <Label className="text-base font-semibold mb-4 block text-gray-800">Aspect Ratio</Label>
+            <RadioGroup value={aspectRatio} onValueChange={setAspectRatio}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="square" id="square" />
+                  <div>
+                    <Label htmlFor="square" className="font-medium text-gray-900">Square (1:1)</Label>
+                    <p className="text-sm text-gray-600">Instagram posts</p>
                   </div>
                 </div>
-              </RadioGroup>
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="wide" id="wide" />
+                  <div>
+                    <Label htmlFor="wide" className="font-medium text-gray-900">Wide (16:9)</Label>
+                    <p className="text-sm text-gray-600">Website headers</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="portrait" id="portrait" />
+                  <div>
+                    <Label htmlFor="portrait" className="font-medium text-gray-900">Portrait (9:16)</Label>
+                    <p className="text-sm text-gray-600">Stories/Reels</p>
+                  </div>
+                </div>
+              </div>
+            </RadioGroup>
+          </div>
+        </div>
 
         <div className="text-center mt-8">
           <Button
