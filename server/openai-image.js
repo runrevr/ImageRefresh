@@ -214,7 +214,9 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
   }
 }
 
-// Text-to-image generation function
+
+
+// Text-to-image generation function - moved up for proper export
 async function generateTextToImage(prompt, options = {}) {
   const transformationId = `txt2img_${Date.now()}`;
 
@@ -264,16 +266,20 @@ async function generateTextToImage(prompt, options = {}) {
       console.log(`[OpenAI] [${transformationId}] Processing image ${i + 1} from OpenAI`);
 
       // Download and save the image
-      const imageResponse = await fetch(imageData.url);
-      if (!imageResponse.ok) {
+      const imageResponse = await axios.get(imageData.url, { 
+        responseType: 'arraybuffer',
+        timeout: 30000 // 30 second timeout
+      });
+
+      if (imageResponse.status !== 200) {
         throw new Error(`Failed to download image ${i + 1}: ${imageResponse.status}`);
       }
 
-      const imageBuffer = await imageResponse.arrayBuffer();
+      const imageBuffer = imageResponse.data;
       const filename = `txt2img-${transformationId}-${i + 1}.png`;
       const filepath = path.join(uploadsDir, filename);
 
-      await fs.writeFile(filepath, Buffer.from(imageBuffer));
+      fs.writeFileSync(filepath, Buffer.from(imageBuffer));
 
       savedImagePaths.push(filepath);
       imageUrls.push(`/uploads/${filename}`);

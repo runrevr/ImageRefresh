@@ -1232,8 +1232,31 @@ app.post("/api/credits/deduct", async (req, res) => {
         enhancedPrompt += `, include "${businessName}" text overlay`;
       }
 
-      // Use the OpenAI image generation service
-      const { generateTextToImage } = await import('./openai-image.js');
+      // Use the OpenAI image generation service with comprehensive debugging
+      const openAiModule = await import('./openai-image.js');
+
+      // Debug: Check all possible locations
+      console.log('[API] Module:', openAiModule);
+      console.log('[API] Module.default:', openAiModule.default);
+      console.log('[API] Module.generateTextToImage:', openAiModule.generateTextToImage);
+      console.log('[API] Module.default?.generateTextToImage:', openAiModule.default?.generateTextToImage);
+
+      // Try to find the function in different ways
+      const generateTextToImage = 
+        openAiModule.generateTextToImage || 
+        openAiModule.default?.generateTextToImage ||
+        openAiModule.default;
+
+      if (!generateTextToImage || typeof generateTextToImage !== 'function') {
+        console.error('[API] generateTextToImage not found or not a function');
+        console.log('[API] Available exports:', Object.keys(openAiModule));
+        if (openAiModule.default) {
+          console.log('[API] Default export keys:', Object.keys(openAiModule.default));
+        }
+        throw new Error('generateTextToImage function not found in openai-image module');
+      }
+
+      console.log('[API] Successfully found generateTextToImage function');
 
       const result = await generateTextToImage(enhancedPrompt, {
         size,
