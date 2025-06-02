@@ -464,20 +464,17 @@ export default function UploadEnhancePage() {
   };
 
   const handleSubmit = async () => {
-    // Check credits before proceeding
-    if (creditStatus?.hasCredits || isAuthenticated) {
+    // Check if user is authenticated first
+    if (isAuthenticated) {
+      // User is logged in, proceed with processing
+      await submitForProcessing();
+    } else if (creditStatus?.hasCredits) {
+      // User has credits but not authenticated (device fingerprint user)
       await submitForProcessing();
     } else {
-       if (!isAuthenticated && creditStatus?.usedFreeCredits && !creditStatus?.shouldShowSignUpModal) {
-          setShowSignUpModal(true);
-          markModalShown();
-       } else if (!isAuthenticated && !creditStatus?.usedFreeCredits){
-          setShowSignUpModal(true);
-          markModalShown();
-       } else{
-        // Should not hit here
-        setShowUpgradePrompt(true);
-       }
+      // User needs to sign up
+      setShowSignUpModal(true);
+      markModalShown();
     }
   };
 
