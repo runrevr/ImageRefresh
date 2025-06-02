@@ -150,12 +150,15 @@ export async function generateTextToImage(prompt, options = {}) {
       throw new Error("Failed to download any images from OpenAI - no URLs provided");
     }
 
+    console.log(`[OpenAI] [${transformationId}] Returning ${imageUrls.length} image URLs:`, imageUrls);
+    
     return {
       success: true,
       imageUrls,
       savedPaths: savedImagePaths,
       transformationId,
-      prompt
+      prompt,
+      totalImages: imageUrls.length
     };
 
   } catch (error) {
