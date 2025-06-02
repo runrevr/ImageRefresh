@@ -154,9 +154,7 @@ export default function TextToImage() {
                     key={style.name}
                     type="button"
                     onClick={() => {
-                      const currentPrompt = prompt.trim();
-                      const separator = currentPrompt ? ', ' : '';
-                      setPrompt(currentPrompt + separator + style.prompt);
+                      setPrompt(style.prompt);
                     }}
                     className="p-3 rounded-lg border-2 border-gray-200 hover:border-[#06B6D4] bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 hover:text-[#06B6D4] transition-all duration-200 min-h-[60px] flex items-center justify-center text-center"
                     title={style.prompt}
