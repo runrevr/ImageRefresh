@@ -877,11 +877,6 @@ export default function UploadEnhancePage() {
               backgroundColor: '#1F2937',
               background: 'linear-gradient(135deg, #1F2937 0%, #374151 50%, #1F2937 100%)'
             }}>
-              {/* Decorative accent elements */}
-              <div className="absolute top-4 left-4 w-3 h-3 rounded-full" style={{ backgroundColor: '#06B6D4' }}></div>
-              <div className="absolute top-8 right-6 w-2 h-2 rounded-full" style={{ backgroundColor: '#84CC16' }}></div>
-              <div className="absolute bottom-6 left-8 w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#F97316' }}></div>
-              <div className="absolute bottom-4 right-4 w-3 h-3 rounded-full" style={{ backgroundColor: '#8B5CF6' }}></div>
               
               <CardHeader className="text-center relative">
                 <CardTitle className="flex items-center justify-center gap-2 brand-font-heading font-semibold text-white text-xl">
@@ -990,8 +985,8 @@ export default function UploadEnhancePage() {
                         !(hasImages && hasIndustryInfo)
                           ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
                           : selectedImageSize === size.id
-                            ? 'border-[#06B6D4] bg-[#06B6D4]/5 shadow-lg transform scale-105' 
-                            : 'border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 hover:shadow-md'
+                            ? 'border-[#84CC16] bg-[#84CC16]/10 shadow-lg transform scale-105' 
+                            : 'border-gray-200 hover:border-[#84CC16] hover:bg-[#84CC16]/5 hover:shadow-md'
                       }`}
                     >
                       {/* Visual Icon */}
@@ -1000,20 +995,20 @@ export default function UploadEnhancePage() {
                           size.id === 'square' ? 'w-12 h-12' : 
                           size.id === 'landscape' ? 'w-16 h-10' : 'w-10 h-16'
                         } border-2 rounded-sm ${
-                          selectedImageSize === size.id ? 'border-[#06B6D4]' : 'border-gray-300'
+                          selectedImageSize === size.id ? 'border-[#84CC16]' : 'border-gray-300'
                         } flex items-center justify-center`}>
                           <div className={`${
                             size.id === 'square' ? 'w-8 h-8' : 
                             size.id === 'landscape' ? 'w-12 h-6' : 'w-6 h-12'
                           } ${
-                            selectedImageSize === size.id ? 'bg-[#06B6D4]' : 'bg-gray-300'
+                            selectedImageSize === size.id ? 'bg-[#84CC16]' : 'bg-gray-300'
                           } rounded-sm opacity-70`}></div>
                         </div>
                       </div>
 
                       {/* Size Label */}
                       <div className={`text-lg font-semibold mb-2 ${
-                        selectedImageSize === size.id ? 'text-[#06B6D4]' : 'text-gray-700'
+                        selectedImageSize === size.id ? 'text-[#84CC16]' : 'text-gray-700'
                       }`}>{size.label}</div>
                       
                       {/* Best For */}
@@ -1030,7 +1025,7 @@ export default function UploadEnhancePage() {
 
                       {/* Selected Indicator */}
                       {selectedImageSize === size.id && (
-                        <div className="mt-3 flex items-center text-[#06B6D4] text-sm font-medium">
+                        <div className="mt-3 flex items-center text-[#84CC16] text-sm font-medium">
                           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
@@ -1044,7 +1039,7 @@ export default function UploadEnhancePage() {
                 {selectedImageSize && hasImages && hasIndustryInfo && (
                   <div className="p-4 mt-6 rounded-lg border-2 border-[#84CC16] bg-[#84CC16]/5 max-w-2xl mx-auto">
                     <div className="text-center">
-                      <p className="text-sm font-medium brand-font-body mb-1" style={{ color: '#84CC16' }}>
+                      <p className="text-sm font-medium brand-font-body mb-1 text-[#84CC16]">
                         ✨ Perfect! Your image will be enhanced to {imageSizeOptions.find(size => size.id === selectedImageSize)?.label}
                       </p>
                       <p className="text-xs text-gray-600 brand-font-body">
