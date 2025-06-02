@@ -936,7 +936,7 @@ export default function UploadEnhancePage() {
                     value={productType}
                     onChange={(e) => setProductType(e.target.value)}
                     disabled={!hasImages}
-                    className={`brand-font-body text-center ${!hasImages ? 'bg-gray-100 text-gray-400' : ''}`}
+                    className={`brand-font-body text-left ${!hasImages ? 'bg-gray-100 text-gray-400' : ''}`}
                   />
                   <p className="text-xs text-gray-400 brand-font-body text-center mt-4">
                     Be specific about your main product category
