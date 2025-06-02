@@ -18,7 +18,7 @@ export function UpgradePrompt({ isOpen, onClose, onSignUp, onViewPricing }: Upgr
       <Card className="w-full max-w-lg bg-white">
         <CardHeader className="text-center pb-4">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#FF7B54] to-[#0D7877] rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#FF7B54] to-[#FF7B54] rounded-full flex items-center justify-center">
               <Crown className="w-8 h-8 text-white" />
             </div>
           </div>
