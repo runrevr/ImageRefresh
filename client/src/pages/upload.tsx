@@ -978,10 +978,8 @@ export default function UploadPage() {
 
                 {selectedTransformation !== 'custom' && (
                   <>
-                    <ImageUploader onImageUploaded={handleUpload} />
-
                     {/* Category Selection Section - Show before upload */}
-                    <div className="mt-12 mb-12">
+                    <div className="mb-12">
                       <h3 className="text-xl font-semibold text-center mb-6 text-gray-900">Choose Your Style Category</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
                         {/* Fun/Viral Category */}
@@ -1078,7 +1076,91 @@ export default function UploadPage() {
                       </div>
                     </div>
 
-                    
+                    {/* Subcategory Options - Show when category is selected */}
+                    {selectedTransformation && selectedTransformation !== 'custom' && (
+                      <div className="mb-8">
+                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                          {selectedTransformation === 'other' ? 'Fun/Viral' : 
+                           selectedTransformation === 'historical' ? 'Pop Culture Through The Years' :
+                           selectedTransformation === 'animation' ? 'Animation' :
+                           selectedTransformation === 'artistic' ? 'Artistic Styles' :
+                           selectedTransformation === 'kids-real' ? 'Kids Drawing' : 'Selected'} Styles
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
+                          {selectedTransformation === 'animation' && [
+                            { name: 'Super Mario Bros', emoji: '🍄' },
+                            { name: 'Minecraft', emoji: '🟫' },
+                            { name: 'Pixar Style', emoji: '🎬' },
+                            { name: 'Trolls', emoji: '💖' },
+                            { name: 'Princess/Prince', emoji: '👸' },
+                            { name: 'Superhero', emoji: '🦸' },
+                            { name: 'Lego Character', emoji: '🧱' },
+                          ].map((style, index) => (
+                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </div>
+                          ))}
+                          
+                          {selectedTransformation === 'historical' && [
+                            { name: 'Old Western', emoji: '🤠' },
+                            { name: '90s Hip-Hop', emoji: '🎤' },
+                            { name: '1980s Style', emoji: '🌈' },
+                            { name: 'Disco Era', emoji: '🕺' },
+                            { name: 'Renaissance', emoji: '🎨' },
+                            { name: 'Victorian Era', emoji: '🎩' },
+                            { name: 'Medieval', emoji: '⚔️' },
+                          ].map((style, index) => (
+                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </div>
+                          ))}
+                          
+                          {selectedTransformation === 'artistic' && [
+                            { name: 'Oil Painting', emoji: '🖼️' },
+                            { name: 'Watercolor', emoji: '🎨' },
+                            { name: 'Impressionist', emoji: '🌅' },
+                            { name: 'Abstract Art', emoji: '🔮' },
+                            { name: 'Pop Surrealism', emoji: '👁️' },
+                            { name: 'Art Deco', emoji: '✨' },
+                          ].map((style, index) => (
+                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </div>
+                          ))}
+                          
+                          {selectedTransformation === 'other' && [
+                            { name: 'Mullets', emoji: '💇' },
+                            { name: 'Hulkamania', emoji: '💪' },
+                            { name: 'Baby Prediction', emoji: '👶' },
+                            { name: 'Future Self', emoji: '👵' },
+                            { name: 'Ghibli Style', emoji: '🌸' },
+                            { name: 'AI Action Figure', emoji: '🎮' },
+                            { name: 'Pet as Human', emoji: '🐕' },
+                            { name: 'Self as Cat', emoji: '🐱' },
+                            { name: 'Caricature', emoji: '😄' },
+                          ].map((style, index) => (
+                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </div>
+                          ))}
+                          
+                          {selectedTransformation === 'kids-real' && [
+                            { name: 'Kids Drawing to Reality', emoji: '🖍️' },
+                          ].map((style, index) => (
+                            <div key={index} className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all duration-200 cursor-pointer">
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <ImageUploader onImageUploaded={handleUpload} />
                   </>
                 )}
 
