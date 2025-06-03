@@ -433,25 +433,38 @@ export const useProductImageLab = (
 
           // Check authentication for real transformations
           if (!isTestModeEnabled && !userId) {
-            throw new Error("Authentication required for image transformations");
+            console.log("Guest user attempting transformation - proceeding with fingerprint tracking");
+          }
+
+          // Prepare headers and body for the request
+          const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+          };
+
+          const requestBody: any = {
+            imageId,
+            transformationType: transformationType,
+            options: {
+              imageBase64: image.base64,
+              prompt: customPrompt || transformOption.prompt,
+              model: "gpt-image-01",
+            },
+          };
+
+          if (userId) {
+            requestBody.userId = userId;
+          } else {
+            // For guest users, add fingerprint for tracking
+            const fingerprint = await generateFingerprint();
+            headers['x-fingerprint'] = fingerprint;
+            requestBody.fingerprint = fingerprint;
           }
 
           // Call the secured Product Lab transformation endpoint
           const response = await fetch("/api/product-image-lab/transform", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              imageId,
-              transformationType: transformationType,
-              userId: userId || undefined,
-              options: {
-                imageBase64: image.base64,
-                prompt: customPrompt || transformOption.prompt,
-                model: "gpt-image-01",
-              },
-            }),
+            headers,
+            body: JSON.stringify(requestBody),
           });
 
           if (!response.ok) {
