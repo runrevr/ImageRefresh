@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force scroll position to top on page load */
+html {
+  scroll-behavior: auto !important;
+}
+
+body {
+  scroll-behavior: auto !important;
+}
+
 @layer utilities {
   .scale-102 {
     transform: scale(1.02);
