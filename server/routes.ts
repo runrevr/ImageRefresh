@@ -586,26 +586,37 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
             transformationType = 'style_transfer';
           }
 
+          // Determine category based on the transformation type
+          const category = transformationType.includes('product') || 
+                          prompt.toLowerCase().includes('product') || 
+                          prompt.toLowerCase().includes('e-commerce') || 
+                          prompt.toLowerCase().includes('catalog') ? 'product' : 'personal';
+
           // Save the primary transformed image
           await storage.saveUserImage({
             userId: userId,
             imagePath: result.transformedPath,
             imageUrl: transformedImageUrl,
             imageType: transformationType,
+            category: category,
             originalPrompt: prompt,
             transformationId: transformation ? transformation.id : null,
+            originalImagePath: originalImagePath,
             expiresAt
           });
 
           // Save the second transformed image if it exists
           if (secondTransformedImageUrl && result.secondTransformedPath) {
-            await storage.saveUserImage({
+            const parentImage = await storage.saveUserImage({
               userId: userId,
               imagePath: result.secondTransformedPath,
               imageUrl: secondTransformedImageUrl,
               imageType: `${transformationType}_variant`,
+              category: category,
               originalPrompt: prompt,
               transformationId: transformation ? transformation.id : null,
+              originalImagePath: originalImagePath,
+              isVariant: true,
               expiresAt
             });
           }

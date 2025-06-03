@@ -516,12 +516,27 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getUserImages(userId: number): Promise<UserImage[]> {
+  async getUserImages(userId: number, category?: string): Promise<UserImage[]> {
+    const conditions = [eq(userImages.userId, userId)];
+    
+    if (category) {
+      conditions.push(eq(userImages.category, category));
+    }
+    
     return await db
       .select()
       .from(userImages)
-      .where(eq(userImages.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(userImages.createdAt));
+  }
+
+  async getUserImagesByCategory(userId: number): Promise<{personal: UserImage[], product: UserImage[]}> {
+    const allImages = await this.getUserImages(userId);
+    
+    return {
+      personal: allImages.filter(img => img.category === 'personal'),
+      product: allImages.filter(img => img.category === 'product')
+    };
   }
 
   async deleteExpiredImages(): Promise<number> {

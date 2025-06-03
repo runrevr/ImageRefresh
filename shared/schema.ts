@@ -63,9 +63,13 @@ export const userImages = pgTable("user_images", {
   imageUrl: text("image_url").notNull(), // Full URL to access the image
   originalPrompt: text("original_prompt"), // The prompt used to create this image
   imageType: text("image_type").notNull(), // 'enhancement', 'transformation', 'text-to-image'
+  category: text("category").notNull().default("personal"), // 'personal' or 'product'
   transformationId: integer("transformation_id").references(() => transformations.id), // Link to transformation if applicable
+  originalImagePath: text("original_image_path"), // Path to the original uploaded image
   fileSize: integer("file_size"), // File size in bytes
   dimensions: text("dimensions"), // Image dimensions like "1024x1024"
+  isVariant: boolean("is_variant").default(false), // True if this is a second/variant image
+  parentImageId: integer("parent_image_id"), // Link to parent image for variants (self-reference)
   expiresAt: timestamp("expires_at").notNull(), // When this image should be deleted (45 days from creation)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -108,9 +112,13 @@ export const insertUserImageSchema = createInsertSchema(userImages).pick({
   imageUrl: true,
   originalPrompt: true,
   imageType: true,
+  category: true,
   transformationId: true,
+  originalImagePath: true,
   fileSize: true,
   dimensions: true,
+  isVariant: true,
+  parentImageId: true,
   expiresAt: true,
 });
 
