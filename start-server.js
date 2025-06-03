@@ -1,26 +1,36 @@
-// Server startup script
 const { spawn } = require('child_process');
 const path = require('path');
 
-console.log('Starting ImageRefresh server...');
+console.log('Starting AI Image Transformation Server...');
 
-// Run the server
-const server = spawn('node', ['-r', 'tsx/register', 'server/index.ts'], {
+// Start the server with proper environment
+const serverProcess = spawn('node', ['server/index.ts'], {
+  cwd: process.cwd(),
   stdio: 'inherit',
-  env: { 
-    ...process.env, 
+  env: {
+    ...process.env,
     NODE_ENV: 'development',
-    PORT: '5000'
+    PORT: '3000'
   }
 });
 
-// Handle server events
-server.on('error', (err) => {
-  console.error('Failed to start server:', err);
+serverProcess.on('error', (error) => {
+  console.error('Failed to start server:', error);
 });
 
+serverProcess.on('exit', (code) => {
+  console.log(`Server process exited with code ${code}`);
+});
+
+// Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('Shutting down server...');
-  server.kill('SIGINT');
+  console.log('\nShutting down server...');
+  serverProcess.kill('SIGINT');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('\nShutting down server...');
+  serverProcess.kill('SIGTERM');
   process.exit(0);
 });

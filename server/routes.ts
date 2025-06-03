@@ -1355,7 +1355,7 @@ app.post("/api/credits/deduct", async (req, res) => {
   });
 
   // Cleanup expired images (45-day retention)
-  app.post("/api/admin/cleanup-expired-images", requireAuth, async (req: Request, res: Response) => {
+  app.post("/api/admin/cleanup-expired-images", simpleAuth, async (req: Request, res: Response) => {
     try {
       // Only allow admin users to run cleanup
       const user = req.user!;

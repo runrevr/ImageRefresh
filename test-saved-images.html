@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Saved Images - Direct Access</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .image-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .image-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .image-container {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-info {
+            padding: 15px;
+        }
+        .image-type {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .image-prompt {
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .image-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .category-badge {
+            background: #e67e22;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        .btn-download {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-download:hover {
+            background: #219a52;
+        }
+        .btn-share {
+            background: #3498db;
+            color: white;
+        }
+        .btn-share:hover {
+            background: #2980b9;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        .tab:hover {
+            background: #ecf0f1;
+        }
+        .tab.active:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Saved Images</h1>
+            <p class="subtitle">All your AI-generated transformations are automatically saved for 45 days</p>
+        </div>
+
+        <div id="status" class="loading">Loading your saved images...</div>
+        
+        <div id="stats" class="stats" style="display: none;"></div>
+        <div id="tabs" class="tabs" style="display: none;"></div>
+        <div id="imageGrid" class="image-grid"></div>
+    </div>
+
+    <script>
+        let allImages = [];
+        let currentFilter = 'all';
+
+        async function loadUserImages() {
+            const statusDiv = document.getElementById('status');
+            const statsDiv = document.getElementById('stats');
+            const tabsDiv = document.getElementById('tabs');
+            const gridDiv = document.getElementById('imageGrid');
+            
+            try {
+                // Try the categorized API first
+                let response = await fetch('/api/user/images?category=categorized', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'x-user-id': '6'
+                    }
+                });
+
+                if (!response.ok) {
+                    // Fallback to direct user images API
+                    response = await fetch('/api/user-images/6');
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                // Handle different response formats
+                if (data.personal || data.product) {
+                    // Categorized response
+                    allImages = [...(data.personal || []), ...(data.product || [])];
+                } else if (Array.isArray(data)) {
+                    // Direct array response
+                    allImages = data;
+                } else {
+                    allImages = [];
+                }
+
+                statusDiv.style.display = 'none';
+                
+                if (allImages.length === 0) {
+                    gridDiv.innerHTML = `
+                        <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">🖼️</div>
+                            <h3 style="color: #7f8c8d; margin-bottom: 10px;">No saved images yet</h3>
+                            <p style="color: #95a5a6;">Start creating transformations to build your collection!</p>
+                            <a href="/upload" style="
+                                display: inline-block;
+                                margin-top: 20px;
+                                padding: 12px 24px;
+                                background: #3498db;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 6px;
+                                font-weight: 500;
+                            ">Create Your First Image</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Show stats
+                const personalCount = allImages.filter(img => img.category === 'personal').length;
+                const productCount = allImages.filter(img => img.category === 'product').length;
+                
+                statsDiv.innerHTML = `
+                    <div class="stat">
+                        <div class="stat-number">${allImages.length}</div>
+                        <div class="stat-label">Total Images</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${personalCount}</div>
+                        <div class="stat-label">Personal</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${productCount}</div>
+                        <div class="stat-label">Product</div>
+                    </div>
+                `;
+                statsDiv.style.display = 'flex';
+
+                // Show tabs
+                tabsDiv.innerHTML = `
+                    <button class="tab active" onclick="filterImages('all')">All (${allImages.length})</button>
+                    <button class="tab" onclick="filterImages('personal')">Personal (${personalCount})</button>
+                    <button class="tab" onclick="filterImages('product')">Product (${productCount})</button>
+                `;
+                tabsDiv.style.display = 'flex';
+
+                // Display images
+                displayImages(allImages);
+                
+            } catch (error) {
+                console.error('Error loading images:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Error loading images:</strong> ${error.message}
+                        <br><br>
+                        <button onclick="window.location.reload()" style="
+                            background: white;
+                            color: #e74c3c;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-weight: 500;
+                        ">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+
+        function filterImages(category) {
+            currentFilter = category;
+            
+            // Update tab styles
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter and display images
+            let filteredImages = allImages;
+            if (category !== 'all') {
+                filteredImages = allImages.filter(img => img.category === category);
+            }
+            
+            displayImages(filteredImages);
+        }
+
+        function displayImages(images) {
+            const gridDiv = document.getElementById('imageGrid');
+            
+            if (images.length === 0) {
+                gridDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                        <p style="color: #95a5a6;">No images in this category</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            gridDiv.innerHTML = images.map(image => {
+                const createdDate = new Date(image.createdAt).toLocaleDateString();
+                const expiryDate = new Date(image.expiresAt);
+                const daysUntilExpiry = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                
+                return `
+                    <div class="image-card">
+                        <div class="image-container">
+                            <img src="${image.imageUrl}" alt="${image.originalPrompt || 'AI Generated Image'}" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDI4MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjI4MCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI5MCIgeT0iMTA1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5OTlhYTIiPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
+                        </div>
+                        <div class="image-info">
+                            <div>
+                                <span class="image-type">${image.imageType}</span>
+                                <span class="category-badge">${image.category}</span>
+                            </div>
+                            ${image.originalPrompt ? `<div class="image-prompt">${image.originalPrompt.length > 100 ? image.originalPrompt.substring(0, 100) + '...' : image.originalPrompt}</div>` : ''}
+                            <div class="image-meta">
+                                <span>${createdDate}</span>
+                                <span>Expires in ${daysUntilExpiry} days</span>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-download" onclick="downloadImage('${image.imageUrl}', ${image.id})">
+                                    Download
+                                </button>
+                                <button class="btn btn-share" onclick="shareImage('${image.imageUrl}', '${image.originalPrompt || 'AI Image'}')">
+                                    Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function downloadImage(imageUrl, imageId) {
+            try {
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ai-image-${imageId}.png`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showNotification('Download started successfully!', 'success');
+            } catch (error) {
+                showNotification('Download failed: ' + error.message, 'error');
+            }
+        }
+
+        async function shareImage(imageUrl, prompt) {
+            try {
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'My AI Generated Image',
+                        text: prompt,
+                        url: imageUrl,
+                    });
+                } else {
+                    await navigator.clipboard.writeText(imageUrl);
+                    showNotification('Image URL copied to clipboard!', 'success');
+                }
+            } catch (error) {
+                showNotification('Share failed: ' + error.message, 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = type;
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '1000';
+            notification.style.padding = '15px';
+            notification.style.borderRadius = '5px';
+            notification.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Load images when page loads
+        document.addEventListener('DOMContentLoaded', loadUserImages);
+    </script>
+</body>
+</html>
