@@ -9,6 +9,33 @@
 
 import { useState, useEffect, useRef } from "react";
 
+// Helper function to generate device fingerprint for guest users
+const generateFingerprint = async (): Promise<string> => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx!.textBaseline = 'top';
+  ctx!.font = '14px Arial';
+  ctx!.fillText('Device fingerprint', 2, 2);
+  
+  const fingerprint = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width + 'x' + screen.height,
+    new Date().getTimezoneOffset(),
+    canvas.toDataURL()
+  ].join('|');
+  
+  // Simple hash function
+  let hash = 0;
+  for (let i = 0; i < fingerprint.length; i++) {
+    const char = fingerprint.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  
+  return Math.abs(hash).toString(36);
+};
+
 // Enums and Constants
 export enum TransformationType {
   REMOVE_BACKGROUND = "remove-background",
@@ -227,10 +254,10 @@ export const useProductImageLab = (
     try {
       setError(null);
       
-      // Check if user is authenticated for real uploads
+      // Check if user is authenticated or has guest fingerprint for real uploads
       if (!isTestModeEnabled && !userId) {
-        setError("Authentication required for image uploads");
-        throw new Error("Authentication required for image uploads");
+        // For guest users, we'll proceed with fingerprint-based tracking
+        console.log("Guest user attempting upload - proceeding with fingerprint tracking");
       }
 
       const imageFiles = Array.from(files);
@@ -256,10 +283,25 @@ export const useProductImageLab = (
         // For real uploads, use the secured backend endpoint
         const formData = new FormData();
         formData.append('image', file);
-        formData.append('userId', userId?.toString() || '');
+        
+        if (userId) {
+          formData.append('userId', userId.toString());
+        } else {
+          // For guest users, add fingerprint for tracking
+          const fingerprint = await generateFingerprint();
+          formData.append('fingerprint', fingerprint);
+        }
+
+        const headers: Record<string, string> = {};
+        if (!userId) {
+          // Add fingerprint header for guest users
+          const fingerprint = await generateFingerprint();
+          headers['x-fingerprint'] = fingerprint;
+        }
 
         const response = await fetch('/api/product-image-lab/upload', {
           method: 'POST',
+          headers,
           body: formData,
         });
 
