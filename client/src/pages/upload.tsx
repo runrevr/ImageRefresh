@@ -1681,6 +1681,48 @@ export default function UploadPage() {
                         </div>
                       </div>
                     )}
+
+                    {/* Image Size Selection - Show when subcategory is selected */}
+                    {selectedSubcategory && (
+                      <div className="mb-8">
+                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                          Choose Output Size
+                        </h4>
+                        <div className="flex justify-center gap-3 max-w-md mx-auto">
+                          {[
+                            { id: 'square', label: 'Square', ratio: '1:1' },
+                            { id: 'portrait', label: 'Portrait', ratio: '2:3' },
+                            { id: 'landscape', label: 'Landscape', ratio: '3:2' }
+                          ].map((size) => (
+                            <button
+                              key={size.id}
+                              className={`flex-1 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedImageSize === size.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
+                              onClick={() => setSelectedImageSize(size.id)}
+                            >
+                              <div className="text-sm font-medium text-gray-700">{size.label}</div>
+                              <div className="text-xs text-gray-500">{size.ratio}</div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Let's Make Magic Button - Show when subcategory and size are selected */}
+                    {selectedSubcategory && selectedImageSize && (
+                      <div className="text-center">
+                        <RainbowButton
+                          onClick={handleMakeMagic}
+                          className="px-12 py-4 text-lg font-semibold"
+                          disabled={!originalImagePath}
+                        >
+                          ✨ Let's Make Magic ✨
+                        </RainbowButton>
+                      </div>
+                    )}
               </div>
             )}
 
