@@ -1153,12 +1153,16 @@ app.post("/api/credits/deduct", async (req, res) => {
   app.get('/api/prebuilt-prompts', getPrebuiltPrompts);
   app.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
 
-  // Get user images endpoint
+  // Get user images endpoint with enhanced debugging
   app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
+    // Set JSON content type explicitly
+    res.setHeader('Content-Type', 'application/json');
+    
     try {
       const userId = parseInt(req.params.userId, 10);
 
       console.log(`[USER-IMAGES API] Request for user ${userId} (original: ${req.params.userId})`);
+      console.log(`[USER-IMAGES API] Request headers:`, req.headers);
 
       if (isNaN(userId) || userId <= 0) {
         console.error(`[USER-IMAGES API] Invalid user ID: ${req.params.userId} -> ${userId}`);
@@ -1167,11 +1171,33 @@ app.post("/api/credits/deduct", async (req, res) => {
 
       const images = await storage.getUserImages(userId);
       console.log(`[USER-IMAGES API] Found ${images.length} images for user ${userId}`);
+      
+      // Enhanced logging for debugging
+      if (images.length > 0) {
+        console.log(`[USER-IMAGES API] Sample image:`, {
+          id: images[0].id,
+          userId: images[0].userId,
+          imageType: images[0].imageType,
+          category: images[0].category
+        });
+      }
 
-      res.json(images);
+      // Ensure we return valid JSON
+      const response = {
+        success: true,
+        count: images.length,
+        images: images
+      };
+
+      console.log(`[USER-IMAGES API] Sending response with ${images.length} images`);
+      return res.json(response);
+      
     } catch (error) {
       console.error('[USER-IMAGES API] Error fetching user images:', error);
-      res.status(500).json({ error: 'Failed to fetch user images' });
+      return res.status(500).json({ 
+        error: 'Failed to fetch user images',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

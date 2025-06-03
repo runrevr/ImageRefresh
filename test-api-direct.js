@@ -1,44 +1,20 @@
-/**
- * Direct API test to verify backend is working
- */
+import { storage } from './server/storage.js';
 
-const testAPI = async () => {
+async function testDirectApi() {
   try {
-    console.log('Testing API connection...');
+    console.log('Testing direct storage.getUserImages(6)...');
+    const images = await storage.getUserImages(6);
+    console.log(`Found ${images.length} images:`);
+    console.log(JSON.stringify(images.slice(0, 2), null, 2));
     
-    // Test edit prompt generation with full URL
-    const promptResponse = await fetch('http://localhost:3000/api/generate-edit-prompt', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        idea_title: 'Test Enhancement',
-        idea_description: 'A simple test to verify the API works',
-        is_chaos_concept: false
-      })
-    });
-    
-    console.log('Prompt API response status:', promptResponse.status);
-    console.log('Response headers:', [...promptResponse.headers.entries()]);
-    
-    const responseText = await promptResponse.text();
-    console.log('Raw response:', responseText.substring(0, 500));
-    
-    if (responseText.startsWith('{')) {
-      const jsonResponse = JSON.parse(responseText);
-      console.log('JSON response:', jsonResponse);
-      
-      if (jsonResponse.edit_prompt) {
-        console.log('✅ API is working! Edit prompt:', jsonResponse.edit_prompt);
-        return jsonResponse.edit_prompt;
-      }
-    } else {
-      console.log('❌ API returned HTML instead of JSON');
-    }
+    // Test if we can serialize to JSON
+    const jsonString = JSON.stringify(images);
+    console.log('JSON serialization successful');
+    console.log(`Total JSON length: ${jsonString.length} characters`);
     
   } catch (error) {
-    console.error('API test failed:', error);
+    console.error('Direct API test failed:', error);
   }
-};
+}
 
-// Run the test
-testAPI();
+testDirectApi();
