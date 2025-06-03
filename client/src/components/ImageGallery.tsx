@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/hooks/useAuth';
 
 interface UserImage {
   id: number;
@@ -33,10 +34,13 @@ export function ImageGallery() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'personal' | 'product'>('all');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   // Fetch categorized images
   const { data: categorizedImages, isLoading } = useQuery<CategorizedImages>({
     queryKey: ['/api/user/images', 'categorized'],
+    enabled: isAuthenticated,
     retry: false,
   });
 
@@ -141,6 +145,18 @@ export function ImageGallery() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return Math.max(0, diffDays);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center p-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Sign In Required</h2>
+        <p className="text-muted-foreground mb-6">Please sign in to view your saved images.</p>
+        <Button onClick={() => window.location.href = '/auth'}>
+          Sign In
+        </Button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
