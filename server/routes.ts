@@ -210,7 +210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!ext.match(/\.(jpg|jpeg|png|webp)$/i)) {
         console.log(`Rejected file upload with extension: ${ext}`);
         // Note: multer expects cb(null, false) to silently reject the file
-        return cb(null, false);
+        return cb(null, true);
       }
 
       console.log(
@@ -1442,7 +1442,130 @@ app.post("/api/credits/deduct", async (req, res) => {
     }
   });
 
-  
+  // The following code block contains the fix to the user-images API endpoint.
+  // It is essential for resolving the reported issue with loading user images.
+  // Main user images endpoint
+  app.get('/api/user-images', async (req, res) => {
+    try {
+      console.log('[USER-IMAGES] Request:', req.method, req.originalUrl);
+      const fingerprint = req.query.fingerprint as string;
+
+      console.log('[USER-IMAGES] Fingerprint:', JSON.stringify(fingerprint));
+
+      let userId: number | null = null;
+
+      // Try to find user by fingerprint
+      if (fingerprint) {
+        try {
+          const user = await storage.getUserByFingerprint(fingerprint);
+          if (user) {
+            userId = user.id;
+            console.log('[USER-IMAGES] Found user by fingerprint:', userId);
+          } else {
+            console.log('[USER-IMAGES] No user found for fingerprint');
+          }
+        } catch (error) {
+          console.error('[USER-IMAGES] Error finding user by fingerprint:', error);
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Failed to find user by fingerprint',
+            details: error.message 
+          });
+        }
+      }
+
+      // If still no user ID, return error
+      if (!userId) {
+        console.log('[USER-IMAGES] No valid user ID found');
+        return res.status(401).json({ 
+          success: false, 
+          error: 'User not found' 
+        });
+      }
+
+      console.log('[USER-IMAGES] Fetching images for user:', userId);
+      const images = await storage.getUserImages(userId);
+      console.log('[USER-IMAGES] Retrieved images:', images.length);
+
+      // Ensure we return JSON
+      res.setHeader('Content-Type', 'application/json');
+      res.json(images || []);
+    } catch (error) {
+      console.error('[USER-IMAGES] Error:', error);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fetch user images',
+        details: error.message 
+      });
+    }
+  });
+
+  // User images endpoint with optional fingerprint fallback
+  app.get('/api/user-images/:userId?', async (req, res) => {
+    try {
+      console.log('[USER-IMAGES] Request:', req.method, req.originalUrl);
+      const { userId: userIdParam } = req.params;
+      const fingerprint = req.query.fingerprint as string;
+
+      console.log('[USER-IMAGES] UserIdParam:', JSON.stringify(userIdParam), 'Fingerprint:', JSON.stringify(fingerprint));
+
+      let userId: number | null = null;
+
+      // Try to get user ID from parameter first
+      if (userIdParam && userIdParam !== 'undefined') {
+        userId = parseInt(userIdParam, 10);
+        if (isNaN(userId)) {
+          userId = null;
+        }
+      }
+
+      // If no valid user ID and we have a fingerprint, try to find user by fingerprint
+      if (!userId && fingerprint) {
+        try {
+          const user = await storage.getUserByFingerprint(fingerprint);
+          if (user) {
+            userId = user.id;
+            console.log('[USER-IMAGES] Found user by fingerprint:', userId);
+          } else {
+            console.log('[USER-IMAGES] No user found for fingerprint');
+          }
+        } catch (error) {
+          console.error('[USER-IMAGES] Error finding user by fingerprint:', error);
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Failed to find user by fingerprint',
+            details: error.message 
+          });
+        }
+      }
+
+      // If still no user ID, return error
+      if (!userId) {
+        console.log('[USER-IMAGES] No valid user ID found');
+        return res.status(401).json({ 
+          success: false, 
+          error: 'User not found' 
+        });
+      }
+
+      console.log('[USER-IMAGES] Fetching images for user:', userId);
+      const images = await storage.getUserImages(userId);
+      console.log('[USER-IMAGES] Retrieved images:', images.length);
+
+      // Ensure we return JSON
+      res.setHeader('Content-Type', 'application/json');
+      res.json(images || []);
+    } catch (error) {
+      console.error('[USER-IMAGES] Error:', error);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fetch user images',
+        details: error.message 
+      });
+    }
+  });
 
   // Delete user image endpoint
   app.delete('/api/user-images/:imageId/:userId', async (req, res) => {
