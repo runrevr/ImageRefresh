@@ -1270,6 +1270,104 @@ app.post("/api/credits/deduct", async (req, res) => {
       });
     }
   });
+
+  // Authentication middleware
+  const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    next();
+  };
+
+  // Enhanced image management routes with Personal/Product categorization
+  app.get("/api/user/images", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const category = req.query.category as string;
+      
+      if (category === 'categorized') {
+        // Return images organized by category
+        const categorizedImages = await storage.getUserImagesByCategory(userId);
+        res.json(categorizedImages);
+      } else {
+        // Return all images or filtered by specific category
+        const images = await storage.getUserImages(userId, category);
+        res.json(images);
+      }
+    } catch (error) {
+      console.error("Error fetching user images:", error);
+      res.status(500).json({ error: "Failed to fetch images" });
+    }
+  });
+
+  // Delete user image with authentication
+  app.delete("/api/user/images/:imageId", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const imageId = parseInt(req.params.imageId);
+      
+      if (isNaN(imageId)) {
+        return res.status(400).json({ error: "Invalid image ID" });
+      }
+      
+      const deleted = await storage.deleteUserImage(imageId, userId);
+      
+      if (deleted) {
+        res.json({ success: true, message: "Image deleted successfully" });
+      } else {
+        res.status(404).json({ error: "Image not found or unauthorized" });
+      }
+    } catch (error) {
+      console.error("Error deleting user image:", error);
+      res.status(500).json({ error: "Failed to delete image" });
+    }
+  });
+
+  // Get single user image for download/sharing
+  app.get("/api/user/images/:imageId", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const imageId = parseInt(req.params.imageId);
+      
+      if (isNaN(imageId)) {
+        return res.status(400).json({ error: "Invalid image ID" });
+      }
+      
+      const images = await storage.getUserImages(userId);
+      const image = images.find(img => img.id === imageId);
+      
+      if (!image) {
+        return res.status(404).json({ error: "Image not found or unauthorized" });
+      }
+      
+      res.json(image);
+    } catch (error) {
+      console.error("Error fetching user image:", error);
+      res.status(500).json({ error: "Failed to fetch image" });
+    }
+  });
+
+  // Cleanup expired images (45-day retention)
+  app.post("/api/admin/cleanup-expired-images", requireAuth, async (req: Request, res: Response) => {
+    try {
+      // Only allow admin users to run cleanup
+      const user = req.user!;
+      if (user.username !== 'admin') {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+      
+      const deletedCount = await storage.deleteExpiredImages();
+      res.json({ 
+        success: true, 
+        message: `Cleaned up ${deletedCount} expired images`,
+        deletedCount 
+      });
+    } catch (error) {
+      console.error("Error cleaning up expired images:", error);
+      res.status(500).json({ error: "Failed to cleanup expired images" });
+    }
+  });
+
   const server = createServer(app);
   return server;
 }
