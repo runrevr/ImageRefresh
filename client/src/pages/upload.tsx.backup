@@ -1242,7 +1242,6 @@ export default function UploadPage() {
                             { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
                             { name: 'Superhero', emoji: '🦸', id: 'superhero' },
                             { name: 'Lego Character', emoji: '🧱', id: 'lego' },
-                            { name: 'Coloring Book', emoji: '📚', id: 'coloring-book' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1315,7 +1314,6 @@ export default function UploadPage() {
                           {selectedTransformation === 'other' && [
                             { name: 'Mullets', emoji: '💇', id: 'mullets' },
                             { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
-                            { name: 'Baby Mode', emoji: '👶', id: 'baby-mode' },
                             { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
                             { name: 'Future Self', emoji: '👵', id: 'future' },
                             { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
