@@ -61,6 +61,7 @@ export interface ProductImageLabOptions {
   onCreditChange?: (credits: number) => void;
   testMode?: boolean;
   simulateApiCalls?: boolean; // Flag to simulate API calls instead of making real ones
+  userId?: number; // User ID for authentication
 }
 
 export interface ProductImageLabHook {
@@ -168,6 +169,7 @@ export const useProductImageLab = (
     onCreditChange = () => {},
     testMode = false,
     simulateApiCalls = false, // Set to false by default for using real API calls
+    userId,
   } = options;
 
   const [availableCredits, setAvailableCredits] = useState<number>(initialCredits);
@@ -224,6 +226,13 @@ export const useProductImageLab = (
   const handleImageUpload = async (files: FileList): Promise<UploadedImage[]> => {
     try {
       setError(null);
+      
+      // Check if user is authenticated for real uploads
+      if (!isTestModeEnabled && !userId) {
+        setError("Authentication required for image uploads");
+        throw new Error("Authentication required for image uploads");
+      }
+
       const imageFiles = Array.from(files);
 
       // Process each file to get a URL and metadata
@@ -232,11 +241,40 @@ export const useProductImageLab = (
         // Convert file to base64 for API calls
         const base64 = await fileToBase64(file);
 
+        // For test mode or simulation, just create local objects
+        if (isTestModeEnabled || isSimulationMode) {
+          return {
+            id: `upload-${timestamp}-${index}`,
+            file,
+            name: file.name,
+            url: URL.createObjectURL(file),
+            base64,
+            uploadedAt: new Date().toISOString(),
+          };
+        }
+
+        // For real uploads, use the secured backend endpoint
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('userId', userId?.toString() || '');
+
+        const response = await fetch('/api/product-image-lab/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Upload failed');
+        }
+
+        const uploadResult = await response.json();
+        
         return {
-          id: `upload-${timestamp}-${index}`,
+          id: uploadResult.file.id,
           file,
           name: file.name,
-          url: URL.createObjectURL(file),
+          url: uploadResult.file.url,
           base64,
           uploadedAt: new Date().toISOString(),
         };
@@ -272,85 +310,7 @@ export const useProductImageLab = (
     );
   };
 
-  /**
-   * Call OpenAI for image transformation using gpt-image-01
-   * @param imageBase64 - Base64 encoded image
-   * @param prompt - Transformation prompt
-   * @returns Transformed image URL
-   */
-  const callOpenAIImage01 = async (
-    imageBase64: string,
-    prompt: string
-  ): Promise<OpenAIImageResponse> => {
-    try {
-      console.log("Calling OpenAI gpt-image-01 API for image transformation");
 
-      // Log the call for debugging
-      setDebugInfo((prev) => ({
-        ...prev,
-        openaiApiCall: {
-          timestamp: new Date().toISOString(),
-          model: "gpt-image-01",
-          promptLength: prompt.length,
-          imageSize: Math.round((imageBase64.length * 3) / 4), // Approximate size calculation
-        },
-      }));
-
-      // Make API call to the server endpoint which will call OpenAI
-      const response = await fetch("/api/openai/transform-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          imageBase64,
-          prompt,
-          model: "gpt-image-01",
-        }),
-      });
-
-      if (!response.ok) {
-        // Handle API error
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.error || `API error: ${response.status}`;
-
-        console.error("OpenAI API error:", errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      // Parse the response
-      const data = await response.json();
-
-      // Log successful response
-      setDebugInfo((prev) => ({
-        ...prev,
-        openaiApiResponse: {
-          timestamp: new Date().toISOString(),
-          status: "success",
-          model: "gpt-image-01",
-        },
-      }));
-
-      return {
-        transformedImageUrl: data.transformedImageUrl || `data:image/jpeg;base64,${data.base64Image}`,
-        prompt,
-      };
-    } catch (error) {
-      // Log API error
-      console.error("OpenAI API error:", error);
-
-      setDebugInfo((prev) => ({
-        ...prev,
-        openaiApiError: {
-          timestamp: new Date().toISOString(),
-          error: error instanceof Error ? error.message : String(error),
-          model: "gpt-image-01",
-        },
-      }));
-
-      throw error;
-    }
-  };
 
   /**
    * Process image transformation
@@ -429,11 +389,40 @@ export const useProductImageLab = (
             throw new Error("Image base64 data is missing");
           }
 
-          // Call OpenAI gpt-image-01 API
-          const result = await callOpenAIImage01(
-            image.base64,
-            customPrompt || transformOption.prompt
-          );
+          // Check authentication for real transformations
+          if (!isTestModeEnabled && !userId) {
+            throw new Error("Authentication required for image transformations");
+          }
+
+          // Call the secured Product Lab transformation endpoint
+          const response = await fetch("/api/product-image-lab/transform", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              imageId,
+              transformationType: transformationType,
+              userId: userId || undefined,
+              options: {
+                imageBase64: image.base64,
+                prompt: customPrompt || transformOption.prompt,
+                model: "gpt-image-01",
+              },
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.message || `Transformation failed: ${response.status}`;
+            throw new Error(errorMessage);
+          }
+
+          const transformResult = await response.json();
+          const result = {
+            transformedImageUrl: transformResult.transformation?.transformedUrl || image.url,
+            prompt: customPrompt || transformOption.prompt,
+          };
 
           transformedImageUrl = result.transformedImageUrl;
 

@@ -87,26 +87,19 @@ export default function FixedProductImageLab({
     freeCreditsUsed: boolean;
   }>({ totalCredits: 0, paidCredits: 0, freeCreditsUsed: true });
 
+  // Get authenticated user data
+  const credits = useCredits();
+
   // Fetch user credits when user changes
   useEffect(() => {
-    // Assuming you have a way to get the user ID (e.g., from context or props)
-    // Replace 'user.id' with the actual way to get the user ID
-    const userId = 'user-id-placeholder'; // Replace with actual user ID
-    if (userId) {
-      fetch(`/api/credits/${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          setUserCredits({
-            totalCredits: data.totalCredits || data.credits || 0,
-            paidCredits: data.paidCredits || 0,
-            freeCreditsUsed: data.freeCreditsUsed || false
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching credits:', error);
-        });
+    if (credits.free !== undefined && credits.paid !== undefined) {
+      setUserCredits({
+        totalCredits: credits.free + credits.paid,
+        paidCredits: credits.paid,
+        freeCreditsUsed: credits.free === 0
+      });
     }
-  }, []);
+  }, [credits]);
 
   // Initialize product image lab hook
   const {
@@ -126,19 +119,12 @@ export default function FixedProductImageLab({
     initialCredits,
     onCreditChange,
     testMode: adminTestMode,
-    webhookUrl: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-893616d-4ba7-8934-38fa5e881ef9',
-    optionsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/options',
-    selectionsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/selections',
-    resultsEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/results',
-    generateEndpoint: 'https://www.n8nemma.live/webhook-test/dbf2c53a-616d-4ba7-8934-38fa5e881ef9/generate'
+    userId: credits.id || undefined // Pass user ID for authentication
   });
 
   // References
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadFormRef = useRef<HTMLFormElement>(null);
-
-  // Fetch credits using the useCredits hook
-  const credits = useCredits();
 
   // Update available credits when credits change
   useEffect(() => {
