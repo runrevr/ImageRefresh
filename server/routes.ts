@@ -473,10 +473,10 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
       // Handle multiple transformed images
       const transformedImageUrls = [];
       let secondTransformedImageUrl = null;
-      
+
       // Add the primary image
       transformedImageUrls.push(transformedImageUrl);
-      
+
       // Add the second image if it exists
       if (result.secondTransformedPath) {
         const secondTransformedImagePath = result.secondTransformedPath
@@ -929,8 +929,7 @@ app.post("/api/credits/deduct", async (req, res) => {
 
     res.json({
       success: true,
-      credits: {
-        free: updatedFreeCredits,
+      credits: {        free: updatedFreeCredits,
         paid: updatedPaidCredits,
         total: updatedFreeCredits + updatedPaidCredits
       },
