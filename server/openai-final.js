@@ -139,7 +139,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
           image: imageFile,
           prompt: prompt,
           size: size,
-          n: 1,
+          n: 2,
           moderation: "low"
         });
 
