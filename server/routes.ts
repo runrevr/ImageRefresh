@@ -1252,13 +1252,3 @@ app.post("/api/credits/deduct", async (req, res) => {
   const server = createServer(app);
   return server;
 }
-
-// The generate-images endpoint was updated to handle a simplified request body, removing unnecessary parameters.
-// Handle product image lab routes
-//app.use('/api/product-image-lab', productImageLabRoutes);
-
-// Handle prebuilt prompts routes
-//app.use('/api/prebuilt', prebuiltPromptsRoutes);
-
-// Handle webhook test routes
-//app.use('/api/webhook-test', webhookTestRoutes);

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { RainbowButton } from '@/components/ui/rainbow-button';
@@ -14,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 interface ResultViewProps {
   originalImage: string;
   transformedImage: string;
+  transformedImages?: string[];
   secondTransformedImage?: string | null;
   onTryAgain: () => void;
   onNewImage: () => void;
@@ -30,6 +30,7 @@ interface ResultViewProps {
 export default function ResultView({ 
   originalImage, 
   transformedImage, 
+  transformedImages = [],
   secondTransformedImage = null,
   onTryAgain, 
   onNewImage,
@@ -51,18 +52,18 @@ export default function ResultView({
   // State for coloring book transformation
   const [isColoringBookLoading, setIsColoringBookLoading] = useState(false);
   const [coloringBookImage, setColoringBookImage] = useState<string | null>(null);
-  
+
   // State for regeneration
   const [isRegenerating, setIsRegenerating] = useState(false);
-  
+
   // State for edit prompt
   const [showEditPrompt, setShowEditPrompt] = useState(false);
   const [editPromptText, setEditPromptText] = useState('');
   const [editImageUrl, setEditImageUrl] = useState<string>('');
-  
+
   // State for full view
   const [fullViewImage, setFullViewImage] = useState<string | null>(null);
-  
+
   const { toast } = useToast();
 
   // Set initial selected image when component loads or when images change
@@ -103,7 +104,7 @@ export default function ResultView({
   // Function to handle downloading the selected image
   const handleDownload = (imageUrl?: string) => {
     const imageToDownload = imageUrl || selectedImage;
-    
+
     // If user is not logged in and email hasn't been collected, show email dialog
     if (isGuest && !emailAlreadyCollected) {
       setActionRequiringEmail('download');
@@ -134,7 +135,7 @@ export default function ResultView({
       const data = await response.json();
       // Update the transformed image with the new result
       setSelectedImage(data.transformedImageUrl);
-      
+
       toast({
         title: "Image Regenerated!",
         description: "Your image has been regenerated with the same prompt.",
@@ -199,7 +200,7 @@ export default function ResultView({
       // Pass the selected image URL and edit prompt to the parent component
       onEditImage(editImageUrl, editPromptText);
     }
-    
+
     setShowEditPrompt(false);
     setEditPromptText('');
     setEditImageUrl('');
@@ -347,7 +348,7 @@ export default function ResultView({
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          
+
           <div className="max-w-full max-h-full p-4">
             <img 
               src={fullViewImage} 
@@ -412,7 +413,7 @@ export default function ResultView({
                   <p className="text-sm font-medium">Option 1</p>
                 </div>
               </div>
-              
+
               {/* Icon buttons for first image */}
               <div className="flex justify-center space-x-1">
                 <IconButton 
@@ -480,7 +481,7 @@ export default function ResultView({
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Icon buttons for second image */}
                 <div className="flex justify-center space-x-1">
                   <IconButton 
@@ -572,7 +573,7 @@ export default function ResultView({
               )}
             </RainbowButton>
           )}
-          
+
           {/* Back to Ideas and Start Fresh buttons */}
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <RainbowButton 

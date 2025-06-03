@@ -49,6 +49,7 @@ export default function UploadPage() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [originalImagePath, setOriginalImagePath] = useState<string | null>(null);
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
+  const [transformedImages, setTransformedImages] = useState<string[]>([]);
   const [secondTransformedImage, setSecondTransformedImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
   const { user: authUser } = useAuth();
@@ -277,6 +278,13 @@ export default function UploadPage() {
           if (data.transformedImageUrl) {
             // Set the transformed image URL from the response
             setTransformedImage(data.transformedImageUrl);
+            
+            // Handle multiple variations if available
+            if (data.transformedImageUrls && data.transformedImageUrls.length > 0) {
+              setTransformedImages(data.transformedImageUrls);
+            } else {
+              setTransformedImages([data.transformedImageUrl]);
+            }
 
             // Store transformation data for potential later edits
             setCurrentTransformation({
@@ -339,6 +347,13 @@ export default function UploadPage() {
 
                   // Set the transformed image URL
                   setTransformedImage(statusData.transformedImageUrl);
+                  
+                  // Handle multiple variations if available
+                  if (statusData.transformedImageUrls && statusData.transformedImageUrls.length > 0) {
+                    setTransformedImages(statusData.transformedImageUrls);
+                  } else {
+                    setTransformedImages([statusData.transformedImageUrl]);
+                  }
 
                   // Store transformation data
                   setCurrentTransformation({
@@ -572,6 +587,7 @@ export default function UploadPage() {
     setOriginalImage(null);
     setOriginalImagePath(null);
     setTransformedImage(null);
+    setTransformedImages([]);
     setSecondTransformedImage(null); // Clear second transformed image
     setPrompt("");
     setSelectedTransformation(null);
@@ -1655,6 +1671,7 @@ export default function UploadPage() {
               <ResultView
                 originalImage={originalImage}
                 transformedImage={transformedImage}
+                transformedImages={transformedImages}
                 secondTransformedImage={secondTransformedImage}
                 prompt={prompt}
                 onTryAgain={handleTryAgain}

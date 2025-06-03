@@ -167,7 +167,7 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
       }
     }
 
-    // Return the first image path for backward compatibility, but log all paths
+    // Return all image paths instead of just the first one
     if (savedImagePaths.length === 0) {
       throw new Error("Failed to download any images from OpenAI");
     }
@@ -175,8 +175,8 @@ export async function transformImageWithOpenAI(imagePath, prompt, size = "1024x1
     console.log(`[OpenAI] [${transformationId}] Successfully processed ${savedImagePaths.length} images`);
     console.log(`[OpenAI] [${transformationId}] All image paths:`, savedImagePaths);
 
-    // Return the first image path for backward compatibility
-    return savedImagePaths[0];
+    // Return all image paths
+    return savedImagePaths;
 
   } catch (error) {
     console.error(`[OpenAI] [${transformationId}] Error in image transformation:`, error);
