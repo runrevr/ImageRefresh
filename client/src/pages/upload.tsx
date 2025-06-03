@@ -1582,8 +1582,7 @@ export default function UploadPage() {
                            selectedTransformation === 'artistic' ? 'Artistic Styles' :
                            selectedTransformation === 'kids-real' ? 'Kids Drawing' : 'Selected'} Styles
                         </h4>
-                        <```python
-div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
                           {selectedTransformation === 'animation' && [
                             { name: 'Super Mario Bros', emoji: '🍄', id: 'mario' },
                             { name: 'Minecraft', emoji: '🟫', id: 'minecraft' },
