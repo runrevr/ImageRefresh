@@ -417,7 +417,7 @@ const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
       "Transform a human into a cat with recognizable traits from the original subject.",
     placeholder: "E.g., Turn me into a cat that resembles my features",
     suggestedPrompt:
-      "Transform into a cat/cats while preserving distinctive human features, coloration, and personality. Create a feline that has subtle similarities to the original hair color, eye color, and facial expressions. The cat should feel like a natural feline version of the person, with recognizable traits that connect it to its human counterpart.",
+      "Transform the person in this image into a realistic cat while carefully preserving their unique individual characteristics. Match the cat's fur color and pattern to the person's hair color and style - if they have blonde hair, make it a golden/cream colored cat; if brown hair, make it a brown tabby; if black hair, make it a black cat; if they have highlights or unique hair colors, reflect this in the cat's fur pattern. Preserve the person's eye color exactly in the cat's eyes. If the person is wearing distinctive clothing colors, incorporate those colors into a collar, bow tie, or small accessory on the cat. Capture the person's facial expression and personality - if they're smiling, show a content cat expression; if serious, show a more dignified cat pose. The cat should have realistic cat proportions and anatomy, but the coloring, expression, and small details should make it clearly recognizable as a feline version of this specific person. Pay special attention to unique features like freckles (show as subtle fur markings), hair texture (reflected in fur texture), and overall demeanor.",
   },
   caricature: {
     title: "Caricature",
