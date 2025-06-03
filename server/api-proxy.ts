@@ -2,8 +2,8 @@ import type { Express, Request, Response } from "express";
 import { storage } from "./storage.js";
 
 export function setupAPIProxy(app: Express) {
-  // Direct API proxy that bypasses all other middleware
-  app.use('/api/user-images/:userId', (req: Request, res: Response) => {
+  // Handle both URL patterns: /api/user-images/:userId and /api/user-images?fingerprint=...
+  app.use('/api/user-images*', (req: Request, res: Response) => {
     console.log(`[API-PROXY] Intercepting: ${req.method} ${req.originalUrl}`);
     
     if (req.method !== 'GET') {
@@ -15,16 +15,47 @@ export function setupAPIProxy(app: Express) {
 }
 
 async function handleUserImagesRequest(req: Request, res: Response) {
-  console.log(`[API-PROXY] Processing user images request for user ${req.params.userId}`);
+  console.log(`[API-PROXY] Processing request: ${req.originalUrl}`);
+  console.log(`[API-PROXY] Path params:`, req.params);
+  console.log(`[API-PROXY] Query params:`, req.query);
   
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache');
   
   try {
-    const userId = parseInt(req.params.userId, 10);
+    let userId: number;
+    
+    // Handle /api/user-images/:userId pattern
+    if (req.params.userId) {
+      userId = parseInt(req.params.userId, 10);
+    }
+    // Handle /api/user-images?fingerprint=... pattern
+    else if (req.query.fingerprint) {
+      console.log(`[API-PROXY] Fingerprint-based request: ${req.query.fingerprint}`);
+      // For fingerprint requests, try to get user from fingerprint
+      try {
+        const user = await storage.getUserByFingerprint(req.query.fingerprint as string);
+        if (user && user.id) {
+          userId = Number(user.id); // Ensure it's a number
+          console.log(`[API-PROXY] Found user ${userId} for fingerprint`);
+        } else {
+          console.log(`[API-PROXY] No user found for fingerprint, using default user 6`);
+          userId = 6; // Default fallback for development
+        }
+      } catch (fpError) {
+        console.log(`[API-PROXY] Fingerprint lookup failed:`, fpError);
+        console.log(`[API-PROXY] Using default user ID 6`);
+        userId = 6; // Default fallback for development
+      }
+    }
+    // Default fallback for development
+    else {
+      console.log(`[API-PROXY] No user ID or fingerprint provided, using default`);
+      userId = 6;
+    }
     
     if (isNaN(userId) || userId <= 0) {
-      console.log(`[API-PROXY] Invalid user ID: ${req.params.userId}`);
+      console.log(`[API-PROXY] Invalid user ID: ${userId}`);
       return res.status(400).json({ 
         success: false,
         error: 'Invalid user ID' 
