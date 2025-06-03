@@ -292,7 +292,7 @@ export default function UploadPage() {
             } else {
               setTransformedImages([data.transformedImageUrl]);
             }
-            
+
             // Also handle direct secondTransformedImageUrl from response
             if (data.secondTransformedImageUrl) {
               setSecondTransformedImage(data.secondTransformedImageUrl);
@@ -904,9 +904,9 @@ export default function UploadPage() {
             }
           } else {
             setTransformedImages([data.transformedImageUrl]);
-          }
-          
-          // Also handle direct secondTransformedImageUrl from response
+            }
+
+            // Also handle direct secondTransformedImageUrl from response
           if (data.secondTransformedImageUrl) {
             setSecondTransformedImage(data.secondTransformedImageUrl);
           }
@@ -1034,11 +1034,12 @@ export default function UploadPage() {
                 <div className="flex justify-center mb-8">
                   <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
                     <button
-                      className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
-                        selectedTransformation !== 'custom' 
+                      className={
+                        `flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ` +
+                        (selectedTransformation !== 'custom' 
                           ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50')
+                      }
                       onClick={() => setSelectedTransformation('animation')}
                     >
                       <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
@@ -1242,6 +1243,7 @@ export default function UploadPage() {
                             { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
                             { name: 'Superhero', emoji: '🦸', id: 'superhero' },
                             { name: 'Lego Character', emoji: '🧱', id: 'lego' },
+                            { name: 'Coloring Book', emoji: '📚', id: 'coloringBook' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1314,6 +1316,7 @@ export default function UploadPage() {
                           {selectedTransformation === 'other' && [
                             { name: 'Mullets', emoji: '💇', id: 'mullets' },
                             { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
+                            { name: 'Baby Mode', emoji: '👶', id: 'baby-mode' },
                             { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
                             { name: 'Future Self', emoji: '👵', id: 'future' },
                             { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
@@ -1589,6 +1592,7 @@ export default function UploadPage() {
                             { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
                             { name: 'Superhero', emoji: '🦸', id: 'superhero' },
                             { name: 'Lego Character', emoji: '🧱', id: 'lego' },
+                            { name: 'Coloring Book', emoji: '🎨', id: 'coloringBook' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1812,4 +1816,74 @@ export default function UploadPage() {
       />
     </div>
   );
+
+    // Get the prompt from the appropriate style definition in PromptInput.tsx
+    const getPromptFromStyleId = (styleId: string): string => {
+      // Create a mapping from style IDs to PromptInput categories/keys
+      const styleMapping: Record<string, { category: string; key: string }> = {
+        'super-mario': { category: 'cartoon', key: 'super-mario' },
+        'minecraft': { category: 'cartoon', key: 'minecraft' },
+        'pixar': { category: 'cartoon', key: 'pixar' },
+        'dreamworks': { category: 'cartoon', key: 'dreamworks' },
+        'princess': { category: 'cartoon', key: 'princess' },
+        'superhero': { category: 'cartoon', key: 'superhero' },
+        'lego': { category: 'cartoon', key: 'lego' },
+        'coloringBook': { category: 'cartoon', key: 'coloringBook' },
+        'kids-drawing': { category: 'kids-real', key: 'kids-real' },
+        'old-western': { category: 'era', key: 'old-western' },
+        '90s-hip-hop': { category: 'era', key: '90s-hip-hop' },
+        '1980s': { category: 'era', key: '1980s' },
+        'disco': { category: 'era', key: 'disco-era' },
+        'renaissance': { category: 'era', key: 'renaissance' },
+        'victorian-era': { category: 'era', key: 'victorian-era' },
+        'medieval': { category: 'era', key: 'medieval' },
+        'oil-painting': { category: 'painting', key: 'oil-painting' },
+        'watercolor': { category: 'painting', key: 'watercolor' },
+        'impressionist': { category: 'painting', key: 'impressionist' },
+        'abstract': { category: 'painting', key: 'abstract' },
+        'pop-surrealism': { category: 'painting', key: 'pop-surrealism' },
+        'art-deco': { category: 'painting', key: 'art-deco' },
+        'mullets': { category: 'other', key: 'mullets' },
+        'hulkamania': { category: 'other', key: 'hulkamania' },
+        'babyMode': { category: 'other', key: 'babyMode' },
+        'baby-prediction': { category: 'other', key: 'baby-prediction' },
+        'future-self': { category: 'other', key: 'future-self' },
+        'ghibli-style': { category: 'other', key: 'ghibli-style' },
+        'ai-action-figure': { category: 'other', key: 'ai-action-figure' },
+        'pet-as-human': { category: 'other', key: 'pet-as-human' },
+        'self-as-cat': { category: 'other', key: 'self-as-cat' },
+        'caricature': { category: 'other', key: 'caricature' },
+        'vampire': { category: 'other', key: 'vampire' },
+      };
+
+      const mapping = styleMapping[styleId];
+      if (!mapping) {
+        console.warn(`No mapping found for style ID: ${styleId}`);
+        return "Transform the image in an artistic style";
+      }
+
+      // Special handling for coloring book - use the dedicated endpoint
+      if (mapping.key === 'coloringBook') {
+        console.log('Coloring book style detected - should use dedicated endpoint');
+        return CARTOON_STYLES.coloringBook.suggestedPrompt;
+      }
+
+      // Get the prompt from the appropriate style definition in PromptInput.tsx
+      switch (mapping.category) {
+        case 'cartoon':
+          return CARTOON_STYLES[mapping.key as keyof typeof CARTOON_STYLES]?.suggestedPrompt || "Transform the image in a cartoon style";
+        case 'era':
+          return ERA_STYLES[mapping.key as keyof typeof ERA_STYLES]?.suggestedPrompt || "Transform the image in a historical style";
+        case 'painting':
+          return PAINTING_STYLES[mapping.key as keyof typeof PAINTING_STYLES]?.suggestedPrompt || "Transform the image in a painting style";
+        case 'other':
+          return OTHER_STYLES[mapping.key as keyof typeof OTHER_STYLES]?.suggestedPrompt || "Transform the image in a fun style";
+        case 'kids-real':
+          return "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.";
+        default:
+          return "Transform the image in an artistic style";
+      }
+    };
+
+
 }
