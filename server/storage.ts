@@ -158,15 +158,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Get user by username for login
-  async getUserByUsername(username: string): Promise<{ id: number; username: string } | null> {
+  async getUserByUsername(username: string): Promise<User | null> {
     console.log(`Storage getUserByUsername called with username: ${username}`);
 
     try {
       const user = await db
-        .select({
-          id: users.id,
-          username: users.username,
-        })
+        .select()
         .from(users)
         .where(eq(users.username, username))
         .limit(1);
