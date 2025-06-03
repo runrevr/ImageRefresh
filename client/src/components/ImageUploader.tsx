@@ -10,8 +10,27 @@ import { apiRequest } from '@/lib/queryClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageUploaderProps {
-  onImageUploaded: (imagePath: string, imageUrl: string) => void;
+  onImageUpload: (imageUrl: string, fileName: string) => void;
+  userCredits?: any;
+  onShowSignupModal?: () => void;
 }
+
+// Category options for image types
+const CATEGORIES = [
+  { id: 'portrait', label: 'Portrait', description: 'People, faces, headshots' },
+  { id: 'product', label: 'Product', description: 'Items, objects, merchandise' },
+  { id: 'landscape', label: 'Landscape', description: 'Scenery, nature, outdoor views' },
+  { id: 'pet', label: 'Pet', description: 'Animals, pets, wildlife' },
+  { id: 'food', label: 'Food', description: 'Meals, dishes, ingredients' },
+  { id: 'other', label: 'Other', description: 'Everything else' }
+];
+
+// Size options for output
+const SIZES = [
+  { id: 'square', label: 'Square (1024×1024)', description: 'Perfect for social media' },
+  { id: 'portrait', label: 'Portrait (1024×1792)', description: 'Tall images' },
+  { id: 'landscape', label: 'Landscape (1792×1024)', description: 'Wide images' }
+];
 
 // Sample images that users can try
 const SAMPLE_IMAGES = [
@@ -32,9 +51,9 @@ const SAMPLE_IMAGES = [
   }
 ];
 
-export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
+export default function ImageUploader({ onImageUpload, userCredits, onShowSignupModal }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(isUploading);
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileError, setFileError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -161,7 +180,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     try {
       const formData = new FormData();
       formData.append('image', file);
-		  const fileName = file.name;
+                  const fileName = file.name;
 
       // Simulate progress for better UX
       const progressInterval = setInterval(() => {
@@ -197,7 +216,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
       // Small delay to show 100% progress
       setTimeout(() => {
           console.log("Calling onImageUpload with:", data.imageUrl, fileName);
-          onImageUploaded(data.imagePath, data.imageUrl);
+          onImageUpload(data.imageUrl, fileName);
         }, 300);
 
     } catch (error) {
