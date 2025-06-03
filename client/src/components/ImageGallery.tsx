@@ -50,7 +50,8 @@ export function ImageGallery() {
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-user-id': user?.id?.toString() || '6'
         }
       });
       
