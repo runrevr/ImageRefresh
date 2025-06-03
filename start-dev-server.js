@@ -1,42 +1,34 @@
-const { spawn } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+#!/usr/bin/env node
 
-// Print a header to the console
-console.log('========================================');
-console.log('🚀 Starting Image Transformation Server');
-console.log('========================================');
+import express from 'express';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { createServer } from 'vite';
+import { registerRoutes } from './server/routes.js';
 
-// Start the backend server
-console.log('Starting backend server...');
-const backendServer = spawn('node', ['--loader=tsx', 'server/index.ts'], {
-  env: { ...process.env, NODE_ENV: 'development' },
-  stdio: 'inherit'
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-backendServer.on('error', (err) => {
-  console.error(`Backend server error: ${err}`);
-});
-
-// Give the backend a moment to start up
-setTimeout(() => {
-  // Start the frontend server
-  console.log('Starting frontend server...');
-  const frontendServer = spawn('npx', ['vite'], {
-    stdio: 'inherit'
+async function createDevServer() {
+  const app = express();
+  
+  // Create Vite server in middleware mode
+  const vite = await createServer({
+    server: { middlewareMode: true },
+    appType: 'custom'
   });
-
-  frontendServer.on('error', (err) => {
-    console.error(`Frontend server error: ${err}`);
-    process.exit(1);
+  
+  // Register API routes first
+  const httpServer = await registerRoutes(app);
+  
+  // Use Vite's middleware
+  app.use(vite.middlewares);
+  
+  const port = process.env.PORT || 5000;
+  
+  httpServer.listen(port, '0.0.0.0', () => {
+    console.log(`Development server running on http://localhost:${port}`);
   });
+}
 
-  console.log('Both servers are now running!');
-  console.log('To access your site, click the "Show" button at the top of Replit.');
-}, 2000);
-
-// Handle process termination
-process.on('SIGINT', () => {
-  backendServer.kill();
-  process.exit();
-});
+createDevServer().catch(console.error);

@@ -293,8 +293,7 @@ export async function generateTextToImage(prompt, options = {}) {
   }
 }
 
-// ES6 exports only
-export { transformImageWithOpenAI };
+// Function already exported above
 
 console.log('[OpenAI Module] File fully loaded - exports available:', {
   transformImageWithOpenAI: typeof transformImageWithOpenAI,
