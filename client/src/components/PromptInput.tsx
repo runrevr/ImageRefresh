@@ -53,6 +53,7 @@ export type CartoonSubcategory =
   | "princess"
   | "superhero"
   | "lego"
+  | "coloringBook"
   | "custom-cartoon";
 
 export type PaintingSubcategory =
@@ -83,6 +84,7 @@ export type EraSubcategory =
 export type OtherSubcategory =
   | "mullets"
   | "hulkamania"
+  | "babyMode"
   | "baby-prediction"
   | "future-self"
   | "ghibli-style"
@@ -171,6 +173,14 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     suggestedPrompt:
       "The scene should be set in a vibrant, playful Lego world with colorful, modular Lego environments such as brick-built trees, buildings, and vehicles. Transform into a custom Lego minifigure that accurately matches real-life features. Carefully replicate the hair style (using the closest matching Lego hairpiece), skin tone (adapted to Lego colors but faithful to real tone), eye color, and visible dental traits. The Lego minifigure should reflect the clothing style and selected theme in a fun, blocky Lego way while maintaining unmistakable likeness. Ensure the Lego character is smiling joyfully. The tone must remain colorful, whimsical, imaginative, and true to a Lego world, with full visual likeness preserved.",
   },
+  coloringBook: {
+    title: "Coloring Book",
+    description:
+      "Transform any image into a clean, black and white coloring book page with clear outlines perfect for coloring - works with people, objects, landscapes, or any scene.",
+    placeholder: "E.g., Turn this into a coloring book page",
+    suggestedPrompt:
+      "Transform this image into a professional coloring book style illustration with these specific requirements:\n\n1. Line art conversion:\n   - Convert to pure black outlines on white background\n   - Create clean, smooth, continuous lines\n   - Line thickness should be consistent and bold enough for coloring\n   - Remove all colors, shading, and fills - outlines only\n   - Ensure all shapes are fully enclosed for easy coloring\n\n2. Detail level:\n   - Simplify complex textures into drawable patterns\n   - Convert gradients and shadows into distinct outlined areas\n   - Break down complicated elements into clear, colorable sections\n   - Add decorative patterns where appropriate (hair, clothing, backgrounds)\n   - Include enough detail to be interesting but not overwhelming\n\n3. Composition:\n   - Maintain the original composition and all subjects\n   - Ensure all elements are clearly defined and separated\n   - Add simple background elements if original background is plain\n   - Create distinct boundaries between different areas\n   - Keep proportions accurate to original image\n\n**CRITICAL REQUIREMENTS:**\n- Output must be pure black lines on white background\n- NO grayscale, NO shading, NO filled areas\n- All lines must connect properly to create enclosed spaces\n- Line weight should be uniform and suitable for coloring\n- Maintain recognizable features of all subjects\n- Suitable for both children and adults to color\n- Clear, crisp lines without sketchy or rough edges\n\n**ABSOLUTELY DO NOT:**\n- Include any colors or gray tones\n- Leave any areas filled in or shaded\n- Create lines too thin or too thick for coloring\n- Make it too complex or too simple\n- Lose important details from the original\n- Add realistic shading or gradients\n- Leave open gaps in outline shapes",
+  },
   "custom-cartoon": {
     title: "Create Your Own Cartoon",
     description: "Describe your own custom cartoon transformation.",
@@ -178,9 +188,6 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     suggestedPrompt: "",
   },
 };
-
-
-
 // Painting subcategories
 export const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
   "oil-painting": {
@@ -372,6 +379,14 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     suggestedPrompt:
       "Apply ONLY these specific costume overlays to the uploaded photo. Do NOT alter the person's features:\n\n1. Hair color change:\n   - Change visible hair color to platinum blonde\n   - Apply to all hair showing beneath the bandana\n   - Keep the person's natural hair length and style\n   - If hair is short, keep it short but blonde\n   - If hair is long, keep it long and blonde\n\n2. Red bandana do-rag style:\n   - Place red bandana as a full do-rag covering the top of head\n   - Should cover from forehead to crown like a skull cap\n   - Include 'HULKAMANIA' in bold yellow text across the front\n   - Bandana should have realistic fabric folds and texture\n\n3. Mustache overlay:\n   - ADD a blonde horseshoe mustache as an overlay\n   - Size it proportionally to the person's face\n   - Blend naturally but keep as an addition, not a transformation\n\n4. Clothing replacement:\n   - Replace ONLY the clothing with a yellow tank top\n   - Add 'HULK RULES' in red block letters on the chest\n   - Fit the tank to the person's exact body shape\n\n**CRITICAL PRESERVATION RULES:**\n- Do NOT alter facial features, bone structure, or expressions\n- Keep the person's exact face, just add the mustache\n- Preserve their natural body shape and size completely\n- Maintain their original skin tone and texture\n- The person should still look like themselves in costume\n- NEVER change eyes, eye color, eye shape, or eyelids\n- NEVER alter the nose shape, size, or nostrils\n- NEVER modify teeth, smile, or mouth shape\n\n**ABSOLUTELY DO NOT:**\n- Change face shape or features\n- Alter body proportions or chest size\n- Make the person look more masculine/feminine\n- Age or de-age the person\n- Change their natural build or physique\n- Modify eyes, eye color, nose, or teeth in any way",
   },
+  babyMode: {
+    title: "Baby Mode",
+    description:
+      "Transform into an adorable baby version of yourself - same clothes, same style, just tiny and cute with all your distinctive features preserved in miniature form.",
+    placeholder: "E.g., Turn me into a baby wearing my exact outfit",
+    suggestedPrompt:
+      "Transform the person in this image into a realistic baby (approximately 6-12 months old) while preserving ALL distinctive features and clothing:\n\n1. Clothing preservation:\n   - Keep EXACT same outfit in miniature baby sizes\n   - Preserve all visible clothing items perfectly\n   - Maintain identical colors, patterns, logos, and details\n   - Include ALL accessories: jewelry, glasses, hats, etc.\n   - Clothes should fit naturally on baby body\n\n2. Physical features to maintain:\n   - Keep exact same eye color and eye shape characteristics\n   - Preserve skin tone precisely\n   - Adapt hair to baby-appropriate length but keep same color/texture\n   - Maintain recognizable facial structure in baby proportions\n   - If wearing glasses, include baby-sized glasses\n\n3. Expression and pose:\n   - Capture the person's expression in baby form\n   - Adapt pose to be baby-appropriate while maintaining essence\n   - If standing, show baby standing/supported\n   - If sitting, show baby in similar position\n\n**CRITICAL PRESERVATION RULES:**\n- The baby must wear the COMPLETE original outfit\n- Maintain all unique identifying features\n- Keep exact same clothing details, just sized for baby\n- Preserve distinctive characteristics (freckles as subtle markings, etc.)\n- Result should be immediately recognizable as baby version of this person\n- NEVER change eye color or distinctive features\n- NEVER omit any clothing items or accessories\n- NEVER alter the outfit design or colors\n\n**ABSOLUTELY DO NOT:**\n- Remove or change any clothing items\n- Alter eye color or skin tone\n- Add baby clothes that weren't in original\n- Change hair color (only adjust length/volume for baby realism)\n- Lose any distinctive features or characteristics\n- Make generic baby - must be THIS specific person as a baby",
+  },
   "baby-prediction": {
     title: "What Will Our Baby Look Like",
     description:
@@ -380,7 +395,7 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     suggestedPrompt:
       "Create a realistic image of a baby that would result from the genetics of the two people in the uploaded photos. The baby should have a balanced blend of facial features from both parents, including eye shape/color, nose, mouth, face shape, and skin tone. Show only the baby in the final image, centered in frame with good lighting against a neutral background. The baby should appear healthy, happy, and around 6-12 months old with a natural expression. Dress the baby in appropriate baby clothing - such as a simple onesie, cute baby outfit, or comfortable infant attire - not attempting to match or replicate the clothing style of the parents. Add subtle details that clearly connect to features from both parent photos without directly copying them.",
   },
-"future-self": {
+  "future-self": {
     title: "What Will I Look Like in 20 Years",
     description:
       "Age the subject in the image to show how they might look 20 years in the future.",
@@ -430,9 +445,11 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   },
   vampire: {
     title: "Vampire Transformation",
-    description: "Transform into a classic gothic vampire with pale skin and fangs.",
+    description:
+      "Transform into a classic gothic vampire with pale skin and fangs.",
     placeholder: "E.g., Add dramatic cape and gothic mansion background",
-    suggestedPrompt: "Transform the person into a classic vampire with pale, porcelain skin, subtle fangs, and piercing eyes with a slight red glow. Add a dramatic black cape with red interior lining. Style the hair in an elegant, timeless fashion. Set against a gothic mansion or castle backdrop with moonlight and fog. Include subtle supernatural elements like bats in the background. Maintain the person's core facial features while adding the vampire aesthetic.",
+    suggestedPrompt:
+      "Transform the person into a classic vampire with pale, porcelain skin, subtle fangs, and piercing eyes with a slight red glow. Add a dramatic black cape with red interior lining. Style the hair in an elegant, timeless fashion. Set against a gothic mansion or castle backdrop with moonlight and fog. Include subtle supernatural elements like bats in the background. Maintain the person's core facial features while adding the vampire aesthetic.",
   },
   "custom-other": {
     title: "Create Your Own",
@@ -623,8 +640,6 @@ export default function PromptInput({
       setPromptText(CARTOON_STYLES[subcategory].suggestedPrompt);
     }
   };
-
-
 
   const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
     setPaintingSubcategory(subcategory);
@@ -921,16 +936,19 @@ export default function PromptInput({
               let description = "";
               switch (primaryCategory) {
                 case "cartoon":
-                  description = CARTOON_STYLES[key as CartoonSubcategory].description;
+                  description =
+                    CARTOON_STYLES[key as CartoonSubcategory].description;
                   break;
                 case "painting":
-                  description = PAINTING_STYLES[key as PaintingSubcategory].description;
+                  description =
+                    PAINTING_STYLES[key as PaintingSubcategory].description;
                   break;
                 case "era":
                   description = ERA_STYLES[key as EraSubcategory].description;
                   break;
                 case "other":
-                  description = OTHER_STYLES[key as OtherSubcategory].description;
+                  description =
+                    OTHER_STYLES[key as OtherSubcategory].description;
                   break;
                 // Pop culture case removed
               }

@@ -6,7 +6,9 @@ import path from "path";
  * @param imagePath Path to the image to transform
  * @returns Path to the transformed image
  */
-export async function createColoringBookImage(imagePath: string): Promise<{ outputPath: string }> {
+export async function createColoringBookImage(
+  imagePath: string,
+): Promise<{ outputPath: string }> {
   try {
     console.log(`Creating coloring book version of image: ${imagePath}`);
 
@@ -21,15 +23,22 @@ export async function createColoringBookImage(imagePath: string): Promise<{ outp
     }
 
     // Professional coloring book transformation prompt
-    const coloringBookPrompt = "Transform this image into a clean coloring book page with pure black outlines on a white background. Convert all elements into simple line art with clear defined borders suitable for coloring. Remove all shading colors and textures leaving only the outline contours of every shape object and detail. Use consistent line weight throughout with slightly thicker lines for main subjects and thinner lines for fine details. Simplify complex textures into basic patterns or leave them as empty spaces. Ensure all areas are fully enclosed with no gaps in the lines creating distinct sections that can be colored in. Convert any text to outline form. Remove all backgrounds and replace with pure white. The final image should look like a professional coloring book page with crisp black lines ready for coloring with no gray areas or partial shading just pure black and white line art.";
+    const coloringBookPrompt =
+      "Transform this image into a professional coloring book style illustration with these specific requirements:\n\n1. Line art conversion:\n   - Convert to pure black outlines on white background\n   - Create clean, smooth, continuous lines\n   - Line thickness should be consistent and bold enough for coloring\n   - Remove all colors, shading, and fills - outlines only\n   - Ensure all shapes are fully enclosed for easy coloring\n\n2. Detail level:\n   - Simplify complex textures into drawable patterns\n   - Convert gradients and shadows into distinct outlined areas\n   - Break down complicated elements into clear, colorable sections\n   - Add decorative patterns where appropriate (hair, clothing, backgrounds)\n   - Include enough detail to be interesting but not overwhelming\n\n3. Composition:\n   - Maintain the original composition and all subjects\n   - Ensure all elements are clearly defined and separated\n   - Add simple background elements if original background is plain\n   - Create distinct boundaries between different areas\n   - Keep proportions accurate to original image\n\n**CRITICAL REQUIREMENTS:**\n- Output must be pure black lines on white background\n- NO grayscale, NO shading, NO filled areas\n- All lines must connect properly to create enclosed spaces\n- Line weight should be uniform and suitable for coloring\n- Maintain recognizable features of all subjects\n- Suitable for both children and adults to color\n- Clear, crisp lines without sketchy or rough edges\n\n**ABSOLUTELY DO NOT:**\n- Include any colors or gray tones\n- Leave any areas filled in or shaded\n- Create lines too thin or too thick for coloring\n- Make it too complex or too simple\n- Lose important details from the original\n- Add realistic shading or gradients\n- Leave open gaps in outline shapes";
 
     console.log("Transforming image with GPT-image-01...");
 
     // Import and use the GPT-image-01 transformation function
     const { transformImage } = await import("./openai-final.js");
-    const result = await transformImage(imagePath, coloringBookPrompt, "1024x1024");
+    const result = await transformImage(
+      imagePath,
+      coloringBookPrompt,
+      "1024x1024",
+    );
 
-    console.log(`Coloring book image created successfully: ${result.transformedPath}`);
+    console.log(
+      `Coloring book image created successfully: ${result.transformedPath}`,
+    );
 
     return { outputPath: result.transformedPath };
   } catch (error: unknown) {
