@@ -29,16 +29,42 @@ export default function MySavedImages() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Fetch all user images directly
+  // Fetch all user images with enhanced error handling
   const { data: images = [], isLoading, error } = useQuery<SavedImage[]>({
     queryKey: ['/api/user-images', user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
+      console.log(`[MY-IMAGES] Fetching images for user ${user?.id}`);
       const response = await fetch(`/api/user-images/${user?.id}`);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch saved images');
+        console.error(`[MY-IMAGES] API response not OK: ${response.status}`);
+        throw new Error(`Failed to fetch saved images: ${response.status}`);
       }
-      return response.json();
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.error(`[MY-IMAGES] Invalid content type: ${contentType}`);
+        throw new Error('API returned non-JSON response');
+      }
+      
+      const data = await response.json();
+      console.log(`[MY-IMAGES] Received data:`, data);
+      
+      // Handle new API response format
+      if (data && data.images && Array.isArray(data.images)) {
+        console.log(`[MY-IMAGES] Found ${data.images.length} images`);
+        return data.images;
+      }
+      
+      // Fallback for direct array response
+      if (Array.isArray(data)) {
+        console.log(`[MY-IMAGES] Found ${data.length} images (direct array)`);
+        return data;
+      }
+      
+      console.warn(`[MY-IMAGES] Unexpected data format:`, data);
+      return [];
     },
   });
 
