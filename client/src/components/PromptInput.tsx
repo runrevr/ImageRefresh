@@ -1005,28 +1005,16 @@ export default function PromptInput({
                       // Pop culture case removed
                     }
                   }}
-                  className={`justify-center text-center h-auto py-3 px-3 text-xs font-medium rounded-lg whitespace-normal break-words min-h-[60px] flex items-center relative ${
+                  className={`justify-center text-center h-auto py-3 px-3 text-xs font-medium rounded-lg whitespace-normal break-words min-h-[60px] flex items-center ${
                     isSubcategoryActive(primaryCategory, key)
                       ? "bg-cyan-500 text-white border-cyan-500 hover:bg-cyan-600"
                       : "text-white bg-gray-800 border-gray-700 hover:bg-gray-700"
                   } ${
                     isPopular 
-                      ? "before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-red-500 before:via-yellow-500 before:via-green-500 before:via-blue-500 before:via-indigo-500 before:to-purple-500 before:animate-pulse before:-z-10" 
+                      ? "rainbow-border" 
                       : ""
                   }`}
                   title={description}
-                  style={isPopular ? {
-                    background: isSubcategoryActive(primaryCategory, key) 
-                      ? 'linear-gradient(45deg, #06b6d4, #0891b2)' 
-                      : 'linear-gradient(45deg, #374151, #4b5563)',
-                    backgroundClip: 'padding-box',
-                    border: '2px solid transparent',
-                    backgroundImage: isSubcategoryActive(primaryCategory, key)
-                      ? 'linear-gradient(45deg, #06b6d4, #0891b2), linear-gradient(45deg, #ef4444, #eab308, #22c55e, #3b82f6, #6366f1, #a855f7)'
-                      : 'linear-gradient(45deg, #374151, #4b5563), linear-gradient(45deg, #ef4444, #eab308, #22c55e, #3b82f6, #6366f1, #a855f7)',
-                    backgroundOrigin: 'border-box',
-                    backgroundClip: 'padding-box, border-box'
-                  } : undefined}
                 >
                   <span className="text-white relative z-10">{title}</span>
                 </Button>

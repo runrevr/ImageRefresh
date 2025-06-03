@@ -72,6 +72,44 @@ body {
       background-color: rgb(42 123 155 / 0.2);
     }
   }
+
+  .mt-screen {
+    margin-top: 100vh;
+  }
+
+  .rainbow-border {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(45deg, #374151, #4b5563);
+    background-clip: padding-box;
+  }
+
+  .rainbow-border::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+    background-size: 400% 400%;
+    animation: rainbow-border 3s ease infinite;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  @keyframes rainbow-border {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .rainbow-border.bg-cyan-500 {
+    background: linear-gradient(45deg, #06b6d4, #0891b2);
+  }
 }
 
 @layer base {
@@ -80,9 +118,7 @@ body {
   }
 }
 
-.mt-screen {
-  margin-top: 100vh;
-}
+
 
 :root {
   /* Rainbow button colors */
