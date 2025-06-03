@@ -29,16 +29,7 @@ enum Step {
 }
 
 // Import transformation types and style definitions from PromptInput
-import PromptInput, { 
-  TransformationType,
-  CartoonSubcategory,
-  ProductSubcategory,
-  OtherSubcategory,
-  CARTOON_STYLES,
-  PAINTING_STYLES, 
-  ERA_STYLES,
-  OTHER_STYLES
-} from "@/components/PromptInput";
+import PromptInput from "@/components/PromptInput";
 
 // User credits state type
 type UserCredits = {
@@ -72,30 +63,9 @@ export default function UploadPage() {
     originalImageFilename: string;
   } | null>(null);
 
-  // Style selection states for PromptInput
-  const [selectedStyle, setSelectedStyle] = useState<TransformationType>('cartoon');
-  const [selectedCartoonSubcategory, setSelectedCartoonSubcategory] = useState<CartoonSubcategory>('kids');
-  const [selectedProductSubcategory, setSelectedProductSubcategory] = useState<ProductSubcategory>('pure-catalog');
-  const [selectedOtherSubcategory, setSelectedOtherSubcategory] = useState<OtherSubcategory>('funny');
+  
 
-  // Load saved style on component mount
-  useEffect(() => {
-    if (hasSavedStyle()) {
-      const savedStyle = getSavedStyle();
-      if (savedStyle) {
-        setSelectedStyle(savedStyle.transformationType);
-        if (savedStyle.cartoonSubcategory) {
-          setSelectedCartoonSubcategory(savedStyle.cartoonSubcategory);
-        }
-        if (savedStyle.productSubcategory) {
-          setSelectedProductSubcategory(savedStyle.productSubcategory);
-        }
-        if (savedStyle.otherSubcategory) {
-          setSelectedOtherSubcategory(savedStyle.otherSubcategory);
-        }
-      }
-    }
-  }, []);
+  
 
   // Fetch user credits when authenticated
   useEffect(() => {
@@ -113,14 +83,14 @@ export default function UploadPage() {
     fetchUserCredits();
   }, [isAuthenticated, user?.id]);
 
-  const handleImageUpload = (imageUrl: string, fileName: string) => {
+  const handleImageUpload = (imagePath: string, imageUrl: string) => {
     setUploadedImage(imageUrl);
-    setOriginalImageFileName(fileName);
+    setOriginalImageFileName(imagePath);
     setCurrentStep(Step.Prompt);
     setErrorMessage(null);
   };
 
-  const handlePromptSubmit = async (prompt: string) => {
+  const handlePromptSubmit = async (prompt: string, imageSize: string) => {
     if (!uploadedImage) return;
 
     setUserPrompt(prompt);
@@ -136,6 +106,7 @@ export default function UploadPage() {
           prompt,
           userId: user?.id || 'anonymous',
           originalImageFilename: originalImageFileName,
+          imageSize,
         }),
       });
 
@@ -170,82 +141,7 @@ export default function UploadPage() {
     }
   };
 
-  const handlePromptWithPresets = async () => {
-    if (!uploadedImage) return;
-
-    const presetPrompt = generatePresetPrompt();
-    await handlePromptSubmit(presetPrompt);
-  };
-
-  const generatePresetPrompt = (): string => {
-    switch (selectedStyle) {
-      case 'cartoon':
-        const cartoonStyle = CARTOON_STYLES[selectedCartoonSubcategory];
-        return cartoonStyle?.suggestedPrompt || "Transform into a cartoon style";
-
-      case 'product':
-        const mapping = {
-          'pure-catalog': { key: 'pureCatalog' },
-          'lifestyle': { key: 'lifestyle' },
-          'enhanced': { key: 'enhanced' },
-          'artistic': { key: 'artistic' },
-          'historical': { key: 'historical' },
-          'animation': { key: 'animation' }
-        };
-
-        const productMapping = mapping[selectedProductSubcategory as keyof typeof mapping];
-        if (productMapping) {
-          return `Transform this product image into ${selectedProductSubcategory} style. Create a professional, high-quality transformation that enhances the product presentation.`;
-        }
-        return "Transform into a professional product style";
-
-      case 'painting':
-        const paintingMapping = {
-          'renaissance': { key: 'renaissance' },
-          'impressionist': { key: 'impressionist' },
-          'expressionist': { key: 'expressionist' },
-          'abstract': { key: 'abstract' },
-          'watercolor': { key: 'watercolor' },
-          'oil': { key: 'oil' }
-        };
-        return "Transform into a beautiful painting style";
-
-      case 'era':
-        const eraMapping = {
-          'medieval': { key: 'medieval' },
-          'victorian': { key: 'victorian' },
-          '1920s': { key: 'twenties' },
-          '1950s': { key: 'fifties' },
-          '1980s': { key: 'eighties' },
-          'futuristic': { key: 'futuristic' }
-        };
-        return "Transform into a historical era style";
-
-      case 'other':
-        const otherMapping = {
-          'funny': { key: 'funny' },
-          'scary': { key: 'scary' },
-          'elegant': { key: 'elegant' },
-          'minimalist': { key: 'minimalist' },
-          'vintage': { key: 'vintage' },
-          'modern': { key: 'modern' },
-          'babyMode': { key: 'babyMode' },
-          'coloringBook': { key: 'coloringBook' }
-        };
-
-        const otherMappingResult = otherMapping[selectedOtherSubcategory as keyof typeof otherMapping];
-        if (otherMappingResult) {
-          return OTHER_STYLES[otherMappingResult.key as keyof typeof OTHER_STYLES]?.suggestedPrompt || "Transform the image in a fun style";
-        }
-        return "Transform the image in an artistic style";
-
-      case 'kids-real':
-        return "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.";
-
-      default:
-        return "Transform the image in an artistic style";
-    }
-  };
+  
 
   const handleEditPrompt = (newPrompt: string) => {
     setCurrentStep(Step.Edit);
@@ -304,116 +200,14 @@ export default function UploadPage() {
           )}
 
           {currentStep === Step.Prompt && (
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-                  Choose Your Transformation Style
-                </h2>
-
-                {/* Two-Tab Header */}
-                <div className="flex justify-center mb-8">
-                  <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
-                    <button
-                      className={
-                        `flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ` +
-                        (selectedTransformation !== 'custom' 
-                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50')
-                      }
-                      onClick={() => setSelectedTransformation('animation')}
-                    >
-                      <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
-                        🖼️
-                      </div>
-                      <div className="text-sm font-semibold">Transform Image</div>
-                      <div className="text-xs opacity-80 text-center leading-tight">
-                        Quick AI styles
-                      </div>
-                    </button>
-
-                    <button
-                      className={
-                        `flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ` +
-                        (selectedTransformation === 'custom' 
-                          ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50')
-                      }
-                      onClick={() => setSelectedTransformation('custom')}
-                    >
-                      <div className={`text-2xl mb-1 ${selectedTransformation === 'custom' ? 'animate-pulse' : ''}`}>
-                        ✨
-                      </div>
-                      <div className="text-sm font-semibold">Custom Prompt</div>
-                      <div className="text-xs opacity-80 text-center leading-tight">
-                        Your own ideas
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {selectedTransformation === 'animation' ? (
-                  <div>
-                    <PromptInput
-                      selectedStyle={selectedStyle}
-                      setSelectedStyle={setSelectedStyle}
-                      selectedCartoonSubcategory={selectedCartoonSubcategory}
-                      setSelectedCartoonSubcategory={setSelectedCartoonSubcategory}
-                      selectedProductSubcategory={selectedProductSubcategory}
-                      setSelectedProductSubcategory={setSelectedProductSubcategory}
-                      selectedOtherSubcategory={selectedOtherSubcategory}
-                      setSelectedOtherSubcategory={setSelectedOtherSubcategory}
-                    />
-
-                    <div className="flex justify-center mt-8">
-                      <RainbowButton onClick={handlePromptWithPresets} className="px-8 py-3">
-                        Transform Image
-                      </RainbowButton>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Describe how you want to transform your image:
-                      </label>
-                      <textarea
-                        value={userPrompt}
-                        onChange={(e) => setUserPrompt(e.target.value)}
-                        placeholder="e.g., Transform this into a watercolor painting with soft brushstrokes and vibrant colors..."
-                        className="w-full h-32 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      />
-                    </div>
-
-                    <div className="flex justify-center">
-                      <RainbowButton 
-                        onClick={() => handlePromptSubmit(userPrompt)} 
-                        className="px-8 py-3"
-                        disabled={!userPrompt.trim()}
-                      >
-                        Transform Image
-                      </RainbowButton>
-                    </div>
-                  </div>
-                )}
-
-                {uploadedImage && (
-                  <div className="mt-8 text-center">
-                    <p className="text-sm text-gray-500 mb-4">Preview of your uploaded image:</p>
-                    <img 
-                      src={uploadedImage} 
-                      alt="Uploaded" 
-                      className="max-w-xs mx-auto rounded-lg shadow-md"
-                    />
-                  </div>
-                )}
-
-                {errorMessage && (
-                  <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-                    <p className="text-red-600 text-center">{errorMessage}</p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <PromptInput
+              originalImage={uploadedImage!}
+              onSubmit={handlePromptSubmit}
+              onBack={() => setCurrentStep(Step.Upload)}
+              selectedTransformation={null}
+              defaultPrompt=""
+              savedStyle={null}
+            />
           )}
 
           {currentStep === Step.Processing && (
