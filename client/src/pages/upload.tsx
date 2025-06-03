@@ -182,7 +182,7 @@ export default function UploadPage() {
       case 'cartoon':
         const cartoonStyle = CARTOON_STYLES[selectedCartoonSubcategory];
         return cartoonStyle?.suggestedPrompt || "Transform into a cartoon style";
-      
+
       case 'product':
         const mapping = {
           'pure-catalog': { key: 'pureCatalog' },
@@ -192,13 +192,13 @@ export default function UploadPage() {
           'historical': { key: 'historical' },
           'animation': { key: 'animation' }
         };
-        
+
         const productMapping = mapping[selectedProductSubcategory as keyof typeof mapping];
         if (productMapping) {
           return `Transform this product image into ${selectedProductSubcategory} style. Create a professional, high-quality transformation that enhances the product presentation.`;
         }
         return "Transform into a professional product style";
-      
+
       case 'painting':
         const paintingMapping = {
           'renaissance': { key: 'renaissance' },
@@ -209,7 +209,7 @@ export default function UploadPage() {
           'oil': { key: 'oil' }
         };
         return "Transform into a beautiful painting style";
-      
+
       case 'era':
         const eraMapping = {
           'medieval': { key: 'medieval' },
@@ -220,7 +220,7 @@ export default function UploadPage() {
           'futuristic': { key: 'futuristic' }
         };
         return "Transform into a historical era style";
-      
+
       case 'other':
         const otherMapping = {
           'funny': { key: 'funny' },
@@ -232,16 +232,16 @@ export default function UploadPage() {
           'babyMode': { key: 'babyMode' },
           'coloringBook': { key: 'coloringBook' }
         };
-        
+
         const otherMappingResult = otherMapping[selectedOtherSubcategory as keyof typeof otherMapping];
         if (otherMappingResult) {
           return OTHER_STYLES[otherMappingResult.key as keyof typeof OTHER_STYLES]?.suggestedPrompt || "Transform the image in a fun style";
         }
         return "Transform the image in an artistic style";
-      
+
       case 'kids-real':
         return "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.";
-      
+
       default:
         return "Transform the image in an artistic style";
     }
@@ -287,10 +287,10 @@ export default function UploadPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navbar />
-      
+
       <main className="pt-20 pb-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {currentStep === Step.Upload && (
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -300,10 +300,10 @@ export default function UploadPage() {
                 Upload any image and watch our AI transform it into amazing styles - from cartoons to paintings to historical eras.
               </p>
               <ImageUploader 
-                onImageUpload={handleImageUpload}
-                userCredits={userCredits}
-                onShowSignupModal={() => setShowSignupModal(true)}
-              />
+                  onImageUploaded={handleImageUpload}
+                  userCredits={userCredits}
+                  onShowSignupModal={() => setShowSignupModal(true)}
+                />
             </div>
           )}
 
@@ -334,7 +334,7 @@ export default function UploadPage() {
                         Quick AI styles
                       </div>
                     </button>
-                    
+
                     <button
                       className={
                         `flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ` +
@@ -367,7 +367,7 @@ export default function UploadPage() {
                       selectedOtherSubcategory={selectedOtherSubcategory}
                       setSelectedOtherSubcategory={setSelectedOtherSubcategory}
                     />
-                    
+
                     <div className="flex justify-center mt-8">
                       <RainbowButton onClick={handlePromptWithPresets} className="px-8 py-3">
                         Transform Image
@@ -387,7 +387,7 @@ export default function UploadPage() {
                         className="w-full h-32 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                       />
                     </div>
-                    
+
                     <div className="flex justify-center">
                       <RainbowButton 
                         onClick={() => handlePromptSubmit(userPrompt)} 
@@ -451,7 +451,7 @@ export default function UploadPage() {
       </main>
 
       <Footer />
-      
+
       <SignupRequiredModal 
         isOpen={showSignupModal} 
         onClose={() => setShowSignupModal(false)} 
