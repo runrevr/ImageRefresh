@@ -607,7 +607,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
 
           // Save the second transformed image if it exists
           if (secondTransformedImageUrl && result.secondTransformedPath) {
-            const parentImage = await storage.saveUserImage({
+            await storage.saveUserImage({
               userId: userId,
               imagePath: result.secondTransformedPath,
               imageUrl: secondTransformedImageUrl,

@@ -434,7 +434,7 @@ export default function IdeasPage() {
           "Turn yourself into a business cat with a suit, tie, and bandana - perfect for the corporate jungle.",
         category: "other",
         prompt:
-          "Transform the person into a photorealistic cat wearing business attire including a suit, tie, and a purple bandana. Maintain the person's expression and personality traits.",
+          "Transform the person in this image into a realistic anthropomorphic cat that stands upright and wears the EXACT same outfit as shown in the original image. The cat must be wearing every piece of clothing visible on the person - preserve all clothing items precisely including shirts, jackets, pants, dresses, accessories, jewelry, hats, or any other garments. The clothes should fit the cat's body naturally as if tailored for a cat-human hybrid. For the cat's appearance: Match the fur color to the person's hair (blonde hair = golden/cream fur, brown hair = brown tabby, black hair = black fur, etc.). Preserve the person's exact eye color in the cat's eyes. If the person has unique features like freckles, glasses, or facial hair, adapt these appropriately (freckles as fur markings, glasses on the cat, whisker styling for facial hair). Maintain the person's pose and expression - if they're standing with hands in pockets, show the cat in the same pose with paws in pockets. If sitting cross-legged, show the cat sitting the same way. The final image should clearly be recognizable as a cat version of this specific person, wearing their complete outfit, in their exact pose.",
         previewImage: prisonCatImage,
         beforeImage: "/assets/couple-field.png",
         featured: true,

@@ -37,15 +37,7 @@ export function ImageGallery() {
   // Fetch categorized images
   const { data: categorizedImages, isLoading } = useQuery<CategorizedImages>({
     queryKey: ['/api/user/images', 'categorized'],
-    queryFn: async () => {
-      const response = await fetch('/api/user/images?category=categorized', {
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch images');
-      }
-      return response.json() as Promise<CategorizedImages>;
-    },
+    retry: false,
   });
 
   // Delete image mutation
