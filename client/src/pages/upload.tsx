@@ -887,8 +887,7 @@ export default function UploadPage() {
           if (userCredits && !userCredits.freeCreditsUsed) {
             setUserCredits(prev => {
               if (!prev) return null;
-              ```
-return { ...prev, freeCreditsUsed: true };
+              return { ...prev, freeCreditsUsed: true };
             });
           } else if (userCredits && userCredits.paidCredits > 0) {
             setUserCredits(prev => {
