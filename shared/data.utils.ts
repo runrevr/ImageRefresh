@@ -106,14 +106,14 @@ export function getStylesByTag(tag: string, limit?: number): Style[] {
  */
 export function searchStyles(keyword: string, limit?: number): Style[] {
   const searchTerm = keyword.toLowerCase();
-  
+
   const matchingStyles = getStyles().filter(style => 
     style.name.toLowerCase().includes(searchTerm) ||
     style.description.toLowerCase().includes(searchTerm) ||
     style.prompt.toLowerCase().includes(searchTerm) ||
     style.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
   );
-  
+
   return limit ? matchingStyles.slice(0, limit) : matchingStyles;
 }
 
@@ -126,7 +126,7 @@ export function getRandomStyle(categoryId?: string): Style {
   const stylesToChooseFrom = categoryId 
     ? getStylesByCategory(categoryId)
     : getStyles();
-  
+
   const randomIndex = Math.floor(Math.random() * stylesToChooseFrom.length);
   return stylesToChooseFrom[randomIndex];
 }
