@@ -282,6 +282,10 @@ export default function UploadPage() {
             // Handle multiple variations if available
             if (data.transformedImageUrls && data.transformedImageUrls.length > 0) {
               setTransformedImages(data.transformedImageUrls);
+              // Set second image if we have multiple variations
+              if (data.transformedImageUrls.length > 1) {
+                setSecondTransformedImage(data.transformedImageUrls[1]);
+              }
             } else {
               setTransformedImages([data.transformedImageUrl]);
             }
@@ -351,6 +355,10 @@ export default function UploadPage() {
                   // Handle multiple variations if available
                   if (statusData.transformedImageUrls && statusData.transformedImageUrls.length > 0) {
                     setTransformedImages(statusData.transformedImageUrls);
+                    // Set second image if we have multiple variations
+                    if (statusData.transformedImageUrls.length > 1) {
+                      setSecondTransformedImage(statusData.transformedImageUrls[1]);
+                    }
                   } else {
                     setTransformedImages([statusData.transformedImageUrl]);
                   }
@@ -854,6 +862,17 @@ export default function UploadPage() {
 
         if (data.transformedImageUrl) {
           setTransformedImage(data.transformedImageUrl);
+          
+          // Handle multiple variations if available
+          if (data.transformedImageUrls && data.transformedImageUrls.length > 0) {
+            setTransformedImages(data.transformedImageUrls);
+            // Set second image if we have multiple variations
+            if (data.transformedImageUrls.length > 1) {
+              setSecondTransformedImage(data.transformedImageUrls[1]);
+            }
+          } else {
+            setTransformedImages([data.transformedImageUrl]);
+          }
 
           // Store transformation data
           setCurrentTransformation({

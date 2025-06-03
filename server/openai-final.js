@@ -225,6 +225,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
           transformedPath: transformedImagePaths[0],
           secondTransformedPath:
             transformedImagePaths.length > 1 ? transformedImagePaths[1] : null,
+          transformedImagePaths: transformedImagePaths // Return all paths
         };
       }
 

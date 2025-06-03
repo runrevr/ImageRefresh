@@ -470,12 +470,20 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         .replace(/^\//, "");
       const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
 
+      // Handle multiple transformed images
+      const transformedImageUrls = [];
       let secondTransformedImageUrl = null;
+      
+      // Add the primary image
+      transformedImageUrls.push(transformedImageUrl);
+      
+      // Add the second image if it exists
       if (result.secondTransformedPath) {
         const secondTransformedImagePath = result.secondTransformedPath
           .replace(process.cwd(), "")
           .replace(/^\//, "");
         secondTransformedImageUrl = `${baseUrl}/${secondTransformedImagePath}`;
+        transformedImageUrls.push(secondTransformedImageUrl);
       }
 
       // If this is an edit and we have a previous transformation, increment the edits count
@@ -607,9 +615,10 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         }
       }
 
-      // Return the transformed image URL
+      // Return the transformed image URLs
       res.status(200).json({
         transformedImageUrl,
+        transformedImageUrls, // Array of all image URLs
         secondTransformedImageUrl,
         prompt,
         id: transformation ? transformation.id : null,
