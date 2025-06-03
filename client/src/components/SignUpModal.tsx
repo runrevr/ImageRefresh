@@ -49,9 +49,7 @@ export function SignUpModal({
           <div className="mx-auto">
             <Sparkles className="h-8 w-8 text-[#06B6D4] mx-auto mb-2" />
           </div>
-          <DialogTitle className="text-xl font-bold text-[#00ff00]">
-            🎉 Love What You Created?
-          </DialogTitle>
+          <DialogTitle className="text-xl font-bold text-[#00ff00]">🎉 Get One More Free Credit</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
