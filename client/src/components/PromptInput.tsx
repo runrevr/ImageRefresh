@@ -90,6 +90,7 @@ export type OtherSubcategory =
   | "pet-as-human"
   | "self-as-cat"
   | "caricature"
+  | "vampire"
   | "custom-other";
 // Writing tips for better prompts
 const PROMPT_TIPS = [
@@ -426,6 +427,12 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
     placeholder: "E.g., Exaggerate eyes and mouth for humorous effect",
     suggestedPrompt:
       "Transform into a skillful caricature with exaggerated yet recognizable features. Strategically enlarge the most distinctive facial elements by 20-30% while keeping overall facial arrangement intact. Simplify less important features for contrast with the exaggerated ones. Apply bold, confident pen or marker-style linework with vibrant watercolor or marker-style coloring. Enhance expressiveness with slightly enlarged eyes and exaggerated facial expression. Keep the body proportions smaller relative to the head (about 1:4 ratio). Add subtle details that emphasize personal characteristics, hobbies, or occupation. The final image should be immediately recognizable as the subject while being playful and humorous without crossing into mockery.",
+  },
+  vampire: {
+    title: "Vampire Transformation",
+    description: "Transform into a classic gothic vampire with pale skin and fangs.",
+    placeholder: "E.g., Add dramatic cape and gothic mansion background",
+    suggestedPrompt: "Transform the person into a classic vampire with pale, porcelain skin, subtle fangs, and piercing eyes with a slight red glow. Add a dramatic black cape with red interior lining. Style the hair in an elegant, timeless fashion. Set against a gothic mansion or castle backdrop with moonlight and fog. Include subtle supernatural elements like bats in the background. Maintain the person's core facial features while adding the vampire aesthetic.",
   },
   "custom-other": {
     title: "Create Your Own",
