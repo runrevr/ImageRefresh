@@ -377,7 +377,11 @@ export default function ResultView({
 
         {/* Image Grid - Above the Fold */}
         <div className="mb-8">
-          <div className={`grid gap-6 ${secondTransformedImage || coloringBookImage ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+          <div className={`grid gap-6 ${
+            secondTransformedImage && coloringBookImage ? 'grid-cols-1 md:grid-cols-3' :
+            secondTransformedImage || coloringBookImage ? 'grid-cols-1 md:grid-cols-2' : 
+            'grid-cols-1'
+          }`}>
             {/* First transformed image */}
             <div className="space-y-4">
               <div 
@@ -449,36 +453,29 @@ export default function ResultView({
             </div>
 
             {/* Second transformed image (if available) */}
-            {(secondTransformedImage || coloringBookImage) && (
+            {secondTransformedImage && (
               <div className="space-y-4">
                 <div 
-                  className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === (secondTransformedImage || coloringBookImage) ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
+                  className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === secondTransformedImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
                   onClick={() => {
-                    const imageToSelect = secondTransformedImage || coloringBookImage;
-                    if (imageToSelect) {
-                      setSelectedImage(imageToSelect);
-                      saveImageSelection(imageToSelect);
-                    }
+                    setSelectedImage(secondTransformedImage);
+                    saveImageSelection(secondTransformedImage);
                   }}
                 >
                   <div className="aspect-square relative">
-                    {(secondTransformedImage || coloringBookImage) && (
-                      <img 
-                        src={secondTransformedImage || coloringBookImage || ''} 
-                        alt="Transformed image option 2" 
-                        className="object-cover w-full h-full" 
-                      />
-                    )}
-                    {selectedImage === (secondTransformedImage || coloringBookImage) && (
+                    <img 
+                      src={secondTransformedImage} 
+                      alt="Transformed image option 2" 
+                      className="object-cover w-full h-full" 
+                    />
+                    {selectedImage === secondTransformedImage && (
                       <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
                         <Check className="h-4 w-4" />
                       </div>
                     )}
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
-                    <p className="text-sm font-medium">
-                      {coloringBookImage && !secondTransformedImage ? 'Coloring Book' : 'Option 2'}
-                    </p>
+                    <p className="text-sm font-medium">Option 2</p>
                   </div>
                 </div>
 
@@ -487,31 +484,93 @@ export default function ResultView({
                   <IconButton 
                     icon={RefreshCw} 
                     label="Regenerate" 
-                    onClick={() => handleRegenerate(secondTransformedImage || coloringBookImage || '')}
+                    onClick={() => handleRegenerate(secondTransformedImage)}
                     loading={isRegenerating}
                   />
                   <IconButton 
                     icon={Download} 
                     label="Download" 
-                    onClick={() => handleDownload(secondTransformedImage || coloringBookImage || '')} 
+                    onClick={() => handleDownload(secondTransformedImage)} 
                   />
                   <IconButton 
                     icon={Share2} 
                     label="Share" 
-                    onClick={() => handleShare(secondTransformedImage || coloringBookImage || '')} 
+                    onClick={() => handleShare(secondTransformedImage)} 
                   />
                   <IconButton 
                     icon={Edit} 
                     label="Edit Prompt" 
                     onClick={() => {
-                      setEditImageUrl(secondTransformedImage || coloringBookImage || '');
+                      setEditImageUrl(secondTransformedImage);
                       setShowEditPrompt(true);
                     }} 
                   />
                   <IconButton 
                     icon={ZoomIn} 
                     label="View Full" 
-                    onClick={() => setFullViewImage(secondTransformedImage || coloringBookImage || '')} 
+                    onClick={() => setFullViewImage(secondTransformedImage)} 
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Coloring book image (if available) */}
+            {coloringBookImage && (
+              <div className="space-y-4">
+                <div 
+                  className={`relative rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${selectedImage === coloringBookImage ? 'border-blue-500 shadow-lg' : 'border-transparent'}`}
+                  onClick={() => {
+                    setSelectedImage(coloringBookImage);
+                    saveImageSelection(coloringBookImage);
+                  }}
+                >
+                  <div className="aspect-square relative">
+                    <img 
+                      src={coloringBookImage} 
+                      alt="Coloring book style" 
+                      className="object-cover w-full h-full" 
+                    />
+                    {selectedImage === coloringBookImage && (
+                      <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                        <Check className="h-4 w-4" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-2">
+                    <p className="text-sm font-medium">Coloring Book</p>
+                  </div>
+                </div>
+
+                {/* Icon buttons for coloring book image */}
+                <div className="flex justify-center space-x-1">
+                  <IconButton 
+                    icon={RefreshCw} 
+                    label="Regenerate" 
+                    onClick={() => handleRegenerate(coloringBookImage)}
+                    loading={isRegenerating}
+                  />
+                  <IconButton 
+                    icon={Download} 
+                    label="Download" 
+                    onClick={() => handleDownload(coloringBookImage)} 
+                  />
+                  <IconButton 
+                    icon={Share2} 
+                    label="Share" 
+                    onClick={() => handleShare(coloringBookImage)} 
+                  />
+                  <IconButton 
+                    icon={Edit} 
+                    label="Edit Prompt" 
+                    onClick={() => {
+                      setEditImageUrl(coloringBookImage);
+                      setShowEditPrompt(true);
+                    }} 
+                  />
+                  <IconButton 
+                    icon={ZoomIn} 
+                    label="View Full" 
+                    onClick={() => setFullViewImage(coloringBookImage)} 
                   />
                 </div>
               </div>
