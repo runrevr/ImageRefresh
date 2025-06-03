@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
@@ -138,10 +139,10 @@ export default function TextToImageResults() {
           {/* Header Section */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Transformation Complete!
+              Images Generated Successfully!
             </h1>
             <p className="text-gray-600 mb-2">
-              Click on an image to select it, then use the action buttons below.
+              Click on an image to view it full size, then use the action buttons below.
             </p>
           </div>
 
@@ -189,7 +190,8 @@ export default function TextToImageResults() {
                           Share
                         </Button>
                       </div>
-                      {/* Generation Details */}
+                      
+                      {/* Generation Details - Only show prompt */}
                       {state.prompt && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
                           <div className="text-left">
