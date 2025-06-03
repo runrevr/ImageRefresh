@@ -985,7 +985,7 @@ export default function PromptInput({
               }
 
               const isPopular = isPopularSubcategory(primaryCategory, key);
-                
+
                 return (
                 <Button
                   key={key}
