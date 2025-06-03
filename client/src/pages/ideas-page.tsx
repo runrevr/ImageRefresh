@@ -355,6 +355,17 @@ export default function IdeasPage() {
         tags: ["hairstyle", "retro", "funny", "rock", "80s"],
       },
       {
+        id: "babyMode",
+        name: "Baby Mode",
+        description: "Transform into an adorable baby version of yourself - same clothes, same style, just tiny and cute with all your distinctive features preserved in miniature form.",
+        category: "other",
+        prompt: "Transform the person in this image into a realistic baby (approximately 6-12 months old) while preserving ALL distinctive features and clothing:\n\n1. Clothing preservation:\n   - Keep EXACT same outfit in miniature baby sizes\n   - Preserve all visible clothing items perfectly\n   - Maintain identical colors, patterns, logos, and details\n   - Include ALL accessories: jewelry, glasses, hats, etc.\n   - Clothes should fit naturally on baby body\n\n2. Physical features to maintain:\n   - Keep exact same eye color and eye shape characteristics\n   - Preserve skin tone precisely\n   - Adapt hair to baby-appropriate length but keep same color/texture\n   - Maintain recognizable facial structure in baby proportions\n   - If wearing glasses, include baby-sized glasses\n\n3. Expression and pose:\n   - Capture the person's expression in baby form\n   - Adapt pose to be baby-appropriate while maintaining essence\n   - If standing, show baby standing/supported\n   - If sitting, show baby in similar position\n\n**CRITICAL PRESERVATION RULES:**\n- The baby must wear the COMPLETE original outfit\n- Maintain all unique identifying features\n- Keep exact same clothing details, just sized for baby\n- Preserve distinctive characteristics (freckles as subtle markings, etc.)\n- Result should be immediately recognizable as baby version of this person\n- NEVER change eye color or distinctive features\n- NEVER omit any clothing items or accessories\n- NEVER alter the outfit design or colors\n\n**ABSOLUTELY DO NOT:**\n- Remove or change any clothing items\n- Alter eye color or skin tone\n- Add baby clothes that weren't in original\n- Change hair color (only adjust length/volume for baby realism)\n- Lose any distinctive features or characteristics\n- Make generic baby - must be THIS specific person as a baby",
+        previewImage: babyImage,
+        beforeImage: "/assets/couple-field.png",
+        new: true,
+        tags: ["baby", "transformation", "cute", "miniature"],
+      },
+      {
         id: "hulkamania",
         name: "Hulkamania",
         description: "Transform into the iconic Hulk Hogan look with blonde mustache, red bandana, and wrestling attitude.",
@@ -599,7 +610,7 @@ export default function IdeasPage() {
 
                     {/* Styles count */}
                     <div className="text-xs bg-white/20 text-white font-medium px-3 py-1 rounded-full mb-2">
-                      9 styles
+                      10 styles
                     </div>
 
                     <p className="text-sm text-white/90 mb-4">
