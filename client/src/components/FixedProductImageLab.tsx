@@ -88,18 +88,19 @@ export default function FixedProductImageLab({
   }>({ totalCredits: 0, paidCredits: 0, freeCreditsUsed: true });
 
   // Get authenticated user data
-  const credits = useCredits();
+  const userCreditsQuery = useCredits();
 
-  // Fetch user credits when user changes
+  // Update local user credits when query data changes
   useEffect(() => {
-    if (credits.free !== undefined && credits.paid !== undefined) {
+    if (userCreditsQuery.data) {
+      const totalCredits = (userCreditsQuery.data.freeCreditsUsed ? 0 : 1) + (userCreditsQuery.data.paidCredits || 0);
       setUserCredits({
-        totalCredits: credits.free + credits.paid,
-        paidCredits: credits.paid,
-        freeCreditsUsed: credits.free === 0
+        totalCredits,
+        paidCredits: userCreditsQuery.data.paidCredits || 0,
+        freeCreditsUsed: userCreditsQuery.data.freeCreditsUsed || false
       });
     }
-  }, [credits]);
+  }, [userCreditsQuery.data]);
 
   // Initialize product image lab hook
   const {
@@ -119,7 +120,7 @@ export default function FixedProductImageLab({
     initialCredits,
     onCreditChange,
     testMode: adminTestMode,
-    userId: credits.id || undefined // Pass user ID for authentication
+    userId: userCreditsQuery.data?.id || undefined // Pass user ID for authentication
   });
 
   // References
@@ -128,8 +129,10 @@ export default function FixedProductImageLab({
 
   // Update available credits when credits change
   useEffect(() => {
-    setAvailableCredits(credits.free + credits.paid);
-  }, [credits]);
+    if (userCreditsQuery.data) {
+      setAvailableCredits((userCreditsQuery.data.totalCredits || 0));
+    }
+  }, [userCreditsQuery.data]);
 
   // Update status when lab is processing or encounters an error
   useEffect(() => {
