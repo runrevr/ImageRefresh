@@ -18,9 +18,9 @@ import { createColoringBookImage } from "./coloring-book";
 import productAiStudioRouter from "./product-ai-studio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // PRIORITY: User images endpoint - must be first to prevent route conflicts
-  app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
-    console.log(`[USER-IMAGES-PRIORITY] Direct hit: ${req.method} ${req.originalUrl}`);
+  // User images endpoint with fingerprint support
+  app.get('/api/user-images/:userId?', async (req: Request, res: Response) => {
+    console.log(`[USER-IMAGES] Request: ${req.method} ${req.originalUrl}`);
 
     // Force JSON response with strict headers
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -29,24 +29,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader('Expires', '0');
 
     try {
+      let userId: number;
       const userIdParam = req.params.userId;
-      const userId = parseInt(userIdParam, 10);
+      const fingerprint = req.query.fingerprint as string;
 
-      console.log(`[USER-IMAGES-PRIORITY] Processing userId: "${userIdParam}" -> ${userId}`);
+      console.log(`[USER-IMAGES] UserIdParam: "${userIdParam}", Fingerprint: "${fingerprint}"`);
 
-      if (isNaN(userId) || userId <= 0) {
-        console.log(`[USER-IMAGES-PRIORITY] Invalid userId, returning 400`);
-        return res.status(400).json({ 
-          success: false,
-          error: 'Invalid user ID',
-          received: userIdParam,
-          parsed: userId
-        });
+      // If no userId is provided in the URL, check fingerprint
+      if (!userIdParam) {
+        if (!fingerprint) {
+          return res.status(400).json({ 
+            success: false,
+            error: 'User ID or fingerprint required'
+          });
+        }
+
+        // Get user by fingerprint
+        try {
+          const user = await storage.getUserByFingerprint(fingerprint);
+          if (!user) {
+            return res.status(404).json({ 
+              success: false,
+              error: 'User not found for fingerprint'
+            });
+          }
+          userId = user.id;
+          console.log(`[USER-IMAGES] Found user ${userId} for fingerprint`);
+        } catch (error) {
+          console.error('[USER-IMAGES] Error finding user by fingerprint:', error);
+          return res.status(500).json({
+            success: false,
+            error: 'Failed to find user'
+          });
+        }
+      } else {
+        userId = parseInt(userIdParam, 10);
+        if (isNaN(userId) || userId <= 0) {
+          console.log(`[USER-IMAGES] Invalid userId: "${userIdParam}"`);
+          return res.status(400).json({ 
+            success: false,
+            error: 'Invalid user ID',
+            received: userIdParam
+          });
+        }
       }
 
-      console.log(`[USER-IMAGES-PRIORITY] Calling storage.getUserImages(${userId})`);
+      console.log(`[USER-IMAGES] Fetching images for userId: ${userId}`);
       const images = await storage.getUserImages(userId);
-      console.log(`[USER-IMAGES-PRIORITY] Storage returned ${images.length} images`);
+      console.log(`[USER-IMAGES] Found ${images.length} images`);
 
       const jsonResponse = {
         success: true,
@@ -56,11 +86,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString()
       };
 
-      console.log(`[USER-IMAGES-PRIORITY] Returning JSON with ${images.length} images`);
       return res.status(200).json(jsonResponse);
 
     } catch (error) {
-      console.error('[USER-IMAGES-PRIORITY] Error:', error);
+      console.error('[USER-IMAGES] Error:', error);
       const errorResponse = {
         success: false,
         error: 'Failed to fetch user images',
@@ -1413,38 +1442,7 @@ app.post("/api/credits/deduct", async (req, res) => {
     }
   });
 
-  // User images endpoint
-  app.get('/api/user-images/:userId', async (req, res) => {
-    try {
-      const userId = parseInt(req.params.userId);
-
-      console.log(`[API] GET /api/user-images/${userId} - Request received`);
-
-      if (!userId || isNaN(userId)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid user ID',
-          error: 'invalid_user_id'
-        });
-      }
-
-      const userImages = await storage.getUserImages(userId);
-      console.log(`[API] Found ${userImages.length} images for user ${userId}`);
-
-      return res.status(200).json({
-        success: true,
-        images: userImages
-      });
-
-    } catch (error) {
-      console.error('[API] Error fetching user images:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Error fetching user images',
-        error: error.message
-      });
-    }
-  });
+  
 
   // Delete user image endpoint
   app.delete('/api/user-images/:imageId/:userId', async (req, res) => {

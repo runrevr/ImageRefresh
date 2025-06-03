@@ -157,22 +157,51 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
+  // Get user by username for login
+  async getUserByUsername(username: string): Promise<{ id: number; username: string } | null> {
     console.log(`Storage getUserByUsername called with username: ${username}`);
+
     try {
-      const [user] = await db
-        .select()
+      const user = await db
+        .select({
+          id: users.id,
+          username: users.username,
+        })
         .from(users)
-        .where(eq(users.username, username));
-      console.log(`User lookup by username result:`, user ? {
-        id: user.id,
-        typeOfId: typeof user.id,
-        username: user.username
-      } : 'Not found');
-      return user;
+        .where(eq(users.username, username))
+        .limit(1);
+
+      const result = user.length > 0 ? user[0] : null;
+      console.log(`User lookup by username result:`, result ? { id: result.id, typeOfId: typeof result.id, username: result.username } : 'Not found');
+
+      return result;
     } catch (error) {
-      console.error(`Error in getUserByUsername(${username}):`, error);
-      return undefined;
+      console.error(`Error getting user by username ${username}:`, error);
+      throw error;
+    }
+  }
+
+  // Get user by fingerprint
+  async getUserByFingerprint(fingerprint: string): Promise<{ id: number; username: string } | null> {
+    console.log(`Storage getUserByFingerprint called with fingerprint: ${fingerprint}`);
+
+    try {
+      const user = await db
+        .select({
+          id: users.id,
+          username: users.username,
+        })
+        .from(users)
+        .where(eq(users.fingerprint, fingerprint))
+        .limit(1);
+
+      const result = user.length > 0 ? user[0] : null;
+      console.log(`User lookup by fingerprint result:`, result ? { id: result.id, username: result.username } : 'Not found');
+
+      return result;
+    } catch (error) {
+      console.error(`Error getting user by fingerprint ${fingerprint}:`, error);
+      throw error;
     }
   }
 
@@ -518,11 +547,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserImages(userId: number, category?: string): Promise<UserImage[]> {
     const conditions = [eq(userImages.userId, userId)];
-    
+
     if (category) {
       conditions.push(eq(userImages.category, category));
     }
-    
+
     return await db
       .select()
       .from(userImages)
@@ -532,7 +561,7 @@ export class DatabaseStorage implements IStorage {
 
   async getUserImagesByCategory(userId: number): Promise<{personal: UserImage[], product: UserImage[]}> {
     const allImages = await this.getUserImages(userId);
-    
+
     return {
       personal: allImages.filter(img => img.category === 'personal'),
       product: allImages.filter(img => img.category === 'product')
@@ -543,7 +572,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(userImages)
       .where(lt(userImages.expiresAt, new Date()));
-    
+
     return result.rowCount || 0;
   }
 
