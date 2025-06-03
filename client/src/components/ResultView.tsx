@@ -611,26 +611,31 @@ export default function ResultView({
         <div className="flex flex-col space-y-4 mb-8">
           {/* Coloring Book Option */}
           {!coloringBookImage && (
-            <RainbowButton
-              className="w-full"
-              onClick={handleColoringBookTransform}
-              disabled={isColoringBookLoading}
-            >
-              {isColoringBookLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Creating Coloring Book...
-                </>
-              ) : (
-                <>
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Convert to Coloring Book Style
-                  <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
-                    1 Credit
-                  </span>
-                </>
-              )}
-            </RainbowButton>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600 text-center">
+                Click on an image above to select it, then convert to coloring book:
+              </p>
+              <RainbowButton
+                className="w-full"
+                onClick={handleColoringBookTransform}
+                disabled={isColoringBookLoading || !selectedImage}
+              >
+                {isColoringBookLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Creating Coloring Book...
+                  </>
+                ) : (
+                  <>
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Convert Selected Image to Coloring Book Style
+                    <span className="ml-1 text-xs bg-yellow-400 text-black px-1 py-0.5 rounded">
+                      1 Credit
+                    </span>
+                  </>
+                )}
+              </RainbowButton>
+            </div>
           )}
 
           {/* Back to Ideas and Start Fresh buttons */}
