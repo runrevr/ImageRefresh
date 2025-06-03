@@ -902,6 +902,8 @@ export default function UploadPage() {
             if (data.transformedImageUrls.length > 1) {
               setSecondTransformedImage(data.transformedImageUrls[1]);
             }
+          }```text
+
           } else {
             setTransformedImages([data.transformedImageUrl]);
             }
@@ -1242,7 +1244,7 @@ export default function UploadPage() {
                             { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
                             { name: 'Superhero', emoji: '🦸', id: 'superhero' },
                             { name: 'Lego Character', emoji: '🧱', id: 'lego' },
-                            { name: 'Coloring Book', emoji: '📚', id: 'coloring-book' },
+                            { name: 'Coloring Book', emoji: '📚', id: 'coloringBook' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1591,6 +1593,7 @@ export default function UploadPage() {
                             { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
                             { name: 'Superhero', emoji: '🦸', id: 'superhero' },
                             { name: 'Lego Character', emoji: '🧱', id: 'lego' },
+                            { name: 'Coloring Book', emoji: '🎨', id: 'coloringBook' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1826,7 +1829,6 @@ export default function UploadPage() {
         'princess': { category: 'cartoon', key: 'princess' },
         'superhero': { category: 'cartoon', key: 'superhero' },
         'lego': { category: 'cartoon', key: 'lego' },
-        'coloring-book': { category: 'cartoon', key: 'coloringBook' },
         'coloringBook': { category: 'cartoon', key: 'coloringBook' },
         'kids-drawing': { category: 'kids-real', key: 'kids-real' },
         'old-western': { category: 'era', key: 'old-western' },
