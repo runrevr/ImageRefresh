@@ -292,7 +292,7 @@ export default function UploadPage() {
             } else {
               setTransformedImages([data.transformedImageUrl]);
             }
-            
+
             // Also handle direct secondTransformedImageUrl from response
             if (data.secondTransformedImageUrl) {
               setSecondTransformedImage(data.secondTransformedImageUrl);
@@ -905,7 +905,7 @@ export default function UploadPage() {
           } else {
             setTransformedImages([data.transformedImageUrl]);
           }
-          
+
           // Also handle direct secondTransformedImageUrl from response
           if (data.secondTransformedImageUrl) {
             setSecondTransformedImage(data.secondTransformedImageUrl);
@@ -1582,7 +1582,8 @@ export default function UploadPage() {
                            selectedTransformation === 'artistic' ? 'Artistic Styles' :
                            selectedTransformation === 'kids-real' ? 'Kids Drawing' : 'Selected'} Styles
                         </h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
+                        <```python
+div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
                           {selectedTransformation === 'animation' && [
                             { name: 'Super Mario Bros', emoji: '🍄', id: 'mario' },
                             { name: 'Minecraft', emoji: '🟫', id: 'minecraft' },
@@ -1814,4 +1815,462 @@ export default function UploadPage() {
       />
     </div>
   );
+
+    // Get the prompt from the appropriate style definition in PromptInput.tsx
+    const getPromptFromStyleId = (styleId: string): string => {
+      // Create a mapping from style IDs to PromptInput categories/keys
+      const styleMapping: Record<string, { category: string; key: string }> = {
+        'super-mario': { category: 'cartoon', key: 'super-mario' },
+        'minecraft': { category: 'cartoon', key: 'minecraft' },
+        'pixar': { category: 'cartoon', key: 'pixar' },
+        'dreamworks': { category: 'cartoon', key: 'dreamworks' },
+        'princess': { category: 'cartoon', key: 'princess' },
+        'superhero': { category: 'cartoon', key: 'superhero' },
+        'lego': { category: 'cartoon', key: 'lego' },
+        'coloring-book': { category: 'cartoon', key: 'coloringBook' },
+        'coloringBook': { category: 'cartoon', key: 'coloringBook' },
+        'kids-drawing': { category: 'kids-real', key: 'kids-real' },
+        'old-western': { category: 'era', key: 'old-western' },
+        '90s-hip-hop': { category: 'era', key: '90s-hip-hop' },
+        '1980s': { category: 'era', key: '1980s' },
+        'disco': { category: 'era', key: 'disco-era' },
+        'renaissance': { category: 'era', key: 'renaissance' },
+        'victorian-era': { category: 'era', key: 'victorian-era' },
+        'medieval': { category: 'era', key: 'medieval' },
+        'oil-painting': { category: 'painting', key: 'oil-painting' },
+        'watercolor': { category: 'painting', key: 'watercolor' },
+        'impressionist': { category: 'painting', key: 'impressionist' },
+        'abstract': { category: 'painting', key: 'abstract' },
+        'pop-surrealism': { category: 'painting', key: 'pop-surrealism' },
+        'art-deco': { category: 'painting', key: 'art-deco' },
+        'mullets': { category: 'other', key: 'mullets' },
+        'hulkamania': { category: 'other', key: 'hulkamania' },
+        'babyMode': { category: 'other', key: 'babyMode' },
+        'baby-prediction': { category: 'other', key: 'baby-prediction' },
+        'future-self': { category: 'other', key: 'future-self' },
+        'ghibli-style': { category: 'other', key: 'ghibli-style' },
+        'ai-action-figure': { category: 'other', key: 'ai-action-figure' },
+        'pet-as-human': { category: 'other', key: 'pet-as-human' },
+        'self-as-cat': { category: 'other', key: 'self-as-cat' },
+        'caricature': { category: 'other', key: 'caricature' },
+        'vampire': { category: 'other', key: 'vampire' },
+      };
+
+      const mapping = styleMapping[styleId];
+      if (!mapping) {
+        console.warn(`No mapping found for style ID: ${styleId}`);
+        return "Transform the image in an artistic style";
+      }
+
+      // Special handling for coloring book - use the dedicated endpoint
+      if (mapping.key === 'coloringBook') {
+        console.log('Coloring book style detected - should use dedicated endpoint');
+        return CARTOON_STYLES.coloringBook.suggestedPrompt;
+      }
+
+      // Get the prompt from the appropriate style definition in PromptInput.tsx
+      switch (mapping.category) {
+        case 'cartoon':
+          return CARTOON_STYLES[mapping.key as keyof typeof CARTOON_STYLES]?.suggestedPrompt || "Transform the image in a cartoon style";
+        case 'era':
+          return ERA_STYLES[mapping.key as keyof typeof ERA_STYLES]?.suggestedPrompt || "Transform the image in a historical style";
+        case 'painting':
+          return PAINTING_STYLES[mapping.key as keyof typeof PAINTING_STYLES]?.suggestedPrompt || "Transform the image in a painting style";
+        case 'other':
+          return OTHER_STYLES[mapping.key as keyof typeof OTHER_STYLES]?.suggestedPrompt || "Transform the image in a fun style";
+        case 'kids-real':
+          return "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.";
+        default:
+          return "Transform the image in an artistic style";
+      }
+    };
+
+// Handle prompt submission - this function sends the transformation request
+  const handlePromptSubmit = async (
+    promptText: string,
+    imageSize: string,
+  ) => {
+    if (!originalImagePath) {
+      toast({
+        title: "Missing Image",
+        description: "Please upload an image first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!promptText || promptText.trim().length === 0) {
+      toast({
+        title: "Missing Prompt",
+        description: "Please provide a prompt for the transformation.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check credits and authentication before proceeding
+    if (!checkCreditsAndAuth()) {
+      return;
+    }
+
+    // Log the full prompt for debugging
+    const promptLength = promptText?.length || 0;
+    const promptPreview = promptText ? promptText.substring(0, 50) + "..." : "empty";
+    console.log("Full prompt being sent:", promptText);
+
+    setPrompt(promptText);
+    setCurrentStep(Step.Processing);
+
+    // Reset the flag when submitting a new transformation
+    setHasTriedAnotherPrompt(false);
+
+    // Scroll to top to see the processing state
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    try {
+      // Log the full request details
+      console.log("Sending transformation request with data:", {
+        originalImagePath,
+        prompt: promptText,
+        promptLength: promptText?.length || 0,
+        userId: userCredits?.id,
+        imageSize: imageSize,
+      });
+
+      if (!originalImagePath) {
+        console.error("Missing originalImagePath. Upload may not have completed properly.");
+        throw new Error("Missing image path. Please upload an image again.");
+      }
+
+      if (!promptText || promptText.trim().length === 0) {
+        console.error("Empty prompt text");
+        throw new Error("Missing prompt text. Please provide a description for the transformation.");
+      }
+
+      console.log("Processing image transformation...");
+
+      const response = await fetch("/api/transform", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          originalImagePath,
+          prompt: promptText,
+          userId: userCredits?.id,
+          imageSize: imageSize,
+        }),
+      });
+
+      // Handle both success and error responses
+      try {
+        const data = await response.json();
+
+        // Check if the transformation was successful
+        if (response.ok) {
+          console.log("Image transformation completed successfully");
+
+          // Check if the response contains what we need
+          if (data.transformedImageUrl) {
+            // Set the transformed image URL from the response
+            setTransformedImage(data.transformedImageUrl);
+
+            // Handle multiple variations if available
+            if (data.transformedImageUrls && data.transformedImageUrls.length > 0) {
+              setTransformedImages(data.transformedImageUrls);
+              // Set second image if we have multiple variations
+              if (data.transformedImageUrls.length > 1) {
+                setSecondTransformedImage(data.transformedImageUrls[1]);
+              }
+            } else {
+              setTransformedImages([data.transformedImageUrl]);
+            }
+
+            // Also handle direct secondTransformedImageUrl from response
+            if (data.secondTransformedImageUrl) {
+              setSecondTransformedImage(data.secondTransformedImageUrl);
+            }
+
+            // Store transformation data for potential later edits
+            setCurrentTransformation({
+              id: data.transformationId,
+              prompt: promptText,
+              transformedImageUrl: data.transformedImageUrl
+            });
+
+            // Move to the result step
+            setCurrentStep(Step.Result);
+
+            // If user had free credits available and used one, update the state
+            if (userCredits && !userCredits.freeCreditsUsed) {
+              setUserCredits(prev => {
+                if (!prev) return null;
+                return { ...prev, freeCreditsUsed: true };
+              });
+            } else if (userCredits && userCredits.paidCredits > 0) {
+              // If they used a paid credit, decrement the count
+              setUserCredits(prev => {
+                if (!prev) return null;
+                return { ...prev, paidCredits: prev.paidCredits - 1 };
+              });
+
+              // Log the updated credit count
+              console.log("Credits updated:", userCredits.paidCredits - 1);
+            }
+          } else if (data.status === "processing" && data.transformationId) {
+            // Transformation is still processing, we need to poll for status
+            console.log("Transformation is processing, ID:", data.transformationId);
+
+            // Store the transformation ID
+            const transformationId = data.transformationId;
+
+            // Set up polling for the transformation status
+            const maxAttempts = 30; // 90 seconds max wait time (30 attempts * 3 seconds)
+
+            const checkStatus = async () => {
+              try {
+                const statusResponse = await apiRequest(
+                  "GET",
+                  `/api/transform/${transformationId}/status`
+                );
+
+                if (!statusResponse.ok) {
+                  console.error("Error checking transformation status");
+                  toast({
+                    title: "Status Check Failed",
+                    description: "Unable to check transformation status. Please try again.",
+                    variant: "destructive",
+                  });
+                  setCurrentStep(Step.Prompt);
+                  return true; // stop polling on error
+                }
+
+                const statusData = await statusResponse.json();
+
+                if (statusData.status === "completed" && statusData.transformedImageUrl) {
+                  console.log("Transformation completed:", statusData);
+
+                  // Set the transformed image URL
+                  setTransformedImage(statusData.transformedImageUrl);
+
+                  // Handle multiple variations if available
+                  if (statusData.transformedImageUrls && statusData.transformedImageUrls.length > 0) {
+                    setTransformedImages(statusData.transformedImageUrls);
+                    // Set second image if we have multiple variations
+                    if (statusData.transformedImageUrls.length > 1) {
+                      setSecondTransformedImage(statusData.transformedImageUrls[1]);
+                    }
+                  } else {
+                    setTransformedImages([statusData.transformedImageUrl]);
+                  }
+
+                  // Store transformation data
+                  setCurrentTransformation({
+                    id: transformationId,
+                    prompt: promptText,
+                    transformedImageUrl: statusData.transformedImageUrl
+                  });
+
+                  // Move to result step
+                  setCurrentStep(Step.Result);
+
+                  // Update user credits
+                  if (userCredits && !userCredits.freeCreditsUsed) {
+                    setUserCredits(prev => {
+                      if (!prev) return null;
+                      return { ...prev, freeCreditsUsed: true };
+                    });
+                  } else if (userCredits && userCredits.paidCredits > 0) {
+                    setUserCredits(prev => {
+                      if (!prev) return null;
+                      return { ...prev, paidCredits: prev.paidCredits - 1 };
+                    });
+
+                    console.log("Credits updated:", userCredits.paidCredits - 1);
+                  }
+
+                  return true; // stop polling
+                }
+
+                if (statusData.status === "failed") {
+                  console.error("Transformation failed:", statusData.message);
+                  toast({
+                    title: "Transformation Failed",
+                    description: statusData.message || "Failed to transform the image. Please try again.",
+                    variant: "destructive",
+                  });
+                  setCurrentStep(Step.Prompt);
+                  return true; // stop polling
+                }
+
+                console.log("Transformation still processing...");
+                return false; // continue polling
+              } catch (error) {
+                console.error("Error polling transformation status:", error);
+                toast({
+                  title: "Error checking status",
+                  description: "There was a problem checking your transformation status. Please try again.",
+                  variant: "destructive",
+                });
+                setCurrentStep(Step.Prompt);
+                return true; // stop polling on error
+              }
+            };
+
+            // Start polling (every 3 seconds)
+            let attempts = 0;
+
+            const pollTimer = setInterval(async () => {
+              attempts++;
+              try {
+                const isDone = await checkStatus();
+                if (isDone || attempts >= maxAttempts) {
+                  clearInterval(pollTimer);
+
+                  if (attempts >= maxAttempts && !isDone) {
+                    console.error("Transformation polling timed out");
+
+                    // Store transformation ID to allow checking later
+                    if (data.transformationId) {
+                      // Save to localStorage for retrieval later
+                      try {
+                        const pendingTransformations = JSON.parse(localStorage.getItem('pendingTransformations') || '[]');
+                        pendingTransformations.push({
+                          id: data.transformationId,
+                          timestamp: new Date().toISOString(),
+                          prompt: promptText?.substring(0, 100) + '...'
+                        });
+                        localStorage.setItem('pendingTransformations', JSON.stringify(pendingTransformations));
+                      } catch (e) {
+                        console.error("Error storing pending transformation", e);
+                      }
+                    }
+
+                    toast({
+                      title: "Transformation in progress",
+                      description: "Your transformation is still processing. You can check your account page later to see the results.",
+                    });
+                    setCurrentStep(Step.Prompt);
+                  }
+                }
+              } catch (error) {
+                clearInterval(pollTimer);
+                console.error("Error in polling loop:", error);
+              }
+            }, 3000);
+          } else {
+            // No transformation ID or image URL - something went wrong
+            console.error("Missing required data in server response");
+            toast({
+              title: "Missing Data",
+              description: "The server response is missing required information. Please try again.",
+              variant: "destructive",
+            });
+            setCurrentStep(Step.Prompt);
+          }
+        } else {
+          // Handle error responses
+          console.error("Server returned error response:", data);
+          if (data.error === "content_safety") {
+            toast({
+              title: "Content Safety Alert",
+              description:
+                "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
+              variant: "destructive",
+            });
+          } else if (data.error === "credit_required") {
+            if (!authUser) {
+              // Show signup modal for non-authenticated users who need credits
+              console.log("Showing signup modal for guest user who needs credits");
+              setShowSignupModal(true);
+              setCurrentStep(Step.Prompt);
+              return; // Don't show additional error toast
+            } else {
+              // For authenticated users, show regular error message
+              toast({
+                title: "No Credits Available",
+                description: "You need to purchase credits to continue creating transformations.",
+                variant: "destructive",
+              });
+            }
+          } else {
+            toast({
+              title: "Transformation failed",
+              description: data.message || "An unknown error occurred during transformation",
+              variant: "destructive",
+            });
+          }
+          setCurrentStep(Step.Prompt);
+        }
+      } catch (jsonError) {
+        console.error("Failed to parse response as JSON:", jsonError);
+        toast({
+          title: "Transformation failed",
+          description: "An error occurred during transformation. Please try again.",
+          variant: "destructive",
+        });
+        setCurrentStep(Step.Prompt);
+      }
+    } catch (fetchError: any) {
+      console.error("Fetch error for /api/transform:", fetchError);
+      console.error("Error transforming image:", fetchError);
+
+      // Check if this is a fetch response that we haven't handled yet
+      if (fetchError.response && !fetchError.response.ok) {
+        try {
+          const errorData = await fetchError.response.json();
+          console.error("Server returned error response:", errorData);
+
+          if (errorData.error === "credit_required") {
+            if (!authUser) {
+              // Show signup modal for non-authenticated users who need credits
+              console.log("Showing signup modal for guest user who needs credits");
+              setShowSignupModal(true);
+              setCurrentStep(Step.Prompt);
+              return; // Don't show additional error toast
+            } else {
+              // For authenticated users, show regular error message
+              toast({
+                title: "No Credits Available",
+                description: "You need to purchase credits to continue creating transformations.",
+                variant: "destructive",
+              });
+            }
+          } else {
+            toast({
+              title: "Transformation failed",
+              description: errorData.message || "An unknown error occurred during transformation",
+              variant: "destructive",
+            });
+          }
+          setCurrentStep(Step.Prompt);
+          return;
+        } catch (parseError) {
+          console.error("Could not parse error response:", parseError);
+        }
+      }
+
+      let errorMessage = "An error occurred during transformation. Please try again.";
+
+      // Handle some common errors more specifically
+      if (fetchError.message && fetchError.message.includes("OpenAI") && fetchError.message.includes("This model's maximum context length")) {
+        errorMessage = "Your prompt is too long for the AI model. Please use a shorter description.";
+      } else if (fetchError.message && fetchError.message.includes("401")) {
+        errorMessage = "Error connecting to the AI service. Please check your API key configuration.";
+      } else if (fetchError.message && fetchError.message.includes("gpt-4-vision")) {
+        errorMessage = "Your OpenAI account needs organization verification to use the gpt-image-1 model. This is a new model with limited access.";
+      } else if (fetchError.message && fetchError.message.includes("No image URL returned")) {
+        errorMessage = "The gpt-image-1 model is not available for your account. This model requires organization verification with OpenAI.";
+      } else if (fetchError.message && fetchError.message.includes("safety system")) {
+        errorMessage = "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.";
+      }
+
+      toast({
+        title: "Transformation Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      setCurrentStep(Step.Prompt);
+    }
+  };
 }
