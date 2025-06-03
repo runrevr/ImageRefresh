@@ -26,7 +26,7 @@ import { apiRequest } from "@/lib/queryClient";
 
 interface PromptInputProps {
   originalImage: string;
-  onSubmit: (prompt: string, imageSize: string) => void;
+  onSubmit: (prompt: string, imageSize: string, isColoringBook?: boolean) => void;
   onBack: () => void;
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
@@ -611,6 +611,17 @@ export default function PromptInput({
 
     // Special handling for category-specific prompts
     let finalPrompt = promptText;
+
+    // Check if this is a coloring book transformation
+    if (primaryCategory === "cartoon" && cartoonSubcategory === "coloringBook") {
+      finalPrompt = CARTOON_STYLES.coloringBook.suggestedPrompt;
+      console.log("Using full coloring book prompt:", finalPrompt);
+      
+      // Route to coloring book endpoint instead of regular transform
+      setIsLoading(true);
+      onSubmit(finalPrompt, imageSize, true); // Pass true to indicate coloring book transformation
+      return;
+    }
 
     // If we're using a mullet transformation, make sure we're sending the full prompt
     if (primaryCategory === "other" && otherSubcategory === "mullets") {
