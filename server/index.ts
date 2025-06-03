@@ -18,6 +18,7 @@ import { setupStaticRoutes } from "./routes/static-routes";
 import { setupProductImageLabRoutes } from "./routes/product-image-lab-routes";
 import { setupAnthropicTestRoutes } from "./routes/anthropic-test";
 import uploadEnhanceApiRoutes from "./routes/upload-enhance-api";
+import { setupAPIProxy } from "./api-proxy";
 import fs from 'fs';
 import path from 'path';
 import { createServer } from 'http'; // Import createServer
@@ -109,6 +110,9 @@ app.get('/api/test', (req, res) => {
     timestamp: new Date()
   });
 });
+
+// PRIORITY: Setup API proxy for user images before any other middleware
+setupAPIProxy(app);
 
 // Setup authentication (passport, sessions, etc.)
 setupAuth(app);
