@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import ImageUploader from "@/components/ImageUploader";
-import PromptInput from "@/components/PromptInput";
 import ProcessingState from "@/components/ProcessingState";
 import ResultView from "@/components/ResultView";
 import EditPrompt from "@/components/EditPrompt";
@@ -30,15 +29,11 @@ enum Step {
 }
 
 // Import transformation types and style definitions from PromptInput
-import { 
+import PromptInput, { 
   TransformationType,
   CartoonSubcategory,
   ProductSubcategory,
   OtherSubcategory,
-} from "@/components/PromptInput";
-
-// Import the style objects from PromptInput
-import PromptInput, { 
   CARTOON_STYLES,
   PAINTING_STYLES, 
   ERA_STYLES,
