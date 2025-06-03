@@ -1800,6 +1800,9 @@ export default function UploadPage() {
                 onTryAgain={handleTryAgain}
                 onNewImage={handleNewImage}
                 onStartEdit={handleStartEdit}
+                freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
+                paidCredits={userCredits?.paidCredits || 0}
+                userId={userCredits?.id}
               />
             )}
 
