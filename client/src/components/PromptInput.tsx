@@ -612,15 +612,10 @@ export default function PromptInput({
     // Special handling for category-specific prompts
     let finalPrompt = promptText;
 
-    // Check if this is a coloring book transformation
+    // Check if this is a coloring book transformation - treat it like any other style
     if (primaryCategory === "cartoon" && cartoonSubcategory === "coloringBook") {
       finalPrompt = CARTOON_STYLES.coloringBook.suggestedPrompt;
       console.log("Using full coloring book prompt:", finalPrompt);
-      
-      // Route to coloring book endpoint instead of regular transform
-      setIsLoading(true);
-      onSubmit(finalPrompt, imageSize, true); // Pass true to indicate coloring book transformation
-      return;
     }
 
     // If we're using a mullet transformation, make sure we're sending the full prompt
