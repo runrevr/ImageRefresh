@@ -37,11 +37,44 @@ export function ImageGallery() {
   const { user } = useAuth();
   const isAuthenticated = !!user;
 
+  console.log('[ImageGallery] Authentication state:', { user: !!user, userId: user?.id });
+
   // Fetch categorized images
-  const { data: categorizedImages, isLoading } = useQuery<CategorizedImages>({
+  const { data: categorizedImages, isLoading, error } = useQuery<CategorizedImages>({
     queryKey: ['/api/user/images', 'categorized'],
     enabled: isAuthenticated,
     retry: false,
+    queryFn: async () => {
+      console.log('[ImageGallery] Fetching images from API...');
+      const response = await fetch('/api/user/images?category=categorized', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('[ImageGallery] API response status:', response.status);
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication required');
+        }
+        throw new Error(`Failed to fetch images: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('[ImageGallery] API response data:', data);
+      return data;
+    },
+  });
+
+  console.log('[ImageGallery] Query state:', { 
+    isLoading, 
+    error: error?.message, 
+    hasData: !!categorizedImages,
+    personalCount: categorizedImages?.personal?.length || 0,
+    productCount: categorizedImages?.product?.length || 0
   });
 
   // Delete image mutation
@@ -162,6 +195,18 @@ export function ImageGallery() {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Images</h2>
+        <p className="text-muted-foreground mb-4">{error.message}</p>
+        <Button onClick={() => window.location.reload()}>
+          Try Again
+        </Button>
       </div>
     );
   }

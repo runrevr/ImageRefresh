@@ -52,6 +52,7 @@ import PrebuiltResults from "./pages/prebuilt-results";
 import MyImages from "./pages/my-images";
 import TextToImage from "./pages/text-to-image";
 import GalleryPage from "./pages/gallery";
+import MySavedImages from "./pages/my-saved-images";
 
 function Router() {
   return (
@@ -115,6 +116,7 @@ function Router() {
         <Route path="/text-to-image" component={TextToImage} />
         <ProtectedRoute path="/my-images" component={MyImages} />
         <ProtectedRoute path="/gallery" component={GalleryPage} />
+        <ProtectedRoute path="/saved-images" component={MySavedImages} />
         <Route component={NotFound} />
       </Switch>
     </>
