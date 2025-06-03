@@ -85,7 +85,7 @@ export function SignUpModal({
             <Button
               onClick={handleSignUpWithEmail}
               variant="outline"
-              className="w-full border-[#06B6D4] text-[#06B6D4] hover:bg-[#06B6D4] hover:text-white font-semibold py-3"
+              className="w-full border-[#06B6D4] text-[#06B6D4] hover:bg-[#06B6D4] hover:text-white font-semibold py-3 bg-[#84CC16]"
             >
               Sign Up with Email
             </Button>
