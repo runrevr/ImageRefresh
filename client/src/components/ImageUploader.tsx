@@ -34,7 +34,7 @@ const SAMPLE_IMAGES = [
 
 export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(isUploading);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileError, setFileError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -161,6 +161,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     try {
       const formData = new FormData();
       formData.append('image', file);
+		  const fileName = file.name;
 
       // Simulate progress for better UX
       const progressInterval = setInterval(() => {
@@ -195,9 +196,9 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
 
       // Small delay to show 100% progress
       setTimeout(() => {
-        console.log("Calling onImageUploaded with:", data.imagePath, data.imageUrl);
-        onImageUploaded(data.imagePath, data.imageUrl);
-      }, 300);
+          console.log("Calling onImageUpload with:", data.imageUrl, fileName);
+          onImageUploaded(data.imagePath, data.imageUrl);
+        }, 300);
 
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -308,7 +309,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
                   <h3 className="text-xl font-medium mb-2">Add Your Image</h3>
                   <p className="text-gray-500">Take a photo or choose from your gallery</p>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <Button
                     onClick={takePhoto}
@@ -317,7 +318,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
                     <Camera className="h-8 w-8" />
                     <span className="text-sm font-medium">Take Photo</span>
                   </Button>
-                  
+
                   <Button
                     onClick={uploadPhoto}
                     className="h-32 flex flex-col items-center justify-center space-y-2 bg-green-500 hover:bg-green-600 text-white"
