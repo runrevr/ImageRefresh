@@ -48,8 +48,29 @@ export function setupProductImageLabRoutes() {
   const router = Router();
 
   // Endpoint to handle file uploads
-  router.post('/api/product-image-lab/upload', upload.single('image'), (req, res) => {
+  router.post('/api/product-image-lab/upload', upload.single('image'), async (req, res) => {
     try {
+      // Check authentication
+      const { userId } = req.body;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required for uploads',
+          error: 'authentication_required'
+        });
+      }
+
+      // Verify user exists
+      const { storage } = await import('../storage.ts');
+      const user = await storage.getUser(parseInt(userId));
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found',
+          error: 'user_not_found'
+        });
+      }
+
       // Check if file exists
       if (!req.file) {
         return res.status(400).json({
@@ -85,13 +106,66 @@ export function setupProductImageLabRoutes() {
   // Endpoint to process image transformations
   router.post('/api/product-image-lab/transform', async (req, res) => {
     try {
-      const { imageId, transformationType, options } = req.body;
+      const { imageId, transformationType, options, userId } = req.body;
 
       // Validate input
       if (!imageId || !transformationType) {
         return res.status(400).json({
           success: false,
           message: 'Missing required parameters'
+        });
+      }
+
+      // Import storage to check user credits
+      const { storage } = await import('../storage.ts');
+
+      // Check if user has credits if userId is provided
+      let userCredits = { freeCreditsUsed: false, paidCredits: 0 };
+
+      if (userId) {
+        try {
+          const user = await storage.getUser(parseInt(userId));
+          if (!user) {
+            return res.status(404).json({ 
+              success: false,
+              message: "User not found",
+              error: "authentication_required"
+            });
+          }
+
+          // Check if the user has free credits
+          const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(parseInt(userId));
+          userCredits = {
+            freeCreditsUsed: !hasMonthlyFreeCredit,
+            paidCredits: user.paidCredits,
+          };
+
+          // Check if user has any credits available
+          const totalCredits = (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits;
+          
+          if (totalCredits < 1) {
+            return res.status(403).json({
+              success: false,
+              message: "Not enough credits",
+              error: "credit_required",
+              freeCreditsUsed: !hasMonthlyFreeCredit,
+              paidCredits: user.paidCredits,
+            });
+          }
+        } catch (userError) {
+          console.error("Error checking user credits:", userError);
+          return res.status(500).json({
+            success: false,
+            message: "Error verifying user credits",
+            error: "credit_check_failed"
+          });
+        }
+      } else {
+        // No userId provided - require authentication
+        return res.status(401).json({
+          success: false,
+          message: "Authentication required for image transformations",
+          error: "authentication_required"
         });
       }
 
@@ -118,6 +192,28 @@ export function setupProductImageLabRoutes() {
       // In a real implementation, this would call an image processing API or service
       fs.copyFileSync(originalPath, transformedPath);
 
+      // Deduct credits after successful transformation
+      if (userId) {
+        try {
+          const useFreeCredit = !userCredits.freeCreditsUsed;
+          let newPaidCredits = userCredits.paidCredits;
+          
+          if (useFreeCredit) {
+            // Mark free credit as used
+            await storage.updateUserCredits(parseInt(userId), true, userCredits.paidCredits);
+          } else {
+            // Deduct paid credit
+            newPaidCredits = Math.max(0, userCredits.paidCredits - 1);
+            await storage.updateUserCredits(parseInt(userId), true, newPaidCredits);
+          }
+          
+          console.log(`Credits deducted for user ${userId} - used free credit: ${useFreeCredit}, remaining paid: ${newPaidCredits}`);
+        } catch (creditError) {
+          console.error("Error deducting credits:", creditError);
+          // Don't fail the transformation if credit deduction fails, but log it
+        }
+      }
+
       // Return the information about the transformed image
       return res.status(200).json({
         success: true,
@@ -143,16 +239,59 @@ export function setupProductImageLabRoutes() {
   });
 
   // Endpoint to get credit information
-  router.get('/api/product-image-lab/credits', (req, res) => {
-    // In a real implementation, this would retrieve the user's credit information
-    // from a database or authentication context
-    return res.status(200).json({
-      credits: {
-        free: 5,
-        paid: 5,
-        total: 10
+  router.get('/api/product-image-lab/credits', async (req, res) => {
+    try {
+      const { userId } = req.query;
+      
+      if (!userId || typeof userId !== 'string') {
+        return res.status(401).json({
+          success: false,
+          message: "Authentication required",
+          error: "authentication_required"
+        });
       }
-    });
+
+      const userIdNum = parseInt(userId);
+      if (isNaN(userIdNum)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid user ID",
+          error: "invalid_user_id"
+        });
+      }
+
+      // Import storage to get user credits
+      const { storage } = await import('../storage.ts');
+      
+      const user = await storage.getUser(userIdNum);
+      if (!user) {
+        return res.status(404).json({ 
+          success: false,
+          message: "User not found",
+          error: "user_not_found"
+        });
+      }
+
+      // Check if the user has free credits
+      const hasMonthlyFreeCredit = await storage.checkAndResetMonthlyFreeCredit(userIdNum);
+      
+      return res.status(200).json({
+        success: true,
+        credits: {
+          free: hasMonthlyFreeCredit ? 1 : 0,
+          paid: user.paidCredits,
+          total: (hasMonthlyFreeCredit ? 1 : 0) + user.paidCredits
+        }
+      });
+      
+    } catch (error: any) {
+      console.error('Error getting credit information:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Error retrieving credit information',
+        error: error.message
+      });
+    }
   });
 
   return router;
