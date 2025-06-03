@@ -37,14 +37,20 @@ export default function MySavedImages() {
       console.log(`[MY-IMAGES] Fetching images for user ${user?.id}`);
       const response = await fetch(`/api/user-images/${user?.id}`);
       
+      console.log(`[MY-IMAGES] Response status: ${response.status}`);
+      console.log(`[MY-IMAGES] Response headers:`, Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
-        console.error(`[MY-IMAGES] API response not OK: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`[MY-IMAGES] API error: ${response.status} - ${errorText}`);
         throw new Error(`Failed to fetch saved images: ${response.status}`);
       }
       
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
+        const responseText = await response.text();
         console.error(`[MY-IMAGES] Invalid content type: ${contentType}`);
+        console.error(`[MY-IMAGES] Response text:`, responseText.substring(0, 200));
         throw new Error('API returned non-JSON response');
       }
       
