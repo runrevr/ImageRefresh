@@ -904,11 +904,9 @@ export default function UploadPage() {
             }
           } else {
             setTransformedImages([data.transformedImageUrl]);
-          ```python
-]);
-          }
+            }
 
-          // Also handle direct secondTransformedImageUrl from response
+            // Also handle direct secondTransformedImageUrl from response
           if (data.secondTransformedImageUrl) {
             setSecondTransformedImage(data.secondTransformedImageUrl);
           }
@@ -1652,7 +1650,7 @@ export default function UploadPage() {
                                   ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
                                   : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
                               }`}
-                              onClick={()={() => {
+                              onClick={() => {
                                 setSelectedSubcategory(style.id);
                                 console.log('Selected style:', style.name);
                               }}
