@@ -21,13 +21,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PRIORITY: User images endpoint - must be first to prevent route conflicts
   app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
     console.log(`[USER-IMAGES-PRIORITY] Direct hit: ${req.method} ${req.originalUrl}`);
-    
+
     // Force JSON response with strict headers
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    
+
     try {
       const userIdParam = req.params.userId;
       const userId = parseInt(userIdParam, 10);
@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`[USER-IMAGES-PRIORITY] Returning JSON with ${images.length} images`);
       return res.status(200).json(jsonResponse);
-      
+
     } catch (error) {
       console.error('[USER-IMAGES-PRIORITY] Error:', error);
       const errorResponse = {
@@ -127,11 +127,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // For development, simulate authentication
     // In production, this would check actual session/token
     const userId = req.headers['x-user-id'] || req.query.userId || '6';
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     // Add user to request object
     req.user = { id: parseInt(userId as string, 10) } as any;
     next();
@@ -907,7 +907,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
             expiresAt
           });
 
-          console.log(`Saved coloring book image to user ${userId}'s collection`);
+          console.log(`Saved coloring book image to user ${userId}'s collection`);```text
         } catch (saveError) {
           console.error("Error saving coloring book image to user collection:", saveError);
           // Don't fail the transformation if saving to collection fails
@@ -1329,7 +1329,7 @@ app.post("/api/credits/deduct", async (req, res) => {
     try {
       const userId = req.user!.id;
       const category = req.query.category as string;
-      
+
       if (category === 'categorized') {
         // Return images organized by category
         const categorizedImages = await storage.getUserImagesByCategory(userId);
@@ -1350,13 +1350,13 @@ app.post("/api/credits/deduct", async (req, res) => {
     try {
       const userId = req.user!.id;
       const imageId = parseInt(req.params.imageId);
-      
+
       if (isNaN(imageId)) {
         return res.status(400).json({ error: "Invalid image ID" });
       }
-      
+
       const deleted = await storage.deleteUserImage(imageId, userId);
-      
+
       if (deleted) {
         res.json({ success: true, message: "Image deleted successfully" });
       } else {
@@ -1373,18 +1373,18 @@ app.post("/api/credits/deduct", async (req, res) => {
     try {
       const userId = req.user!.id;
       const imageId = parseInt(req.params.imageId);
-      
+
       if (isNaN(imageId)) {
         return res.status(400).json({ error: "Invalid image ID" });
       }
-      
+
       const images = await storage.getUserImages(userId);
       const image = images.find(img => img.id === imageId);
-      
+
       if (!image) {
         return res.status(404).json({ error: "Image not found or unauthorized" });
       }
-      
+
       res.json(image);
     } catch (error) {
       console.error("Error fetching user image:", error);
@@ -1400,7 +1400,7 @@ app.post("/api/credits/deduct", async (req, res) => {
       if (user.username !== 'admin') {
         return res.status(403).json({ error: "Admin access required" });
       }
-      
+
       const deletedCount = await storage.deleteExpiredImages();
       res.json({ 
         success: true, 
@@ -1410,6 +1410,78 @@ app.post("/api/credits/deduct", async (req, res) => {
     } catch (error) {
       console.error("Error cleaning up expired images:", error);
       res.status(500).json({ error: "Failed to cleanup expired images" });
+    }
+  });
+
+  // User images endpoint
+  app.get('/api/user-images/:userId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+
+      console.log(`[API] GET /api/user-images/${userId} - Request received`);
+
+      if (!userId || isNaN(userId)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid user ID',
+          error: 'invalid_user_id'
+        });
+      }
+
+      const userImages = await storage.getUserImages(userId);
+      console.log(`[API] Found ${userImages.length} images for user ${userId}`);
+
+      return res.status(200).json({
+        success: true,
+        images: userImages
+      });
+
+    } catch (error) {
+      console.error('[API] Error fetching user images:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Error fetching user images',
+        error: error.message
+      });
+    }
+  });
+
+  // Delete user image endpoint
+  app.delete('/api/user-images/:imageId/:userId', async (req, res) => {
+    try {
+      const imageId = parseInt(req.params.imageId);
+      const userId = parseInt(req.params.userId);
+
+      console.log(`[API] DELETE /api/user-images/${imageId}/${userId} - Request received`);
+
+      if (!imageId || !userId || isNaN(imageId) || isNaN(userId)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid image ID or user ID'
+        });
+      }
+
+      const success = await storage.deleteUserImage(imageId, userId);
+
+      if (success) {
+        return res.status(200).json({
+          success: true,
+          message: 'Image deleted successfully'
+        });
+      } else {
+        return res.status(404).json({
+          success: false,
+          message: 'Image not found or already deleted'
+        });
+      }
+
+    } catch (error) {
+      console.error('[API] Error deleting user image:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Error deleting image',
+        error: error.message
+      });
     }
   });
 

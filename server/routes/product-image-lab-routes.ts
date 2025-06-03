@@ -238,6 +238,43 @@ export function setupProductImageLabRoutes() {
         }
       }
 
+      // Save the transformed image to the database if user is authenticated
+      if (userId) {
+        try {
+          const { storage } = await import('../storage.ts');
+          
+          // Calculate expiry date (45 days from now)
+          const expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + 45);
+          
+          const userImageData = {
+            userId: parseInt(userId),
+            imagePath: `/uploads/${transformedFilename}`,
+            imageUrl: `/uploads/${transformedFilename}`,
+            originalPrompt: options?.prompt || null,
+            imageType: transformationType,
+            category: 'product', // Default category for product lab images
+            transformationId: null,
+            originalImagePath: `/uploads/${originalFile}`,
+            fileSize: null,
+            dimensions: null,
+            isVariant: false,
+            parentImageId: null,
+            expiresAt: expiryDate.toISOString(),
+            createdAt: new Date().toISOString()
+          };
+          
+          console.log(`[PRODUCT-LAB] Saving transformed image to database:`, userImageData);
+          
+          const savedImage = await storage.saveUserImage(userImageData);
+          console.log(`[PRODUCT-LAB] Successfully saved image with ID: ${savedImage.id}`);
+          
+        } catch (saveError) {
+          console.error('[PRODUCT-LAB] Error saving image to database:', saveError);
+          // Don't fail the transformation if saving fails, just log it
+        }
+      }
+
       // Return the information about the transformed image
       return res.status(200).json({
         success: true,
