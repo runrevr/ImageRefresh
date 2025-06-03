@@ -907,7 +907,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
             expiresAt
           });
 
-          console.log(`Saved coloring book image to user ${userId}'s collection`);```text
+          console.log(`Saved coloring book image to user ${userId}'s collection`);
         } catch (saveError) {
           console.error("Error saving coloring book image to user collection:", saveError);
           // Don't fail the transformation if saving to collection fails
