@@ -581,6 +581,12 @@ export default function PromptInput({
       console.log("Using full hulkamania prompt:", finalPrompt);
     }
 
+    // If we're using a self-as-cat transformation, make sure we're sending the full prompt
+    if (primaryCategory === "other" && otherSubcategory === "self-as-cat") {
+      finalPrompt = OTHER_STYLES["self-as-cat"].suggestedPrompt;
+      console.log("Using full self-as-cat prompt:", finalPrompt);
+    }
+
     setIsLoading(true);
     onSubmit(finalPrompt, imageSize);
   };
