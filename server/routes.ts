@@ -486,6 +486,8 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         transformedImageUrls.push(secondTransformedImageUrl);
       }
 
+      console.log(`[TRANSFORM] Final response will include ${transformedImageUrls.length} image URLs:`, transformedImageUrls);
+
       // If this is an edit and we have a previous transformation, increment the edits count
       let transformation = null;
       if (userId) {

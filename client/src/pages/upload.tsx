@@ -278,7 +278,7 @@ export default function UploadPage() {
           if (data.transformedImageUrl) {
             // Set the transformed image URL from the response
             setTransformedImage(data.transformedImageUrl);
-            
+
             // Handle multiple variations if available
             if (data.transformedImageUrls && data.transformedImageUrls.length > 0) {
               setTransformedImages(data.transformedImageUrls);
@@ -351,7 +351,7 @@ export default function UploadPage() {
 
                   // Set the transformed image URL
                   setTransformedImage(statusData.transformedImageUrl);
-                  
+
                   // Handle multiple variations if available
                   if (statusData.transformedImageUrls && statusData.transformedImageUrls.length > 0) {
                     setTransformedImages(statusData.transformedImageUrls);
@@ -780,7 +780,7 @@ export default function UploadPage() {
       'princess': "Transform into Disney princess/prince style with elegant royal attire, refined features, and fairy tale aesthetic",
       'superhero': "Transform into superhero character style with heroic costume, dynamic pose, and comic book appearance",
       'lego': "Transform into LEGO minifigure character with plastic brick-like appearance, cylindrical head, and LEGO aesthetic",
-      
+
       // Historical styles
       'western': "Transform into Old Western cowboy/cowgirl style with period-appropriate clothing, rugged appearance, and frontier aesthetic",
       'hiphop': "Transform into 90s Hip-Hop style with period-appropriate urban fashion, streetwear, and cultural elements",
@@ -789,7 +789,7 @@ export default function UploadPage() {
       'renaissance': "Transform into Renaissance period style with classical art techniques, period clothing, and historical aesthetic",
       'victorian': "Transform into Victorian era style with period-appropriate formal attire and historical fashion",
       'medieval': "Transform into Medieval period style with armor, period clothing, and historical fantasy elements",
-      
+
       // Artistic styles
       'oil': "Transform into oil painting style with rich textures, painterly brushstrokes, and classical art techniques",
       'watercolor': "Transform into watercolor painting style with soft washes, flowing colors, and artistic transparency",
@@ -797,7 +797,7 @@ export default function UploadPage() {
       'abstract': "Transform into abstract art style with geometric shapes, bold colors, and non-representational elements",
       'surrealism': "Transform into Pop Surrealism style with dreamlike elements, vibrant colors, and artistic fantasy",
       'artdeco': "Transform into Art Deco style with geometric patterns, elegant lines, and 1920s aesthetic",
-      
+
       // Fun/Viral styles
       'mullets': "Transform the uploaded photo by replacing only the hair region with an iconic mullet hairstyle. Use the image's hair mask to isolate the hair—do not touch the face, body, clothing, or background. Match the original hair color, texture, and density exactly. Randomly choose one of these top-hair styles for each run: curly, teased volume; short, textured spikes; feathered, classic '80s layers; sleek, modern taper. In every variation, the back must be noticeably longer than the front ('business in front, party in back'). Preserve all facial attributes exactly as in the original, including skin tone and smoothness, facial proportions and bone structure, eye color, eye shape, lips, and expression, age appearance. Seamlessly blend shadows, highlights, and lighting so the new hair looks like part of the original photograph.",
       'hulkamania': "Transform into the iconic Hulk Hogan 'Hulkamania' style. Add a distinctive blonde handlebar mustache, a red bandana with 'HULKAMANIA' text, and dress in a bright yellow tank top with 'HULK RULES' text. Include Hulk Hogan's signature confident, charismatic expression and pose.",
@@ -808,23 +808,23 @@ export default function UploadPage() {
       'pet-human': "Transform the pet into a human character while maintaining recognizable traits and personality.",
       'self-cat': "Transform the person into a photorealistic cat wearing business attire including a suit, tie, and a purple bandana.",
       'caricature': "Transform into a skillful caricature with exaggerated yet recognizable features, bold linework, and vibrant coloring.",
-      
+
       // Kids Drawing
       'kids-drawing': "Transform the kids drawing into a photorealistic version while maintaining the original character and style."
     };
 
     const stylePrompt = stylePrompts[selectedSubcategory] || "Transform the image in an artistic style";
     const finalPrompt = prompt.trim() ? `${stylePrompt}. Additional details: ${prompt}` : stylePrompt;
-    
+
     // Convert selectedImageSize to API format
     const imageSizeMap: Record<string, string> = {
       'square': '1024x1024',
       'portrait': '1024x1536',
       'landscape': '1536x1024'
     };
-    
+
     const apiImageSize = imageSizeMap[selectedImageSize] || '1024x1024';
-    
+
     await handlePromptSubmit(finalPrompt, apiImageSize);
   };
 
@@ -862,7 +862,7 @@ export default function UploadPage() {
 
         if (data.transformedImageUrl) {
           setTransformedImage(data.transformedImageUrl);
-          
+
           // Handle multiple variations if available
           if (data.transformedImageUrls && data.transformedImageUrls.length > 0) {
             setTransformedImages(data.transformedImageUrls);
@@ -887,7 +887,8 @@ export default function UploadPage() {
           if (userCredits && !userCredits.freeCreditsUsed) {
             setUserCredits(prev => {
               if (!prev) return null;
-              return { ...prev, freeCreditsUsed: true };
+              ```
+return { ...prev, freeCreditsUsed: true };
             });
           } else if (userCredits && userCredits.paidCredits > 0) {
             setUserCredits(prev => {
