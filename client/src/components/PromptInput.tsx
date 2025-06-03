@@ -109,7 +109,7 @@ type StyleOption = {
 };
 
 // Cartoon subcategories
-const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
+export const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   "super-mario": {
     title: "Super Mario Bros",
     description:
@@ -181,7 +181,7 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
 
 
 // Painting subcategories
-const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
+export const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
   "oil-painting": {
     title: "Oil Painting",
     description:
@@ -279,7 +279,7 @@ const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
 };
 
 // Era subcategories
-const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
+export const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
   "old-western": {
     title: "Old Western",
     description:
@@ -354,7 +354,7 @@ const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
 
 // Other subcategories
 
-const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
+export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   mullets: {
     title: "Mullets",
     description:
