@@ -18,6 +18,59 @@ import { createColoringBookImage } from "./coloring-book";
 import productAiStudioRouter from "./product-ai-studio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // PRIORITY: User images endpoint - must be first to prevent route conflicts
+  app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
+    console.log(`[USER-IMAGES-PRIORITY] Direct hit: ${req.method} ${req.originalUrl}`);
+    
+    // Force JSON response with strict headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
+    try {
+      const userIdParam = req.params.userId;
+      const userId = parseInt(userIdParam, 10);
+
+      console.log(`[USER-IMAGES-PRIORITY] Processing userId: "${userIdParam}" -> ${userId}`);
+
+      if (isNaN(userId) || userId <= 0) {
+        console.log(`[USER-IMAGES-PRIORITY] Invalid userId, returning 400`);
+        return res.status(400).json({ 
+          success: false,
+          error: 'Invalid user ID',
+          received: userIdParam,
+          parsed: userId
+        });
+      }
+
+      console.log(`[USER-IMAGES-PRIORITY] Calling storage.getUserImages(${userId})`);
+      const images = await storage.getUserImages(userId);
+      console.log(`[USER-IMAGES-PRIORITY] Storage returned ${images.length} images`);
+
+      const jsonResponse = {
+        success: true,
+        count: images.length,
+        userId: userId,
+        images: images,
+        timestamp: new Date().toISOString()
+      };
+
+      console.log(`[USER-IMAGES-PRIORITY] Returning JSON with ${images.length} images`);
+      return res.status(200).json(jsonResponse);
+      
+    } catch (error) {
+      console.error('[USER-IMAGES-PRIORITY] Error:', error);
+      const errorResponse = {
+        success: false,
+        error: 'Failed to fetch user images',
+        details: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      };
+      return res.status(500).json(errorResponse);
+    }
+  });
+
   // Add detailed console logs for debugging
   app.use((req, res, next) => {
     const start = Date.now();
@@ -1158,58 +1211,7 @@ app.post("/api/credits/deduct", async (req, res) => {
   app.get('/api/prebuilt-prompts', getPrebuiltPrompts);
   app.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
 
-  // PRIORITY: User images endpoint - must be early in route order
-  app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
-    console.log(`[USER-IMAGES] Direct hit: ${req.method} ${req.originalUrl}`);
-    
-    // Force JSON response with strict headers
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    
-    try {
-      const userIdParam = req.params.userId;
-      const userId = parseInt(userIdParam, 10);
-
-      console.log(`[USER-IMAGES] Processing userId: "${userIdParam}" -> ${userId}`);
-
-      if (isNaN(userId) || userId <= 0) {
-        console.log(`[USER-IMAGES] Invalid userId, returning 400`);
-        return res.status(400).json({ 
-          success: false,
-          error: 'Invalid user ID',
-          received: userIdParam,
-          parsed: userId
-        });
-      }
-
-      console.log(`[USER-IMAGES] Calling storage.getUserImages(${userId})`);
-      const images = await storage.getUserImages(userId);
-      console.log(`[USER-IMAGES] Storage returned ${images.length} images`);
-
-      const jsonResponse = {
-        success: true,
-        count: images.length,
-        userId: userId,
-        images: images,
-        timestamp: new Date().toISOString()
-      };
-
-      console.log(`[USER-IMAGES] Returning JSON with ${images.length} images`);
-      return res.status(200).json(jsonResponse);
-      
-    } catch (error) {
-      console.error('[USER-IMAGES] Error:', error);
-      const errorResponse = {
-        success: false,
-        error: 'Failed to fetch user images',
-        details: error instanceof Error ? error.message : String(error),
-        timestamp: new Date().toISOString()
-      };
-      return res.status(500).json(errorResponse);
-    }
-  });
+  // Duplicate route removed - using priority route at top of file
 
   app.post('/api/user-images', async (req, res) => {
     try {
