@@ -299,11 +299,7 @@ export default function UploadPage() {
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
                 Upload any image and watch our AI transform it into amazing styles - from cartoons to paintings to historical eras.
               </p>
-              <ImageUploader 
-                  onImageUploaded={handleImageUpload}
-                  userCredits={userCredits}
-                  onShowSignupModal={() => setShowSignupModal(true)}
-                />
+              <ImageUploader onImageUploaded={handleImageUpload} />
             </div>
           )}
 
