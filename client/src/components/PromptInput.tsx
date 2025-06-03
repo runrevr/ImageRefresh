@@ -611,6 +611,12 @@ export default function PromptInput({
       console.log("Using full self-as-cat prompt:", finalPrompt);
     }
 
+    // If we're using a babyMode transformation, make sure we're sending the full prompt
+    if (primaryCategory === "other" && otherSubcategory === "babyMode") {
+      finalPrompt = OTHER_STYLES.babyMode.suggestedPrompt;
+      console.log("Using full babyMode prompt:", finalPrompt);
+    }
+
     setIsLoading(true);
     onSubmit(finalPrompt, imageSize);
   };
