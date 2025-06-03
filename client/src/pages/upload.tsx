@@ -289,6 +289,11 @@ export default function UploadPage() {
             } else {
               setTransformedImages([data.transformedImageUrl]);
             }
+            
+            // Also handle direct secondTransformedImageUrl from response
+            if (data.secondTransformedImageUrl) {
+              setSecondTransformedImage(data.secondTransformedImageUrl);
+            }
 
             // Store transformation data for potential later edits
             setCurrentTransformation({
@@ -872,6 +877,11 @@ export default function UploadPage() {
             }
           } else {
             setTransformedImages([data.transformedImageUrl]);
+          }
+          
+          // Also handle direct secondTransformedImageUrl from response
+          if (data.secondTransformedImageUrl) {
+            setSecondTransformedImage(data.secondTransformedImageUrl);
           }
 
           // Store transformation data
