@@ -22,6 +22,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use((req, res, next) => {
     const start = Date.now();
 
+    // Log all API requests
+    if (req.originalUrl.startsWith('/api/')) {
+      console.log(`[API] ${req.method} ${req.originalUrl} - ${new Date().toISOString()}`);
+    }
+
     // Log when the request completes
     res.on("finish", () => {
       const duration = Date.now() - start;
@@ -1153,51 +1158,56 @@ app.post("/api/credits/deduct", async (req, res) => {
   app.get('/api/prebuilt-prompts', getPrebuiltPrompts);
   app.post('/api/prebuilt-transform', transformWithPrebuiltPrompt);
 
-  // Get user images endpoint with enhanced debugging
+  // PRIORITY: User images endpoint - must be early in route order
   app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
-    // Set JSON content type explicitly
-    res.setHeader('Content-Type', 'application/json');
+    console.log(`[USER-IMAGES] Direct hit: ${req.method} ${req.originalUrl}`);
+    
+    // Force JSON response with strict headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     
     try {
-      const userId = parseInt(req.params.userId, 10);
+      const userIdParam = req.params.userId;
+      const userId = parseInt(userIdParam, 10);
 
-      console.log(`[USER-IMAGES API] Request for user ${userId} (original: ${req.params.userId})`);
-      console.log(`[USER-IMAGES API] Request headers:`, req.headers);
+      console.log(`[USER-IMAGES] Processing userId: "${userIdParam}" -> ${userId}`);
 
       if (isNaN(userId) || userId <= 0) {
-        console.error(`[USER-IMAGES API] Invalid user ID: ${req.params.userId} -> ${userId}`);
-        return res.status(400).json({ error: 'Invalid user ID' });
-      }
-
-      const images = await storage.getUserImages(userId);
-      console.log(`[USER-IMAGES API] Found ${images.length} images for user ${userId}`);
-      
-      // Enhanced logging for debugging
-      if (images.length > 0) {
-        console.log(`[USER-IMAGES API] Sample image:`, {
-          id: images[0].id,
-          userId: images[0].userId,
-          imageType: images[0].imageType,
-          category: images[0].category
+        console.log(`[USER-IMAGES] Invalid userId, returning 400`);
+        return res.status(400).json({ 
+          success: false,
+          error: 'Invalid user ID',
+          received: userIdParam,
+          parsed: userId
         });
       }
 
-      // Ensure we return valid JSON
-      const response = {
+      console.log(`[USER-IMAGES] Calling storage.getUserImages(${userId})`);
+      const images = await storage.getUserImages(userId);
+      console.log(`[USER-IMAGES] Storage returned ${images.length} images`);
+
+      const jsonResponse = {
         success: true,
         count: images.length,
-        images: images
+        userId: userId,
+        images: images,
+        timestamp: new Date().toISOString()
       };
 
-      console.log(`[USER-IMAGES API] Sending response with ${images.length} images`);
-      return res.json(response);
+      console.log(`[USER-IMAGES] Returning JSON with ${images.length} images`);
+      return res.status(200).json(jsonResponse);
       
     } catch (error) {
-      console.error('[USER-IMAGES API] Error fetching user images:', error);
-      return res.status(500).json({ 
+      console.error('[USER-IMAGES] Error:', error);
+      const errorResponse = {
+        success: false,
         error: 'Failed to fetch user images',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
+        details: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      };
+      return res.status(500).json(errorResponse);
     }
   });
 
