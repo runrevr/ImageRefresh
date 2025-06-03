@@ -1681,14 +1681,6 @@ export default function UploadPage() {
                         </div>
                       </div>
                     )}
-
-                <PromptInput
-                  originalImage={originalImage}
-                  selectedTransformation={selectedTransformation}
-                  savedStyle={savedStyle}
-                  onPromptSubmit={handlePromptSubmit}
-                  onNewImage={handleNewImage}
-                />
               </div>
             )}
 
