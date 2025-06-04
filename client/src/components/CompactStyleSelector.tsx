@@ -41,6 +41,7 @@ import {
   type Category,
   type Style
 } from "../../../shared/data.utils";
+import { trackStyleSelection } from "@/utils/analytics";
 
 // Props for the component
 interface CompactStyleSelectorProps {
@@ -62,10 +63,10 @@ export default function CompactStyleSelector({
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || "");
   const [showMobileSelect, setShowMobileSelect] = useState(window.innerWidth < 640);
-  
+
   // Get categories
   const categories = getCategories();
-  
+
   // Get styles for the selected category
   const styles = selectedCategory
     ? getStylesByCategory(selectedCategory)
@@ -83,7 +84,7 @@ export default function CompactStyleSelector({
   // Handle style selection
   const handleStyleSelect = (style: Style) => {
     onSelectStyle(style);
-    
+
     toast({
       title: "Style selected",
       description: `You've selected the "${style.name}" style.`,
@@ -103,7 +104,7 @@ export default function CompactStyleSelector({
           <CardTitle className="text-lg font-bold">Select a Style</CardTitle>
           <CardDescription>Choose a transformation style for your image</CardDescription>
         </CardHeader>
-        
+
         <CardContent className="p-4">
           {/* Mobile Dropdown for Categories */}
           <div className="block sm:hidden mb-4">
@@ -123,7 +124,7 @@ export default function CompactStyleSelector({
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Desktop Tabs for Categories */}
           <div className="hidden sm:block mb-4">
             <Tabs 
@@ -143,7 +144,7 @@ export default function CompactStyleSelector({
               </TabsList>
             </Tabs>
           </div>
-          
+
           {/* Styles List */}
           {selectedCategory ? (
             <ScrollArea className="pr-3" style={{ maxHeight }}>
@@ -154,7 +155,10 @@ export default function CompactStyleSelector({
                     className={`flex items-center p-2 rounded-md cursor-pointer transition-colors hover:bg-gray-100 ${
                       selectedStyleId === style.id ? 'bg-gray-100 border border-[#2A7B9B]/30' : 'border border-gray-200'
                     }`}
-                    onClick={() => handleStyleSelect(style)}
+                    onClick={() => {
+                      handleStyleSelect(style);
+                      trackStyleSelection(style.category, style.name);
+                    }}
                   >
                     {/* Style Thumbnail */}
                     {showThumbnails && (
@@ -166,7 +170,7 @@ export default function CompactStyleSelector({
                         />
                       </div>
                     )}
-                    
+
                     {/* Style Info */}
                     <div className="flex-grow">
                       <div className="flex items-center justify-between">
@@ -176,7 +180,7 @@ export default function CompactStyleSelector({
                         )}
                       </div>
                       <p className="text-xs text-gray-500 line-clamp-1">{style.description}</p>
-                      
+
                       {/* Badges */}
                       <div className="flex mt-1 space-x-1">
                         {style.featured && (
@@ -199,7 +203,7 @@ export default function CompactStyleSelector({
                   </div>
                 ))}
               </div>
-              
+
               {/* Empty state */}
               {styles.length === 0 && (
                 <div className="py-8 text-center">

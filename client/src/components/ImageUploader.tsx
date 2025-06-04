@@ -8,18 +8,7 @@ import { ArrowUpFromLine, Image, FileWarning, Copy, Download, Camera, Upload } f
 import { formatBytes } from '@/lib/utils';
 import { apiRequest } from '@/lib/queryClient';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-// Declare global analytics functions
-declare global {
-  interface Window {
-    ImageRefreshAnalytics?: {
-      trackImageUpload: (fileType: string, fileSize: number) => void;
-      trackDownload: (category: string, style: string) => void;
-      trackStyleSelection: (category: string, subcategory: string) => void;
-      trackError: (errorType: string, details: string) => void;
-    };
-  }
-}
+import { trackImageUpload } from '@/utils/analytics';
 
 interface ImageUploaderProps {
   onImageUploaded: (imagePath: string, imageUrl: string) => void;
@@ -171,12 +160,10 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     setUploadProgress(0);
 
     // Track image upload analytics
-    if (typeof window !== 'undefined' && window.ImageRefreshAnalytics) {
-      window.ImageRefreshAnalytics.trackImageUpload(
-        file.type.split('/')[1], // 'jpg', 'png', etc
-        file.size
-      );
-    }
+    trackImageUpload(
+      file.type.split('/')[1], // 'jpg', 'png', etc
+      file.size
+    );
 
     try {
       const formData = new FormData();
