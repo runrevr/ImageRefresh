@@ -27,6 +27,7 @@ import dogCatDrawingImage from "../assets/dog-and-cat-drawing.png";
 import dogCatRealImage from "../assets/dog-and-cat-real.png";
 import alicornDrawingImage from "../assets/alicorn-drawing.jpg";
 import alicornRealImage from "../assets/alicorn-real.png";
+import childWithMissingTeethImage from "../assets/child-with-missing-teeth.png";
 
 // Enum for the different steps in the process
 enum Step {
@@ -262,12 +263,12 @@ export default function DentalLanding() {
                   {/* Row 1: Before Images */}
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
                     <img 
-                      src={bearDrawingImage} 
-                      alt="Child's bear drawing" 
-                      className="w-full h-full object-contain p-4"
+                      src={childWithMissingTeethImage} 
+                      alt="Happy child with missing teeth" 
+                      className="w-full h-full object-cover"
                     />
                     <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
-                      Original Drawing
+                      Before Visit
                     </div>
                   </div>
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
