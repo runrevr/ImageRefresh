@@ -1292,21 +1292,8 @@ export default function PromptInput({
                 </button>
               ))
             ) : (
-              // Transform styles
-              CARTOON_STYLES.map((style, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleStyleSelect(style.prompt)}
-                  className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium ${
-                    selectedStyle === style.prompt
-                      ? "border-cyan-500 bg-cyan-500 text-white"
-                      : "border-gray-200 hover:border-cyan-500 bg-white hover:bg-gray-50 text-gray-700 hover:text-cyan-500"
-                  }`}
-                >
-                  {style.name}
-                </button>
-              ))
+              // Transform styles - these would be different style options for transform mode
+              []
             )}
           </div>
         </div>
