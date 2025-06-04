@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,8 @@ import {
   Sparkles,
   Clock, // For era category
   Baby, // For kids to real
+  Plus,
+  Upload,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -26,7 +28,11 @@ import { apiRequest } from "@/lib/queryClient";
 
 interface PromptInputProps {
   originalImage: string;
-  onSubmit: (prompt: string, imageSize: string, isColoringBook?: boolean) => void;
+  onSubmit: (
+    prompt: string,
+    imageSize: string,
+    isColoringBook?: boolean,
+  ) => void;
   onBack: () => void;
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
@@ -302,7 +308,7 @@ export const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
       "Vibrant urban style with iconic fashion and visual elements from 90s hip-hop culture.",
     placeholder: "E.g., Add 90s hip-hop fashion and urban setting",
     suggestedPrompt:
-      "Using the uploaded photo as your sole reference, generate an authentic 1990s hip-hop–style portrait that maintains the subject’s exact skin tone, facial features, and expression. Do not alter any aspect of their natural complexion. Apply the following:• Fashion & Accessories: Convert clothing into iconic ’90s hip-hop fashion—baggy jeans, oversized sports jerseys, branded tracksuits, Timberland boots, or streetwear with bold logos and bright colors. Add chunky gold chains, door-knocker earrings, snapback caps at angles, bandanas, or sports team apparel.• Hairstyles: Style hair in era-specific trends (high-top fades, box braids, flat tops, etc.), adapted to the subject’s original hair texture and color.• Setting: Place against a graffiti-tagged wall,Enhance My Prompt with AI basketball court, city street, or similar urban backdrop.• Color & Lighting: Emulate slightly overexposed flash photography and ’90s film/video color effects—saturated hues, light film grain, and high-contrast look—while keeping all skin tones exactly as in the source.The result should capture the bold, expressive aesthetic of ’90s hip-hop culture without changing the subject’s natural skin color or identity.",
+      "Using the uploaded photo as your sole reference, generate an authentic 1990s hip-hop–style portrait that maintains the subject's exact skin tone, facial features, and expression. Do not alter any aspect of their natural complexion. Apply the following:• Fashion & Accessories: Convert clothing into iconic '90s hip-hop fashion—baggy jeans, oversized sports jerseys, branded tracksuits, Timberland boots, or streetwear with bold logos and bright colors. Add chunky gold chains, door-knocker earrings, snapback caps at angles, bandanas, or sports team apparel.• Hairstyles: Style hair in era-specific trends (high-top fades, box braids, flat tops, etc.), adapted to the subject's original hair texture and color.• Setting: Place against a graffiti-tagged wall,Enhance My Prompt with AI basketball court, city street, or similar urban backdrop.• Color & Lighting: Emulate slightly overexposed flash photography and '90s film/video color effects—saturated hues, light film grain, and high-contrast look—while keeping all skin tones exactly as in the source.The result should capture the bold, expressive aesthetic of '90s hip-hop culture without changing the subject's natural skin color or identity.",
   },
   "1980s": {
     title: "1980s",
@@ -469,10 +475,15 @@ const POPULAR_SUBCATEGORIES = {
 };
 
 // Function to check if a subcategory is popular
-const isPopularSubcategory = (category: string, subcategory: string): boolean => {
+const isPopularSubcategory = (
+  category: string,
+  subcategory: string,
+): boolean => {
   switch (category) {
     case "other":
-      return POPULAR_SUBCATEGORIES.other.includes(subcategory as OtherSubcategory);
+      return POPULAR_SUBCATEGORIES.other.includes(
+        subcategory as OtherSubcategory,
+      );
     // Add more cases as needed
     default:
       return false;
@@ -496,6 +507,10 @@ export default function PromptInput({
   const [isLoading, setIsLoading] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [randomTip, setRandomTip] = useState("");
+  const [uploadedReferenceImage, setUploadedReferenceImage] = useState<
+    string | null
+  >(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Transformation selection state
   const [primaryCategory, setPrimaryCategory] =
@@ -613,7 +628,10 @@ export default function PromptInput({
     let finalPrompt = promptText;
 
     // Check if this is a coloring book transformation - treat it like any other style
-    if (primaryCategory === "cartoon" && cartoonSubcategory === "coloringBook") {
+    if (
+      primaryCategory === "cartoon" &&
+      cartoonSubcategory === "coloringBook"
+    ) {
       finalPrompt = CARTOON_STYLES.coloringBook.suggestedPrompt;
       console.log("Using full coloring book prompt:", finalPrompt);
     }
@@ -828,6 +846,25 @@ export default function PromptInput({
     setIsLoading(false);
   };
 
+  // Handle image upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result;
+        if (typeof result === "string") {
+          setUploadedReferenceImage(result);
+          toast({
+            title: "Reference image uploaded",
+            description: "Your reference image has been added to the prompt.",
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const currentSubcategoryInfo = getCurrentSubcategoryInfo();
   const subcategoryOptions = getSubcategoryOptions();
 
@@ -985,8 +1022,8 @@ export default function PromptInput({
               }
 
               const isPopular = isPopularSubcategory(primaryCategory, key);
-                
-                return (
+
+              return (
                 <Button
                   key={key}
                   variant={
@@ -1015,11 +1052,7 @@ export default function PromptInput({
                     isSubcategoryActive(primaryCategory, key)
                       ? "bg-cyan-500 text-white border-cyan-500 hover:bg-cyan-600"
                       : "text-white bg-gray-800 border-gray-700 hover:bg-gray-700"
-                  } ${
-                    isPopular 
-                      ? "rainbow-border" 
-                      : ""
-                  }`}
+                  } ${isPopular ? "rainbow-border" : ""}`}
                   title={description}
                 >
                   <span className="text-white relative z-10">{title}</span>
@@ -1098,11 +1131,20 @@ export default function PromptInput({
         </div>
 
         <div className="relative">
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-30 pointer-events-none">
-            <div className="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white">
-              +
-            </div>
-          </div>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 z-30 bg-blue-600 hover:bg-blue-700 text-white w-7 h-7 rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white transition-colors cursor-pointer"
+            title="Upload reference image"
+          >
+            +
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
           <Textarea
             placeholder={
               currentSubcategoryInfo?.placeholder || getCustomPlaceholder()
@@ -1113,6 +1155,30 @@ export default function PromptInput({
             rows={1}
           />
         </div>
+
+        {/* Show uploaded reference image if exists */}
+        {uploadedReferenceImage && (
+          <div className="mt-2 p-3 bg-muted/50 rounded-lg flex items-start gap-3">
+            <img
+              src={uploadedReferenceImage}
+              alt="Reference"
+              className="w-16 h-16 object-cover rounded"
+            />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Reference image uploaded</p>
+              <p className="text-xs text-muted-foreground">
+                This image will be used as additional context for your
+                transformation.
+              </p>
+              <button
+                onClick={() => setUploadedReferenceImage(null)}
+                className="text-xs text-destructive hover:underline mt-1"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        )}
 
         {randomTip && (
           <p className="text-sm text-muted-foreground flex items-start">
