@@ -955,8 +955,8 @@ export default function Home() {
         variant: "destructive",
       });
       setCurrentStep(Step.Upload);
-    }```text
-      }
+    }
+  };
   };
 
   // Function to scroll to uploader section
