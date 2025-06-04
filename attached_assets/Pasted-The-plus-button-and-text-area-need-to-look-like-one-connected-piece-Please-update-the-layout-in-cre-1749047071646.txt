@@ -1,0 +1,68 @@
+The plus button and text area need to look like one connected piece. Please update the layout in create.tsx:
+
+Replace the entire prompt input section (the flex container with image upload and textarea) with this:
+
+<div className="relative max-w-2xl mx-auto mb-12">
+ <div className="relative border-4 border-double border-gray-300 rounded-2xl focus-within:border-[#06B6D4] shadow-lg overflow-hidden bg-white">
+   <div className="flex items-start">
+     {/* Image Upload Button/Preview */}
+     <div className="flex-shrink-0 border-r-2 border-gray-200">
+       {uploadedImage ? (
+         <div className="relative w-32 h-32">
+           <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
+           <button
+             onClick={() => fileInputRef.current?.click()}
+             className="absolute top-2 right-2 bg-white/80 backdrop-blur rounded p-1.5 shadow hover:bg-white"
+             title="Change image"
+             type="button"
+           >
+             ✏️
+           </button>
+           <button
+             onClick={() => setUploadedImage(null)}
+             className="absolute top-2 left-2 bg-white/80 backdrop-blur rounded p-1.5 shadow hover:bg-white"
+             title="Remove image"
+             type="button"
+           >
+             ✕
+           </button>
+         </div>
+       ) : (
+         <button
+           onClick={() => fileInputRef.current?.click()}
+           className="w-32 h-32 hover:bg-gray-50 transition-all flex items-center justify-center group"
+           type="button"
+           title="Upload image"
+         >
+           <span className="text-3xl text-gray-400 group-hover:text-[#06B6D4] transition-colors">+</span>
+         </button>
+       )}
+     </div>
+
+     {/* Textarea */}
+     <Textarea
+       value={prompt}
+       onChange={(e) => setPrompt(e.target.value)}
+       placeholder={uploadedImage 
+         ? "Describe how you want to transform this image..." 
+         : "Describe your idea! Example: 'A friendly dragon teaching a young princess how to paint rainbows in a magical forest, bright cheerful colors, whimsical storybook style'"
+       }
+       className="flex-1 p-6 text-sm border-0 focus:outline-none focus:ring-0 min-h-[128px] resize-none bg-transparent"
+       onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
+     />
+   </div>
+ </div>
+ <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
+</div>
+
+Key changes:
+1. Single bordered container that holds both elements
+2. Subtle divider line between upload area and text
+3. Upload button has no border, just hover effect
+4. Added title="Upload image" for hover tooltip
+5. Family-friendly placeholder example
+6. Textarea has no border, seamlessly integrated
+7. Focus state highlights entire container
+8. Image preview fits within the same height as textarea
+
+This creates a cohesive, single input area like Sora's design with a more appropriate example for families.
