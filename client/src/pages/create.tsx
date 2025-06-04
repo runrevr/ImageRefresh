@@ -349,44 +349,44 @@ export default function Create() {
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 {[
                   { 
-                    name: "Bioluminescent magic", 
-                    prompt: "glowing with bioluminescent light, ethereal light trails, soft blue-green glow emanating from within, phosphorescent patterns, magical sparkles floating in air, dark background to enhance luminescence" 
+                    name: "Golden Hour", 
+                    prompt: "captured during golden hour with warm amber sunlight streaming through, creating soft shadows and a dreamy atmosphere, gentle lens flare, honeyed tones throughout the scene, natural outdoor setting with diffused backlighting" 
                   },
                   { 
-                    name: "Steampunk mechanical", 
-                    prompt: "steampunk style, brass gears and copper pipes, Victorian-era mechanical parts, rivets and steam vents, antique bronze finish, clockwork mechanisms visible, industrial revolution aesthetic" 
+                    name: "Double Exposure", 
+                    prompt: "double exposure effect, silhouette blended with secondary imagery, transparent overlay, dreamy fade between images, artistic photographic blend, ethereal combination of two visual elements" 
                   },
                   { 
-                    name: "80s airbrush art", 
-                    prompt: "80s airbrush art style, neon pink and electric blue gradients, chrome metallic effects, retro-futuristic, glossy finish, laser grid background, Miami Vice color palette" 
+                    name: "8K Ultra HD", 
+                    prompt: "ultra high resolution 8K photography, extreme sharpness throughout, every texture and detail crystal clear, professional camera with premium lens, perfect focus from foreground to background, photorealistic quality" 
                   },
                   { 
-                    name: "Comic book pop art", 
-                    prompt: "comic book style, bold black outlines, Ben Day dot shading, vibrant primary colors, speech bubble effects, dynamic action lines, Roy Lichtenstein inspired" 
+                    name: "Black & White", 
+                    prompt: "classic black and white photography with dramatic contrast between lights and darks, deep blacks and bright whites, strong tonal range, timeless monochrome aesthetic, emphasis on form and texture over color" 
                   },
                   { 
-                    name: "Surrealist melting", 
-                    prompt: "surrealist style, melting and warping like Salvador Dalí painting, impossible physics, dreamlike distortions, reality bending, fluid transformations, mysterious floating elements" 
+                    name: "Documentary", 
+                    prompt: "documentary style candid moment captured naturally, unposed and authentic, environmental context visible, photojournalistic approach, available light only, raw and genuine emotion, slice-of-life composition" 
                   },
                   { 
-                    name: "Candyland sweet", 
-                    prompt: "candyland aesthetic, pastel pink and mint green, sugar crystal textures, whipped cream clouds, rainbow sprinkles, glossy candy coating, marshmallow soft lighting" 
+                    name: "Vintage Polaroid", 
+                    prompt: "vintage polaroid photograph, faded white borders, light leaks, nostalgic color shift with slightly washed out colors, slightly overexposed, authentic instant film grain, 1970s instant photo aesthetic, square format" 
                   },
                   { 
-                    name: "Double exposure portrait", 
-                    prompt: "double exposure effect, silhouette blended with [landscape/texture], transparent overlay, dreamy fade between images, artistic photographic blend, ethereal combination" 
+                    name: "80's Airbrush", 
+                    prompt: "80s airbrush art style, neon pink and electric blue gradients, chrome metallic effects, retro-futuristic aesthetic, glossy finish, laser grid background, Miami Vice color palette, smooth blended colors" 
                   },
                   { 
-                    name: "Vintage polaroid", 
-                    prompt: "vintage polaroid photograph, faded white borders, light leaks, nostalgic color shift, slightly overexposed, authentic film grain, 1970s instant photo aesthetic" 
+                    name: "3D Low Poly", 
+                    prompt: "low-poly 3D art style, geometric faceted surfaces, flat shaded polygons, minimalist color palette, early PlayStation graphics aesthetic, angular crystalline structure, simplified geometric forms" 
                   },
                   { 
-                    name: "Tron-style wireframe", 
-                    prompt: "Tron legacy style, glowing neon wireframe on black background, electric blue and orange light trails, digital grid world, cyberpunk geometric patterns, holographic effect" 
+                    name: "3D Animation", 
+                    prompt: "modern 3D animation style like Pixar or DreamWorks, smooth rendered surfaces, vibrant colors, expressive character design, professional CGI quality, detailed textures and lighting, cinematic presentation" 
                   },
                   { 
-                    name: "Low-poly 3D", 
-                    prompt: "low-poly 3D art style, geometric faceted surfaces, flat shaded polygons, minimalist color palette, early PlayStation graphics aesthetic, angular crystalline structure" 
+                    name: "Comic Book", 
+                    prompt: "comic book style illustration, bold black outlines, Ben Day dot shading, vibrant primary colors, speech bubble effects, dynamic action lines, dramatic angles, superhero comic aesthetic" 
                   }
                 ].map((style) => (
                   <button
