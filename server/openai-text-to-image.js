@@ -34,19 +34,20 @@ export async function generateTextToImage(prompt, options = {}) {
     const {
       size = "1024x1024",
       quality = "standard",
-      style = "natural"
+      style = "natural",
+      count = 2
     } = options;
 
     // Validate the size parameter
     const validSizes = ["1024x1024", "1792x1024", "1024x1792"];
     const finalSize = validSizes.includes(size) ? size : "1024x1024";
 
-    console.log(`[OpenAI] [${transformationId}] Using gpt-image-1 model for text-to-image generation with size: ${finalSize}`);
+    console.log(`[OpenAI] [${transformationId}] Using gpt-image-1 model for text-to-image generation with size: ${finalSize}, count: ${count}`);
 
     const response = await openai.images.generate({
       model: "gpt-image-1",
       prompt: prompt,
-      n: 2,
+      n: count,
       size: finalSize,
       moderation: "low"
     });

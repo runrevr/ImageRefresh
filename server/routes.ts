@@ -911,7 +911,8 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
 
           console.log(
             `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,          );
-          } catch (creditError) {
+          }```text
+        } catch (creditError) {
             console.error("Error updating user credits:", creditError);
             // Continue with the response even if credit update failed
           }
@@ -1382,64 +1383,54 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
 
     // Text-to-image generation endpoint
     app.post('/api/generate-images', async (req, res) => {
-      try {
-        console.log('Request Body:', req.body);
-        console.log('[API] Text-to-image generation request received');
+    try {
+      console.log('[API] Text-to-image generation request received');
+      const { prompt, aspectRatio = 'square', variations = 2, numImages = 2 } = req.body;
 
-        const { prompt, aspectRatio } = req.body;
-
-        if (!prompt) {
-          return res.status(400).json({
-            success: false,
-            error: 'Prompt is required'
-          });
-        }
-
-        // Map aspect ratio to size
-        let size = "1024x1024"; // default
-        if (aspectRatio === "wide") {
-          size = "1792x1024";
-        } else if (aspectRatio === "portrait") {
-          size = "1024x1792";
-        }
-
-        // Enhance the prompt based on context
-        let enhancedPrompt = prompt;
-
-        // Use the dedicated OpenAI text-to-image generation service
-        const { generateTextToImage } = await import('./openai-text-to-image.js');
-
-        console.log('[API] Successfully imported generateTextToImage function');
-
-        const result = await generateTextToImage(enhancedPrompt, {
-          size,
-          quality: 'standard',
-          style: 'natural'
-        });
-
-        // Generate a job ID for tracking
-        const jobId = `txt2img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-        // Return the result with metadata
-        res.json({
-          success: true,
-          jobId,
-          imageUrl: result.imageUrls[0], // First image URL
-          imageUrls: result.imageUrls, // All image URLs
-          metadata: {
-            prompt: enhancedPrompt,
-            aspectRatio
-          }
-        });
-
-      } catch (error: any) {
-        console.error('[API] Text-to-image generation error:', error);
-        res.status(500).json({
-          success: false,
-          error: error.message || 'Failed to generate image'
-        });
+      if (!prompt) {
+        return res.status(400).json({ error: 'Prompt is required' });
       }
-    });
+
+      // Use either variations or numImages parameter
+      const imageCount = Math.max(variations, numImages);
+
+      // Map aspect ratio to OpenAI size format
+      let size = "1024x1024";
+      if (aspectRatio === 'wide') {
+        size = "1792x1024";
+      } else if (aspectRatio === 'portrait') {
+        size = "1024x1792";
+      }
+
+      console.log(`[API] Generating ${imageCount} images with size ${size}`);
+
+      const { generateTextToImage } = await import('./openai-text-to-image.js');
+
+      const result = await generateTextToImage(prompt, {
+        size,
+        quality: "standard",
+        style: "natural",
+        count: imageCount
+      });
+
+      console.log('[API] Text-to-image generation completed:', result);
+
+      res.json({
+        success: true,
+        imageUrls: result.imageUrls,
+        transformationId: result.transformationId,
+        prompt: result.prompt,
+        totalImages: result.totalImages
+      });
+
+    } catch (error) {
+      console.error('[API] Error in text-to-image generation:', error);
+      res.status(500).json({ 
+        error: 'Failed to generate images',
+        details: error.message 
+      });
+    }
+  });
 
     // Enhanced image management routes with Personal/Product categorization
     app.get("/api/user/images", simpleAuth, async (req: Request, res: Response) => {

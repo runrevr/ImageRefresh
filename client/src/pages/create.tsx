@@ -228,6 +228,7 @@ export default function Create() {
           body: JSON.stringify({
             prompt: finalPrompt,
             variations: 2,
+            numImages: 2,
             purpose,
             industry,
             aspectRatio,
