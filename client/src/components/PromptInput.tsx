@@ -1099,7 +1099,7 @@ export default function PromptInput({
 
         <div className="relative">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
-            <span className="text-gray-400 text-lg font-light">+</span>
+            <span className="text-gray-500 text-lg font-semibold">+</span>
           </div>
           <Textarea
             placeholder={
@@ -1107,7 +1107,7 @@ export default function PromptInput({
             }
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
-            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-8 pr-3"
+            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-10 pr-3"
             rows={1}
           />
         </div>
