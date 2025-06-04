@@ -1,0 +1,25 @@
+Excellent! I can see the text-to-image page structure. 
+
+Now Step 2: Create the Duplicate with Custom Styles
+
+Please:
+1. Create a new file at client/src/pages/create.tsx
+2. Copy the ENTIRE content from text-to-image.tsx into this new file
+3. Keep the title and subtitle as they are (they're perfect)
+4. REPLACE all 8 photography style buttons with these 10 new ones:
+
+   * { name: "Bioluminescent magic", prompt: "glowing with bioluminescent light, ethereal light trails, soft blue-green glow emanating from within, phosphorescent patterns, magical sparkles floating in air, dark background to enhance luminescence" }
+   * { name: "Steampunk mechanical", prompt: "steampunk style, brass gears and copper pipes, Victorian-era mechanical parts, rivets and steam vents, antique bronze finish, clockwork mechanisms visible, industrial revolution aesthetic" }
+   * { name: "80s airbrush art", prompt: "80s airbrush art style, neon pink and electric blue gradients, chrome metallic effects, retro-futuristic, glossy finish, laser grid background, Miami Vice color palette" }
+   * { name: "Comic book pop art", prompt: "comic book style, bold black outlines, Ben Day dot shading, vibrant primary colors, speech bubble effects, dynamic action lines, Roy Lichtenstein inspired" }
+   * { name: "Surrealist melting", prompt: "surrealist style, melting and warping like Salvador Dalí painting, impossible physics, dreamlike distortions, reality bending, fluid transformations, mysterious floating elements" }
+   * { name: "Candyland sweet", prompt: "candyland aesthetic, pastel pink and mint green, sugar crystal textures, whipped cream clouds, rainbow sprinkles, glossy candy coating, marshmallow soft lighting" }
+   * { name: "Double exposure portrait", prompt: "double exposure effect, silhouette blended with [landscape/texture], transparent overlay, dreamy fade between images, artistic photographic blend, ethereal combination" }
+   * { name: "Vintage polaroid", prompt: "vintage polaroid photograph, faded white borders, light leaks, nostalgic color shift, slightly overexposed, authentic film grain, 1970s instant photo aesthetic" }
+   * { name: "Tron-style wireframe", prompt: "Tron legacy style, glowing neon wireframe on black background, electric blue and orange light trails, digital grid world, cyberpunk geometric patterns, holographic effect" }
+   * { name: "Low-poly 3D", prompt: "low-poly 3D art style, geometric faceted surfaces, flat shaded polygons, minimalist color palette, early PlayStation graphics aesthetic, angular crystalline structure" }
+
+5. Change the grid from "grid-cols-2 md:grid-cols-4" to "grid-cols-2 md:grid-cols-5" to fit 10 buttons nicely
+6. Keep everything else exactly the same for now
+
+Show me the new create.tsx file when done, especially the style buttons section.
