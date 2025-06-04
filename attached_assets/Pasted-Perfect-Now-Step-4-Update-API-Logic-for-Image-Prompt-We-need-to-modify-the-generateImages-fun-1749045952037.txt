@@ -1,0 +1,107 @@
+Perfect! Now Step 4: Update API Logic for Image + Prompt
+
+We need to modify the generateImages function to handle both text-only and image+text scenarios. Please update the create.tsx file:
+
+1. First, let's check if there's an existing /api/edit-image endpoint in your server. Can you quickly check server/routes.ts for any image editing endpoints?
+
+2. In the meantime, update the generateImages function in create.tsx. Replace the entire generateImages function with this:
+
+const generateImages = async () => {
+  if (!prompt.trim()) {
+    toast({
+      title: "Error",
+      description: "Please enter a prompt first",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsGenerating(true);
+
+  try {
+    let finalPrompt = prompt;
+    
+    // Add style prompt if selected
+    if (selectedStylePrompt) {
+      finalPrompt = `${finalPrompt}. ${selectedStylePrompt}`;
+    }
+
+    // Determine which API endpoint to use
+    const endpoint = uploadedImage ? "/api/edit-image" : "/api/generate-images";
+    
+    // Prepare the request body based on whether we have an image
+    const requestBody = uploadedImage 
+      ? {
+          image: uploadedImage,
+          prompt: finalPrompt,
+          aspectRatio
+        }
+      : {
+          prompt: finalPrompt,
+          variations: 2,
+          purpose,
+          industry,
+          aspectRatio,
+          styleIntensity: styleIntensity[0],
+          addText,
+          businessName,
+        };
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.success && result.imageUrls) {
+      // Navigate to results page with the generated images
+      const params = new URLSearchParams({
+        imageUrls: encodeURIComponent(JSON.stringify(result.imageUrls)),
+        prompt: finalPrompt,
+        metadata: encodeURIComponent(JSON.stringify({
+          hasSourceImage: !!uploadedImage,
+          aspectRatio,
+          selectedStyle: selectedStylePrompt ? true : false
+        }))
+      });
+      
+      window.location.href = `/text-to-image-results.html?${params.toString()}`;
+    } else {
+      throw new Error(result.error || "Failed to generate images");
+    }
+  } catch (error) {
+    console.error("Error generating images:", error);
+    toast({
+      title: "Error",
+      description: uploadedImage 
+        ? "Failed to edit image. Please try again." 
+        : "Failed to generate images. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+3. Also update the button text to be more contextual. Find the generate button and update it to:
+   {isGenerating ? (
+     <>
+       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+       Creating Magic...
+     </>
+   ) : (
+     <>
+       <Sparkles className="mr-2 h-5 w-5" />
+       {uploadedImage ? "Transform Image" : "Generate Image"}
+     </>
+   )}
+
+Show me the updated generateImages function and button. Also, let me know what image editing endpoints you find in the server routes.
