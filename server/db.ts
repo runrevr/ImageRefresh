@@ -1,20 +1,42 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
-import * as schema from "../shared/schema.js";
+import { Pool } from 'pg';
 
-neonConfig.webSocketConstructor = ws;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  max: 10,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 5000,
+  maxUses: 7500,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000,
+});
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+// Handle pool errors to prevent crashes
+pool.on('error', (err) => {
+  console.error('🔥 Unexpected database pool error:', err);
+  // Don't exit the process, let the pool handle reconnection
+});
 
-console.log("Initializing database connection...");
+// Handle client connection errors
+pool.on('connect', () => {
+  console.log('✅ Database client connected');
+});
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool, { schema });
-console.log("Database connection established successfully");
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('📡 Closing database pool...');
+  pool.end(() => {
+    console.log('📡 Database pool closed');
+    process.exit(0);
+  });
+});
 
-export { pool, db };
+process.on('SIGTERM', () => {
+  console.log('📡 Closing database pool...');
+  pool.end(() => {
+    console.log('📡 Database pool closed');
+    process.exit(0);
+  });
+});
+
+export default pool;
