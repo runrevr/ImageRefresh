@@ -934,8 +934,9 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           );
 
           console.log(
-            `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,          );
-          } catch (creditError) {
+            `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`
+          );
+        } catch (creditError) {
             console.error("Error updating user credits:", creditError);
             // Continue with the response even if credit update failed
           }
