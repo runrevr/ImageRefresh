@@ -6,6 +6,18 @@ import { Download, ArrowLeftRight, Upload, ImageIcon, Edit, Check, BookOpen, Loa
 import { downloadImage, getFilenameFromPath } from '@/lib/utils';
 import { Link } from 'wouter';
 import EmailCollectionDialog from './EmailCollectionDialog';
+
+// Declare global analytics functions
+declare global {
+  interface Window {
+    ImageRefreshAnalytics?: {
+      trackImageUpload: (fileType: string, fileSize: number) => void;
+      trackDownload: (category: string, style: string) => void;
+      trackStyleSelection: (category: string, subcategory: string) => void;
+      trackError: (errorType: string, details: string) => void;
+    };
+  }
+}
 import { useAuth } from '@/hooks/useAuth';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -110,6 +122,11 @@ export default function ResultView({
       setActionRequiringEmail('download');
       setShowEmailDialog(true);
       return;
+    }
+
+    // Track download analytics
+    if (typeof window !== 'undefined' && window.ImageRefreshAnalytics) {
+      window.ImageRefreshAnalytics.trackDownload('image_transformation', 'transformed_image');
     }
 
     // Otherwise proceed with download of the selected image
