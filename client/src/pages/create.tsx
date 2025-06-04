@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ResultView from "@/components/ResultView";
+import { SafetyRejectionDialog } from "@/components/SafetyRejectionDialog";
 
 export default function Create() {
   const [prompt, setPrompt] = useState("");
@@ -25,6 +26,8 @@ export default function Create() {
   const [selectedStylePrompt, setSelectedStylePrompt] = useState(""); // Track selected photography style prompt
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [resultImages, setResultImages] = useState<string[]>([]);
+  const [showSafetyDialog, setShowSafetyDialog] = useState(false);
+  const [safetyRejectionReason, setSafetyRejectionReason] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -258,13 +261,20 @@ export default function Create() {
       } else {
         throw new Error(result.error || "Failed to generate images");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating images:", error);
-      toast({
-        title: "Error",
-        description: "Failed to generate images. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Check if it's a safety system rejection
+      if (error.message && error.message.includes("safety system")) {
+        setSafetyRejectionReason("Content was rejected by OpenAI's safety system. Please try a different prompt that doesn't involve inappropriate content, especially when using images with children.");
+        setShowSafetyDialog(true);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to generate images. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -493,6 +503,13 @@ export default function Create() {
             />
           </div>
         )}
+
+        {/* Safety Rejection Dialog */}
+        <SafetyRejectionDialog 
+          isOpen={showSafetyDialog}
+          onClose={() => setShowSafetyDialog(false)}
+          reason={safetyRejectionReason}
+        />
       </div>
     </Layout>
   );

@@ -808,23 +808,46 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           const imgResponse = await axios.get(imagePath, { responseType: 'arraybuffer' });
           fs.writeFileSync(tempFile, Buffer.from(imgResponse.data));
           sourceImagePath = tempFile;
-          console.log(`Downloaded image to ${sourceImagePath}`);
         } catch (downloadError) {
-          console.error(`Error downloading image from URL: ${downloadError.message}`);
-          return res.status(404).json({ message: "Failed to download image from URL" });
+          console.error(`Error downloading image: ${downloadError}`);
+          return res.status(400).json({ message: "Failed to download image from URL" });
         }
       } else {
-        // It's a regular file path
-        sourceImagePath = path.isAbsolute(imagePath) ? imagePath : path.join(process.cwd(), imagePath);
+        // Handle local file path - normalize the path
+        let cleanPath = imagePath;
+
+        // Remove leading slash if present to make it relative
+        if (cleanPath.startsWith('/')) {
+          cleanPath = cleanPath.substring(1);
+        }
+
+        // If it doesn't start with 'uploads/', add it
+        if (!cleanPath.startsWith('uploads/')) {
+          cleanPath = `uploads/${cleanPath}`;
+        }
+
+        sourceImagePath = path.join(process.cwd(), cleanPath);
+      }
+
+      console.log(`Source image path: ${sourceImagePath}`);
+
+      // Check if the source image file exists
+      if (!fs.existsSync(sourceImagePath)) {
+        console.error(`Image file not found: ${sourceImagePath}`);
+        console.log(`Attempted paths: ${sourceImagePath}`);
+        // Try alternate path resolution
+        const alternatePath = path.join(process.cwd(), 'uploads', path.basename(imagePath));
+        console.log(`Trying alternate path: ${alternatePath}`);
+        if (fs.existsSync(alternatePath)) {
+          sourceImagePath = alternatePath;
+          console.log(`Found image at alternate path: ${sourceImagePath}`);
+        } else {
+          return res.status(404).json({ message: "Image file not found" });
+        }
       }
 
       console.log(`Processing coloring book transformation for image: ${sourceImagePath}`);
       console.log(`User ID: ${userId || "Guest"}`);
-
-      // Check if the image exists
-      if (!fs.existsSync(sourceImagePath)) {
-        return res.status(404).json({ message: "Image file not found" });
-      }
 
       // Check if user has credits (if userId is provided)
       let userCredits = { freeCreditsUsed: false, paidCredits: 0 };
@@ -888,7 +911,8 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
 
       // Create the transformed image URL - removing leading slash and prepending the server URL
       const transformedImagePath = result.outputPath
-        .replace(process.cwd(), "")
+        .replace```text
+(process.cwd(), "")
         .replace(/^\//, "");
       const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
 
