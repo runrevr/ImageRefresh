@@ -1210,29 +1210,17 @@ export default function PromptInput({
           </div>
         </div>
 
-        <div className="relative">
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-50 bg-blue-600 hover:bg-blue-700 text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold shadow-xl border-2 border-white transition-all duration-200 cursor-pointer hover:scale-105"
-            title="Upload reference image"
-            type="button"
-          >
-            <span className="text-white">+</span>
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageUpload}
-          />
-          <Textarea
-            placeholder={isGenerationMode ? "Describe what you want to create..." : currentSubcategoryInfo?.placeholder || getCustomPlaceholder()}
-            value={promptText}
-            onChange={(e) => setPromptText(e.target.value)}
-            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-12 pr-3 border border-gray-300"
-            rows={1}
-          />
+        <div className="relative max-w-2xl mx-auto mb-12">
+          <div className="relative">
+            <Textarea
+              value={promptText}
+              onChange={(e) => setPromptText(e.target.value)}
+              placeholder={isGenerationMode ? "Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'" : currentSubcategoryInfo?.placeholder || getCustomPlaceholder()}
+              className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
+              onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && handlePromptSubmit()}
+            />
+            <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
+          </div>
         </div>
 
         {/* Show uploaded reference image if exists */}
@@ -1271,21 +1259,60 @@ export default function PromptInput({
 
       {/* Style Pills - Only show in generation mode */}
         {isGenerationMode && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-3 text-gray-800">
-              Choose Generation Style
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {GENERATION_STYLES.map((style, index) => (
+          <div className="mt-12 max-w-4xl mx-auto">
+            <h3 className="text-lg font-semibold mb-3 text-gray-800">Add Photography Style</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { 
+                  name: "Golden Hour", 
+                  prompt: "captured during golden hour with warm amber sunlight streaming through, creating soft shadows and a dreamy atmosphere, gentle lens flare, honeyed tones throughout the scene, natural outdoor setting with diffused backlighting" 
+                },
+                { 
+                  name: "Studio Lighting", 
+                  prompt: "professional studio setting with multiple soft box lights creating even, flattering illumination, clean seamless backdrop, controlled shadows, commercial quality lighting setup, crisp details with balanced exposure" 
+                },
+                { 
+                  name: "Black & White", 
+                  prompt: "classic black and white photography with dramatic contrast between lights and darks, deep blacks and bright whites, no mid-tones, stark shadows creating bold visual impact, timeless monochrome aesthetic" 
+                },
+                { 
+                  name: "Vintage Film", 
+                  prompt: "shot on vintage 35mm film stock, warm orange and brown color grading, subtle film grain texture, slightly faded colors with nostalgic feel, soft focus edges, authentic analog photography aesthetic" 
+                },
+                { 
+                  name: "Documentary", 
+                  prompt: "documentary style candid moment captured naturally, unposed and authentic, environmental context visible, photojournalistic approach, available light only, raw and genuine emotion, slice-of-life composition" 
+                },
+                { 
+                  name: "8K Ultra HD", 
+                  prompt: "ultra high resolution 8K photography, extreme sharpness throughout, every texture and detail crystal clear, professional camera with premium lens, perfect focus from foreground to background, photorealistic quality" 
+                },
+                { 
+                  name: "Motion Blur", 
+                  prompt: "dynamic motion captured with intentional blur, vibrant saturated colors popping against the movement, shutter drag technique, energetic and kinetic feeling, streaks of color suggesting speed and action" 
+                },
+                { 
+                  name: "Street Style", 
+                  prompt: "urban street photography aesthetic, gritty city environment, mixed lighting from neon signs and streetlights, busy atmosphere with environmental context, raw authentic moment, handheld camera feel with slight tilt" 
+                }
+              ].map((style) => (
                 <button
-                  key={index}
+                  key={style.name}
                   type="button"
-                  onClick={() => setSelectedGenerationStyle(selectedGenerationStyle === style.prompt ? null : style.prompt)}
+                  onClick={() => {
+                    // Toggle selection - if already selected, deselect it
+                    if (selectedGenerationStyle === style.prompt) {
+                      setSelectedGenerationStyle(null);
+                    } else {
+                      setSelectedGenerationStyle(style.prompt);
+                    }
+                  }}
                   className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium ${
                     selectedGenerationStyle === style.prompt
-                      ? "border-cyan-500 bg-cyan-500 text-white"
-                      : "border-gray-200 hover:border-cyan-500 bg-white hover:bg-gray-50 text-gray-700 hover:text-cyan-500"
+                      ? "border-[#06B6D4] bg-[#06B6D4] text-white"
+                      : "border-gray-200 hover:border-[#06B6D4] bg-white hover:bg-gray-50 text-gray-700 hover:text-[#06B6D4]"
                   }`}
+                  title={style.prompt}
                 >
                   {style.name}
                 </button>
