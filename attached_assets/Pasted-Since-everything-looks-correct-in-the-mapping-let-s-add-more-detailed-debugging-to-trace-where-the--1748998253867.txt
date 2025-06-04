@@ -1,0 +1,66 @@
+Since everything looks correct in the mapping, let's add more detailed debugging to trace where the prompt is getting lost.
+In your upload.tsx, modify the handleMakeMagic function to add logging:
+javascriptconst handleMakeMagic = async () => {
+  if (!selectedSubcategory || !originalImagePath) {
+    toast({
+      title: "Missing Requirements",
+      description: "Please select a style and upload an image first.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  console.log("DEBUG handleMakeMagic - selectedSubcategory:", selectedSubcategory);
+
+  const detailedPrompt = getPromptFromStyles(selectedSubcategory);
+  console.log("DEBUG handleMakeMagic - detailedPrompt:", detailedPrompt);
+  
+  const finalPrompt = prompt.trim()
+    ? `${detailedPrompt}. Additional details: ${prompt}`
+    : detailedPrompt;
+    
+  console.log("DEBUG handleMakeMagic - finalPrompt being sent:", finalPrompt);
+
+  // Convert selectedImageSize to API format
+  const imageSizeMap: Record<string, string> = {
+    square: "1024x1024",
+    portrait: "1024x1536",
+    landscape: "1536x1024",
+  };
+
+  const apiImageSize = imageSizeMap[selectedImageSize] || "1024x1024";
+
+  await handlePromptSubmit(finalPrompt, apiImageSize);
+};
+Also, in handlePromptSubmit, add a log right before the API call:
+javascriptconst handlePromptSubmit = async (promptText: string, imageSize: string = "square") => {
+  console.log("DEBUG handlePromptSubmit - promptText received:", promptText);
+  console.log("DEBUG handlePromptSubmit - promptText length:", promptText.length);
+  
+  // ... existing validation code ...
+
+  try {
+    console.log("DEBUG API Call - Sending transformation request with:");
+    console.log("  - originalImagePath:", originalImagePath);
+    console.log("  - prompt:", promptText);
+    console.log("  - imageSize:", imageSize);
+    
+    const response = await fetch("/api/transform", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        originalImagePath,
+        prompt: promptText,
+        userId: userCredits?.id,
+        imageSize: imageSize,
+      }),
+    });
+Run the coloring book transformation again and share what the console logs show. This will help us see:
+
+If the correct subcategory is selected
+If the correct prompt is retrieved
+If the prompt is being passed correctly to the API
+
+The issue might be that the prompt is being overwritten somewhere between retrieval and the API call.
