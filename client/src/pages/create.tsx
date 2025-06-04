@@ -247,53 +247,57 @@ export default function Create() {
           </p>
 
           <div className="relative max-w-2xl mx-auto mb-12">
-            <div className="flex gap-3 items-start">
-              {/* Image Upload Button/Preview */}
-              <div className="flex-shrink-0">
-                {uploadedImage ? (
-                  <div className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-300">
-                    <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
+            <div className="relative border-4 border-double border-gray-300 rounded-2xl focus-within:border-[#06B6D4] shadow-lg overflow-hidden bg-white">
+              <div className="flex items-start">
+                {/* Image Upload Button/Preview */}
+                <div className="flex-shrink-0 border-r-2 border-gray-200">
+                  {uploadedImage ? (
+                    <div className="relative w-32 h-32">
+                      <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="absolute top-2 right-2 bg-white/80 backdrop-blur rounded p-1.5 shadow hover:bg-white"
+                        title="Change image"
+                        type="button"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => setUploadedImage(null)}
+                        className="absolute top-2 left-2 bg-white/80 backdrop-blur rounded p-1.5 shadow hover:bg-white"
+                        title="Remove image"
+                        type="button"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="absolute top-1 right-1 bg-white rounded p-1 shadow hover:bg-gray-100"
-                      title="Change image"
+                      className="w-32 h-32 hover:bg-gray-50 transition-all flex items-center justify-center group"
+                      type="button"
+                      title="Upload image"
                     >
-                      ✏️
+                      <span className="text-3xl text-gray-400 group-hover:text-[#06B6D4] transition-colors">+</span>
                     </button>
-                    <button
-                      onClick={() => setUploadedImage(null)}
-                      className="absolute top-1 left-1 bg-white rounded p-1 shadow hover:bg-gray-100"
-                      title="Remove image"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-24 h-24 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-all flex items-center justify-center bg-white"
-                    type="button"
-                  >
-                    <span className="text-4xl text-gray-400 hover:text-[#06B6D4]">+</span>
-                  </button>
-                )}
-              </div>
+                  )}
+                </div>
 
-              {/* Existing Textarea */}
-              <div className="flex-1 relative">
+                {/* Textarea */}
                 <Textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder={uploadedImage 
                     ? "Describe how you want to transform this image..." 
-                    : "Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
+                    : "Describe your idea! Example: 'A friendly dragon teaching a young princess how to paint rainbows in a magical forest, bright cheerful colors, whimsical storybook style'"
                   }
-                  className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
+                  className="flex-1 p-6 text-sm border-0 focus:outline-none focus:ring-0 min-h-[128px] resize-none bg-transparent"
                   onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
                 />
-                <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
               </div>
             </div>
+            <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
+          </div>
 
             {/* Style Pills */}
             <div className="mt-12 max-w-4xl mx-auto">
