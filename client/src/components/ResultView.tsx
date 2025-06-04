@@ -425,16 +425,19 @@ export default function ResultView({
                   label="Regenerate" 
                   onClick={() => handleRegenerate(transformedImage)}
                   loading={isRegenerating}
+                  className="bg-white hover:bg-gray-100 text-gray-700 border"
                 />
                 <IconButton 
                   icon={Download} 
                   label="Download" 
                   onClick={() => handleDownload(transformedImage)} 
+                  className="bg-white hover:bg-gray-100 text-gray-700 border"
                 />
                 <IconButton 
                   icon={Share2} 
                   label="Share" 
                   onClick={() => handleShare(transformedImage)} 
+                  className="bg-white hover:bg-gray-100 text-gray-700 border"
                 />
                 <IconButton 
                   icon={Edit} 
@@ -443,11 +446,13 @@ export default function ResultView({
                     setEditImageUrl(transformedImage);
                     setShowEditPrompt(true);
                   }} 
+                  className="bg-white hover:bg-gray-100 text-gray-700 border"
                 />
                 <IconButton 
                   icon={ZoomIn} 
                   label="View Full" 
                   onClick={() => setFullViewImage(transformedImage)} 
+                  className="bg-white hover:bg-gray-100 text-gray-700 border"
                 />
               </div>
             </div>
@@ -486,16 +491,19 @@ export default function ResultView({
                     label="Regenerate" 
                     onClick={() => handleRegenerate(secondTransformedImage)}
                     loading={isRegenerating}
+                    className="bg-white hover:bg-gray-100 text-gray-700 border"
                   />
                   <IconButton 
                     icon={Download} 
                     label="Download" 
                     onClick={() => handleDownload(secondTransformedImage)} 
+                    className="bg-white hover:bg-gray-100 text-gray-700 border"
                   />
                   <IconButton 
                     icon={Share2} 
                     label="Share" 
                     onClick={() => handleShare(secondTransformedImage)} 
+                    className="bg-white hover:bg-gray-100 text-gray-700 border"
                   />
                   <IconButton 
                     icon={Edit} 
@@ -504,11 +512,13 @@ export default function ResultView({
                       setEditImageUrl(secondTransformedImage);
                       setShowEditPrompt(true);
                     }} 
+                    className="bg-white hover:bg-gray-100 text-gray-700 border"
                   />
                   <IconButton 
                     icon={ZoomIn} 
                     label="View Full" 
                     onClick={() => setFullViewImage(secondTransformedImage)} 
+                    className="bg-white hover:bg-gray-100 text-gray-700 border"
                   />
                 </div>
               </div>
