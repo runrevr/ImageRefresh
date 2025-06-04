@@ -67,7 +67,7 @@ export default function AuthPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!registerName || !registerUsername || !registerPassword || !registerConfirmPassword) {
+    if (!registerName || !registerEmail || !registerPassword || !registerConfirmPassword) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -127,11 +127,11 @@ export default function AuthPage() {
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-username">Username</Label>
+                    <Label htmlFor="login-username">Email</Label>
                     <Input 
                       id="login-username" 
-                      type="text" 
-                      placeholder="Enter your username" 
+                      type="email" 
+                      placeholder="Enter your email address" 
                       value={loginUsername} 
                       onChange={(e) => setLoginUsername(e.target.value)} 
                       required
@@ -192,14 +192,13 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-username">Username</Label>
+                    <Label htmlFor="register-username">Username (Optional)</Label>
                     <Input 
                       id="register-username" 
                       type="text" 
-                      placeholder="Choose a username" 
+                      placeholder="Choose a username (optional)" 
                       value={registerUsername} 
                       onChange={(e) => setRegisterUsername(e.target.value)}
-                      required 
                     />
                   </div>
                   <div className="space-y-2">

@@ -79,7 +79,14 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username: string, password: string, done: any) => {
       try {
-        const user = await storage.getUserByUsername(username);
+        // First try to find user by email
+        let user = await storage.getUserByEmail(username);
+        
+        // If not found by email, try username (for backward compatibility)
+        if (!user) {
+          user = await storage.getUserByUsername(username);
+        }
+        
         if (!user || !(await comparePasswords(password, user.password))) {
           return done(null, false);
         } else {
@@ -105,15 +112,23 @@ export function setupAuth(app: Express) {
     try {
       const { username, password, email, name } = req.body;
       
-      // Check if username already exists
-      const existingUser = await storage.getUserByUsername(username);
-      if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-
       // Email is now required
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
+      }
+      
+      // Check if email already exists
+      const existingEmailUser = await storage.getUserByEmail(email);
+      if (existingEmailUser) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      
+      // Check if username already exists (only if username is provided)
+      if (username) {
+        const existingUsernameUser = await storage.getUserByUsername(username);
+        if (existingUsernameUser) {
+          return res.status(400).json({ message: "Username already exists" });
+        }
       }
       
       // Name is now required
@@ -127,7 +142,7 @@ export function setupAuth(app: Express) {
       const hashedPassword = await hashPassword(password);
       const insertUser = {
         name: name || "User", // Set default name if not provided
-        username,
+        username: username || null, // Username is now optional
         password: hashedPassword,
         email,
         freeCreditsUsed: false, // All users get 1 free credit per month

@@ -5,9 +5,9 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: text("name").default("User"),
-  email: text("email").notNull(),  // Remove unique constraint temporarily
+  email: text("email").notNull().unique(),  // Email should be unique since it's primary login
   password: text("password").notNull(),
-  username: text("username"),  // Remove unique constraint temporarily
+  username: text("username"),  // Username is now optional
   freeCreditsUsed: boolean("free_credits_used").default(false).notNull(),
   lastFreeCredit: timestamp("last_free_credit"), // When the free credit was last used
   paidCredits: integer("paid_credits").default(0).notNull(),

@@ -178,6 +178,27 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // Get user by email for login
+  async getUserByEmail(email: string): Promise<User | null> {
+    console.log(`Storage getUserByEmail called with email: ${email}`);
+
+    try {
+      const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      const result = user.length > 0 ? user[0] : null;
+      console.log(`User lookup by email result:`, result ? { id: result.id, typeOfId: typeof result.id, email: result.email } : 'Not found');
+
+      return result;
+    } catch (error) {
+      console.error(`Error getting user by email ${email}:`, error);
+      throw error;
+    }
+  }
+
   // Get user by fingerprint
   async getUserByFingerprint(fingerprint: string): Promise<{ id: number; username: string } | null> {
     console.log(`Storage getUserByFingerprint called with fingerprint: ${fingerprint}`);
