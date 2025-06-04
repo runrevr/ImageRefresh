@@ -1133,10 +1133,11 @@ export default function PromptInput({
         <div className="relative">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 z-30 bg-blue-600 hover:bg-blue-700 text-white w-7 h-7 rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white transition-colors cursor-pointer"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-50 bg-blue-600 hover:bg-blue-700 text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold shadow-xl border-2 border-white transition-all duration-200 cursor-pointer hover:scale-105"
             title="Upload reference image"
+            type="button"
           >
-            +
+            <span className="text-white">+</span>
           </button>
           <input
             ref={fileInputRef}
@@ -1151,7 +1152,7 @@ export default function PromptInput({
             }
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
-            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-12 pr-3"
+            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-12 pr-3 border border-gray-300"
             rows={1}
           />
         </div>
