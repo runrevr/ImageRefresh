@@ -1136,10 +1136,17 @@ export default function GenerateEnhancementsPage() {
               </div>
 
               <div className="flex gap-3">
-                <Link href="/select-ideas">
+                <Link href="/">
                   <Button variant="outline" className="brand-button-secondary brand-font-body">
                     <ChevronLeft className="w-4 h-4 mr-2" />
-                    Back to Ideas
+                    Back to Home
+                  </Button>
+                </Link>
+
+                <Link href="/upload-enhance">
+                  <Button variant="outline" className="brand-button-secondary brand-font-body">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Start Over
                   </Button>
                 </Link>
 
