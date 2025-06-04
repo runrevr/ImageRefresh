@@ -163,21 +163,32 @@ export default function Create() {
         finalPrompt = `${finalPrompt}. ${selectedStylePrompt}`;
       }
 
-      const response = await fetch("/api/generate-images", {
+      // Choose endpoint based on whether an image is uploaded
+      const endpoint = uploadedImage ? "/api/edit-image" : "/api/generate-images";
+      
+      const requestBody = uploadedImage 
+        ? {
+            image: uploadedImage,
+            prompt: finalPrompt,
+            aspectRatio,
+          }
+        : {
+            prompt: finalPrompt,
+            variations: 2,
+            purpose,
+            industry,
+            aspectRatio,
+            styleIntensity: styleIntensity[0],
+            addText,
+            businessName,
+          };
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          prompt: finalPrompt,
-          variations: 2,
-          purpose,
-          industry,
-          aspectRatio,
-          styleIntensity: styleIntensity[0],
-          addText,
-          businessName,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -272,7 +283,10 @@ export default function Create() {
                 <Textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
+                  placeholder={uploadedImage 
+                    ? "Describe how you want to transform this image..." 
+                    : "Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
+                  }
                   className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
                   onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
                 />
@@ -371,14 +385,14 @@ export default function Create() {
                 <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
                   <RadioGroupItem value="wide" id="wide" />
                   <div>
-                    <Label htmlFor="wide" className="font-medium text-gray-900">Wide (16:9)</Label>
+                    <Label htmlFor="wide" className="font-medium text-gray-900">Landscape (16:9)</Label>
                     <p className="text-sm text-gray-600">Website headers</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
                   <RadioGroupItem value="portrait" id="portrait" />
                   <div>
-                    <Label htmlFor="portrait" className="font-medium text-gray-900">Portrait (9:16)</Label>
+                    <Label htmlFor="portrait" className="font-medium text-gray-900">Portrait (2:3)</Label>
                     <p className="text-sm text-gray-600">Stories/Reels</p>
                   </div>
                 </div>
