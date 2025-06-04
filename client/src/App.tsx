@@ -52,7 +52,6 @@ import PrebuiltPrompts from "./pages/prebuilt-prompts";
 import PrebuiltUpload from "./pages/prebuilt-upload";
 import PrebuiltResults from "./pages/prebuilt-results";
 import MyImages from "./pages/my-images";
-import TextToImage from "./pages/text-to-image";
 import GalleryPage from "./pages/gallery";
 import MySavedImages from "./pages/my-saved-images";
 
