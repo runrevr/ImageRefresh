@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ResultView from "@/components/ResultView";
-import { SafetyRejectionDialog } from "@/components/SafetyRejectionDialog";
 
 export default function Create() {
   const [prompt, setPrompt] = useState("");
@@ -26,30 +24,30 @@ export default function Create() {
   const [selectedStylePrompt, setSelectedStylePrompt] = useState(""); // Track selected photography style prompt
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [resultImages, setResultImages] = useState<string[]>([]);
-  const [showSafetyDialog, setShowSafetyDialog] = useState(false);
-  const [safetyRejectionReason, setSafetyRejectionReason] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const [showSafetyDialog, setShowSafetyDialog] = useState(false);
+  const [safetyErrorMessage, setSafetyErrorMessage] = useState("");
 
   const uploadImageAndGetPath = async (base64Image: string): Promise<string> => {
     // Convert base64 to blob
     const response = await fetch(base64Image);
     const blob = await response.blob();
-    
+
     // Create FormData
     const formData = new FormData();
     formData.append('image', blob, 'image.jpg');
-    
+
     // Upload and get path
     const uploadResponse = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     });
-    
+
     if (!uploadResponse.ok) {
       throw new Error('Failed to upload image');
     }
-    
+
     const { imagePath } = await uploadResponse.json();
     console.log('Received file path from upload:', imagePath);
     return imagePath;
@@ -198,7 +196,7 @@ export default function Create() {
         try {
           // Upload image and get path
           const imagePath = await uploadImageAndGetPath(uploadedImage);
-          
+
           // Now call edit-image with just the path
           response = await fetch('/api/edit-image', {
             method: 'POST',
@@ -250,7 +248,7 @@ export default function Create() {
       if (result.success && result.imageUrls) {
         // Set the result images to display inline
         setResultImages(result.imageUrls);
-        
+
         // Auto-scroll to results after a brief delay
         setTimeout(() => {
           const resultsElement = document.getElementById('results-section');
@@ -261,17 +259,21 @@ export default function Create() {
       } else {
         throw new Error(result.error || "Failed to generate images");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error generating images:", error);
-      
+
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate images";
+
       // Check if it's a safety system rejection
-      if (error.message && error.message.includes("safety system")) {
-        setSafetyRejectionReason("Content was rejected by OpenAI's safety system. Please try a different prompt that doesn't involve inappropriate content, especially when using images with children.");
+      if (errorMessage.includes('safety system') || 
+          errorMessage.includes('content policy') || 
+          errorMessage.includes('inappropriate content')) {
+        setSafetyErrorMessage(errorMessage);
         setShowSafetyDialog(true);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to generate images. Please try again.",
+          title: "Generation failed",
+          description: errorMessage,
           variant: "destructive",
         });
       }
@@ -503,13 +505,6 @@ export default function Create() {
             />
           </div>
         )}
-
-        {/* Safety Rejection Dialog */}
-        <SafetyRejectionDialog 
-          isOpen={showSafetyDialog}
-          onClose={() => setShowSafetyDialog(false)}
-          reason={safetyRejectionReason}
-        />
       </div>
     </Layout>
   );
