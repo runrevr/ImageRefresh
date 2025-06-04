@@ -29,17 +29,6 @@ export default function MyImages() {
 
   const { data: images = [], isLoading, error } = useQuery<UserImage[]>({
     queryKey: ['/api/user-images', userId ? String(userId) : ''],
-    queryFn: async () => {
-      if (!userId) throw new Error('No user ID');
-
-      const response = await fetch(`/api/user-images/${userId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch images');
-      }
-
-      const data = await response.json();
-      return data.images || data || []; // Handle different response structures
-    },
     enabled: !!userId,
   });
 
