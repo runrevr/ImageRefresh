@@ -192,11 +192,43 @@ export default function UploadPage() {
     return true;
   };
 
-  // When prompt is submitted, transform the image
-  const handlePromptSubmit = async (
-    promptText: string,
-    imageSize: string = "square",
-  ) => {
+  const handleMakeMagic = async () => {
+    if (!selectedSubcategory || !originalImagePath) {
+      toast({
+        title: "Missing Requirements",
+        description: "Please select a style and upload an image first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log("DEBUG handleMakeMagic - selectedSubcategory:", selectedSubcategory);
+
+    const detailedPrompt = getPromptFromStyles(selectedSubcategory);
+    console.log("DEBUG handleMakeMagic - detailedPrompt:", detailedPrompt);
+
+    const finalPrompt = prompt.trim()
+      ? `${detailedPrompt}. Additional details: ${prompt}`
+      : detailedPrompt;
+
+    console.log("DEBUG handleMakeMagic - finalPrompt being sent:", finalPrompt);
+
+    // Convert selectedImageSize to API format
+    const imageSizeMap: Record<string, string> = {
+      square: "1024x1024",
+      portrait: "1024x1536",
+      landscape: "1536x1024",
+    };
+
+    const apiImageSize = imageSizeMap[selectedImageSize] || "1024x1024";
+
+    await handlePromptSubmit(finalPrompt, apiImageSize);
+  };
+
+  const handlePromptSubmit = async (promptText: string, imageSize: string = "square") => {
+    console.log("DEBUG handlePromptSubmit - promptText received:", promptText);
+    console.log("DEBUG handlePromptSubmit - promptText length:", promptText.length);
+
     if (!originalImagePath) {
       toast({
         title: "Missing Image",
@@ -212,11 +244,6 @@ export default function UploadPage() {
         description: "Please provide a prompt for the transformation.",
         variant: "destructive",
       });
-      return;
-    }
-
-    // Check credits and authentication before proceeding
-    if (!checkCreditsAndAuth()) {
       return;
     }
 
@@ -765,99 +792,6 @@ export default function UploadPage() {
       });
       setCurrentStep(Step.Edit);
     }
-  };
-
-  // Handle the "Let's Make Magic" button click
-  const handleMakeMagic = async () => {
-    if (!selectedSubcategory || !originalImagePath) {
-      toast({
-        title: "Missing Requirements",
-        description: "Please select a style and upload an image first.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Get prompt from PromptInput.tsx style definitions based on category and subcategory
-    const getPromptFromStyles = (subcategory: string): string => {
-      // Map subcategory IDs to PromptInput.tsx style keys
-      const subcategoryMap: Record<string, { category: string, key: string }> = {
-        // Animation styles (cartoon category)
-        'mario': { category: 'cartoon', key: 'super-mario' },
-        'minecraft': { category: 'cartoon', key: 'minecraft' },
-        'pixar': { category: 'cartoon', key: 'pixar' },
-        'trolls': { category: 'cartoon', key: 'dreamworks' },
-        'princess': { category: 'cartoon', key: 'princess' },
-        'superhero': { category: 'cartoon', key: 'superhero' },
-        'lego': { category: 'cartoon', key: 'lego' },
-
-        // Historical styles (era category)
-        'western': { category: 'era', key: 'old-western' },
-        'hiphop': { category: 'era', key: '90s-hip-hop' },
-        '80s': { category: 'era', key: '1980s' },
-        'disco': { category: 'era', key: 'disco-era' },
-        'renaissance': { category: 'era', key: 'renaissance' },
-        'victorian': { category: 'era', key: 'victorian-era' },
-        'medieval': { category: 'era', key: 'medieval' },
-
-        // Artistic styles (painting category)
-        'oil': { category: 'painting', key: 'oil-painting' },
-        'watercolor': { category: 'painting', key: 'watercolor' },
-        'impressionist': { category: 'painting', key: 'impressionist' },
-        'abstract': { category: 'painting', key: 'abstract' },
-        'surrealism': { category: 'painting', key: 'pop-surrealism' },
-        'artdeco': { category: 'painting', key: 'art-deco' },
-
-        // Fun/Viral styles (other category)
-        'mullets': { category: 'other', key: 'mullets' },
-        'hulkamania': { category: 'other', key: 'hulkamania' },
-        'baby': { category: 'other', key: 'baby-prediction' },
-        'future': { category: 'other', key: 'future-self' },
-        'ghibli': { category: 'other', key: 'ghibli-style' },
-        'action-figure': { category: 'other', key: 'ai-action-figure' },
-        'pet-human': { category: 'other', key: 'pet-as-human' },
-        'self-cat': { category: 'other', key: 'self-as-cat' },
-        'caricature': { category: 'other', key: 'caricature' },
-
-        // Kids Drawing
-        'kids-drawing': { category: 'kids-real', key: 'kids-drawing' }
-      };
-
-      const mapping = subcategoryMap[subcategory];
-      if (!mapping) {
-        return "Transform the image in an artistic style";
-      }
-
-      // Get the prompt from the appropriate style definition in PromptInput.tsx
-      switch (mapping.category) {
-        case 'cartoon':
-          return CARTOON_STYLES[mapping.key as keyof typeof CARTOON_STYLES]?.suggestedPrompt || "Transform the image in a cartoon style";
-        case 'era':
-          return ERA_STYLES[mapping.key as keyof typeof ERA_STYLES]?.suggestedPrompt || "Transform the image in a historical style";
-        case 'painting':
-          return PAINTING_STYLES[mapping.key as keyof typeof PAINTING_STYLES]?.suggestedPrompt || "Transform the image in a painting style";
-        case 'other':
-          return OTHER_STYLES[mapping.key as keyof typeof OTHER_STYLES]?.suggestedPrompt || "Transform the image in a fun style";
-        case 'kids-real':
-          return "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.";
-        default:
-          return "Transform the image in an artistic style";
-      }
-    };
-
-    const detailedPrompt = getPromptFromStyles(selectedSubcategory);
-    const finalPrompt = prompt.trim() ? `${detailedPrompt}. Additional details: ${prompt}` : detailedPrompt;
-
-    // Convert selectedImageSize to API format
-    const imageSizeMap: Record<string, string> = {
-      'square': '1024x1024',
-      'portrait': '1024x1536',
-      'landscape': '1536x1024'
-    };
-
-    const apiImageSize = imageSizeMap[selectedImageSize] || '1024x1024';
-
-    await handlePromptSubmit(finalPrompt, apiImageSize);
   };
 
   // Apply a preset transformation style
@@ -1815,7 +1749,7 @@ export default function UploadPage() {
     </div>
   );
 
-    // Get the prompt from the appropriate style definition in PromptInput.tsx
+    // This function maps style IDs to prompts for image transformation, incorporating detailed debugging logs.
     const getPromptFromStyleId = (styleId: string): string => {
       // Create a mapping from style IDs to PromptInput categories/keys
       const styleMapping: Record<string, { category: string; key: string }> = {
