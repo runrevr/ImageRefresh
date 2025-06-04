@@ -910,7 +910,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           );
 
           console.log(
-            `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
+            `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
           );
           } catch (creditError) {
             console.error("Error updating user credits:", creditError);
@@ -1296,23 +1296,23 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
     app.post('/api/edit-image', async (req, res) => {
       try {
         console.log('[API] Image edit request received');
-        
-        const { image, prompt, aspectRatio } = req.body;
-        
-        if (!image) {
+
+        const { originalImagePath, prompt, aspectRatio } = req.body;
+
+        if (!originalImagePath) {
           return res.status(400).json({
             success: false,
             error: 'Image is required'
           });
         }
-        
+
         if (!prompt) {
           return res.status(400).json({
             success: false,
             error: 'Prompt is required'
           });
         }
-        
+
         // Map aspect ratio to size
         let size = "1024x1024"; // default
         if (aspectRatio === "wide") {
@@ -1320,23 +1320,34 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         } else if (aspectRatio === "portrait") {
           size = "1024x1792";
         }
-        
+
+        // Construct full path to the uploaded image
+        const fullImagePath = path.join(process.cwd(), originalImagePath);
+
+        // Verify the image file exists
+        if (!fs.existsSync(fullImagePath)) {
+          return res.status(400).json({ 
+            success: false, 
+            error: "Image file not found" 
+          });
+        }
+
         // Use the existing transformImage function from openai-final.js
         const { transformImage } = await import('./openai-final.js');
-        
+
         // The image parameter should be a file path or URL
-        const result = await transformImage(image, prompt, size);
-        
+        const result = await transformImage(fullImagePath, prompt, size);
+
         // Create server-relative paths for the transformed images
         const baseUrl = req.protocol + "://" + req.get("host");
-        
+
         const transformedImagePath = result.transformedPath
           .replace(process.cwd(), "")
           .replace(/^\//, "");
         const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
-        
+
         const imageUrls = [transformedImageUrl];
-        
+
         // Add second image if it exists
         if (result.secondTransformedPath) {
           const secondTransformedImagePath = result.secondTransformedPath
@@ -1345,16 +1356,16 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           const secondTransformedImageUrl = `${baseUrl}/${secondTransformedImagePath}`;
           imageUrls.push(secondTransformedImageUrl);
         }
-        
+
         console.log(`[API] Image edit completed, returning ${imageUrls.length} images`);
-        
+
         res.json({
           success: true,
           imageUrls: imageUrls,
           transformedImageUrl: transformedImageUrl,
           prompt: prompt
         });
-        
+
       } catch (error) {
         console.error('[API] Image edit error:', error);
         res.status(500).json({

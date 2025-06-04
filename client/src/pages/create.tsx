@@ -26,6 +26,29 @@ export default function Create() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  const uploadImageAndGetPath = async (base64Image: string): Promise<string> => {
+    // Convert base64 to blob
+    const response = await fetch(base64Image);
+    const blob = await response.blob();
+    
+    // Create FormData
+    const formData = new FormData();
+    formData.append('image', blob, 'image.jpg');
+    
+    // Upload and get path
+    const uploadResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!uploadResponse.ok) {
+      throw new Error('Failed to upload image');
+    }
+    
+    const { imagePath } = await uploadResponse.json();
+    return imagePath;
+  };
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -163,16 +186,43 @@ export default function Create() {
         finalPrompt = `${finalPrompt}. ${selectedStylePrompt}`;
       }
 
-      // Choose endpoint based on whether an image is uploaded
-      const endpoint = uploadedImage ? "/api/edit-image" : "/api/generate-images";
-      
-      const requestBody = uploadedImage 
-        ? {
-            image: uploadedImage,
-            prompt: finalPrompt,
-            aspectRatio,
-          }
-        : {
+      let response;
+
+      if (uploadedImage) {
+        try {
+          // Upload image and get path
+          const imagePath = await uploadImageAndGetPath(uploadedImage);
+          
+          // Now call edit-image with just the path
+          response = await fetch('/api/edit-image', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              originalImagePath: imagePath,  // Just the path, like Transform does
+              prompt: finalPrompt,
+              aspectRatio
+            })
+          });
+        } catch (uploadError) {
+          console.error('Failed to upload image:', uploadError);
+          toast({
+            title: "Upload failed",
+            description: "Failed to upload image. Please try again.",
+            variant: "destructive",
+          });
+          setIsGenerating(false);
+          return;
+        }
+      } else {
+        // Text-to-image generation
+        response = await fetch("/api/generate-images", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             prompt: finalPrompt,
             variations: 2,
             purpose,
@@ -181,15 +231,9 @@ export default function Create() {
             styleIntensity: styleIntensity[0],
             addText,
             businessName,
-          };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+          }),
+        });
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
