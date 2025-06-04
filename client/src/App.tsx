@@ -54,6 +54,8 @@ import TextToImage from "./pages/text-to-image";
 import GalleryPage from "./pages/gallery";
 import MySavedImages from "./pages/my-saved-images";
 import Create from "./pages/create";
+import DentalLanding from "./pages/dental-landing";
+import CheckoutDental from "./pages/checkout-dental";
 
 function Router() {
   return (
@@ -107,8 +109,8 @@ function Router() {
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
-        <Route path="/dental" component={() => import('./pages/dental-landing').then(m => m.default)} />
-        <Route path="/checkout-dental" component={() => import('./pages/checkout-dental').then(m => m.default)} />
+        <Route path="/dental" component={DentalLanding} />
+        <Route path="/checkout-dental" component={CheckoutDental} />
         <Route path="/view-transformation" component={ViewTransformation} />
         <Route path="/text-to-image-results" component={TextToImageResults} />
         <Route path="/checkout-demo" component={CheckoutDemo} />
