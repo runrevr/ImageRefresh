@@ -15,7 +15,7 @@ import {
   type UserImage,
   type InsertUserImage,
 } from "../shared/schema.js";
-import db from "./db.js";
+import { db } from "./db.js";
 import { eq, desc, and, not, isNull, lt } from "drizzle-orm";
 import { Pool } from '@neondatabase/serverless';
 
