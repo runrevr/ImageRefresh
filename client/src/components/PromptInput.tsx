@@ -1098,8 +1098,8 @@ export default function PromptInput({
         </div>
 
         <div className="relative">
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 pointer-events-none flex items-center justify-center">
-            <div className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shadow-sm">
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-30 pointer-events-none">
+            <div className="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white">
               +
             </div>
           </div>
@@ -1109,7 +1109,7 @@ export default function PromptInput({
             }
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
-            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-14 pr-3"
+            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-12 pr-3"
             rows={1}
           />
         </div>
