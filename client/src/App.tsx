@@ -30,6 +30,7 @@ import ProductImageLabPage from './pages/product-image-lab';
 import TextToImage from "./pages/text-to-image";
 import TextToImageResults from "./pages/text-to-image-results";
 import Generation from "./pages/generation";
+import CustomPromptGeneration from "@/pages/custom-prompt-generation";
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -118,6 +119,7 @@ function Router() {
         <ProtectedRoute path="/my-images" component={MyImages} />
         <ProtectedRoute path="/gallery" component={GalleryPage} />
         <ProtectedRoute path="/saved-images" component={MySavedImages} />
+        <Route path="/custom-prompt-generation" component={CustomPromptGeneration} />
         <Route component={NotFound} />
       </Switch>
     </>
