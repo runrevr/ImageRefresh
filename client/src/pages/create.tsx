@@ -392,7 +392,9 @@ export default function Create() {
                   <button
                     key={style.name}
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       // Toggle selection - if already selected, deselect it
                       if (selectedStylePrompt === style.prompt) {
                         setSelectedStylePrompt("");
@@ -400,9 +402,9 @@ export default function Create() {
                         setSelectedStylePrompt(style.prompt);
                       }
                     }}
-                    className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium ${
+                    className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium cursor-pointer ${
                       selectedStylePrompt === style.prompt
-                        ? "border-[#06B6D4] bg-[#06B6D4] text-white"
+                        ? "border-[#06B6D4] bg-[#06B6D4] text-white shadow-md"
                         : "border-gray-200 hover:border-[#06B6D4] bg-white hover:bg-gray-50 text-gray-700 hover:text-[#06B6D4]"
                     }`}
                     title={style.prompt}
@@ -424,27 +426,33 @@ export default function Create() {
             <Label className="text-base font-semibold mb-4 block text-gray-800">Aspect Ratio</Label>
             <RadioGroup value={aspectRatio} onValueChange={setAspectRatio}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
+                <label htmlFor="square" className={`flex items-center space-x-2 p-4 border-2 rounded-lg transition-colors cursor-pointer ${
+                  aspectRatio === "square" ? "border-[#06B6D4] bg-[#06B6D4]/10" : "border-gray-300 hover:border-[#06B6D4] hover:bg-gray-50"
+                }`}>
                   <RadioGroupItem value="square" id="square" />
                   <div>
-                    <Label htmlFor="square" className="font-medium text-gray-900">Square (1:1)</Label>
+                    <div className="font-medium text-gray-900">Square (1:1)</div>
                     <p className="text-sm text-gray-600">Instagram posts</p>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
+                </label>
+                <label htmlFor="wide" className={`flex items-center space-x-2 p-4 border-2 rounded-lg transition-colors cursor-pointer ${
+                  aspectRatio === "wide" ? "border-[#06B6D4] bg-[#06B6D4]/10" : "border-gray-300 hover:border-[#06B6D4] hover:bg-gray-50"
+                }`}>
                   <RadioGroupItem value="wide" id="wide" />
                   <div>
-                    <Label htmlFor="wide" className="font-medium text-gray-900">Landscape (16:9)</Label>
+                    <div className="font-medium text-gray-900">Landscape (16:9)</div>
                     <p className="text-sm text-gray-600">Website headers</p>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2 p-4 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-colors">
+                </label>
+                <label htmlFor="portrait" className={`flex items-center space-x-2 p-4 border-2 rounded-lg transition-colors cursor-pointer ${
+                  aspectRatio === "portrait" ? "border-[#06B6D4] bg-[#06B6D4]/10" : "border-gray-300 hover:border-[#06B6D4] hover:bg-gray-50"
+                }`}>
                   <RadioGroupItem value="portrait" id="portrait" />
                   <div>
-                    <Label htmlFor="portrait" className="font-medium text-gray-900">Portrait (2:3)</Label>
+                    <div className="font-medium text-gray-900">Portrait (2:3)</div>
                     <p className="text-sm text-gray-600">Stories/Reels</p>
                   </div>
-                </div>
+                </label>
               </div>
             </RadioGroup>
           </div>
@@ -453,8 +461,8 @@ export default function Create() {
         <div className="text-center mt-8">
           <Button
             onClick={generateImages}
-            disabled={isGenerating}
-            className="px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[#06B6D4] to-[#84CC16] hover:from-[#0891B2] hover:to-[#65A30D] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            disabled={isGenerating || !prompt.trim()}
+            className="px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[#06B6D4] to-[#84CC16] hover:from-[#0891B2] hover:to-[#65A30D] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isGenerating ? (
               <>
@@ -464,7 +472,7 @@ export default function Create() {
             ) : (
               <>
                 <Sparkles className="mr-2 h-5 w-5" />
-                Let's Make Some Magic
+                {prompt.trim() ? "Let's Make Some Magic" : "Enter a prompt to begin"}
               </>
             )}
           </Button>
