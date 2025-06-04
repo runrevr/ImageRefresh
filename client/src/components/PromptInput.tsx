@@ -688,12 +688,34 @@ export default function PromptInput({
     if (subcategory !== "custom-cartoon") {
       setPromptText(CARTOON_STYLES[subcategory].suggestedPrompt);
     }
+
+    // Track subcategory selection with Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'style_applied', {
+        'event_category': 'user_selections',
+        'category': 'cartoon',
+        'subcategory': subcategory,
+        'combination': `cartoon_${subcategory}`,
+        'full_path': `cartoon > ${subcategory}`
+      });
+    }
   };
 
   const handlePaintingSelect = (subcategory: PaintingSubcategory) => {
     setPaintingSubcategory(subcategory);
     if (subcategory !== "custom-painting") {
       setPromptText(PAINTING_STYLES[subcategory].suggestedPrompt);
+    }
+
+    // Track subcategory selection with Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'style_applied', {
+        'event_category': 'user_selections',
+        'category': 'painting',
+        'subcategory': subcategory,
+        'combination': `painting_${subcategory}`,
+        'full_path': `painting > ${subcategory}`
+      });
     }
   };
 
@@ -702,12 +724,34 @@ export default function PromptInput({
     if (subcategory !== "custom-era") {
       setPromptText(ERA_STYLES[subcategory].suggestedPrompt);
     }
+
+    // Track subcategory selection with Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'style_applied', {
+        'event_category': 'user_selections',
+        'category': 'era',
+        'subcategory': subcategory,
+        'combination': `era_${subcategory}`,
+        'full_path': `era > ${subcategory}`
+      });
+    }
   };
 
   const handleOtherSelect = (subcategory: OtherSubcategory) => {
     setOtherSubcategory(subcategory);
     if (subcategory !== "custom-other") {
       setPromptText(OTHER_STYLES[subcategory].suggestedPrompt);
+    }
+
+    // Track subcategory selection with Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'style_applied', {
+        'event_category': 'user_selections',
+        'category': 'other',
+        'subcategory': subcategory,
+        'combination': `other_${subcategory}`,
+        'full_path': `other > ${subcategory}`
+      });
     }
   };
 
