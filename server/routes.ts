@@ -1292,6 +1292,78 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
       }
     });
 
+    // Image editing endpoint for uploaded images with prompts
+    app.post('/api/edit-image', async (req, res) => {
+      try {
+        console.log('[API] Image edit request received');
+        
+        const { image, prompt, aspectRatio } = req.body;
+        
+        if (!image) {
+          return res.status(400).json({
+            success: false,
+            error: 'Image is required'
+          });
+        }
+        
+        if (!prompt) {
+          return res.status(400).json({
+            success: false,
+            error: 'Prompt is required'
+          });
+        }
+        
+        // Map aspect ratio to size
+        let size = "1024x1024"; // default
+        if (aspectRatio === "wide") {
+          size = "1792x1024";
+        } else if (aspectRatio === "portrait") {
+          size = "1024x1792";
+        }
+        
+        // Use the existing transformImage function from openai-final.js
+        const { transformImage } = await import('./openai-final.js');
+        
+        // The image parameter should be a file path or URL
+        const result = await transformImage(image, prompt, size);
+        
+        // Create server-relative paths for the transformed images
+        const baseUrl = req.protocol + "://" + req.get("host");
+        
+        const transformedImagePath = result.transformedPath
+          .replace(process.cwd(), "")
+          .replace(/^\//, "");
+        const transformedImageUrl = `${baseUrl}/${transformedImagePath}`;
+        
+        const imageUrls = [transformedImageUrl];
+        
+        // Add second image if it exists
+        if (result.secondTransformedPath) {
+          const secondTransformedImagePath = result.secondTransformedPath
+            .replace(process.cwd(), "")
+            .replace(/^\//, "");
+          const secondTransformedImageUrl = `${baseUrl}/${secondTransformedImagePath}`;
+          imageUrls.push(secondTransformedImageUrl);
+        }
+        
+        console.log(`[API] Image edit completed, returning ${imageUrls.length} images`);
+        
+        res.json({
+          success: true,
+          imageUrls: imageUrls,
+          transformedImageUrl: transformedImageUrl,
+          prompt: prompt
+        });
+        
+      } catch (error) {
+        console.error('[API] Image edit error:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message || 'Failed to edit image'
+        });
+      }
+    });
+
     // Text-to-image generation endpoint
     app.post('/api/generate-images', async (req, res) => {
       try {

@@ -1039,14 +1039,10 @@ export default function UploadPage() {
                       </div>
                     </button>
                     <button
-                      className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
-                        selectedTransformation === 'custom' 
-                          ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
-                      onClick={() => setSelectedTransformation('custom')}
+                      className="flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-orange-500"
+                      onClick={() => window.location.href = '/create'}
                     >
-                      <div className={`text-2xl mb-1 ${selectedTransformation === 'custom' ? 'animate-pulse' : ''}`}>
+                      <div className="text-2xl mb-1">
                         ✨
                       </div>
                       <div className="text-sm font-semibold">Custom Prompt</div>
