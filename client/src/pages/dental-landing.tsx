@@ -182,7 +182,7 @@ export default function DentalLanding() {
             <div className="w-full bg-gradient-to-br from-primary-50 to-secondary-50 py-20">
               <div className="max-w-6xl mx-auto px-4 text-center">
                 <div className="mb-8">
-                  <Smile className="w-16 h-16 text-primary-600 mx-auto mb-4" />
+                  <Smile className="w-16 h-16 text-primary-500 mx-auto mb-4" />
                   <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-[1.1] tracking-tight">
                     Make Every Visit{" "}
                     <br className="hidden sm:block" />
@@ -200,7 +200,7 @@ export default function DentalLanding() {
                       animate={{ y: 0, opacity: 1 }}
                       exit={{ y: "-50%", opacity: 0 }}
                       transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                      mainClassName="text-primary-600 font-bold inline-block text-5xl md:text-6xl leading-[1.1] tracking-tight"
+                      mainClassName="text-primary-500 font-bold inline-block text-5xl md:text-6xl leading-[1.1] tracking-tight"
                       elementLevelClassName="font-bold text-5xl md:text-6xl"
                     />
                     {" "}for Kids
@@ -213,7 +213,7 @@ export default function DentalLanding() {
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                   <Button
-                    className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg px-8 py-4"
+                    className="bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4"
                     onClick={handleUploadClick}
                   >
                     <Heart className="w-5 h-5 mr-2" />
@@ -221,7 +221,7 @@ export default function DentalLanding() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white font-bold text-lg px-8 py-4"
+                    className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-bold text-lg px-8 py-4"
                     onClick={() => document.getElementById('dental-pricing')?.scrollIntoView({ behavior: 'smooth' })}
                   >
                     View Pricing
@@ -256,7 +256,7 @@ export default function DentalLanding() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <Card className="border-2 border-primary-100 hover:border-primary-200 transition-colors">
                     <CardContent className="p-6 text-center">
-                      <Smile className="w-12 h-12 text-primary-600 mx-auto mb-4" />
+                      <Smile className="w-12 h-12 text-primary-500 mx-auto mb-4" />
                       <h3 className="text-xl font-bold mb-3">Reduce Anxiety</h3>
                       <p className="text-gray-600">
                         Turn nervous kids into excited patients by bringing their drawings to life. 
@@ -267,7 +267,7 @@ export default function DentalLanding() {
 
                   <Card className="border-2 border-secondary-100 hover:border-secondary-200 transition-colors">
                     <CardContent className="p-6 text-center">
-                      <Heart className="w-12 h-12 text-secondary-600 mx-auto mb-4" />
+                      <Heart className="w-12 h-12 text-secondary-500 mx-auto mb-4" />
                       <h3 className="text-xl font-bold mb-3">Build Relationships</h3>
                       <p className="text-gray-600">
                         Create magical moments that kids and parents will never forget. 
@@ -278,7 +278,7 @@ export default function DentalLanding() {
 
                   <Card className="border-2 border-accent-100 hover:border-accent-200 transition-colors">
                     <CardContent className="p-6 text-center">
-                      <Star className="w-12 h-12 text-accent-600 mx-auto mb-4" />
+                      <Star className="w-12 h-12 text-accent-500 mx-auto mb-4" />
                       <h3 className="text-xl font-bold mb-3">Stand Out</h3>
                       <p className="text-gray-600">
                         Be the most innovative dental practice in your area. 
@@ -350,7 +350,7 @@ export default function DentalLanding() {
 
                 <div className="text-center">
                   <Button
-                    className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg px-8 py-4"
+                    className="bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4"
                     onClick={handleUploadClick}
                   >
                     Try It Now - Free Demo
@@ -381,7 +381,7 @@ export default function DentalLanding() {
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">
                           Unlimited Dental Plan
                         </h3>
-                        <div className="text-6xl font-bold text-primary-600 mb-2">
+                        <div className="text-6xl font-bold text-primary-500 mb-2">
                           $75
                           <span className="text-2xl text-gray-600">/month</span>
                         </div>
@@ -415,7 +415,7 @@ export default function DentalLanding() {
                         </ul>
 
                         <Button 
-                          className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg py-4"
+                          className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg py-4"
                           onClick={() => setLocation('/checkout-dental')}
                         >
                           Start Your Practice Plan
@@ -435,7 +435,7 @@ export default function DentalLanding() {
                   </p>
                   <Button 
                     variant="outline"
-                    className="border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white"
+                    className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white"
                   >
                     Schedule a Demo Call
                   </Button>
@@ -509,7 +509,7 @@ export default function DentalLanding() {
             </div>
 
             {/* Final CTA */}
-            <div className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 py-16">
+            <div className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 py-16">
               <div className="max-w-4xl mx-auto px-4 text-center text-white">
                 <h2 className="text-4xl font-bold mb-4">
                   Ready to Transform Your Practice?
@@ -519,14 +519,14 @@ export default function DentalLanding() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
-                    className="bg-white text-primary-600 hover:bg-gray-100 font-bold text-lg px-8 py-4"
+                    className="bg-white text-primary-500 hover:bg-gray-100 font-bold text-lg px-8 py-4"
                     onClick={handleUploadClick}
                   >
                     Try Free Demo
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-primary-600 font-bold text-lg px-8 py-4"
+                    className="border-white text-white hover:bg-white hover:text-primary-500 font-bold text-lg px-8 py-4"
                     onClick={() => setLocation('/checkout-dental')}
                   >
                     Start Unlimited Plan
