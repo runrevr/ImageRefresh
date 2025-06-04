@@ -1,4 +1,9 @@
-import { Pool } from 'pg';
+import { Pool } from '@neondatabase/serverless';
+import { neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
+
+// Configure WebSocket for Neon
+neonConfig.webSocketConstructor = ws;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
