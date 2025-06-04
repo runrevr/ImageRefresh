@@ -30,6 +30,7 @@ import ProductImageLabPage from './pages/product-image-lab';
 import TextToImage from "./pages/text-to-image";
 import TextToImageResults from "./pages/text-to-image-results";
 import Generation from "./pages/generation";
+import CustomGeneration from "./pages/custom-generation";
 import CustomPromptGeneration from "@/pages/custom-prompt-generation";
 
 // Import protected routes and account pages
@@ -116,6 +117,7 @@ function Router() {
         <Route path="/prebuilt-upload" component={PrebuiltUpload} />
         <Route path="/prebuilt-results" component={PrebuiltResults} />
         <Route path="/text-to-image" component={TextToImage} />
+        <Route path="/custom-generation" component={CustomGeneration} />
         <ProtectedRoute path="/my-images" component={MyImages} />
         <ProtectedRoute path="/gallery" component={GalleryPage} />
         <ProtectedRoute path="/saved-images" component={MySavedImages} />
