@@ -681,7 +681,7 @@ export default function Home() {
       });
       setCurrentStep(Step.Prompt);
     }
-  };
+  }
 
   const handleTryAgain = () => {
     // Only allow trying another prompt if they haven't tried one already
@@ -956,8 +956,7 @@ export default function Home() {
       });
       setCurrentStep(Step.Upload);
     }
-  };
-  };
+  }
 
   // Function to scroll to uploader section
   const scrollToUploader = () => {
