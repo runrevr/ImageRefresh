@@ -34,11 +34,11 @@ const SAMPLE_IMAGES = [
 
 export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileError, setFileError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [fileDetails, setFileDetails] = useState<{
     name: string;
     size: string;
