@@ -910,8 +910,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           );
 
           console.log(
-            `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
-          );
+            `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,          );
           } catch (creditError) {
             console.error("Error updating user credits:", creditError);
             // Continue with the response even if credit update failed
@@ -1322,7 +1321,13 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         }
 
         // Construct full path to the uploaded image
-        const fullImagePath = path.join(process.cwd(), originalImagePath);
+        const fullImagePath = path.isAbsolute(originalImagePath) 
+          ? originalImagePath 
+          : path.join(process.cwd(), originalImagePath);
+
+        console.log('[API] Original image path received:', originalImagePath);
+        console.log('[API] Constructed full image path:', fullImagePath);
+        console.log('[API] File exists:', fs.existsSync(fullImagePath));
 
         // Verify the image file exists
         if (!fs.existsSync(fullImagePath)) {

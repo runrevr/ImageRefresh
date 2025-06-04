@@ -46,6 +46,7 @@ export default function Create() {
     }
     
     const { imagePath } = await uploadResponse.json();
+    console.log('Received file path from upload:', imagePath);
     return imagePath;
   };
 
