@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,12 +22,28 @@ export default function Create() {
   const [businessName, setBusinessName] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedStylePrompt, setSelectedStylePrompt] = useState(""); // Track selected photography style prompt
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          setUploadedImage(result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const enhancePrompt = async () => {
     if (!prompt.trim()) {
@@ -202,6 +218,13 @@ export default function Create() {
 
   return (
     <Layout>
+      <input 
+        ref={fileInputRef}
+        type="file" 
+        accept="image/*" 
+        onChange={handleImageUpload}
+        style={{ display: 'none' }}
+      />
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -213,15 +236,48 @@ export default function Create() {
           </p>
 
           <div className="relative max-w-2xl mx-auto mb-12">
-            <div className="relative">
-              <Textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
-                className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
-                onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
-              />
-              <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
+            <div className="flex gap-3 items-start">
+              {/* Image Upload Button/Preview */}
+              <div className="flex-shrink-0">
+                {uploadedImage ? (
+                  <div className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-300">
+                    <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute top-1 right-1 bg-white rounded p-1 shadow hover:bg-gray-100"
+                      title="Change image"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => setUploadedImage(null)}
+                      className="absolute top-1 left-1 bg-white rounded p-1 shadow hover:bg-gray-100"
+                      title="Remove image"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-all flex items-center justify-center text-3xl text-gray-400 hover:text-[#06B6D4]"
+                  >
+                    +
+                  </button>
+                )}
+              </div>
+
+              {/* Existing Textarea */}
+              <div className="flex-1 relative">
+                <Textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'"
+                  className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
+                  onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
+                />
+                <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
+              </div>
             </div>
 
             {/* Style Pills */}
