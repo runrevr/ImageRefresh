@@ -43,6 +43,8 @@ export default function MyImages() {
       // Handle different possible response structures
       if (Array.isArray(data)) {
         return data;
+      } else if (data.success && data.images && Array.isArray(data.images)) {
+        return data.images;
       } else if (data.images && Array.isArray(data.images)) {
         return data.images;
       } else if (data.data && Array.isArray(data.data)) {
