@@ -88,10 +88,11 @@ export default function Generation() {
 
           <div className="max-w-4xl mx-auto">
             <PromptInput
+              originalImage="" 
+              onSubmit={() => {}}
+              onBack={() => {}}
               onGenerate={handleGenerate}
-              isGenerating={isGenerating}
               isGenerationMode={true}
-              placeholder="Describe what you want to create..."
             />
           </div>
         </div>
