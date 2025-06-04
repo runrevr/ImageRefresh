@@ -38,7 +38,7 @@ interface PromptInputProps {
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
   savedStyle?: SavedStyle | null; // Style information from Ideas page
-  onGenerate?: (prompt: string, selectedStyle?: string) => void;
+  onGenerate?: (prompt: string, imageSize?: string, selectedStyle?: string) => void;
   isGenerationMode?: boolean;
 }
 
@@ -778,7 +778,7 @@ export default function PromptInput({
         }
       }
       console.log("Generation prompt being sent:", finalPrompt);
-      onGenerate(finalPrompt, selectedGenerationStyle || undefined);
+      onGenerate(finalPrompt, imageSize, selectedGenerationStyle || undefined);
     } else {
       // Transform mode - transform existing image
       console.log("Transform prompt being sent:", promptText);
@@ -1366,6 +1366,62 @@ export default function PromptInput({
           </Button>
         </div>
       </div>
+
+      {/* Size Selection for Generation Mode */}
+      {isGenerationMode && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-medium">Choose Image Size</h2>
+          <div className="flex space-x-2">
+            <Button
+              variant={imageSize === "mobile" ? "default" : "outline"}
+              className={`flex flex-col items-center py-2 px-4 h-auto ${
+                imageSize === "mobile"
+                  ? "bg-secondary text-white"
+                  : "text-white bg-black"
+              }`}
+              onClick={() => setImageSize("mobile")}
+            >
+              <div className="h-8 w-4 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+                <div className="h-6 w-2 bg-current rounded-sm"></div>
+              </div>
+              <span className="text-xs">Portrait</span>
+              <span className="text-xs opacity-80 mt-1">2:3</span>
+            </Button>
+
+            <Button
+              variant={imageSize === "square" ? "default" : "outline"}
+              className={`flex flex-col items-center py-2 px-4 h-auto ${
+                imageSize === "square"
+                  ? "bg-secondary text-white"
+                  : "text-white bg-black"
+              }`}
+              onClick={() => setImageSize("square")}
+            >
+              <div className="h-6 w-6 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+                <div className="h-4 w-4 bg-current rounded-sm"></div>
+              </div>
+              <span className="text-xs">Square</span>
+              <span className="text-xs opacity-80 mt-1">1:1</span>
+            </Button>
+
+            <Button
+              variant={imageSize === "default" ? "default" : "outline"}
+              className={`flex flex-col items-center py-2 px-4 h-auto ${
+                imageSize === "default"
+                  ? "bg-secondary text-white"
+                  : "text-white bg-black"
+              }`}
+              onClick={() => setImageSize("default")}
+            >
+              <div className="h-4 w-8 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
+                <div className="h-2 w-6 bg-current rounded-sm"></div>
+              </div>
+              <span className="text-xs">Landscape</span>
+              <span className="text-xs opacity-80 mt-1">16:9</span>
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Submit Button */}
       <div className="flex justify-end mt-4">

@@ -15,7 +15,7 @@ export default function Generation() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
 
-  const handleGenerate = async (prompt: string, selectedStyle?: string) => {
+  const handleGenerate = async (prompt: string, imageSize?: string, selectedStyle?: string) => {
     if (!prompt.trim()) {
       toast({
         title: "Please enter a prompt",
@@ -35,7 +35,7 @@ export default function Generation() {
         },
         body: JSON.stringify({
           prompt: prompt.trim(),
-          aspectRatio: "square" // default to square, you can add aspect ratio selection later
+          imageSize: imageSize || "square"
         })
       });
 
@@ -50,7 +50,7 @@ export default function Generation() {
             metadata: {
               variations: data.imageUrls.length,
               selectedStyle,
-              aspectRatio: "square"
+              imageSize: imageSize || "square"
             }
           }
         });
