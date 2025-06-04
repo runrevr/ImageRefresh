@@ -21,7 +21,6 @@ import {
   Baby, // For kids to real
   Plus,
   Upload,
-  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -38,8 +37,6 @@ interface PromptInputProps {
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
   savedStyle?: SavedStyle | null; // Style information from Ideas page
-  onGenerate?: (prompt: string, imageSize?: string, selectedStyle?: string) => void;
-  isGenerationMode?: boolean;
 }
 
 // Main transformation categories
@@ -197,50 +194,6 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     suggestedPrompt: "",
   },
 };
-
-export const GENERATION_STYLES = [
-  { 
-    name: "Bioluminescent Magic", 
-    prompt: ", glowing with bioluminescent light, ethereal light trails, soft blue-green glow emanating from within, phosphorescent patterns, magical sparkles floating in air, dark background to enhance luminescence" 
-  },
-  { 
-    name: "Steampunk Mechanical", 
-    prompt: ", steampunk style, brass gears and copper pipes, Victorian-era mechanical parts, rivets and steam vents, antique bronze finish, clockwork mechanisms visible, industrial revolution aesthetic" 
-  },
-  { 
-    name: "80s Airbrush Art", 
-    prompt: ", 80s airbrush art style, neon pink and electric blue gradients, chrome metallic effects, retro-futuristic, glossy finish, laser grid background, Miami Vice color palette" 
-  },
-  { 
-    name: "Comic Book Pop Art", 
-    prompt: ", comic book style, bold black outlines, Ben Day dot shading, vibrant primary colors, speech bubble effects, dynamic action lines, Roy Lichtenstein inspired" 
-  },
-  { 
-    name: "Surrealist Melting", 
-    prompt: ", surrealist style, melting and warping like Salvador Dalí painting, impossible physics, dreamlike distortions, reality bending, fluid transformations, mysterious floating elements" 
-  },
-  { 
-    name: "Candyland Sweet", 
-    prompt: ", candyland aesthetic, pastel pink and mint green, sugar crystal textures, whipped cream clouds, rainbow sprinkles, glossy candy coating, marshmallow soft lighting" 
-  },
-  { 
-    name: "Double Exposure Portrait", 
-    prompt: ", double exposure effect, silhouette blended with landscape, transparent overlay, dreamy fade between images, artistic photographic blend, ethereal combination" 
-  },
-  { 
-    name: "Vintage Polaroid", 
-    prompt: ", vintage polaroid photograph, faded white borders, light leaks, nostalgic color shift, slightly overexposed, authentic film grain, 1970s instant photo aesthetic" 
-  },
-  { 
-    name: "Tron-style Wireframe", 
-    prompt: ", Tron legacy style, glowing neon wireframe on black background, electric blue and orange light trails, digital grid world, cyberpunk geometric patterns, holographic effect" 
-  },
-  { 
-    name: "Low-poly 3D", 
-    prompt: ", low-poly 3D art style, geometric faceted surfaces, flat shaded polygons, minimalist color palette, early PlayStation graphics aesthetic, angular crystalline structure" 
-  }
-];
-
 // Painting subcategories
 export const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
   "oil-painting": {
@@ -389,7 +342,8 @@ export const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
     suggestedPrompt:
       "Transform the uploaded photo of a person or couple into a 1970s disco scene, altering only their hair, clothing, and background—do not change any facial features or body proportions.  \n1. **Isolate regions**  \n   - Use the image's hair mask to replace hairstyles.  \n   - Use the clothing mask to swap in disco outfits.  \n   - Use a background mask to recreate a dance‐floor setting.  \n2. **Preserve identity**  \n   - Keep all facial attributes (skin tone, bone structure, eye color & shape, lip shape, expression) exactly as in the original—no age shifts, no new wrinkles or blemishes.  \n   - Maintain original body posture and proportions.  \n3. **Randomize key disco elements** (choose one per run):  \n   - **Hair style:** classic rounded afro | feathered shag with curtain bangs | voluminous blowout waves  \n   - **Outfit:** sequin jumpsuit with flared legs | polyester wrap dress with geometric prints | satin shirt with wide collar + bell-bottom trousers  \n   - **Accessory:** mirrored aviator sunglasses | wide paisley headband | metallic platform shoes  \n4. **Background & lighting**  \n   - Place the subjects on a reflective dance floor with a spinning disco ball overhead.  \n   - Add colored spotlights (amber, magenta, teal) and subtle lens flares.  \n5. **Seamless integration**  \n   - Blend shadows, highlights, and color cast so the new hair, clothes, and background look like one cohesive photograph.  \n6. **Negative constraints** (do **not**):  \n   - Alter any facial detail, skin texture, or age cues.  \n   - Change body poses, hand positions, or cropping.  \n   - Introduce modern elements (smartphones, modern jewelry, contemporary hairstyles).",
   },
-  cyberpunk: {    title: "Cyberpunk",
+  cyberpunk: {
+    title: "Cyberpunk",
     description:
       "Futuristic dystopian aesthetic with neon lights, urban decay, and high-tech elements.",
     placeholder: "E.g., Add neon lights and cybernetic elements",
@@ -544,8 +498,6 @@ export default function PromptInput({
   selectedTransformation,
   defaultPrompt,
   savedStyle,
-  onGenerate,
-  isGenerationMode = false,
 }: PromptInputProps) {
   const { toast } = useToast();
   const [promptText, setPromptText] = useState(defaultPrompt || "");
@@ -579,9 +531,6 @@ export default function PromptInput({
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
   // No pop culture subcategory needed
-  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
-  const [selectedGenerationStyle, setSelectedGenerationStyle] = useState<string | null>(null);
-
 
   // Determine subcategory options based on primary category
   const getSubcategoryOptions = () => {
@@ -762,31 +711,6 @@ export default function PromptInput({
     }
   };
 
-    const handlePromptSubmit = () => {
-    console.log("DEBUG handlePromptSubmit - promptText received:", promptText);
-    console.log("DEBUG handlePromptSubmit - promptText length:", promptText.length);
-
-    if (!promptText.trim()) return;
-
-    if (isGenerationMode && onGenerate) {
-      // Generation mode - create image from text
-      let finalPrompt = promptText.trim();
-      if (selectedGenerationStyle) {
-        const styleData = GENERATION_STYLES.find(s => s.prompt === selectedGenerationStyle);
-        if (styleData) {
-          finalPrompt = finalPrompt + styleData.prompt;
-        }
-      }
-      console.log("Generation prompt being sent:", finalPrompt);
-      onGenerate(finalPrompt, imageSize, selectedGenerationStyle || undefined);
-    } else {
-      // Transform mode - transform existing image
-      console.log("Transform prompt being sent:", promptText);
-      onSubmit(promptText.trim(), uploadedReferenceImage || undefined);
-    }
-  };
-
-
   // Pop culture handler removed
 
   // Get the current subcategory title and description
@@ -939,10 +863,6 @@ export default function PromptInput({
       };
       reader.readAsDataURL(file);
     }
-  };
-
-    const handleStyleSelect = (stylePrompt: string) => {
-    setSelectedStyle(stylePrompt === selectedStyle ? null : stylePrompt);
   };
 
   const currentSubcategoryInfo = getCurrentSubcategoryInfo();
@@ -1210,17 +1130,31 @@ export default function PromptInput({
           </div>
         </div>
 
-        <div className="relative max-w-2xl mx-auto mb-12">
-          <div className="relative">
-            <Textarea
-              value={promptText}
-              onChange={(e) => setPromptText(e.target.value)}
-              placeholder={isGenerationMode ? "Be specific! Include: WHO (subjects) + WHAT (action) + WHERE (setting) + MOOD. Example: 'Two business partners shaking hands in a bright modern office, celebrating a successful deal, confident expressions'" : currentSubcategoryInfo?.placeholder || getCustomPlaceholder()}
-              className="w-full p-6 text-sm border-4 border-double border-gray-300 rounded-2xl focus:border-[#06B6D4] focus:ring-2 focus:ring-[#06B6D4]/20 shadow-lg min-h-[120px] resize-none"
-              onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && handlePromptSubmit()}
-            />
-            <div className="absolute -bottom-6 left-0 right-0 h-8 bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#00ff00] to-[#ff0080] opacity-60 blur-xl rounded-full animate-pulse" />
-          </div>
+        <div className="relative">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-50 bg-blue-600 hover:bg-blue-700 text-white w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold shadow-xl border-2 border-white transition-all duration-200 cursor-pointer hover:scale-105"
+            title="Upload reference image"
+            type="button"
+          >
+            <span className="text-white">+</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+          <Textarea
+            placeholder={
+              currentSubcategoryInfo?.placeholder || getCustomPlaceholder()
+            }
+            value={promptText}
+            onChange={(e) => setPromptText(e.target.value)}
+            className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-12 pr-3 border border-gray-300"
+            rows={1}
+          />
         </div>
 
         {/* Show uploaded reference image if exists */}
@@ -1256,70 +1190,6 @@ export default function PromptInput({
           </p>
         )}
       </div>
-
-      {/* Style Pills - Only show in generation mode */}
-        {isGenerationMode && (
-          <div className="mt-12 max-w-4xl mx-auto">
-            <h3 className="text-lg font-semibold mb-3 text-gray-800">Add Photography Style</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                { 
-                  name: "Golden Hour", 
-                  prompt: "captured during golden hour with warm amber sunlight streaming through, creating soft shadows and a dreamy atmosphere, gentle lens flare, honeyed tones throughout the scene, natural outdoor setting with diffused backlighting" 
-                },
-                { 
-                  name: "Studio Lighting", 
-                  prompt: "professional studio setting with multiple soft box lights creating even, flattering illumination, clean seamless backdrop, controlled shadows, commercial quality lighting setup, crisp details with balanced exposure" 
-                },
-                { 
-                  name: "Black & White", 
-                  prompt: "classic black and white photography with dramatic contrast between lights and darks, deep blacks and bright whites, no mid-tones, stark shadows creating bold visual impact, timeless monochrome aesthetic" 
-                },
-                { 
-                  name: "Vintage Film", 
-                  prompt: "shot on vintage 35mm film stock, warm orange and brown color grading, subtle film grain texture, slightly faded colors with nostalgic feel, soft focus edges, authentic analog photography aesthetic" 
-                },
-                { 
-                  name: "Documentary", 
-                  prompt: "documentary style candid moment captured naturally, unposed and authentic, environmental context visible, photojournalistic approach, available light only, raw and genuine emotion, slice-of-life composition" 
-                },
-                { 
-                  name: "8K Ultra HD", 
-                  prompt: "ultra high resolution 8K photography, extreme sharpness throughout, every texture and detail crystal clear, professional camera with premium lens, perfect focus from foreground to background, photorealistic quality" 
-                },
-                { 
-                  name: "Motion Blur", 
-                  prompt: "dynamic motion captured with intentional blur, vibrant saturated colors popping against the movement, shutter drag technique, energetic and kinetic feeling, streaks of color suggesting speed and action" 
-                },
-                { 
-                  name: "Street Style", 
-                  prompt: "urban street photography aesthetic, gritty city environment, mixed lighting from neon signs and streetlights, busy atmosphere with environmental context, raw authentic moment, handheld camera feel with slight tilt" 
-                }
-              ].map((style) => (
-                <button
-                  key={style.name}
-                  type="button"
-                  onClick={() => {
-                    // Toggle selection - if already selected, deselect it
-                    if (selectedGenerationStyle === style.prompt) {
-                      setSelectedGenerationStyle(null);
-                    } else {
-                      setSelectedGenerationStyle(style.prompt);
-                    }
-                  }}
-                  className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium ${
-                    selectedGenerationStyle === style.prompt
-                      ? "border-[#06B6D4] bg-[#06B6D4] text-white"
-                      : "border-gray-200 hover:border-[#06B6D4] bg-white hover:bg-gray-50 text-gray-700 hover:text-[#06B6D4]"
-                  }`}
-                  title={style.prompt}
-                >
-                  {style.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
       {/* Image Size Selection */}
       <div className="space-y-3">
@@ -1377,81 +1247,16 @@ export default function PromptInput({
         </div>
       </div>
 
-      {/* Size Selection for Generation Mode */}
-      {isGenerationMode && (
-        <div className="space-y-3">
-          <h2 className="text-lg font-medium">Choose Image Size</h2>
-          <div className="flex space-x-2">
-            <Button
-              variant={imageSize === "mobile" ? "default" : "outline"}
-              className={`flex flex-col items-center py-2 px-4 h-auto ${
-                imageSize === "mobile"
-                  ? "bg-secondary text-white"
-                  : "text-white bg-black"
-              }`}
-              onClick={() => setImageSize("mobile")}
-            >
-              <div className="h-8 w-4 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
-                <div className="h-6 w-2 bg-current rounded-sm"></div>
-              </div>
-              <span className="text-xs">Portrait</span>
-              <span className="text-xs opacity-80 mt-1">2:3</span>
-            </Button>
-
-            <Button
-              variant={imageSize === "square" ? "default" : "outline"}
-              className={`flex flex-col items-center py-2 px-4 h-auto ${
-                imageSize === "square"
-                  ? "bg-secondary text-white"
-                  : "text-white bg-black"
-              }`}
-              onClick={() => setImageSize("square")}
-            >
-              <div className="h-6 w-6 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
-                <div className="h-4 w-4 bg-current rounded-sm"></div>
-              </div>
-              <span className="text-xs">Square</span>
-              <span className="text-xs opacity-80 mt-1">1:1</span>
-            </Button>
-
-            <Button
-              variant={imageSize === "default" ? "default" : "outline"}
-              className={`flex flex-col items-center py-2 px-4 h-auto ${
-                imageSize === "default"
-                  ? "bg-secondary text-white"
-                  : "text-white bg-black"
-              }`}
-              onClick={() => setImageSize("default")}
-            >
-              <div className="h-4 w-8 border-2 border-current rounded-sm mb-1 flex items-center justify-center">
-                <div className="h-2 w-6 bg-current rounded-sm"></div>
-              </div>
-              <span className="text-xs">Landscape</span>
-              <span className="text-xs opacity-80 mt-1">16:9</span>
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Submit Button */}
       <div className="flex justify-end mt-4">
         <RainbowButton
-            onClick={handlePromptSubmit}
-            disabled={!promptText.trim() || isLoading}
-            className="w-full"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isGenerationMode ? "Creating Magic..." : "Making Magic..."}
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                {isGenerationMode ? "Create Magic" : "Make Magic"}
-              </>
-            )}
-          </RainbowButton>
+          onClick={handleSubmit}
+          disabled={isLoading || !promptText.trim()}
+          size="lg"
+        >
+          {isLoading ? "Processing..." : "Transform Image"}
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </RainbowButton>
       </div>
     </div>
   );
