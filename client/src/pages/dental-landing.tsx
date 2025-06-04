@@ -269,8 +269,8 @@ export default function DentalLanding() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
-                      Before Visit
+                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                      Before Image
                     </div>
                   </div>
                   <div className="rounded-lg overflow-hidden shadow-lg bg-white">
@@ -281,8 +281,8 @@ export default function DentalLanding() {
                         className="w-full h-full object-contain p-4"
                       />
                     </div>
-                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
-                      Original Drawing
+                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                      Before Image
                     </div>
                   </div>
                   <div className="rounded-lg overflow-hidden shadow-lg bg-white">
@@ -293,8 +293,8 @@ export default function DentalLanding() {
                         className="w-full h-full object-contain p-4"
                       />
                     </div>
-                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
-                      Original Drawing
+                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                      Before Image
                     </div>
                   </div>
 
@@ -307,8 +307,8 @@ export default function DentalLanding() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
-                      AI Transformation
+                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
+                      Transformation
                     </div>
                   </div>
                   <div className="rounded-lg overflow-hidden shadow-lg bg-white">
@@ -319,8 +319,8 @@ export default function DentalLanding() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
-                      AI Transformation
+                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
+                      Transformation
                     </div>
                   </div>
                   <div className="rounded-lg overflow-hidden shadow-lg bg-white">
@@ -331,8 +331,8 @@ export default function DentalLanding() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
-                      AI Transformation
+                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
+                      Transformation
                     </div>
                   </div>
 
@@ -341,12 +341,12 @@ export default function DentalLanding() {
                     <div className="aspect-square">
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
                         <div className="text-center p-4">
-                          <Heart className="w-12 h-12 text-purple-500 mx-auto mb-2" />
+                          <Heart className="w-12 h-12 text-orange-500 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">Coloring Book Style</p>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-purple-500 text-white text-center py-2 text-sm font-semibold">
+                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
@@ -354,12 +354,12 @@ export default function DentalLanding() {
                     <div className="aspect-square">
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
                         <div className="text-center p-4">
-                          <Smile className="w-12 h-12 text-purple-500 mx-auto mb-2" />
+                          <Smile className="w-12 h-12 text-orange-500 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">Coloring Book Style</p>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-purple-500 text-white text-center py-2 text-sm font-semibold">
+                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
@@ -367,12 +367,12 @@ export default function DentalLanding() {
                     <div className="aspect-square">
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
                         <div className="text-center p-4">
-                          <Star className="w-12 h-12 text-purple-500 mx-auto mb-2" />
+                          <Star className="w-12 h-12 text-orange-500 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">Coloring Book Style</p>
                         </div>
                       </div>
                     </div>
-                    <div className="bg-purple-500 text-white text-center py-2 text-sm font-semibold">
+                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
