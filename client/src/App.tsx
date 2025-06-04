@@ -107,6 +107,8 @@ function Router() {
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
+        <Route path="/dental" component={() => import('./pages/dental-landing').then(m => m.default)} />
+        <Route path="/checkout-dental" component={() => import('./pages/checkout-dental').then(m => m.default)} />
         <Route path="/view-transformation" component={ViewTransformation} />
         <Route path="/text-to-image-results" component={TextToImageResults} />
         <Route path="/checkout-demo" component={CheckoutDemo} />
@@ -136,24 +138,24 @@ function App() {
       setTheme("dark");
       document.documentElement.classList.add("dark");
     }
-    
+
     // Disable browser scroll restoration
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    
+
     // Ensure page starts at top
     window.scrollTo(0, 0);
-    
+
     // Handle page visibility changes to reset scroll position
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         window.scrollTo(0, 0);
       }
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };

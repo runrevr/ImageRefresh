@@ -958,8 +958,28 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
       }
     });
 
+// Dental practice subscription
+app.post("/api/create-dental-subscription", async (req, res) => {
+  try {
+    const { practiceInfo } = req.body;
 
+    // Here you would create the dental practice subscription
+    // For now, we'll simulate success
+    console.log("Creating dental subscription for:", practiceInfo);
 
+    res.json({
+      success: true,
+      subscriptionId: `dental_${Date.now()}`,
+      message: "Dental practice subscription created successfully"
+    });
+  } catch (error) {
+    console.error("Error creating dental subscription:", error);
+    res.status(500).json({
+      error: "Failed to create subscription",
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
     // Credit deduction endpoint
   app.post("/api/credits/deduct", async (req, res) => {
     try {
