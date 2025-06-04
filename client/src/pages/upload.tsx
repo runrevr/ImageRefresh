@@ -192,6 +192,61 @@ export default function UploadPage() {
     return true;
   };
 
+  // Function to get prompt from style subcategory
+  const getPromptFromStyles = (subcategory: string): string => {
+    const styleMapping: Record<string, string> = {
+      // Animation styles
+      'mario': CARTOON_STYLES.mario?.suggestedPrompt || 'Transform into Super Mario style',
+      'minecraft': CARTOON_STYLES.minecraft?.suggestedPrompt || 'Transform into Minecraft style',
+      'pixar': CARTOON_STYLES.pixar?.suggestedPrompt || 'Transform into Pixar animation style',
+      'trolls': CARTOON_STYLES.trolls?.suggestedPrompt || 'Transform into Trolls style',
+      'princess': CARTOON_STYLES.princess?.suggestedPrompt || 'Transform into princess/prince style',
+      'superhero': CARTOON_STYLES.superhero?.suggestedPrompt || 'Transform into superhero style',
+      'lego': CARTOON_STYLES.lego?.suggestedPrompt || 'Transform into Lego character style',
+      'coloring-book': CARTOON_STYLES.coloringBook?.suggestedPrompt || 'Transform into coloring book style',
+      
+      // Historical styles
+      'western': ERA_STYLES['old-western']?.suggestedPrompt || 'Transform into Old Western style',
+      'hiphop': ERA_STYLES['90s-hip-hop']?.suggestedPrompt || 'Transform into 90s Hip-Hop style',
+      '80s': ERA_STYLES['1980s']?.suggestedPrompt || 'Transform into 1980s style',
+      'disco': ERA_STYLES['disco-era']?.suggestedPrompt || 'Transform into Disco era style',
+      'renaissance': ERA_STYLES.renaissance?.suggestedPrompt || 'Transform into Renaissance style',
+      'victorian': ERA_STYLES['victorian-era']?.suggestedPrompt || 'Transform into Victorian era style',
+      'medieval': ERA_STYLES.medieval?.suggestedPrompt || 'Transform into Medieval style',
+      
+      // Artistic styles
+      'oil': PAINTING_STYLES['oil-painting']?.suggestedPrompt || 'Transform into oil painting style',
+      'watercolor': PAINTING_STYLES.watercolor?.suggestedPrompt || 'Transform into watercolor style',
+      'impressionist': PAINTING_STYLES.impressionist?.suggestedPrompt || 'Transform into impressionist style',
+      'abstract': PAINTING_STYLES.abstract?.suggestedPrompt || 'Transform into abstract art style',
+      'surrealism': PAINTING_STYLES['pop-surrealism']?.suggestedPrompt || 'Transform into surrealism style',
+      'artdeco': PAINTING_STYLES['art-deco']?.suggestedPrompt || 'Transform into Art Deco style',
+      
+      // Other styles
+      'mullets': OTHER_STYLES.mullets?.suggestedPrompt || 'Transform with mullet style',
+      'hulkamania': OTHER_STYLES.hulkamania?.suggestedPrompt || 'Transform into Hulkamania style',
+      'baby-mode': OTHER_STYLES.babyMode?.suggestedPrompt || 'Transform into baby mode',
+      'baby': OTHER_STYLES['baby-prediction']?.suggestedPrompt || 'Transform into baby prediction',
+      'future': OTHER_STYLES['future-self']?.suggestedPrompt || 'Transform into future self',
+      'ghibli': OTHER_STYLES['ghibli-style']?.suggestedPrompt || 'Transform into Studio Ghibli style',
+      'action-figure': OTHER_STYLES['ai-action-figure']?.suggestedPrompt || 'Transform into action figure',
+      'pet-human': OTHER_STYLES['pet-as-human']?.suggestedPrompt || 'Transform pet as human',
+      'self-cat': OTHER_STYLES['self-as-cat']?.suggestedPrompt || 'Transform self as cat',
+      'caricature': OTHER_STYLES.caricature?.suggestedPrompt || 'Transform into caricature',
+      
+      // Kids drawing
+      'kids-drawing': 'Transform this children\'s drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing\'s theme. The final image should look like a professional photograph that brings the child\'s drawing to life while preserving its creative essence and charm.',
+    };
+
+    const prompt = styleMapping[subcategory];
+    if (!prompt) {
+      console.warn(`No prompt found for subcategory: ${subcategory}`);
+      return 'Transform the image in an artistic style';
+    }
+    
+    return prompt;
+  };
+
   const handleMakeMagic = async () => {
     if (!selectedSubcategory || !originalImagePath) {
       toast({
