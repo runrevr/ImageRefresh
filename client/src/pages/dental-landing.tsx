@@ -273,87 +273,103 @@ export default function DentalLanding() {
                       Before Visit
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={giraffeDrawingImage} 
-                      alt="Child's giraffe drawing" 
-                      className="w-full h-full object-contain p-4"
-                    />
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <img 
+                        src={giraffeDrawingImage} 
+                        alt="Child's giraffe drawing" 
+                        className="w-full h-full object-contain p-4"
+                      />
+                    </div>
                     <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
                       Original Drawing
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dogCatDrawingImage} 
-                      alt="Child's dog and cat drawing" 
-                      className="w-full h-full object-contain p-4"
-                    />
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <img 
+                        src={dogCatDrawingImage} 
+                        alt="Child's dog and cat drawing" 
+                        className="w-full h-full object-contain p-4"
+                      />
+                    </div>
                     <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
                       Original Drawing
                     </div>
                   </div>
 
                   {/* Row 2: After Images */}
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={bearRealImage} 
-                      alt="AI transformed bear" 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <img 
+                        src={bearRealImage} 
+                        alt="AI transformed bear" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
                       AI Transformation
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={giraffeRealImage} 
-                      alt="AI transformed giraffe" 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <img 
+                        src={giraffeRealImage} 
+                        alt="AI transformed giraffe" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
                       AI Transformation
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dogCatRealImage} 
-                      alt="AI transformed dog and cat" 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <img 
+                        src={dogCatRealImage} 
+                        alt="AI transformed dog and cat" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
                       AI Transformation
                     </div>
                   </div>
 
                   {/* Row 3: Coloring Book Images */}
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center p-4">
-                        <Heart className="w-12 h-12 text-purple-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Coloring Book Style</p>
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <div className="text-center p-4">
+                          <Heart className="w-12 h-12 text-purple-500 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">Coloring Book Style</p>
+                        </div>
                       </div>
                     </div>
                     <div className="bg-purple-500 text-white text-center py-2 text-sm font-semibold">
                       Coloring Book
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center p-4">
-                        <Smile className="w-12 h-12 text-purple-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Coloring Book Style</p>
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <div className="text-center p-4">
+                          <Smile className="w-12 h-12 text-purple-500 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">Coloring Book Style</p>
+                        </div>
                       </div>
                     </div>
                     <div className="bg-purple-500 text-white text-center py-2 text-sm font-semibold">
                       Coloring Book
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center p-4">
-                        <Star className="w-12 h-12 text-purple-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Coloring Book Style</p>
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <div className="text-center p-4">
+                          <Star className="w-12 h-12 text-purple-500 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">Coloring Book Style</p>
+                        </div>
                       </div>
                     </div>
                     <div className="bg-purple-500 text-white text-center py-2 text-sm font-semibold">
