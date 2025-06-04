@@ -27,6 +27,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import DeviceFingerprint from "@/components/DeviceFingerprint";
 import ScrollToTop from "@/components/ScrollToTop";
 import ProductImageLabPage from './pages/product-image-lab';
+import TextToImage from "./pages/text-to-image";
+import TextToImageResults from "./pages/text-to-image-results";
+import Generation from "./pages/generation";
 
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -43,7 +46,6 @@ import SelectIdeasPage from "@/pages/select-ideas";
 import GenerateEnhancementsPage from "@/pages/generate-enhancements";
 import ResultsPage from "@/pages/results";
 import ViewTransformation from "@/pages/view-transformation";
-import TextToImageResults from "@/pages/text-to-image-results";
 import CheckoutDemo from "@/pages/checkout-demo";
 import CheckoutFlowDemo from "@/pages/checkout-flow-demo";
 import PrebuiltPrompts from "./pages/prebuilt-prompts";
@@ -134,24 +136,24 @@ function App() {
       setTheme("dark");
       document.documentElement.classList.add("dark");
     }
-    
+
     // Disable browser scroll restoration
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    
+
     // Ensure page starts at top
     window.scrollTo(0, 0);
-    
+
     // Handle page visibility changes to reset scroll position
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         window.scrollTo(0, 0);
       }
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };

@@ -21,6 +21,7 @@ import {
   Baby, // For kids to real
   Plus,
   Upload,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SavedStyle } from "./StyleIntegration";
@@ -37,6 +38,8 @@ interface PromptInputProps {
   selectedTransformation?: TransformationType | null;
   defaultPrompt?: string; // Default prompt text (can come from saved style)
   savedStyle?: SavedStyle | null; // Style information from Ideas page
+  onGenerate?: (prompt: string, selectedStyle?: string) => void;
+  isGenerationMode?: boolean;
 }
 
 // Main transformation categories
@@ -194,6 +197,50 @@ The overall style should feel cheerful, energetic, bright, and nostalgic, captur
     suggestedPrompt: "",
   },
 };
+
+export const GENERATION_STYLES = [
+  { 
+    name: "Bioluminescent Magic", 
+    prompt: ", glowing with bioluminescent light, ethereal light trails, soft blue-green glow emanating from within, phosphorescent patterns, magical sparkles floating in air, dark background to enhance luminescence" 
+  },
+  { 
+    name: "Steampunk Mechanical", 
+    prompt: ", steampunk style, brass gears and copper pipes, Victorian-era mechanical parts, rivets and steam vents, antique bronze finish, clockwork mechanisms visible, industrial revolution aesthetic" 
+  },
+  { 
+    name: "80s Airbrush Art", 
+    prompt: ", 80s airbrush art style, neon pink and electric blue gradients, chrome metallic effects, retro-futuristic, glossy finish, laser grid background, Miami Vice color palette" 
+  },
+  { 
+    name: "Comic Book Pop Art", 
+    prompt: ", comic book style, bold black outlines, Ben Day dot shading, vibrant primary colors, speech bubble effects, dynamic action lines, Roy Lichtenstein inspired" 
+  },
+  { 
+    name: "Surrealist Melting", 
+    prompt: ", surrealist style, melting and warping like Salvador Dalí painting, impossible physics, dreamlike distortions, reality bending, fluid transformations, mysterious floating elements" 
+  },
+  { 
+    name: "Candyland Sweet", 
+    prompt: ", candyland aesthetic, pastel pink and mint green, sugar crystal textures, whipped cream clouds, rainbow sprinkles, glossy candy coating, marshmallow soft lighting" 
+  },
+  { 
+    name: "Double Exposure Portrait", 
+    prompt: ", double exposure effect, silhouette blended with landscape, transparent overlay, dreamy fade between images, artistic photographic blend, ethereal combination" 
+  },
+  { 
+    name: "Vintage Polaroid", 
+    prompt: ", vintage polaroid photograph, faded white borders, light leaks, nostalgic color shift, slightly overexposed, authentic film grain, 1970s instant photo aesthetic" 
+  },
+  { 
+    name: "Tron-style Wireframe", 
+    prompt: ", Tron legacy style, glowing neon wireframe on black background, electric blue and orange light trails, digital grid world, cyberpunk geometric patterns, holographic effect" 
+  },
+  { 
+    name: "Low-poly 3D", 
+    prompt: ", low-poly 3D art style, geometric faceted surfaces, flat shaded polygons, minimalist color palette, early PlayStation graphics aesthetic, angular crystalline structure" 
+  }
+];
+
 // Painting subcategories
 export const PAINTING_STYLES: Record<PaintingSubcategory, StyleOption> = {
   "oil-painting": {
@@ -342,8 +389,7 @@ export const ERA_STYLES: Record<EraSubcategory, StyleOption> = {
     suggestedPrompt:
       "Transform the uploaded photo of a person or couple into a 1970s disco scene, altering only their hair, clothing, and background—do not change any facial features or body proportions.  \n1. **Isolate regions**  \n   - Use the image's hair mask to replace hairstyles.  \n   - Use the clothing mask to swap in disco outfits.  \n   - Use a background mask to recreate a dance‐floor setting.  \n2. **Preserve identity**  \n   - Keep all facial attributes (skin tone, bone structure, eye color & shape, lip shape, expression) exactly as in the original—no age shifts, no new wrinkles or blemishes.  \n   - Maintain original body posture and proportions.  \n3. **Randomize key disco elements** (choose one per run):  \n   - **Hair style:** classic rounded afro | feathered shag with curtain bangs | voluminous blowout waves  \n   - **Outfit:** sequin jumpsuit with flared legs | polyester wrap dress with geometric prints | satin shirt with wide collar + bell-bottom trousers  \n   - **Accessory:** mirrored aviator sunglasses | wide paisley headband | metallic platform shoes  \n4. **Background & lighting**  \n   - Place the subjects on a reflective dance floor with a spinning disco ball overhead.  \n   - Add colored spotlights (amber, magenta, teal) and subtle lens flares.  \n5. **Seamless integration**  \n   - Blend shadows, highlights, and color cast so the new hair, clothes, and background look like one cohesive photograph.  \n6. **Negative constraints** (do **not**):  \n   - Alter any facial detail, skin texture, or age cues.  \n   - Change body poses, hand positions, or cropping.  \n   - Introduce modern elements (smartphones, modern jewelry, contemporary hairstyles).",
   },
-  cyberpunk: {
-    title: "Cyberpunk",
+  cyberpunk: {    title: "Cyberpunk",
     description:
       "Futuristic dystopian aesthetic with neon lights, urban decay, and high-tech elements.",
     placeholder: "E.g., Add neon lights and cybernetic elements",
@@ -498,6 +544,8 @@ export default function PromptInput({
   selectedTransformation,
   defaultPrompt,
   savedStyle,
+  onGenerate,
+  isGenerationMode = false,
 }: PromptInputProps) {
   const { toast } = useToast();
   const [promptText, setPromptText] = useState(defaultPrompt || "");
@@ -531,6 +579,9 @@ export default function PromptInput({
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
   // No pop culture subcategory needed
+  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
+  const [selectedGenerationStyle, setSelectedGenerationStyle] = useState<string | null>(null);
+
 
   // Determine subcategory options based on primary category
   const getSubcategoryOptions = () => {
@@ -711,6 +762,31 @@ export default function PromptInput({
     }
   };
 
+    const handlePromptSubmit = () => {
+    console.log("DEBUG handlePromptSubmit - promptText received:", promptText);
+    console.log("DEBUG handlePromptSubmit - promptText length:", promptText.length);
+
+    if (!promptText.trim()) return;
+
+    if (isGenerationMode && onGenerate) {
+      // Generation mode - create image from text
+      let finalPrompt = promptText.trim();
+      if (selectedGenerationStyle) {
+        const styleData = GENERATION_STYLES.find(s => s.prompt === selectedGenerationStyle);
+        if (styleData) {
+          finalPrompt = finalPrompt + styleData.prompt;
+        }
+      }
+      console.log("Generation prompt being sent:", finalPrompt);
+      onGenerate(finalPrompt, selectedGenerationStyle || undefined);
+    } else {
+      // Transform mode - transform existing image
+      console.log("Transform prompt being sent:", promptText);
+      onSubmit(promptText.trim(), uploadedReferenceImage || undefined);
+    }
+  };
+
+
   // Pop culture handler removed
 
   // Get the current subcategory title and description
@@ -863,6 +939,10 @@ export default function PromptInput({
       };
       reader.readAsDataURL(file);
     }
+  };
+
+    const handleStyleSelect = (stylePrompt: string) => {
+    setSelectedStyle(stylePrompt === selectedStyle ? null : stylePrompt);
   };
 
   const currentSubcategoryInfo = getCurrentSubcategoryInfo();
@@ -1147,9 +1227,7 @@ export default function PromptInput({
             onChange={handleImageUpload}
           />
           <Textarea
-            placeholder={
-              currentSubcategoryInfo?.placeholder || getCustomPlaceholder()
-            }
+            placeholder={isGenerationMode ? "Describe what you want to create..." : currentSubcategoryInfo?.placeholder || getCustomPlaceholder()}
             value={promptText}
             onChange={(e) => setPromptText(e.target.value)}
             className="h-[38px] min-h-[38px] text-base resize-y overflow-hidden focus:min-h-[150px] transition-all leading-[38px] py-0 pl-12 pr-3 border border-gray-300"
@@ -1190,6 +1268,48 @@ export default function PromptInput({
           </p>
         )}
       </div>
+
+      {/* Style Pills */}
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-3 text-gray-800">
+            {isGenerationMode ? "Choose Generation Style" : "Choose Your Style"}
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {isGenerationMode ? (
+              // Generation styles
+              GENERATION_STYLES.map((style, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => setSelectedGenerationStyle(selectedGenerationStyle === style.prompt ? null : style.prompt)}
+                  className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium ${
+                    selectedGenerationStyle === style.prompt
+                      ? "border-cyan-500 bg-cyan-500 text-white"
+                      : "border-gray-200 hover:border-cyan-500 bg-white hover:bg-gray-50 text-gray-700 hover:text-cyan-500"
+                  }`}
+                >
+                  {style.name}
+                </button>
+              ))
+            ) : (
+              // Transform styles
+              CARTOON_STYLES.map((style, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleStyleSelect(style.prompt)}
+                  className={`p-3 rounded-lg border-2 transition-all duration-200 min-h-[60px] flex items-center justify-center text-center text-sm font-medium ${
+                    selectedStyle === style.prompt
+                      ? "border-cyan-500 bg-cyan-500 text-white"
+                      : "border-gray-200 hover:border-cyan-500 bg-white hover:bg-gray-50 text-gray-700 hover:text-cyan-500"
+                  }`}
+                >
+                  {style.name}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
 
       {/* Image Size Selection */}
       <div className="space-y-3">
@@ -1250,13 +1370,22 @@ export default function PromptInput({
       {/* Submit Button */}
       <div className="flex justify-end mt-4">
         <RainbowButton
-          onClick={handleSubmit}
-          disabled={isLoading || !promptText.trim()}
-          size="lg"
-        >
-          {isLoading ? "Processing..." : "Transform Image"}
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </RainbowButton>
+            onClick={handlePromptSubmit}
+            disabled={!promptText.trim() || isLoading}
+            className="w-full"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isGenerationMode ? "Creating Magic..." : "Making Magic..."}
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                {isGenerationMode ? "Create Magic" : "Make Magic"}
+              </>
+            )}
+          </RainbowButton>
       </div>
     </div>
   );
