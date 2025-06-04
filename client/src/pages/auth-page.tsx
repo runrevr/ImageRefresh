@@ -127,14 +127,15 @@ export default function AuthPage() {
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-username">Email</Label>
+                    <Label htmlFor="login-email">Email</Label>
                     <Input 
-                      id="login-username" 
+                      id="login-email" 
                       type="email" 
                       placeholder="Enter your email address" 
                       value={loginUsername} 
                       onChange={(e) => setLoginUsername(e.target.value)} 
                       required
+                      autoComplete="email"
                     />
                   </div>
                   <div className="space-y-2">
