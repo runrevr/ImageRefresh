@@ -261,12 +261,14 @@ export default function DentalLanding() {
                 
                 <div className="grid grid-cols-3 gap-4 mb-8">
                   {/* Row 1: Before Images */}
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={childWithMissingTeethImage} 
-                      alt="Happy child with missing teeth" 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="aspect-square">
+                      <img 
+                        src={childWithMissingTeethImage} 
+                        alt="Happy child with missing teeth" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
                       Before Visit
                     </div>
