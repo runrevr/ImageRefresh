@@ -1,0 +1,50 @@
+Please update the style buttons in create.tsx with these 10 new photography/art styles:
+
+Replace the entire style buttons array (starting with "Bioluminescent magic") with these new styles:
+
+{[
+ { 
+   name: "Golden Hour", 
+   prompt: "captured during golden hour with warm amber sunlight streaming through, creating soft shadows and a dreamy atmosphere, gentle lens flare, honeyed tones throughout the scene, natural outdoor setting with diffused backlighting" 
+ },
+ { 
+   name: "Double Exposure", 
+   prompt: "double exposure effect, silhouette blended with secondary imagery, transparent overlay, dreamy fade between images, artistic photographic blend, ethereal combination of two visual elements" 
+ },
+ { 
+   name: "8K Ultra HD", 
+   prompt: "ultra high resolution 8K photography, extreme sharpness throughout, every texture and detail crystal clear, professional camera with premium lens, perfect focus from foreground to background, photorealistic quality" 
+ },
+ { 
+   name: "Black & White", 
+   prompt: "classic black and white photography with dramatic contrast between lights and darks, deep blacks and bright whites, strong tonal range, timeless monochrome aesthetic, emphasis on form and texture over color" 
+ },
+ { 
+   name: "Documentary", 
+   prompt: "documentary style candid moment captured naturally, unposed and authentic, environmental context visible, photojournalistic approach, available light only, raw and genuine emotion, slice-of-life composition" 
+ },
+ { 
+   name: "Vintage Polaroid", 
+   prompt: "vintage polaroid photograph, faded white borders, light leaks, nostalgic color shift with slightly washed out colors, slightly overexposed, authentic instant film grain, 1970s instant photo aesthetic, square format" 
+ },
+ { 
+   name: "80's Airbrush", 
+   prompt: "80s airbrush art style, neon pink and electric blue gradients, chrome metallic effects, retro-futuristic aesthetic, glossy finish, laser grid background, Miami Vice color palette, smooth blended colors" 
+ },
+ { 
+   name: "3D Low Poly", 
+   prompt: "low-poly 3D art style, geometric faceted surfaces, flat shaded polygons, minimalist color palette, early PlayStation graphics aesthetic, angular crystalline structure, simplified geometric forms" 
+ },
+ { 
+   name: "3D Animation", 
+   prompt: "modern 3D animation style like Pixar or DreamWorks, smooth rendered surfaces, vibrant colors, expressive character design, professional CGI quality, detailed textures and lighting, cinematic presentation" 
+ },
+ { 
+   name: "Comic Book", 
+   prompt: "comic book style illustration, bold black outlines, Ben Day dot shading, vibrant primary colors, speech bubble effects, dynamic action lines, dramatic angles, superhero comic aesthetic" 
+ }
+].map((style) => (
+ // ... rest of the button code stays the same
+))}
+
+Note: I removed "2D Animation" to keep it at 10 buttons total and added "Vintage Polaroid" as requeste
