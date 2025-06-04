@@ -13,6 +13,7 @@ import AccountNeededDialog from "@/components/AccountNeededDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Star, Heart, Smile } from "lucide-react";
+import { TextRotate } from "@/components/ui/text-rotate";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useFreeCredits } from "@/hooks/useFreeCredits";
@@ -182,9 +183,27 @@ export default function DentalLanding() {
               <div className="max-w-6xl mx-auto px-4 text-center">
                 <div className="mb-8">
                   <Smile className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                  <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                    Make Every Visit 
-                    <span className="text-blue-600"> Magical</span> for Kids
+                  <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-[1.1] tracking-tight">
+                    Make Every Visit{" "}
+                    <br className="hidden sm:block" />
+                    <TextRotate
+                      texts={[
+                        "Magical",
+                        "Exciting", 
+                        "Fun",
+                        "Special",
+                        "Amazing"
+                      ]}
+                      rotationInterval={2000}
+                      staggerDuration={0.03}
+                      initial={{ y: "50%", opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: "-50%", opacity: 0 }}
+                      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                      mainClassName="text-blue-600 font-bold inline-block text-5xl md:text-6xl leading-[1.1] tracking-tight"
+                      elementLevelClassName="font-bold text-5xl md:text-6xl"
+                    />
+                    {" "}for Kids
                   </h1>
                   <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto mb-8">
                     Transform your young patients' drawings into stunning reality with AI. 
