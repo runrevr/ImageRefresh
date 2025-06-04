@@ -247,16 +247,16 @@ export default function Create() {
           </p>
 
           <div className="relative max-w-2xl mx-auto mb-12">
-            <div className="relative border-4 border-double border-gray-300 rounded-2xl focus-within:border-[#06B6D4] shadow-lg overflow-hidden bg-white">
+            <div className="relative border-4 border-double border-gray-700 rounded-2xl focus-within:border-[#06B6D4] shadow-lg overflow-hidden bg-gray-800">
               <div className="flex items-start">
                 {/* Image Upload Button/Preview */}
-                <div className="flex-shrink-0 border-r-2 border-gray-200">
+                <div className="flex-shrink-0 border-r-2 border-gray-700">
                   {uploadedImage ? (
-                    <div className="relative w-32 h-32">
+                    <div className="relative w-20 h-20">
                       <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="absolute top-2 right-2 bg-white/80 backdrop-blur rounded p-1.5 shadow hover:bg-white"
+                        className="absolute top-1 right-1 bg-white/80 backdrop-blur rounded p-1 shadow hover:bg-white"
                         title="Change image"
                         type="button"
                       >
@@ -264,7 +264,7 @@ export default function Create() {
                       </button>
                       <button
                         onClick={() => setUploadedImage(null)}
-                        className="absolute top-2 left-2 bg-white/80 backdrop-blur rounded p-1.5 shadow hover:bg-white"
+                        className="absolute top-1 left-1 bg-white/80 backdrop-blur rounded p-1 shadow hover:bg-white"
                         title="Remove image"
                         type="button"
                       >
@@ -274,11 +274,11 @@ export default function Create() {
                   ) : (
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-32 h-32 hover:bg-gray-50 transition-all flex items-center justify-center group"
+                      className="w-20 h-20 hover:bg-gray-700 transition-all flex items-center justify-center group"
                       type="button"
                       title="Upload image"
                     >
-                      <span className="text-3xl text-gray-400 group-hover:text-[#06B6D4] transition-colors">+</span>
+                      <span className="text-2xl text-gray-400 group-hover:text-[#06B6D4] transition-colors">+</span>
                     </button>
                   )}
                 </div>
@@ -291,7 +291,7 @@ export default function Create() {
                     ? "Describe how you want to transform this image..." 
                     : "Describe your idea! Example: 'A friendly dragon teaching a young princess how to paint rainbows in a magical forest, bright cheerful colors, whimsical storybook style'"
                   }
-                  className="flex-1 p-6 text-sm border-0 focus:outline-none focus:ring-0 min-h-[128px] resize-none bg-transparent"
+                  className="flex-1 p-4 text-sm border-0 focus:outline-none focus:ring-0 min-h-[60px] resize-none bg-transparent text-white placeholder-gray-400"
                   onKeyPress={(e) => e.key === 'Enter' && e.ctrlKey && generateImages()}
                 />
               </div>
