@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { db } from './db';
-import { transformations } from '@shared/schema';
+import db from './db.js';
+import { transformations } from '../shared/schema.js';
 import { lt, sql, or, isNull } from 'drizzle-orm';
 
 const RETENTION_DAYS = 60;
