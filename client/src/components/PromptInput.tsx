@@ -1269,15 +1269,14 @@ export default function PromptInput({
         )}
       </div>
 
-      {/* Style Pills */}
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3 text-gray-800">
-            {isGenerationMode ? "Choose Generation Style" : "Choose Your Style"}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {isGenerationMode ? (
-              // Generation styles
-              GENERATION_STYLES.map((style, index) => (
+      {/* Style Pills - Only show in generation mode */}
+        {isGenerationMode && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-3 text-gray-800">
+              Choose Generation Style
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {GENERATION_STYLES.map((style, index) => (
                 <button
                   key={index}
                   type="button"
@@ -1290,13 +1289,10 @@ export default function PromptInput({
                 >
                   {style.name}
                 </button>
-              ))
-            ) : (
-              // Transform styles - these would be different style options for transform mode
-              []
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
       {/* Image Size Selection */}
       <div className="space-y-3">
