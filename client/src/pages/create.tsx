@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import ResultView from "@/components/ResultView";
 
 export default function Create() {
   const [prompt, setPrompt] = useState("");
@@ -23,6 +24,7 @@ export default function Create() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedStylePrompt, setSelectedStylePrompt] = useState(""); // Track selected photography style prompt
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [resultImages, setResultImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -243,20 +245,16 @@ export default function Create() {
       const result = await response.json();
 
       if (result.success && result.imageUrls) {
-        // Navigate to results page with the generated images
-        window.location.href = `/text-to-image-results.html?${new URLSearchParams({
-          imageUrls: encodeURIComponent(JSON.stringify(result.imageUrls)),
-          prompt: finalPrompt, // Use the final enhanced prompt
-          metadata: encodeURIComponent(JSON.stringify({
-            variations: 2,
-            purpose,
-            industry,
-            aspectRatio,
-            styleIntensity: styleIntensity[0],
-            addText,
-            businessName,
-          }))
-        }).toString()}`;
+        // Set the result images to display inline
+        setResultImages(result.imageUrls);
+        
+        // Auto-scroll to results after a brief delay
+        setTimeout(() => {
+          const resultsElement = document.getElementById('results-section');
+          if (resultsElement) {
+            resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
       } else {
         throw new Error(result.error || "Failed to generate images");
       }
@@ -470,6 +468,31 @@ export default function Create() {
             )}
           </Button>
         </div>
+
+        {/* Results Section */}
+        {resultImages.length > 0 && (
+          <div id="results-section" className="mt-8">
+            <ResultView
+              originalImage={uploadedImage || ""}
+              transformedImage={resultImages[0]}
+              secondTransformedImage={resultImages[1] || null}
+              onTryAgain={() => {
+                setResultImages([]);
+                setPrompt("");
+                setUploadedImage(null);
+              }}
+              onNewImage={() => {
+                setResultImages([]);
+                setPrompt("");
+                setUploadedImage(null);
+              }}
+              freeCredits={0}
+              paidCredits={0}
+              prompt={prompt}
+              canEdit={false}
+            />
+          </div>
+        )}
       </div>
     </Layout>
   );
