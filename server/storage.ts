@@ -589,14 +589,61 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUserImage(imageId: number, userId: number): Promise<boolean> {
-    const result = await db
-      .delete(userImages)
-      .where(and(
-        eq(userImages.id, imageId),
-        eq(userImages.userId, userId)
-      ));
+    try {
+      // First, get the image record to find the file path
+      const [imageRecord] = await db
+        .select()
+        .from(userImages)
+        .where(and(
+          eq(userImages.id, imageId),
+          eq(userImages.userId, userId)
+        ));
 
-    return (result.rowCount || 0) > 0;
+      if (!imageRecord) {
+        console.log(`[STORAGE] Image ${imageId} not found for user ${userId}`);
+        return false;
+      }
+
+      // Delete from database first
+      const result = await db
+        .delete(userImages)
+        .where(and(
+          eq(userImages.id, imageId),
+          eq(userImages.userId, userId)
+        ));
+
+      const deleted = (result.rowCount || 0) > 0;
+
+      if (deleted && imageRecord.imagePath) {
+        // Delete the physical file
+        try {
+          const fs = await import('fs');
+          const path = await import('path');
+          
+          // Handle both absolute and relative paths
+          let fullPath = imageRecord.imagePath;
+          if (!path.isAbsolute(fullPath)) {
+            fullPath = path.join(process.cwd(), fullPath);
+          }
+
+          if (fs.existsSync(fullPath)) {
+            fs.unlinkSync(fullPath);
+            console.log(`[STORAGE] Deleted file: ${fullPath}`);
+          } else {
+            console.log(`[STORAGE] File not found for deletion: ${fullPath}`);
+          }
+        } catch (fileError) {
+          console.error(`[STORAGE] Error deleting file ${imageRecord.imagePath}:`, fileError);
+          // Don't fail the operation if file deletion fails - the DB record is already gone
+        }
+      }
+
+      console.log(`[STORAGE] Successfully deleted image ${imageId} for user ${userId}`);
+      return deleted;
+    } catch (error) {
+      console.error(`[STORAGE] Error deleting image ${imageId}:`, error);
+      return false;
+    }
   }
 }
 
