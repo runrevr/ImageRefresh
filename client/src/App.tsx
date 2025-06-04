@@ -53,6 +53,7 @@ import MyImages from "./pages/my-images";
 import TextToImage from "./pages/text-to-image";
 import GalleryPage from "./pages/gallery";
 import MySavedImages from "./pages/my-saved-images";
+import Create from "./pages/create";
 
 function Router() {
   return (
@@ -114,6 +115,7 @@ function Router() {
         <Route path="/prebuilt-upload" component={PrebuiltUpload} />
         <Route path="/prebuilt-results" component={PrebuiltResults} />
         <Route path="/text-to-image" component={TextToImage} />
+        <Route path="/create" component={Create} />
         <ProtectedRoute path="/my-images" component={MyImages} />
         <ProtectedRoute path="/gallery" component={GalleryPage} />
         <ProtectedRoute path="/saved-images" component={MySavedImages} />
