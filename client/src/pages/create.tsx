@@ -271,9 +271,10 @@ export default function Create() {
                 ) : (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-all flex items-center justify-center text-3xl text-gray-400 hover:text-[#06B6D4]"
+                    className="w-24 h-24 border-2 border-gray-300 rounded-lg hover:border-[#06B6D4] hover:bg-gray-50 transition-all flex items-center justify-center bg-white"
+                    type="button"
                   >
-                    +
+                    <span className="text-4xl text-gray-400 hover:text-[#06B6D4]">+</span>
                   </button>
                 )}
               </div>
