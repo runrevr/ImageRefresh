@@ -29,14 +29,15 @@ import alicornDrawingImage from "../assets/alicorn-drawing.jpg";
 import alicornRealImage from "../assets/alicorn-real.png";
 
 // Import dental images
-import dentalBoyBeforeImage from "../assets/dental-boy-missing-teeth-before.png";
-import dentalChildBeforeImage from "../assets/dental-child-missing-tooth-before.png";
-import dentalSuperheroTransformImage from "../assets/dental-superhero-transformation.png";
-import dentalPrincessTransformImage from "../assets/dental-princess-transformation.png";
-import dentalMinecraftTransformImage from "../assets/dental-minecraft-transformation.png";
-import dentalSuperheroColoringImage from "../assets/dental-superhero-coloring.png";
-import dentalPrincessColoringImage from "../assets/dental-princess-coloring.png";
-import dentalMinecraftColoringImage from "../assets/dental-minecraft-coloring.png";
+import dentalBefore1Image from "../assets/dental-before-1.png";
+import dentalBefore2Image from "../assets/dental-before-2.png";
+import dentalBefore3Image from "../assets/dental-before-3.png";
+import dentalTransform1Image from "../assets/dental-transform-1.png";
+import dentalTransform2Image from "../assets/dental-transform-2.png";
+import dentalTransform3Image from "../assets/dental-transform-3.png";
+import dentalColoring1Image from "../assets/dental-coloring-1.png";
+import dentalColoring2Image from "../assets/dental-coloring-2.png";
+import dentalColoring3Image from "../assets/dental-coloring-3.png";
 
 // Enum for the different steps in the process
 enum Step {
@@ -268,100 +269,124 @@ export default function DentalLanding() {
                   </p>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  {/* Row 1: Before Images */}
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalBoyBeforeImage} 
-                      alt="Child with missing teeth before dental visit" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
-                      Before Image
+                <div className="grid grid-cols-3 gap-6 mb-8">
+                  {/* Column 1: Set 1 Images */}
+                  <div className="flex flex-col gap-4">
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalBefore1Image} 
+                          alt="Child 1 - Before" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                        Before
+                      </div>
                     </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalChildBeforeImage} 
-                      alt="Another child with missing tooth before" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
-                      Before Image
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalTransform1Image} 
+                          alt="Child 1 - Transformation" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
+                        Transformation
+                      </div>
                     </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={bearDrawingImage} 
-                      alt="Child's drawing" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
-                      Before Image
-                    </div>
-                  </div>
-
-                  {/* Row 2: After Images */}
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalSuperheroTransformImage} 
-                      alt="Superhero transformation" 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
-                      Transformation
-                    </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalPrincessTransformImage} 
-                      alt="Princess transformation" 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
-                      Transformation
-                    </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalMinecraftTransformImage} 
-                      alt="Minecraft transformation" 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
-                      Transformation
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalBefore3Image} 
+                          alt="Child 3 - Before" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
+                        Coloring Book
+                      </div>
                     </div>
                   </div>
 
-                  {/* Row 3: Coloring Book Images */}
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalSuperheroColoringImage} 
-                      alt="Superhero coloring book page" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
-                      Coloring Book
+                  {/* Column 2: Set 2 Images */}
+                  <div className="flex flex-col gap-4">
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalBefore2Image} 
+                          alt="Child 2 - Before" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                        Before
+                      </div>
+                    </div>
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalTransform2Image} 
+                          alt="Child 2 - Transformation" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
+                        Transformation
+                      </div>
+                    </div>
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalTransform3Image} 
+                          alt="Child 3 - Transformation" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
+                        Coloring Book
+                      </div>
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalPrincessColoringImage} 
-                      alt="Princess coloring book page" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
-                      Coloring Book
+
+                  {/* Column 3: Set 3 Images */}
+                  <div className="flex flex-col gap-4">
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalColoring1Image} 
+                          alt="Child 1 - Coloring Book" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                        Before
+                      </div>
                     </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dentalMinecraftColoringImage} 
-                      alt="Minecraft coloring book page" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
-                      Coloring Book
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalColoring2Image} 
+                          alt="Child 2 - Coloring Book" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
+                        Transformation
+                      </div>
+                    </div>
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
+                      <div className="flex-1 p-4 flex items-center justify-center">
+                        <img 
+                          src={dentalColoring3Image} 
+                          alt="Child 3 - Coloring Book" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
+                        Coloring Book
+                      </div>
                     </div>
                   </div>
                 </div>
