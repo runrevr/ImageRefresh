@@ -162,19 +162,11 @@ export default function DentalLanding() {
   };
 
   const handleUploadClick = () => {
-    if (userCredits?.totalCredits) {
-      setShowUploadForm(true);
-    } else {
-      setShowAccountDialog(true);
-    }
+    setLocation('/upload');
   };
 
   return (
     <div className="text-gray-800 min-h-screen flex flex-col" style={{ backgroundColor: "white" }}>
-      <Navbar
-        freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
-        paidCredits={userCredits?.paidCredits || 0}
-      />
       {/* Account Needed Dialog */}
       <AccountNeededDialog
         open={showAccountDialog}
@@ -183,7 +175,7 @@ export default function DentalLanding() {
         isLoggedIn={Boolean(userCredits?.totalCredits)}
         remainingCredits={userCredits?.paidCredits || 0}
       />
-      <main className="relative w-full" style={{ paddingTop: '4rem' }}>
+      <main className="relative w-full">
         {/* Hero Section for Dental Practices */}
         {currentStep === Step.Upload && !showUploadForm && (
           <>
@@ -547,10 +539,7 @@ export default function DentalLanding() {
                             <Check className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
                             <span>HD resolution output perfect for printing</span>
                           </li>
-                          <li className="flex items-start">
-                            <Check className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                            <span>Multiple staff accounts included</span>
-                          </li>
+
                           <li className="flex items-start">
                             <Check className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
                             <span>Commercial usage rights</span>
