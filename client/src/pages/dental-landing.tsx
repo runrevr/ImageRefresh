@@ -529,7 +529,7 @@ export default function DentalLanding() {
                     </div>
                     <CardContent className="p-8 pt-16">
                       <div className="text-center">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                        <h3 className="text-2xl font-bold mb-4 text-[#06b6d4]">
                           Unlimited Dental Plan
                         </h3>
                         <div className="text-6xl font-bold text-primary-500 mb-2">
