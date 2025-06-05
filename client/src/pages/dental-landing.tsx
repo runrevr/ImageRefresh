@@ -27,10 +27,16 @@ import dogCatDrawingImage from "../assets/dog-and-cat-drawing.png";
 import dogCatRealImage from "../assets/dog-and-cat-real.png";
 import alicornDrawingImage from "../assets/alicorn-drawing.jpg";
 import alicornRealImage from "../assets/alicorn-real.png";
-// Additional dental images will be imported here
-// import dentalImage1 from "../assets/dental-image-1.png";
-// import dentalImage2 from "../assets/dental-image-2.png";
-// etc...
+
+// Import dental images
+import dentalBoyBeforeImage from "../assets/dental-boy-missing-teeth-before.png";
+import dentalChildBeforeImage from "../assets/dental-child-missing-tooth-before.png";
+import dentalSuperheroTransformImage from "../assets/dental-superhero-transformation.png";
+import dentalPrincessTransformImage from "../assets/dental-princess-transformation.png";
+import dentalMinecraftTransformImage from "../assets/dental-minecraft-transformation.png";
+import dentalSuperheroColoringImage from "../assets/dental-superhero-coloring.png";
+import dentalPrincessColoringImage from "../assets/dental-princess-coloring.png";
+import dentalMinecraftColoringImage from "../assets/dental-minecraft-coloring.png";
 
 // Enum for the different steps in the process
 enum Step {
@@ -266,28 +272,28 @@ export default function DentalLanding() {
                   {/* Row 1: Before Images */}
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
                     <img 
+                      src={dentalBoyBeforeImage} 
+                      alt="Child with missing teeth before dental visit" 
+                      className="w-full h-full object-contain p-4"
+                    />
+                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                      Before Image
+                    </div>
+                  </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={dentalChildBeforeImage} 
+                      alt="Another child with missing tooth before" 
+                      className="w-full h-full object-contain p-4"
+                    />
+                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
+                      Before Image
+                    </div>
+                  </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
                       src={bearDrawingImage} 
-                      alt="Child's bear drawing" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
-                      Before Image
-                    </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={giraffeDrawingImage} 
-                      alt="Child's giraffe drawing" 
-                      className="w-full h-full object-contain p-4"
-                    />
-                    <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
-                      Before Image
-                    </div>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <img 
-                      src={dogCatDrawingImage} 
-                      alt="Child's dog and cat drawing" 
+                      alt="Child's drawing" 
                       className="w-full h-full object-contain p-4"
                     />
                     <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
@@ -298,8 +304,8 @@ export default function DentalLanding() {
                   {/* Row 2: After Images */}
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
                     <img 
-                      src={bearRealImage} 
-                      alt="AI transformed bear" 
+                      src={dentalSuperheroTransformImage} 
+                      alt="Superhero transformation" 
                       className="w-full h-full object-cover"
                     />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
@@ -308,8 +314,8 @@ export default function DentalLanding() {
                   </div>
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
                     <img 
-                      src={giraffeRealImage} 
-                      alt="AI transformed giraffe" 
+                      src={dentalPrincessTransformImage} 
+                      alt="Princess transformation" 
                       className="w-full h-full object-cover"
                     />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
@@ -318,8 +324,8 @@ export default function DentalLanding() {
                   </div>
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
                     <img 
-                      src={dogCatRealImage} 
-                      alt="AI transformed dog and cat" 
+                      src={dentalMinecraftTransformImage} 
+                      alt="Minecraft transformation" 
                       className="w-full h-full object-cover"
                     />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
@@ -329,34 +335,31 @@ export default function DentalLanding() {
 
                   {/* Row 3: Coloring Book Images */}
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center p-4">
-                        <Heart className="w-12 h-12 text-orange-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Coloring Book Style</p>
-                      </div>
-                    </div>
+                    <img 
+                      src={dentalSuperheroColoringImage} 
+                      alt="Superhero coloring book page" 
+                      className="w-full h-full object-contain p-4"
+                    />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center p-4">
-                        <Smile className="w-12 h-12 text-orange-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Coloring Book Style</p>
-                      </div>
-                    </div>
+                    <img 
+                      src={dentalPrincessColoringImage} 
+                      alt="Princess coloring book page" 
+                      className="w-full h-full object-contain p-4"
+                    />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
                   <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center p-4">
-                        <Star className="w-12 h-12 text-orange-500 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Coloring Book Style</p>
-                      </div>
-                    </div>
+                    <img 
+                      src={dentalMinecraftColoringImage} 
+                      alt="Minecraft coloring book page" 
+                      className="w-full h-full object-contain p-4"
+                    />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
