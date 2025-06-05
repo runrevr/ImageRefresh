@@ -175,7 +175,6 @@ export default function DentalLanding() {
         freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
         paidCredits={userCredits?.paidCredits || 0}
       />
-
       {/* Account Needed Dialog */}
       <AccountNeededDialog
         open={showAccountDialog}
@@ -184,7 +183,6 @@ export default function DentalLanding() {
         isLoggedIn={Boolean(userCredits?.totalCredits)}
         remainingCredits={userCredits?.paidCredits || 0}
       />
-
       <main className="relative w-full" style={{ paddingTop: '4rem' }}>
         {/* Hero Section for Dental Practices */}
         {currentStep === Step.Upload && !showUploadForm && (
@@ -312,16 +310,13 @@ export default function DentalLanding() {
 
                   {/* Column 2: Set 2 Images */}
                   <div className="flex flex-col gap-4">
-                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
-                      <div className="flex-1 p-4 flex items-center justify-center">
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                      <div className="p-4 flex items-center justify-center h-full">
                         <img 
                           src={dentalTransform1Image} 
                           alt="Minecraft Transformation" 
                           className="max-w-full max-h-full object-contain"
                         />
-                      </div>
-                      <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
-                        Before
                       </div>
                     </div>
                     <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
@@ -336,16 +331,13 @@ export default function DentalLanding() {
                         Transformation
                       </div>
                     </div>
-                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
-                      <div className="flex-1 p-4 flex items-center justify-center">
+                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                      <div className="p-4 flex items-center justify-center h-full">
                         <img 
-                          src={dentalColoring2Image} 
-                          alt="Child 2 - Coloring Book" 
+                          src={dentalTransform3Image} 
+                          alt="Bobby Superhero Transformation" 
                           className="max-w-full max-h-full object-contain"
                         />
-                      </div>
-                      <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
-                        Coloring Book
                       </div>
                     </div>
                   </div>
@@ -412,7 +404,7 @@ export default function DentalLanding() {
                   Why Dental Practices Love ImageRefresh
                 </h2>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[#ffffff]">
                   <Card className="border-2 border-primary-100 hover:border-primary-200 transition-colors">
                     <CardContent className="p-6 text-center">
                       <Smile className="w-12 h-12 text-primary-500 mx-auto mb-4" />
@@ -767,7 +759,6 @@ export default function DentalLanding() {
           </div>
         )}
       </main>
-
       <Footer />
     </div>
   );
