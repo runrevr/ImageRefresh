@@ -409,7 +409,7 @@ export default function DentalLanding() {
                     <CardContent className="p-6 text-center">
                       <Smile className="w-12 h-12 text-primary-500 mx-auto mb-4" />
                       <h3 className="text-xl font-bold mb-3">Reduce Anxiety</h3>
-                      <p className="text-gray-600">
+                      <p className="text-[#ffffff]">
                         Turn nervous kids into excited patients by bringing their drawings to life. 
                         Create positive associations with dental visits.
                       </p>
