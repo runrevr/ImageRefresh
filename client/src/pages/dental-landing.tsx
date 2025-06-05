@@ -431,7 +431,7 @@ export default function DentalLanding() {
                     <CardContent className="p-6 text-center">
                       <Star className="w-12 h-12 text-accent-500 mx-auto mb-4" />
                       <h3 className="text-xl font-bold mb-3">Stand Out</h3>
-                      <p className="text-gray-600">
+                      <p className="text-[#ffffff]">
                         Be the most innovative dental practice in your area. 
                         Create social media buzz and word-of-mouth marketing.
                       </p>
