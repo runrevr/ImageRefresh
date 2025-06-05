@@ -2,13 +2,11 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
-import Navbar from "@/components/Navbar";
 import ImageUploader from "@/components/ImageUploader";
 import PromptInput from "@/components/PromptInput";
 import ProcessingState from "@/components/ProcessingState";
 import ResultView from "@/components/ResultView";
 import EditPrompt from "@/components/EditPrompt";
-import Footer from "@/components/Footer";
 import AccountNeededDialog from "@/components/AccountNeededDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -748,7 +746,6 @@ export default function DentalLanding() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }
