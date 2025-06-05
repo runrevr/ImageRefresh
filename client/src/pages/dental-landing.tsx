@@ -420,7 +420,7 @@ export default function DentalLanding() {
                     <CardContent className="p-6 text-center">
                       <Heart className="w-12 h-12 text-secondary-500 mx-auto mb-4" />
                       <h3 className="text-xl font-bold mb-3">Build Relationships</h3>
-                      <p className="text-gray-600">
+                      <p className="text-[#ffffff]">
                         Create magical moments that kids and parents will never forget. 
                         Strengthen patient loyalty and referrals.
                       </p>
