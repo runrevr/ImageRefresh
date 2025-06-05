@@ -30,13 +30,13 @@ import alicornRealImage from "../assets/alicorn-real.png";
 
 // Import dental images
 import dentalBefore1Image from "../assets/dental-before-1.png";
-import dentalBefore2Image from "../assets/dental-before-2.png";
+import dentalBefore2Image from "../assets/dental-before-2-new.jpg";
 import dentalBefore3Image from "../assets/dental-before-3.png";
-import dentalTransform1Image from "../assets/dental-transform-1.png";
+import dentalTransform1Image from "../assets/dental-transform-1-new.png";
 import dentalTransform2Image from "../assets/dental-transform-2.png";
-import dentalTransform3Image from "../assets/dental-transform-3.png";
+import dentalTransform3Image from "../assets/dental-transform-3-new.png";
 import dentalColoring1Image from "../assets/dental-coloring-1.png";
-import dentalColoring2Image from "../assets/dental-coloring-2.png";
+import dentalColoring2Image from "../assets/dental-coloring-2-new.png";
 import dentalColoring3Image from "../assets/dental-coloring-3.png";
 
 // Enum for the different steps in the process
@@ -287,8 +287,8 @@ export default function DentalLanding() {
                     <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
                       <div className="flex-1 p-4 flex items-center justify-center">
                         <img 
-                          src={dentalTransform1Image} 
-                          alt="Child 1 - Transformation" 
+                          src={dentalBefore2Image} 
+                          alt="Child 2 - Before" 
                           className="max-w-full max-h-full object-contain"
                         />
                       </div>
@@ -315,8 +315,8 @@ export default function DentalLanding() {
                     <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
                       <div className="flex-1 p-4 flex items-center justify-center">
                         <img 
-                          src={dentalBefore2Image} 
-                          alt="Child 2 - Before" 
+                          src={dentalTransform1Image} 
+                          alt="Minecraft Transformation" 
                           className="max-w-full max-h-full object-contain"
                         />
                       </div>
@@ -339,8 +339,8 @@ export default function DentalLanding() {
                     <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
                       <div className="flex-1 p-4 flex items-center justify-center">
                         <img 
-                          src={dentalTransform3Image} 
-                          alt="Child 3 - Transformation" 
+                          src={dentalColoring2Image} 
+                          alt="Child 2 - Coloring Book" 
                           className="max-w-full max-h-full object-contain"
                         />
                       </div>
