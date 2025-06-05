@@ -27,7 +27,10 @@ import dogCatDrawingImage from "../assets/dog-and-cat-drawing.png";
 import dogCatRealImage from "../assets/dog-and-cat-real.png";
 import alicornDrawingImage from "../assets/alicorn-drawing.jpg";
 import alicornRealImage from "../assets/alicorn-real.png";
-import childWithMissingTeethImage from "../assets/child-with-missing-teeth.png";
+// Additional dental images will be imported here
+// import dentalImage1 from "../assets/dental-image-1.png";
+// import dentalImage2 from "../assets/dental-image-2.png";
+// etc...
 
 // Enum for the different steps in the process
 enum Step {
@@ -261,115 +264,97 @@ export default function DentalLanding() {
                 
                 <div className="grid grid-cols-3 gap-4 mb-8">
                   {/* Row 1: Before Images */}
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <img 
-                        src={childWithMissingTeethImage} 
-                        alt="Happy child with missing teeth" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={bearDrawingImage} 
+                      alt="Child's bear drawing" 
+                      className="w-full h-full object-contain p-4"
+                    />
                     <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
                       Before Image
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <img 
-                        src={giraffeDrawingImage} 
-                        alt="Child's giraffe drawing" 
-                        className="w-full h-full object-contain p-4"
-                      />
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={giraffeDrawingImage} 
+                      alt="Child's giraffe drawing" 
+                      className="w-full h-full object-contain p-4"
+                    />
                     <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
                       Before Image
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <img 
-                        src={dogCatDrawingImage} 
-                        alt="Child's dog and cat drawing" 
-                        className="w-full h-full object-contain p-4"
-                      />
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={dogCatDrawingImage} 
+                      alt="Child's dog and cat drawing" 
+                      className="w-full h-full object-contain p-4"
+                    />
                     <div className="bg-cyan-500 text-white text-center py-2 text-sm font-semibold">
                       Before Image
                     </div>
                   </div>
 
                   {/* Row 2: After Images */}
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <img 
-                        src={bearRealImage} 
-                        alt="AI transformed bear" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={bearRealImage} 
+                      alt="AI transformed bear" 
+                      className="w-full h-full object-cover"
+                    />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
                       Transformation
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <img 
-                        src={giraffeRealImage} 
-                        alt="AI transformed giraffe" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={giraffeRealImage} 
+                      alt="AI transformed giraffe" 
+                      className="w-full h-full object-cover"
+                    />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
                       Transformation
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <img 
-                        src={dogCatRealImage} 
-                        alt="AI transformed dog and cat" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <img 
+                      src={dogCatRealImage} 
+                      alt="AI transformed dog and cat" 
+                      className="w-full h-full object-cover"
+                    />
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#00FF00' }}>
                       Transformation
                     </div>
                   </div>
 
                   {/* Row 3: Coloring Book Images */}
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <div className="text-center p-4">
-                          <Heart className="w-12 h-12 text-orange-500 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">Coloring Book Style</p>
-                        </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <div className="text-center p-4">
+                        <Heart className="w-12 h-12 text-orange-500 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Coloring Book Style</p>
                       </div>
                     </div>
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <div className="text-center p-4">
-                          <Smile className="w-12 h-12 text-orange-500 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">Coloring Book Style</p>
-                        </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <div className="text-center p-4">
+                        <Smile className="w-12 h-12 text-orange-500 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Coloring Book Style</p>
                       </div>
                     </div>
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
                       Coloring Book
                     </div>
                   </div>
-                  <div className="rounded-lg overflow-hidden shadow-lg bg-white">
-                    <div className="aspect-square">
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <div className="text-center p-4">
-                          <Star className="w-12 h-12 text-orange-500 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">Coloring Book Style</p>
-                        </div>
+                  <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white">
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <div className="text-center p-4">
+                        <Star className="w-12 h-12 text-orange-500 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Coloring Book Style</p>
                       </div>
                     </div>
                     <div className="text-white text-center py-2 text-sm font-semibold" style={{ backgroundColor: '#FF8C00' }}>
