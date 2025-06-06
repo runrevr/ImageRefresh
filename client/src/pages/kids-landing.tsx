@@ -590,7 +590,7 @@ export default function KidsLanding() {
                       <p className="text-gray-600">For ongoing creative fun</p>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <ul className="space-y-3">
+                      <ul className="space-y-3 text-[#333333]">
                         <li className="flex items-center">
                           <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
                           <span className="text-sm">12 transformations per month</span>
