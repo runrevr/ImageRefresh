@@ -467,6 +467,454 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   },
 };
 
+// Taylor Swift Era subcategories
+export const TAYLOR_SWIFT_STYLES: Record<TaylorSwiftSubcategory, StyleOption> = {
+  "debut": {
+    title: "Taylor Swift (2006)",
+    description: "Golden country girl aesthetic with warm lighting and curly blonde hair",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to match Taylor Swift's 2006 debut album aesthetic. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these stylistic changes:
+
+HAIR & STYLING:
+- Transform hair into long, golden blonde cascading curls with natural highlights
+- Add subtle side-swept bangs if appropriate to face shape
+- Create voluminous, country-style waves reminiscent of 2006 styling
+
+AESTHETIC & ATMOSPHERE:
+- Apply warm, golden hour lighting with soft focus
+- Add a dreamy, slightly oversaturated country filter
+- Create a soft bokeh background with hints of green fields or blue sky
+- Apply subtle lens flare effects for that nostalgic 2006 feel
+
+CLOTHING & ACCESSORIES:
+- Add or modify clothing to feature sundresses, cowboy boots aesthetic
+- Include delicate jewelry like small hoop earrings or simple necklaces
+- Maintain modest, wholesome country girl styling
+
+COLOR GRADING:
+- Warm yellows and oranges in highlights
+- Soft, creamy skin tones
+- Slightly faded, vintage quality
+- Emphasize turquoise blues and earthy browns
+
+COMPOSITION:
+- Center the subject with classic portrait framing
+- Add subtle vignetting for vintage feel
+- Maintain the innocent, hopeful expression`
+  },
+  "fearless": {
+    title: "Fearless (2008)",
+    description: "Sparkly golden hour with flowing movement and glitter",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to match Taylor Swift's Fearless album cover aesthetic. ESSENTIAL: Keep the subject's facial features, expressions, and identity completely unchanged. Apply only these stylistic elements:
+
+HAIR TRANSFORMATION:
+- Style hair into bouncy, golden blonde curls with movement
+- Create windswept effect as if caught mid-twirl
+- Add sparkly hair accessories or subtle glitter
+
+GOLDEN ATMOSPHERE:
+- Bathe entire image in warm, golden sunset lighting
+- Create dreamy, ethereal glow around the subject
+- Add light leaks and golden lens flares
+- Apply soft, romantic focus with slight motion blur
+
+WARDROBE ELEMENTS:
+- Transform clothing into flowing, golden or champagne-colored fabric
+- Add sparkles, sequins, or glittery elements
+- Create movement in fabric as if dancing or spinning
+
+BACKGROUND & SETTING:
+- Create abstract golden bokeh background
+- Add floating sparkles or light particles
+- Suggest outdoor twilight setting
+- Include warm sunset colors bleeding into frame
+
+COLOR PALETTE:
+- Rich golds and champagnes
+- Warm honey tones
+- Soft whites and creams
+- Touch of rose gold in highlights`
+  },
+  "speak-now": {
+    title: "Speak Now (2010)",
+    description: "Purple fantasy with flowing gowns and enchanted atmosphere",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to recreate the Speak Now album cover aesthetic. MANDATORY: Preserve all facial features and identity markers exactly as they are. Apply these purple-themed transformations:
+
+HAIR STYLING:
+- Transform hair into long, flowing waves
+- Add volume and dramatic movement
+- Tint with subtle purple undertones in shadows
+- Create fairy-tale princess styling
+
+PURPLE WONDERLAND:
+- Drape subject in flowing purple fabric or gown
+- Add layers of tulle or chiffon for ethereal effect
+- Include sparkles and shimmer throughout
+- Create dramatic fabric movement
+
+LIGHTING & ATMOSPHERE:
+- Apply theatrical, stage-like lighting
+- Create purple and lavender color wash
+- Add mystical, enchanted forest feel
+- Include soft spotlighting effect
+
+BACKGROUND ELEMENTS:
+- Transform background into purple gradient
+- Add swirling mists or smoke effects
+- Include subtle sparkles floating in air
+- Create dreamy, fantastical atmosphere
+
+FINISHING TOUCHES:
+- Enhance with violet and amethyst tones
+- Add subtle glow to skin
+- Create whimsical, storybook quality
+- Maintain elegant, graceful positioning`
+  },
+  "red": {
+    title: "Red (2012)",
+    description: "Autumn vibes with signature red lips and vintage warmth",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to match the Red album cover aesthetic. CRUCIAL: Do not alter any facial features, only apply stylistic changes around them. Create this autumn-inspired look:
+
+SIGNATURE ELEMENTS:
+- Apply bold red lipstick to lips (classic matte finish)
+- Style hair into vintage-inspired waves
+- Add autumn-toned highlights to hair
+
+AUTUMN ATMOSPHERE:
+- Create warm, fall-themed color grading
+- Add vintage film grain and texture
+- Apply slightly desaturated, nostalgic filter
+- Include warm orange and red color cast
+
+WARDROBE TRANSFORMATION:
+- Add or modify clothing to include red elements
+- Create vintage-inspired styling (scarves, coats)
+- Add cozy autumn textures
+
+BACKGROUND & MOOD:
+- Transform background to autumn leaves or soft bokeh
+- Add falling leaves effect if appropriate
+- Create melancholic, wistful atmosphere
+- Include warm, diffused lighting
+
+COLOR PALETTE:
+- Deep burgundy reds
+- Burnt oranges
+- Golden yellows
+- Rich browns
+- Cream highlights`
+  },
+  "nineteen-eighty-nine": {
+    title: "1989 (2014)",
+    description: "Polaroid aesthetic with cool tones and urban sophistication",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to recreate the 1989 album Polaroid aesthetic. VITAL: Keep subject's face and features completely untouched. Apply these stylistic changes:
+
+POLAROID STYLING:
+- Frame image in white Polaroid-style border
+- Apply instant camera color grading
+- Create slightly washed-out, dreamy quality
+- Add subtle light leaks on edges
+
+SIGNATURE LOOK:
+- Add bold red or pink lipstick
+- Style hair in short bob or pulled back
+- Create clean, minimalist aesthetic
+- Apply soft, diffused lighting
+
+NEW YORK ATMOSPHERE:
+- Suggest city backdrop without overwhelming
+- Add cool blue undertones
+- Create sophisticated, urban feel
+- Include subtle lens flare
+
+COLOR TREATMENT:
+- Slightly overexposed highlights
+- Faded, vintage color palette
+- Cool blues and soft pinks
+- Creamy skin tones
+
+COMPOSITION:
+- Crop to show partial face/profile if appropriate
+- Create intimate, candid feeling
+- Add subtle motion blur for dynamism
+- Maintain mysterious, artistic quality`
+  },
+  "reputation": {
+    title: "Reputation (2017)",
+    description: "Dark, edgy black & white with newspaper/snake motifs",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to match the Reputation album's dark aesthetic. CRITICAL: Preserve exact facial structure and features. Apply only these stylistic elements:
+
+MONOCHROME TREATMENT:
+- Convert to high-contrast black and white
+- Create dramatic shadows and highlights
+- Apply gritty, editorial texture
+- Add film noir quality
+
+STYLING ELEMENTS:
+- Slick hair back or create wet-look styling
+- Add dark, dramatic makeup effects
+- Create sharp, defined edges
+- Apply intense, moody lighting
+
+NEWSPAPER AESTHETIC:
+- Overlay subtle newsprint texture
+- Add typography elements around edges
+- Create collage-like effect with text
+- Include halftone dot pattern subtly
+
+SNAKE MOTIFS:
+- Add subtle snake-scale textures in background
+- Include serpentine shapes in shadows
+- Create mysterious, dangerous atmosphere
+- Add metallic, reptilian highlights
+
+FINISHING EFFECTS:
+- High contrast black and white
+- Sharp, dramatic shadows
+- Gritty texture overlay
+- Dark, edgy vignetting`
+  },
+  "lover": {
+    title: "Lover (2019)",
+    description: "Pastel paradise with glittery heart eye makeup",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to embody the Lover album's dreamy aesthetic. ESSENTIAL: Do not modify facial features, only apply artistic styling. Create this pastel paradise:
+
+SIGNATURE HEART:
+- Add glittery pink heart shape around one eye
+- Create sparkly, iridescent effect
+- Make heart prominent but artistic
+- Use pink and purple glitter tones
+
+PASTEL PARADISE:
+- Transform background into pastel clouds
+- Use soft pinks, blues, purples, yellows
+- Create dreamy, cotton candy sky
+- Add rainbow elements subtly
+
+HAIR TRANSFORMATION:
+- Add pink or blue tips to hair ends
+- Create soft, romantic waves
+- Add subtle pastel highlights
+- Include sparkles in hair
+
+COLOR GRADING:
+- Apply soft, ethereal filter
+- Enhance with pastel color wash
+- Create glowing, luminous skin
+- Add prismatic light effects
+
+WHIMSICAL ELEMENTS:
+- Include floating hearts or butterflies
+- Add lens flares in pastel colors
+- Create magical, fairytale atmosphere
+- Soft focus with dreamy quality`
+  },
+  "folklore": {
+    title: "Folklore (2020)",
+    description: "Cottagecore forest aesthetic with braids and cardigans",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to capture Folklore's mystical forest aesthetic. MANDATORY: Keep all facial features exactly as they are. Apply these atmospheric changes:
+
+COTTAGECORE STYLING:
+- Transform hair into loose, natural braids
+- Add messy, effortless texture
+- Create woodland fairy aesthetic
+- Include small braids or twisted sections
+
+FOREST ATMOSPHERE:
+- Desaturate to muted, earthy tones
+- Create moody, overcast lighting
+- Add misty, ethereal quality
+- Include soft, natural shadows
+
+WARDROBE ELEMENTS:
+- Transform clothing to chunky knit cardigan
+- Add cream or gray tones
+- Create cozy, rustic textures
+- Include vintage, handmade quality
+
+BACKGROUND MAGIC:
+- Transform setting to deep forest
+- Add fog or mist effects
+- Include trees and natural elements
+- Create mysterious, isolated feeling
+
+COLOR PALETTE:
+- Muted grays and creams
+- Soft forest greens
+- Earthy browns
+- Subtle blue undertones`
+  },
+  "evermore": {
+    title: "Evermore (2020)",
+    description: "Rustic autumn woods with golden hour lighting",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to match Evermore's rustic aesthetic. CRUCIAL: Preserve subject's identity and facial features completely. Apply these elements:
+
+AUTUMN WOODS:
+- Create golden hour forest lighting
+- Add warm, amber tones throughout
+- Include falling leaves effect
+- Create cozy cabin atmosphere
+
+STYLING DETAILS:
+- Transform hair into loose, flowing waves
+- Add plaid or flannel elements
+- Create rustic, outdoorsy look
+- Include natural, minimal makeup effect
+
+TEXTURAL ELEMENTS:
+- Add film grain for vintage feel
+- Create soft, nostalgic focus
+- Include warm light leaks
+- Apply subtle sepia toning
+
+BACKGROUND ATMOSPHERE:
+- Transform to autumn forest setting
+- Add golden sunlight filtering through trees
+- Create intimate, storytelling mood
+- Include rustic, natural elements
+
+COLOR STORY:
+- Rich oranges and reds
+- Deep forest greens
+- Warm browns and golds
+- Soft cream highlights`
+  },
+  "midnights": {
+    title: "Midnights (2022)",
+    description: "70s glamour with jewel tones and sparkly nighttime vibes",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to embody the Midnights album aesthetic. VITAL: Do not alter facial structure, only apply stylistic elements. Create this 70s-inspired nighttime look:
+
+RETRO GLAMOUR:
+- Apply sparkly, jewel-toned eyeshadow effect
+- Add subtle glitter to skin
+- Create 70s-inspired makeup look
+- Include dramatic eye makeup
+
+MIDNIGHT ATMOSPHERE:
+- Apply deep blue and purple color grading
+- Create moody, late-night lighting
+- Add subtle blur for dreamy quality
+- Include vintage 70s film texture
+
+STYLING ELEMENTS:
+- Transform clothing to include sparkles/sequins
+- Add jewel-toned fabric effects
+- Create disco-era inspired elements
+- Include metallic accents
+
+SIGNATURE EFFECTS:
+- Add clock or time-related motifs subtly
+- Create starry night elements
+- Include moon or celestial touches
+- Apply retro color correction
+
+FINISHING TOUCHES:
+- Soft, hazy focus
+- Vintage color grading
+- Mysterious atmosphere
+- Glamorous but intimate feeling`
+  },
+  "ttpd": {
+    title: "The Tortured Poets Department (2024)",
+    description: "Minimalist black & white with poetic, vulnerable aesthetic",
+    placeholder: "E.g., Add specific details about the transformation",
+    suggestedPrompt: `Transform the uploaded image to match The Tortured Poets Department aesthetic. ESSENTIAL: Keep facial features unchanged, apply only artistic styling. Create this moody, artistic look:
+
+MONOCHROME ARTISTRY:
+- Convert to sophisticated black and white
+- Create soft, artistic shadows
+- Apply fine art photography style
+- Add subtle grain texture
+
+MINIMALIST STYLING:
+- Create simple, understated look
+- Transform clothing to basic black/white
+- Add vulnerable, raw quality
+- Include intimate, personal feeling
+
+POETIC ATMOSPHERE:
+- Create moody, contemplative lighting
+- Add typewriter or manuscript elements
+- Include subtle ink stain effects
+- Apply literary, artistic quality
+
+COMPOSITION:
+- Use dramatic negative space
+- Create introspective mood
+- Add slight motion blur for emotion
+- Include artistic, editorial framing
+
+FINAL TOUCHES:
+- Soft contrast black and white
+- Emotional, raw quality
+- Minimalist aesthetic
+- Deeply personal feeling`
+  },
+  "eras-tour-concert": {
+    title: "Eras Tour Concert",
+    description: "Transform into Taylor Swift performing at The Eras Tour in a packed stadium",
+    placeholder: "E.g., Add specific concert details or era elements",
+    suggestedPrompt: `Transform the uploaded image to show the subject as Taylor Swift performing at The Eras Tour concert. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these concert transformation elements:
+
+ICONIC ERAS TOUR OUTFIT:
+- Transform clothing into a custom Atelier Versace-style bodysuit
+- Cover the bodysuit in thousands of sparkling sequins and rhinestones
+- Use Lover-era color palette: pink, blue, gold, and silver crystals
+- Create intricate beadwork patterns across the bodysuit
+- Add dramatic fringe details and cascading crystal elements
+- Include high-cut leg design with sheer mesh panels
+
+ACCESSORIES & STYLING:
+- Add knee-high Christian Louboutin-style boots covered in matching crystals
+- Create a bedazzled microphone in hand with rhinestone details
+- Style hair in glamorous waves with face-framing layers
+- Add dramatic stage makeup with glittery eyeshadow and bold lashes
+- Include signature red lipstick
+- Add sparkly jewelry and crystal earrings
+
+STADIUM ATMOSPHERE:
+- Set the scene in a massive sold-out stadium (70,000+ capacity)
+- Create dramatic concert lighting with spotlights on the performer
+- Add colorful stage lights in pink, purple, and blue beams
+- Include pyrotechnic effects and sparklers in the background
+- Show the elaborate Eras Tour stage setup with LED screens
+- Add fog/haze effects for concert atmosphere
+
+CROWD ELEMENTS:
+- Fill the stadium with thousands of enthusiastic fans
+- Show fans holding up phone flashlights creating a sea of lights
+- Include fans wearing friendship bracelets and era-specific outfits
+- Add colorful light-up wristbands throughout the crowd
+- Show fans holding signs and wearing cowboy hats
+- Create energy and movement in the crowd
+
+PERFORMANCE DETAILS:
+- Capture mid-performance with confident, powerful pose
+- Show dynamic movement as if dancing or singing
+- Create connection with the audience through gesture
+- Add motion blur to suggest energetic performance
+- Include confetti or glitter falling from above
+- Show multiple backup dancers in coordinating outfits
+
+FINISHING TOUCHES:
+- Apply concert photography style with high contrast
+- Create lens flares from stage lights
+- Add stadium architecture and upper decks full of fans
+- Include giant LED screens showing the performer
+- Create electric, euphoric atmosphere
+- Make it feel like the biggest show on Earth`
+  }
+};
+
 // Popular subcategories that should have rainbow borders
 const POPULAR_SUBCATEGORIES = {
   other: ["mullets", "babyMode", "self-as-cat"] as OtherSubcategory[],
