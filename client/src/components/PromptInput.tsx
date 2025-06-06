@@ -893,12 +893,23 @@ FINAL TOUCHES:
 - Minimalist aesthetic
 - Deeply personal feeling`,
     },
-    "eras-tour-concert": {
-      title: "Stadium Tour Era",
-      description:
-        "Transform into a pop star performing at a massive stadium tour",
-      placeholder: "E.g., Add specific concert details or era elements",
-      suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these concert transformation elements:
+"eras-tour-concert": {
+  title: "Stadium Tour Era",
+  description: "Pop star performing at a massive stadium tour",
+  placeholder: "E.g., Add specific concert details or era elements",
+  suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 ICONIC CONCERT OUTFIT:
 - Transform clothing into a custom designer bodysuit
@@ -908,47 +919,49 @@ ICONIC CONCERT OUTFIT:
 - Add dramatic fringe details and cascading crystal elements
 - Include high-cut leg design with sheer mesh panels
 
-ACCESSORIES & STYLING:
+ACCESSORIES & STYLING (maintaining exact natural hair color):
 - Add knee-high boots covered in matching crystals
 - Create a bedazzled microphone in hand with rhinestone details
-- Style hair in glamorous waves with face-framing layers
-- Add dramatic stage makeup with glittery eyeshadow and bold lashes
-- Include signature red lipstick
-- Add sparkly jewelry and crystal earrings
+- Style hair in glamorous waves using subject's exact natural hair color and texture
+- Add dramatic stage makeup with glittery eyeshadow that follows natural eye contours
+- Include red or pink lipstick while maintaining exact lip shape
+- Keep subject's exact original hair color
 
-STADIUM ATMOSPHERE:
-- Set the scene in a massive sold-out stadium (70,000+ capacity)
-- Create dramatic concert lighting with spotlights on the performer
-- Add colorful stage lights in pink, purple, and blue beams
-- Include pyrotechnic effects and sparklers in the background
-- Show an elaborate stage setup with LED screens
-- Add fog/haze effects for concert atmosphere
+SIMPLIFIED STADIUM ATMOSPHERE:
+- Position subject as a distant figure on a large stage
+- Create dramatic stage lighting with spotlights illuminating the performer
+- Show dark silhouetted crowd in foreground with scattered phone lights twinkling
+- Add large LED screens in background showing the performance
+- Include atmospheric fog/haze effects
+- Use pink, purple, and blue stage lighting beams cutting through darkness
 
 CROWD ELEMENTS:
-- Fill the stadium with thousands of enthusiastic fans
-- Show fans holding up phone flashlights creating a sea of lights
-- Include fans wearing friendship bracelets and themed outfits
-- Add colorful light-up wristbands throughout the crowd
-- Show fans holding signs and wearing cowboy hats
-- Create energy and movement in the crowd
+- Show crowd as dark silhouettes with glimmering phone lights
+- Create a sea of tiny light points from phones and light-up wristbands
+- Keep crowd simple and atmospheric rather than detailed
+- Add soft glow from LED screens illuminating parts of the crowd
+- Focus on the magical lighting atmosphere rather than individual fans
 
 PERFORMANCE DETAILS:
-- Capture mid-performance with confident, powerful pose
-- Show dynamic movement as if dancing or singing
-- Create connection with the audience through gesture
-- Add motion blur to suggest energetic performance
+- Position subject further back in the stadium to create realistic concert perspective
+- Show them performing on a distant stage with the crowd in foreground/middle ground
+- Capture them as a small but visible figure on the massive stage
+- Create the feeling of watching a real concert from audience perspective
+- Add motion blur to suggest energetic performance while keeping face sharp
 - Include confetti or glitter falling from above
-- Show multiple backup dancers in coordinating outfits
+- Show multiple backup dancers in coordinating outfits as small figures
 
-FINISHING TOUCHES:
+REALISTIC CONCERT PHOTOGRAPHY:
+- Use telephoto lens perspective as if photographed from audience
+- Make the performer appropriately sized relative to the massive stadium
 - Apply concert photography style with high contrast
 - Create lens flares from stage lights
-- Add stadium architecture and upper decks full of fans
+- Add stadium architecture and upper decks full of fans towering over the stage
 - Include giant LED screens showing the performer
-- Create electric, euphoric atmosphere
-- Make it feel like the biggest show on Earth`,
-    },
-  };
+- Show the scale and grandeur of a real stadium tour
+- Preserve subject's exact natural features while adding performance energy`
+}
+};
 
 // Popular subcategories that should have rainbow borders
 const POPULAR_SUBCATEGORIES = {
