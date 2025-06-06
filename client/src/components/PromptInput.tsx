@@ -1531,6 +1531,9 @@ export default function PromptInput({
                 case "other":
                   title = OTHER_STYLES[key as OtherSubcategory].title;
                   break;
+                case "taylor-swift":
+                  title = TAYLOR_SWIFT_STYLES[key as TaylorSwiftSubcategory].title;
+                  break;
                 // Pop culture case removed
               }
 
@@ -1550,6 +1553,10 @@ export default function PromptInput({
                 case "other":
                   description =
                     OTHER_STYLES[key as OtherSubcategory].description;
+                  break;
+                case "taylor-swift":
+                  description =
+                    TAYLOR_SWIFT_STYLES[key as TaylorSwiftSubcategory].description;
                   break;
                 // Pop culture case removed
               }
@@ -1577,6 +1584,9 @@ export default function PromptInput({
                         break;
                       case "other":
                         handleOtherSelect(key as OtherSubcategory);
+                        break;
+                      case "taylor-swift":
+                        handleTaylorSwiftSelect(key as TaylorSwiftSubcategory);
                         break;
                       // Pop culture case removed
                     }

@@ -37,7 +37,8 @@ import PromptInput, {
   CARTOON_STYLES,
   PAINTING_STYLES, 
   ERA_STYLES,
-  OTHER_STYLES
+  OTHER_STYLES,
+  TAYLOR_SWIFT_STYLES
 } from "@/components/PromptInput";
 
 // User credits state type
