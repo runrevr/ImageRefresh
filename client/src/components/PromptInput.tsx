@@ -532,14 +532,27 @@ COMPOSITION:
     },
     fearless: {
       title: "Golden Fairytale Era (2008)",
-      description: "Sparkly golden hour with flowing movement and glitter",
+      description: "Sparkly golden hour with flowing curls and glitter",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a golden, fairytale-inspired album cover aesthetic from 2008. ESSENTIAL: Keep the subject's facial features, expressions, and identity completely unchanged. Apply only these stylistic elements:
+      suggestedPrompt: `Transform the uploaded image to match a golden, fairytale-inspired album cover aesthetic from 2008.
 
-HAIR TRANSFORMATION:
-- Style hair into bouncy, golden blonde curls with movement
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
+
+HAIR TRANSFORMATION (maintaining exact natural hair color):
+- Style hair into bouncy curls with movement in the subject's exact natural hair color
 - Create windswept effect as if caught mid-twirl
-- Add sparkly hair accessories or subtle glitter
+- Add sparkly hair accessories or subtle glitter to the existing hair
+- Preserve the subject's exact original hair color and texture throughout
 
 GOLDEN ATMOSPHERE:
 - Bathe entire image in warm, golden sunset lighting
@@ -559,32 +572,44 @@ BACKGROUND & SETTING:
 - Include warm sunset colors bleeding into frame
 
 COLOR PALETTE:
-- Rich golds and champagnes
-- Warm honey tones
+- Rich golds and champagnes in environment and clothing
+- Warm honey tones in lighting
 - Soft whites and creams
-- Touch of rose gold in highlights`,
+- Keep subject's exact natural coloring intact`,
     },
     "speak-now": {
       title: "Purple Fantasy Era (2010)",
-      description: "Purple fantasy with flowing gowns and enchanted atmosphere",
+      description: "Purple fantasy with flowing hair and enchanted atmosphere",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to recreate a purple-themed fantasy album cover aesthetic. MANDATORY: Preserve all facial features and identity markers exactly as they are. Apply these purple-themed transformations:
+      suggestedPrompt: `Transform the uploaded image to recreate a purple-themed fantasy album cover aesthetic.
 
-HAIR STYLING:
-- Transform hair into long, flowing waves
-- Add volume and dramatic movement
-- Tint with subtle purple undertones in shadows
-- Create fairy-tale princess styling
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
+
+HAIR STYLING (maintaining exact natural hair color):
+- Transform hairstyle into long, flowing waves using subject's exact natural hair color
+- Add volume and dramatic movement to the existing hair
+- Create fairy-tale princess styling while keeping original hair color and texture
+- Add purple accessories or flowers to hair if appropriate
 
 PURPLE WONDERLAND:
 - Drape subject in flowing purple fabric or gown
 - Add layers of tulle or chiffon for ethereal effect
-- Include sparkles and shimmer throughout
+- Include sparkles and shimmer throughout clothing
 - Create dramatic fabric movement
 
 LIGHTING & ATMOSPHERE:
 - Apply theatrical, stage-like lighting
-- Create purple and lavender color wash
+- Create purple and lavender color wash in environment only
 - Add mystical, enchanted forest feel
 - Include soft spotlighting effect
 
@@ -595,27 +620,40 @@ BACKGROUND ELEMENTS:
 - Create dreamy, fantastical atmosphere
 
 FINISHING TOUCHES:
-- Enhance with violet and amethyst tones
-- Add subtle glow to skin
+- Enhance environment with violet and amethyst tones
+- Keep subject's exact natural skin tone with soft glow
 - Create whimsical, storybook quality
 - Maintain elegant, graceful positioning`,
     },
     red: {
       title: "Autumn Romance Era (2012)",
-      description: "Autumn vibes with signature red lips and vintage warmth",
+      description: "Autumn vibes with vintage waves and red lips",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match an autumn-themed album cover aesthetic. CRUCIAL: Do not alter any facial features, only apply stylistic changes around them. Create this autumn-inspired look:
+      suggestedPrompt: `Transform the uploaded image to match an autumn-themed album cover aesthetic.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change to red)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 SIGNATURE ELEMENTS:
-- Apply bold red lipstick to lips (classic matte finish)
-- Style hair into vintage-inspired waves
-- Add autumn-toned highlights to hair
+- Apply bold red lipstick to lips while maintaining exact lip shape and fullness
+- Style hair into vintage-inspired waves using subject's exact natural hair color
+- Create sophisticated 1940s-style hair waves
+- Keep subject's exact original hair color and texture unchanged
 
 AUTUMN ATMOSPHERE:
 - Create warm, fall-themed color grading
 - Add vintage film grain and texture
 - Apply slightly desaturated, nostalgic filter
-- Include warm orange and red color cast
+- Include warm orange and red color cast in environment
 
 WARDROBE TRANSFORMATION:
 - Add or modify clothing to include red elements
@@ -629,18 +667,29 @@ BACKGROUND & MOOD:
 - Include warm, diffused lighting
 
 COLOR PALETTE:
-- Deep burgundy reds
-- Burnt oranges
-- Golden yellows
-- Rich browns
-- Cream highlights`,
+- Deep burgundy reds in clothing/accessories
+- Burnt oranges in environment
+- Golden yellows in lighting
+- Rich browns in background
+- Keep subject's exact natural coloring`,
     },
     "nineteen-eighty-nine": {
       title: "Polaroid Pop Era (2014)",
-      description:
-        "Polaroid aesthetic with cool tones and urban sophistication",
+      description: "Polaroid aesthetic with sleek hair and urban vibes",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to recreate a Polaroid-inspired pop album aesthetic. VITAL: Keep subject's face and features completely untouched. Apply these stylistic changes:
+      suggestedPrompt: `Transform the uploaded image to recreate a Polaroid-inspired pop album aesthetic.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 POLAROID STYLING:
 - Frame image in white Polaroid-style border
@@ -649,46 +698,59 @@ POLAROID STYLING:
 - Add subtle light leaks on edges
 
 SIGNATURE LOOK:
-- Add bold red or pink lipstick
-- Style hair in short bob or pulled back
+- Add bold red or pink lipstick while maintaining exact lip shape
+- Style hair in sleek bob or pulled back style using exact natural hair color
 - Create clean, minimalist aesthetic
 - Apply soft, diffused lighting
+- Maintain subject's exact original hair color and texture
 
 NEW YORK ATMOSPHERE:
 - Suggest city backdrop without overwhelming
-- Add cool blue undertones
+- Add cool blue undertones to environment
 - Create sophisticated, urban feel
 - Include subtle lens flare
 
 COLOR TREATMENT:
 - Slightly overexposed highlights
-- Faded, vintage color palette
-- Cool blues and soft pinks
-- Creamy skin tones
+- Faded, vintage color palette in background
+- Cool blues and soft pinks in environment
+- Keep subject's exact natural skin tone
 
 COMPOSITION:
-- Crop to show partial face/profile if appropriate
+- Crop to show partial face/profile if appropriate while maintaining recognizability
 - Create intimate, candid feeling
 - Add subtle motion blur for dynamism
 - Maintain mysterious, artistic quality`,
     },
     reputation: {
       title: "Dark Snake Era (2017)",
-      description: "Dark, edgy black & white with newspaper/snake motifs",
+      description: "Dark, edgy aesthetic with slicked hair and snake motifs",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a dark, edgy album aesthetic with snake motifs. CRITICAL: Preserve exact facial structure and features. Apply only these stylistic elements:
+      suggestedPrompt: `Transform the uploaded image to match a dark, edgy album aesthetic with snake motifs.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 MONOCHROME TREATMENT:
-- Convert to high-contrast black and white
-- Create dramatic shadows and highlights
+- Convert to high-contrast black and white while preserving all facial details
+- Create dramatic shadows and highlights that enhance rather than obscure features
 - Apply gritty, editorial texture
-- Add film noir quality
+- Add film noir quality while maintaining facial clarity
 
 STYLING ELEMENTS:
-- Slick hair back or create wet-look styling
-- Add dark, dramatic makeup effects
-- Create sharp, defined edges
-- Apply intense, moody lighting
+- Slick hair back or create wet-look styling in subject's exact natural hair color
+- Add dark, dramatic makeup effects (smokey eyes, dark lips) without altering facial structure
+- Create sharp, defined edges while preserving natural contours
+- Apply intense, moody lighting that still shows all facial features clearly
 
 NEWSPAPER AESTHETIC:
 - Overlay subtle newsprint texture
@@ -697,33 +759,40 @@ NEWSPAPER AESTHETIC:
 - Include halftone dot pattern subtly
 
 SNAKE MOTIFS:
-- Add subtle snake-scale textures in background
+- Add subtle snake-scale textures in background only
 - Include serpentine shapes in shadows
 - Create mysterious, dangerous atmosphere
-- Add metallic, reptilian highlights
+- Add metallic, reptilian highlights to environment only
 
 FINISHING EFFECTS:
-- High contrast black and white
-- Sharp, dramatic shadows
+- High contrast black and white with facial detail preservation
+- Sharp, dramatic shadows that define rather than hide features
 - Gritty texture overlay
 - Dark, edgy vignetting`,
     },
     lover: {
       title: "Pastel Dream Era (2019)",
-      description: "Pastel paradise with glittery heart eye makeup",
+      description: "Pastel paradise with romantic waves and heart makeup",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to embody a dreamy pastel album aesthetic. ESSENTIAL: Do not modify facial features, only apply artistic styling. Create this pastel paradise:
+      suggestedPrompt: `Transform the uploaded image to embody a dreamy pastel album aesthetic.
 
-SIGNATURE HEART FACE PAINT:
-- Apply realistic glitter face paint in a heart shape around one eye without altering eye shape or size
-- Create the appearance of actual chunky cosmetic glitter applied with makeup brush
-- Make it look like physical makeup sitting ON TOP of the skin, not a digital overlay
-- Use individual sparkle particles that catch light realistically
-- Apply pink and iridescent glitter with visible texture and dimension
-- Show subtle skin texture underneath the glitter
-- Make heart outline slightly imperfect like hand-painted makeup
-- Include small gaps between glitter particles for realism
-- Add subtle shadow cast by the raised glitter particles
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
+
+SIGNATURE HEART:
+- Add glittery pink heart shape around one eye without altering eye shape or size
+- Create sparkly, iridescent effect
+- Make heart prominent but artistic, not covering facial features
+- Use pink and purple glitter tones
 
 PASTEL PARADISE:
 - Transform background into pastel clouds
@@ -731,38 +800,50 @@ PASTEL PARADISE:
 - Create dreamy, cotton candy sky
 - Add rainbow elements subtly
 
-HAIR TRANSFORMATION:
-- Add pink and/or blue tips to hair ends
-- Create soft, romantic waves
-- Add subtle pastel highlights
-- Include sparkles in hair
+HAIR TRANSFORMATION (maintaining exact natural hair color):
+- Style hair in soft, romantic waves using exact natural hair color
+- Add subtle sparkles or glitter to hair
+- Create flowing, ethereal hair movement
+- Keep subject's exact original hair color and texture unchanged
 
 COLOR GRADING:
 - Apply soft, ethereal filter
-- Enhance with pastel color wash
-- Create glowing, luminous skin
+- Enhance environment with pastel color wash
+- Keep subject's exact natural skin tone with luminous glow
 - Add prismatic light effects
 
 WHIMSICAL ELEMENTS:
 - Include floating hearts or butterflies
 - Add lens flares in pastel colors
 - Create magical, fairytale atmosphere
-- Soft focus with dreamy quality`,
+- Soft focus with dreamy quality while maintaining facial sharpness`,
     },
     folklore: {
       title: "Indie Forest Era (2020)",
-      description: "Cottagecore forest aesthetic with braids and cardigans",
+      description: "Cottagecore forest aesthetic with natural braids",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to capture an indie folk forest aesthetic. MANDATORY: Keep all facial features exactly as they are. Apply these atmospheric changes:
+      suggestedPrompt: `Transform the uploaded image to capture an indie folk forest aesthetic.
 
-COTTAGECORE STYLING:
-- Transform hair into loose, natural braids
-- Add messy, effortless texture
-- Create woodland fairy aesthetic
-- Include small braids or twisted sections
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
+
+COTTAGECORE STYLING (maintaining exact natural hair color):
+- Transform hair into loose, natural braids using subject's exact original hair color
+- Add messy, effortless texture to existing hair
+- Create woodland fairy aesthetic with exact natural hair color and texture
+- Include small braids or twisted sections in original hair color
 
 FOREST ATMOSPHERE:
-- Desaturate to muted, earthy tones
+- Desaturate environment to muted, earthy tones
 - Create moody, overcast lighting
 - Add misty, ethereal quality
 - Include soft, natural shadows
@@ -780,34 +861,47 @@ BACKGROUND MAGIC:
 - Create mysterious, isolated feeling
 
 COLOR PALETTE:
-- Muted grays and creams
-- Soft forest greens
-- Earthy browns
-- Subtle blue undertones`,
+- Muted grays and creams in clothing
+- Soft forest greens in environment
+- Earthy browns in background
+- Keep subject's exact natural coloring intact`,
     },
     evermore: {
       title: "Rustic Woods Era (2020)",
-      description: "Rustic autumn woods with golden hour lighting",
+      description: "Autumn woods with flowing waves and golden light",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a rustic woodland aesthetic. CRUCIAL: Preserve subject's identity and facial features completely. Apply these elements:
+      suggestedPrompt: `Transform the uploaded image to match a rustic woodland aesthetic.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 AUTUMN WOODS:
 - Create golden hour forest lighting
-- Add warm, amber tones throughout
+- Add warm, amber tones to environment
 - Include falling leaves effect
 - Create cozy cabin atmosphere
 
-STYLING DETAILS:
-- Transform hair into loose, flowing waves
-- Add plaid or flannel elements
+STYLING DETAILS (maintaining exact natural hair color):
+- Transform hair into loose, flowing waves in subject's exact natural hair color
+- Add plaid or flannel clothing elements
 - Create rustic, outdoorsy look
-- Include natural, minimal makeup effect
+- Apply natural, minimal makeup effect
+- Keep exact original hair color and texture unchanged
 
 TEXTURAL ELEMENTS:
 - Add film grain for vintage feel
 - Create soft, nostalgic focus
 - Include warm light leaks
-- Apply subtle sepia toning
+- Apply subtle sepia toning to environment only
 
 BACKGROUND ATMOSPHERE:
 - Transform to autumn forest setting
@@ -816,67 +910,93 @@ BACKGROUND ATMOSPHERE:
 - Include rustic, natural elements
 
 COLOR STORY:
-- Rich oranges and reds
-- Deep forest greens
-- Warm browns and golds
-- Soft cream highlights`,
+- Rich oranges and reds in environment
+- Deep forest greens in background
+- Warm browns and golds in lighting
+- Preserve subject's exact natural coloring`,
     },
     midnights: {
       title: "Lavender Haze Era (2022)",
-      description: "70s glamour with jewel tones and sparkly nighttime vibes",
+      description: "70s glamour with sleek hair and jewel tones",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to embody a midnight-themed album aesthetic. VITAL: Do not alter facial structure, only apply stylistic elements. Create this 70s-inspired nighttime look:
+      suggestedPrompt: `Transform the uploaded image to embody a midnight-themed album aesthetic.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 RETRO GLAMOUR:
-- Apply sparkly, jewel-toned eyeshadow effect
-- Add subtle glitter to skin
-- Create 70s-inspired makeup look
-- Include dramatic eye makeup
+- Apply sparkly, jewel-toned eyeshadow effect without changing eye shape
+- Add subtle glitter to skin while preserving natural texture
+- Create 70s-inspired makeup look that enhances rather than alters features
+- Include dramatic eye makeup that follows natural eye contours
 
 MIDNIGHT ATMOSPHERE:
-- Apply deep blue and purple color grading
+- Apply deep blue and purple color grading to environment
 - Create moody, late-night lighting
 - Add subtle blur for dreamy quality
 - Include vintage 70s film texture
 
-STYLING ELEMENTS:
+STYLING ELEMENTS (maintaining exact natural hair color):
+- Style hair in sleek 70s waves using exact natural hair color
 - Transform clothing to include sparkles/sequins
 - Add jewel-toned fabric effects
 - Create disco-era inspired elements
-- Include metallic accents
+- Keep subject's exact original hair color and texture
 
 SIGNATURE EFFECTS:
 - Add clock or time-related motifs subtly
-- Create starry night elements
+- Create starry night elements in background
 - Include moon or celestial touches
 - Apply retro color correction
 
 FINISHING TOUCHES:
-- Soft, hazy focus
-- Vintage color grading
+- Soft, hazy focus while maintaining facial clarity
+- Vintage color grading in environment
 - Mysterious atmosphere
-- Glamorous but intimate feeling`,
+- Keep subject's exact natural features intact`,
     },
     ttpd: {
       title: "Poet's Department Era (2024)",
-      description: "Minimalist black & white with poetic, vulnerable aesthetic",
+      description: "Minimalist black & white with understated styling",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a minimalist poetic album aesthetic. ESSENTIAL: Keep facial features unchanged, apply only artistic styling. Create this moody, artistic look:
+      suggestedPrompt: `Transform the uploaded image to match a minimalist poetic album aesthetic.
+
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
 
 MONOCHROME ARTISTRY:
-- Convert to sophisticated black and white
-- Create soft, artistic shadows
+- Convert to sophisticated black and white while preserving all facial detail
+- Create soft, artistic shadows that enhance facial structure
 - Apply fine art photography style
 - Add subtle grain texture
 
-MINIMALIST STYLING:
-- Create simple, understated look
+MINIMALIST STYLING (maintaining exact natural hair color):
+- Style hair in simple, understated way using exact natural hair color
 - Transform clothing to basic black/white
 - Add vulnerable, raw quality
 - Include intimate, personal feeling
+- Preserve exact original hair color in grayscale conversion
 
 POETIC ATMOSPHERE:
-- Create moody, contemplative lighting
+- Create moody, contemplative lighting that clearly shows all features
 - Add typewriter or manuscript elements
 - Include subtle ink stain effects
 - Apply literary, artistic quality
@@ -884,20 +1004,20 @@ POETIC ATMOSPHERE:
 COMPOSITION:
 - Use dramatic negative space
 - Create introspective mood
-- Add slight motion blur for emotion
+- Add slight motion blur for emotion while keeping face sharp
 - Include artistic, editorial framing
 
 FINAL TOUCHES:
-- Soft contrast black and white
+- Soft contrast black and white with facial detail preservation
 - Emotional, raw quality
 - Minimalist aesthetic
-- Deeply personal feeling`,
+- Keep all natural features clearly visible and recognizable`,
     },
-"eras-tour-concert": {
-  title: "Stadium Tour Era",
-  description: "Pop star performing at a massive stadium tour",
-  placeholder: "E.g., Add specific concert details or era elements",
-  suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour.
+    "eras-tour-concert": {
+      title: "Stadium Tour Era",
+      description: "Pop star performing at a massive stadium tour",
+      placeholder: "E.g., Add specific concert details or era elements",
+      suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour.
 
 ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
 - Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
@@ -927,41 +1047,38 @@ ACCESSORIES & STYLING (maintaining exact natural hair color):
 - Include red or pink lipstick while maintaining exact lip shape
 - Keep subject's exact original hair color
 
-SIMPLIFIED STADIUM ATMOSPHERE:
-- Position subject as a distant figure on a large stage
-- Create dramatic stage lighting with spotlights illuminating the performer
-- Show dark silhouetted crowd in foreground with scattered phone lights twinkling
-- Add large LED screens in background showing the performance
-- Include atmospheric fog/haze effects
-- Use pink, purple, and blue stage lighting beams cutting through darkness
+STADIUM ATMOSPHERE:
+- Set the scene in a massive sold-out stadium (70,000+ capacity)
+- Create dramatic concert lighting with spotlights on the performer
+- Add colorful stage lights in pink, purple, and blue beams
+- Include pyrotechnic effects and sparklers in the background
+- Show an elaborate stage setup with LED screens
+- Add fog/haze effects for concert atmosphere
 
 CROWD ELEMENTS:
-- Show crowd as dark silhouettes with glimmering phone lights
-- Create a sea of tiny light points from phones and light-up wristbands
-- Keep crowd simple and atmospheric rather than detailed
-- Add soft glow from LED screens illuminating parts of the crowd
-- Focus on the magical lighting atmosphere rather than individual fans
+- Fill the stadium with thousands of enthusiastic fans
+- Show fans holding up phone flashlights creating a sea of lights
+- Include fans wearing friendship bracelets and themed outfits
+- Add colorful light-up wristbands throughout the crowd
+- Show fans holding signs and wearing cowboy hats
+- Create energy and movement in the crowd
 
 PERFORMANCE DETAILS:
-- Position subject further back in the stadium to create realistic concert perspective
-- Show them performing on a distant stage with the crowd in foreground/middle ground
-- Capture them as a small but visible figure on the massive stage
-- Create the feeling of watching a real concert from audience perspective
+- Capture mid-performance with confident, powerful pose
+- Show dynamic movement as if dancing or singing
+- Create connection with the audience through gesture
 - Add motion blur to suggest energetic performance while keeping face sharp
 - Include confetti or glitter falling from above
-- Show multiple backup dancers in coordinating outfits as small figures
+- Show multiple backup dancers in coordinating outfits
 
-REALISTIC CONCERT PHOTOGRAPHY:
-- Use telephoto lens perspective as if photographed from audience
-- Make the performer appropriately sized relative to the massive stadium
+FINISHING TOUCHES:
 - Apply concert photography style with high contrast
 - Create lens flares from stage lights
-- Add stadium architecture and upper decks full of fans towering over the stage
+- Add stadium architecture and upper decks full of fans
 - Include giant LED screens showing the performer
-- Show the scale and grandeur of a real stadium tour
-- Preserve subject's exact natural features while adding performance energy`
-}
-};
+- Preserve subject's exact natural features while adding performance energy`,
+    },
+  };
 
 // Popular subcategories that should have rainbow borders
 const POPULAR_SUBCATEGORIES = {
