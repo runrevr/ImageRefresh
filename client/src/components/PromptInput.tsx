@@ -101,6 +101,20 @@ export type OtherSubcategory =
   | "caricature"
   | "vampire"
   | "custom-other";
+
+export type TaylorSwiftSubcategory =
+  | "debut"
+  | "fearless"
+  | "speak-now"
+  | "red"
+  | "nineteen-eighty-nine"
+  | "reputation"
+  | "lover"
+  | "folklore"
+  | "evermore"
+  | "midnights"
+  | "ttpd"
+  | "eras-tour-concert";
 // Writing tips for better prompts
 const PROMPT_TIPS = [
   "Be specific about style (e.g., 'watercolor', 'photorealistic', 'cartoon')",
@@ -470,10 +484,10 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
 // Taylor Swift Era subcategories
 export const TAYLOR_SWIFT_STYLES: Record<TaylorSwiftSubcategory, StyleOption> = {
   "debut": {
-    title: "Taylor Swift (2006)",
+    title: "Country Debut Era (2006)",
     description: "Golden country girl aesthetic with warm lighting and curly blonde hair",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match Taylor Swift's 2006 debut album aesthetic. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these stylistic changes:
+    suggestedPrompt: `Transform the uploaded image to match a 2006 country music debut album aesthetic. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these stylistic changes:
 
 HAIR & STYLING:
 - Transform hair into long, golden blonde cascading curls with natural highlights
@@ -503,10 +517,10 @@ COMPOSITION:
 - Maintain the innocent, hopeful expression`
   },
   "fearless": {
-    title: "Fearless (2008)",
+    title: "Golden Fairytale Era (2008)",
     description: "Sparkly golden hour with flowing movement and glitter",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match Taylor Swift's Fearless album cover aesthetic. ESSENTIAL: Keep the subject's facial features, expressions, and identity completely unchanged. Apply only these stylistic elements:
+    suggestedPrompt: `Transform the uploaded image to match a golden, fairytale-inspired album cover aesthetic from 2008. ESSENTIAL: Keep the subject's facial features, expressions, and identity completely unchanged. Apply only these stylistic elements:
 
 HAIR TRANSFORMATION:
 - Style hair into bouncy, golden blonde curls with movement
@@ -537,10 +551,10 @@ COLOR PALETTE:
 - Touch of rose gold in highlights`
   },
   "speak-now": {
-    title: "Speak Now (2010)",
+    title: "Purple Fantasy Era (2010)",
     description: "Purple fantasy with flowing gowns and enchanted atmosphere",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to recreate the Speak Now album cover aesthetic. MANDATORY: Preserve all facial features and identity markers exactly as they are. Apply these purple-themed transformations:
+    suggestedPrompt: `Transform the uploaded image to recreate a purple-themed fantasy album cover aesthetic. MANDATORY: Preserve all facial features and identity markers exactly as they are. Apply these purple-themed transformations:
 
 HAIR STYLING:
 - Transform hair into long, flowing waves
@@ -573,10 +587,10 @@ FINISHING TOUCHES:
 - Maintain elegant, graceful positioning`
   },
   "red": {
-    title: "Red (2012)",
+    title: "Autumn Romance Era (2012)",
     description: "Autumn vibes with signature red lips and vintage warmth",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match the Red album cover aesthetic. CRUCIAL: Do not alter any facial features, only apply stylistic changes around them. Create this autumn-inspired look:
+    suggestedPrompt: `Transform the uploaded image to match an autumn-themed album cover aesthetic. CRUCIAL: Do not alter any facial features, only apply stylistic changes around them. Create this autumn-inspired look:
 
 SIGNATURE ELEMENTS:
 - Apply bold red lipstick to lips (classic matte finish)
@@ -608,10 +622,10 @@ COLOR PALETTE:
 - Cream highlights`
   },
   "nineteen-eighty-nine": {
-    title: "1989 (2014)",
+    title: "Polaroid Pop Era (2014)",
     description: "Polaroid aesthetic with cool tones and urban sophistication",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to recreate the 1989 album Polaroid aesthetic. VITAL: Keep subject's face and features completely untouched. Apply these stylistic changes:
+    suggestedPrompt: `Transform the uploaded image to recreate a Polaroid-inspired pop album aesthetic. VITAL: Keep subject's face and features completely untouched. Apply these stylistic changes:
 
 POLAROID STYLING:
 - Frame image in white Polaroid-style border
@@ -644,10 +658,10 @@ COMPOSITION:
 - Maintain mysterious, artistic quality`
   },
   "reputation": {
-    title: "Reputation (2017)",
+    title: "Dark Snake Era (2017)",
     description: "Dark, edgy black & white with newspaper/snake motifs",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match the Reputation album's dark aesthetic. CRITICAL: Preserve exact facial structure and features. Apply only these stylistic elements:
+    suggestedPrompt: `Transform the uploaded image to match a dark, edgy album aesthetic with snake motifs. CRITICAL: Preserve exact facial structure and features. Apply only these stylistic elements:
 
 MONOCHROME TREATMENT:
 - Convert to high-contrast black and white
@@ -680,10 +694,10 @@ FINISHING EFFECTS:
 - Dark, edgy vignetting`
   },
   "lover": {
-    title: "Lover (2019)",
+    title: "Pastel Dream Era (2019)",
     description: "Pastel paradise with glittery heart eye makeup",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to embody the Lover album's dreamy aesthetic. ESSENTIAL: Do not modify facial features, only apply artistic styling. Create this pastel paradise:
+    suggestedPrompt: `Transform the uploaded image to embody a dreamy pastel album aesthetic. ESSENTIAL: Do not modify facial features, only apply artistic styling. Create this pastel paradise:
 
 SIGNATURE HEART:
 - Add glittery pink heart shape around one eye
@@ -716,10 +730,10 @@ WHIMSICAL ELEMENTS:
 - Soft focus with dreamy quality`
   },
   "folklore": {
-    title: "Folklore (2020)",
+    title: "Indie Forest Era (2020)",
     description: "Cottagecore forest aesthetic with braids and cardigans",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to capture Folklore's mystical forest aesthetic. MANDATORY: Keep all facial features exactly as they are. Apply these atmospheric changes:
+    suggestedPrompt: `Transform the uploaded image to capture an indie folk forest aesthetic. MANDATORY: Keep all facial features exactly as they are. Apply these atmospheric changes:
 
 COTTAGECORE STYLING:
 - Transform hair into loose, natural braids
@@ -752,10 +766,10 @@ COLOR PALETTE:
 - Subtle blue undertones`
   },
   "evermore": {
-    title: "Evermore (2020)",
+    title: "Rustic Woods Era (2020)",
     description: "Rustic autumn woods with golden hour lighting",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match Evermore's rustic aesthetic. CRUCIAL: Preserve subject's identity and facial features completely. Apply these elements:
+    suggestedPrompt: `Transform the uploaded image to match a rustic woodland aesthetic. CRUCIAL: Preserve subject's identity and facial features completely. Apply these elements:
 
 AUTUMN WOODS:
 - Create golden hour forest lighting
@@ -788,10 +802,10 @@ COLOR STORY:
 - Soft cream highlights`
   },
   "midnights": {
-    title: "Midnights (2022)",
+    title: "Lavender Haze Era (2022)",
     description: "70s glamour with jewel tones and sparkly nighttime vibes",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to embody the Midnights album aesthetic. VITAL: Do not alter facial structure, only apply stylistic elements. Create this 70s-inspired nighttime look:
+    suggestedPrompt: `Transform the uploaded image to embody a midnight-themed album aesthetic. VITAL: Do not alter facial structure, only apply stylistic elements. Create this 70s-inspired nighttime look:
 
 RETRO GLAMOUR:
 - Apply sparkly, jewel-toned eyeshadow effect
@@ -824,10 +838,10 @@ FINISHING TOUCHES:
 - Glamorous but intimate feeling`
   },
   "ttpd": {
-    title: "The Tortured Poets Department (2024)",
+    title: "Poet's Department Era (2024)",
     description: "Minimalist black & white with poetic, vulnerable aesthetic",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match The Tortured Poets Department aesthetic. ESSENTIAL: Keep facial features unchanged, apply only artistic styling. Create this moody, artistic look:
+    suggestedPrompt: `Transform the uploaded image to match a minimalist poetic album aesthetic. ESSENTIAL: Keep facial features unchanged, apply only artistic styling. Create this moody, artistic look:
 
 MONOCHROME ARTISTRY:
 - Convert to sophisticated black and white
@@ -860,21 +874,21 @@ FINAL TOUCHES:
 - Deeply personal feeling`
   },
   "eras-tour-concert": {
-    title: "Eras Tour Concert",
-    description: "Transform into Taylor Swift performing at The Eras Tour in a packed stadium",
+    title: "Stadium Tour Era",
+    description: "Transform into a pop star performing at a massive stadium tour",
     placeholder: "E.g., Add specific concert details or era elements",
-    suggestedPrompt: `Transform the uploaded image to show the subject as Taylor Swift performing at The Eras Tour concert. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these concert transformation elements:
+    suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these concert transformation elements:
 
-ICONIC ERAS TOUR OUTFIT:
-- Transform clothing into a custom Atelier Versace-style bodysuit
+ICONIC CONCERT OUTFIT:
+- Transform clothing into a custom designer bodysuit
 - Cover the bodysuit in thousands of sparkling sequins and rhinestones
-- Use Lover-era color palette: pink, blue, gold, and silver crystals
+- Use vibrant color palette: pink, blue, gold, and silver crystals
 - Create intricate beadwork patterns across the bodysuit
 - Add dramatic fringe details and cascading crystal elements
 - Include high-cut leg design with sheer mesh panels
 
 ACCESSORIES & STYLING:
-- Add knee-high Christian Louboutin-style boots covered in matching crystals
+- Add knee-high boots covered in matching crystals
 - Create a bedazzled microphone in hand with rhinestone details
 - Style hair in glamorous waves with face-framing layers
 - Add dramatic stage makeup with glittery eyeshadow and bold lashes
@@ -886,13 +900,13 @@ STADIUM ATMOSPHERE:
 - Create dramatic concert lighting with spotlights on the performer
 - Add colorful stage lights in pink, purple, and blue beams
 - Include pyrotechnic effects and sparklers in the background
-- Show the elaborate Eras Tour stage setup with LED screens
+- Show an elaborate stage setup with LED screens
 - Add fog/haze effects for concert atmosphere
 
 CROWD ELEMENTS:
 - Fill the stadium with thousands of enthusiastic fans
 - Show fans holding up phone flashlights creating a sea of lights
-- Include fans wearing friendship bracelets and era-specific outfits
+- Include fans wearing friendship bracelets and themed outfits
 - Add colorful light-up wristbands throughout the crowd
 - Show fans holding signs and wearing cowboy hats
 - Create energy and movement in the crowd
