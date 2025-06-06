@@ -913,7 +913,6 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
             `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`
           );
         } catch (creditError) {
-```text
           console.error("Error updating user credits:", creditError);
           // Continue with the response even if credit update failed
         }
