@@ -979,6 +979,8 @@ export default function PromptInput({
   );
   const [otherSubcategory, setOtherSubcategory] =
     useState<OtherSubcategory | null>(null);
+  const [taylorSwiftSubcategory, setTaylorSwiftSubcategory] =
+    useState<TaylorSwiftSubcategory | null>(null);
   // No pop culture subcategory needed
 
   // Determine subcategory options based on primary category
@@ -992,7 +994,8 @@ export default function PromptInput({
         return Object.keys(ERA_STYLES) as EraSubcategory[];
       case "other":
         return Object.keys(OTHER_STYLES) as OtherSubcategory[];
-      // Pop culture category removed
+      case "taylor-swift":
+        return Object.keys(TAYLOR_SWIFT_STYLES) as TaylorSwiftSubcategory[];
       case "kids-real":
         // No subcategories for kids-real
         return [];
