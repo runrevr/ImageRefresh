@@ -550,7 +550,7 @@ export default function KidsLanding() {
                       <p className="text-gray-700">Unlimited summer fun for the whole family</p>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <ul className="space-y-3">
+                      <ul className="space-y-3 text-[#333333]">
                         <li className="flex items-center">
                           <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
                           <span className="text-sm font-medium">Unlimited transformations</span>
