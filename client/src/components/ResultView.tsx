@@ -579,6 +579,23 @@ export default function ResultView({
                     onClick={() => setFullViewImage(coloringBookImage)} 
                   />
                 </div>
+
+                {/* Navigation buttons below coloring book image */}
+                <div className="flex justify-center space-x-4 mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => window.location.href = '/'}
+                    className="px-6 py-2"
+                  >
+                    Back to Home
+                  </Button>
+                  <Button
+                    onClick={onNewImage}
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Start Over
+                  </Button>
+                </div>
               </div>
             )}
           </div>
