@@ -29,7 +29,7 @@ import alicornRealImage from "../assets/alicorn-real.png";
 import kidsDrawingConverted from "../assets/kids-drawing-converted2.png";
 import pixarUs from "../assets/pixar us.png";
 import legoCharacter from "../assets/lego-character.png";
-import minecraftCharacter from "../assets/minecraft-character.png";
+import minecraftCharacter from "../assets/mario.png";
 
 // Enum for the different steps in the process
 enum Step {
