@@ -48,6 +48,7 @@ export type TransformationType =
   | "other"
   | "kids"
   | "kids-real"
+  | "taylor-swift"
   | "custom";
 
 // Subcategory types
