@@ -1288,6 +1288,8 @@ export default function PromptInput({
         return eraSubcategory === subcategory;
       case "other":
         return otherSubcategory === subcategory;
+      case "taylor-swift":
+        return taylorSwiftSubcategory === subcategory;
       // Pop culture case removed
       default:
         return false;
@@ -1486,6 +1488,18 @@ export default function PromptInput({
           >
             <Paintbrush className="h-5 w-5 mb-1" />
             <span className="text-xs text-center">Painting</span>
+          </Button>
+          <Button
+            variant={primaryCategory === "taylor-swift" ? "default" : "outline"}
+            className={`flex flex-col items-center justify-center h-16 ${
+              primaryCategory === "taylor-swift"
+                ? "bg-secondary text-white"
+                : "text-white bg-black"
+            }`}
+            onClick={() => handleCategorySelect("taylor-swift")}
+          >
+            <Sparkles className="h-5 w-5 mb-1" />
+            <span className="text-xs text-center">Taylor Swift Eras</span>
           </Button>
         </div>
       </div>
