@@ -512,7 +512,7 @@ export default function KidsLanding() {
                       <ul className="space-y-3">
                         <li className="flex items-center">
                           <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                          <span className="text-sm">1 free transformation to try</span>
+                          <span className="text-sm text-[#333333]">1 free transformation to try</span>
                         </li>
                         <li className="flex items-center">
                           <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
