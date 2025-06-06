@@ -134,14 +134,49 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
           { type: 'image/png' }
         );
 
-        const response = await openai.images.edit({
-          model: "gpt-image-1", 
-          image: imageFile,
-          prompt: prompt,
-          size: size,
-          n: 2,
-          moderation: "low"
-        });
+        // Try with n=2 first, but be prepared to handle if the parameter is not supported
+        let response;
+        try {
+          response = await openai.images.edit({
+            model: "gpt-image-1", 
+            image: imageFile,
+            prompt: prompt,
+            size: size,
+            n: 2,
+            moderation: "low"
+          });
+        } catch (apiError) {
+          // If n parameter is not supported, make two separate calls
+          if (apiError.message && apiError.message.includes("Unknown parameter") && apiError.message.includes("n")) {
+            console.log("[OpenAI] n parameter not supported, making two separate calls");
+            
+            const firstCall = await openai.images.edit({
+              model: "gpt-image-1", 
+              image: imageFile,
+              prompt: prompt,
+              size: size,
+              moderation: "low"
+            });
+            
+            const secondCall = await openai.images.edit({
+              model: "gpt-image-1", 
+              image: imageFile,
+              prompt: prompt,
+              size: size,
+              moderation: "low"
+            });
+            
+            // Combine the results
+            response = {
+              data: [
+                ...firstCall.data,
+                ...secondCall.data
+              ]
+            };
+          } else {
+            throw apiError;
+          }
+        }
 
       console.log(`[OpenAI] API Response received successfully`);
 
@@ -236,102 +271,7 @@ export async function transformImage(imagePath, prompt, size = "1024x1024") {
       console.error("[OpenAI] API Error Details:", apiError.response?.data);
       console.error("[OpenAI] API Status:", apiError.response?.status);
 
-      // Check for specific parameter errors and retry if needed
-      if (
-        apiError.response &&
-        apiError.response.data &&
-        apiError.response.data.error
-      ) {
-        const errorMessage = apiError.response.data.error.message || "";
-
-        if (
-          errorMessage.includes("Unknown parameter") &&
-          errorMessage.includes("n")
-        ) {
-          console.log("[OpenAI] Retrying without 'n' parameter");
-
-          // Create a new form without the 'n' parameter
-          const retryForm = new FormData();
-          retryForm.append("model", "gpt-image-1");
-          retryForm.append("prompt", prompt);
-          retryForm.append("size", size);
-          retryForm.append("image", fs.createReadStream(optimizedImagePath), {
-            filename: "image.png",
-            contentType: "image/png",
-          });
-
-          try {
-            const retryResponse = await axios.post(
-              "https://api.openai.com/v1/images/edits",
-              retryForm,
-              {
-                headers: {
-                  Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                  ...retryForm.getHeaders(),
-                },
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-              },
-            );
-
-            console.log(`[OpenAI] Retry successful`);
-
-            // Process the retry response
-            const timestamp = Date.now();
-            const uploadsDir = path.join(process.cwd(), "uploads");
-
-            if (!fs.existsSync(uploadsDir)) {
-              fs.mkdirSync(uploadsDir, { recursive: true });
-            }
-
-            let transformedImagePaths = [];
-
-            if (
-              retryResponse.data &&
-              retryResponse.data.data &&
-              Array.isArray(retryResponse.data.data)
-            ) {
-              for (let i = 0; i < retryResponse.data.data.length; i++) {
-                const item = retryResponse.data.data[i];
-                const outputPath = path.join(
-                  uploadsDir,
-                  `transformed-${timestamp}${i > 0 ? "-" + (i + 1) : ""}.png`,
-                );
-
-                if (item.url) {
-                  // It's a regular URL - download it
-                  const imageResponse = await axios.get(item.url, {
-                    responseType: "arraybuffer",
-                  });
-                  fs.writeFileSync(
-                    outputPath,
-                    Buffer.from(imageResponse.data, "binary"),
-                  );
-                  transformedImagePaths.push(outputPath);
-                } else if (item.b64_json) {
-                  // It's base64 data - decode and save it
-                  const imgBuffer = Buffer.from(item.b64_json, "base64");
-                  fs.writeFileSync(outputPath, imgBuffer);
-                  transformedImagePaths.push(outputPath);
-                }
-              }
-            }
-
-            if (transformedImagePaths.length > 0) {
-              return {
-                url: `file://${transformedImagePaths[0]}`,
-                transformedPath: transformedImagePaths[0],
-                secondTransformedPath:
-                  transformedImagePaths.length > 1
-                    ? transformedImagePaths[1]
-                    : null,
-              };
-            }
-          } catch (retryError) {
-            console.error("[OpenAI] Retry also failed:", retryError.message);
-          }
-        }
-      }
+      
 
       // Don't use fallback - throw the actual error so user knows what happened
       console.error("[OpenAI] All transformation attempts failed");
