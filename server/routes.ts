@@ -658,7 +658,7 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
               );
 
               console.log(
-                `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`,
+                `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`
               );
             } catch (creditError) {
               console.error("Error updating user credits:", creditError);
@@ -910,54 +910,54 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
           );
 
           console.log(
-            `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`
-```text
-);
+            `Updated user ${userId} credits - Used free credit: ${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`
+          );
         } catch (creditError) {
-            console.error("Error updating user credits:", creditError);
-            // Continue with the response even if credit update failed
-          }
+```text
+          console.error("Error updating user credits:", creditError);
+          // Continue with the response even if credit update failed
         }
-
-        // Save the transformed image to user's collection
-        if (userId && transformedImageUrl) {
-          try {
-            // Calculate expiry date (45 days from now)
-            const expiresAt = new Date();
-            expiresAt.setDate(expiresAt.getDate() + 45);
-
-            // Save the coloring book transformation
-            await storage.saveUserImage({
-              userId: userId,
-              imagePath: result.outputPath,
-              imageUrl: transformedImageUrl,
-              imageType: 'coloring_book',
-              originalPrompt: 'Convert to coloring book style',
-              transformationId: null,
-              expiresAt
-            });
-
-            console.log(`Saved coloring book image to user ${userId}'s collection`);
-          } catch (saveError) {
-            console.error("Error saving coloring book image to user collection:", saveError);
-            // Don't fail the transformation if saving to collection fails
-          }
-        }
-
-        // Return the transformed image URL
-        res.status(200).json({
-          message: "Coloring book transformation completed successfully",
-          transformedImageUrl: transformedImageUrl,
-          originalImagePath: imagePath,
-        });
-      } catch (error: any) {
-        console.error("Error in coloring book transformation:", error);
-        res.status(500).json({
-          message: "Error processing coloring book transformation",
-          error: error.message,
-        });
       }
-    });
+
+      // Save the transformed image to user's collection
+      if (userId && transformedImageUrl) {
+        try {
+          // Calculate expiry date (45 days from now)
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 45);
+
+          // Save the coloring book transformation
+          await storage.saveUserImage({
+            userId: userId,
+            imagePath: result.outputPath,
+            imageUrl: transformedImageUrl,
+            imageType: 'coloring_book',
+            originalPrompt: 'Convert to coloring book style',
+            transformationId: null,
+            expiresAt
+          });
+
+          console.log(`Saved coloring book image to user ${userId}'s collection`);
+        } catch (saveError) {
+          console.error("Error saving coloring book image to user collection:", saveError);
+          // Don't fail the transformation if saving to collection fails
+        }
+      }
+
+      // Return the transformed image URL
+      res.status(200).json({
+        message: "Coloring book transformation completed successfully",
+        transformedImageUrl: transformedImageUrl,
+        originalImagePath: imagePath,
+      });
+    } catch (error: any) {
+      console.error("Error in coloring book transformation:", error);
+      res.status(500).json({
+        message: "Error processing coloring book transformation",
+        error: error.message,
+      });
+    }
+  });
 
 // Create payment intent for summer subscription  
 app.post('/api/create-summer-subscription', async (req, res) => {
