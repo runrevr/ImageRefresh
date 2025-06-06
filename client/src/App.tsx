@@ -57,6 +57,7 @@ import Create from "./pages/create";
 import DentalLanding from "@/pages/dental-landing";
 import KidsLanding from "@/pages/kids-landing";
 import CheckoutDental from "@/pages/checkout-dental";
+import CheckoutSummer from '@/pages/checkout-summer';
 
 function Router() {
   return (
@@ -111,20 +112,9 @@ function Router() {
         <Route path="/checkout-demo" component={CheckoutDemoPage} />
         <Route path="/checkout-flow-demo" component={CheckoutFlowDemoPage} />
         <Route path="/dental" component={DentalLanding} />
-        <Route path="/kids" component={KidsLanding} />
         <Route path="/checkout-dental" component={CheckoutDental} />
-        <Route path="/view-transformation" component={ViewTransformation} />
-        <Route path="/text-to-image-results" component={TextToImageResults} />
-        <Route path="/checkout-demo" component={CheckoutDemo} />
-        <Route path="/checkout-flow-demo" component={CheckoutFlowDemo} />
-        <Route path="/prebuilt-prompts" component={PrebuiltPrompts} />
-        <Route path="/prebuilt-upload" component={PrebuiltUpload} />
-        <Route path="/prebuilt-results" component={PrebuiltResults} />
-        <Route path="/text-to-image" component={TextToImage} />
-        <Route path="/create" component={Create} />
-        <ProtectedRoute path="/my-images" component={MyImages} />
-        <ProtectedRoute path="/gallery" component={GalleryPage} />
-        <ProtectedRoute path="/saved-images" component={MySavedImages} />
+        <Route path="/checkout-summer" component={CheckoutSummer} />
+        <Route path="/kids" component={KidsLanding} />
         <Route component={NotFound} />
       </Switch>
     </>

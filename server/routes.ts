@@ -911,7 +911,8 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
 
           console.log(
             `Updated user ${userId} credits - Used free credit:${useFreeCredit}, Paid credits remaining: ${paidCreditsRemaining}`
-          );
+```text
+);
         } catch (creditError) {
             console.error("Error updating user credits:", creditError);
             // Continue with the response even if credit update failed
@@ -958,8 +959,58 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
       }
     });
 
-// Dental practice subscription
-app.post("/api/create-dental-subscription", async (req, res) => {
+// Create payment intent for summer subscription  
+app.post('/api/create-summer-subscription', async (req, res) => {
+  try {
+    const { email, customerName, packageType, amount, duration } = req.body;
+
+    // Validate input
+    if (!email || !customerName || packageType !== 'summer-unlimited' || amount !== 1900 || duration !== 3) {
+      return res.status(400).json({ error: 'Invalid summer package parameters' });
+    }
+
+    // Create Stripe checkout session for summer package
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Summer Unlimited Package',
+              description: '3 months of unlimited image transformations for kids',
+              images: ['https://your-domain.com/summer-package-image.jpg'],
+            },
+            unit_amount: amount, // $19.00
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment', // One-time payment, not subscription
+      customer_email: email,
+      metadata: {
+        packageType: 'summer-unlimited',
+        duration: '3',
+        customerName: customerName,
+      },
+      success_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/upload?category=animation&success=summer`,
+      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/checkout-summer?canceled=true`,
+    });
+
+    console.log(`[API] Summer subscription checkout session created for ${email}`);
+
+    res.json({ 
+      paymentUrl: session.url,
+      sessionId: session.id 
+    });
+  } catch (error) {
+    console.error('[API] Error creating summer subscription:', error);
+    res.status(500).json({ error: 'Failed to create summer subscription' });
+  }
+});
+
+// Create payment intent for dental subscription
+app.post('/api/create-dental-subscription', async (req, res) => {
   try {
     const { practiceInfo } = req.body;
 
