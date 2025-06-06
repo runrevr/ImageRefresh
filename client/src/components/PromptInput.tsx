@@ -1124,6 +1124,7 @@ export default function PromptInput({
     setPaintingSubcategory(null);
     setEraSubcategory(null);
     setOtherSubcategory(null);
+    setTaylorSwiftSubcategory(null);
     // Pop culture reference removed
 
     // Set default prompt for Kids to Real
@@ -1203,6 +1204,24 @@ export default function PromptInput({
         'subcategory': subcategory,
         'combination': `other_${subcategory}`,
         'full_path': `other > ${subcategory}`
+      });
+    }
+  };
+
+  const handleTaylorSwiftSelect = (subcategory: TaylorSwiftSubcategory) => {
+    setTaylorSwiftSubcategory(subcategory);
+    if (subcategory !== "custom-taylor-swift") {
+      setPromptText(TAYLOR_SWIFT_STYLES[subcategory].suggestedPrompt);
+    }
+
+    // Track subcategory selection with Google Analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'style_applied', {
+        'event_category': 'user_selections',
+        'category': 'taylor-swift',
+        'subcategory': subcategory,
+        'combination': `taylor-swift_${subcategory}`,
+        'full_path': `taylor-swift > ${subcategory}`
       });
     }
   };
