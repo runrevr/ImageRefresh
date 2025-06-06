@@ -326,18 +326,7 @@ export default function KidsLanding() {
 
                   {/* Column 3: Coloring Book Pages */}
                   <div className="flex flex-col gap-4">
-                    <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
-                      <div className="flex-1 p-4 flex items-center justify-center">
-                        <img 
-                          src={legoCharacter} 
-                          alt="Coloring Book 1" 
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      </div>
-                      <div className="bg-orange-500 text-white text-center py-2 text-sm font-semibold">
-                        Coloring Book
-                      </div>
-                    </div>
+                    
                     <div className="aspect-square rounded-lg overflow-hidden shadow-lg bg-white flex flex-col">
                       <div className="flex-1 p-4 flex items-center justify-center">
                         <div className="w-full h-full bg-gray-100 flex items-center justify-center">
