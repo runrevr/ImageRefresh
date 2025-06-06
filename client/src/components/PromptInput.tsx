@@ -1238,6 +1238,8 @@ export default function PromptInput({
       return ERA_STYLES[eraSubcategory];
     } else if (primaryCategory === "other" && otherSubcategory) {
       return OTHER_STYLES[otherSubcategory];
+    } else if (primaryCategory === "taylor-swift" && taylorSwiftSubcategory) {
+      return TAYLOR_SWIFT_STYLES[taylorSwiftSubcategory];
       // Pop culture reference removed
     } else if (primaryCategory === "kids-real") {
       // Custom info for kids-real category
@@ -1264,6 +1266,8 @@ export default function PromptInput({
       case "era":
         return <Clock className="h-5 w-5 mr-2" />;
       case "other":
+        return <Sparkles className="h-5 w-5 mr-2" />;
+      case "taylor-swift":
         return <Sparkles className="h-5 w-5 mr-2" />;
       case "kids-real":
         return <Baby className="h-5 w-5 mr-2" />;
