@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
@@ -71,7 +70,7 @@ export default function CheckoutSummer() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50">
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-12 pt-20">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
@@ -175,7 +174,7 @@ export default function CheckoutSummer() {
                   <span className="text-lg font-semibold">Total:</span>
                   <span className="text-2xl font-bold text-orange-600">$19.00</span>
                 </div>
-                
+
                 <Button
                   onClick={handlePurchase}
                   disabled={isLoading || !email || !customerName}
