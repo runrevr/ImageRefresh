@@ -846,7 +846,7 @@ export default function UploadPage() {
         }
       }
     } catch (error: any) {
-      console.error("Error during edit transformation:", error);
+      console.log("Error during edit transformation:", error);
 
       // More specific error messages
       let errorMessage = "An error occurred during editing. Please try again.";
@@ -987,7 +987,24 @@ export default function UploadPage() {
     }
   };
 
-  // Auto-submit functionality removed - just pre-fill the form and let user click Transform
+  // Handle direct navigation to uploader and URL category params
+  useEffect(() => {
+    const directUpload = sessionStorage.getItem('showUploaderDirectly');
+    if (directUpload === 'true') {
+      sessionStorage.removeItem('showUploaderDirectly');
+      setCurrentStep(Step.Upload);
+    }
+
+    // Check for category parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    if (category === 'kids') {
+      // Pre-select kids/cartoons/animations category
+      setCurrentStep(Step.Upload);
+       setSelectedTransformation('animation');
+       setSelectedSubcategory('coloring-book');
+    }
+  }, []);
 
   // Reset scroll position when page loads
   useEffect(() => {
