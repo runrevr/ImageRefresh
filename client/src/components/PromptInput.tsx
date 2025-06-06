@@ -481,18 +481,31 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   },
 };
 
-// Taylor Swift Era subcategories
+// Taylor Swift Era subcategories with enhanced facial preservation
 export const TAYLOR_SWIFT_STYLES: Record<TaylorSwiftSubcategory, StyleOption> = {
   "debut": {
     title: "Country Debut Era (2006)",
-    description: "Golden country girl aesthetic with warm lighting and curly blonde hair",
+    description: "Country girl aesthetic with curly hair and warm lighting",
     placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match a 2006 country music debut album aesthetic. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these stylistic changes:
+    suggestedPrompt: `Transform the uploaded image to match a 2006 country music debut album aesthetic. 
 
-HAIR & STYLING:
-- Transform hair into long, golden blonde cascading curls with natural highlights
+ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
+- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
+- Maintain EXACT nose shape, size, bridge width, and nostril shape
+- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
+- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
+- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
+- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
+- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
+- Maintain EXACT chin shape, forehead size, and temple width
+- Keep ALL proportional relationships between facial features identical
+- The person must be instantly recognizable to anyone who knows them
+
+HAIR & STYLING (maintaining exact natural hair color):
+- Transform hair into long, cascading curls while keeping subject's exact natural hair color and texture
 - Add subtle side-swept bangs if appropriate to face shape
 - Create voluminous, country-style waves reminiscent of 2006 styling
+- Preserve the subject's exact natural hair color throughout
 
 AESTHETIC & ATMOSPHERE:
 - Apply warm, golden hour lighting with soft focus
@@ -507,14 +520,14 @@ CLOTHING & ACCESSORIES:
 
 COLOR GRADING:
 - Warm yellows and oranges in highlights
-- Soft, creamy skin tones
+- Soft, creamy skin tones (preserve subject's exact natural skin tone)
 - Slightly faded, vintage quality
-- Emphasize turquoise blues and earthy browns
+- Emphasize turquoise blues and earthy browns in environment
 
 COMPOSITION:
 - Center the subject with classic portrait framing
 - Add subtle vignetting for vintage feel
-- Maintain the innocent, hopeful expression`
+- Maintain the subject's natural expression and facial positioning`
   },
   "fearless": {
     title: "Golden Fairytale Era (2008)",
