@@ -13,6 +13,8 @@ import { Check, Star, Heart, Palette, Sparkles, Sun, Smile } from "lucide-react"
 import { TextRotate } from "@/components/ui/text-rotate";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { CardHeader, CardTitle } from "@/components/ui/card";
+import { X } from "lucide-react";
 
 // Import transformation examples
 import bearDrawingImage from "../assets/bear-drawing.png";
@@ -489,152 +491,148 @@ export default function KidsLanding() {
 
             {/* Summer Pricing */}
             <div id="summer-pricing" className="w-full bg-white py-16">
-              <div className="max-w-4xl mx-auto px-4">
+              <div className="max-w-6xl mx-auto px-4">
                 <div className="text-center mb-12">
-                  <h2 className="text-4xl font-bold text-orange-600 mb-4">
-                    🌞 Summer Survival Kit Pricing
+                  <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                    Choose Your Summer Adventure! 🌞
                   </h2>
                   <p className="text-xl text-gray-600">
-                    Keep kids entertained all summer long with unlimited transformations
+                    Pick the perfect plan for endless summer creativity
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                   {/* Free Trial */}
-                  <Card className="relative bg-white border-2 border-gray-200 rounded-xl shadow-lg">
-                    <CardContent className="p-8">
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">Try Free</h3>
-                        <div className="text-4xl font-bold text-gray-900 mb-6">$0</div>
-                        <p className="text-gray-600 mb-6">Perfect for testing the magic</p>
-                        <ul className="text-left space-y-3 mb-8">
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            1 free transformation
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            All cartoon styles
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-red-500 mr-2">✗</span>
-                            Limited downloads
-                          </li>
-                        </ul>
-                        <Button 
-                          className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300 py-3 text-lg font-semibold"
-                          onClick={() => navigate("/upload?category=animation")}
-                        >
-                          Try Free Now
-                        </Button>
-                      </div>
+                  <Card className="border-2 border-gray-200 bg-white shadow-lg hover:shadow-xl transition-shadow">
+                    <CardHeader className="text-center pb-4">
+                      <CardTitle className="text-2xl font-bold text-gray-800">Try Free</CardTitle>
+                      <div className="text-4xl font-bold text-gray-900 mb-2">$0</div>
+                      <p className="text-gray-600">Perfect for testing the magic</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <ul className="space-y-3">
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm">1 free transformation to try</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm">Access to all cartoon styles</span>
+                        </li>
+                        <li className="flex items-center">
+                          <X className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm text-gray-400">Limited to one image</span>
+                        </li>
+                        <li className="flex items-center">
+                          <X className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm text-gray-400">No coloring book creation</span>
+                        </li>
+                      </ul>
+                      <Button 
+                        className="w-full bg-gray-500 hover:bg-gray-600 text-white mt-6"
+                        onClick={() => setLocation('/upload?category=kids')}
+                      >
+                        Try Free Now
+                      </Button>
                     </CardContent>
                   </Card>
 
-                  {/* Summer Unlimited - Featured */}
-                  <Card className="relative bg-gradient-to-br from-orange-50 to-yellow-50 border-4 border-orange-400 rounded-xl shadow-xl transform scale-105">
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                      <span className="bg-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold">
-                        🔥 SUMMER SPECIAL
+                  {/* Summer Special - Featured */}
+                  <Card className="border-4 border-orange-400 bg-gradient-to-br from-orange-50 to-yellow-50 shadow-xl transform scale-105 relative hover:shadow-2xl transition-shadow">
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                        SUMMER SPECIAL
                       </span>
                     </div>
-                    <CardContent className="p-8 pt-12">
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-orange-700 mb-4">Summer Unlimited</h3>
-                        <div className="text-5xl font-bold text-orange-600 mb-2">$19</div>
-                        <p className="text-orange-700 font-semibold mb-6">3 months only!</p>
-                        <p className="text-gray-700 mb-6">Unlimited summer fun for the whole family</p>
-                        <ul className="text-left space-y-3 mb-8">
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            <strong>Unlimited transformations</strong>
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            All cartoon & coloring styles
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            HD downloads
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            Save all creations
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            Perfect for summer activities
-                          </li>
-                        </ul>
-                        <Button 
-                          className="w-full bg-orange-500 text-white hover:bg-orange-600 py-3 text-lg font-semibold shadow-lg"
-                          onClick={() => navigate("/checkout-summer")}
-                        >
-                          Start Summer Fun! 🌞
-                        </Button>
-                        <p className="text-xs text-gray-500 mt-2">
-                          Valid through August 31st • Cancel anytime
-                        </p>
-                      </div>
+                    <CardHeader className="text-center pb-4 pt-8">
+                      <CardTitle className="text-2xl font-bold text-orange-600">Summer Unlimited</CardTitle>
+                      <div className="text-5xl font-bold text-orange-600 mb-2">$19</div>
+                      <p className="text-orange-700 font-semibold">3 months only!</p>
+                      <p className="text-gray-700">Unlimited summer fun for the whole family</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <ul className="space-y-3">
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm font-medium">Unlimited transformations</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm font-medium">All cartoon styles included</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm font-medium">Create coloring book pages</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm font-medium">HD downloads & saves</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm font-medium">Perfect for whole family</span>
+                        </li>
+                      </ul>
+                      <Button 
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg py-3 mt-6"
+                        onClick={() => setLocation('/checkout-summer')}
+                      >
+                        Start Summer Fun! 🌞
+                      </Button>
+                      <p className="text-xs text-gray-600 text-center">Valid through August 31st • Cancel anytime</p>
                     </CardContent>
                   </Card>
 
-                  {/* Monthly Option */}
-                  <Card className="relative bg-white border-2 border-gray-200 rounded-xl shadow-lg">
-                    <CardContent className="p-8">
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">Monthly</h3>
-                        <div className="text-4xl font-bold text-gray-900 mb-6">$10</div>
-                        <p className="text-gray-600 mb-6">For ongoing creative fun</p>
-                        <ul className="text-left space-y-3 mb-8">
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            12 transformations/month
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            All cartoon styles
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            HD downloads
-                          </li>
-                          <li className="flex items-center">
-                            <span className="text-green-500 mr-2">✓</span>
-                            Save all images
-                          </li>
-                        </ul>
-                        <Button 
-                          className="w-full bg-blue-500 text-white hover:bg-blue-600 py-3 text-lg font-semibold"
-                          onClick={() => navigate("/checkout")}
-                        >
-                          Choose Monthly
-                        </Button>
-                      </div>
+                  {/* Monthly Plan */}
+                  <Card className="border-2 border-blue-200 bg-white shadow-lg hover:shadow-xl transition-shadow">
+                    <CardHeader className="text-center pb-4">
+                      <CardTitle className="text-2xl font-bold text-gray-800">Monthly</CardTitle>
+                      <div className="text-4xl font-bold text-blue-600 mb-2">$10</div>
+                      <p className="text-gray-600">For ongoing creative fun</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <ul className="space-y-3">
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm">12 transformations per month</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm">All cartoon & coloring styles</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm">HD quality downloads</span>
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span className="text-sm">Image storage & history</span>
+                        </li>
+                      </ul>
+                      <Button 
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white mt-6"
+                        onClick={() => setLocation('/pricing')}
+                      >
+                        Choose Monthly
+                      </Button>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Value Proposition */}
-                <div className="text-center mt-12 bg-orange-50 rounded-xl p-8">
-                  <h3 className="text-2xl font-bold text-orange-700 mb-4">
-                    Why Choose Summer Unlimited?
-                  </h3>
-                  <div className="grid md:grid-cols-3 gap-6 text-center">
-                    <div>
-                      <div className="text-3xl mb-2">🎨</div>
-                      <h4 className="font-semibold text-gray-800">Endless Creativity</h4>
-                      <p className="text-gray-600 text-sm">Transform every drawing, photo, and idea into magic</p>
+                {/* Trust indicators */}
+                <div className="text-center mt-12 space-y-4">
+                  <div className="flex justify-center items-center space-x-8 text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      <span>30-day money-back guarantee</span>
                     </div>
-                    <div>
-                      <div className="text-3xl mb-2">📱</div>
-                      <h4 className="font-semibold text-gray-800">Screen Time Alternative</h4>
-                      <p className="text-gray-600 text-sm">Keep kids engaged with creative activities</p>
+                    <div className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      <span>Secure payment processing</span>
                     </div>
-                    <div>
-                      <div className="text-3xl mb-2">👨‍👩‍👧‍👦</div>
-                      <h4 className="font-semibold text-gray-800">Family Fun</h4>
-                      <p className="text-gray-600 text-sm">Create memories together all summer long</p>
+                    <div className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      <span>Cancel anytime</span>
                     </div>
                   </div>
                 </div>
@@ -688,8 +686,7 @@ export default function KidsLanding() {
                   <Card className="bg-white">
                     <CardContent className="p-6">
                       <div className="flex mb-4">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                        {[...Array(5)].map((_, i) => (<Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                         ))}
                       </div>
                       <p className="text-gray-700 mb-4">
