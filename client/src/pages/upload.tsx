@@ -205,7 +205,7 @@ export default function UploadPage() {
       'superhero': CARTOON_STYLES.superhero?.suggestedPrompt || 'Transform into superhero style',
       'lego': CARTOON_STYLES.lego?.suggestedPrompt || 'Transform into Lego character style',
       'coloring-book': CARTOON_STYLES.coloringBook?.suggestedPrompt || 'Transform into coloring book style',
-      
+
       // Historical styles
       'western': ERA_STYLES['old-western']?.suggestedPrompt || 'Transform into Old Western style',
       'hiphop': ERA_STYLES['90s-hip-hop']?.suggestedPrompt || 'Transform into 90s Hip-Hop style',
@@ -214,7 +214,7 @@ export default function UploadPage() {
       'renaissance': ERA_STYLES.renaissance?.suggestedPrompt || 'Transform into Renaissance style',
       'victorian': ERA_STYLES['victorian-era']?.suggestedPrompt || 'Transform into Victorian era style',
       'medieval': ERA_STYLES.medieval?.suggestedPrompt || 'Transform into Medieval style',
-      
+
       // Artistic styles
       'oil': PAINTING_STYLES['oil-painting']?.suggestedPrompt || 'Transform into oil painting style',
       'watercolor': PAINTING_STYLES.watercolor?.suggestedPrompt || 'Transform into watercolor style',
@@ -222,7 +222,7 @@ export default function UploadPage() {
       'abstract': PAINTING_STYLES.abstract?.suggestedPrompt || 'Transform into abstract art style',
       'surrealism': PAINTING_STYLES['pop-surrealism']?.suggestedPrompt || 'Transform into surrealism style',
       'artdeco': PAINTING_STYLES['art-deco']?.suggestedPrompt || 'Transform into Art Deco style',
-      
+
       // Other styles
       'mullets': OTHER_STYLES.mullets?.suggestedPrompt || 'Transform with mullet style',
       'hulkamania': OTHER_STYLES.hulkamania?.suggestedPrompt || 'Transform into Hulkamania style',
@@ -234,7 +234,21 @@ export default function UploadPage() {
       'pet-human': OTHER_STYLES['pet-as-human']?.suggestedPrompt || 'Transform pet as human',
       'self-cat': OTHER_STYLES['self-as-cat']?.suggestedPrompt || 'Transform self as cat',
       'caricature': OTHER_STYLES.caricature?.suggestedPrompt || 'Transform into caricature',
-      
+
+      // Taylor Swift Eras
+      'debut': TAYLOR_SWIFT_STYLES?.debut?.suggestedPrompt || 'Transform into Taylor Swift debut era',
+      'fearless': TAYLOR_SWIFT_STYLES?.fearless?.suggestedPrompt || 'Transform into Fearless era',
+      'speak-now': TAYLOR_SWIFT_STYLES?.['speak-now']?.suggestedPrompt || 'Transform into Speak Now era',
+      'red': TAYLOR_SWIFT_STYLES?.red?.suggestedPrompt || 'Transform into Red era',
+      'nineteen-eighty-nine': TAYLOR_SWIFT_STYLES?.['nineteen-eighty-nine']?.suggestedPrompt || 'Transform into 1989 era',
+      'reputation': TAYLOR_SWIFT_STYLES?.reputation?.suggestedPrompt || 'Transform into Reputation era',
+      'lover': TAYLOR_SWIFT_STYLES?.lover?.suggestedPrompt || 'Transform into Lover era',
+      'folklore': TAYLOR_SWIFT_STYLES?.folklore?.suggestedPrompt || 'Transform into Folklore era',
+      'evermore': TAYLOR_SWIFT_STYLES?.evermore?.suggestedPrompt || 'Transform into Evermore era',
+      'midnights': TAYLOR_SWIFT_STYLES?.midnights?.suggestedPrompt || 'Transform into Midnights era',
+      'ttpd': TAYLOR_SWIFT_STYLES?.ttpd?.suggestedPrompt || 'Transform into TTPD era',
+      'eras-tour-concert': TAYLOR_SWIFT_STYLES?.['eras-tour-concert']?.suggestedPrompt || 'Transform into Eras Tour concert',
+
       // Kids drawing
       'kids-drawing': 'Transform this children\'s drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing\'s theme. The final image should look like a professional photograph that brings the child\'s drawing to life while preserving its creative essence and charm.',
     };
@@ -244,7 +258,7 @@ export default function UploadPage() {
       console.warn(`No prompt found for subcategory: ${subcategory}`);
       return 'Transform the image in an artistic style';
     }
-    
+
     return prompt;
   };
 
@@ -1179,6 +1193,22 @@ export default function UploadPage() {
                           </div>
                         </button>
 
+                         {/* Taylor Swift Category */}
+                         <button
+                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                            selectedTransformation === 'taylor-swift' 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                          }`}
+                          onClick={() => setSelectedTransformation('taylor-swift')}
+                        >
+                          <div className="text-3xl mb-2">🎤</div>
+                          <div className="text-sm font-semibold text-gray-900">Taylor Swift</div>
+                          <div className="text-xs text-gray-600 text-center mt-1">
+                           All the Eras
+                          </div>
+                        </button>
+
                         {/* Kids Real Category */}
                         <button
                           className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
@@ -1280,6 +1310,37 @@ export default function UploadPage() {
                             { name: 'Abstract Art', emoji: '🔮', id: 'abstract' },
                             { name: 'Pop Surrealism', emoji: '👁️', id: 'surrealism' },
                             { name: 'Art Deco', emoji: '✨', id: 'artdeco' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
+                              onClick={() => {
+                                setSelectedSubcategory(style.id);
+                                console.log('Selected style:', style.name);
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+
+                           {selectedTransformation === 'taylor-swift' && [
+                            { name: 'Debut (2006)', emoji: '🎸', id: 'debut' },
+                            { name: 'Fearless (2008)', emoji: '✨', id: 'fearless' },
+                            { name: 'Speak Now (2010)', emoji: '💜', id: 'speak-now' },
+                            { name: 'Red (2012)', emoji: '❤️', id: 'red' },
+                            { name: '1989 (2014)', emoji: '📸', id: 'nineteen-eighty-nine' },
+                            { name: 'Reputation (2017)', emoji: '🐍', id: 'reputation' },
+                            { name: 'Lover (2019)', emoji: '🦋', id: 'lover' },
+                            { name: 'Folklore (2020)', emoji: '🌲', id: 'folklore' },
+                            { name: 'Evermore (2020)', emoji: '🍂', id: 'evermore' },
+                            { name: 'Midnights (2022)', emoji: '🌙', id: 'midnights' },
+                            { name: 'TTPD (2024)', emoji: '📖', id: 'ttpd' },
+                            { name: 'Eras Tour Concert', emoji: '🎤', id: 'eras-tour-concert' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1529,6 +1590,22 @@ export default function UploadPage() {
                       </div>
                     </button>
 
+                     {/* Taylor Swift Category */}
+                     <button
+                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTransformation === 'taylor-swift' 
+                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                      }`}
+                      onClick={() => setSelectedTransformation('taylor-swift')}
+                    >
+                      <div className="text-3xl mb-2">🎤</div>
+                      <div className="text-sm font-semibold text-gray-900">Taylor Swift</div>
+                      <div className="text-xs text-gray-600 text-center mt-1">
+                       All the Eras
+                      </div>
+                    </button>
+
                     {/* Kids Real Category */}
                     <button
                       className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
@@ -1577,6 +1654,7 @@ export default function UploadPage() {
                             { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
                             { name: 'Superhero', emoji: '🦸', id: 'superhero' },
                             { name: 'Lego Character', emoji: '🧱', id: 'lego' },
+                            { name: 'Coloring Book', emoji: '📚', id: 'coloring-book' },
                           ].map((style, index) => (
                             <button
                               key={index}
@@ -1646,9 +1724,41 @@ export default function UploadPage() {
                             </button>
                           ))}
 
+                           {selectedTransformation === 'taylor-swift' && [
+                            { name: 'Debut (2006)', emoji: '🎸', id: 'debut' },
+                            { name: 'Fearless (2008)', emoji: '✨', id: 'fearless' },
+                            { name: 'Speak Now (2010)', emoji: '💜', id: 'speak-now' },
+                            { name: 'Red (2012)', emoji: '❤️', id: 'red' },
+                            { name: '1989 (2014)', emoji: '📸', id: 'nineteen-eighty-nine' },
+                            { name: 'Reputation (2017)', emoji: '🐍', id: 'reputation' },
+                            { name: 'Lover (2019)', emoji: '🦋', id: 'lover' },
+                            { name: 'Folklore (2020)', emoji: '🌲', id: 'folklore' },
+                            { name: 'Evermore (2020)', emoji: '🍂', id: 'evermore' },
+                            { name: 'Midnights (2022)', emoji: '🌙', id: 'midnights' },
+                            { name: 'TTPD (2024)', emoji: '📖', id: 'ttpd' },
+                            { name: 'Eras Tour Concert', emoji: '🎤', id: 'eras-tour-concert' },
+                          ].map((style, index) => (
+                            <button
+                              key={index}
+                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                selectedSubcategory === style.id 
+                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                              }`}
+                              onClick={() => {
+                                setSelectedSubcategory(style.id);
+                                console.log('Selected style:', style.name);
+                              }}
+                            >
+                              <span className="text-lg">{style.emoji}</span>
+                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                            </button>
+                          ))}
+
                           {selectedTransformation === 'other' && [
                             { name: 'Mullets', emoji: '💇', id: 'mullets' },
                             { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
+                            { name: 'Baby Mode', emoji: '👶', id: 'baby-mode' },
                             { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
                             { name: 'Future Self', emoji: '👵', id: 'future' },
                             { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
