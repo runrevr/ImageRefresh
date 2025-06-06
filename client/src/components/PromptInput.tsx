@@ -482,12 +482,13 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
 };
 
 // Taylor Swift Era subcategories with enhanced facial preservation
-export const TAYLOR_SWIFT_STYLES: Record<TaylorSwiftSubcategory, StyleOption> = {
-  "debut": {
-    title: "Country Debut Era (2006)",
-    description: "Country girl aesthetic with curly hair and warm lighting",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match a 2006 country music debut album aesthetic. 
+export const TAYLOR_SWIFT_STYLES: Record<TaylorSwiftSubcategory, StyleOption> =
+  {
+    debut: {
+      title: "Country Debut Era (2006)",
+      description: "Country girl aesthetic with curly hair and warm lighting",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to match a 2006 country music debut album aesthetic. 
 
 ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
 - Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
@@ -527,13 +528,13 @@ COLOR GRADING:
 COMPOSITION:
 - Center the subject with classic portrait framing
 - Add subtle vignetting for vintage feel
-- Maintain the subject's natural expression and facial positioning`
-  },
-  "fearless": {
-    title: "Golden Fairytale Era (2008)",
-    description: "Sparkly golden hour with flowing movement and glitter",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match a golden, fairytale-inspired album cover aesthetic from 2008. ESSENTIAL: Keep the subject's facial features, expressions, and identity completely unchanged. Apply only these stylistic elements:
+- Maintain the subject's natural expression and facial positioning`,
+    },
+    fearless: {
+      title: "Golden Fairytale Era (2008)",
+      description: "Sparkly golden hour with flowing movement and glitter",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to match a golden, fairytale-inspired album cover aesthetic from 2008. ESSENTIAL: Keep the subject's facial features, expressions, and identity completely unchanged. Apply only these stylistic elements:
 
 HAIR TRANSFORMATION:
 - Style hair into bouncy, golden blonde curls with movement
@@ -561,13 +562,13 @@ COLOR PALETTE:
 - Rich golds and champagnes
 - Warm honey tones
 - Soft whites and creams
-- Touch of rose gold in highlights`
-  },
-  "speak-now": {
-    title: "Purple Fantasy Era (2010)",
-    description: "Purple fantasy with flowing gowns and enchanted atmosphere",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to recreate a purple-themed fantasy album cover aesthetic. MANDATORY: Preserve all facial features and identity markers exactly as they are. Apply these purple-themed transformations:
+- Touch of rose gold in highlights`,
+    },
+    "speak-now": {
+      title: "Purple Fantasy Era (2010)",
+      description: "Purple fantasy with flowing gowns and enchanted atmosphere",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to recreate a purple-themed fantasy album cover aesthetic. MANDATORY: Preserve all facial features and identity markers exactly as they are. Apply these purple-themed transformations:
 
 HAIR STYLING:
 - Transform hair into long, flowing waves
@@ -597,13 +598,13 @@ FINISHING TOUCHES:
 - Enhance with violet and amethyst tones
 - Add subtle glow to skin
 - Create whimsical, storybook quality
-- Maintain elegant, graceful positioning`
-  },
-  "red": {
-    title: "Autumn Romance Era (2012)",
-    description: "Autumn vibes with signature red lips and vintage warmth",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match an autumn-themed album cover aesthetic. CRUCIAL: Do not alter any facial features, only apply stylistic changes around them. Create this autumn-inspired look:
+- Maintain elegant, graceful positioning`,
+    },
+    red: {
+      title: "Autumn Romance Era (2012)",
+      description: "Autumn vibes with signature red lips and vintage warmth",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to match an autumn-themed album cover aesthetic. CRUCIAL: Do not alter any facial features, only apply stylistic changes around them. Create this autumn-inspired look:
 
 SIGNATURE ELEMENTS:
 - Apply bold red lipstick to lips (classic matte finish)
@@ -632,13 +633,14 @@ COLOR PALETTE:
 - Burnt oranges
 - Golden yellows
 - Rich browns
-- Cream highlights`
-  },
-  "nineteen-eighty-nine": {
-    title: "Polaroid Pop Era (2014)",
-    description: "Polaroid aesthetic with cool tones and urban sophistication",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to recreate a Polaroid-inspired pop album aesthetic. VITAL: Keep subject's face and features completely untouched. Apply these stylistic changes:
+- Cream highlights`,
+    },
+    "nineteen-eighty-nine": {
+      title: "Polaroid Pop Era (2014)",
+      description:
+        "Polaroid aesthetic with cool tones and urban sophistication",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to recreate a Polaroid-inspired pop album aesthetic. VITAL: Keep subject's face and features completely untouched. Apply these stylistic changes:
 
 POLAROID STYLING:
 - Frame image in white Polaroid-style border
@@ -668,13 +670,13 @@ COMPOSITION:
 - Crop to show partial face/profile if appropriate
 - Create intimate, candid feeling
 - Add subtle motion blur for dynamism
-- Maintain mysterious, artistic quality`
-  },
-  "reputation": {
-    title: "Dark Snake Era (2017)",
-    description: "Dark, edgy black & white with newspaper/snake motifs",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match a dark, edgy album aesthetic with snake motifs. CRITICAL: Preserve exact facial structure and features. Apply only these stylistic elements:
+- Maintain mysterious, artistic quality`,
+    },
+    reputation: {
+      title: "Dark Snake Era (2017)",
+      description: "Dark, edgy black & white with newspaper/snake motifs",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to match a dark, edgy album aesthetic with snake motifs. CRITICAL: Preserve exact facial structure and features. Apply only these stylistic elements:
 
 MONOCHROME TREATMENT:
 - Convert to high-contrast black and white
@@ -704,19 +706,24 @@ FINISHING EFFECTS:
 - High contrast black and white
 - Sharp, dramatic shadows
 - Gritty texture overlay
-- Dark, edgy vignetting`
-  },
-  "lover": {
-    title: "Pastel Dream Era (2019)",
-    description: "Pastel paradise with glittery heart eye makeup",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to embody a dreamy pastel album aesthetic. ESSENTIAL: Do not modify facial features, only apply artistic styling. Create this pastel paradise:
+- Dark, edgy vignetting`,
+    },
+    lover: {
+      title: "Pastel Dream Era (2019)",
+      description: "Pastel paradise with glittery heart eye makeup",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to embody a dreamy pastel album aesthetic. ESSENTIAL: Do not modify facial features, only apply artistic styling. Create this pastel paradise:
 
-SIGNATURE HEART:
-- Add glittery pink heart shape around one eye
-- Create sparkly, iridescent effect
-- Make heart prominent but artistic
-- Use pink and purple glitter tones
+SIGNATURE HEART FACE PAINT:
+- Apply realistic glitter face paint in a heart shape around one eye without altering eye shape or size
+- Create the appearance of actual chunky cosmetic glitter applied with makeup brush
+- Make it look like physical makeup sitting ON TOP of the skin, not a digital overlay
+- Use individual sparkle particles that catch light realistically
+- Apply pink and iridescent glitter with visible texture and dimension
+- Show subtle skin texture underneath the glitter
+- Make heart outline slightly imperfect like hand-painted makeup
+- Include small gaps between glitter particles for realism
+- Add subtle shadow cast by the raised glitter particles
 
 PASTEL PARADISE:
 - Transform background into pastel clouds
@@ -725,7 +732,7 @@ PASTEL PARADISE:
 - Add rainbow elements subtly
 
 HAIR TRANSFORMATION:
-- Add pink or blue tips to hair ends
+- Add pink and/or blue tips to hair ends
 - Create soft, romantic waves
 - Add subtle pastel highlights
 - Include sparkles in hair
@@ -740,13 +747,13 @@ WHIMSICAL ELEMENTS:
 - Include floating hearts or butterflies
 - Add lens flares in pastel colors
 - Create magical, fairytale atmosphere
-- Soft focus with dreamy quality`
-  },
-  "folklore": {
-    title: "Indie Forest Era (2020)",
-    description: "Cottagecore forest aesthetic with braids and cardigans",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to capture an indie folk forest aesthetic. MANDATORY: Keep all facial features exactly as they are. Apply these atmospheric changes:
+- Soft focus with dreamy quality`,
+    },
+    folklore: {
+      title: "Indie Forest Era (2020)",
+      description: "Cottagecore forest aesthetic with braids and cardigans",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to capture an indie folk forest aesthetic. MANDATORY: Keep all facial features exactly as they are. Apply these atmospheric changes:
 
 COTTAGECORE STYLING:
 - Transform hair into loose, natural braids
@@ -776,13 +783,13 @@ COLOR PALETTE:
 - Muted grays and creams
 - Soft forest greens
 - Earthy browns
-- Subtle blue undertones`
-  },
-  "evermore": {
-    title: "Rustic Woods Era (2020)",
-    description: "Rustic autumn woods with golden hour lighting",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match a rustic woodland aesthetic. CRUCIAL: Preserve subject's identity and facial features completely. Apply these elements:
+- Subtle blue undertones`,
+    },
+    evermore: {
+      title: "Rustic Woods Era (2020)",
+      description: "Rustic autumn woods with golden hour lighting",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to match a rustic woodland aesthetic. CRUCIAL: Preserve subject's identity and facial features completely. Apply these elements:
 
 AUTUMN WOODS:
 - Create golden hour forest lighting
@@ -812,13 +819,13 @@ COLOR STORY:
 - Rich oranges and reds
 - Deep forest greens
 - Warm browns and golds
-- Soft cream highlights`
-  },
-  "midnights": {
-    title: "Lavender Haze Era (2022)",
-    description: "70s glamour with jewel tones and sparkly nighttime vibes",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to embody a midnight-themed album aesthetic. VITAL: Do not alter facial structure, only apply stylistic elements. Create this 70s-inspired nighttime look:
+- Soft cream highlights`,
+    },
+    midnights: {
+      title: "Lavender Haze Era (2022)",
+      description: "70s glamour with jewel tones and sparkly nighttime vibes",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to embody a midnight-themed album aesthetic. VITAL: Do not alter facial structure, only apply stylistic elements. Create this 70s-inspired nighttime look:
 
 RETRO GLAMOUR:
 - Apply sparkly, jewel-toned eyeshadow effect
@@ -848,13 +855,13 @@ FINISHING TOUCHES:
 - Soft, hazy focus
 - Vintage color grading
 - Mysterious atmosphere
-- Glamorous but intimate feeling`
-  },
-  "ttpd": {
-    title: "Poet's Department Era (2024)",
-    description: "Minimalist black & white with poetic, vulnerable aesthetic",
-    placeholder: "E.g., Add specific details about the transformation",
-    suggestedPrompt: `Transform the uploaded image to match a minimalist poetic album aesthetic. ESSENTIAL: Keep facial features unchanged, apply only artistic styling. Create this moody, artistic look:
+- Glamorous but intimate feeling`,
+    },
+    ttpd: {
+      title: "Poet's Department Era (2024)",
+      description: "Minimalist black & white with poetic, vulnerable aesthetic",
+      placeholder: "E.g., Add specific details about the transformation",
+      suggestedPrompt: `Transform the uploaded image to match a minimalist poetic album aesthetic. ESSENTIAL: Keep facial features unchanged, apply only artistic styling. Create this moody, artistic look:
 
 MONOCHROME ARTISTRY:
 - Convert to sophisticated black and white
@@ -884,13 +891,14 @@ FINAL TOUCHES:
 - Soft contrast black and white
 - Emotional, raw quality
 - Minimalist aesthetic
-- Deeply personal feeling`
-  },
-  "eras-tour-concert": {
-    title: "Stadium Tour Era",
-    description: "Transform into a pop star performing at a massive stadium tour",
-    placeholder: "E.g., Add specific concert details or era elements",
-    suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these concert transformation elements:
+- Deeply personal feeling`,
+    },
+    "eras-tour-concert": {
+      title: "Stadium Tour Era",
+      description:
+        "Transform into a pop star performing at a massive stadium tour",
+      placeholder: "E.g., Add specific concert details or era elements",
+      suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour. CRITICAL: Preserve the subject's exact facial features, bone structure, and identity - do not alter any facial characteristics. Apply these concert transformation elements:
 
 ICONIC CONCERT OUTFIT:
 - Transform clothing into a custom designer bodysuit
@@ -938,9 +946,9 @@ FINISHING TOUCHES:
 - Add stadium architecture and upper decks full of fans
 - Include giant LED screens showing the performer
 - Create electric, euphoric atmosphere
-- Make it feel like the biggest show on Earth`
-  }
-};
+- Make it feel like the biggest show on Earth`,
+    },
+  };
 
 // Popular subcategories that should have rainbow borders
 const POPULAR_SUBCATEGORIES = {
@@ -1170,13 +1178,13 @@ export default function PromptInput({
     }
 
     // Track subcategory selection with Google Analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'style_applied', {
-        'event_category': 'user_selections',
-        'category': 'cartoon',
-        'subcategory': subcategory,
-        'combination': `cartoon_${subcategory}`,
-        'full_path': `cartoon > ${subcategory}`
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "style_applied", {
+        event_category: "user_selections",
+        category: "cartoon",
+        subcategory: subcategory,
+        combination: `cartoon_${subcategory}`,
+        full_path: `cartoon > ${subcategory}`,
       });
     }
   };
@@ -1188,13 +1196,13 @@ export default function PromptInput({
     }
 
     // Track subcategory selection with Google Analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'style_applied', {
-        'event_category': 'user_selections',
-        'category': 'painting',
-        'subcategory': subcategory,
-        'combination': `painting_${subcategory}`,
-        'full_path': `painting > ${subcategory}`
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "style_applied", {
+        event_category: "user_selections",
+        category: "painting",
+        subcategory: subcategory,
+        combination: `painting_${subcategory}`,
+        full_path: `painting > ${subcategory}`,
       });
     }
   };
@@ -1206,13 +1214,13 @@ export default function PromptInput({
     }
 
     // Track subcategory selection with Google Analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'style_applied', {
-        'event_category': 'user_selections',
-        'category': 'era',
-        'subcategory': subcategory,
-        'combination': `era_${subcategory}`,
-        'full_path': `era > ${subcategory}`
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "style_applied", {
+        event_category: "user_selections",
+        category: "era",
+        subcategory: subcategory,
+        combination: `era_${subcategory}`,
+        full_path: `era > ${subcategory}`,
       });
     }
   };
@@ -1224,13 +1232,13 @@ export default function PromptInput({
     }
 
     // Track subcategory selection with Google Analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'style_applied', {
-        'event_category': 'user_selections',
-        'category': 'other',
-        'subcategory': subcategory,
-        'combination': `other_${subcategory}`,
-        'full_path': `other > ${subcategory}`
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "style_applied", {
+        event_category: "user_selections",
+        category: "other",
+        subcategory: subcategory,
+        combination: `other_${subcategory}`,
+        full_path: `other > ${subcategory}`,
       });
     }
   };
@@ -1242,13 +1250,13 @@ export default function PromptInput({
     }
 
     // Track subcategory selection with Google Analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'style_applied', {
-        'event_category': 'user_selections',
-        'category': 'taylor-swift',
-        'subcategory': subcategory,
-        'combination': `taylor-swift_${subcategory}`,
-        'full_path': `taylor-swift > ${subcategory}`
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "style_applied", {
+        event_category: "user_selections",
+        category: "taylor-swift",
+        subcategory: subcategory,
+        combination: `taylor-swift_${subcategory}`,
+        full_path: `taylor-swift > ${subcategory}`,
       });
     }
   };
@@ -1559,7 +1567,8 @@ export default function PromptInput({
                   title = OTHER_STYLES[key as OtherSubcategory].title;
                   break;
                 case "taylor-swift":
-                  title = TAYLOR_SWIFT_STYLES[key as TaylorSwiftSubcategory].title;
+                  title =
+                    TAYLOR_SWIFT_STYLES[key as TaylorSwiftSubcategory].title;
                   break;
                 // Pop culture case removed
               }
@@ -1583,7 +1592,8 @@ export default function PromptInput({
                   break;
                 case "taylor-swift":
                   description =
-                    TAYLOR_SWIFT_STYLES[key as TaylorSwiftSubcategory].description;
+                    TAYLOR_SWIFT_STYLES[key as TaylorSwiftSubcategory]
+                      .description;
                   break;
                 // Pop culture case removed
               }
