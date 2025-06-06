@@ -169,7 +169,6 @@ export default function KidsLanding() {
         isLoggedIn={Boolean(userCredits?.totalCredits)}
         remainingCredits={userCredits?.paidCredits || 0}
       />
-
       <main className="relative w-full">
         {/* Hero Section for Summer Survival Kit */}
         {currentStep === Step.Upload && !showUploadForm && (
@@ -517,7 +516,7 @@ export default function KidsLanding() {
                         </li>
                         <li className="flex items-center">
                           <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                          <span className="text-sm">Access to all cartoon styles</span>
+                          <span className="text-sm text-[#333333]">Access to all cartoon styles</span>
                         </li>
                         <li className="flex items-center">
                           <X className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
