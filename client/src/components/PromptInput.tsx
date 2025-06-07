@@ -481,188 +481,175 @@ export const OTHER_STYLES: Record<OtherSubcategory, StyleOption> = {
   },
 };
 
-// Taylor Swift Era subcategories with enhanced facial preservation
+// Taylor Swift Era subcategories - Animated Versions
 export const TAYLOR_SWIFT_STYLES: Record<TaylorSwiftSubcategory, StyleOption> =
   {
     debut: {
       title: "Country Debut Era (2006)",
-      description: "Country girl aesthetic with curly hair and warm lighting",
+      description:
+        "Animated country girl aesthetic with curly hair and warm lighting",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a 2006 country music debut album aesthetic. 
+      suggestedPrompt: `Transform the uploaded image into a warm, animated illustration in the style of modern digital art. Create a 2006 country music debut aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use warm, golden hour lighting typical of animated films
 
-HAIR & STYLING (maintaining exact natural hair color):
-- Transform hair into long, cascading curls while keeping subject's exact natural hair color and texture
-- Add subtle side-swept bangs if appropriate to face shape
-- Create voluminous, country-style waves reminiscent of 2006 styling
-- Preserve the subject's exact natural hair color throughout
+ANIMATED COUNTRY STYLING:
+- Style hair into long, flowing animated curls with movement
+- Add subtle side-swept bangs in illustration style
+- Create voluminous, bouncy waves using cartoon art techniques
+- Apply warm honey-colored highlights in animation style
 
-AESTHETIC & ATMOSPHERE:
-- Apply warm, golden hour lighting with soft focus
-- Add a dreamy, slightly oversaturated country filter
-- Create a soft bokeh background with hints of green fields or blue sky
-- Apply subtle lens flare effects for that nostalgic 2006 feel
+COUNTRY AESTHETIC:
+- Transform clothing into animated sundress or country-style outfit
+- Add delicate animated jewelry like small hoops or simple necklaces
+- Create modest, wholesome country girl styling in cartoon form
+- Use soft fabric textures typical of animation
 
-CLOTHING & ACCESSORIES:
-- Add or modify clothing to feature sundresses, cowboy boots aesthetic
-- Include delicate jewelry like small hoop earrings or simple necklaces
-- Maintain modest, wholesome country girl styling
+ANIMATED ATMOSPHERE:
+- Apply warm, golden sunset lighting in illustration style
+- Create dreamy, slightly oversaturated country filter
+- Add soft bokeh background with animated green fields or blue sky
+- Include gentle lens flare effects in artistic style
+- Apply nostalgic 2006 feel through color grading
 
-COLOR GRADING:
+COLOR PALETTE:
 - Warm yellows and oranges in highlights
-- Soft, creamy skin tones (preserve subject's exact natural skin tone)
+- Soft, creamy skin tones in animation style
 - Slightly faded, vintage quality
 - Emphasize turquoise blues and earthy browns in environment
 
-COMPOSITION:
-- Center the subject with classic portrait framing
-- Add subtle vignetting for vintage feel
-- Maintain the subject's natural expression and facial positioning`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create wholesome, country charm like an animated movie
+- Use artistic interpretation to capture personality`,
     },
     fearless: {
       title: "Golden Fairytale Era (2008)",
-      description: "Sparkly golden hour with flowing curls and glitter",
+      description:
+        "Animated sparkly golden hour with flowing curls and glitter",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a golden, fairytale-inspired album cover aesthetic from 2008.
+      suggestedPrompt: `Transform the uploaded image into a magical animated illustration in the style of modern digital art. Create a golden, fairytale-inspired aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use magical, ethereal lighting typical of fairy tale animations
 
-HAIR TRANSFORMATION (maintaining exact natural hair color):
-- Style hair into bouncy curls with movement in the subject's exact natural hair color
-- Create windswept effect as if caught mid-twirl
-- Add sparkly hair accessories or subtle glitter to the existing hair
-- Preserve the subject's exact original hair color and texture throughout
+ANIMATED GOLDEN TRANSFORMATION:
+- Style hair into bouncy animated curls with magical movement
+- Create windswept effect as if caught mid-twirl in cartoon style
+- Add sparkly hair accessories and animated glitter effects
+- Use flowing, dynamic hair animation techniques
 
-GOLDEN ATMOSPHERE:
+FAIRYTALE WARDROBE:
+- Transform clothing into flowing, golden animated fabric
+- Add sparkles, sequins, and glittery elements in illustration style
+- Create movement in fabric as if dancing in animated form
+- Use rich, magical textures typical of fantasy animation
+
+GOLDEN ANIMATED ATMOSPHERE:
 - Bathe entire image in warm, golden sunset lighting
 - Create dreamy, ethereal glow around the subject
-- Add light leaks and golden lens flares
-- Apply soft, romantic focus with slight motion blur
+- Add animated light leaks and golden lens flares
+- Apply soft, romantic focus with gentle motion blur effects
 
-WARDROBE ELEMENTS:
-- Transform clothing into flowing, golden or champagne-colored fabric
-- Add sparkles, sequins, or glittery elements
-- Create movement in fabric as if dancing or spinning
+MAGICAL ELEMENTS:
+- Create abstract golden bokeh background in animation style
+- Add floating sparkles and light particles
+- Include animated sunset colors bleeding into frame
+- Use rich golds and champagnes throughout
 
-BACKGROUND & SETTING:
-- Create abstract golden bokeh background
-- Add floating sparkles or light particles
-- Suggest outdoor twilight setting
-- Include warm sunset colors bleeding into frame
-
-COLOR PALETTE:
-- Rich golds and champagnes in environment and clothing
-- Warm honey tones in lighting
-- Soft whites and creams
-- Keep subject's exact natural coloring intact`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create magical, fairytale quality like a Disney princess movie
+- Use artistic interpretation to capture joyful personality`,
     },
     "speak-now": {
       title: "Purple Fantasy Era (2010)",
-      description: "Purple fantasy with flowing hair and enchanted atmosphere",
+      description:
+        "Animated purple fantasy with flowing hair and enchanted atmosphere",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to recreate a purple-themed fantasy album cover aesthetic.
+      suggestedPrompt: `Transform the uploaded image into an enchanted animated illustration in the style of modern digital art. Create a purple-themed fantasy aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use mystical, theatrical lighting typical of fantasy animations
 
-HAIR STYLING (maintaining exact natural hair color):
-- Transform hairstyle into long, flowing waves using subject's exact natural hair color
-- Add volume and dramatic movement to the existing hair
-- Create fairy-tale princess styling while keeping original hair color and texture
-- Add purple accessories or flowers to hair if appropriate
+ANIMATED FANTASY STYLING:
+- Transform hairstyle into long, flowing animated waves
+- Add volume and dramatic movement in illustration style
+- Create fairy-tale princess styling using cartoon techniques
+- Include purple accessories or animated flowers in hair
 
 PURPLE WONDERLAND:
-- Drape subject in flowing purple fabric or gown
-- Add layers of tulle or chiffon for ethereal effect
+- Drape subject in flowing purple animated fabric or gown
+- Add layers of tulle or chiffon in illustration style
 - Include sparkles and shimmer throughout clothing
-- Create dramatic fabric movement
+- Create dramatic fabric movement using animation techniques
 
-LIGHTING & ATMOSPHERE:
-- Apply theatrical, stage-like lighting
-- Create purple and lavender color wash in environment only
-- Add mystical, enchanted forest feel
-- Include soft spotlighting effect
+ENCHANTED ATMOSPHERE:
+- Apply theatrical, stage-like lighting in cartoon style
+- Create purple and lavender color wash throughout environment
+- Add mystical, enchanted forest feel in animation style
+- Include soft spotlighting effects
 
-BACKGROUND ELEMENTS:
-- Transform background into purple gradient
-- Add swirling mists or smoke effects
+MAGICAL BACKGROUND:
+- Transform background into animated purple gradient
+- Add swirling mists and smoke effects in cartoon style
 - Include subtle sparkles floating in air
 - Create dreamy, fantastical atmosphere
 
-FINISHING TOUCHES:
-- Enhance environment with violet and amethyst tones
-- Keep subject's exact natural skin tone with soft glow
-- Create whimsical, storybook quality
-- Maintain elegant, graceful positioning`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create whimsical, storybook quality like an animated fantasy film
+- Use artistic interpretation to capture graceful personality`,
     },
     red: {
       title: "Autumn Romance Era (2012)",
-      description: "Autumn vibes with vintage waves and red lips",
+      description: "Animated autumn vibes with vintage waves and red lips",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match an autumn-themed album cover aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a romantic animated illustration in the style of modern digital art. Create an autumn-themed aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change to red)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use warm, nostalgic lighting typical of romantic animations
 
-SIGNATURE ELEMENTS:
-- Apply bold red lipstick to lips while maintaining exact lip shape and fullness
-- Style hair into vintage-inspired waves using subject's exact natural hair color
-- Create sophisticated 1940s-style hair waves
-- Keep subject's exact original hair color and texture unchanged
+ANIMATED SIGNATURE ELEMENTS:
+- Apply bold red lipstick in illustration style
+- Style hair into vintage-inspired animated waves
+- Create sophisticated 1940s-style hair waves using cartoon techniques
+- Add classic, timeless beauty in animation form
 
-AUTUMN ATMOSPHERE:
-- Create warm, fall-themed color grading
-- Add vintage film grain and texture
+AUTUMN ANIMATED ATMOSPHERE:
+- Create warm, fall-themed color grading in illustration style
+- Add vintage film grain texture effect
 - Apply slightly desaturated, nostalgic filter
-- Include warm orange and red color cast in environment
+- Include warm orange and red color cast
 
-WARDROBE TRANSFORMATION:
-- Add or modify clothing to include red elements
-- Create vintage-inspired styling (scarves, coats)
-- Add cozy autumn textures
+ROMANTIC WARDROBE:
+- Transform clothing to include red elements in animation style
+- Create vintage-inspired styling (scarves, coats) in cartoon form
+- Add cozy autumn textures using illustration techniques
 
-BACKGROUND & MOOD:
-- Transform background to autumn leaves or soft bokeh
-- Add falling leaves effect if appropriate
+AUTUMN BACKGROUND:
+- Transform background to animated autumn leaves or soft bokeh
+- Add falling leaves effect in cartoon style
 - Create melancholic, wistful atmosphere
 - Include warm, diffused lighting
 
@@ -671,240 +658,257 @@ COLOR PALETTE:
 - Burnt oranges in environment
 - Golden yellows in lighting
 - Rich browns in background
-- Keep subject's exact natural coloring`,
+
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create romantic, vintage quality like a classic animated film
+- Use artistic interpretation to capture sophisticated personality`,
     },
     "nineteen-eighty-nine": {
       title: "Polaroid Pop Era (2014)",
-      description: "Polaroid aesthetic with sleek hair and urban vibes",
+      description:
+        "Animated Polaroid aesthetic with sleek hair and urban vibes",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to recreate a Polaroid-inspired pop album aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a stylish animated illustration in the style of modern digital art. Create a Polaroid-inspired pop aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use cool, urban lighting typical of contemporary animations
 
-POLAROID STYLING:
-- Frame image in white Polaroid-style border
-- Apply instant camera color grading
+ANIMATED POLAROID STYLING:
+- Frame image with animated white Polaroid-style border
+- Apply instant camera color grading in illustration style
 - Create slightly washed-out, dreamy quality
-- Add subtle light leaks on edges
+- Add subtle light leaks on edges in cartoon style
 
-SIGNATURE LOOK:
-- Add bold red or pink lipstick while maintaining exact lip shape
-- Style hair in sleek bob or pulled back style using exact natural hair color
-- Create clean, minimalist aesthetic
+SIGNATURE ANIMATED LOOK:
+- Apply bold red or pink lipstick in illustration style
+- Style hair in sleek animated bob or pulled back style
+- Create clean, minimalist aesthetic using cartoon techniques
 - Apply soft, diffused lighting
-- Maintain subject's exact original hair color and texture
 
-NEW YORK ATMOSPHERE:
-- Suggest city backdrop without overwhelming
+URBAN ATMOSPHERE:
+- Suggest city backdrop in animation style without overwhelming
 - Add cool blue undertones to environment
 - Create sophisticated, urban feel
-- Include subtle lens flare
+- Include subtle lens flare effects
 
-COLOR TREATMENT:
-- Slightly overexposed highlights
+POLAROID COLOR TREATMENT:
+- Slightly overexposed highlights in illustration style
 - Faded, vintage color palette in background
-- Cool blues and soft pinks in environment
-- Keep subject's exact natural skin tone
+- Cool blues and soft pinks throughout environment
+- Create instant camera aesthetic
 
-COMPOSITION:
-- Crop to show partial face/profile if appropriate while maintaining recognizability
-- Create intimate, candid feeling
-- Add subtle motion blur for dynamism
-- Maintain mysterious, artistic quality`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create intimate, candid feeling like an animated music video
+- Use artistic interpretation to capture cool, confident personality`,
     },
     reputation: {
       title: "Dark Snake Era (2017)",
-      description: "Dark, edgy aesthetic with slicked hair and snake motifs",
+      description:
+        "Animated dark, edgy aesthetic with slicked hair and snake motifs",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a dark, edgy album aesthetic with snake motifs.
+      suggestedPrompt: `Transform the uploaded image into a dramatic animated illustration in the style of modern digital art. Create a dark, edgy aesthetic with snake motifs:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with dramatic shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use intense, moody lighting typical of thriller animations
 
-MONOCHROME TREATMENT:
-- Convert to high-contrast black and white while preserving all facial details
-- Create dramatic shadows and highlights that enhance rather than obscure features
-- Apply gritty, editorial texture
-- Add film noir quality while maintaining facial clarity
+ANIMATED MONOCHROME TREATMENT:
+- Convert to high-contrast black and white illustration
+- Create dramatic shadows and highlights in cartoon style
+- Apply gritty, editorial texture effect
+- Add film noir quality using animation techniques
 
-STYLING ELEMENTS:
-- Slick hair back or create wet-look styling in subject's exact natural hair color
-- Add dark, dramatic makeup effects (smokey eyes, dark lips) without altering facial structure
-- Create sharp, defined edges while preserving natural contours
-- Apply intense, moody lighting that still shows all facial features clearly
+EDGY ANIMATED STYLING:
+- Slick hair back or create wet-look styling in illustration form
+- Add dark, dramatic makeup effects in cartoon style
+- Create sharp, defined edges using animation techniques
+- Apply intense, moody lighting
 
 NEWSPAPER AESTHETIC:
-- Overlay subtle newsprint texture
+- Overlay subtle newsprint texture in animation style
 - Add typography elements around edges
 - Create collage-like effect with text
 - Include halftone dot pattern subtly
 
 SNAKE MOTIFS:
-- Add subtle snake-scale textures in background only
+- Add subtle snake-scale textures in background in cartoon style
 - Include serpentine shapes in shadows
 - Create mysterious, dangerous atmosphere
-- Add metallic, reptilian highlights to environment only
+- Add metallic, reptilian highlights to environment
 
-FINISHING EFFECTS:
-- High contrast black and white with facial detail preservation
-- Sharp, dramatic shadows that define rather than hide features
-- Gritty texture overlay
-- Dark, edgy vignetting`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create dark, edgy quality like a noir animated film
+- Use artistic interpretation to capture fierce, confident personality`,
     },
     lover: {
       title: "Pastel Dream Era (2019)",
-      description: "Pastel paradise with romantic waves and heart makeup",
+      description:
+        "Animated pastel paradise with romantic waves and heart makeup",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to embody a dreamy pastel album aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a dreamy animated illustration in the style of modern digital art. Create a pastel paradise aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use warm, soft lighting typical of animated films
 
-SIGNATURE HEART:
-- Add glittery pink heart shape around one eye without altering eye shape or size
-- Create sparkly, iridescent effect
-- Make heart prominent but artistic, not covering facial features
-- Use pink and purple glitter tones
+SIGNATURE ANIMATED HEART:
+- Paint a sparkly heart shape around one eye in artistic illustration style
+- Use stylized glitter effect with animated sparkles
+- Apply pink and iridescent colors in cartoon art style
+- Make it look like magical face paint in an animated world
+- Add twinkling star effects around the heart
+- Create dimensional shading using illustration techniques
 
-PASTEL PARADISE:
-- Transform background into pastel clouds
-- Use soft pinks, blues, purples, yellows
-- Create dreamy, cotton candy sky
-- Add rainbow elements subtly
+PASTEL ANIMATED PARADISE:
+- Transform background into dreamy animated clouds
+- Use soft cartoon sky with cotton candy textures
+- Apply gentle pastel gradient (pinks, blues, purples, yellows)
+- Add floating animated elements like hearts and butterflies
+- Include magical sparkles drifting through the air
+- Create storybook illustration atmosphere
 
-HAIR TRANSFORMATION (maintaining exact natural hair color):
-- Style hair in soft, romantic waves using exact natural hair color
-- Add subtle sparkles or glitter to hair
-- Create flowing, ethereal hair movement
-- Keep subject's exact original hair color and texture unchanged
+ANIMATED HAIR STYLING:
+- Style hair with gentle animated waves and movement
+- Add pastel highlights in illustration style
+- Include magical sparkles throughout the hair
+- Use smooth, flowing lines typical of animation
+- Apply soft cartoon shading and highlights
 
-COLOR GRADING:
-- Apply soft, ethereal filter
-- Enhance environment with pastel color wash
-- Keep subject's exact natural skin tone with luminous glow
-- Add prismatic light effects
+ILLUSTRATION COLOR PALETTE:
+- Use vibrant but soft pastel colors
+- Apply cartoon-style lighting and shading
+- Create glowing, luminous skin in illustration style
+- Add magical aura effects around the subject
+- Use artistic color blending techniques
 
-WHIMSICAL ELEMENTS:
-- Include floating hearts or butterflies
-- Add lens flares in pastel colors
-- Create magical, fairytale atmosphere
-- Soft focus with dreamy quality while maintaining facial sharpness`,
+WHIMSICAL ANIMATED ELEMENTS:
+- Add floating hearts with gentle animation-style glow
+- Include cartoon butterflies with soft wing details
+- Create lens flare effects in artistic illustration style
+- Apply magical fairy-tale atmosphere
+- Use soft focus effects typical of animated films
+- Add prismatic light beams in cartoon style
+
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create magical, dreamy quality like a Disney movie still
+- Use artistic interpretation to capture personality rather than exact realism`,
     },
     folklore: {
       title: "Indie Forest Era (2020)",
-      description: "Cottagecore forest aesthetic with natural braids",
+      description: "Animated cottagecore forest aesthetic with natural braids",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to capture an indie folk forest aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a serene animated illustration in the style of modern digital art. Create an indie folk forest aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+    ANIMATION STYLE:
+    - Convert to smooth, stylized digital illustration style
+    - Use clean vector-like artwork with soft shading
+    - Apply cartoon/animated character proportions while maintaining ALL recognizable features
+    - Create painterly, artistic interpretation rather than photorealistic rendering
+    - Use natural, muted lighting typical of indie animations
+    - PRESERVE EXACT facial features, bone structure, eye color, and natural hair color
 
-COTTAGECORE STYLING (maintaining exact natural hair color):
-- Transform hair into loose, natural braids using subject's exact original hair color
-- Add messy, effortless texture to existing hair
-- Create woodland fairy aesthetic with exact natural hair color and texture
-- Include small braids or twisted sections in original hair color
+    DISTANT FOREST COMPOSITION:
+    - Position subject further back in the forest scene, creating depth and atmosphere
+    - Show them as a figure walking through or sitting in the woodland setting
+    - Create a wider shot that includes more of the forest environment
+    - Use cinematic framing like a Studio Ghibli establishing shot
+    - Make the person a focal point but integrated into the larger forest scene
 
-FOREST ATMOSPHERE:
-- Desaturate environment to muted, earthy tones
-- Create moody, overcast lighting
-- Add misty, ethereal quality
-- Include soft, natural shadows
+    ANIMATED COTTAGECORE STYLING:
+    - Transform hair into loose, natural animated braids using EXACT original hair color
+    - Add messy, effortless texture in illustration style while maintaining natural color
+    - Create woodland fairy aesthetic using cartoon techniques
+    - Include small braids or twisted sections in original hair color
+    - NEVER change the natural hair color - preserve it exactly in animated form
 
-WARDROBE ELEMENTS:
-- Transform clothing to chunky knit cardigan
-- Add cream or gray tones
-- Create cozy, rustic textures
-- Include vintage, handmade quality
+    FOREST ATMOSPHERE:
+    - Desaturate environment to muted, earthy tones in animation style
+    - Create moody, overcast lighting filtering through trees
+    - Add misty, ethereal quality using illustration techniques
+    - Include soft, natural shadows and dappled light
+    - Show tall trees, fallen logs, moss, and forest floor details
+    - Create sense of being deep in the woods
 
-BACKGROUND MAGIC:
-- Transform setting to deep forest
-- Add fog or mist effects
-- Include trees and natural elements
-- Create mysterious, isolated feeling
+    COZY WARDROBE:
+    - Transform clothing to chunky knit cardigan in animation style
+    - Add cream or gray tones using cartoon techniques
+    - Create cozy, rustic textures in illustration form
+    - Include vintage, handmade quality
+    - Add boots suitable for forest walking
 
-COLOR PALETTE:
-- Muted grays and creams in clothing
-- Soft forest greens in environment
-- Earthy browns in background
-- Keep subject's exact natural coloring intact`,
+    ENHANCED WOODLAND BACKGROUND:
+    - Transform setting to expansive animated deep forest with layers of depth
+    - Add fog and mist effects weaving between trees in cartoon style
+    - Include detailed forest elements: tree trunks, branches, leaves, ferns
+    - Create mysterious, isolated feeling with atmospheric perspective
+    - Show forest path or clearing where subject is positioned
+    - Add subtle wildlife elements like birds or butterflies
+
+    COLOR PALETTE:
+    - Muted grays and creams in clothing
+    - Soft forest greens in environment with multiple tonal variations
+    - Earthy browns in tree trunks and forest floor
+    - Natural, organic color scheme with depth
+    - Preserve subject's exact natural coloring
+
+    FINAL ARTISTIC TOUCHES:
+    - Maintain the essence and EXACT recognizability of the original person
+    - Apply consistent animated art style throughout while preserving identity
+    - Create peaceful, introspective quality like a Studio Ghibli establishing shot
+    - Use artistic interpretation to capture contemplative personality
+    - Ensure the subject remains clearly visible and recognizable despite being further in the scene`,
     },
     evermore: {
       title: "Rustic Woods Era (2020)",
-      description: "Autumn woods with flowing waves and golden light",
+      description: "Animated autumn woods with flowing waves and golden light",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a rustic woodland aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a warm animated illustration in the style of modern digital art. Create a rustic woodland aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use golden, nostalgic lighting typical of autumn animations
 
-AUTUMN WOODS:
-- Create golden hour forest lighting
+RUSTIC STYLING:
+- Transform hair into loose, flowing animated waves
+- Add plaid or flannel clothing elements in cartoon style
+- Create rustic, outdoorsy look using illustration techniques
+- Apply natural, minimal makeup effect
+
+AUTUMN WOODS ATMOSPHERE:
+- Create golden hour forest lighting in animation style
 - Add warm, amber tones to environment
-- Include falling leaves effect
+- Include falling leaves effect in cartoon form
 - Create cozy cabin atmosphere
 
-STYLING DETAILS (maintaining exact natural hair color):
-- Transform hair into loose, flowing waves in subject's exact natural hair color
-- Add plaid or flannel clothing elements
-- Create rustic, outdoorsy look
-- Apply natural, minimal makeup effect
-- Keep exact original hair color and texture unchanged
-
 TEXTURAL ELEMENTS:
-- Add film grain for vintage feel
+- Add film grain for vintage feel in illustration style
 - Create soft, nostalgic focus
-- Include warm light leaks
-- Apply subtle sepia toning to environment only
+- Include warm light leaks using animation techniques
+- Apply subtle sepia toning to environment
 
-BACKGROUND ATMOSPHERE:
-- Transform to autumn forest setting
+WOODLAND BACKGROUND:
+- Transform to animated autumn forest setting
 - Add golden sunlight filtering through trees
 - Create intimate, storytelling mood
 - Include rustic, natural elements
@@ -913,170 +917,154 @@ COLOR STORY:
 - Rich oranges and reds in environment
 - Deep forest greens in background
 - Warm browns and golds in lighting
-- Preserve subject's exact natural coloring`,
+- Cozy, autumnal color palette
+
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create intimate, storytelling quality like an animated indie film
+- Use artistic interpretation to capture warm, nostalgic personality`,
     },
     midnights: {
       title: "Lavender Haze Era (2022)",
-      description: "70s glamour with sleek hair and jewel tones",
+      description: "Animated 70s glamour with sleek hair and jewel tones",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to embody a midnight-themed album aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a glamorous animated illustration in the style of modern digital art. Create a midnight-themed aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+    ANIMATION STYLE:
+    - Convert to smooth, stylized digital illustration style
+    - Use clean vector-like artwork with soft shading
+    - Apply cartoon/animated character proportions while maintaining recognizable features
+    - Create painterly, artistic interpretation rather than photorealistic rendering
+    - Use moody, late-night lighting typical of retro animations
 
-RETRO GLAMOUR:
-- Apply sparkly, jewel-toned eyeshadow effect without changing eye shape
-- Add subtle glitter to skin while preserving natural texture
-- Create 70s-inspired makeup look that enhances rather than alters features
-- Include dramatic eye makeup that follows natural eye contours
+    ICONIC MIDNIGHTS LIGHTER:
+    - Include a vintage-style lighter as a key prop in the scene
+    - Show subject holding or positioned near the lighter
+    - Create warm, flickering flame effect in animation style
+    - Use the lighter flame as a key light source illuminating the face
+    - Add mystical, midnight atmosphere around the lighter
+    - Make the lighter prominent but artistic, fitting the aesthetic
 
-MIDNIGHT ATMOSPHERE:
-- Apply deep blue and purple color grading to environment
-- Create moody, late-night lighting
-- Add subtle blur for dreamy quality
-- Include vintage 70s film texture
+    ANIMATED RETRO GLAMOUR:
+    - Apply sparkly, jewel-toned eyeshadow in illustration style
+    - Add subtle glitter effects in cartoon form
+    - Create 70s-inspired makeup look using animation techniques
+    - Include dramatic eye makeup with animated sparkles
+    - Use warm lighter flame to create golden highlights on face
 
-STYLING ELEMENTS (maintaining exact natural hair color):
-- Style hair in sleek 70s waves using exact natural hair color
-- Transform clothing to include sparkles/sequins
-- Add jewel-toned fabric effects
-- Create disco-era inspired elements
-- Keep subject's exact original hair color and texture
+    MIDNIGHT ATMOSPHERE:
+    - Apply deep blue and purple color grading in animation style
+    - Create moody, late-night lighting
+    - Add subtle blur for dreamy quality
+    - Include vintage 70s film texture effect
 
-SIGNATURE EFFECTS:
-- Add clock or time-related motifs subtly
-- Create starry night elements in background
-- Include moon or celestial touches
-- Apply retro color correction
+    ANIMATED 70S STYLING:
+    - Style hair in sleek animated 70s waves
+    - Transform clothing to include sparkles/sequins in cartoon style
+    - Add jewel-toned fabric effects
+    - Create disco-era inspired elements
 
-FINISHING TOUCHES:
-- Soft, hazy focus while maintaining facial clarity
-- Vintage color grading in environment
-- Mysterious atmosphere
-- Keep subject's exact natural features intact`,
+    CELESTIAL EFFECTS:
+    - Add clock or time-related motifs subtly in animation style
+    - Create starry night elements in background
+    - Include moon and celestial touches
+    - Apply retro color correction
+
+    FINAL ARTISTIC TOUCHES:
+    - Maintain the essence and recognizability of the original person
+    - Apply consistent animated art style throughout
+    - Create mysterious, glamorous quality like a retro animated music video
+    - Use artistic interpretation to capture confident, dreamy personality`,
     },
     ttpd: {
       title: "Poet's Department Era (2024)",
-      description: "Minimalist black & white with understated styling",
+      description: "Animated minimalist black & white with understated styling",
       placeholder: "E.g., Add specific details about the transformation",
-      suggestedPrompt: `Transform the uploaded image to match a minimalist poetic album aesthetic.
+      suggestedPrompt: `Transform the uploaded image into a contemplative animated illustration in the style of modern digital art. Create a minimalist poetic aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use soft, contemplative lighting typical of artistic animations
 
-MONOCHROME ARTISTRY:
-- Convert to sophisticated black and white while preserving all facial detail
-- Create soft, artistic shadows that enhance facial structure
-- Apply fine art photography style
-- Add subtle grain texture
+ANIMATED MONOCHROME ARTISTRY:
+- Convert to sophisticated black and white illustration
+- Create soft, artistic shadows in cartoon style
+- Apply fine art photography style using animation techniques
+- Add subtle grain texture effect
 
-MINIMALIST STYLING (maintaining exact natural hair color):
-- Style hair in simple, understated way using exact natural hair color
-- Transform clothing to basic black/white
+MINIMALIST STYLING:
+- Style hair in simple, understated way in animation form
+- Transform clothing to basic black/white using cartoon techniques
 - Add vulnerable, raw quality
 - Include intimate, personal feeling
-- Preserve exact original hair color in grayscale conversion
 
 POETIC ATMOSPHERE:
-- Create moody, contemplative lighting that clearly shows all features
+- Create moody, contemplative lighting in illustration style
 - Add typewriter or manuscript elements
 - Include subtle ink stain effects
 - Apply literary, artistic quality
 
-COMPOSITION:
-- Use dramatic negative space
+ARTISTIC COMPOSITION:
+- Use dramatic negative space in animation style
 - Create introspective mood
-- Add slight motion blur for emotion while keeping face sharp
+- Add slight motion blur for emotion
 - Include artistic, editorial framing
 
-FINAL TOUCHES:
-- Soft contrast black and white with facial detail preservation
-- Emotional, raw quality
-- Minimalist aesthetic
-- Keep all natural features clearly visible and recognizable`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create emotional, raw quality like an artistic animated short film
+- Use artistic interpretation to capture vulnerable, introspective personality`,
     },
     "eras-tour-concert": {
       title: "Stadium Tour Era",
-      description: "Pop star performing at a massive stadium tour",
+      description: "Animated pop star performing at a massive stadium tour",
       placeholder: "E.g., Add specific concert details or era elements",
-      suggestedPrompt: `Transform the uploaded image to show the subject as a pop superstar performing at a record-breaking stadium tour.
+      suggestedPrompt: `Transform the uploaded image into an epic animated illustration in the style of modern digital art. Create a stadium tour performance aesthetic:
 
-ABSOLUTE FACIAL PRESERVATION REQUIREMENTS - DO NOT ALTER ANY OF THESE:
-- Preserve EXACT facial bone structure: jawline shape, cheekbone placement and prominence, brow bone structure
-- Maintain EXACT nose shape, size, bridge width, and nostril shape
-- Keep EXACT eye shape, size, spacing, and natural eye color unchanged
-- Preserve EXACT lip shape, fullness, and natural proportions (lip color can change)
-- Maintain EXACT face shape (oval/round/square/heart) and facial proportions
-- Keep EXACT eyebrow shape, arch, thickness, and natural hair color
-- Preserve EXACT skin tone, texture, and any natural facial characteristics (freckles, dimples, etc.)
-- Maintain EXACT chin shape, forehead size, and temple width
-- Keep ALL proportional relationships between facial features identical
-- The person must be instantly recognizable to anyone who knows them
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with dramatic shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use spectacular concert lighting typical of animated performances
 
-ICONIC CONCERT OUTFIT:
-- Transform clothing into a custom designer bodysuit
-- Cover the bodysuit in thousands of sparkling sequins and rhinestones
-- Use vibrant color palette: pink, blue, gold, and silver crystals
-- Create intricate beadwork patterns across the bodysuit
-- Add dramatic fringe details and cascading crystal elements
-- Include high-cut leg design with sheer mesh panels
+ANIMATED CONCERT OUTFIT:
+- Transform clothing into sparkly animated performance attire
+- Add rhinestones and sequins in illustration style
+- Use vibrant colors: pink, blue, gold, and silver
+- Create flowing, dynamic costume using cartoon techniques
 
-ACCESSORIES & STYLING (maintaining exact natural hair color):
-- Add knee-high boots covered in matching crystals
-- Create a bedazzled microphone in hand with rhinestone details
-- Style hair in glamorous waves using subject's exact natural hair color and texture
-- Add dramatic stage makeup with glittery eyeshadow that follows natural eye contours
-- Include red or pink lipstick while maintaining exact lip shape
-- Keep subject's exact original hair color
+SIMPLIFIED STADIUM ATMOSPHERE:
+- Position subject as a distant animated figure on a large stage
+- Create dramatic stage lighting with animated spotlights
+- Show dark silhouetted crowd with scattered twinkling phone lights
+- Add large LED screens in background in cartoon style
+- Include atmospheric fog/haze effects
+- Use pink, purple, and blue stage lighting beams
 
-STADIUM ATMOSPHERE:
-- Set the scene in a massive sold-out stadium (70,000+ capacity)
-- Create dramatic concert lighting with spotlights on the performer
-- Add colorful stage lights in pink, purple, and blue beams
-- Include pyrotechnic effects and sparklers in the background
-- Show an elaborate stage setup with LED screens
-- Add fog/haze effects for concert atmosphere
+ANIMATED CROWD ELEMENTS:
+- Show crowd as dark silhouettes with glimmering phone lights
+- Create a sea of tiny light points in animation style
+- Keep crowd simple and atmospheric rather than detailed
+- Add soft glow from LED screens
+- Focus on magical lighting atmosphere
 
-CROWD ELEMENTS:
-- Fill the stadium with thousands of enthusiastic fans
-- Show fans holding up phone flashlights creating a sea of lights
-- Include fans wearing friendship bracelets and themed outfits
-- Add colorful light-up wristbands throughout the crowd
-- Show fans holding signs and wearing cowboy hats
-- Create energy and movement in the crowd
+PERFORMANCE ENERGY:
+- Capture confident performance pose in animation style
+- Show dynamic movement using cartoon techniques
+- Add motion blur effects while maintaining clarity
+- Include animated confetti or sparkles falling
 
-PERFORMANCE DETAILS:
-- Capture mid-performance with confident, powerful pose
-- Show dynamic movement as if dancing or singing
-- Create connection with the audience through gesture
-- Add motion blur to suggest energetic performance while keeping face sharp
-- Include confetti or glitter falling from above
-- Show multiple backup dancers in coordinating outfits
-
-FINISHING TOUCHES:
-- Apply concert photography style with high contrast
-- Create lens flares from stage lights
-- Add stadium architecture and upper decks full of fans
-- Include giant LED screens showing the performer
-- Preserve subject's exact natural features while adding performance energy`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create spectacular, larger-than-life quality like an animated concert film
+- Use artistic interpretation to capture performance energy and charisma`,
     },
   };
 
