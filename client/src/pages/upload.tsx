@@ -1060,7 +1060,7 @@ export default function UploadPage() {
                         selectedTransformation !== 'custom' 
                           ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}`}
+                      }`}
                       onClick={() => setSelectedTransformation('animation')}
                     >
                       <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
