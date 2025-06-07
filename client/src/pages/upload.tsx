@@ -573,38 +573,31 @@ export default function UploadPage() {
             setCurrentStep(Step.Prompt);
           }
         } else {
-          // Handle error responses
+          const data = await response.json();
           console.error("Server returned error response:", data);
-          if (data.error === "content_safety") {
-            toast({
-              title: "Content Safety Alert",
-              description:
-                "Your request was rejected by our safety system. Please try a different prompt or style that is more appropriate for all audiences.",
-              variant: "destructive",
-            });
-          } else if (data.error === "credit_required") {
-            if (!authUser) {
-              // Show signup modal for non-authenticated users who need credits
-              console.log("Showing signup modal for guest user who needs credits");
-              setShowSignupModal(true);
-              setCurrentStep(Step.Prompt);
-              return; // Don't show additional error toast
-            } else {
-              // For authenticated users, show regular error message
-              toast({
-                title: "No Credits Available",
-                description: "You need to purchase credits to continue creating transformations.",
-                variant: "destructive",
-              });
-            }
-          } else {
-            toast({
-              title: "Transformation failed",
-              description: data.message || "An unknown error occurred during transformation",
-              variant: "destructive",
-            });
+
+          // Handle specific error types
+          let title = "Transformation failed";
+          let description = data.message || "An unknown error occurred during transformation";
+
+          if (data.errorCode === 'safety_rejected') {
+            title = "Content not allowed";
+            description = "Your image or prompt contains content that isn't allowed. Please try a different image or modify your prompt.";
+          } else if (data.errorCode === 'rate_limited') {
+            title = "Service busy";
+            description = "Our service is experiencing high demand. Please wait a moment and try again.";
+          } else if (data.errorCode === 'connection_failed') {
+            title = "Connection error";
+            description = "Unable to connect to our AI service. Please check your internet connection and try again.";
           }
+
+          toast({
+            title,
+            description,
+            variant: "destructive",
+          });
           setCurrentStep(Step.Prompt);
+          return;
         }
       } catch (jsonError) {
         console.error("Failed to parse response as JSON:", jsonError);
@@ -650,7 +643,13 @@ export default function UploadPage() {
           setCurrentStep(Step.Prompt);
           return;
         } catch (parseError) {
-          console.error("Could not parse error response:", parseError);
+          console.error("Failed to parse error response:", parseError);
+          toast({
+            title: "Transformation failed",
+            description: "Could not process server response. Please try again.",
+            variant: "destructive",
+          });
+          setCurrentStep(Step.Prompt);
         }
       }
 
@@ -845,6 +844,8 @@ export default function UploadPage() {
           setCurrentStep(Step.Edit);
         }
       }
+```text
+
     } catch (error: any) {
       console.log("Error during edit transformation:", error);
 
@@ -1542,7 +1543,8 @@ export default function UploadPage() {
                 {/* Category Selection Section - Now appears after upload */}
                 <div className="mb-12">
                   <h3 className="text-xl font-semibold text-center mb-6 text-gray-900">Choose Your Style Category</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">```text
+
                     {/* Fun/Viral Category */}
                     <button
                       className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${

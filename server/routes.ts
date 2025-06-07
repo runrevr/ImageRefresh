@@ -740,38 +740,40 @@ IMPORTANT: Preserve the original face, facial features, skin tone, age, and iden
         editsUsed: transformation ? transformation.editsUsed : 0,
       });
     } catch (error: any) {
-      console.error("Error in image transformation:", error);
+      console.error('Error in image transformation:', error);
 
-      // Check for specific OpenAI error types
-      if (
-        error.message &&
-        (error.message.includes("organization verification") ||
-          error.message.includes("invalid_api_key") ||
-          error.message.includes("rate limit") ||
-          error.message.includes("billing"))
-      ) {
-        return res.status(400).json({
-          message: error.message,
-          error: "openai_api_error",
-        });
+      // Enhanced error response with more specific error types
+      let errorMessage = 'Error processing image transformation';
+      let errorCode = 'transformation_failed';
+      let statusCode = 500;
+
+      if (error.message) {
+        if (error.message.includes('safety system') || error.message.includes('content policy')) {
+          errorMessage = 'Your image or prompt was rejected by our safety system. This can happen with face photos or prompts containing inappropriate content. Please try a different image or modify your prompt to be more appropriate.';
+          errorCode = 'safety_rejected';
+          statusCode = 400; // Client error, not server error
+        } else if (error.message.includes('API key') || error.message.includes('authentication')) {
+          errorMessage = 'API authentication failed. Please try again later.';
+          errorCode = 'auth_failed';
+        } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+          errorMessage = 'Service temporarily unavailable due to high demand. Please try again in a few moments.';
+          errorCode = 'rate_limited';
+          statusCode = 429;
+        } else if (error.message.includes('connection failed') || error.message.includes('network')) {
+          errorMessage = 'Connection to AI service failed. Please check your internet connection and try again.';
+          errorCode = 'connection_failed';
+          statusCode = 503;
+        }
       }
 
-      // Check for content moderation errors
-      if (
-        error.message &&
-        error.message.toLowerCase().includes("content policy")
-      ) {
-        return res.status(400).json({
-          message:
-            "Your request was rejected by our content safety system. Please try a different prompt.",
-          error: "content_safety",
-        });
-      }
-
-      // Generic error
-      res.status(500).json({
-        message: "Error processing image transformation",
-        error: error.message,
+      res.status(statusCode).json({
+        message: errorMessage,
+        error: error.message || 'Unknown error occurred',
+        errorCode: errorCode,
+        details: {
+          timestamp: new Date().toISOString(),
+          userId: userId
+        }
       });
     }
   });
