@@ -18,86 +18,36 @@ import { createColoringBookImage } from "./coloring-book";
 import productAiStudioRouter from "./product-ai-studio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Primary user images endpoint - place this BEFORE other user-images routes
+  // PRIORITY: User images endpoint - must be first before middleware
   app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
-    console.log(`[USER-IMAGES] Request: ${req.method} ${req.originalUrl}`);
-
-    // Force JSON response with strict headers
+    console.log(`[USER-IMAGES-PRIORITY] ${req.method} ${req.originalUrl}`);
+    
+    // Set JSON headers immediately
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-
+    res.setHeader('Cache-Control', 'no-cache');
+    
     try {
       const userIdParam = req.params.userId;
-      console.log(`[USER-IMAGES] UserIdParam: "${userIdParam}"`);
-
       const userId = parseInt(userIdParam, 10);
+      
       if (isNaN(userId) || userId <= 0) {
-        console.log(`[USER-IMAGES] Invalid userId: "${userIdParam}"`);
-        return res.status(400).json({ 
-          success: false,
-          error: 'Invalid user ID',
-          received: userIdParam
-        });
+        console.log(`[USER-IMAGES-PRIORITY] Invalid userId: ${userIdParam}`);
+        return res.status(400).json({ error: 'Invalid user ID' });
       }
 
-      console.log(`[USER-IMAGES] Fetching images for userId: ${userId}`);
+      console.log(`[USER-IMAGES-PRIORITY] Fetching for user: ${userId}`);
       const images = await storage.getUserImages(userId);
-      console.log(`[USER-IMAGES] Found ${images.length} images`);
-
-      // Return images directly as array for compatibility
-      return res.status(200).json(images);
-
-    } catch (error) {
-      console.error('[USER-IMAGES] Error:', error);
-      return res.status(500).json([]);
-    }
-  });
-
-  // Fallback endpoint for fingerprint-based lookup
-  app.get('/api/user-images', async (req: Request, res: Response) => {
-    console.log(`[USER-IMAGES-FALLBACK] Request: ${req.method} ${req.originalUrl}`);
-
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-
-    try {
-      const fingerprint = req.query.fingerprint as string;
-      const userIdParam = req.query.userId as string;
-
-      console.log(`[USER-IMAGES-FALLBACK] UserIdParam: "${userIdParam}", Fingerprint: "${fingerprint}"`);
-
-      let userId: number;
-
-      if (userIdParam && userIdParam !== 'undefined') {
-        userId = parseInt(userIdParam, 10);
-        if (isNaN(userId)) {
-          return res.status(400).json([]);
-        }
-      } else if (fingerprint && fingerprint !== 'undefined') {
-        try {
-          const user = await storage.getUserByFingerprint(fingerprint);
-          if (!user) {
-            return res.status(404).json([]);
-          }
-          userId = user.id;
-        } catch (error) {
-          console.error('[USER-IMAGES-FALLBACK] Error finding user:', error);
-          return res.status(500).json([]);
-        }
-      } else {
-        return res.status(400).json([]);
-      }
-
-      console.log(`[USER-IMAGES-FALLBACK] Fetching images for userId: ${userId}`);
-      const images = await storage.getUserImages(userId);
-      console.log(`[USER-IMAGES-FALLBACK] Found ${images.length} images`);
+      console.log(`[USER-IMAGES-PRIORITY] Found ${images.length} images`);
 
       return res.status(200).json(images);
 
     } catch (error) {
-      console.error('[USER-IMAGES-FALLBACK] Error:', error);
-      return res.status(500).json([]);
+      console.error('[USER-IMAGES-PRIORITY] Error:', error);
+      return res.status(500).json({ error: 'Failed to fetch images' });
     }
   });
+
+  
 
   // Add detailed console logs for debugging
   app.use((req, res, next) => {
@@ -1592,140 +1542,7 @@ app.post('/api/create-dental-subscription', async (req, res) => {
       }
     });
 
-    // The following code block contains the fix to the user-images API endpoint.
-    // It is essential for resolving the reported issue with loading user images.
-    // Main user images endpoint
-    // Get user images endpoint
-app.get('/api/user-images', async (req, res) => {
-  try {
-    console.log('[USER-IMAGES] Request:', req.method, req.url);
-
-    const userIdParam = req.query.userId as string;
-    const fingerprint = req.query.fingerprint as string;
-
-    console.log('[USER-IMAGES] UserIdParam:', JSON.stringify(userIdParam), ', Fingerprint:', JSON.stringify(fingerprint));
-
-    let userId: number;
-
-    if (userIdParam && userIdParam !== 'undefined') {
-      userId = parseInt(userIdParam);
-      if (isNaN(userId)) {
-        console.log('[USER-IMAGES] Invalid userId parameter:', userIdParam);
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Invalid user ID' 
-        });
-      }
-    } else if (fingerprint && fingerprint !== 'undefined') {
-      try {
-        const user = await storage.getUserByFingerprint(fingerprint);
-        if (!user) {
-          console.log('[USER-IMAGES] No user found for fingerprint:', fingerprint);
-          return res.status(404).json({ 
-            success: false, 
-            error: 'User not found' 
-          });
-        }
-        userId = user.id;
-        console.log('[USER-IMAGES] Found user by fingerprint:', userId);
-      } catch (error) {
-        console.error('[USER-IMAGES] Error finding user by fingerprint:', error);
-        return res.status(500).json({ 
-          success: false, 
-          error: 'Failed to find user' 
-        });
-      }
-    } else {
-      console.log('[USER-IMAGES] Missing userId and fingerprint');
-      return res.status(400).json({ 
-        success: false, 
-        error: 'User ID or fingerprint required' 
-      });
-    }
-
-    console.log('[USER-IMAGES] Fetching images for user:', userId);
-    const images = await storage.getUserImages(userId);
-
-    console.log('[USER-IMAGES] Retrieved images:', images.length);
-
-    // Ensure we return JSON
-    res.setHeader('Content-Type', 'application/json');
-    res.json(images || []);
-  } catch (error) {
-    console.error('[USER-IMAGES] Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch user images',
-      details: error.message 
-    });
-  }
-});
-
-    // User images endpoint with optional fingerprint fallback
-    app.get('/api/user-images/:userId?', async (req, res) => {
-      try {
-        console.log('[USER-IMAGES] Request:', req.method, req.originalUrl);
-        const { userId: userIdParam } = req.params;
-        const fingerprint = req.query.fingerprint as string;
-
-        console.log('[USER-IMAGES] UserIdParam:', JSON.stringify(userIdParam), 'Fingerprint:', JSON.stringify(fingerprint));
-
-        let userId: number | null = null;
-
-        // Try to get user ID from parameter first
-        if (userIdParam && userIdParam !== 'undefined') {
-          userId = parseInt(userIdParam, 10);
-          if (isNaN(userId)) {
-            userId = null;
-          }
-        }
-
-        // If no valid user ID and we have a fingerprint, try to find user by fingerprint
-        if (!userId && fingerprint) {
-          try {
-            const user = await storage.getUserByFingerprint(fingerprint);
-            if (user) {
-              userId = user.id;
-              console.log('[USER-IMAGES] Found user by fingerprint:', userId);
-            } else {
-              console.log('[USER-IMAGES] No user found for fingerprint');
-            }
-          } catch (error) {
-            console.error('[USER-IMAGES] Error finding user by fingerprint:', error);
-            return res.status(500).json({ 
-              success: false, 
-              error: 'Failed to find user by fingerprint',
-              details: error.message 
-            });
-          }
-        }
-
-        // If still no user ID, return error
-        if (!userId) {
-          console.log('[USER-IMAGES] No valid user ID found');
-          return res.status(401).json({ 
-            success: false, 
-            error: 'User not found' 
-          });
-        }
-
-        console.log('[USER-IMAGES] Fetching images for user:', userId);
-        const images = await storage.getUserImages(userId);
-        console.log('[USER-IMAGES] Retrieved images:', images.length);
-
-        // Ensure we return JSON
-        res.setHeader('Content-Type', 'application/json');
-        res.json(images || []);
-      } catch (error) {
-        console.error('[USER-IMAGES] Error:', error);
-        res.setHeader('Content-Type', 'application/json');
-        res.status(500).json({ 
-          success: false, 
-          error: 'Failed to fetch user images',
-          details: error.message 
-        });
-      }
-    });
+    
 
     // Delete user image endpoint
     app.delete('/api/user-images/:imageId/:userId', async (req, res) => {

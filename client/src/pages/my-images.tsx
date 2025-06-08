@@ -28,28 +28,34 @@ export default function MyImages() {
   const userId = user?.id;
 
   const { data: images = [], isLoading, error } = useQuery<UserImage[]>({
-    queryKey: ['/api/user-images', userId ? String(userId) : ''],
+    queryKey: ['user-images', userId],
     queryFn: async () => {
       if (!userId) throw new Error('No user ID');
 
       console.log('[MY-IMAGES] Fetching images for user:', userId);
-      
+
       const response = await fetch(`/api/user-images/${userId}`, {
+        method: 'GET',
         credentials: 'include',
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
         }
       });
-      
+
+      console.log('[MY-IMAGES] Response status:', response.status);
+      console.log('[MY-IMAGES] Response headers:', response.headers.get('content-type'));
+
       if (!response.ok) {
-        console.error('[MY-IMAGES] API Error:', response.status);
-        throw new Error(`Failed to fetch images: ${response.status}`);
+        const errorText = await response.text();
+        console.error('[MY-IMAGES] API Error:', response.status, errorText);
+        throw new Error(`Failed to fetch images: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       console.log('[MY-IMAGES] API Response:', data);
 
-      // Server now returns images directly as array
+      // Ensure we always return an array
       return Array.isArray(data) ? data : [];
     },
     enabled: !!userId,
@@ -109,7 +115,7 @@ export default function MyImages() {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      
+
       const a = document.createElement('a');
       a.href = url;
       a.download = `enhanced-image-${Date.now()}.png`;
@@ -203,7 +209,7 @@ export default function MyImages() {
             {images.map((image) => {
               const daysLeft = getDaysUntilExpiry(image.expiresAt);
               const isExpiringSoon = daysLeft <= 7;
-              
+
               return (
                 <Card key={image.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
                   <div className="relative aspect-square">
@@ -233,7 +239,7 @@ export default function MyImages() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <CardContent className="p-4">
                     <div className="space-y-2">
                       {image.originalPrompt && (
@@ -241,13 +247,13 @@ export default function MyImages() {
                           {image.originalPrompt}
                         </p>
                       )}
-                      
+
                       {image.imageType && (
                         <span className="inline-block px-2 py-1 bg-cyan-100 text-cyan-800 text-xs rounded-full">
                           {image.imageType}
                         </span>
                       )}
-                      
+
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>{format(new Date(image.createdAt), 'MMM d, yyyy')}</span>
                         <span className={`${isExpiringSoon ? 'text-orange-600 font-medium' : ''}`}>
