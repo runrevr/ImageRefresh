@@ -31,8 +31,9 @@ import ProductImageLabPage from './pages/product-image-lab';
 // Import protected routes and account pages
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import AccountPage from "@/pages/account";
-import TransformationsPage from "@/pages/transformations";
-import CheckoutPage from "@/pages/checkout";
+import TransformationsPage from "./pages/transformations";
+import MyImages from "./pages/my-images";
+import CheckoutPage from "./pages/checkout";
 import SubscribePage from "@/pages/subscribe";
 import BuyCreditsPage from "@/pages/buy-credits";
 import CheckoutDemoPage from "@/pages/checkout-demo";
@@ -49,16 +50,12 @@ import CheckoutFlowDemo from "@/pages/checkout-flow-demo";
 import PrebuiltPrompts from "./pages/prebuilt-prompts";
 import PrebuiltUpload from "./pages/prebuilt-upload";
 import PrebuiltResults from "./pages/prebuilt-results";
-import MyImages from "./pages/my-images";
-import TextToImage from "./pages/text-to-image";
-import GalleryPage from "./pages/gallery";
 import MySavedImages from "./pages/my-saved-images";
 import Create from "./pages/create";
 import DentalLanding from "@/pages/dental-landing";
 import KidsLanding from "@/pages/kids-landing";
 import CheckoutDental from "@/pages/checkout-dental";
 import CheckoutSummer from '@/pages/checkout-summer';
-
 function Router() {
   return (
     <>
@@ -106,6 +103,7 @@ function Router() {
         </Route>
         <ProtectedRoute path="/account" component={AccountPage} />
         <ProtectedRoute path="/transformations" component={TransformationsPage} />
+        <ProtectedRoute path="/my-images" component={MyImages} />
         <ProtectedRoute path="/checkout" component={CheckoutPage} />
         <ProtectedRoute path="/subscribe" component={SubscribePage} />
         <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
