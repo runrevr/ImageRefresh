@@ -18,85 +18,84 @@ import { createColoringBookImage } from "./coloring-book";
 import productAiStudioRouter from "./product-ai-studio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // User images endpoint with fingerprint support
-  app.get('/api/user-images/:userId?', async (req: Request, res: Response) => {
+  // Primary user images endpoint - place this BEFORE other user-images routes
+  app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
     console.log(`[USER-IMAGES] Request: ${req.method} ${req.originalUrl}`);
 
     // Force JSON response with strict headers
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
 
     try {
-      let userId: number;
       const userIdParam = req.params.userId;
-      const fingerprint = req.query.fingerprint as string;
+      console.log(`[USER-IMAGES] UserIdParam: "${userIdParam}"`);
 
-      console.log(`[USER-IMAGES] UserIdParam: "${userIdParam}", Fingerprint: "${fingerprint}"`);
-
-      // If no userId is provided in the URL, check fingerprint
-      if (!userIdParam) {
-        if (!fingerprint) {
-          return res.status(400).json({ 
-            success: false,
-            error: 'User ID or fingerprint required'
-          });
-        }
-
-        // Get user by fingerprint
-        try {
-          const user = await storage.getUserByFingerprint(fingerprint);
-          if (!user) {
-            return res.status(404).json({ 
-              success: false,
-              error: 'User not found for fingerprint'
-            });
-          }
-          userId = user.id;
-          console.log(`[USER-IMAGES] Found user ${userId} for fingerprint`);
-        } catch (error) {
-          console.error('[USER-IMAGES] Error finding user by fingerprint:', error);
-          return res.status(500).json({
-            success: false,
-            error: 'Failed to find user'
-          });
-        }
-      } else {
-        userId = parseInt(userIdParam, 10);
-        if (isNaN(userId) || userId <= 0) {
-          console.log(`[USER-IMAGES] Invalid userId: "${userIdParam}"`);
-          return res.status(400).json({ 
-            success: false,
-            error: 'Invalid user ID',
-            received: userIdParam
-          });
-        }
+      const userId = parseInt(userIdParam, 10);
+      if (isNaN(userId) || userId <= 0) {
+        console.log(`[USER-IMAGES] Invalid userId: "${userIdParam}"`);
+        return res.status(400).json({ 
+          success: false,
+          error: 'Invalid user ID',
+          received: userIdParam
+        });
       }
 
       console.log(`[USER-IMAGES] Fetching images for userId: ${userId}`);
       const images = await storage.getUserImages(userId);
       console.log(`[USER-IMAGES] Found ${images.length} images`);
 
-      const jsonResponse = {
-        success: true,
-        count: images.length,
-        userId: userId,
-        images: images,
-        timestamp: new Date().toISOString()
-      };
-
-      return res.status(200).json(jsonResponse);
+      // Return images directly as array for compatibility
+      return res.status(200).json(images);
 
     } catch (error) {
       console.error('[USER-IMAGES] Error:', error);
-      const errorResponse = {
-        success: false,
-        error: 'Failed to fetch user images',
-        details: error instanceof Error ? error.message : String(error),
-        timestamp: new Date().toISOString()
-      };
-      return res.status(500).json(errorResponse);
+      return res.status(500).json([]);
+    }
+  });
+
+  // Fallback endpoint for fingerprint-based lookup
+  app.get('/api/user-images', async (req: Request, res: Response) => {
+    console.log(`[USER-IMAGES-FALLBACK] Request: ${req.method} ${req.originalUrl}`);
+
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+    try {
+      const fingerprint = req.query.fingerprint as string;
+      const userIdParam = req.query.userId as string;
+
+      console.log(`[USER-IMAGES-FALLBACK] UserIdParam: "${userIdParam}", Fingerprint: "${fingerprint}"`);
+
+      let userId: number;
+
+      if (userIdParam && userIdParam !== 'undefined') {
+        userId = parseInt(userIdParam, 10);
+        if (isNaN(userId)) {
+          return res.status(400).json([]);
+        }
+      } else if (fingerprint && fingerprint !== 'undefined') {
+        try {
+          const user = await storage.getUserByFingerprint(fingerprint);
+          if (!user) {
+            return res.status(404).json([]);
+          }
+          userId = user.id;
+        } catch (error) {
+          console.error('[USER-IMAGES-FALLBACK] Error finding user:', error);
+          return res.status(500).json([]);
+        }
+      } else {
+        return res.status(400).json([]);
+      }
+
+      console.log(`[USER-IMAGES-FALLBACK] Fetching images for userId: ${userId}`);
+      const images = await storage.getUserImages(userId);
+      console.log(`[USER-IMAGES-FALLBACK] Found ${images.length} images`);
+
+      return res.status(200).json(images);
+
+    } catch (error) {
+      console.error('[USER-IMAGES-FALLBACK] Error:', error);
+      return res.status(500).json([]);
     }
   });
 

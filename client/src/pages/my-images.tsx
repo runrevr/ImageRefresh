@@ -37,36 +37,23 @@ export default function MyImages() {
       const response = await fetch(`/api/user-images/${userId}`, {
         credentials: 'include',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Accept': 'application/json'
         }
       });
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[MY-IMAGES] API Error:', response.status, errorText);
+        console.error('[MY-IMAGES] API Error:', response.status);
         throw new Error(`Failed to fetch images: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('[MY-IMAGES] API Response:', data); // Debug log
+      console.log('[MY-IMAGES] API Response:', data);
 
-      // Handle different possible response structures
-      if (Array.isArray(data)) {
-        return data;
-      } else if (data.success && data.images && Array.isArray(data.images)) {
-        return data.images;
-      } else if (data.images && Array.isArray(data.images)) {
-        return data.images;
-      } else if (data.data && Array.isArray(data.data)) {
-        return data.data;
-      } else {
-        console.warn('[MY-IMAGES] Unexpected response structure:', data);
-        return [];
-      }
+      // Server now returns images directly as array
+      return Array.isArray(data) ? data : [];
     },
     enabled: !!userId,
-    retry: 3,
+    retry: 2,
     retryDelay: 1000,
   });
 

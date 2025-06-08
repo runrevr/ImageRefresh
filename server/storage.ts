@@ -200,41 +200,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Get user by fingerprint
-  async getUserByFingerprint(fingerprint: string): Promise<{ id: number; username: string } | null> {
+  async getUserByFingerprint(fingerprint: string): Promise<User | null> {
     console.log(`Storage getUserByFingerprint called with fingerprint: ${fingerprint}`);
 
     try {
-      console.log('Storage getUserByFingerprint called with fingerprint:', fingerprint);
-
       if (!fingerprint || fingerprint.trim() === '') {
         console.log('Empty fingerprint provided');
         return null;
       }
 
-      const query = 'SELECT * FROM users WHERE device_fingerprint = $1';
-      console.log('Executing query:', query, 'with params:', [fingerprint]);
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.deviceFingerprint, fingerprint))
+        .limit(1);
 
-      const result = await this.db.execute(query, [fingerprint]);
-
-      if (result.rows.length === 0) {
+      if (!user) {
         console.log('No user found for fingerprint:', fingerprint);
         return null;
       }
 
-      const row = result.rows[0];
-      return {
-        id: row.id,
-        email: row.email,
-        deviceFingerprint: row.device_fingerprint,
-        freeCreditsUsed: row.free_credits_used,
-        lastFreeCredit: row.last_free_credit ? new Date(row.last_free_credit) : null,
-        paidCredits: row.paid_credits || 0,
-        createdAt: new Date(row.created_at),
-        updatedAt: new Date(row.updated_at)
-      };
+      console.log(`Found user ${user.id} for fingerprint`);
+      return user;
     } catch (error) {
       console.error(`Error getting user by fingerprint ${fingerprint}:`, error);
-      throw error;
+      return null;
     }
   }
 
