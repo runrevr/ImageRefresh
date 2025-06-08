@@ -32,9 +32,20 @@ export default function MyImages() {
     queryFn: async () => {
       if (!userId) throw new Error('No user ID');
 
-      const response = await fetch(`/api/user-images/${userId}`);
+      console.log('[MY-IMAGES] Fetching images for user:', userId);
+      
+      const response = await fetch(`/api/user-images/${userId}`, {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch images');
+        const errorText = await response.text();
+        console.error('[MY-IMAGES] API Error:', response.status, errorText);
+        throw new Error(`Failed to fetch images: ${response.status}`);
       }
 
       const data = await response.json();
@@ -55,6 +66,8 @@ export default function MyImages() {
       }
     },
     enabled: !!userId,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   // Log for debugging
@@ -62,8 +75,14 @@ export default function MyImages() {
     userId,
     isLoading,
     error: error?.message,
-    imageCount: images.length
+    imageCount: images.length,
+    user: user
   });
+
+  // Log when user changes
+  React.useEffect(() => {
+    console.log('[MY-IMAGES] User changed:', { user, userId });
+  }, [user, userId]);
 
   const deleteImageMutation = useMutation({
     mutationFn: async ({ imageId, userId }: { imageId: number; userId: number }) => {

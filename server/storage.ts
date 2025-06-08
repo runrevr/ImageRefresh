@@ -578,17 +578,11 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getUserImages(userId: number, category?: string): Promise<UserImage[]> {
-    const conditions = [eq(userImages.userId, userId)];
-
-    if (category) {
-      conditions.push(eq(userImages.category, category));
-    }
-
+  async getUserImages(userId: number): Promise<UserImage[]> {
     return await db
       .select()
       .from(userImages)
-      .where(and(...conditions))
+      .where(eq(userImages.userId, userId))
       .orderBy(desc(userImages.createdAt));
   }
 
@@ -640,7 +634,7 @@ export class DatabaseStorage implements IStorage {
         try {
           const fs = await import('fs');
           const path = await import('path');
-          
+
           // Handle both absolute and relative paths
           let fullPath = imageRecord.imagePath;
           if (!path.isAbsolute(fullPath)) {
