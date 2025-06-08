@@ -66,6 +66,7 @@ export default function UploadPage() {
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [selectedImageSize, setSelectedImageSize] = useState<string>('square');
+  const [isTransformMode, setIsTransformMode] = useState<boolean>(true); // Track which mode is selected
 
   // Update local user state when auth user changes
   useEffect(() => {
@@ -706,6 +707,7 @@ export default function UploadPage() {
     setSelectedSubcategory(null);
     setSelectedImageSize('square');
     setHasTriedAnotherPrompt(false);
+    setIsTransformMode(true);
     setCurrentStep(Step.Upload);
   };
 
@@ -844,8 +846,6 @@ export default function UploadPage() {
           setCurrentStep(Step.Edit);
         }
       }
-```text
-
     } catch (error: any) {
       console.log("Error during edit transformation:", error);
 
@@ -1057,13 +1057,13 @@ export default function UploadPage() {
                   <div className="flex bg-white border border-gray-200 rounded-2xl p-2 shadow-lg max-w-2xl mx-auto">
                     <button
                       className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
-                        selectedTransformation !== 'custom' 
+                        isTransformMode
                           ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg transform scale-105' 
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       }`}
-                      onClick={() => setSelectedTransformation('animation')}
+                      onClick={() => setIsTransformMode(true)}
                     >
-                      <div className={`text-2xl mb-1 ${selectedTransformation !== 'custom' ? 'animate-pulse' : ''}`}>
+                      <div className={`text-2xl mb-1 ${isTransformMode ? 'animate-pulse' : ''}`}>
                         🖼️
                       </div>
                       <div className="text-sm font-semibold">Transform Image</div>
@@ -1072,7 +1072,11 @@ export default function UploadPage() {
                       </div>
                     </button>
                     <button
-                      className="flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:border-orange-500"
+                      className={`flex-1 px-8 py-4 rounded-xl font-medium transition-all duration-300 flex flex-col items-center justify-center gap-2 min-w-0 ${
+                        !isTransformMode
+                          ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg transform scale-105'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
                       onClick={() => window.location.href = '/create'}
                     >
                       <div className="text-2xl mb-1">
@@ -1086,60 +1090,7 @@ export default function UploadPage() {
                   </div>
                 </div>
 
-                {/* Custom Prompt UI */}
-                {selectedTransformation === 'custom' && (
-                  <div className="max-w-4xl mx-auto">
-                    <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 border border-orange-200">
-                      <div className="text-center mb-8">
-                        <div className="text-4xl mb-4">✨</div>
-                        <h2 className="text-3xl font-bold mb-3 text-gray-900">
-                          Create From Your Imagination
-                        </h2>
-                        <p className="text-lg text-gray-600">
-                          Describe what you want to create and let AI bring it to life
-                        </p>
-                      </div>
-
-                      <div className="mb-8">
-                        <textarea
-                          className="w-full h-32 p-4 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"                  placeholder="Example: A majestic dragon flying over a crystal city at sunset, photorealistic style, 8kquality..."
-                          value=""
-                          onChange={() => {}}
-                        />
-                      </div>
-
-                      <div className="mb-8">
-                        <h3 className="text-xl font-semibold mb-4 text-gray-900">Try these ideas:</h3>
-                        <div className="flex flex-wrap gap-3">
-                          {[
-                            { emoji: "🐱", text: "Cyberpunk Cat" },
-                            { emoji: "🧚", text: "Fantasy Scene" },
-                            { emoji: "🚀", text: "Space Adventure" },
-                            { emoji: "☕", text: "Steampunk Cafe" }
-                          ].map((idea, index) => (
-                            <button
-                              key={index}
-                              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
-                              onClick={() => {}}
-                            >
-                              <span>{idea.emoji}</span>
-                              <span className="text-sm font-medium">{idea.text}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-4 rounded-lg">
-                        <span className="text-lg">💡</span>
-                        <p className="text-sm">
-                          Tip: You can also upload an image to use as reference for your custom prompt
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedTransformation !== 'custom' && (
+                {isTransformMode && (
                   <>
                     <ImageUploader onImageUploaded={handleUpload} />
 
@@ -1180,20 +1131,20 @@ export default function UploadPage() {
                         </button>
 
                         {/* Kids/Cartoons Category */}
-                    <button
-                      className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
-                        selectedTransformation === 'animation' 
-                          ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                          : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
-                      }`}
-                      onClick={() => setSelectedTransformation('animation')}
-                    >
-                      <div className="text-3xl mb-2">🎬</div>
-                      <div className="text-sm font-semibold text-gray-900">Kids/Cartoons</div>
-                      <div className="text-xs text-gray-600 text-center mt-1">
-                        Cartoon and animated styles
-                      </div>
-                    </button>
+                        <button
+                          className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
+                            selectedTransformation === 'animation' 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'border-gray-200 hover:border-[#06B6D4] hover:bg-gray-50'
+                          }`}
+                          onClick={() => setSelectedTransformation('animation')}
+                        >
+                          <div className="text-3xl mb-2">🎬</div>
+                          <div className="text-sm font-semibold text-gray-900">Kids/Cartoons</div>
+                          <div className="text-xs text-gray-600 text-center mt-1">
+                            Cartoon and animated styles
+                          </div>
+                        </button>
 
                         {/* Artistic Category */}
                         <button
@@ -1258,7 +1209,7 @@ export default function UploadPage() {
                     </div>
 
                     {/* Subcategory Options - Show when category is selected */}
-                    {selectedTransformation && selectedTransformation !== 'custom' && (
+                    {selectedTransformation && (
                       <div className="mb-8">
                         <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
                           {selectedTransformation === 'other' ? 'Fun/Viral' : 
@@ -1507,9 +1458,8 @@ export default function UploadPage() {
                     )}
                   </>
                 )}
-
-                </div>
-              )}
+              </div>
+            )}
 
             {currentStep === Step.Prompt && (
               <div className="max-w-3xl mx-auto">
@@ -1543,8 +1493,7 @@ export default function UploadPage() {
                 {/* Category Selection Section - Now appears after upload */}
                 <div className="mb-12">
                   <h3 className="text-xl font-semibold text-center mb-6 text-gray-900">Choose Your Style Category</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">```text
-
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
                     {/* Fun/Viral Category */}
                     <button
                       className={`flex flex-col items-center p-6 rounded-xl border-2 transition-all duration-300 ${
@@ -1655,218 +1604,221 @@ export default function UploadPage() {
                   </div>
                 </div>
 
-                {selectedTransformation && selectedTransformation !== 'custom' && (
-                      <div className="mb-8">
-                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
-                          {selectedTransformation === 'other' ? 'Fun/Viral' : 
-                           selectedTransformation === 'historical' ? 'Pop Culture Through The Years' :
-                           selectedTransformation === 'animation' ? 'Animation' :
-                           selectedTransformation === 'artistic' ? 'Artistic Styles' :
-                           selectedTransformation === 'kids-real' ? 'Kids Drawing' : 'Selected'} Styles
-                        </h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
-                          {selectedTransformation === 'animation' && [
-                            { name: 'Super Mario Bros', emoji: '🍄', id: 'mario' },
-                            { name: 'Minecraft', emoji: '🟫', id: 'minecraft' },
-                            { name: 'Pixar Style', emoji: '🎬', id: 'pixar' },
-                            { name: 'Trolls', emoji: '💖', id: 'trolls' },
-                            { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
-                            { name: 'Superhero', emoji: '🦸', id: 'superhero' },
-                            { name: 'Lego Character', emoji: '🧱', id: 'lego' },
-                            { name: 'Coloring Book', emoji: '📚', id: 'coloring-book' },
-                          ].map((style, index) => (
-                            <button
-                              key={index}
-                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedSubcategory === style.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => {
-                                setSelectedSubcategory(style.id);
-                                console.log('Selected style:', style.name);
-                              }}
-                            >
-                              <span className="text-lg">{style.emoji}</span>
-                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </button>
-                          ))}
-
-                          {selectedTransformation === 'historical' && [
-                            { name: 'Old Western', emoji: '🤠', id: 'western' },
-                            { name: '90s Hip-Hop', emoji: '🎤', id: 'hiphop' },
-                            { name: '1980s Style', emoji: '🌈', id: '80s' },
-                            { name: 'Disco Era', emoji: '🕺', id: 'disco' },
-                            { name: 'Renaissance', emoji: '🎨', id: 'renaissance' },
-                            { name: 'Victorian Era', emoji: '🎩', id: 'victorian' },
-                            { name: 'Medieval', emoji: '⚔️', id: 'medieval' },
-                          ].map((style, index) => (
-                            <button
-                              key={index}
-                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedSubcategory === style.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => {
-                                setSelectedSubcategory(style.id);
-                                console.log('Selected style:', style.name);
-                              }}
-                            >
-                              <span className="text-lg">{style.emoji}</span>
-                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </button>
-                          ))}
-
-                          {selectedTransformation === 'artistic' && [
-                            { name: 'Oil Painting', emoji: '🖼️', id: 'oil' },
-                            { name: 'Watercolor', emoji: '🎨', id: 'watercolor' },
-                            { name: 'Impressionist', emoji: '🌅', id: 'impressionist' },
-                            { name: 'Abstract Art', emoji: '🔮', id: 'abstract' },
-                            { name: 'Pop Surrealism', emoji: '👁️', id: 'surrealism' },
-                            { name: 'Art Deco', emoji: '✨', id: 'artdeco' },
-                          ].map((style, index) => (
-                            <button
-                              key={index}
-                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedSubcategory === style.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => {
-                                setSelectedSubcategory(style.id);
-                                console.log('Selected style:', style.name);
-                              }}
-                            >
-                              <span className="text-lg">{style.emoji}</span>
-                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </button>
-                          ))}
-
-                           {selectedTransformation === 'taylor-swift' && [
-                            { name: 'Debut (2006)', emoji: '🎸', id: 'debut' },
-                            { name: 'Fearless (2008)', emoji: '✨', id: 'fearless' },
-                            { name: 'Speak Now (2010)', emoji: '💜', id: 'speak-now' },
-                            { name: 'Red (2012)', emoji: '🍂', id: 'red' },
-                            { name: '1989 (2014)', emoji: '🏙️', id: 'nineteen-eighty-nine' },
-                            { name: 'Reputation (2017)', emoji: '🐍', id: 'reputation' },
-                            { name: 'Lover (2019)', emoji: '💕', id: 'lover' },
-                            { name: 'Folklore (2020)', emoji: '🌲', id: 'folklore' },
-                            { name: 'Evermore (2020)', emoji: '🍁', id: 'evermore' },
-                            { name: 'Midnights (2022)', emoji: '🌙', id: 'midnights' },
-                            { name: 'TTPD (2024)', emoji: '🖤', id: 'ttpd' },
-                            { name: 'Eras Tour Concert', emoji: '🎤', id: 'eras-tour-concert' },
-                          ].map((style, index) => (
-                            <button
-                              key={index}
-                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedSubcategory === style.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => {
-                                setSelectedSubcategory(style.id);
-                                console.log('Selected style:', style.name);
-                              }}
-                            >
-                              <span className="text-lg">{style.emoji}</span>
-                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </button>
-                          ))}
-
-                          {selectedTransformation === 'other' && [
-                            { name: 'Mullets', emoji: '💇', id: 'mullets' },
-                            { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
-                            { name: 'Baby Mode', emoji: '👶', id: 'baby-mode' },
-                            { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
-                            { name: 'Future Self', emoji: '👵', id: 'future' },
-                            { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
-                            { name: 'AI Action Figure', emoji: '🎮', id: 'action-figure' },
-                            { name: 'Pet as Human', emoji: '🐕', id: 'pet-human' },
-                            { name: 'Self as Cat', emoji: '🐱', id: 'self-cat' },
-                            { name: 'Caricature', emoji: '😄', id: 'caricature' },
-                          ].map((style, index) => (
-                            <button
-                              key={index}
-                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedSubcategory === style.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => {
-                                setSelectedSubcategory(style.id);
-                                console.log('Selected style:', style.name);
-                              }}
-                            >
-                              <span className="text-lg">{style.emoji}</span>
-                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </button>
-                          ))}
-
-                          {selectedTransformation === 'kids-real' && [
-                            { name: 'Kids Drawing to Reality', emoji: '🖍️', id: 'kids-drawing' },
-                          ].map((style, index) => (
-                            <button
-                              key={index}
-                              className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedSubcategory === style.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => {
-                                setSelectedSubcategory(style.id);
-                                console.log('Selected style:', style.name);
-                              }}
-                            >
-                              <span className="text-lg">{style.emoji}</span>
-                              <span className="text-sm font-medium text-gray-700">{style.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Image Size Selection - Show when subcategory is selected */}
-                    {selectedSubcategory && (
-                      <div className="mb-8">
-                        <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
-                          Choose Output Size
-                        </h4>
-                        <div className="flex justify-center gap-3 max-w-md mx-auto">
-                          {[
-                            { id: 'square', label: 'Square', ratio: '1:1' },
-                            { id: 'portrait', label: 'Portrait', ratio: '2:3' },
-                            { id: 'landscape', label: 'Landscape', ratio: '3:2' }
-                          ].map((size) => (
-                            <button
-                              key={size.id}
-                              className={`flex-1 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
-                                selectedImageSize === size.id 
-                                  ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
-                                  : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
-                              }`}
-                              onClick={() => setSelectedImageSize(size.id)}
-                            >
-                              <div className="text-sm font-medium text-gray-700">{size.label}</div>
-                              <div className="text-xs text-gray-500">{size.ratio}</div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Let's Make Magic Button - Show when subcategory and size are selected */}
-                    {selectedSubcategory && selectedImageSize && (
-                      <div className="text-center">
-                        <RainbowButton
-                          onClick={handleMakeMagic}
-                          className="px-12 py-4 text-lg font-semibold"
-                          disabled={!originalImagePath}
+                {selectedTransformation && (
+                  <div className="mb-8">
+                    <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                      {selectedTransformation === 'other' ? 'Fun/Viral' : 
+                       selectedTransformation === 'historical' ? 'Pop Culture Through The Years' :
+                       selectedTransformation === 'animation' ? 'Animation' :
+                       selectedTransformation === 'artistic' ? 'Artistic Styles' :
+                       selectedTransformation === 'kids-real' ? 'Kids Drawing' : 'Selected'} Styles
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
+                      {/* Same subcategory options as in Upload step */}
+                      {selectedTransformation === 'animation' && [
+                        { name: 'Super Mario Bros', emoji: '🍄', id: 'mario' },
+                        { name: 'Minecraft', emoji: '🟫', id: 'minecraft' },
+                        { name: 'Pixar Style', emoji: '🎬', id: 'pixar' },
+                        { name: 'Trolls', emoji: '💖', id: 'trolls' },
+                        { name: 'Princess/Prince', emoji: '👸', id: 'princess' },
+                        { name: 'Superhero', emoji: '🦸', id: 'superhero' },
+                        { name: 'Lego Character', emoji: '🧱', id: 'lego' },
+                        { name: 'Coloring Book', emoji: '📚', id: 'coloring-book' },
+                      ].map((style, index) => (
+                        <button
+                          key={index}
+                          className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedSubcategory === style.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => {
+                            setSelectedSubcategory(style.id);
+                            console.log('Selected style:', style.name);
+                          }}
                         >
-                          ✨ Let's Make Magic ✨
-                        </RainbowButton>
-                      </div>
-                    )}
+                          <span className="text-lg">{style.emoji}</span>
+                          <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                        </button>
+                      ))}
+
+                      {/* Add similar blocks for other transformation types */}
+                      {selectedTransformation === 'historical' && [
+                        { name: 'Old Western', emoji: '🤠', id: 'western' },
+                        { name: '90s Hip-Hop', emoji: '🎤', id: 'hiphop' },
+                        { name: '1980s Style', emoji: '🌈', id: '80s' },
+                        { name: 'Disco Era', emoji: '🕺', id: 'disco' },
+                        { name: 'Renaissance', emoji: '🎨', id: 'renaissance' },
+                        { name: 'Victorian Era', emoji: '🎩', id: 'victorian' },
+                        { name: 'Medieval', emoji: '⚔️', id: 'medieval' },
+                      ].map((style, index) => (
+                        <button
+                          key={index}
+                          className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedSubcategory === style.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => {
+                            setSelectedSubcategory(style.id);
+                            console.log('Selected style:', style.name);
+                          }}
+                        >
+                          <span className="text-lg">{style.emoji}</span>
+                          <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                        </button>
+                      ))}
+
+                      {/* Continue with other categories... */}
+                      {selectedTransformation === 'artistic' && [
+                        { name: 'Oil Painting', emoji: '🖼️', id: 'oil' },
+                        { name: 'Watercolor', emoji: '🎨', id: 'watercolor' },
+                        { name: 'Impressionist', emoji: '🌅', id: 'impressionist' },
+                        { name: 'Abstract Art', emoji: '🔮', id: 'abstract' },
+                        { name: 'Pop Surrealism', emoji: '👁️', id: 'surrealism' },
+                        { name: 'Art Deco', emoji: '✨', id: 'artdeco' },
+                      ].map((style, index) => (
+                        <button
+                          key={index}
+                          className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedSubcategory === style.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => {
+                            setSelectedSubcategory(style.id);
+                            console.log('Selected style:', style.name);
+                          }}
+                        >
+                          <span className="text-lg">{style.emoji}</span>
+                          <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                        </button>
+                      ))}
+
+                      {selectedTransformation === 'taylor-swift' && [
+                        { name: 'Debut (2006)', emoji: '🎸', id: 'debut' },
+                        { name: 'Fearless (2008)', emoji: '✨', id: 'fearless' },
+                        { name: 'Speak Now (2010)', emoji: '💜', id: 'speak-now' },
+                        { name: 'Red (2012)', emoji: '🍂', id: 'red' },
+                        { name: '1989 (2014)', emoji: '🏙️', id: 'nineteen-eighty-nine' },
+                        { name: 'Reputation (2017)', emoji: '🐍', id: 'reputation' },
+                        { name: 'Lover (2019)', emoji: '💕', id: 'lover' },
+                        { name: 'Folklore (2020)', emoji: '🌲', id: 'folklore' },
+                        { name: 'Evermore (2020)', emoji: '🍁', id: 'evermore' },
+                        { name: 'Midnights (2022)', emoji: '🌙', id: 'midnights' },
+                        { name: 'TTPD (2024)', emoji: '🖤', id: 'ttpd' },
+                        { name: 'Eras Tour Concert', emoji: '🎤', id: 'eras-tour-concert' },
+                      ].map((style, index) => (
+                        <button
+                          key={index}
+                          className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedSubcategory === style.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => {
+                            setSelectedSubcategory(style.id);
+                            console.log('Selected style:', style.name);
+                          }}
+                        >
+                          <span className="text-lg">{style.emoji}</span>
+                          <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                        </button>
+                      ))}
+
+                      {selectedTransformation === 'other' && [
+                        { name: 'Mullets', emoji: '💇', id: 'mullets' },
+                        { name: 'Hulkamania', emoji: '💪', id: 'hulkamania' },
+                        { name: 'Baby Mode', emoji: '👶', id: 'baby-mode' },
+                        { name: 'Baby Prediction', emoji: '👶', id: 'baby' },
+                        { name: 'Future Self', emoji: '👵', id: 'future' },
+                        { name: 'Ghibli Style', emoji: '🌸', id: 'ghibli' },
+                        { name: 'AI Action Figure', emoji: '🎮', id: 'action-figure' },
+                        { name: 'Pet as Human', emoji: '🐕', id: 'pet-human' },
+                        { name: 'Self as Cat', emoji: '🐱', id: 'self-cat' },
+                        { name: 'Caricature', emoji: '😄', id: 'caricature' },
+                      ].map((style, index) => (
+                        <button
+                          key={index}
+                          className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedSubcategory === style.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => {
+                            setSelectedSubcategory(style.id);
+                            console.log('Selected style:', style.name);
+                          }}
+                        >
+                          <span className="text-lg">{style.emoji}</span>
+                          <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                        </button>
+                      ))}
+
+                      {selectedTransformation === 'kids-real' && [
+                        { name: 'Kids Drawing to Reality', emoji: '🖍️', id: 'kids-drawing' },
+                      ].map((style, index) => (
+                        <button
+                          key={index}
+                          className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedSubcategory === style.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => {
+                            setSelectedSubcategory(style.id);
+                            console.log('Selected style:', style.name);
+                          }}
+                        >
+                          <span className="text-lg">{style.emoji}</span>
+                          <span className="text-sm font-medium text-gray-700">{style.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Image Size Selection - Show when subcategory is selected */}
+                {selectedSubcategory && (
+                  <div className="mb-8">
+                    <h4 className="text-lg font-semibold text-center mb-4 text-gray-900">
+                      Choose Output Size
+                    </h4>
+                    <div className="flex justify-center gap-3 max-w-md mx-auto">
+                      {[
+                        { id: 'square', label: 'Square', ratio: '1:1' },
+                        { id: 'portrait', label: 'Portrait', ratio: '2:3' },
+                        { id: 'landscape', label: 'Landscape', ratio: '3:2' }
+                      ].map((size) => (
+                        <button
+                          key={size.id}
+                          className={`flex-1 p-3 border-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                            selectedImageSize === size.id 
+                              ? 'border-[#06B6D4] bg-[#06B6D4]/10 shadow-lg' 
+                              : 'bg-white border-gray-200 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5'
+                          }`}
+                          onClick={() => setSelectedImageSize(size.id)}
+                        >
+                          <div className="text-sm font-medium text-gray-700">{size.label}</div>
+                          <div className="text-xs text-gray-500">{size.ratio}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Let's Make Magic Button - Show when subcategory and size are selected */}
+                {selectedSubcategory && selectedImageSize && (
+                  <div className="text-center">
+                    <RainbowButton
+                      onClick={handleMakeMagic}
+                      className="px-12 py-4 text-lg font-semibold"
+                      disabled={!originalImagePath}
+                    >
+                      ✨ Let's Make Magic ✨
+                    </RainbowButton>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1929,75 +1881,4 @@ export default function UploadPage() {
       />
     </div>
   );
-
-    // This function maps style IDs to prompts for image transformation, incorporating detailed debugging logs.
-    const getPromptFromStyleId = (styleId: string): string => {
-      // Create a mapping from style IDs to PromptInput categories/keys
-      const styleMapping: Record<string, { category: string; key: string }> = {
-        'super-mario': { category: 'cartoon', key: 'super-mario' },
-        'minecraft': { category: 'cartoon', key: 'minecraft' },
-        'pixar': { category: 'cartoon', key: 'pixar' },
-        'dreamworks': { category: 'cartoon', key: 'dreamworks' },
-        'princess': { category: 'cartoon', key: 'princess' },
-        'superhero': { category: 'cartoon', key: 'superhero' },
-        'lego': { category: 'cartoon', key: 'lego' },
-        'coloring-book': { category: 'cartoon', key: 'coloringBook' },
-        'coloringBook': { category: 'cartoon', key: 'coloringBook' },
-        'kids-drawing': { category: 'kids-real', key: 'kids-real' },
-        'old-western': { category: 'era', key: 'old-western' },
-        '90s-hip-hop': { category: 'era', key: '90s-hip-hop' },
-        '1980s': { category: 'era', key: '1980s' },
-        'disco': { category: 'era', key: 'disco-era' },
-        'renaissance': { category: 'era', key: 'renaissance' },
-        'victorian-era': { category: 'era', key: 'victorian-era' },
-        'medieval': { category: 'era', key: 'medieval' },
-        'oil-painting': { category: 'painting', key: 'oil-painting' },
-        'watercolor': { category: 'painting', key: 'watercolor' },
-        'impressionist': { category: 'painting', key: 'impressionist' },
-        'abstract': { category: 'painting', key: 'abstract' },
-        'pop-surrealism': { category: 'painting', key: 'pop-surrealism' },
-        'art-deco': { category: 'painting', key: 'art-deco' },
-        'mullets': { category: 'other', key: 'mullets' },
-        'hulkamania': { category: 'other', key: 'hulkamania' },
-        'babyMode': { category: 'other', key: 'babyMode' },
-        'baby-prediction': { category: 'other', key: 'baby-prediction' },
-        'future-self': { category: 'other', key: 'future-self' },
-        'ghibli-style': { category: 'other', key: 'ghibli-style' },
-        'ai-action-figure': { category: 'other', key: 'ai-action-figure' },
-        'pet-as-human': { category: 'other', key: 'pet-as-human' },
-        'self-as-cat': { category: 'other', key: 'self-as-cat' },
-        'caricature': { category: 'other', key: 'caricature' },
-        'vampire': { category: 'other', key: 'vampire' },
-      };
-
-      const mapping = styleMapping[styleId];
-      if (!mapping) {
-        console.warn(`No mapping found for style ID: ${styleId}`);
-        return "Transform the image in an artistic style";
-      }
-
-      // Special handling for coloring book - use the dedicated endpoint
-      if (mapping.key === 'coloringBook') {
-        console.log('Coloring book style detected - should use dedicated endpoint');
-        return CARTOON_STYLES.coloringBook.suggestedPrompt;
-      }
-
-      // Get the prompt from the appropriate style definition in PromptInput.tsx
-      switch (mapping.category) {
-        case 'cartoon':
-          return CARTOON_STYLES[mapping.key as keyof typeof CARTOON_STYLES]?.suggestedPrompt || "Transform the image in a cartoon style";
-        case 'era':
-          return ERA_STYLES[mapping.key as keyof typeof ERA_STYLES]?.suggestedPrompt || "Transform the image in a historical style";
-        case 'painting':
-          return PAINTING_STYLES[mapping.key as keyof typeof PAINTING_STYLES]?.suggestedPrompt || "Transform the image in a painting style";
-        case 'other':
-          return OTHER_STYLES[mapping.key as keyof typeof OTHER_STYLES]?.suggestedPrompt || "Transform the image in a fun style";
-        case 'kids-real':
-          return "Transform this children's drawing into a realistic photographic image. Maintain the composition, characters, and key elements from the drawing, but render them in a photorealistic style with natural lighting, proper proportions, and detailed textures. Keep the original colors as a guide but enhance them to look realistic. Add appropriate environmental details and background elements that complement the drawing's theme. The final image should look like a professional photograph that brings the child's drawing to life while preserving its creative essence and charm.";
-        default:
-          return "Transform the image in an artistic style";
-      }
-    };
-
-
 }
