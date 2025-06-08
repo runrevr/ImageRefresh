@@ -41,15 +41,12 @@ export default function MyImages() {
           credentials: 'include',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
+            'Content-Type': 'application/json'
           }
         });
 
         console.log('[MY-IMAGES] Response status:', response.status);
         console.log('[MY-IMAGES] Response ok:', response.ok);
-        console.log('[MY-IMAGES] Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -66,6 +63,7 @@ export default function MyImages() {
 
         const data = await response.json();
         console.log('[MY-IMAGES] API Response data:', data);
+        console.log('[MY-IMAGES] Number of images received:', Array.isArray(data) ? data.length : 'Not an array');
 
         // Ensure we always return an array
         if (Array.isArray(data)) {
@@ -80,10 +78,11 @@ export default function MyImages() {
       }
     },
     enabled: !!userId,
-    retry: 1,
+    retry: 2,
     retryDelay: 1000,
-    staleTime: 0,
-    cacheTime: 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
 
   // Log for debugging
@@ -92,7 +91,9 @@ export default function MyImages() {
     isLoading,
     error: error?.message,
     imageCount: images.length,
-    user: user
+    imagesArray: images,
+    user: user,
+    hasImages: images && images.length > 0
   });
 
   // Log when user changes
@@ -113,7 +114,7 @@ export default function MyImages() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user-images', userId] });
+      queryClient.invalidateQueries({ queryKey: ['user-images', userId] });
       toast({
         title: "Image deleted",
         description: "The image has been removed from your collection.",
