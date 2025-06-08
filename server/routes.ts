@@ -21,29 +21,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PRIORITY: User images endpoint - must be first before middleware
   app.get('/api/user-images/:userId', async (req: Request, res: Response) => {
     console.log(`[USER-IMAGES-PRIORITY] ${req.method} ${req.originalUrl}`);
+    console.log(`[USER-IMAGES-PRIORITY] Headers:`, req.headers);
     
     // Set JSON headers immediately
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     
     try {
       const userIdParam = req.params.userId;
+      console.log(`[USER-IMAGES-PRIORITY] Raw userId param: "${userIdParam}"`);
+      
       const userId = parseInt(userIdParam, 10);
       
       if (isNaN(userId) || userId <= 0) {
-        console.log(`[USER-IMAGES-PRIORITY] Invalid userId: ${userIdParam}`);
-        return res.status(400).json({ error: 'Invalid user ID' });
+        console.log(`[USER-IMAGES-PRIORITY] Invalid userId: ${userIdParam} -> ${userId}`);
+        return res.status(400).json({ error: 'Invalid user ID', receivedParam: userIdParam });
       }
 
-      console.log(`[USER-IMAGES-PRIORITY] Fetching for user: ${userId}`);
+      console.log(`[USER-IMAGES-PRIORITY] Fetching images for user: ${userId}`);
+      
+      // Check if user exists first
+      const user = await storage.getUser(userId);
+      if (!user) {
+        console.log(`[USER-IMAGES-PRIORITY] User ${userId} not found`);
+        return res.status(404).json({ error: 'User not found', userId });
+      }
+      
       const images = await storage.getUserImages(userId);
-      console.log(`[USER-IMAGES-PRIORITY] Found ${images.length} images`);
+      console.log(`[USER-IMAGES-PRIORITY] Found ${images.length} images for user ${userId}`);
+      console.log(`[USER-IMAGES-PRIORITY] Sample images:`, images.slice(0, 2));
 
-      return res.status(200).json(images);
+      // Always return an array
+      const result = Array.isArray(images) ? images : [];
+      console.log(`[USER-IMAGES-PRIORITY] Returning array with ${result.length} items`);
+
+      return res.status(200).json(result);
 
     } catch (error) {
       console.error('[USER-IMAGES-PRIORITY] Error:', error);
-      return res.status(500).json({ error: 'Failed to fetch images' });
+      return res.status(500).json({ 
+        error: 'Failed to fetch images', 
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
     }
   });
 

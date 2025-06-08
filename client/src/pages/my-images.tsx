@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,33 +35,55 @@ export default function MyImages() {
 
       console.log('[MY-IMAGES] Fetching images for user:', userId);
 
-      const response = await fetch(`/api/user-images/${userId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache'
+      try {
+        const response = await fetch(`/api/user-images/${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+
+        console.log('[MY-IMAGES] Response status:', response.status);
+        console.log('[MY-IMAGES] Response ok:', response.ok);
+        console.log('[MY-IMAGES] Response headers:', Object.fromEntries(response.headers.entries()));
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[MY-IMAGES] API Error:', response.status, errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
-      });
 
-      console.log('[MY-IMAGES] Response status:', response.status);
-      console.log('[MY-IMAGES] Response headers:', response.headers.get('content-type'));
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const textResponse = await response.text();
+          console.error('[MY-IMAGES] Non-JSON response:', textResponse);
+          throw new Error('Server returned non-JSON response');
+        }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[MY-IMAGES] API Error:', response.status, errorText);
-        throw new Error(`Failed to fetch images: ${response.status} - ${errorText}`);
+        const data = await response.json();
+        console.log('[MY-IMAGES] API Response data:', data);
+
+        // Ensure we always return an array
+        if (Array.isArray(data)) {
+          return data;
+        } else {
+          console.warn('[MY-IMAGES] Response is not an array:', data);
+          return [];
+        }
+      } catch (fetchError) {
+        console.error('[MY-IMAGES] Fetch error:', fetchError);
+        throw fetchError;
       }
-
-      const data = await response.json();
-      console.log('[MY-IMAGES] API Response:', data);
-
-      // Ensure we always return an array
-      return Array.isArray(data) ? data : [];
     },
     enabled: !!userId,
-    retry: 2,
+    retry: 1,
     retryDelay: 1000,
+    staleTime: 0,
+    cacheTime: 0,
   });
 
   // Log for debugging
