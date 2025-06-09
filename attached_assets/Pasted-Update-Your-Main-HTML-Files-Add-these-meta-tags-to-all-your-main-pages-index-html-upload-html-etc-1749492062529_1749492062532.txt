@@ -1,0 +1,40 @@
+Update Your Main HTML Files
+Add these meta tags to all your main pages (index.html, upload.html, etc.):
+html<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>AI Image Transformation | Turn Photos into Superheroes & Professional Product Images</title>
+    <meta name="title" content="AI Image Transformation | Turn Photos into Superheroes & Professional Product Images">
+    <meta name="description" content="Transform kids into superheroes, enhance product photos for e-commerce, and create stunning visual content with our AI-powered image transformation platform. Free trial available.">
+    <meta name="keywords" content="AI image transformation, photo editing, superhero transformation, product photography, kids photo editor, e-commerce images, cartoon transformation">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="author" content="Image Refresh">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imagerefresh.com/">
+    <meta property="og:title" content="AI Image Transformation | Turn Photos into Superheroes & Professional Product Images">
+    <meta property="og:description" content="Transform kids into superheroes, enhance product photos for e-commerce, and create stunning visual content with our AI-powered image transformation platform.">
+    <meta property="og:image" content="https://imagerefresh.com/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://imagerefresh.com/">
+    <meta property="twitter:title" content="AI Image Transformation | Turn Photos into Superheroes & Professional Product Images">
+    <meta property="twitter:description" content="Transform kids into superheroes, enhance product photos for e-commerce, and create stunning visual content with our AI-powered image transformation platform.">
+    <meta property="twitter:image" content="https://imagerefresh.com/images/twitter-image.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://imagerefresh.com/">
+</head>
