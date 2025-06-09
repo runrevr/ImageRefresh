@@ -198,7 +198,7 @@ export default function UploadPage() {
   const getPromptFromStyles = (subcategory: string): string => {
     const styleMapping: Record<string, string> = {
       // Animation styles
-      'mario': CARTOON_STYLES.mario?.suggestedPrompt || 'Transform into Super Mario style',
+      'mario': CARTOON_STYLES['super-mario']?.suggestedPrompt || 'Transform into Super Mario style',
       'minecraft': CARTOON_STYLES.minecraft?.suggestedPrompt || 'Transform into Minecraft style',
       'pixar': CARTOON_STYLES.pixar?.suggestedPrompt || 'Transform into Pixar animation style',
       'trolls': CARTOON_STYLES.trolls?.suggestedPrompt || 'Transform into Trolls style',
