@@ -243,7 +243,7 @@ export default function MyImages() {
                     <div className="relative aspect-square">
                       <img
                         src={image.imageUrl}
-                        alt={image.originalPrompt || "Enhanced image"}
+                        alt="Enhanced image"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           console.error('Image failed to load:', image.imageUrl);
