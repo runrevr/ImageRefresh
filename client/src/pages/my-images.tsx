@@ -29,11 +29,14 @@ export default function MyImages() {
 
   const userId = user?.id;
 
-  const { data: images = [], isLoading, error } = useQuery<UserImage[]>({
+  console.log('[MY-IMAGES] Component render - userId:', userId);
+
+  const { data: images = [], isLoading, error, refetch } = useQuery<UserImage[]>({
     queryKey: ['user-images', userId],
     queryFn: async () => {
       if (!userId) throw new Error('No user ID');
 
+      console.log('[MY-IMAGES] Fetching images for user:', userId);
       const response = await fetch(`/api/user-images/${userId}`, {
         method: 'GET',
         credentials: 'include',
@@ -43,17 +46,46 @@ export default function MyImages() {
         }
       });
 
+      console.log('[MY-IMAGES] Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        const errorText = await response.text();
+        console.error('[MY-IMAGES] API error:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      console.log('[MY-IMAGES] Raw API response:', data);
+
+      // Handle different response formats
+      let imageArray = [];
+      if (Array.isArray(data)) {
+        imageArray = data;
+      } else if (data && Array.isArray(data.images)) {
+        imageArray = data.images;
+      } else if (data && typeof data === 'object') {
+        console.warn('[MY-IMAGES] Unexpected response format:', data);
+        imageArray = [];
+      }
+
+      console.log('[MY-IMAGES] Final image array:', imageArray);
+      console.log('[MY-IMAGES] Image count:', imageArray.length);
+
+      return imageArray;
     },
     enabled: !!userId,
     retry: 1,
-    staleTime: 30000,
+    staleTime: 0,
     refetchOnWindowFocus: false,
+    refetchOnMount: true,
+  });
+
+  console.log('[MY-IMAGES] Current state:', {
+    userId,
+    isLoading,
+    error: error?.message,
+    imageCount: images?.length || 0,
+    hasImages: images && images.length > 0
   });
 
   const deleteImageMutation = useMutation({
@@ -127,6 +159,21 @@ export default function MyImages() {
   const freeCredits = userCredits?.hasMonthlyFreeCredit ? 1 : 0;
   const paidCredits = userCredits?.paidCredits || 0;
 
+  // Not logged in
+  if (!userId) {
+    return (
+      <>
+        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
+          <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Please log in to view your images</h1>
+            <p className="text-gray-600">You need to be logged in to access your saved images.</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   // Loading state
   if (isLoading) {
     return (
@@ -136,6 +183,7 @@ export default function MyImages() {
           <div className="max-w-6xl mx-auto px-4 py-12">
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">My Images</h1>
+              <p className="text-gray-600">Loading your images...</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
@@ -163,30 +211,12 @@ export default function MyImages() {
           <div className="max-w-4xl mx-auto px-4 py-12 text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Error Loading Images</h1>
             <p className="text-gray-600 mb-6">{error.message}</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
+            <Button onClick={() => refetch()}>Try Again</Button>
           </div>
         </div>
       </>
     );
   }
-
-  // Not logged in
-  if (!userId) {
-    return (
-      <>
-        <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
-          <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Please log in to view your images</h1>
-            <p className="text-gray-600">You need to be logged in to access your saved images.</p>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Check if we have images
-  const hasImages = images && images.length > 0;
 
   return (
     <>
@@ -198,12 +228,12 @@ export default function MyImages() {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Your enhanced and transformed images are saved here for 45 days. Download them to keep them permanently.
             </p>
-            {images && images.length > 0 && (
-              <p className="text-sm text-gray-500 mt-2">{images.length} images found</p>
-            )}
+            <p className="text-sm text-gray-500 mt-2">
+              {images.length} image{images.length !== 1 ? 's' : ''} found
+            </p>
           </div>
 
-          {hasImages ? (
+          {images.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {images.map((image) => {
                 const daysLeft = getDaysUntilExpiry(image.expiresAt);
@@ -275,7 +305,7 @@ export default function MyImages() {
                 <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-6 flex items-center justify-center">
                   <Calendar className="w-12 h-12 text-gray-400" />
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">No images yet</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">No images found</h3>
                 <p className="text-gray-600 mb-8">
                   Start creating and enhancing images to build your collection. All transformed images will be saved here automatically.
                 </p>
