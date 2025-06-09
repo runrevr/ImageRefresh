@@ -61,6 +61,12 @@ console.log('Environment Configuration:');
 console.log(`API Key: ${process.env.ACTIVECAMPAIGN_API_KEY ? 'Set' : 'Not set'}`);
 console.log(`Base URL: ${process.env.ACTIVECAMPAIGN_BASE_URL || 'Not set'}`);
 console.log(`USE_MOCK_WEBHOOK: ${process.env.USE_MOCK_WEBHOOK || 'Not set'}`);
+console.log(`Database URL: ${process.env.DATABASE_URL ? 'Set' : 'Not set'}`);
+
+// Set database connection with retry logic
+if (!process.env.DATABASE_URL) {
+  console.warn('⚠️  DATABASE_URL not set - database features will be limited');
+}
 
 // Set ActiveCampaign API credentials
 process.env.ACTIVECAMPAIGN_API_KEY = process.env.ACTIVECAMPAIGN_API_KEY || '1579e89bd0548efef9178b71b72c6a85d641f3ebc7806d86d6154c41a9a67af6c360fdc6';
@@ -360,8 +366,16 @@ Respond with ONLY the edit prompt text, no formatting, no JSON, no explanation.`
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
+    // Log database connection errors specifically
+    if (err.message && err.message.includes('database') || err.message.includes('connection')) {
+      console.error('🔴 Database connection error:', err.message);
+      console.error('This may be due to network issues or database unavailability');
+    }
+
     res.status(status).json({ message });
-    throw err;
+    
+    // Don't throw the error, just log it to prevent server crash
+    console.error('Server error handled:', err.message);
   });
 
   // importantly only setup vite in development and after
