@@ -7,6 +7,7 @@ import ProcessingState from "@/components/ProcessingState";
 import ResultView from "@/components/ResultView";
 import EditPrompt from "@/components/EditPrompt";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
