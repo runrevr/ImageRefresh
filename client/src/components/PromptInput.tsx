@@ -137,15 +137,14 @@ export const CARTOON_STYLES: Record<CartoonSubcategory, StyleOption> = {
   "super-mario": {
     title: "Super Mario Bros",
     description:
-      "Transform into the colorful, blocky style of the Super Mario universe.",
+      "Transform into the modern 3D-animated style of contemporary Mario films and games.",
     placeholder: "E.g., Place the name Jack somewhere in the image",
     suggestedPrompt: `Create a vibrant, modern 3D-animated scene inspired by contemporary animated adventure films and video game adaptations. Design a heroic plumber character with realistic textures and lighting, featuring expressive eyes and dynamic poses. The character should wear:
 For the main hero (if male uploaded image): A bright red cap with a circular emblem, red shirt, blue overalls with yellow buttons, white gloves, and brown boots. Give him a confident, determined expression with a slight smile and heroic stance.
 For the secondary hero (if male uploaded image, alternate): A bright green cap with a circular emblem, green shirt, blue overalls with yellow buttons, white gloves, and brown boots. Give him a more cautious but brave expression with wide, alert eyes.
 For the royal character (if female uploaded image): An elegant pink ball gown with puffy sleeves, a golden crown with jeweled details, long blonde hair in an updo, white gloves, and pink heels. Give her a graceful, confident expression with kind eyes and regal posture.
 The scene should feature: Floating brick platforms with realistic stone textures, lush green hills with detailed grass, vibrant blue sky with realistic cloud formations, colorful question mark blocks with metallic shine, green warp pipes with industrial detailing, piranha plants with sharp teeth and spotted patterns, walking mushroom creatures with determined expressions, and floating coins with golden gleam.
-Style requirements: Photorealistic 3D rendering with dramatic lighting, rich saturated colors, detailed textures on all surfaces, cinematic composition with depth of field, and the polished look of modern animated blockbuster films. The overall mood should be adventurous, heroic, and filled with wonder - capturing the spirit of a thrilling animated adventure movie.
-  `,
+Style requirements: Photorealistic 3D rendering with dramatic lighting, rich saturated colors, detailed textures on all surfaces, cinematic composition with depth of field, and the polished look of modern animated blockbuster films. The overall mood should be adventurous, heroic, and filled with wonder - capturing the spirit of a thrilling animated adventure movie.`,
   },
   minecraft: {
     title: "Minecraft",
