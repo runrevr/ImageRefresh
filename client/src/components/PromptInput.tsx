@@ -560,11 +560,13 @@ GOLDEN ANIMATED ATMOSPHERE:
 - Add animated light leaks and golden lens flares
 - Apply soft, romantic focus with gentle motion blur effects
 
-MAGICAL ELEMENTS:
-- Create abstract golden bokeh background in animation style
-- Add floating sparkles and light particles
-- Include animated sunset colors bleeding into frame
-- Use rich golds and champagnes throughout
+FEARLESS ALBUM COVER BACKGROUND:
+- Create soft, creamy beige/champagne animated background
+- Use simple, elegant studio backdrop like the original album cover
+- Apply warm, golden lighting effects
+- Add subtle gradient from light to slightly darker tones
+- Keep background clean and minimal for classic portrait feel
+- Use professional photography studio aesthetic in animation style
 
 FINAL ARTISTIC TOUCHES:
 - Maintain the essence and recognizability of the original person
@@ -604,11 +606,13 @@ ENCHANTED ATMOSPHERE:
 - Add mystical, enchanted forest feel in animation style
 - Include soft spotlighting effects
 
-MAGICAL BACKGROUND:
-- Transform background into animated purple gradient
-- Add swirling mists and smoke effects in cartoon style
-- Include subtle sparkles floating in air
-- Create dreamy, fantastical atmosphere
+SPEAK NOW ALBUM COVER BACKGROUND:
+- Create bright white animated background
+- Use clean, minimalist white backdrop like the original album cover
+- Apply soft, even lighting throughout
+- Add subtle white-on-white gradient effects
+- Keep background completely white and clean for dramatic contrast
+- Use bright, airy studio lighting aesthetic in animation style
 
 FINAL ARTISTIC TOUCHES:
 - Maintain the essence and recognizability of the original person
@@ -646,11 +650,13 @@ ROMANTIC WARDROBE:
 - Create vintage-inspired styling (scarves, coats) in cartoon form
 - Add cozy autumn textures using illustration techniques
 
-AUTUMN BACKGROUND:
-- Transform background to animated autumn leaves or soft bokeh
-- Add falling leaves effect in cartoon style
-- Create melancholic, wistful atmosphere
-- Include warm, diffused lighting
+RED ALBUM COVER BACKGROUND:
+- Create soft white/cream animated background
+- Use clean, simple backdrop like the original album cover
+- Apply subtle studio lighting effects
+- Add gentle shadows for depth
+- Keep background minimal and classic
+- Use professional portrait photography aesthetic in animation style
 
 COLOR PALETTE:
 - Deep burgundy reds in clothing/accessories
@@ -690,11 +696,13 @@ SIGNATURE ANIMATED LOOK:
 - Create clean, minimalist aesthetic using cartoon techniques
 - Apply soft, diffused lighting
 
-URBAN ATMOSPHERE:
-- Suggest city backdrop in animation style without overwhelming
-- Add cool blue undertones to environment
-- Create sophisticated, urban feel
-- Include subtle lens flare effects
+1989 ALBUM COVER BACKGROUND:
+- Create bright white animated background
+- Use clean, minimalist white backdrop like the original Polaroid cover
+- Apply soft, even lighting throughout
+- Add Polaroid-style white border framing
+- Keep background completely white and clean
+- Use instant camera aesthetic in animation style
 
 POLAROID COLOR TREATMENT:
 - Slightly overexposed highlights in illustration style
@@ -734,11 +742,13 @@ EDGY ANIMATED STYLING:
 - Create sharp, defined edges using animation techniques
 - Apply intense, moody lighting
 
-NEWSPAPER AESTHETIC:
-- Overlay subtle newsprint texture in animation style
-- Add typography elements around edges
-- Create collage-like effect with text
-- Include halftone dot pattern subtly
+REPUTATION ALBUM COVER BACKGROUND:
+- Create newspaper/magazine print animated background
+- Use black and white newsprint collage like the original album cover
+- Add typography elements and headline text overlays
+- Include halftone dot patterns and text columns
+- Create editorial, magazine-style backdrop
+- Use dramatic black and white newspaper aesthetic in animation style
 
 SNAKE MOTIFS:
 - Add subtle snake-scale textures in background in cartoon style
@@ -816,64 +826,64 @@ FINAL ARTISTIC TOUCHES:
       placeholder: "E.g., Add specific details about the transformation",
       suggestedPrompt: `Transform the uploaded image into a serene animated illustration in the style of modern digital art. Create an indie folk forest aesthetic:
 
-    ANIMATION STYLE:
-    - Convert to smooth, stylized digital illustration style
-    - Use clean vector-like artwork with soft shading
-    - Apply cartoon/animated character proportions while maintaining ALL recognizable features
-    - Create painterly, artistic interpretation rather than photorealistic rendering
-    - Use natural, muted lighting typical of indie animations
-    - PRESERVE EXACT facial features, bone structure, eye color, and natural hair color
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining ALL recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use natural, muted lighting typical of indie animations
+- PRESERVE EXACT facial features, bone structure, eye color, and natural hair color
 
-    DISTANT FOREST COMPOSITION:
-    - Position subject further back in the forest scene, creating depth and atmosphere
-    - Show them as a figure walking through or sitting in the woodland setting
-    - Create a wider shot that includes more of the forest environment
-    - Use cinematic framing like a Studio Ghibli establishing shot
-    - Make the person a focal point but integrated into the larger forest scene
+DISTANT FOREST COMPOSITION:
+- Position subject further back in the forest scene, creating depth and atmosphere
+- Show them as a figure walking through or sitting in the woodland setting
+- Create a wider shot that includes more of the forest environment
+- Use cinematic framing like a Studio Ghibli establishing shot
+- Make the person a focal point but integrated into the larger forest scene
 
-    ANIMATED COTTAGECORE STYLING:
-    - Transform hair into loose, natural animated braids using EXACT original hair color
-    - Add messy, effortless texture in illustration style while maintaining natural color
-    - Create woodland fairy aesthetic using cartoon techniques
-    - Include small braids or twisted sections in original hair color
-    - NEVER change the natural hair color - preserve it exactly in animated form
+ANIMATED COTTAGECORE STYLING:
+- Transform hair into loose, natural animated braids using EXACT original hair color
+- Add messy, effortless texture in illustration style while maintaining natural color
+- Create woodland fairy aesthetic using cartoon techniques
+- Include small braids or twisted sections in original hair color
+- NEVER change the natural hair color - preserve it exactly in animated form
 
-    FOREST ATMOSPHERE:
-    - Desaturate environment to muted, earthy tones in animation style
-    - Create moody, overcast lighting filtering through trees
-    - Add misty, ethereal quality using illustration techniques
-    - Include soft, natural shadows and dappled light
-    - Show tall trees, fallen logs, moss, and forest floor details
-    - Create sense of being deep in the woods
+FOREST ATMOSPHERE:
+- Desaturate environment to muted, earthy tones in animation style
+- Create moody, overcast lighting filtering through trees
+- Add misty, ethereal quality using illustration techniques
+- Include soft, natural shadows and dappled light
+- Show tall trees, fallen logs, moss, and forest floor details
+- Create sense of being deep in the woods
 
-    COZY WARDROBE:
-    - Transform clothing to chunky knit cardigan in animation style
-    - Add cream or gray tones using cartoon techniques
-    - Create cozy, rustic textures in illustration form
-    - Include vintage, handmade quality
-    - Add boots suitable for forest walking
+COZY WARDROBE:
+- Transform clothing to chunky knit cardigan in animation style
+- Add cream or gray tones using cartoon techniques
+- Create cozy, rustic textures in illustration form
+- Include vintage, handmade quality
+- Add boots suitable for forest walking
 
-    ENHANCED WOODLAND BACKGROUND:
-    - Transform setting to expansive animated deep forest with layers of depth
-    - Add fog and mist effects weaving between trees in cartoon style
-    - Include detailed forest elements: tree trunks, branches, leaves, ferns
-    - Create mysterious, isolated feeling with atmospheric perspective
-    - Show forest path or clearing where subject is positioned
-    - Add subtle wildlife elements like birds or butterflies
+ENHANCED WOODLAND BACKGROUND:
+- Transform setting to expansive animated deep forest with layers of depth
+- Add fog and mist effects weaving between trees in cartoon style
+- Include detailed forest elements: tree trunks, branches, leaves, ferns
+- Create mysterious, isolated feeling with atmospheric perspective
+- Show forest path or clearing where subject is positioned
+- Add subtle wildlife elements like birds or butterflies
 
-    COLOR PALETTE:
-    - Muted grays and creams in clothing
-    - Soft forest greens in environment with multiple tonal variations
-    - Earthy browns in tree trunks and forest floor
-    - Natural, organic color scheme with depth
-    - Preserve subject's exact natural coloring
+COLOR PALETTE:
+- Muted grays and creams in clothing
+- Soft forest greens in environment with multiple tonal variations
+- Earthy browns in tree trunks and forest floor
+- Natural, organic color scheme with depth
+- Preserve subject's exact natural coloring
 
-    FINAL ARTISTIC TOUCHES:
-    - Maintain the essence and EXACT recognizability of the original person
-    - Apply consistent animated art style throughout while preserving identity
-    - Create peaceful, introspective quality like a Studio Ghibli establishing shot
-    - Use artistic interpretation to capture contemplative personality
-    - Ensure the subject remains clearly visible and recognizable despite being further in the scene`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and EXACT recognizability of the original person
+- Apply consistent animated art style throughout while preserving identity
+- Create peaceful, introspective quality like a Studio Ghibli establishing shot
+- Use artistic interpretation to capture contemplative personality
+- Ensure the subject remains clearly visible and recognizable despite being further in the scene`,
     },
     evermore: {
       title: "Rustic Woods Era (2020)",
@@ -930,51 +940,51 @@ FINAL ARTISTIC TOUCHES:
       placeholder: "E.g., Add specific details about the transformation",
       suggestedPrompt: `Transform the uploaded image into a glamorous animated illustration in the style of modern digital art. Create a midnight-themed aesthetic:
 
-    ANIMATION STYLE:
-    - Convert to smooth, stylized digital illustration style
-    - Use clean vector-like artwork with soft shading
-    - Apply cartoon/animated character proportions while maintaining recognizable features
-    - Create painterly, artistic interpretation rather than photorealistic rendering
-    - Use moody, late-night lighting typical of retro animations
+ANIMATION STYLE:
+- Convert to smooth, stylized digital illustration style
+- Use clean vector-like artwork with soft shading
+- Apply cartoon/animated character proportions while maintaining recognizable features
+- Create painterly, artistic interpretation rather than photorealistic rendering
+- Use moody, late-night lighting typical of retro animations
 
-    ICONIC MIDNIGHTS LIGHTER:
-    - Include a vintage-style lighter as a key prop in the scene
-    - Show subject holding or positioned near the lighter
-    - Create warm, flickering flame effect in animation style
-    - Use the lighter flame as a key light source illuminating the face
-    - Add mystical, midnight atmosphere around the lighter
-    - Make the lighter prominent but artistic, fitting the aesthetic
+ICONIC MIDNIGHTS LIGHTER:
+- Include a vintage-style lighter as a key prop in the scene
+- Show subject holding or positioned near the lighter
+- Create warm, flickering flame effect in animation style
+- Use the lighter flame as a key light source illuminating the face
+- Add mystical, midnight atmosphere around the lighter
+- Make the lighter prominent but artistic, fitting the aesthetic
 
-    ANIMATED RETRO GLAMOUR:
-    - Apply sparkly, jewel-toned eyeshadow in illustration style
-    - Add subtle glitter effects in cartoon form
-    - Create 70s-inspired makeup look using animation techniques
-    - Include dramatic eye makeup with animated sparkles
-    - Use warm lighter flame to create golden highlights on face
+ANIMATED RETRO GLAMOUR:
+- Apply sparkly, jewel-toned eyeshadow in illustration style
+- Add subtle glitter effects in cartoon form
+- Create 70s-inspired makeup look using animation techniques
+- Include dramatic eye makeup with animated sparkles
+- Use warm lighter flame to create golden highlights on face
 
-    MIDNIGHT ATMOSPHERE:
-    - Apply deep blue and purple color grading in animation style
-    - Create moody, late-night lighting
-    - Add subtle blur for dreamy quality
-    - Include vintage 70s film texture effect
+MIDNIGHT ATMOSPHERE:
+- Apply deep blue and purple color grading in animation style
+- Create moody, late-night lighting
+- Add subtle blur for dreamy quality
+- Include vintage 70s film texture effect
 
-    ANIMATED 70S STYLING:
-    - Style hair in sleek animated 70s waves
-    - Transform clothing to include sparkles/sequins in cartoon style
-    - Add jewel-toned fabric effects
-    - Create disco-era inspired elements
+ANIMATED 70S STYLING:
+- Style hair in sleek animated 70s waves
+- Transform clothing to include sparkles/sequins in cartoon style
+- Add jewel-toned fabric effects
+- Create disco-era inspired elements
 
-    CELESTIAL EFFECTS:
-    - Add clock or time-related motifs subtly in animation style
-    - Create starry night elements in background
-    - Include moon and celestial touches
-    - Apply retro color correction
+CELESTIAL EFFECTS:
+- Add clock or time-related motifs subtly in animation style
+- Create starry night elements in background
+- Include moon and celestial touches
+- Apply retro color correction
 
-    FINAL ARTISTIC TOUCHES:
-    - Maintain the essence and recognizability of the original person
-    - Apply consistent animated art style throughout
-    - Create mysterious, glamorous quality like a retro animated music video
-    - Use artistic interpretation to capture confident, dreamy personality`,
+FINAL ARTISTIC TOUCHES:
+- Maintain the essence and recognizability of the original person
+- Apply consistent animated art style throughout
+- Create mysterious, glamorous quality like a retro animated music video
+- Use artistic interpretation to capture confident, dreamy personality`,
     },
     ttpd: {
       title: "Poet's Department Era (2024)",
