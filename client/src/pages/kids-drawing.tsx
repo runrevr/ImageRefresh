@@ -15,6 +15,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import SEO from '@/components/SEO';
 
 // Import images
 import alicornDrawing from "../assets/alicorn-drawing.jpg";
@@ -37,17 +38,17 @@ export default function KidsDrawingPage() {
   // Example demo images for before/after showcase
   const demoBeforeImage = dogCatDrawing;
   const demoAfterImage = dogCatReal;
-  
+
   // For carousel auto-scrolling
   const [carouselApi, setCarouselApi] = useState<any>(null);
-  
+
   // Check if we should automatically scroll to the uploader
   useEffect(() => {
     const directUpload = sessionStorage.getItem('showUploaderDirectly');
     if (directUpload === 'true') {
       // Clear the flag so it doesn't trigger again on page refresh
       sessionStorage.removeItem('showUploaderDirectly');
-      
+
       // Scroll to the uploader section
       setTimeout(() => {
         const uploaderElement = document.getElementById('uploader');
@@ -57,14 +58,14 @@ export default function KidsDrawingPage() {
       }, 300);
     }
   }, []);
-  
+
   useEffect(() => {
     if (carouselApi) {
       // Set up a timer to auto-advance the carousel
       const autoplayInterval = setInterval(() => {
         carouselApi.scrollNext();
       }, 5000); // Change slide every 5 seconds
-      
+
       // Clean up interval when component unmounts
       return () => clearInterval(autoplayInterval);
     }
@@ -122,7 +123,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
 
       const data = await response.json();
       setTransformedImage(data.transformedImageUrl);
-      
+
       toast({
         title: "Transformation complete!",
         description: "Your drawing has been transformed into a realistic image",
@@ -141,6 +142,12 @@ Feel free to interpret what this might be, but do not add any elements not prese
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50">
+      <SEO 
+        title="Turn Kids Drawings into Reality | AI Children's Art Transformation"
+        description="Transform your child's drawings into magical realistic images. Turn sketches of pets, animals, and characters into stunning artwork that kids will treasure forever."
+        keywords="kids drawings to reality, children's art transformation, drawing to photo, kids art AI, transform children drawings, realistic pet drawings"
+        canonical="https://imagerefresh.com/kids-drawing"
+      />
       <div className="sticky top-0 z-50 bg-white bg-opacity-90 backdrop-blur-md shadow-sm">
         <Navbar freeCredits={user?.freeCreditsUsed === false ? 1 : 0} paidCredits={user?.paidCredits || 0} />
       </div>
@@ -154,7 +161,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
             Our AI transforms children's artwork into hyper-realistic 3D renders and photographs while preserving every detail that makes their creation unique!
           </p>
-          
+
           {/* Image Carousel */}
           <div className="w-full max-w-4xl mx-auto mb-10 overflow-hidden">
             <Carousel className="w-full"
@@ -228,7 +235,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
               </div>
             </Carousel>
           </div>
-          
+
           <div className="flex justify-center">
             <Button 
               size="lg" 
@@ -259,7 +266,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
         {/* Upload Section */}
         <div id="uploader" className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg mb-16">
           <h2 className="text-2xl font-bold mb-6 text-center">Upload Your Child's Drawing</h2>
-          
+
           {!originalImage ? (
             <ImageUploader onImageUploaded={handleImageUploaded} />
           ) : (
@@ -275,7 +282,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex-1">
                   <h3 className="text-lg font-medium mb-2">Transformed Image</h3>
                   {transformedImage ? (
@@ -312,7 +319,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
                   )}
                 </div>
               </div>
-              
+
               <div className="flex justify-center gap-4">
                 <Button 
                   variant="outline"
@@ -324,7 +331,7 @@ Feel free to interpret what this might be, but do not add any elements not prese
                 >
                   Upload New Drawing
                 </Button>
-                
+
                 <Button
                   onClick={handleTransform}
                   disabled={isTransforming || !originalImage}
@@ -341,28 +348,28 @@ Feel free to interpret what this might be, but do not add any elements not prese
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mb-16">
           <h2 className="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-          
+
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">What types of drawings work best?</h3>
               <p className="text-gray-700">All children's drawings work great! The AI preserves every detail, proportion, and characteristic that makes their art unique. Both colorful drawings and simple sketches transform beautifully.</p>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">How does the transformation work?</h3>
               <p className="text-gray-700">Our AI analyzes your child's drawing and creates a hyper-realistic 3D render or photograph of exactly what they drew - maintaining all proportions and details. The image will appear as if their creation exists in real life, with appropriate textures, lighting, and environmental context.</p>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">How long does the transformation take?</h3>
               <p className="text-gray-700">Most transformations complete within 30-45 seconds, depending on the complexity of the drawing and current system load. The AI puts in extra effort to ensure all details are preserved exactly as your child intended.</p>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">Can I save the transformed images?</h3>
               <p className="text-gray-700">Yes! Simply click the download button that appears in the corner of your transformed image. Many parents love to print these transformations as keepsakes or gifts.</p>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-2">Is there a limit to how many drawings I can transform?</h3>
               <p className="text-gray-700">Free users can transform 1 drawing per month. Premium users get additional transformations based on their subscription plan.</p>

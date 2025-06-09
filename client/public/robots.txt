@@ -1,0 +1,21 @@
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://imagerefresh.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /api/
+Disallow: /uploads/
+Disallow: /temp/
+
+# Allow important pages
+Allow: /
+Allow: /pricing
+Allow: /kids-drawing
+Allow: /product-enhancement
+Allow: /about
+Allow: /help
+Allow: /ideas

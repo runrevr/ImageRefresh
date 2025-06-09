@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
+import Navbar from "@/components/Navbar";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/hooks/useAuth";
 
 // Define UserCredits type similar to home.tsx
@@ -23,6 +25,12 @@ export default function AboutPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <SEO 
+        title="About ImageRefresh | AI-Powered Image Transformation Platform"
+        description="Learn about ImageRefresh, the leading AI image transformation platform. Discover our mission to make professional photo editing accessible to everyone."
+        keywords="about imagerefresh, AI image company, photo transformation team, image editing platform, AI photography tools"
+        canonical="https://imagerefresh.com/about"
+      />
       <Navbar 
         freeCredits={userCredits && !userCredits.freeCreditsUsed ? 1 : 0} 
         paidCredits={userCredits?.paidCredits || 0} 

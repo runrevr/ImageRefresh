@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
+import SEO from "@/components/SEO";
 
 // Import product images for the masonry grid
 import shampoo1 from "../assets/shampoo-1.jpg";
@@ -28,7 +29,7 @@ export default function ProductEnhancementPage() {
   const { user: authUser } = useAuth();
   // Initialize local user state with data from auth
   const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
-  
+
   // Update local user state when auth user changes
   useEffect(() => {
     if (authUser) {
@@ -39,15 +40,21 @@ export default function ProductEnhancementPage() {
       });
     }
   }, [authUser]);
-  
+
   // Default to 0 if userCredits is not available
   const freeCredits = userCredits && !userCredits.freeCreditsUsed ? 1 : 0;
   const paidCredits = userCredits?.paidCredits || 0;
-  
+
   return (
     <div className="flex flex-col min-h-screen">
+      <SEO 
+        title="AI Product Photography Enhancement | Professional E-commerce Images"
+        description="Transform ordinary product photos into professional e-commerce images with AI. Enhance lighting, backgrounds, and presentation for better sales conversions."
+        keywords="product photography enhancement, e-commerce images, AI product photos, professional product images, online store photography, product image editing"
+        canonical="https://imagerefresh.com/product-enhancement"
+      />
       <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />
-      
+
       <main className="flex-grow">
         {/* Hero section */}
         <div className="bg-[#2A7B9B] text-white pt-24 pb-20 px-4 sm:px-6 lg:px-8">
@@ -67,7 +74,7 @@ export default function ProductEnhancementPage() {
             </Link>
           </div>
         </div>
-        
+
         {/* Masonry grid with product images */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
@@ -76,42 +83,42 @@ export default function ProductEnhancementPage() {
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={mexicanFoodOriginal} alt="Basic food photography" className="w-full h-auto" />
               </div>
-              
+
               {/* Sweatshirt Dynamic Version */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={sweatshirtDynamic} alt="Sweatshirt with dynamic background" className="w-full h-auto" />
               </div>
-              
+
               {/* Enhanced Mexican Food */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={mexicanFoodEnhanced} alt="Enhanced food photography" className="w-full h-auto" />
               </div>
-              
+
               {/* Sweatshirt Lifestyle */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={sweatshirtLifestyle} alt="Sweatshirt lifestyle photography" className="w-full h-auto" />
               </div>
-              
+
               {/* Shampoo Gold Glamour */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo4} alt="Shampoo with gold luxury styling" className="w-full h-auto" />
               </div>
-              
+
               {/* Original Sweatshirt */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={sweatshirtBasic} alt="Basic sweatshirt product photo" className="w-full h-auto" />
               </div>
-              
+
               {/* Shampoo Bathroom Setting */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo3} alt="Shampoo in luxury bathroom setting" className="w-full h-auto" />
               </div>
-              
+
               {/* Shampoo with Towels */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo2} alt="Shampoo with spa towels and greenery" className="w-full h-auto" />
               </div>
-              
+
               {/* Shampoo Original Product Shot */}
               <div className="mb-5 transform transition-all duration-300 hover:scale-[1.02] shadow-lg rounded-lg overflow-hidden break-inside-avoid">
                 <img src={shampoo1} alt="Original product photography" className="w-full h-auto" />
@@ -119,7 +126,7 @@ export default function ProductEnhancementPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Product Features Section */}
         <div className="py-16 px-4 sm:px-6 lg:px-8 bg-[#f2f2f2]">
           <div className="max-w-5xl mx-auto">
@@ -129,7 +136,7 @@ export default function ProductEnhancementPage() {
                 stop the scroll and drive clicks. Whether you're selling apparel, electronics, home goods or bespoke creations,
                 our expert team uses cutting-edge AI and design flair to:
               </p>
-              
+
               <ul className="space-y-6 mt-8">
                 <li className="flex items-start">
                   <div className="bg-[#A3E4D7] rounded-full p-1 mr-4 mt-1">
@@ -142,7 +149,7 @@ export default function ProductEnhancementPage() {
                     <p className="mt-1">From crisp shadows to dynamic backgrounds, we bring every detail to life.</p>
                   </div>
                 </li>
-                
+
                 <li className="flex items-start">
                   <div className="bg-[#A3E4D7] rounded-full p-1 mr-4 mt-1">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#2A7B9B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -154,7 +161,7 @@ export default function ProductEnhancementPage() {
                     <p className="mt-1">Social-ready formats, perfect framing and on-trend styling ensure your posts go viral.</p>
                   </div>
                 </li>
-                
+
                 <li className="flex items-start">
                   <div className="bg-[#A3E4D7] rounded-full p-1 mr-4 mt-1">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#2A7B9B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -167,14 +174,14 @@ export default function ProductEnhancementPage() {
                   </div>
                 </li>
               </ul>
-              
+
               <p className="mt-8 font-semibold text-lg">
                 Don't settle for "good enough." Give your products the show-stopping imagery they deserve and watch your clicks, shares, and sales soar.
               </p>
             </div>
           </div>
         </div>
-        
+
         {/* CTA section */}
         <div className="bg-[#2A7B9B] py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
@@ -187,7 +194,7 @@ export default function ProductEnhancementPage() {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

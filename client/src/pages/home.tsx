@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
+import SEO from "@/components/SEO";
 import ImageUploader from "@/components/ImageUploader";
 import PromptInput from "@/components/PromptInput";
 import ProcessingState from "@/components/ProcessingState";
@@ -1006,6 +1007,11 @@ export default function Home() {
       className="text-gray-800 min-h-screen flex flex-col"
       style={{ backgroundColor: "white" }}
     >
+      <SEO 
+        title="AI Image Transformation | Turn Photos into Superheroes & Professional Product Images"
+        description="Transform kids into superheroes, enhance product photos for e-commerce, and create stunning visual content with our AI-powered image transformation platform. Free trial available."
+        keywords="AI image transformation, photo editing, superhero transformation, product photography, kids photo editor, e-commerce images, cartoon transformation, mullet generator, 80s style photos"
+      />
       <Navbar
         freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
         paidCredits={userCredits?.paidCredits || 0}
