@@ -4,9 +4,9 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
-import Navbar from "@/components/Navbar";
 import SEO from "@/components/SEO";
 import { useAuth } from "@/hooks/useAuth";
+import { useCredits } from "@/hooks/useCredits";
 
 // Define UserCredits type similar to home.tsx
 type UserCredits = {
