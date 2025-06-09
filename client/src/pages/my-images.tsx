@@ -80,9 +80,10 @@ export default function MyImages() {
     enabled: !!userId,
     retry: 2,
     retryDelay: 1000,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Always fresh for debugging
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
+    refetchOnMount: 'always',
+    refetchInterval: false,
   });
 
   // Log for debugging
@@ -93,13 +94,34 @@ export default function MyImages() {
     imageCount: images.length,
     imagesArray: images,
     user: user,
-    hasImages: images && images.length > 0
+    hasImages: images && images.length > 0,
+    dataType: typeof images,
+    isArray: Array.isArray(images),
+    firstImage: images[0]
+  });
+
+  // Log render decision
+  console.log('[MY-IMAGES] Render decision:', {
+    showLoading: isLoading,
+    showEmpty: !isLoading && images.length === 0,
+    showImages: !isLoading && images.length > 0,
+    actualLength: images?.length || 0
   });
 
   // Log when user changes
   React.useEffect(() => {
     console.log('[MY-IMAGES] User changed:', { user, userId });
   }, [user, userId]);
+
+  // Log when images data changes
+  React.useEffect(() => {
+    console.log('[MY-IMAGES] Images data changed:', {
+      imageCount: images?.length || 0,
+      isArray: Array.isArray(images),
+      firstImage: images?.[0],
+      timestamp: new Date().toISOString()
+    });
+  }, [images]);
 
   const deleteImageMutation = useMutation({
     mutationFn: async ({ imageId, userId }: { imageId: number; userId: number }) => {
@@ -210,7 +232,7 @@ export default function MyImages() {
               </Card>
             ))}
           </div>
-        ) : images.length === 0 ? (
+        ) : !images || images.length === 0 ? (
           <div className="text-center py-20">
             <div className="max-w-md mx-auto">
               <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-6 flex items-center justify-center">
