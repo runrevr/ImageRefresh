@@ -407,7 +407,8 @@ Feel free to interpret what this might be, but do not add any elements not prese
         </div>
       </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }
