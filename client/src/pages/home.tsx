@@ -1011,7 +1011,30 @@ export default function Home() {
         title="AI Image Transformation | Turn Photos into Superheroes & Professional Product Images"
         description="Transform kids into superheroes, enhance product photos for e-commerce, and create stunning visual content with our AI-powered image transformation platform. Free trial available."
         keywords="AI image transformation, photo editing, superhero transformation, product photography, kids photo editor, e-commerce images, cartoon transformation, mullet generator, 80s style photos"
+        canonicalUrl="https://imagerefresh.com/"
       />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Image Refresh",
+          "description": "AI-powered image transformation platform for personal and commercial use",
+          "url": "https://imagerefresh.com",
+          "applicationCategory": "PhotographyApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "2025-12-31"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Image Refresh",
+            "url": "https://imagerefresh.com"
+          }
+        })}
+      </script>
       <Navbar
         freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
         paidCredits={userCredits?.paidCredits || 0}
@@ -1019,7 +1042,7 @@ export default function Home() {
 
       {/* Account Needed Dialog */}
       <AccountNeededDialog
-        open={showAccountNeededDialog}
+        open={showAccountDialog}
         onClose={() => setShowAccountNeededDialog(false)}
         email={storedEmail}
         isLoggedIn={Boolean(userCredits?.totalCredits)}

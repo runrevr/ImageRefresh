@@ -141,7 +141,36 @@ Feel free to interpret what this might be, but do not add any elements not prese
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50">
+    <>
+      <SEO 
+        title="Kids Drawing to Reality | AI Image Transformation for Children"
+        description="Transform your child's drawings into realistic images with AI. Turn imagination into reality with our specialized kids drawing transformation tool."
+        keywords="kids drawing transformation, children's art to reality, AI drawing enhancement, kids photo editing"
+        canonicalUrl="https://imagerefresh.com/kids-drawing"
+      />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Image Refresh",
+          "description": "AI-powered image transformation platform for personal and commercial use",
+          "url": "https://imagerefresh.com",
+          "applicationCategory": "PhotographyApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "2025-12-31"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Image Refresh",
+            "url": "https://imagerefresh.com"
+          }
+        })}
+      </script>
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
       <SEO 
         title="Turn Kids Drawings into Reality | AI Children's Art Transformation"
         description="Transform your child's drawings into magical realistic images. Turn sketches of pets, animals, and characters into stunning artwork that kids will treasure forever."

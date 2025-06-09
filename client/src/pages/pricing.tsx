@@ -38,6 +38,28 @@ export default function PricingPage() {
         keywords="AI image transformation pricing, photo editing plans, affordable image transformation, superhero photo pricing, product photography pricing"
         canonical="https://imagerefresh.com/pricing"
       />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Image Refresh",
+          "description": "AI-powered image transformation platform for personal and commercial use",
+          "url": "https://imagerefresh.com",
+          "applicationCategory": "PhotographyApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "2025-12-31"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Image Refresh",
+            "url": "https://imagerefresh.com"
+          }
+        })}
+      </script>
       {/* Custom styling for navbar on dark background */}
       <div className="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg">
         <Navbar freeCredits={freeCredits} paidCredits={paidCredits} />

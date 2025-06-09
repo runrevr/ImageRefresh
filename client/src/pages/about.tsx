@@ -31,6 +31,28 @@ export default function AboutPage() {
         keywords="about imagerefresh, AI image company, photo transformation team, image editing platform, AI photography tools"
         canonical="https://imagerefresh.com/about"
       />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Image Refresh",
+          "description": "AI-powered image transformation platform for personal and commercial use",
+          "url": "https://imagerefresh.com",
+          "applicationCategory": "PhotographyApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "2025-12-31"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Image Refresh",
+            "url": "https://imagerefresh.com"
+          }
+        })}
+      </script>
       <Navbar 
         freeCredits={userCredits && !userCredits.freeCreditsUsed ? 1 : 0} 
         paidCredits={userCredits?.paidCredits || 0} 

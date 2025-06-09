@@ -841,8 +841,8 @@ export default function UploadPage() {
           toast({
             title: "Edit Failed",
             description: "An error occurred during editing. Please try again.",
-            variant: "destructive",
-          });
+              variant: "destructive",
+            });
           setCurrentStep(Step.Edit);
         }
       }
@@ -1025,7 +1025,36 @@ export default function UploadPage() {
   }, [location]);
 
   return (
-    <div className="text-gray-800 min-h-screen flex flex-col bg-gray-50">
+    <>
+      <SEO 
+        title="Upload & Transform Images | AI Image Editor"
+        description="Upload your photos and transform them with AI. Choose from superhero styles, cartoon effects, and professional enhancements."
+        keywords="upload photos, AI image editor, photo transformation, image enhancement"
+        canonicalUrl="https://imagerefresh.com/upload"
+      />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Image Refresh",
+          "description": "AI-powered image transformation platform for personal and commercial use",
+          "url": "https://imagerefresh.com",
+          "applicationCategory": "PhotographyApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "2025-12-31"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Image Refresh",
+            "url": "https://imagerefresh.com"
+          }
+        })}
+      </script>
+      <div className="min-h-screen bg-gray-50">
       <Navbar
         freeCredits={!userCredits?.freeCreditsUsed ? 1 : 0}
         paidCredits={userCredits?.paidCredits || 0}
