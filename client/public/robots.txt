@@ -5,6 +5,11 @@ Allow: /
 # Sitemaps
 Sitemap: https://imagerefresh.com/sitemap.xml
 
+# Allow favicon and assets
+Allow: /favicon.png
+Allow: /images/
+Allow: /assets/
+
 # Disallow admin and private areas
 Disallow: /admin
 Disallow: /api/

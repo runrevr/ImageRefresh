@@ -1,0 +1,22 @@
+
+{
+  "name": "Image Refresh - AI Image Transformation",
+  "short_name": "ImageRefresh",
+  "description": "Transform photos into superheroes, enhance product images, and create stunning visual content with AI",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0D7877",
+  "background_color": "#ffffff"
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'wouter'
 import Navbar from '@/components/Navbar'
+import SEO from '@/components/SEO'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -229,6 +230,34 @@ export default function SelectIdeasPage() {
 
   return (
     <>
+      <SEO 
+        title="Select Enhancement Ideas | AI Image Transformation"
+        description="Choose from AI-generated enhancement ideas for your products. Transform photos with professional and creative styles using our advanced image transformation platform."
+        keywords="AI image enhancement, product photo ideas, image transformation selection, creative photo editing, professional photo enhancement"
+        canonical="https://imagerefresh.com/select-ideas"
+      />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Image Refresh",
+          "description": "AI-powered image transformation platform for personal and commercial use",
+          "url": "https://imagerefresh.com",
+          "applicationCategory": "PhotographyApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "10.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "2025-12-31"
+          },
+          "provider": {
+            "@type": "Organization",
+            "name": "Image Refresh",
+            "url": "https://imagerefresh.com"
+          }
+        })}
+      </script>
       <style>{`
         :root {
           --primary: #0D7877;

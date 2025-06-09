@@ -62,6 +62,29 @@ const SEO: React.FC<SEOProps> = ({
     }
     canonicalLink.setAttribute('href', canonical || `https://imagerefresh.com${location}`);
 
+    // Add structured data for organization
+    let structuredDataScript = document.querySelector('#structured-data-org');
+    if (!structuredDataScript) {
+      structuredDataScript = document.createElement('script');
+      structuredDataScript.setAttribute('type', 'application/ld+json');
+      structuredDataScript.setAttribute('id', 'structured-data-org');
+      document.head.appendChild(structuredDataScript);
+    }
+    
+    const organizationData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Image Refresh",
+      "url": "https://imagerefresh.com",
+      "logo": "https://imagerefresh.com/favicon.png",
+      "description": "AI-powered image transformation platform for personal and commercial use",
+      "sameAs": [
+        "https://imagerefresh.com"
+      ]
+    };
+    
+    structuredDataScript.textContent = JSON.stringify(organizationData);
+
   }, [title, description, keywords, ogImage, canonical, location]);
 
   return null;
