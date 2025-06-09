@@ -1908,6 +1908,7 @@ export default function UploadPage() {
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}
       />
-    </div>
+      </div>
+    </>
   );
 }
